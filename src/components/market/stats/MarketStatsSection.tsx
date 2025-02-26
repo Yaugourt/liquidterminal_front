@@ -15,7 +15,7 @@ export function MarketStatsSection({
   trendingTokens,
 }: MarketStatsSectionProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8">
       <MarketStatsCard title="Market Cap">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -42,17 +42,17 @@ export function MarketStatsSection({
           {trendingTokens.map((token) => (
             <div key={token.name} className="flex justify-between items-center">
               <span className="text-white">{token.name}</span>
-              <div className="flex gap-4">
-                <span className="text-white">${formatNumber(token.price)}</span>
-                <span
-                  className={
-                    token.change24h >= 0 ? "text-[#26A69A]" : "text-red-500"
-                  }
-                >
-                  {token.change24h >= 0 ? "+" : ""}
-                  {formatNumber(token.change24h)}%
-                </span>
-              </div>
+
+              <span className="text-white">${formatNumber(token.price)}</span>
+              <span
+                className={
+                  token.change24h >= 0 ? "text-[#37983F]" : "text-red-500"
+                }
+              >
+                {token.change24h >= 0 ? "+" : ""}
+                {formatNumber(token.change24h)}%
+              </span>
+
             </div>
           ))}
         </div>
