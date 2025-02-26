@@ -1,43 +1,44 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { usePageTitle } from "@/store/use-page-title"
-import { Card } from "@/components/ui/card"
-import { getToken } from "@/api/markets/queries"
-import { Token } from "@/api/markets/types"
-import { use } from "react"
-import { formatNumber } from "@/lib/format"
+import { useEffect, useState } from "react";
+import { usePageTitle } from "@/store/use-page-title";
+import { Card } from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import { getToken } from "@/api/markets/queries";
+import { Token } from "@/api/markets/types";
+import { formatNumber } from "@/lib/format";
 
-export default function TokenPage({ params }: { params: Promise<{ token: string }> }) {
-    const resolvedParams = use(params)
-    const { setTitle } = usePageTitle()
-    const [token, setToken] = useState<Token | null>(null)
-    const [loading, setLoading] = useState(true)
-    const tokenName = decodeURIComponent(resolvedParams.token)
+export default function TokenPage() {
+    const { setTitle } = usePageTitle();
+    const params = useParams();
+    const token_param = params.token as string;
+    const tokenName = decodeURIComponent(token_param);
+    const [token, setToken] = useState<Token | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setTitle(`${tokenName} - Market`)
-    }, [setTitle, tokenName])
+        setTitle(`${tokenName} - Market`);
+    }, [setTitle, tokenName]);
 
     useEffect(() => {
         const fetchToken = async () => {
             try {
-                const data = await getToken(tokenName)
-                setToken(data)
+                const data = await getToken(tokenName);
+                setToken(data);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchToken()
-    }, [tokenName])
+        fetchToken();
+    }, [tokenName]);
 
     if (loading) {
-        return <div className="text-white p-4">Chargement...</div>
+        return <div className="text-white p-4">Chargement...</div>;
     }
 
     if (!token) {
-        return <div className="text-white p-4">Token non trouvé</div>
+        return <div className="text-white p-4">Token non trouvé</div>;
     }
 
     return (
@@ -139,6 +140,14 @@ export default function TokenPage({ params }: { params: Promise<{ token: string 
                         </div>
                     </Card>
 
+                    {/* Order Book Card */}
+                    <Card className="p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+                        <h3 className="text-white text-lg mb-4">Order Book</h3>
+                        <div className="h-[400px] flex items-center justify-center text-white/60">
+                            Order Book à venir
+                        </div>
+                    </Card>
+
                     {/* Trades Card */}
                     <Card className="p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
                         <h3 className="text-white text-lg mb-4">Trades</h3>
@@ -149,5 +158,5 @@ export default function TokenPage({ params }: { params: Promise<{ token: string 
                 </div>
             </div>
         </div>
-    )
-} 
+    );
+}
