@@ -14,17 +14,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 import { formatNumber } from "@/lib/format"
 import { useRouter } from "next/navigation"
-
-interface Token {
-    name: string
-    logo: string | null
-    price: number
-    marketCap: number
-    volume: number
-    change24h: number
-    liquidity: number
-    supply: number
-}
+import { Token } from "@/api/markets/types"
 
 type SortConfig = {
     key: keyof Token | null
@@ -56,8 +46,8 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
             direction = 'desc'
         }
-
         const newSortedTokens = [...sortedTokens].sort((a, b) => {
+            if (a[key] === null || b[key] === null) return 0
             if (a[key] < b[key]) return direction === 'asc' ? -1 : 1
             if (a[key] > b[key]) return direction === 'asc' ? 1 : -1
             return 0
@@ -157,16 +147,16 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                                 </div>
                             </TableCell>
                             <TableCell className="text-white first:pl-4 last:pr-4 whitespace-nowrap">
-                                ${formatNumber(token.price)}
+                                ${formatNumber(token.price, 'price')}
                             </TableCell>
                             <TableCell className={`first:pl-4 last:pr-4 hidden sm:table-cell whitespace-nowrap ${token.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                                {token.change24h >= 0 ? '+' : ''}{formatNumber(token.change24h)}%
+                                {token.change24h >= 0 ? '+' : ''}{formatNumber(token.change24h, 'change')}%
                             </TableCell>
                             <TableCell className="text-white first:pl-4 last:pr-4 hidden md:table-cell whitespace-nowrap">
-                                ${formatNumber(token.volume)}
+                                ${formatNumber(token.volume, 'volume')}
                             </TableCell>
                             <TableCell className="text-white first:pl-4 last:pr-4 hidden lg:table-cell whitespace-nowrap">
-                                ${formatNumber(token.marketCap)}
+                                ${formatNumber(token.marketCap, 'marketCap')}
                             </TableCell>
                         </TableRow>
                     ))}

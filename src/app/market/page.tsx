@@ -7,17 +7,8 @@ import { Card } from "@/components/ui/card"
 import { TokenTable } from "@/components/market/TokenTable"
 import { TokenFilters } from "@/components/market/TokenFilters"
 import { formatNumber } from "@/lib/format"
-
-interface Token {
-    name: string
-    logo: string | null
-    price: number
-    marketCap: number
-    volume: number
-    change24h: number
-    liquidity: number
-    supply: number
-}
+import { Token } from "@/api/markets/types"
+import { getSpotTokens } from "@/api/markets/queries"
 
 export default function Market() {
     const { setTitle } = usePageTitle()
@@ -31,11 +22,8 @@ export default function Market() {
     useEffect(() => {
         const fetchTokens = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/markets')
-                const data = await response.json()
+                const data = await getSpotTokens()
                 setTokens(data)
-            } catch (error) {
-                console.error('Erreur lors du chargement des tokens:', error)
             } finally {
                 setLoading(false)
             }
@@ -70,16 +58,16 @@ export default function Market() {
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-white text-lg">Market Cap</h3>
-                                <span className="text-[#83E9FF]">${formatNumber(totalMarketCap)}</span>
+                                <span className="text-[#83E9FF]">${formatNumber(totalMarketCap, 'marketCap')}</span>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-[#FFFFFF99] text-sm">Total volume:</p>
-                                    <p className="text-white">${formatNumber(totalVolume)}</p>
+                                    <p className="text-white">${formatNumber(totalVolume, 'volume')}</p>
                                 </div>
                                 <div>
                                     <p className="text-[#FFFFFF99] text-sm">24h spot volume:</p>
-                                    <p className="text-white">${formatNumber(totalSpotVolume)}</p>
+                                    <p className="text-white">${formatNumber(totalSpotVolume, 'volume')}</p>
                                 </div>
                                 <div>
                                     <p className="text-[#FFFFFF99] text-sm">Total spot token:</p>
@@ -101,9 +89,9 @@ export default function Market() {
                                 <div key={token.name} className="flex justify-between items-center">
                                     <span className="text-white">{token.name}</span>
                                     <div className="flex gap-4">
-                                        <span className="text-white">${formatNumber(token.price)}</span>
+                                        <span className="text-white">${formatNumber(token.price, 'price')}</span>
                                         <span className={token.change24h >= 0 ? 'text-green-500' : 'text-red-500'}>
-                                            {token.change24h >= 0 ? '+' : ''}{formatNumber(token.change24h)}%
+                                            {token.change24h >= 0 ? '+' : ''}{formatNumber(token.change24h, 'change')}%
                                         </span>
                                     </div>
                                 </div>
