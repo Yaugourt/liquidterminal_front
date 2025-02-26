@@ -67,6 +67,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
   };
 
   const handleTokenClick = (tokenName: string) => {
+    console.log(`Navigation vers le token spot: "${tokenName}"`);
     router.push(`/market/${encodeURIComponent(tokenName)}`);
   };
 
@@ -79,7 +80,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
       <Table>
         <TableHeader>
           <TableRow className="border-none">
-            <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent pl-4">
+            <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent pl-4 w-[120px]">
               <Button
                 variant="ghost"
                 onClick={() => sortData("name")}
@@ -89,7 +90,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
-            <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent">
+            <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent w-[100px]">
               <Button
                 variant="ghost"
                 onClick={() => sortData("price")}
@@ -99,7 +100,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
+            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden lg:table-cell">
               <Button
                 variant="ghost"
                 onClick={() => sortData("marketCap")}
@@ -109,7 +110,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
+            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden md:table-cell">
               <Button
                 variant="ghost"
                 onClick={() => sortData("volume")}
@@ -125,7 +126,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 onClick={() => sortData("change24h")}
                 className="text-[#FFFFFF99] font-normal hover:text-white p-0 ml-auto"
               >
-                Change (24h)
+                Change
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
@@ -148,20 +149,20 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                       e.currentTarget.style.display = "none";
                     }}
                   />
-                  <span className="text-white">{token.name}</span>
+                  <span className="text-white text-sm md:text-base">{token.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-right text-white">
+              <TableCell className="text-right text-white text-sm md:text-base">
                 ${formatNumber(token.price, "price")}
               </TableCell>
-              <TableCell className="text-right text-white">
+              <TableCell className="text-right text-white text-sm md:text-base hidden lg:table-cell">
                 ${formatNumber(token.marketCap, "marketCap")}
               </TableCell>
-              <TableCell className="text-right text-white">
+              <TableCell className="text-right text-white text-sm md:text-base hidden md:table-cell">
                 ${formatNumber(token.volume, "volume")}
               </TableCell>
               <TableCell
-                className={`text-right pr-4 ${token.change24h >= 0 ? "text-green-500" : "text-red-500"
+                className={`text-right pr-4 text-sm md:text-base ${token.change24h >= 0 ? "text-green-500" : "text-red-500"
                   }`}
               >
                 {token.change24h >= 0 ? "+" : ""}

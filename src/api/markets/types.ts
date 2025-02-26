@@ -9,6 +9,18 @@ export interface Token {
     supply: number
 }
 
+export interface PerpToken {
+    name: string
+    logo?: string | null
+    price: number
+    change24h: number
+    volume: number
+    openInterest: number
+    funding: number
+    maxLeverage: number
+    onlyIsolated: boolean
+}
+
 export interface Auction {
     time: number
     deployer: string

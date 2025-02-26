@@ -4,38 +4,38 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { Card } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
-import { getToken } from "@/api/markets/queries";
-import { Token } from "@/api/markets/types";
+import { getPerpToken } from "@/api/markets/queries";
+import { PerpToken } from "@/api/markets/types";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function TokenPage() {
+export default function TokenPerpPage() {
     const { setTitle } = usePageTitle();
     const router = useRouter();
     const params = useParams();
     const token_param = params.token as string;
     const tokenName = decodeURIComponent(token_param);
-    const [token, setToken] = useState<Token | null>(null);
+    const [token, setToken] = useState<PerpToken | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        setTitle(`${tokenName} - Market`);
+        setTitle(`${tokenName} - Market Perp`);
     }, [setTitle, tokenName]);
 
     useEffect(() => {
         const fetchToken = async () => {
             try {
-                console.log(`Recherche du token spot: "${tokenName}"`);
-                const data = await getToken(tokenName);
-                console.log("Résultat de la recherche spot:", data);
+                console.log(`Recherche du token: "${tokenName}"`);
+                const data = await getPerpToken(tokenName);
+                console.log("Résultat de la recherche:", data);
                 setToken(data);
                 if (!data) {
-                    setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Spot.`);
+                    setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Perp.`);
                 }
             } catch (err) {
-                console.error("Erreur lors du chargement du token spot:", err);
+                console.error("Erreur lors du chargement du token:", err);
                 setError("Une erreur est survenue lors du chargement des données du token.");
             } finally {
                 setLoading(false);
@@ -46,7 +46,7 @@ export default function TokenPage() {
     }, [tokenName]);
 
     const handleBackToList = () => {
-        router.push('/market');
+        router.push('/market/perp');
     };
 
     if (loading) {
@@ -82,7 +82,7 @@ export default function TokenPage() {
                         <div className="space-y-3 sm:space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-white font-bold text-sm sm:text-base">{token.name}/USDC</span>
-                                <span className="bg-[#1E4620] text-[#4ADE80] px-2 py-1 rounded text-xs sm:text-sm">Spot</span>
+                                <span className="bg-[#1E4620] text-[#4ADE80] px-2 py-1 rounded text-xs sm:text-sm">Perp</span>
                             </div>
 
                             <div className="space-y-2">
@@ -104,8 +104,18 @@ export default function TokenPage() {
                                 </div>
 
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Market Cap:</div>
-                                    <div className="text-white text-base sm:text-lg">${formatNumber(token.marketCap, 'marketCap')}</div>
+                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Open Interest:</div>
+                                    <div className="text-white text-base sm:text-lg">{formatNumber(token.openInterest)}</div>
+                                </div>
+
+                                <div>
+                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Funding Rate:</div>
+                                    <div className="text-white text-base sm:text-lg">{(token.funding * 100).toFixed(6)}%</div>
+                                </div>
+
+                                <div>
+                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Max Leverage:</div>
+                                    <div className="text-white text-base sm:text-lg">{token.maxLeverage}x</div>
                                 </div>
 
                                 <div>
@@ -225,4 +235,4 @@ export default function TokenPage() {
             </div>
         </div>
     );
-}
+} 

@@ -1,9 +1,10 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
-import { Menu } from "lucide-react"
+import { Menu, ChevronDown, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { useState } from "react"
 
 const navigation = [
     {
@@ -18,8 +19,12 @@ const navigation = [
     },
     {
         name: 'Market',
-        href: '/market',
-        icon: '/sidebar/Line_up.svg'
+        icon: '/sidebar/Line_up.svg',
+        hasSubmenu: true,
+        submenu: [
+            { name: 'Spot', href: '/market' },
+            { name: 'Perp', href: '/market/perp' }
+        ]
     },
     {
         name: 'Project',
@@ -45,6 +50,12 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+    const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+
+    const toggleSubmenu = (name: string) => {
+        setOpenSubmenu(openSubmenu === name ? null : name);
+    };
+
     return (
         <>
             {/* Overlay - visible uniquement sur mobile quand la sidebar est ouverte */}
@@ -87,21 +98,62 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     <ul className="space-y-2">
                         {navigation.map((item) => (
                             <li key={item.name}>
-                                <Link
-                                    href={item.href}
-                                    className={cn(
-                                        "flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
-                                        "hover:text-white"
-                                    )}
-                                >
-                                    <Image
-                                        src={item.icon}
-                                        alt={item.name}
-                                        width={20}
-                                        height={20}
-                                    />
-                                    <span>{item.name}</span>
-                                </Link>
+                                {item.hasSubmenu ? (
+                                    <div>
+                                        <button
+                                            onClick={() => toggleSubmenu(item.name)}
+                                            className={cn(
+                                                "flex items-center justify-between w-full gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
+                                                "hover:text-white"
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Image
+                                                    src={item.icon}
+                                                    alt={item.name}
+                                                    width={20}
+                                                    height={20}
+                                                />
+                                                <span>{item.name}</span>
+                                            </div>
+                                            {openSubmenu === item.name ? (
+                                                <ChevronDown className="h-4 w-4" />
+                                            ) : (
+                                                <ChevronRight className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                        {openSubmenu === item.name && (
+                                            <ul className="pl-8 mt-1 space-y-1">
+                                                {item.submenu?.map((subItem) => (
+                                                    <li key={subItem.name}>
+                                                        <Link
+                                                            href={subItem.href}
+                                                            className="block px-3 py-1 text-sm text-white hover:text-[#83E9FF] transition-colors"
+                                                        >
+                                                            {subItem.name}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link
+                                        href={item.href!}
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
+                                            "hover:text-white"
+                                        )}
+                                    >
+                                        <Image
+                                            src={item.icon}
+                                            alt={item.name}
+                                            width={20}
+                                            height={20}
+                                        />
+                                        <span>{item.name}</span>
+                                    </Link>
+                                )}
                             </li>
                         ))}
                     </ul>
