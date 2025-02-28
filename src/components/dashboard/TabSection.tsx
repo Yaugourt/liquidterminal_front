@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -24,36 +25,36 @@ export function TabSection({
     <div className="space-y-4">
       {/* Tabs */}
       <div className="flex gap-2">
-        <button
+        <Button
           onClick={() => setActiveTab("vault")}
-          className={`px-4 py-2 text-white rounded-md ${
-            activeTab === "vault"
-              ? "bg-[#26A69A]"
-              : "bg-[#051728] hover:bg-[#0B2437]"
-          }`}
+          variant="ghost"
+          className={`text-white ${activeTab === "vault"
+            ? "bg-[#051728B2] hover:bg-[#051728] border border-[#83E9FF4D]"
+            : "bg-[#1692ADB2] hover:bg-[#1692AD] border-transparent"
+            }`}
         >
           Vault
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("stacking")}
-          className={`px-4 py-2 text-white rounded-md ${
-            activeTab === "stacking"
-              ? "bg-[#26A69A]"
-              : "bg-[#051728] hover:bg-[#0B2437]"
-          }`}
+          variant="ghost"
+          className={`text-white ${activeTab === "stacking"
+            ? "bg-[#051728B2] hover:bg-[#051728] border border-[#83E9FF4D]"
+            : "bg-[#1692ADB2] hover:bg-[#1692AD] border-transparent"
+            }`}
         >
           Stacking
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("auction")}
-          className={`px-4 py-2 text-white rounded-md ${
-            activeTab === "auction"
-              ? "bg-[#26A69A]"
-              : "bg-[#051728] hover:bg-[#0B2437]"
-          }`}
+          variant="ghost"
+          className={`text-white ${activeTab === "auction"
+            ? "bg-[#051728B2] hover:bg-[#051728] border border-[#83E9FF4D]"
+            : "bg-[#1692ADB2] hover:bg-[#1692AD] border-transparent"
+            }`}
         >
           Auction
-        </button>
+        </Button>
       </div>
 
       <div className="lg:flex lg:gap-8">
@@ -88,15 +89,27 @@ export function TabSection({
         {/* Graphique à droite */}
         <Card className="mt-4 lg:mt-0 lg:flex-1 h-[300px] lg:h-[350px] relative bg-[#051728E5] border border-[#83E9FF26] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm">
           <div className="absolute top-2 right-4 z-10 flex gap-2">
-            <button className="px-4 py-1 text-sm text-white bg-[#051728] rounded-md">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white bg-[#1692ADB2] hover:bg-[#1692AD] border-transparent"
+            >
               All
-            </button>
-            <button className="px-4 py-1 text-sm text-white bg-[#26A69A] rounded-md">
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white bg-[#051728B2] hover:bg-[#051728] border border-[#83E9FF4D]"
+            >
               Strict
-            </button>
-            <button className="px-4 py-1 text-sm text-white bg-[#051728] rounded-md">
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white bg-[#1692ADB2] hover:bg-[#1692AD] border-transparent"
+            >
               Auction
-            </button>
+            </Button>
           </div>
 
           <div className="absolute top-4 left-6 z-10">

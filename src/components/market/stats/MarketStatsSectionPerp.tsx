@@ -1,11 +1,14 @@
 import { MarketStatsCard } from "../MarketStatsCard";
+import { formatNumberWithoutDecimals } from "./utils";
+import { PerpToken } from "@/api/markets/types";
 import { formatNumber } from "@/lib/format";
 
 interface MarketStatsSectionPerpProps {
     totalMarketCap: number;
     totalVolume: number;
     totalPerpVolume: number;
-    trendingTokens: any[];
+    trendingTokens: PerpToken[];
+    totalTokenCount: number;
 }
 
 export function MarketStatsSectionPerp({
@@ -13,31 +16,32 @@ export function MarketStatsSectionPerp({
     totalVolume,
     totalPerpVolume,
     trendingTokens,
+    totalTokenCount,
 }: MarketStatsSectionPerpProps) {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4 md:my-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 md:my-8">
             <MarketStatsCard title="Market Cap">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                     <div>
-                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total volume:</p>
-                        <p className="text-white text-sm sm:text-base">${formatNumber(totalVolume)}</p>
+                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total marketcap:</p>
+                        <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalMarketCap)}</p>
                     </div>
                     <div>
                         <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h perp volume:</p>
-                        <p className="text-white text-sm sm:text-base">${formatNumber(totalPerpVolume)}</p>
+                        <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalPerpVolume)}</p>
                     </div>
                     <div>
                         <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total perp token:</p>
-                        <p className="text-white text-sm sm:text-base">${formatNumber(trendingTokens.length)}</p>
+                        <p className="text-white text-sm sm:text-base">{formatNumber(totalTokenCount)}</p>
                     </div>
                     <div>
                         <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h spot volume:</p>
-                        <p className="text-white text-sm sm:text-base">$0.00</p>
+                        <p className="text-white text-sm sm:text-base">$0</p>
                     </div>
                 </div>
             </MarketStatsCard>
 
-            <MarketStatsCard title="Trending Tokens">
+            <MarketStatsCard title="Top Volume Tokens">
                 <div className="space-y-2 sm:space-y-3">
                     {trendingTokens.map((token) => (
                         <div key={token.name} className="grid grid-cols-12 items-center gap-1 sm:gap-2">

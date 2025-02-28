@@ -1,11 +1,16 @@
 import { MarketStatsCard } from "../MarketStatsCard";
+import { AuctionCard } from "./AuctionCard";
+import { useAuctionData } from "./useAuctionData";
+import { formatNumberWithoutDecimals } from "./utils";
+import { Token } from "@/api/markets/types";
 import { formatNumber } from "@/lib/format";
 
 interface MarketStatsSectionProps {
   totalMarketCap: number;
   totalVolume: number;
   totalSpotVolume: number;
-  trendingTokens: any[];
+  trendingTokens: Token[];
+  totalTokenCount: number;
 }
 
 export function MarketStatsSection({
@@ -13,31 +18,44 @@ export function MarketStatsSection({
   totalVolume,
   totalSpotVolume,
   trendingTokens,
+  totalTokenCount,
 }: MarketStatsSectionProps) {
+  // Utiliser le hook personnalisé pour gérer les données d'enchère
+  const {
+    currentPrice,
+    displayPrice,
+    progress,
+    loading,
+    timeUntilStart,
+    isUpcoming,
+    isActive,
+    lastAuction
+  } = useAuctionData();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4 md:my-8">
       <MarketStatsCard title="Market Cap">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           <div>
-            <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total volume:</p>
-            <p className="text-white text-sm sm:text-base">${formatNumber(totalVolume)}</p>
+            <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total marketcap:</p>
+            <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalMarketCap)}</p>
           </div>
           <div>
             <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h spot volume:</p>
-            <p className="text-white text-sm sm:text-base">${formatNumber(totalSpotVolume)}</p>
+            <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalSpotVolume)}</p>
           </div>
           <div>
             <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total spot token:</p>
-            <p className="text-white text-sm sm:text-base">${formatNumber(3)}</p>
+            <p className="text-white text-sm sm:text-base">{formatNumber(totalTokenCount)}</p>
           </div>
           <div>
             <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h perp volume:</p>
-            <p className="text-white text-sm sm:text-base">$0.00</p>
+            <p className="text-white text-sm sm:text-base">$0</p>
           </div>
         </div>
       </MarketStatsCard>
 
-      <MarketStatsCard title="Trending Tokens">
+      <MarketStatsCard title="Top Volume Tokens">
         <div className="space-y-2 sm:space-y-3">
           {trendingTokens.map((token) => (
             <div key={token.name} className="grid grid-cols-12 items-center gap-1 sm:gap-2">
@@ -55,18 +73,16 @@ export function MarketStatsSection({
         </div>
       </MarketStatsCard>
 
-      <MarketStatsCard title="Auction" className="md:col-span-2 lg:col-span-1">
-        <div className="space-y-2 sm:space-y-3">
-          <div>
-            <p className="text-[#FFFFFF99] text-xs sm:text-sm">Current price:</p>
-            <p className="text-white text-sm sm:text-base">351,343.24$</p>
-          </div>
-          <div>
-            <p className="text-[#FFFFFF99] text-xs sm:text-sm">Last auctions:</p>
-            <p className="text-white text-sm sm:text-base">NEURAL for 205,149.38$</p>
-          </div>
-        </div>
-      </MarketStatsCard>
+      <AuctionCard
+        currentPrice={currentPrice}
+        displayPrice={displayPrice}
+        progress={progress}
+        isActive={isActive}
+        isUpcoming={isUpcoming}
+        timeUntilStart={timeUntilStart}
+        lastAuction={lastAuction}
+        loading={loading}
+      />
     </div>
   );
 }
