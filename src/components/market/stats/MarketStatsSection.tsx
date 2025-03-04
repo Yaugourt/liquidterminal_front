@@ -7,7 +7,6 @@ import { formatNumber } from "@/lib/format";
 
 interface MarketStatsSectionProps {
   totalMarketCap: number;
-  totalVolume: number;
   totalSpotVolume: number;
   trendingTokens: Token[];
   totalTokenCount: number;
@@ -15,7 +14,6 @@ interface MarketStatsSectionProps {
 
 export function MarketStatsSection({
   totalMarketCap,
-  totalVolume,
   totalSpotVolume,
   trendingTokens,
   totalTokenCount,
@@ -29,7 +27,9 @@ export function MarketStatsSection({
     timeUntilStart,
     isUpcoming,
     isActive,
-    lastAuction
+    lastAuction,
+    isPurchased,
+    nextAuctionPrice
   } = useAuctionData();
 
   return (
@@ -82,6 +82,8 @@ export function MarketStatsSection({
         timeUntilStart={timeUntilStart}
         lastAuction={lastAuction}
         loading={loading}
+        isPurchased={isPurchased}
+        nextAuctionPrice={nextAuctionPrice}
       />
     </div>
   );

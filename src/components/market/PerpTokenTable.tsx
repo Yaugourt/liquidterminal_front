@@ -10,10 +10,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/format";
 import { useRouter } from "next/navigation";
 import { PerpToken } from "@/api/markets/types";
+import Image from "next/image";
 
 type SortConfig = {
     key: keyof PerpToken | null;
@@ -25,6 +26,27 @@ interface PerpTokenTableProps {
     loading: boolean;
 }
 
+// Composant d'image avec gestion d'erreur
+function TokenImage({ src, alt }: { src: string; alt: string }) {
+    const [hasError, setHasError] = useState(false);
+
+    if (hasError) {
+        return null;
+    }
+
+    return (
+        <Image
+            src={src}
+            alt={alt}
+            width={24}
+            height={24}
+            className="w-6 h-6"
+            onError={() => setHasError(true)}
+            unoptimized // Pour les images externes
+        />
+    );
+}
+
 export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
     const router = useRouter();
     const [sortedTokens, setSortedTokens] = useState<PerpToken[]>([]);
@@ -34,7 +56,7 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
     });
 
     useEffect(() => {
-        // Tri initial par volume décroissant
+        // Initial sort by volume descending
         const initialSortedTokens = [...tokens].sort((a, b) => b.volume - a.volume);
         setSortedTokens(initialSortedTokens);
     }, [tokens]);
@@ -47,7 +69,7 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
         }
 
         const newSortedTokens = [...sortedTokens].sort((a, b) => {
-            // Vérification des valeurs nulles ou undefined
+            // Check for null or undefined values
             const valueA = a[key];
             const valueB = b[key];
 
@@ -55,7 +77,7 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
             if (valueA == null) return direction === "asc" ? -1 : 1;
             if (valueB == null) return direction === "asc" ? 1 : -1;
 
-            // Comparaison sûre des valeurs non nulles
+            // Safe comparison of non-null values
             if (valueA < valueB) return direction === "asc" ? -1 : 1;
             if (valueA > valueB) return direction === "asc" ? 1 : -1;
             return 0;
@@ -66,12 +88,27 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
     };
 
     const handleTokenClick = (tokenName: string) => {
-        console.log(`Navigation vers le token: "${tokenName}"`);
+        console.log(`Navigating to perp token: "${tokenName}"`);
         router.push(`/market/perp/${encodeURIComponent(tokenName)}`);
     };
 
     if (loading) {
-        return <div className="text-white p-4">Chargement...</div>;
+        return (
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+                <Loader2 className="w-10 h-10 mb-4 text-[#83E9FF4D] animate-spin" />
+                <p className="text-white text-lg">Loading...</p>
+            </div>
+        );
+    }
+
+    if (!tokens || tokens.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+                <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
+                <p className="text-white text-lg">No data available</p>
+                <p className="text-[#FFFFFF80] text-sm mt-2">Check back later for updated perpetual market information</p>
+            </div>
+        );
     }
 
     return (
@@ -150,13 +187,9 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                         >
                             <TableCell className="py-4 pl-4">
                                 <div className="flex items-center gap-2">
-                                    <img
+                                    <TokenImage
                                         src={`https://app.hyperliquid.xyz/coins/${token.name.toUpperCase()}_USDC.svg`}
                                         alt={token.name}
-                                        className="w-6 h-6"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = "none";
-                                        }}
                                     />
                                     <span className="text-white text-sm md:text-base">{token.name}</span>
                                 </div>

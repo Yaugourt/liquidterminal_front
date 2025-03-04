@@ -19,6 +19,8 @@ interface AuctionDataState {
     timeUntilStart: string;
     isUpcoming: boolean;
     isActive: boolean;
+    isPurchased: boolean;
+    nextAuctionPrice: string;
 }
 
 interface AuctionDataRef {
@@ -41,78 +43,125 @@ export function useAuctionData() {
         timeUntilStart: "",
         isUpcoming: false,
         isActive: false,
+        isPurchased: false,
+        nextAuctionPrice: "0.00",
     });
 
-    // Références pour les intervalles et les données d'enchère
+    // References for intervals and auction data
     const priceIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const timeIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const auctionDataRef = useRef<AuctionDataRef | null>(null);
 
-    // Récupérer les données d'enchères
+    // Fetch auction data
     useEffect(() => {
         const fetchAuctionData = async () => {
             try {
                 setState(prev => ({ ...prev, loading: true }));
 
-                // Récupérer les informations sur l'enchère actuelle
+                // Get current auction information
                 const auctionData = await fetchCurrentAuction();
                 console.log("Auction data:", auctionData);
                 setState(prev => ({ ...prev, auctionInfo: auctionData }));
 
-                // Récupérer l'état actuel de l'enchère (pour obtenir currentGas)
+                // Get current auction state (to get currentGas)
                 const auctionState = await fetchAuctionState();
                 console.log("Auction state:", auctionState);
 
-                // Si nous avons currentGas et que l'enchère est en cours, stocker les données pour le calcul
-                if (auctionState?.gasAuction?.currentGas && auctionData?.currentAuction) {
+                // Si nous avons des informations sur la prochaine enchère, stockons son prix
+                if (auctionData?.nextAuction) {
+                    const nextAuctionStartGas = parseFloat(auctionData.nextAuction.startGas);
+                    setState(prev => ({
+                        ...prev,
+                        nextAuctionPrice: nextAuctionStartGas.toFixed(2)
+                    }));
+                }
+
+                // Get last auction
+                const auctionHistory = await fetchAuctionHistory();
+
+                // Sort by descending timestamp and take the first (most recent)
+                if (auctionHistory && auctionHistory.length > 0) {
+                    const sortedAuctions = [...auctionHistory].sort((a, b) => b.time - a.time);
+                    const lastAuction = sortedAuctions[0];
+                    setState(prev => ({ ...prev, lastAuction }));
+
+                    // Vérifier si une enchère a été récemment achetée en comparant les timestamps
                     const now = Date.now();
-                    const { currentAuction } = auctionData;
-
-                    // Vérifier si l'enchère est en cours
-                    if (now >= currentAuction.startTime && now < currentAuction.endTime) {
-                        const initialGasValue = parseFloat(currentAuction.startGas);
-                        const currentGasValue = parseFloat(auctionState.gasAuction.currentGas);
-                        const endGasValue = parseFloat(currentAuction.endGas || "0");
-
-                        // Stocker les données pour le calcul continu
-                        auctionDataRef.current = {
-                            initialGas: initialGasValue,
-                            currentGas: currentGasValue,
-                            endGas: endGasValue,
-                            startTime: currentAuction.startTime,
-                            endTime: currentAuction.endTime,
-                            fetchTime: now
-                        };
-
-                        // Définir le prix initial
-                        setState(prev => ({
-                            ...prev,
-                            currentPrice: currentGasValue,
-                            displayPrice: currentGasValue.toFixed(2),
-                            isActive: true,
-                            isUpcoming: false
-                        }));
-
-                        // Calculer la progression initiale
-                        const progressPercentage = calculateAuctionProgress(
-                            initialGasValue,
-                            currentGasValue,
-                            endGasValue
-                        );
-                        setState(prev => ({ ...prev, progress: progressPercentage }));
+                    const lastAuctionTime = lastAuction.time;
+                    
+                    // Si l'enchère a été complétée dans les 31 dernières heures (temps d'une enchère)
+                    const thirtyOneHoursInMs = 31 * 60 * 60 * 1000;
+                    
+                    if (auctionData?.currentAuction) {
+                        // Vérifier si la dernière enchère a été achetée pendant l'enchère actuelle
+                        // (c'est-à-dire après le début mais avant la fin de l'enchère actuelle)
+                        const isPurchased = lastAuctionTime > auctionData.currentAuction.startTime && 
+                                           (now - lastAuctionTime) < thirtyOneHoursInMs;
+                        
+                        if (isPurchased) {
+                            console.log("Enchère achetée détectée!");
+                            setState(prev => ({ 
+                                ...prev, 
+                                isPurchased,
+                                isActive: false,  // L'enchère n'est plus active puisqu'elle a été achetée
+                                currentPrice: null // Pas de prix actuel
+                            }));
+                            
+                            // Calculer le temps restant avant la prochaine enchère
+                            // (comme si l'enchère actuelle allait jusqu'à sa fin normale)
+                            const timeRemaining = Math.max(0, Math.floor((auctionData.currentAuction.endTime - now) / 1000));
+                            const formattedTime = formatTimeRemaining(timeRemaining);
+                            setState(prev => ({ ...prev, timeUntilStart: formattedTime }));
+                        }
                     }
                 }
 
-                // Récupérer la dernière enchère
-                const auctionHistory = await fetchAuctionHistory();
+                // Si l'enchère n'a pas été achetée, continuer avec la logique existante
+                if (auctionState?.gasAuction?.currentGas && auctionData?.currentAuction) {
+                    // Vérifier si une enchère achetée a déjà été détectée
+                    const isPurchasedAlready = state.isPurchased; 
+                    
+                    if (!isPurchasedAlready) {
+                        const now = Date.now();
+                        const { currentAuction } = auctionData;
 
-                // Trier par timestamp décroissant et prendre la première (la plus récente)
-                if (auctionHistory && auctionHistory.length > 0) {
-                    const sortedAuctions = [...auctionHistory].sort((a, b) => b.time - a.time);
-                    setState(prev => ({ ...prev, lastAuction: sortedAuctions[0] }));
+                        // Check if auction is ongoing
+                        if (now >= currentAuction.startTime && now < currentAuction.endTime) {
+                            const initialGasValue = parseFloat(currentAuction.startGas);
+                            const currentGasValue = parseFloat(auctionState.gasAuction.currentGas);
+                            const endGasValue = parseFloat(currentAuction.endGas || "0");
+
+                            // Store data for continuous calculation
+                            auctionDataRef.current = {
+                                initialGas: initialGasValue,
+                                currentGas: currentGasValue,
+                                endGas: endGasValue,
+                                startTime: currentAuction.startTime,
+                                endTime: currentAuction.endTime,
+                                fetchTime: now
+                            };
+
+                            // Set initial price
+                            setState(prev => ({
+                                ...prev,
+                                currentPrice: currentGasValue,
+                                displayPrice: currentGasValue.toFixed(2),
+                                isActive: true,
+                                isUpcoming: false
+                            }));
+
+                            // Calculate initial progress
+                            const progressPercentage = calculateAuctionProgress(
+                                initialGasValue,
+                                currentGasValue,
+                                endGasValue
+                            );
+                            setState(prev => ({ ...prev, progress: progressPercentage }));
+                        }
+                    }
                 }
             } catch (error) {
-                console.error("Erreur lors de la récupération des données d'enchères:", error);
+                console.error("Error retrieving auction data:", error);
             } finally {
                 setState(prev => ({ ...prev, loading: false }));
             }
@@ -120,12 +169,12 @@ export function useAuctionData() {
 
         fetchAuctionData();
 
-        // Rafraîchir les données toutes les minutes pour s'assurer qu'elles sont à jour
+        // Refresh data every minute to ensure it's up to date
         const refreshInterval = setInterval(fetchAuctionData, 60000);
         return () => clearInterval(refreshInterval);
     }, []);
 
-    // Nettoyer les intervalles lors du démontage du composant
+    // Clean up intervals when component unmounts
     useEffect(() => {
         return () => {
             if (priceIntervalRef.current) {
@@ -137,9 +186,9 @@ export function useAuctionData() {
         };
     }, []);
 
-    // Calculer le prix et déterminer l'état de l'enchère
+    // Calculate price and determine auction state
     useEffect(() => {
-        // Nettoyer les intervalles existants
+        // Clean existing intervals
         if (priceIntervalRef.current) {
             clearInterval(priceIntervalRef.current);
             priceIntervalRef.current = null;
@@ -151,10 +200,10 @@ export function useAuctionData() {
 
         if (!state.auctionInfo) return;
 
-        const now = Date.now(); // Timestamp actuel en millisecondes
+        const now = Date.now(); // Current timestamp in milliseconds
         const { currentAuction, nextAuction } = state.auctionInfo;
 
-        // Vérifier si les données sont valides
+        // Check if data is valid
         if (!currentAuction) {
             setState(prev => ({
                 ...prev,
@@ -166,22 +215,22 @@ export function useAuctionData() {
         }
 
         if (now >= currentAuction.startTime && now < currentAuction.endTime) {
-            // L'enchère est en cours
+            // Auction is ongoing
             setState(prev => ({
                 ...prev,
                 isActive: true,
                 isUpcoming: false
             }));
 
-            // Mettre à jour le prix en fonction du temps écoulé depuis la récupération des données
+            // Update price based on time elapsed since data retrieval
             const updatePriceAndProgress = () => {
                 const now = Date.now();
 
-                // Si nous avons les données d'enchère stockées
+                // If we have stored auction data
                 if (auctionDataRef.current) {
                     const { initialGas, endGas, startTime, endTime } = auctionDataRef.current;
 
-                    // Calculer le nouveau prix en fonction du temps écoulé
+                    // Calculate new price based on elapsed time
                     const newGasValue = calculateAuctionPrice(
                         initialGas,
                         endGas,
@@ -190,14 +239,14 @@ export function useAuctionData() {
                         now
                     );
 
-                    // Mettre à jour le prix et la progression
+                    // Update price and progress
                     setState(prev => ({
                         ...prev,
                         currentPrice: newGasValue,
                         displayPrice: newGasValue.toFixed(2)
                     }));
 
-                    // Calculer la progression
+                    // Calculate progress
                     const progressPercentage = calculateAuctionProgress(
                         initialGas,
                         newGasValue,
@@ -205,18 +254,18 @@ export function useAuctionData() {
                     );
                     setState(prev => ({ ...prev, progress: progressPercentage }));
 
-                    // Vérifier si l'enchère est terminée
+                    // Check if auction is complete
                     if (now >= endTime) {
                         window.location.reload();
                     }
                 }
             };
 
-            // Mettre à jour le prix très fréquemment pour une animation fluide
-            priceIntervalRef.current = setInterval(updatePriceAndProgress, 100);
-            updatePriceAndProgress(); // Exécuter immédiatement
+            // Update price very frequently for smooth animation
+            priceIntervalRef.current = setInterval(updatePriceAndProgress, 20);
+            updatePriceAndProgress(); // Execute immediately
 
-            // Mettre à jour le temps restant
+            // Update remaining time
             const updateTimeRemaining = () => {
                 const now = Date.now();
                 const timeRemaining = Math.floor((currentAuction.endTime - now) / 1000);
@@ -225,19 +274,19 @@ export function useAuctionData() {
                 }
             };
 
-            // Mettre à jour le temps restant toutes les secondes
+            // Update remaining time every second
             timeIntervalRef.current = setInterval(updateTimeRemaining, 1000);
-            updateTimeRemaining(); // Exécuter immédiatement
+            updateTimeRemaining(); // Execute immediately
 
         } else if (now < currentAuction.startTime) {
-            // L'enchère n'a pas encore commencé
+            // Auction hasn't started yet
             setState(prev => ({
                 ...prev,
                 isActive: false,
                 isUpcoming: true
             }));
 
-            // Afficher le prix de départ
+            // Display starting price
             const startGasValue = parseFloat(currentAuction.startGas);
             setState(prev => ({
                 ...prev,
@@ -245,14 +294,14 @@ export function useAuctionData() {
                 displayPrice: startGasValue.toFixed(2)
             }));
 
-            // Calculer le temps restant avant le début
+            // Calculate time remaining before start
             const timeRemaining = Math.floor((currentAuction.startTime - now) / 1000);
             setState(prev => ({
                 ...prev,
                 timeUntilStart: formatTimeRemaining(timeRemaining)
             }));
 
-            // Mettre à jour le temps restant plus fréquemment (toutes les secondes)
+            // Update remaining time more frequently (every second)
             timeIntervalRef.current = setInterval(() => {
                 const now = Date.now();
                 const timeRemaining = Math.floor((currentAuction.startTime - now) / 1000);
@@ -261,21 +310,21 @@ export function useAuctionData() {
                     timeUntilStart: formatTimeRemaining(timeRemaining)
                 }));
 
-                // Si l'enchère a commencé, recharger la page
+                // If auction has started, reload the page
                 if (timeRemaining <= 0) {
                     window.location.reload();
                 }
-            }, 1000); // Mise à jour toutes les secondes
+            }, 1000); // Update every second
 
         } else if (nextAuction && now < nextAuction.startTime) {
-            // L'enchère actuelle est terminée, mais il y a une prochaine enchère
+            // Current auction is complete, but there's a next auction
             setState(prev => ({
                 ...prev,
                 isActive: false,
                 isUpcoming: true
             }));
 
-            // Afficher le prix de départ de la prochaine enchère
+            // Display starting price of next auction
             const startGasValue = parseFloat(nextAuction.startGas || "0");
             const priceValue = startGasValue > 0 ? startGasValue : null;
             setState(prev => ({
@@ -284,14 +333,14 @@ export function useAuctionData() {
                 displayPrice: priceValue ? priceValue.toFixed(2) : "0.00"
             }));
 
-            // Calculer le temps restant avant la prochaine enchère
+            // Calculate time remaining before next auction
             const timeRemaining = Math.floor((nextAuction.startTime - now) / 1000);
             setState(prev => ({
                 ...prev,
                 timeUntilStart: formatTimeRemaining(timeRemaining)
             }));
 
-            // Mettre à jour le temps restant plus fréquemment (toutes les secondes)
+            // Update remaining time more frequently (every second)
             timeIntervalRef.current = setInterval(() => {
                 const now = Date.now();
                 const timeRemaining = Math.floor((nextAuction.startTime - now) / 1000);
@@ -299,10 +348,10 @@ export function useAuctionData() {
                     ...prev,
                     timeUntilStart: formatTimeRemaining(timeRemaining)
                 }));
-            }, 1000); // Mise à jour toutes les secondes
+            }, 1000); // Update every second
 
         } else {
-            // Aucune enchère en cours ou prévue
+            // No ongoing or scheduled auction
             setState(prev => ({
                 ...prev,
                 isActive: false,
@@ -312,7 +361,7 @@ export function useAuctionData() {
             }));
         }
 
-        // Nettoyer les intervalles lors du démontage ou de la mise à jour
+        // Clean up intervals on unmount or update
         return () => {
             if (priceIntervalRef.current) {
                 clearInterval(priceIntervalRef.current);
