@@ -26,14 +26,12 @@ export default function Home() {
         <SearchBar placeholder="Search..." />
       </div>
 
-      <main className="p-2 mt-[5%] lg:p-8 space-y-3 lg:space-y-8">
+      <main className="p-4 lg:p-12 space-y-6">
         <StatsGrid />
 
-        <div className="space-y-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-8">
-            <TransactionsTable volume="460 000" users="460 000" />
-            <TransactionsTable volume="460 000" users="460 000" />
-          </div>
+        <div className="flex gap-4 w-full justify-between">
+          <TransactionsTable volume="460 000" users="460 000" />
+          <TransactionsTable volume="460 000" users="460 000" />
         </div>
 
         <TabSection

@@ -17,7 +17,9 @@ export function StatsGrid() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:3001/pages/dashboard/globalstats");
+        const response = await fetch(
+          "http://localhost:3001/pages/dashboard/globalstats"
+        );
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`);
@@ -50,15 +52,27 @@ export function StatsGrid() {
   };
 
   const statsItems = [
-    { title: "Users", value: stats ? formatNumber(stats.numberOfUsers) : "..." },
-    { title: "Daily Volume", value: stats ? formatNumber(stats.dailyVolume) : "..." },
-    { title: "Bridged USDC", value: stats ? formatNumber(stats.bridgedUsdc) : "..." },
-    { title: "HYPE Staked", value: stats ? formatNumber(stats.totalHypeStake) : "..." },
-    { title: "Total Vault TVL", value: "Coming soon" },
+    {
+      title: "User",
+      value: stats ? formatNumber(stats.numberOfUsers) : "460 000",
+    },
+    {
+      title: "Daily volume",
+      value: stats ? `$${formatNumber(stats.dailyVolume)}` : "$4.7B",
+    },
+    {
+      title: "Bridged USDC",
+      value: stats ? `${formatNumber(stats.bridgedUsdc)}M` : "1.7M",
+    },
+    {
+      title: "HYPE Staked",
+      value: stats ? formatNumber(stats.totalHypeStake) : "427,19M",
+    },
+    { title: "Total vault TVL", value: "$557.19M" },
   ];
 
   return (
-    <div className="grid grid-cols-5 gap-2 lg:gap-4">
+    <div className="flex gap-4 w-full justify-between items-center">
       {statsItems.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}
