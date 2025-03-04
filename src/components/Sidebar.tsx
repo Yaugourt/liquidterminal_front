@@ -85,7 +85,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         <Menu className="h-8 w-8 text-white" />
                     </Button>
                     <div className="flex items-center gap-2">
-                        <img src="/logo.svg" alt="Logo" className="h-6 w-6" />
+                        <Image 
+                            src="/logo.svg" 
+                            alt="Logo" 
+                            width={24} 
+                            height={24} 
+                            className="h-6 w-6" 
+                        />
                         <h1 className="hidden lg:block text-sm font-bold">
                             <span className="text-[#83E9FF]">Liquid</span>
                             <span className="text-white">Terminal</span>

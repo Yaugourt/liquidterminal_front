@@ -13,7 +13,6 @@ interface MarketStatsSectionPerpProps {
 
 export function MarketStatsSectionPerp({
     totalMarketCap,
-    totalVolume,
     totalPerpVolume,
     trendingTokens,
     totalTokenCount,

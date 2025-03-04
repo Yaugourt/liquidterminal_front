@@ -16,7 +16,7 @@ export default function Wallets() {
 
   return (
     <div className="min-h-screen">
-      <div className="p-4 space-y-4">
+      <div className="p-8 space-y-8">
         <WalletHeader />
         <WalletTabs />
         <StatsSection />

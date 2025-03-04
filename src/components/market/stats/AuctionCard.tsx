@@ -10,6 +10,8 @@ interface AuctionCardProps {
     timeUntilStart: string;
     lastAuction: AuctionHistory | null;
     loading: boolean;
+    isPurchased: boolean;
+    nextAuctionPrice: string;
 }
 
 export function AuctionCard({
@@ -21,37 +23,55 @@ export function AuctionCard({
     timeUntilStart,
     lastAuction,
     loading,
+    isPurchased,
+    nextAuctionPrice,
 }: AuctionCardProps) {
     return (
         <MarketStatsCard title="Auction" className="md:col-span-2 lg:col-span-1">
             <div className="space-y-2 sm:space-y-3">
                 {loading ? (
-                    <p className="text-white text-sm">Chargement des données d'enchère...</p>
+                    <p className="text-white text-sm">Loading auction data...</p>
                 ) : (
                     <>
                         <div>
-                            <p className="text-[#FFFFFF99] text-xs sm:text-sm">Current price:</p>
-                            <p className="text-white text-sm sm:text-base font-mono">
-                                {currentPrice ? `$${displayPrice}` : "Aucune enchère en cours"}
-                            </p>
-
-                            {isActive && (
-                                <div className="mt-2">
-                                    <div className="w-full bg-[#051728] h-1 rounded-full overflow-hidden">
-                                        <div
-                                            className="bg-[#83E9FF] h-full transition-all duration-100 ease-linear"
-                                            style={{ width: `${progress}%` }}
-                                        ></div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {isUpcoming && (
-                                <div className="mt-2">
-                                    <p className="text-[#83E9FF] text-xs sm:text-sm">
-                                        Commence dans: {timeUntilStart}
+                            {isPurchased ? (
+                                <>
+                                    <p className="text-[#FFFFFF99] text-xs sm:text-sm">Purchased</p>
+                                    <p className="text-[#83E9FF] text-sm sm:text-base mb-2">
+                                        Next auction price: ${nextAuctionPrice}
                                     </p>
-                                </div>
+                                    <div className="mt-2">
+                                        <p className="text-[#83E9FF] text-xs sm:text-sm">
+                                            Next auction in: {timeUntilStart}
+                                        </p>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="text-[#FFFFFF99] text-xs sm:text-sm">Current price:</p>
+                                    <p className="text-white text-sm sm:text-base font-mono">
+                                        {currentPrice ? `$${displayPrice}` : "No active auction"}
+                                    </p>
+
+                                    {isActive && (
+                                        <div className="mt-2">
+                                            <div className="w-full bg-[#051728] h-1 rounded-full overflow-hidden">
+                                                <div
+                                                    className="bg-[#83E9FF] h-full transition-all duration-100 ease-linear"
+                                                    style={{ width: `${progress}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {isUpcoming && (
+                                        <div className="mt-2">
+                                            <p className="text-[#83E9FF] text-xs sm:text-sm">
+                                                Starts in: {timeUntilStart}
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
 

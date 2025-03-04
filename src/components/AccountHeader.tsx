@@ -7,7 +7,7 @@ import Image from "next/image"
 
 export function AccountHeader() {
     return (
-        <div className="hidden lg:flex items-center gap-4 absolute top-4 right-4 z-20">
+        <div className="hidden lg:flex items-center gap-4 absolute top-4 right-8 z-30">
             <Button variant="ghost" size="icon" className="w-[45px] h-[45px] rounded-xl bg-[#051728] border-2 border-[#83E9FF4D]">
                 <Bell className="h-10 w-10 text-white" />
             </Button>

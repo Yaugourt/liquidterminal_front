@@ -5,7 +5,6 @@ import { usePageTitle } from "@/store/use-page-title";
 import { MarketHeader } from "@/components/market/header/MarketHeader";
 import { MarketStatsSectionPerp } from "@/components/market/stats/MarketStatsSectionPerp";
 import { PerpTokensSection } from "@/components/market/tokens/PerpTokensSection";
-import { formatNumber } from "@/lib/format";
 import { getPerpTokens, calculatePerpMarketStats } from "@/api/markets/queries";
 import { PerpToken } from "@/api/markets/types";
 
@@ -28,16 +27,22 @@ export default function MarketPerp() {
     useEffect(() => {
         const fetchTokens = async () => {
             try {
-                // En développement, on peut utiliser les données mockées ou l'API
                 const data = await getPerpTokens();
                 setTokens(data);
 
-                // Calculer les statistiques du marché
+                // Calculate market statistics
                 const stats = calculatePerpMarketStats(data);
                 setMarketStats(stats);
             } catch (error) {
-                console.error("Erreur lors du chargement des tokens perp:", error);
-                // En cas d'erreur, utiliser les données mockées
+                console.error("Error loading perp tokens:", error);
+                setTokens([]);
+                setMarketStats({
+                    trendingTokens: [],
+                    totalMarketCap: 0,
+                    totalVolume: 0,
+                    totalPerpVolume: 0,
+                    totalTokenCount: 0
+                });
             } finally {
                 setLoading(false);
             }
