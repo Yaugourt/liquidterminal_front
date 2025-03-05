@@ -5,7 +5,6 @@ import {
     fetchCurrentAuction,
     fetchAuctionState,
     formatTimeRemaining,
-    calculateAuctionPrice,
     calculateAuctionProgress
 } from "@/api/markets/queries";
 
@@ -30,6 +29,8 @@ interface AuctionDataRef {
     startTime: number;
     endTime: number;
     fetchTime: number;
+    apiGas: number; // Valeur actuelle de l'API
+    rateOfChange: number; // Taux de changement recalculé selon l'API
 }
 
 export function useAuctionData() {
@@ -51,12 +52,18 @@ export function useAuctionData() {
     const priceIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const timeIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const auctionDataRef = useRef<AuctionDataRef | null>(null);
+    const lastFetchTimeRef = useRef<number>(0);
+    // Variable pour suivre s'il s'agit du chargement initial
+    const isInitialLoadRef = useRef(true);
 
     // Fetch auction data
     useEffect(() => {
         const fetchAuctionData = async () => {
             try {
-                setState(prev => ({ ...prev, loading: true }));
+                // Mettre l'état de chargement à true uniquement lors du chargement initial
+                if (isInitialLoadRef.current) {
+                    setState(prev => ({ ...prev, loading: true }));
+                }
 
                 // Get current auction information
                 const auctionData = await fetchCurrentAuction();
@@ -130,6 +137,15 @@ export function useAuctionData() {
                             const initialGasValue = parseFloat(currentAuction.startGas);
                             const currentGasValue = parseFloat(auctionState.gasAuction.currentGas);
                             const endGasValue = parseFloat(currentAuction.endGas || "0");
+                            
+                            // Calculer le taux de changement basé sur la valeur actuelle de l'API
+                            const totalDuration = currentAuction.endTime - currentAuction.startTime;
+                            const timeElapsed = now - currentAuction.startTime;
+                            const timeRemaining = totalDuration - timeElapsed;
+                            
+                            // Calculer le taux de changement en fonction de la valeur API et du temps restant
+                            const remainingGasChange = currentGasValue - endGasValue;
+                            const rateOfChange = timeRemaining > 0 ? remainingGasChange / timeRemaining : 0;
 
                             // Store data for continuous calculation
                             auctionDataRef.current = {
@@ -138,8 +154,13 @@ export function useAuctionData() {
                                 endGas: endGasValue,
                                 startTime: currentAuction.startTime,
                                 endTime: currentAuction.endTime,
-                                fetchTime: now
+                                fetchTime: now,
+                                apiGas: currentGasValue,  // Stocker la valeur API actuelle
+                                rateOfChange: rateOfChange  // Taux de changement basé sur l'API
                             };
+                            
+                            // Enregistrer le temps de la dernière mise à jour
+                            lastFetchTimeRef.current = now;
 
                             // Set initial price
                             setState(prev => ({
@@ -163,14 +184,17 @@ export function useAuctionData() {
             } catch (error) {
                 console.error("Error retrieving auction data:", error);
             } finally {
-                setState(prev => ({ ...prev, loading: false }));
+                if (isInitialLoadRef.current) {
+                    setState(prev => ({ ...prev, loading: false }));
+                    isInitialLoadRef.current = false;
+                }
             }
         };
 
         fetchAuctionData();
 
-        // Refresh data every minute to ensure it's up to date
-        const refreshInterval = setInterval(fetchAuctionData, 60000);
+        // Fetch data every 30 seconds instead of 15 seconds to reduce visible refreshes
+        const refreshInterval = setInterval(fetchAuctionData, 30000);
         return () => clearInterval(refreshInterval);
     }, []);
 
@@ -201,7 +225,7 @@ export function useAuctionData() {
         if (!state.auctionInfo) return;
 
         const now = Date.now(); // Current timestamp in milliseconds
-        const { currentAuction, nextAuction } = state.auctionInfo;
+        const { currentAuction } = state.auctionInfo;
 
         // Check if data is valid
         if (!currentAuction) {
@@ -222,22 +246,19 @@ export function useAuctionData() {
                 isUpcoming: false
             }));
 
-            // Update price based on time elapsed since data retrieval
+            // Update price based on time elapsed since last API fetch
             const updatePriceAndProgress = () => {
                 const now = Date.now();
 
                 // If we have stored auction data
                 if (auctionDataRef.current) {
-                    const { initialGas, endGas, startTime, endTime } = auctionDataRef.current;
-
-                    // Calculate new price based on elapsed time
-                    const newGasValue = calculateAuctionPrice(
-                        initialGas,
-                        endGas,
-                        startTime,
-                        endTime,
-                        now
-                    );
+                    const { initialGas, endGas, apiGas, rateOfChange, endTime } = auctionDataRef.current;
+                    const timeSinceLastFetch = now - lastFetchTimeRef.current;
+                    
+                    // Calculer le nouveau prix basé sur le taux de changement actuel et le temps écoulé depuis la dernière API fetch
+                    // Cette méthode est plus précise car elle utilise le taux de changement calculé à partir des données API réelles
+                    const gasDrop = rateOfChange * timeSinceLastFetch;
+                    const newGasValue = Math.max(endGas, apiGas - gasDrop);
 
                     // Update price and progress
                     setState(prev => ({
@@ -262,7 +283,7 @@ export function useAuctionData() {
             };
 
             // Update price very frequently for smooth animation
-            priceIntervalRef.current = setInterval(updatePriceAndProgress, 20);
+            priceIntervalRef.current = setInterval(updatePriceAndProgress, 50);
             updatePriceAndProgress(); // Execute immediately
 
             // Update remaining time
@@ -272,6 +293,8 @@ export function useAuctionData() {
                 if (timeRemaining <= 0) {
                     window.location.reload();
                 }
+                const formattedTime = formatTimeRemaining(timeRemaining);
+                setState(prev => ({ ...prev, timeUntilStart: formattedTime }));
             };
 
             // Update remaining time every second
@@ -279,7 +302,7 @@ export function useAuctionData() {
             updateTimeRemaining(); // Execute immediately
 
         } else if (now < currentAuction.startTime) {
-            // Auction hasn't started yet
+            // Upcoming auction
             setState(prev => ({
                 ...prev,
                 isActive: false,
@@ -294,64 +317,25 @@ export function useAuctionData() {
                 displayPrice: startGasValue.toFixed(2)
             }));
 
-            // Calculate time remaining before start
-            const timeRemaining = Math.floor((currentAuction.startTime - now) / 1000);
-            setState(prev => ({
-                ...prev,
-                timeUntilStart: formatTimeRemaining(timeRemaining)
-            }));
-
-            // Update remaining time more frequently (every second)
-            timeIntervalRef.current = setInterval(() => {
+            // Update time until start
+            const updateTimeUntilStart = () => {
                 const now = Date.now();
-                const timeRemaining = Math.floor((currentAuction.startTime - now) / 1000);
-                setState(prev => ({
-                    ...prev,
-                    timeUntilStart: formatTimeRemaining(timeRemaining)
-                }));
-
-                // If auction has started, reload the page
-                if (timeRemaining <= 0) {
+                if (currentAuction.startTime > now) {
+                    const secondsUntilStart = Math.floor((currentAuction.startTime - now) / 1000);
+                    const formattedTime = formatTimeRemaining(secondsUntilStart);
+                    setState(prev => ({ ...prev, timeUntilStart: formattedTime }));
+                } else {
+                    // Start time reached, refetch data
+                    setState(prev => ({ ...prev, isUpcoming: false }));
+                    clearInterval(timeIntervalRef.current as NodeJS.Timeout);
                     window.location.reload();
                 }
-            }, 1000); // Update every second
+            };
 
-        } else if (nextAuction && now < nextAuction.startTime) {
-            // Current auction is complete, but there's a next auction
-            setState(prev => ({
-                ...prev,
-                isActive: false,
-                isUpcoming: true
-            }));
-
-            // Display starting price of next auction
-            const startGasValue = parseFloat(nextAuction.startGas || "0");
-            const priceValue = startGasValue > 0 ? startGasValue : null;
-            setState(prev => ({
-                ...prev,
-                currentPrice: priceValue,
-                displayPrice: priceValue ? priceValue.toFixed(2) : "0.00"
-            }));
-
-            // Calculate time remaining before next auction
-            const timeRemaining = Math.floor((nextAuction.startTime - now) / 1000);
-            setState(prev => ({
-                ...prev,
-                timeUntilStart: formatTimeRemaining(timeRemaining)
-            }));
-
-            // Update remaining time more frequently (every second)
-            timeIntervalRef.current = setInterval(() => {
-                const now = Date.now();
-                const timeRemaining = Math.floor((nextAuction.startTime - now) / 1000);
-                setState(prev => ({
-                    ...prev,
-                    timeUntilStart: formatTimeRemaining(timeRemaining)
-                }));
-            }, 1000); // Update every second
-
+            timeIntervalRef.current = setInterval(updateTimeUntilStart, 1000);
+            updateTimeUntilStart();
         } else {
-            // No ongoing or scheduled auction
+            // Auction ended
             setState(prev => ({
                 ...prev,
                 isActive: false,
@@ -360,18 +344,6 @@ export function useAuctionData() {
                 displayPrice: "0.00"
             }));
         }
-
-        // Clean up intervals on unmount or update
-        return () => {
-            if (priceIntervalRef.current) {
-                clearInterval(priceIntervalRef.current);
-                priceIntervalRef.current = null;
-            }
-            if (timeIntervalRef.current) {
-                clearInterval(timeIntervalRef.current);
-                timeIntervalRef.current = null;
-            }
-        };
     }, [state.auctionInfo]);
 
     return state;
