@@ -10,18 +10,20 @@ export default function Explorer() {
     <div className="min-h-screen">
       <ExplorerHeader />
 
-      <div className="p-4 space-y-4">
+      <div className="p-4 lg:p-12 space-y-6">
         {/* Stats Section avec table de transactions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Stats Grid avec background */}
           <div
-            className="bg-[#1692ADB2] rounded-lg p-4 lg:min-h-[240px]"
+            className="bg-[#1692ADB2] rounded-lg p-6 flex items-center justify-center lg:min-h-[240px]"
             style={{
               backgroundImage: "url(/images/pattern.svg)",
               backgroundSize: "cover",
             }}
           >
-            <StatsGrid />
+            <div className="w-full max-w-[450px]">
+              <StatsGrid />
+            </div>
           </div>
 
           {/* Table de transactions */}
