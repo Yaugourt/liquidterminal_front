@@ -29,7 +29,7 @@ export default function Home() {
       <main className="p-4 lg:p-12 space-y-6">
         <StatsGrid />
 
-        <div className="flex gap-4 w-full justify-between">
+        <div className="flex flex-col md:flex-row gap-4 w-full justify-between">
           <TransactionsTable volume="460 000" users="460 000" />
           <TransactionsTable volume="460 000" users="460 000" />
         </div>

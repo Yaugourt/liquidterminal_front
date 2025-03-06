@@ -1,37 +1,68 @@
+import { useEffect, useState } from "react";
 import { MarketStatsCard } from "../MarketStatsCard";
-import { formatNumberWithoutDecimals } from "./utils";
-import { PerpToken } from "@/api/markets/types";
+import { PerpToken } from "@/services/markets/types";
 import { formatNumber } from "@/lib/format";
+import { getPerpGlobalStats } from "@/services/markets/queries";
 
 interface MarketStatsSectionPerpProps {
-    totalMarketCap: number;
-    totalVolume: number;
-    totalPerpVolume: number;
     trendingTokens: PerpToken[];
-    totalTokenCount: number;
+    totalMarketCap?: number;
+    totalVolume?: number;
+    totalPerpVolume?: number;
+    totalTokenCount?: number;
 }
 
 export function MarketStatsSectionPerp({
-    totalMarketCap,
-    totalPerpVolume,
     trendingTokens,
-    totalTokenCount,
 }: MarketStatsSectionPerpProps) {
+    const [globalStats, setGlobalStats] = useState({
+        totalOpenInterest: 0,
+        totalVolume24h: 0,
+        totalPairs: 0
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchGlobalStats = async () => {
+            try {
+                const data = await getPerpGlobalStats();
+                setGlobalStats(data);
+            } catch (error) {
+                console.error("Erreur lors du chargement des statistiques globales:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchGlobalStats();
+    }, []);
+
+    // Fonction pour formater les nombres sans décimales
+    const formatWholeNumber = (value: number): string => {
+        return Math.round(value).toLocaleString('en-US');
+    };
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 md:my-8">
             <MarketStatsCard title="Market Cap">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                     <div>
-                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total marketcap:</p>
-                        <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalMarketCap)}</p>
+                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total Open Interest:</p>
+                        <p className="text-white text-sm sm:text-base">
+                            {loading ? "Loading..." : `$${formatWholeNumber(globalStats.totalOpenInterest)}`}
+                        </p>
                     </div>
                     <div>
-                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h perp volume:</p>
-                        <p className="text-white text-sm sm:text-base">${formatNumberWithoutDecimals(totalPerpVolume)}</p>
+                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h Volume:</p>
+                        <p className="text-white text-sm sm:text-base">
+                            {loading ? "Loading..." : `$${formatWholeNumber(globalStats.totalVolume24h)}`}
+                        </p>
                     </div>
                     <div>
-                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total perp token:</p>
-                        <p className="text-white text-sm sm:text-base">{formatNumber(totalTokenCount)}</p>
+                        <p className="text-[#FFFFFF99] text-xs sm:text-sm">Total Pairs:</p>
+                        <p className="text-white text-sm sm:text-base">
+                            {loading ? "Loading..." : formatWholeNumber(globalStats.totalPairs)}
+                        </p>
                     </div>
                     <div>
                         <p className="text-[#FFFFFF99] text-xs sm:text-sm">24h spot volume:</p>

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { TokenFilters } from "../TokenFilters";
 import { PerpTokenTable } from "../PerpTokenTable";
-import { PerpToken } from "@/api/markets/types";
+import { PerpToken } from "@/services/markets/types";
 
 interface PerpTokensSectionProps {
     tokens: PerpToken[];

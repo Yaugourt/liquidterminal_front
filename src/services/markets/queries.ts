@@ -274,4 +274,27 @@ export function calculateAuctionProgress(
     const totalGasChange = initialGas - endGas;
     const currentGasChange = initialGas - currentGas;
     return Math.min(100, (currentGasChange / totalGasChange) * 100);
+}
+
+/**
+ * Récupère les statistiques globales du marché perp
+ * @returns Les statistiques globales du marché perp
+ */
+export async function getPerpGlobalStats() {
+  try {
+    const response = await fetch('http://localhost:3001/pages/market/perp/globalstats');
+    
+    if (!response.ok) {
+      throw new Error(`Erreur lors de la récupération des statistiques globales: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Erreur lors de la récupération des statistiques globales:', error);
+    return {
+      totalOpenInterest: 0,
+      totalVolume24h: 0,
+      totalPairs: 0
+    };
+  }
 } 

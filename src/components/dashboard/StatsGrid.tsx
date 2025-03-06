@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StatsCard } from "./StatsCard";
+import { Database } from "lucide-react";
 
 interface DashboardStats {
   numberOfUsers: number;
@@ -38,6 +39,20 @@ export function StatsGrid() {
     fetchStats();
   }, []);
 
+  // Afficher l'état de chargement
+  if (loading) return <div className="text-center py-4">Chargement des statistiques...</div>;
+  
+  // Si erreur ou pas de données, afficher un message élégant
+  if (error || !stats) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 text-center bg-[#051728E5] border-2 border-[#83E9FF4D] rounded-lg shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
+        <p className="text-white text-lg">Données non disponibles</p>
+        <p className="text-[#FFFFFF80] text-sm mt-2">Consultez à nouveau ultérieurement pour les informations mises à jour</p>
+      </div>
+    );
+  }
+
   // Fonction pour formater les grands nombres
   const formatNumber = (num: number): string => {
     if (num >= 1000000000) {
@@ -54,19 +69,19 @@ export function StatsGrid() {
   const statsItems = [
     {
       title: "User",
-      value: stats ? formatNumber(stats.numberOfUsers) : "460 000",
+      value: formatNumber(stats.numberOfUsers),
     },
     {
       title: "Daily volume",
-      value: stats ? `$${formatNumber(stats.dailyVolume)}` : "$4.7B",
+      value: `$${formatNumber(stats.dailyVolume)}`,
     },
     {
       title: "Bridged USDC",
-      value: stats ? `${formatNumber(stats.bridgedUsdc)}M` : "1.7M",
+      value: `${formatNumber(stats.bridgedUsdc)}M`,
     },
     {
       title: "HYPE Staked",
-      value: stats ? formatNumber(stats.totalHypeStake) : "427,19M",
+      value: formatNumber(stats.totalHypeStake),
     },
     { title: "Total vault TVL", value: "$557.19M" },
   ];

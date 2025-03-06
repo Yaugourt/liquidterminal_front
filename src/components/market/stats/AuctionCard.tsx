@@ -1,5 +1,6 @@
 import { MarketStatsCard } from "../MarketStatsCard";
-import { AuctionHistory } from "@/api/markets/types";
+import { AuctionHistory } from "@/services/markets/types";
+import { Clock, DollarSign } from "lucide-react";
 
 interface AuctionCardProps {
     currentPrice: number | null;
@@ -12,6 +13,7 @@ interface AuctionCardProps {
     loading: boolean;
     isPurchased: boolean;
     nextAuctionPrice: string;
+    nextAuctionTime: string;
 }
 
 export function AuctionCard({
@@ -35,15 +37,18 @@ export function AuctionCard({
                     <>
                         <div>
                             {isPurchased ? (
-                                <>
-                                    <p className="text-[#FFFFFF99] text-xs sm:text-sm">Purchased</p>
-                                    <p className="text-[#83E9FF] text-sm sm:text-base mb-2">
-                                        Next auction price: ${nextAuctionPrice}
-                                    </p>
-                                    <div className="mt-2">
-                                        <p className="text-[#83E9FF] text-xs sm:text-sm">
-                                            Next auction in: {timeUntilStart}
-                                        </p>
+                                 <>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Clock className="h-4 w-4 text-[#83E9FF]" />
+                                        <span className="text-[#83E9FF] text-sm">
+                                            Next auction starts in {timeUntilStart}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <DollarSign className="h-4 w-4 text-[#83E9FF]" />
+                                        <span className="text-white text-sm sm:text-base font-mono">
+                                            Starting price: ${nextAuctionPrice}
+                                        </span>
                                     </div>
                                 </>
                             ) : (
@@ -79,9 +84,14 @@ export function AuctionCard({
                             <p className="text-[#FFFFFF99] text-xs sm:text-sm">Last auctions:</p>
                             <p className="text-white text-sm sm:text-base">
                                 {lastAuction
-                                    ? `${lastAuction.name} for ${parseFloat(lastAuction.deployGas).toFixed(2)}$`
+                                    ? `${lastAuction.name} for $${parseFloat(lastAuction.deployGas).toFixed(2)}`
                                     : "No recent auctions"}
                             </p>
+                            {lastAuction && (
+                                <p className="text-[#FFFFFF99] text-xs">
+                                    by {lastAuction.deployer.substring(0, 6)}...{lastAuction.deployer.substring(lastAuction.deployer.length - 4)}
+                                </p>
+                            )}
                         </div>
                     </>
                 )}

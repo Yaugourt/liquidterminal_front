@@ -5,8 +5,8 @@ import { usePageTitle } from "@/store/use-page-title";
 import { MarketHeader } from "@/components/market/header/MarketHeader";
 import { MarketStatsSectionPerp } from "@/components/market/stats/MarketStatsSectionPerp";
 import { PerpTokensSection } from "@/components/market/tokens/PerpTokensSection";
-import { getPerpTokens, calculatePerpMarketStats } from "@/api/markets/queries";
-import { PerpToken } from "@/api/markets/types";
+import { getPerpTokens, calculatePerpMarketStats } from "@/services/markets/queries";
+import { PerpToken } from "@/services/markets/types";
 
 export default function MarketPerp() {
     const { setTitle } = usePageTitle();
@@ -56,11 +56,7 @@ export default function MarketPerp() {
             <div className="p-4">
                 <MarketHeader />
                 <MarketStatsSectionPerp
-                    totalMarketCap={marketStats.totalMarketCap}
-                    totalVolume={marketStats.totalVolume}
-                    totalPerpVolume={marketStats.totalPerpVolume}
                     trendingTokens={marketStats.trendingTokens}
-                    totalTokenCount={marketStats.totalTokenCount}
                 />
                 <PerpTokensSection tokens={tokens} loading={loading} />
             </div>

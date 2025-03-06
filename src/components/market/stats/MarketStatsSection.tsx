@@ -2,7 +2,7 @@ import { MarketStatsCard } from "../MarketStatsCard";
 import { AuctionCard } from "./AuctionCard";
 import { useAuctionData } from "./useAuctionData";
 import { formatNumberWithoutDecimals } from "./utils";
-import { Token } from "@/api/markets/types";
+import { Token } from "@/services/markets/types";
 import { formatNumber } from "@/lib/format";
 
 interface MarketStatsSectionProps {

@@ -5,8 +5,8 @@ import { usePageTitle } from "@/store/use-page-title";
 import { MarketHeader } from "@/components/market/header/MarketHeader";
 import { MarketStatsSection } from "@/components/market/stats/MarketStatsSection";
 import { TokensSection } from "@/components/market/tokens/TokensSection";
-import { getSpotTokens, calculateSpotMarketStats } from "@/api/markets/queries";
-import { Token } from "@/api/markets/types";
+import { getSpotTokens, calculateSpotMarketStats } from "@/services/markets/queries";
+import { Token } from "@/services/markets/types";
 
 export default function Market() {
     const { setTitle } = usePageTitle();

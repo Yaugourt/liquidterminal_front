@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/format";
 import { useRouter } from "next/navigation";
-import { Token } from "@/api/markets/types";
+import { Token } from "@/services/markets/types";
 import Image from "next/image";
 
 type SortConfig = {

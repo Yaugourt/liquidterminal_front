@@ -38,7 +38,7 @@ export interface GasAuction {
 }
 
 export interface AuctionState {
-    states: any[]
+    states: unknown[]
     gasAuction: GasAuction
 }
 

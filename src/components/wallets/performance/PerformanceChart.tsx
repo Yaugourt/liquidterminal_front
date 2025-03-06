@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { PerformanceHeader } from "./PerformanceHeader";
-import { PerformanceGraph } from "./PerformanceGraph"; // À créer plus tard pour le graphique
 
 export function PerformanceChart() {
   return (
