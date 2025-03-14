@@ -40,7 +40,7 @@ export function StatsGrid() {
   }, []);
 
   // Afficher l'état de chargement
-  if (loading) return <div className="text-center py-4">Chargement des statistiques...</div>;
+  if (loading) return <div className="text-center py-4 text-white">Chargement des statistiques...</div>;
   
   // Si erreur ou pas de données, afficher un message élégant
   if (error || !stats) {
@@ -87,7 +87,7 @@ export function StatsGrid() {
   ];
 
   return (
-    <div className="flex gap-4 w-full justify-between items-center">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
       {statsItems.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}

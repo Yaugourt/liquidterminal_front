@@ -12,7 +12,7 @@ import { TabSection } from "@/components/dashboard/TabSection";
 export default function Home() {
   const { setTitle } = usePageTitle();
   const { width } = useWindowSize();
-  const chartHeight = width >= 1024 ? 345 : 296;
+  const chartHeight = width >= 1024 ? 345 : width >= 640 ? 296 : 246;
   const [activeTab, setActiveTab] = useState("vault");
 
   useEffect(() => {
@@ -26,10 +26,10 @@ export default function Home() {
         <SearchBar placeholder="Search..." />
       </div>
 
-      <main className="p-4 lg:p-12 space-y-6">
+      <main className="p-3 sm:p-4 lg:p-6 xl:p-12 space-y-4 sm:space-y-6">
         <StatsGrid />
 
-        <div className="flex flex-col md:flex-row gap-4 w-full justify-between">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 w-full">
           <TransactionsTable volume="460 000" users="460 000" />
           <TransactionsTable volume="460 000" users="460 000" />
         </div>

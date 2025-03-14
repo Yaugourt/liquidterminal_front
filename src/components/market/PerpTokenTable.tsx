@@ -106,16 +106,16 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
             <div className="flex flex-col items-center justify-center p-12 text-center">
                 <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
                 <p className="text-white text-lg">No data available</p>
-                <p className="text-[#FFFFFF80] text-sm mt-2">Check back later for updated perpetual market information</p>
+                <p className="text-[#FFFFFF80] text-sm mt-2">Check back later for updated market information</p>
             </div>
         );
     }
 
     return (
-        <div className="overflow-x-auto">
-            <Table>
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
+            <Table className="min-w-[750px]">
                 <TableHeader>
-                    <TableRow className="border-none">
+                    <TableRow className="border-none bg-[#051728]">
                         <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent pl-4 w-[120px]">
                             <Button
                                 variant="ghost"
@@ -136,7 +136,17 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
-                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden md:table-cell">
+                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
+                            <Button
+                                variant="ghost"
+                                onClick={() => sortData("marketCap")}
+                                className="text-[#FFFFFF99] font-normal hover:text-white p-0 ml-auto"
+                            >
+                                Market Cap
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
+                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
                             <Button
                                 variant="ghost"
                                 onClick={() => sortData("volume")}
@@ -146,7 +156,7 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
-                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden lg:table-cell">
+                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
                             <Button
                                 variant="ghost"
                                 onClick={() => sortData("openInterest")}
@@ -156,13 +166,13 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
-                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden lg:table-cell">
+                        <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
                             <Button
                                 variant="ghost"
                                 onClick={() => sortData("funding")}
                                 className="text-[#FFFFFF99] font-normal hover:text-white p-0 ml-auto"
                             >
-                                Funding
+                                Funding Rate
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
@@ -178,7 +188,7 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                         </TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="bg-[#051728CC]">
                     {sortedTokens.map((token) => (
                         <TableRow
                             key={token.name}
@@ -197,13 +207,16 @@ export function PerpTokenTable({ tokens, loading }: PerpTokenTableProps) {
                             <TableCell className="text-right text-white text-sm md:text-base">
                                 ${formatNumber(token.price, "price")}
                             </TableCell>
-                            <TableCell className="text-right text-white text-sm md:text-base hidden md:table-cell">
+                            <TableCell className="text-right text-white text-sm md:text-base">
+                                ${formatNumber(token.marketCap, "marketCap")}
+                            </TableCell>
+                            <TableCell className="text-right text-white text-sm md:text-base">
                                 ${formatNumber(token.volume, "volume")}
                             </TableCell>
-                            <TableCell className="text-right text-white text-sm md:text-base hidden lg:table-cell">
-                                {formatNumber(token.openInterest)}
+                            <TableCell className="text-right text-white text-sm md:text-base">
+                                ${formatNumber(token.openInterest)}
                             </TableCell>
-                            <TableCell className="text-right text-white text-sm md:text-base hidden lg:table-cell">
+                            <TableCell className="text-right text-white text-sm md:text-base">
                                 {(token.funding * 100).toFixed(6)}%
                             </TableCell>
                             <TableCell

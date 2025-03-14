@@ -112,10 +112,10 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <Table>
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
+      <Table className="min-w-[650px]">
         <TableHeader>
-          <TableRow className="border-none">
+          <TableRow className="border-none bg-[#051728]">
             <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent pl-4 w-[120px]">
               <Button
                 variant="ghost"
@@ -136,7 +136,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden lg:table-cell">
+            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
               <Button
                 variant="ghost"
                 onClick={() => sortData("marketCap")}
@@ -146,7 +146,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent hidden md:table-cell">
+            <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent">
               <Button
                 variant="ghost"
                 onClick={() => sortData("volume")}
@@ -168,7 +168,7 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="bg-[#051728CC]">
           {sortedTokens.map((token) => (
             <TableRow
               key={token.name}
@@ -187,10 +187,10 @@ export function TokenTable({ tokens, loading }: TokenTableProps) {
               <TableCell className="text-right text-white text-sm md:text-base">
                 ${formatNumber(token.price, "price")}
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base hidden lg:table-cell">
+              <TableCell className="text-right text-white text-sm md:text-base">
                 ${formatNumber(token.marketCap, "marketCap")}
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base hidden md:table-cell">
+              <TableCell className="text-right text-white text-sm md:text-base">
                 ${formatNumber(token.volume, "volume")}
               </TableCell>
               <TableCell
