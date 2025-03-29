@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 
 export function BlocksTable() {
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6">
+    <Card className="bg-[#051728E5] h-[500px] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6">
       <h2 className="text-white text-lg mb-4">Blocks</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-white">
