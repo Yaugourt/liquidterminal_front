@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { StatsCard } from "./StatsCard";
 import { Database } from "lucide-react";
-
-interface DashboardStats {
-  numberOfUsers: number;
-  dailyVolume: number;
-  bridgedUsdc: number;
-  totalHypeStake: number;
-}
+import { getDashboardStats } from "@/services/dashboard/api";
+import { DashboardStats } from "@/services/dashboard/types";
 
 export function StatsGrid() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -18,15 +13,7 @@ export function StatsGrid() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:3001/pages/dashboard/globalstats"
-        );
-
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await getDashboardStats();
         setStats(data);
       } catch (err) {
         console.error("Erreur lors de la récupération des statistiques:", err);

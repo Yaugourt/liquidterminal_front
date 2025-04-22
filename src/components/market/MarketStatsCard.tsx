@@ -1,11 +1,14 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface MarketStatsCardProps {
   title: string;
   children: React.ReactNode;
   className?: string;
+  headerRight?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 /**
@@ -15,7 +18,9 @@ interface MarketStatsCardProps {
 export const MarketStatsCard = memo(function MarketStatsCard({ 
   title, 
   children, 
-  className 
+  className,
+  headerRight,
+  isLoading = false
 }: MarketStatsCardProps) {
   return (
     <Card 
@@ -26,8 +31,17 @@ export const MarketStatsCard = memo(function MarketStatsCard({
         className
       )}
     >
-      <h3 className="text-white text-base font-medium mb-4">{title}</h3>
-      {children}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-white text-lg font-semibold">{title}</h3>
+        {headerRight}
+      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
+        </div>
+      ) : (
+        children
+      )}
     </Card>
   );
 });

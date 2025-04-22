@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { Card } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
-import { getToken } from "@/services/markets/queries";
 import { Token } from "@/services/markets/types";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";

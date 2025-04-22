@@ -1,6 +1,6 @@
 import { WalletInfo, WalletStats } from "./types";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "http://localhost:3002";
 
 // Cache pour les réponses API
 interface CacheEntry {
@@ -35,7 +35,7 @@ export async function getWalletInfo(address: string, forceRefresh = false): Prom
     // Ajouter un délai artificiel pour simuler une requête réseau
     await delay(800);
     
-    const response = await fetch(`${API_BASE_URL}/pages/wallet/${address}/info`, {
+    const response = await fetch(`${API_BASE_URL}/wallet/${address}`, {
       headers: {
         'Accept': 'application/json',
         'Cache-Control': 'no-cache'

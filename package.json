@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --hostname 127.0.0.1 --port 8080",
+    "dev": "next dev --turbopack --hostname 127.0.0.1 --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -21,6 +21,7 @@
     "@types/uuid": "^10.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "hyperliquid": "^1.6.2",
     "lightweight-charts": "^5.0.1",

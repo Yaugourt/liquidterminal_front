@@ -1,4 +1,4 @@
-type NumberType = 'price' | 'volume' | 'marketCap' | 'change' | 'default'
+type NumberType = 'price' | 'volume' | 'marketCap' | 'change' | 'liquidity' | 'default'
 
 export const formatNumber = (num: number, type: NumberType = 'default') => {
     const options: Intl.NumberFormatOptions = {
@@ -15,6 +15,7 @@ export const formatNumber = (num: number, type: NumberType = 'default') => {
             break
         case 'volume':
         case 'marketCap':
+        case 'liquidity':
             options.maximumFractionDigits = 0
             break
         default:

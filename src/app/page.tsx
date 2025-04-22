@@ -30,8 +30,8 @@ export default function Home() {
         <StatsGrid />
 
         <div className="flex flex-col md:flex-row gap-3 sm:gap-4 w-full">
-          <TransactionsTable volume="460 000" users="460 000" />
-          <TransactionsTable volume="460 000" users="460 000" />
+          <TransactionsTable type="perp" />
+          <TransactionsTable type="spot" />
         </div>
 
         <TabSection
