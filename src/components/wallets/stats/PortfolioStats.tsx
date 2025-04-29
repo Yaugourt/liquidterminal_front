@@ -1,38 +1,80 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatItem } from "./StatItem";
-import { CreditCard, TrendingDown, Wallet2, Coins } from "lucide-react";
+"use client";
+
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { Card } from "@/components/ui/card";
+import { Loader2, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Données temporaires
+const mockStats = {
+  totalBalance: 100000,
+  usdcBalance: 50000,
+  otherTokens: 50000
+};
 
 export function PortfolioStats() {
+  const [stats, setStats] = useState(mockStats);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Fonction pour formater les valeurs monétaires (mémorisée)
+  const formatCurrency = useCallback((value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  }, []);
+
+  // Fonction pour rafraîchir manuellement les données
+  const handleRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  }, []);
+
   return (
-    <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
-      <CardHeader>
-        <CardTitle className="text-white text-lg">Portfolio Statistics</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-y-6">
-          <StatItem 
-            label="Total Balance:" 
-            value="$6,571.41"
-            icon={<Wallet2 size={18} />}
-          />
-          <StatItem
-            label="Portfolio Growth:"
-            value="-14.09%"
-            valueColor="text-[#FF5252]"
-            icon={<TrendingDown size={18} />}
-          />
-          <StatItem 
-            label="USDC Balance:" 
-            value="$0.12"
-            icon={<CreditCard size={18} />}
-          />
-          <StatItem 
-            label="Other Tokens:" 
-            value="$6,571.28"
-            icon={<Coins size={18} />}
-          />
+    <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 relative">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-white text-lg">Statistiques du portefeuille</h3>
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isRefreshing || isLoading}
+          className="text-[#83E9FF] hover:text-white hover:bg-[#1692ADB2]"
+        >
+          <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+          Actualiser
+        </Button>
+      </div>
+      
+      {isLoading ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
+          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
         </div>
-      </CardContent>
+      ) : (
+        <div className="grid grid-cols-2 gap-y-6">
+          <div>
+            <p className="text-[#FFFFFF99] text-sm mb-1">Balance totale:</p>
+            <p className="text-white text-xl">{formatCurrency(stats.totalBalance)}</p>
+          </div>
+          <div>
+            <p className="text-[#FFFFFF99] text-sm mb-1">Évolution du portefeuille:</p>
+            <p className="text-[#FF5252] text-xl">-</p>
+          </div>
+          <div>
+            <p className="text-[#FFFFFF99] text-sm mb-1">Balance USDC:</p>
+            <p className="text-white text-xl">{formatCurrency(stats.usdcBalance)}</p>
+          </div>
+          <div>
+            <p className="text-[#FFFFFF99] text-sm mb-1">Autres tokens:</p>
+            <p className="text-white text-xl">{formatCurrency(stats.otherTokens)}</p>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

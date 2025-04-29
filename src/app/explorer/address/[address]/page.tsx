@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { ExplorerHeader } from "@/components/explorer/ExplorerHeader";
+import { UnifiedHeader } from "@/components/UnifiedHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Données simulées

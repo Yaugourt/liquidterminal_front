@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2, AlertCircle } from "lucide-react";
@@ -8,21 +8,71 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Input } from "@/components/ui/input";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuthContext } from "@/contexts/auth.context";
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
-  const [walletToDelete, setWalletToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { wallets, activeWalletId, addWallet, setActiveWallet, removeWallet } = useWallets();
+  const { 
+    wallets, 
+    
+    activeWalletId, 
+    loading: storeLoading,
+    error: storeError,
+    initialize, 
+    addWallet, 
+    setActiveWallet, 
+    removeWallet, 
+
+  } = useWallets();
+  const { user, privyUser } = useAuthContext();
+
+  // Fetch wallets when privyUser changes
+  useEffect(() => {
+    const fetchWallets = async () => {
+      if (privyUser?.id) {
+        try {
+          console.log("Fetching wallets for user:", privyUser.id);
+          setIsLoading(true);
+          setError(null);
+          await initialize(privyUser.id);
+          console.log("Wallets fetched successfully:", wallets);
+        } catch (err) {
+          console.error("Error fetching wallets:", err);
+          setError("Failed to fetch wallets. Please try again later.");
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        console.log("No privyUser.id available, skipping wallet fetch");
+      }
+    };
+
+    fetchWallets();
+  }, [privyUser?.id, initialize]);
+
+  // Log when wallets change
+  useEffect(() => {
+    console.log("Wallets updated:", wallets);
+  }, [wallets]);
+
+  // Log when global error changes
+  useEffect(() => {
+    if (storeError) {
+      console.error("Error in wallet store:", storeError);
+      setError(storeError);
+    }
+  }, [storeError]);
 
   const handleAddWallet = async () => {
-    if (!address) {
-      setError("Address is required");
+    if (!address || !privyUser?.id) {
+      setError("Please enter a wallet address");
       return;
     }
     
@@ -30,38 +80,106 @@ export function WalletTabs() {
     setIsLoading(true);
     
     try {
-      await addWallet(address, name || undefined);
+      // Ensure name is not undefined
+      const walletName = name.trim() || undefined;
+      console.log("Adding wallet with name:", walletName);
+      
+      // Ajouter le wallet
+      const result = await addWallet(address, walletName, privyUser.id);
+      
+      if (!result) {
+        throw new Error("Failed to add wallet");
+      }
+      
+      // Clear form and close dialog
       setAddress("");
       setName("");
       setIsAddWalletOpen(false);
-    } catch (err: unknown) {
-      setError("Failed to add wallet. Please check the address and try again.");
+      
+      // Forcer un rechargement des wallets
+      if (privyUser?.id) {
+        await initialize(privyUser.id);
+      }
+    } catch (err: any) {
       console.error("Error adding wallet:", err);
+      
+      // Handle specific error cases
+      if (err.response) {
+        switch (err.response.status) {
+          case 409:
+            setError("Ce wallet est déjà associé à votre compte.");
+            break;
+          case 400:
+            setError("Adresse de wallet invalide.");
+            break;
+          default:
+            setError(err.message || "Une erreur est survenue lors de l'ajout du wallet.");
+        }
+      } else {
+        setError(err.message || "Une erreur est survenue lors de l'ajout du wallet.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDeleteClick = (id: string, walletName: string | undefined, e: React.MouseEvent) => {
+  const handleDeleteClick = (id: number, walletName: string | undefined, e: React.MouseEvent) => {
     e.stopPropagation(); // Empêcher le clic de sélectionner l'onglet
     setWalletToDelete({ id, name: walletName || "Sans nom" });
     setIsDeleteWalletOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (walletToDelete) {
-      removeWallet(walletToDelete.id);
-      setIsDeleteWalletOpen(false);
-      setWalletToDelete(null);
+      try {
+        setIsLoading(true);
+        setError(null);
+        await removeWallet(walletToDelete.id);
+        setIsDeleteWalletOpen(false);
+        setWalletToDelete(null);
+        
+        // Forcer un rechargement des wallets
+        if (privyUser?.id) {
+          await initialize(privyUser.id);
+        }
+      } catch (err: any) {
+        console.error("Error deleting wallet:", err);
+        
+        // Handle specific error cases
+        if (err.response) {
+          switch (err.response.status) {
+            case 404:
+              setError("Wallet not found.");
+              break;
+            case 403:
+              setError("You don't have permission to delete this wallet.");
+              break;
+            default:
+              setError(err.message || "An error occurred while deleting the wallet.");
+          }
+        } else {
+          setError(err.message || "An error occurred while deleting the wallet.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
+  };
+
+  // Convertir l'ID actif en chaîne pour Radix UI
+  const activeTabValue = activeWalletId?.toString() || "";
+  
+  // Gérer le changement d'onglet en convertissant la chaîne en nombre
+  const handleTabChange = (value: string) => {
+    setActiveWallet(parseInt(value, 10));
   };
 
   return (
     <>
       <div className="flex gap-2 items-center">
         <Tabs 
-          value={activeWalletId || undefined} 
-          onValueChange={setActiveWallet}
+          value={activeTabValue} 
+          onValueChange={handleTabChange}
           className="w-auto"
         >
           <TabsList className="gap-3">
@@ -69,10 +187,15 @@ export function WalletTabs() {
               wallets.map((wallet) => (
                 <TabsTrigger 
                   key={wallet.id} 
-                  value={wallet.id}
-                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center"
+                  value={wallet.id.toString()}
+                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
                 >
-                  <span>{wallet.name}</span>
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">{wallet.name || 'Unnamed Wallet'}</span>
+                    <span className="text-xs text-gray-400">
+                      Added: {new Date(wallet.addedAt).toLocaleDateString()}
+                    </span>
+                  </div>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -108,6 +231,9 @@ export function WalletTabs() {
         <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
           <DialogHeader>
             <DialogTitle>Ajouter un nouveau wallet</DialogTitle>
+            <DialogDescription className="text-[#FFFFFF99]">
+              Entrez l'adresse de votre wallet Ethereum et un nom optionnel.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -134,7 +260,12 @@ export function WalletTabs() {
                 className="bg-[#0C2237] border-[#83E9FF4D]"
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && (
+              <div className="text-red-500 text-sm flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                <p>{error}</p>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button 

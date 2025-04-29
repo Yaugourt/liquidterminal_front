@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Loader2, RefreshCw } from "lucide-react";
-import { useWalletData } from "@/services/wallets/hooks/useWalletData";
-import { calculateWalletStats } from "@/services/wallets/api";
 import { Button } from "@/components/ui/button";
 
+// Données temporaires
+const mockTotalValue = 150000;
+
 export function PerformanceChart() {
-  const { activeWallet, refreshActiveWallet } = useWalletData();
-  const [totalValue, setTotalValue] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [totalValue] = useState(mockTotalValue);
+  const [isLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const isUpdatingRef = useRef(false);
 
   // Fonction pour formater les valeurs monétaires (mémorisée)
   const formatCurrency = useCallback((value: number) => {
@@ -25,46 +24,12 @@ export function PerformanceChart() {
   }, []);
 
   // Fonction pour rafraîchir manuellement les données
-  const handleRefresh = useCallback(async () => {
-    if (isRefreshing || !refreshActiveWallet) return;
-    
+  const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
-    try {
-      await refreshActiveWallet();
-    } catch (error) {
-      console.error("Failed to refresh wallet data:", error);
-    } finally {
+    setTimeout(() => {
       setIsRefreshing(false);
-    }
-  }, [refreshActiveWallet, isRefreshing]);
-
-  // Calculer la valeur totale à partir des données du wallet (mémorisé)
-  const calculatedTotalValue = useMemo(() => {
-    if (!activeWallet?.info) return 0;
-    
-    const { totalBalance } = calculateWalletStats(activeWallet.info);
-    return totalBalance;
-  }, [activeWallet?.info]);
-
-  useEffect(() => {
-    // Éviter les mises à jour multiples
-    if (isUpdatingRef.current) return;
-    
-    isUpdatingRef.current = true;
-    setIsLoading(true);
-    
-    // Utiliser un court délai pour montrer l'état de chargement
-    const timer = setTimeout(() => {
-      setTotalValue(calculatedTotalValue);
-      setIsLoading(false);
-      isUpdatingRef.current = false;
-    }, 300);
-    
-    return () => {
-      clearTimeout(timer);
-      isUpdatingRef.current = false;
-    };
-  }, [calculatedTotalValue]);
+    }, 1000);
+  }, []);
 
   return (
     <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] relative">

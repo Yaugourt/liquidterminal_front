@@ -10,8 +10,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpDown, Loader2, Database } from "lucide-react";
-import { Holding, HoldingDisplay } from "@/services/wallets/types";
 import { Button } from "@/components/ui/button";
+
+// Types
+export interface Holding {
+  coin: string;
+  token: string;
+  total: string;
+  entryNtl: string;
+}
+
+export interface HoldingDisplay extends Holding {
+  id: string;
+  totalValue: number;
+  price: number;
+}
 
 type SortConfig = {
   key: keyof HoldingDisplay | null;

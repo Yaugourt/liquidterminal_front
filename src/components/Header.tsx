@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useSidebar } from "@/hooks/use-sidebar"
 import Image from "next/image"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuthContext } from "@/contexts/auth.context"
 
 export function Header() {
     const { setIsOpen } = useSidebar()
-    const { user, authenticated, login, logout } = useAuth();
+    const {  authenticated, login, logout, privyUser } = useAuthContext();
 
     return (
         <header className="p-2 lg:hidden bg-[#051728]">
@@ -54,18 +54,18 @@ export function Header() {
                         // Affichage utilisateur si authentifié
                         <div className="flex items-center gap-2 bg-[#11294199] px-2 py-1 rounded-xl border-2 border-[#83E9FF1A]">
                             <Avatar className="h-8 w-8 border-2 border-[#1a2c38]">
-                                {user?.twitter?.profilePictureUrl || user?.farcaster?.pfp ? (
+                                {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
                                     <Image 
-                                        src={user.twitter?.profilePictureUrl || user.farcaster?.pfp || ""}
+                                        src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
                                         alt="Avatar"
                                         width={32}
                                         height={32}
                                     />
                                 ) : (
                                     <AvatarFallback className="bg-[#1a2c38] text-white text-xs">
-                                        {user?.twitter?.username?.[0]?.toUpperCase() || 
-                                         user?.farcaster?.username?.[0]?.toUpperCase() || 
-                                         user?.github?.username?.[0]?.toUpperCase() || "U"}
+                                        {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
+                                         privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
+                                         privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
                                     </AvatarFallback>
                                 )}
                             </Avatar>

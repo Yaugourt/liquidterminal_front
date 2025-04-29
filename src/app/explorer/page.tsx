@@ -1,14 +1,14 @@
 "use client";
 
-import { ExplorerHeader } from "@/components/explorer/ExplorerHeader";
+import { UnifiedHeader } from "@/components/UnifiedHeader";
 import { StatsGrid } from "@/components/explorer/StatsGrid";
 import { BlocksTable } from "@/components/explorer/BlocksTable";
 import { RecentTransactionsTable } from "@/components/explorer/RecentTransactionsTable";
-
+import { ValidatorsTable } from "@/components/explorer/ValidatorsTable";
 export default function Explorer() {
   return (
-    <div className="min-h-screen">
-      <ExplorerHeader />
+    <div className="min-h-screen p-4">
+      <UnifiedHeader customTitle="Explorer" />
 
       <div className="p-4 lg:p-12 space-y-6">
         {/* Stats Section avec table de transactions */}
@@ -28,7 +28,7 @@ export default function Explorer() {
 
           {/* Table de transactions */}
           <div>
-            <RecentTransactionsTable />
+            <ValidatorsTable />
           </div>
         </div>
 

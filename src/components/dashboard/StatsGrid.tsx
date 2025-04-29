@@ -1,77 +1,55 @@
-import { useEffect, useState } from "react";
+import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
 import { StatsCard } from "./StatsCard";
-import { Database } from "lucide-react";
-import { getDashboardStats } from "@/services/dashboard/api";
-import { DashboardStats } from "@/services/dashboard/types";
+import { Loader2 } from "lucide-react";
+import { formatNumberWithoutDecimals } from "@/lib/formatting";
 
 export function StatsGrid() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { stats, isLoading, error } = useDashboardStats();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const data = await getDashboardStats();
-        setStats(data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des statistiques:", err);
-        setError("Impossible de charger les statistiques");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-  // Afficher l'état de chargement
-  if (loading) return <div className="text-center py-4 text-white">Chargement des statistiques...</div>;
-  
-  // Si erreur ou pas de données, afficher un message élégant
-  if (error || !stats) {
+  // Afficher un état de chargement
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center p-6 text-center bg-[#051728E5] border-2 border-[#83E9FF4D] rounded-lg shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg">Données non disponibles</p>
-        <p className="text-[#FFFFFF80] text-sm mt-2">Consultez à nouveau ultérieurement pour les informations mises à jour</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
+        {[...Array(5)].map((_, index) => (
+          <div key={index} className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-4 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 text-[#83E9FF4D] animate-spin" />
+          </div>
+        ))}
       </div>
     );
   }
 
-  // Fonction pour formater les grands nombres
-  const formatNumber = (num: number): string => {
-    if (num >= 1000000000) {
-      return `${(num / 1000000000).toFixed(2)}B`;
-    } else if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`;
-    } else {
-      return num.toString();
-    }
-  };
+  // Afficher une erreur
+  if (error) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
+        <div className="col-span-full bg-[#051728] border-2 border-red-500 rounded-lg p-4 text-center text-red-500">
+          Error: {error.message}
+        </div>
+      </div>
+    );
+  }
 
-  const statsItems = [
+  // Afficher les données
+  const statsItems = stats ? [
     {
       title: "User",
-      value: formatNumber(stats.numberOfUsers),
+      value: formatNumberWithoutDecimals(stats.numberOfUsers),
     },
     {
       title: "Daily volume",
-      value: `$${formatNumber(stats.dailyVolume)}`,
+      value: `$${formatNumberWithoutDecimals(stats.dailyVolume)}`,
     },
     {
       title: "Bridged USDC",
-      value: `${formatNumber(stats.bridgedUsdc)}M`,
+      value: `${formatNumberWithoutDecimals(stats.bridgedUsdc)}M`,
     },
     {
       title: "HYPE Staked",
-      value: formatNumber(stats.totalHypeStake),
+      value: formatNumberWithoutDecimals(stats.totalHypeStake),
     },
     { title: "Total vault TVL", value: "$557.19M" },
-  ];
+  ] : [];
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">

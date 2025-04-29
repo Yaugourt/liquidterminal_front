@@ -1,126 +1,197 @@
-import { WalletInfo, WalletStats } from "./types";
+import axios from 'axios';
+import { API_BASE_URL } from '../../config';
+import { 
+  AddWalletResponse, 
+  WalletResponse
+} from './types';
+import { 
+  fetchHyperliquidBalances, 
+  fetchHyperliquidPerpPositions 
+} from './hyperliquid.service';
 
-const API_BASE_URL = "http://localhost:3002";
-
-// Cache pour les réponses API
-interface CacheEntry {
-  data: WalletInfo;
-  timestamp: number;
-}
-
-const cache: Record<string, CacheEntry> = {};
-const CACHE_DURATION = 60 * 1000; // 1 minute en millisecondes
-
-// Fonction utilitaire pour ajouter un délai
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Réexporter les fonctions du service Hyperliquid
+export { fetchHyperliquidBalances, fetchHyperliquidPerpPositions };
 
 /**
- * Récupère les informations d'un wallet depuis l'API ou le cache
- * @param address Adresse du wallet
- * @param forceRefresh Forcer le rafraîchissement des données (ignorer le cache)
- * @returns Informations du wallet
+ * Adds a new wallet to the user's account
+ * @param address The wallet address
+ * @param name Optional name for the wallet
+ * @param privyUserId The user's Privy ID
+ * @returns The wallet response
  */
-export async function getWalletInfo(address: string, forceRefresh = false): Promise<WalletInfo> {
-  // Vérifier si les données sont en cache et toujours valides
-  const cacheKey = `wallet_${address}`;
-  const now = Date.now();
-  const cachedData = cache[cacheKey];
-  
-  if (!forceRefresh && cachedData && (now - cachedData.timestamp) < CACHE_DURATION) {
-    console.log(`Using cached data for wallet ${address}`);
-    return cachedData.data;
-  }
-  
+export const addWallet = async (
+  address: string,
+  name?: string,
+  privyUserId?: string
+): Promise<AddWalletResponse> => {
   try {
-    // Ajouter un délai artificiel pour simuler une requête réseau
-    await delay(800);
-    
-    const response = await fetch(`${API_BASE_URL}/wallet/${address}`, {
-      headers: {
-        'Accept': 'application/json',
-        'Cache-Control': 'no-cache'
-      }
+    console.log("Adding wallet with address:", address, "name:", name, "privyUserId:", privyUserId);
+    const response = await axios.post(`${API_BASE_URL}/wallet`, {
+      address,
+      name,
+      privyUserId
     });
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch wallet info: ${response.statusText}`);
+    console.log("Add wallet response:", response.data);
+    
+    // Vérifier si la réponse indique un succès
+    if (response.data && response.data.success === true) {
+      // Si la réponse contient les données attendues
+      if (response.data.wallet && response.data.userWallet) {
+        return {
+          success: true,
+          wallet: response.data.wallet,
+          userWallet: response.data.userWallet
+        };
+      }
+      
+      // Si la réponse contient seulement userWallet
+      if (response.data.userWallet) {
+        // Créer un wallet à partir des données de userWallet
+        const userWallet = response.data.userWallet;
+        const wallet = {
+          id: userWallet.walletId || 0,
+          address: address,
+          name: userWallet.name || name || `Wallet ${userWallet.id}`,
+          addedAt: userWallet.addedAt || new Date()
+        };
+        
+        return {
+          success: true,
+          wallet: wallet,
+          userWallet: userWallet
+        };
+      }
+      
+      // Si la réponse contient seulement un message de succès
+      return {
+        success: true,
+        message: response.data.message || "Wallet ajouté avec succès"
+      };
     }
     
-    const data = await response.json();
-    
-    // Mettre en cache les données
-    cache[cacheKey] = {
-      data,
-      timestamp: now
+    // Si la réponse n'indique pas un succès
+    console.error("Invalid response format from addWallet:", response.data);
+    return {
+      success: false,
+      message: response.data.message || "Invalid response format from server"
     };
+  } catch (error: any) {
+    console.error('Error adding wallet:', error);
     
-    return data;
-  } catch (error) {
-    console.error("Error fetching wallet info:", error);
-    
-    // Si nous avons des données en cache, même expirées, les utiliser en cas d'erreur
-    if (cachedData) {
-      console.warn(`Using expired cached data for wallet ${address} due to fetch error`);
-      return cachedData.data;
+    if (error.response) {
+      // Propager l'erreur avec le statut HTTP et le message
+      throw {
+        message: error.response.data.message || 'Failed to add wallet',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
     }
     
     throw error;
   }
-}
+};
 
 /**
- * Calcule les statistiques d'un wallet à partir de ses holdings
- * @param walletInfo Informations du wallet
- * @returns Statistiques du wallet
+ * Gets all wallets for a user
+ * @param privyUserId The user's Privy ID
+ * @returns Array of user wallets
  */
-export function calculateWalletStats(walletInfo: WalletInfo): WalletStats {
-  let totalBalance = 0;
-  let usdcBalance = 0;
-  let otherTokens = 0;
-
-  if (!walletInfo.holdings || !Array.isArray(walletInfo.holdings)) {
-    return { totalBalance, usdcBalance, otherTokens };
-  }
-
-  walletInfo.holdings.forEach(holding => {
-    try {
-      const entryValue = parseFloat(holding.entryNtl);
-      
-      if (isNaN(entryValue)) {
-        console.warn(`Invalid entryNtl value for ${holding.coin}: ${holding.entryNtl}`);
-        return;
-      }
-      
-      if (holding.coin === "USDC") {
-        usdcBalance += entryValue;
-      } else {
-        otherTokens += entryValue;
-      }
-      
-      totalBalance += entryValue;
-    } catch (error) {
-      console.error(`Error processing holding ${holding.coin}:`, error);
+export const getWalletsByUser = async (
+  privyUserId: string
+): Promise<WalletResponse> => {
+  try {
+    console.log("Fetching wallets for user:", privyUserId);
+    const response = await axios.get(`${API_BASE_URL}/wallet/user/${privyUserId}`);
+    console.log("API response:", response.data);
+    
+    // Vérifier que la réponse contient les données attendues
+    if (!response.data) {
+      console.error("Invalid response format from getWalletsByUser:", response.data);
+      return {
+        data: []
+      };
     }
-  });
-
-  return {
-    totalBalance,
-    usdcBalance,
-    otherTokens
-  };
-}
+    
+    // Vérifier si la réponse contient une structure paginée
+    if (response.data.data && Array.isArray(response.data.data)) {
+      return {
+        data: response.data.data
+      };
+    }
+    
+    // Si la réponse est directement un tableau
+    if (Array.isArray(response.data)) {
+      return {
+        data: response.data
+      };
+    }
+    
+    console.error("Unexpected response format:", response.data);
+    return {
+      data: []
+    };
+  } catch (error: any) {
+    console.error('Error fetching wallets:', error);
+    throw error;
+  }
+};
 
 /**
- * Efface le cache pour une adresse spécifique ou tout le cache
- * @param address Adresse du wallet (optionnel)
+ * Deletes a wallet from the user's account
+ * @param walletId The ID of the wallet to delete
+ * @returns Promise that resolves when the wallet is deleted
  */
-export function clearCache(address?: string): void {
-  if (address) {
-    const cacheKey = `wallet_${address}`;
-    delete cache[cacheKey];
-    console.log(`Cache cleared for wallet ${address}`);
-  } else {
-    Object.keys(cache).forEach(key => delete cache[key]);
-    console.log('All cache cleared');
+export const deleteWallet = async (walletId: string): Promise<void> => {
+  try {
+    console.log("Deleting wallet with ID:", walletId);
+    const response = await axios.delete(`${API_BASE_URL}/wallet/${walletId}`);
+    console.log("Delete wallet response:", response.data);
+  } catch (error: any) {
+    console.error('Error deleting wallet:', error);
+    
+    // Propager l'erreur avec le statut HTTP et le message
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to delete wallet',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
+    }
+    
+    throw error;
   }
-} 
+};
+
+/**
+ * Removes a wallet association from a user
+ * @param privyUserId The user's Privy ID
+ * @param walletId The ID of the wallet to remove from the user
+ * @returns Promise that resolves when the wallet is removed from the user
+ */
+export const removeWalletFromUser = async (privyUserId: number, walletId: number): Promise<void> => {
+  try {
+    console.log(`Removing wallet ${walletId} from user ${privyUserId}`);
+    const response = await axios.delete(`${API_BASE_URL}/wallet/user/${privyUserId}/wallet/${walletId}`);
+    console.log("Remove wallet from user response:", response.data);
+  } catch (error: any) {
+    console.error('Error removing wallet from user:', error);
+    
+    // Propager l'erreur avec le statut HTTP et le message
+    if (error.response) {
+      throw {
+        message: error.response.data.message || 'Failed to remove wallet from user',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
+    }
+    
+    throw error;
+  }
+}; 

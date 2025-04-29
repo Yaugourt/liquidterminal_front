@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { SearchBar } from "@/components/SearchBar";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { UnifiedHeader } from "@/components/UnifiedHeader";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
-import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
+import { TrendingTokens } from "@/components/dashboard/TrendingTokens";
 import { TabSection } from "@/components/dashboard/TabSection";
 
 export default function Home() {
@@ -20,8 +20,8 @@ export default function Home() {
   }, [setTitle]);
 
   return (
-    <div className="min-h-screen">
-      <DashboardHeader />
+    <div className="min-h-screen p-4">
+      <UnifiedHeader customTitle="Dashboard" />
       <div className="p-2 lg:hidden">
         <SearchBar placeholder="Search..." />
       </div>
@@ -30,8 +30,8 @@ export default function Home() {
         <StatsGrid />
 
         <div className="flex flex-col md:flex-row gap-3 sm:gap-4 w-full">
-          <TransactionsTable type="perp" />
-          <TransactionsTable type="spot" />
+          <TrendingTokens type="perp" />
+          <TrendingTokens type="spot" />
         </div>
 
         <TabSection

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { use } from "react"
-import { ExplorerHeader } from "@/components/explorer/ExplorerHeader"
+import { UnifiedHeader } from "@/components/UnifiedHeader"
 
 interface BlockDetailsProps {
     params: Promise<{
@@ -65,7 +65,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
 
     return (
         <div className="min-h-screen">
-            <ExplorerHeader />
+            <UnifiedHeader customTitle="Explorer" />
             <div className="min-h-screen p-4 lg:p-12 space-y-6">
                 {/* Block Information */}
                 <h2 className="text-xl text-white font-medium flex items-center gap-2">

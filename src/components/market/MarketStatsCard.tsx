@@ -2,14 +2,7 @@ import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-
-interface MarketStatsCardProps {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-  headerRight?: React.ReactNode;
-  isLoading?: boolean;
-}
+import { MarketStatsCardProps } from "@/components/types/market.types";
 
 /**
  * Composant de carte pour afficher les statistiques du marché

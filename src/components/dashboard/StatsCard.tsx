@@ -1,21 +1,29 @@
 import { Card } from "@/components/ui/card";
+import { StatsCardProps } from "@/components/types/dashboard.types";
 
-interface StatsCardProps {
-  title: string;
-  value: string;
-}
-
-export function StatsCard({ title, value }: StatsCardProps) {
+export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   return (
-    <Card className="w-full p-3 sm:p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm">
-      <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal mb-1">
-          {title}
-        </p>
-        <p className="text-[#83E9FF] text-base sm:text-lg md:text-xl font-medium text-center">
-          {value}
-        </p>
-      </div>
+    <Card className="p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm">
+      <h3 className="text-xs sm:text-sm text-[#FFFFFF99] mb-2">{title}</h3>
+      {isLoading ? (
+        <div className="h-8 bg-[#1692AD] animate-pulse rounded" />
+      ) : (
+        <div className="flex items-baseline gap-2">
+          <span className="text-lg sm:text-xl font-semibold text-white">
+            {value}
+          </span>
+          {change && (
+            <span
+              className={`text-xs ${
+                change >= 0 ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {change >= 0 ? "+" : ""}
+              {change}%
+            </span>
+          )}
+        </div>
+      )}
     </Card>
   );
 }

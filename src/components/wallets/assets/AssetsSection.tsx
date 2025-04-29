@@ -2,66 +2,86 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Database, RefreshCw } from "lucide-react";
-import { AssetsTable } from "./AssetsTable";
-import { useWalletData } from "@/services/wallets/hooks/useWalletData";
+import { Database, RefreshCw, AlertCircle } from "lucide-react";
+import { AssetsTable, Holding } from "./AssetsTable";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
+import { useWallets } from "@/store/use-wallets";
+import { HyperliquidPerpAssetPosition } from "@/services/wallets/types";
 
 export function AssetsSection() {
-  const { activeWallet, hasWallets, refreshActiveWallet } = useWalletData();
   const [viewType, setViewType] = useState<"spot" | "perp">("spot");
-  const [holdingsCount, setHoldingsCount] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const isUpdatingRef = useRef(false);
+  const [isClient, setIsClient] = useState(false);
+  const [activeWalletDisplay, setActiveWalletDisplay] = useState<string | null>(null);
   
-  // Mémoriser les holdings pour éviter des recalculs inutiles
-  const holdings = useMemo(() => 
-    activeWallet?.info?.holdings || [],
-    [activeWallet?.info?.holdings]
-  );
+  // Utiliser les hooks pour récupérer les balances
+  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances();
+  const { getActiveWallet } = useWallets();
+  const activeWallet = getActiveWallet();
+  
+  // Effet pour marquer que nous sommes côté client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
+  // Effet pour mettre à jour l'affichage du wallet actif
+  useEffect(() => {
+    if (activeWallet) {
+      const display = activeWallet.name || 
+        `${activeWallet.address.slice(0, 6)}...${activeWallet.address.slice(-4)}`;
+      setActiveWalletDisplay(display);
+    } else {
+      setActiveWalletDisplay(null);
+    }
+  }, [activeWallet]);
+  
+  // Convertir les balances Hyperliquid en holdings
+  const convertedHoldings = useMemo(() => {
+    console.log("AssetsSection: viewType =", viewType);
+    console.log("AssetsSection: spotBalances =", spotBalances);
+    console.log("AssetsSection: perpPositions =", perpPositions);
+    
+    if (viewType === "spot" && spotBalances) {
+      const holdings = spotBalances.map(balance => ({
+        coin: balance.coin,
+        token: "USDC", // Conversion du token number en string
+        total: balance.total,
+        entryNtl: balance.entryNtl
+      })) as Holding[];
+      console.log("AssetsSection: Spot holdings =", holdings);
+      return holdings;
+    } else if (viewType === "perp" && perpPositions) {
+      const holdings = perpPositions.assetPositions.map(position => ({
+        coin: position.position.coin,
+        token: "USDC",
+        total: position.position.szi,
+        entryNtl: position.position.entryPx
+      })) as Holding[];
+      console.log("AssetsSection: Perp holdings =", holdings);
+      return holdings;
+    }
+    console.log("AssetsSection: No holdings to display");
+    return [];
+  }, [spotBalances, perpPositions, viewType]);
   
   // Fonction pour rafraîchir manuellement les données
   const handleRefresh = useCallback(async () => {
-    if (isRefreshing || !refreshActiveWallet) return;
-    
     setIsRefreshing(true);
     try {
-      await refreshActiveWallet();
+      await refresh();
     } catch (error) {
-      console.error("Failed to refresh wallet data:", error);
+      console.error("Erreur lors du rafraîchissement:", error);
     } finally {
-      setIsRefreshing(false);
+      setTimeout(() => setIsRefreshing(false), 1000);
     }
-  }, [refreshActiveWallet, isRefreshing]);
+  }, [refresh]);
   
   // Fonction pour changer le type de vue
   const handleViewTypeChange = useCallback((type: "spot" | "perp") => {
     setViewType(type);
   }, []);
-  
-  // Utiliser useEffect pour mettre à jour le nombre d'assets côté client uniquement
-  // et gérer l'état de chargement
-  useEffect(() => {
-    // Éviter les mises à jour multiples
-    if (isUpdatingRef.current) return;
-    
-    isUpdatingRef.current = true;
-    setIsLoading(true);
-    
-    // Utiliser un court délai pour montrer l'état de chargement
-    const timer = setTimeout(() => {
-      setHoldingsCount(holdings.length);
-      setIsLoading(false);
-      isUpdatingRef.current = false;
-    }, 300);
-    
-    return () => {
-      clearTimeout(timer);
-      isUpdatingRef.current = false;
-    };
-  }, [holdings]);
   
   // Mémoriser les classes CSS pour les boutons de type de vue
   const spotButtonClasses = useMemo(() => 
@@ -83,6 +103,20 @@ export function AssetsSection() {
     ),
     [viewType]
   );
+
+  // Afficher un message d'erreur si nécessaire
+  if (error) {
+    return (
+      <Card className="bg-transparent border-0 shadow-none overflow-hidden rounded-lg">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center text-red-500 space-x-2">
+            <AlertCircle className="h-5 w-5" />
+            <span>{error || "Une erreur est survenue lors du chargement des assets"}</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <div className="relative space-y-4">
@@ -106,7 +140,12 @@ export function AssetsSection() {
         <div className="flex items-center gap-4 justify-between sm:justify-end">
           <div className="flex items-center text-[#FFFFFF99] text-xs sm:text-sm">
             <Database size={16} className="mr-2" />
-            Total assets: {holdingsCount !== null ? holdingsCount : '—'}
+            Total assets: {convertedHoldings.length}
+            {isClient && activeWalletDisplay && (
+              <span className="ml-2 text-[#83E9FF]">
+                ({activeWalletDisplay})
+              </span>
+            )}
           </div>
           <Button 
             variant="ghost" 
@@ -115,7 +154,7 @@ export function AssetsSection() {
             disabled={isRefreshing || isLoading}
             className="text-[#83E9FF] hover:text-white hover:bg-[#1692ADB2]"
           >
-            <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-1 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualiser</span>
           </Button>
         </div>
@@ -123,15 +162,9 @@ export function AssetsSection() {
 
       <Card className="bg-transparent border-0 shadow-none overflow-hidden rounded-lg">
         <CardContent className="p-0">
-          <AssetsTable holdings={holdings} loading={isLoading} />
+          <AssetsTable holdings={convertedHoldings} loading={isLoading || isRefreshing} />
         </CardContent>
       </Card>
-      
-      {!hasWallets && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#051728CC] p-4 rounded-lg text-center z-10">
-          <p className="text-white">Ajoutez un wallet pour voir vos assets</p>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { PortfolioStats } from "../PortfolioStats";
+import { PortfolioStats } from "./PortfolioStats";
 import { PerformanceChart } from "../PerformanceChart";
 
 export function StatsSection() {

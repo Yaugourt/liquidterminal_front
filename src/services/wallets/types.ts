@@ -1,36 +1,138 @@
-export interface Holding {
-  coin: string;
-  token: number;
-  total: string;
-  hold: string;
-  entryNtl: string;
-}
-
-export interface WalletInfo {
-  address: string;
-  holdings: Holding[];
-}
-
 export interface Wallet {
-  id: string;
+  id: number;
+  address: string;
+  name: string;
+  addedAt: Date;
+}
+
+export interface UserWallet {
+  id: number;
+  userId: number;
+  walletId: number;
+  name?: string;
+  address?: string;
+  addedAt: Date;
+  Wallet?: Wallet;
+  wallet?: Wallet;
+}
+
+export interface WalletResponse {
+  data: UserWallet[];
+}
+
+export interface AddWalletRequest {
+  privyUserId: string;
   address: string;
   name?: string;
-  info?: WalletInfo;
 }
 
-export interface WalletStats {
-  totalBalance: number;
-  usdcBalance: number;
-  otherTokens: number;
+export interface AddWalletResponse {
+  success: boolean;
+  message?: string;
+  wallet?: Wallet;
+  userWallet?: UserWallet;
 }
 
-export interface HoldingDisplay {
-  id: string;
+// Types pour le store use-wallets
+export interface WalletsState {
+  wallets: Wallet[];
+  userWallets: UserWallet[];
+  activeWalletId: number | null;
+  loading: boolean;
+  error: string | null;
+  
+  initialize: (privyUserId: string | number) => Promise<void>;
+  addWallet: (address: string, name?: string, privyUserId?: string | number) => Promise<Wallet | void>;
+  removeWallet: (id: number) => Promise<void>;
+  setActiveWallet: (id: number) => void;
+  getActiveWallet: () => Wallet | undefined;
+}
+
+/**
+ * Types pour les services de wallets
+ */
+
+/**
+ * Balance de token Hyperliquid
+ */
+export interface HyperliquidBalance {
   coin: string;
   token: number;
+  hold: string;
   total: string;
-  hold?: string;
   entryNtl: string;
-  totalValue: number;
-  price: number;
+}
+
+/**
+ * Réponse de l'API Hyperliquid pour les balances de tokens
+ */
+export type HyperliquidBalancesResponse = HyperliquidBalance[];
+
+/**
+ * Paramètres pour la requête de balances de tokens
+ */
+export interface HyperliquidBalancesRequest {
+  type: string;
+  user: string;
+}
+
+/**
+ * Résultat du hook pour récupérer les balances de tokens
+ */
+export interface UseHyperliquidBalancesResult {
+  balances: HyperliquidBalance[] | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+/**
+ * Types pour les positions perp de Hyperliquid
+ */
+export interface HyperliquidPerpPosition {
+  coin: string;
+  cumFunding: {
+    allTime: string;
+    sinceChange: string;
+    sinceOpen: string;
+  };
+  entryPx: string;
+  leverage: {
+    rawUsd: string;
+    type: string;
+    value: number;
+  };
+  liquidationPx: string;
+  marginUsed: string;
+  maxLeverage: number;
+  positionValue: string;
+  returnOnEquity: string;
+  szi: string;
+  unrealizedPnl: string;
+}
+
+export interface HyperliquidPerpAssetPosition {
+  position: HyperliquidPerpPosition;
+  type: string;
+}
+
+export interface HyperliquidMarginSummary {
+  accountValue: string;
+  totalMarginUsed: string;
+  totalNtlPos: string;
+  totalRawUsd: string;
+}
+
+export interface HyperliquidPerpResponse {
+  assetPositions: HyperliquidPerpAssetPosition[];
+  crossMaintenanceMarginUsed: string;
+  crossMarginSummary: HyperliquidMarginSummary;
+  marginSummary: HyperliquidMarginSummary;
+  time: number;
+  withdrawable: string;
+}
+
+export interface HyperliquidPerpRequest {
+  type: string;
+  user: string;
 } 

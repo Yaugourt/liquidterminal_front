@@ -22,7 +22,7 @@ const navigation = [
         icon: '/sidebar/Line_up.svg',
         hasSubmenu: true,
         submenu: [
-            { name: 'Spot', href: '/market' },
+            { name: 'Spot', href: '/market/spot' },
             { name: 'Perp', href: '/market/perp' }
         ]
     },

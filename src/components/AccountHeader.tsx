@@ -4,10 +4,10 @@ import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Image from "next/image"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuthContext } from "@/contexts/auth.context"
 
 export function AccountHeader() {
-    const { user, authenticated, login, logout } = useAuth();
+    const {  authenticated, login, logout, privyUser } = useAuthContext();
 
     // Si non authentifié, afficher le bouton de connexion
     if (!authenticated) {
@@ -41,25 +41,25 @@ export function AccountHeader() {
             <div className="flex items-center gap-3 bg-[#051728] px-2 py-1 rounded-xl border-2 border-[#83E9FF4D]">
                 <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8 border-2 border-[#1a2c38]">
-                        {user?.twitter?.profilePictureUrl || user?.farcaster?.pfp ? (
+                        {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
                             <Image 
-                                src={user.twitter?.profilePictureUrl || user.farcaster?.pfp || ""}
+                                src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
                                 alt="Avatar"
                                 width={32}
                                 height={32}
                             />
                         ) : (
                             <AvatarFallback className="bg-[#1a2c38] text-white text-xs">
-                                {user?.twitter?.username?.[0]?.toUpperCase() || 
-                                 user?.farcaster?.username?.[0]?.toUpperCase() || 
-                                 user?.github?.username?.[0]?.toUpperCase() || "U"}
+                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
+                                 privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
+                                 privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
                             </AvatarFallback>
                         )}
                     </Avatar>
                     <span className="text-[#FFFFFF99]">
-                        {user?.twitter?.username || 
-                         user?.farcaster?.username || 
-                         user?.github?.username || "User"}
+                        {privyUser?.twitter?.username || 
+                         privyUser?.farcaster?.username || 
+                         privyUser?.github?.username || "User"}
                     </span>
                 </div>
                 <div className="w-[1px] h-6 bg-[#1a2c38]" />
