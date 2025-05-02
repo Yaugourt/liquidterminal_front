@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useExplorerStore } from "@/services/explorer/websocket.service";
-import { formatDistance } from "date-fns";
-import { fr } from "date-fns/locale";
+import { formatDistanceToNowStrict } from "date-fns";
 import { Pagination } from "./Pagination";
 
 const ITEMS_PER_PAGE = 10;
@@ -22,24 +21,11 @@ export function RecentTransactionsTable() {
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   const getActionDescription = (action: any) => {
-    switch (action.type) {
-      case "cancel":
-        return `Cancel ${action.cancels?.length || 0} order(s)`;
-      case "order":
-        return "Place order";
-      case "withdraw":
-        return "Withdraw";
-      case "deposit":
-        return "Deposit";
-      case "cancelByCloid":
-        return "cancelByCloid";
-      default:
-        return action.type;
-    }
+    return action.type;
   };
 
   return (
-    <Card className="bg-[#051728E5] h-[500px] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
+    <Card className="bg-[#051728E5] h-[650px] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-white text-lg">Recent Transactions</h2>
         <div className="flex items-center gap-2">
@@ -92,7 +78,7 @@ export function RecentTransactionsTable() {
                       className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
                     >
                       <td className="py-3 px-2">
-                        {formatDistance(tx.time, new Date(), { addSuffix: true, locale: fr })}
+                        {formatDistanceToNowStrict(tx.time, { addSuffix: true })}
                       </td>
                       <td className="py-3 px-2 text-[#83E9FF]">
                         {getActionDescription(tx.action)}

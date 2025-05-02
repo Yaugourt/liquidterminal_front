@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/table";
 import { ArrowUpDown, Loader2, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
+import { PerpMarketData } from "@/services/market/perp/types";
+import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 
 // Types
 export interface Holding {
@@ -18,22 +21,52 @@ export interface Holding {
   token: string;
   total: string;
   entryNtl: string;
+  price?: string;
+  pnl?: string;
+  pnlPercentage?: string;
+  logo?: string;
 }
 
-export interface HoldingDisplay extends Holding {
+export interface PerpHolding {
+  coin: string;
+  type: 'Short' | 'Long';
+  marginUsed: string;
+  positionValue: string;
+  entryPrice: string;
+  liquidation: string;
+  logo?: string;
+}
+
+export interface PerpHoldingDisplay extends PerpHolding {
+  id: string;
+  marginUsedValue: number;
+  positionValueNum: number;
+  entryPriceNum: number;
+  liquidationNum: number;
+}
+
+export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 'price'> {
   id: string;
   totalValue: number;
   price: number;
+  pnl: number;
+  pnlPercentage: number;
+  entryPrice: number;
 }
 
+type SpotSortKey = keyof HoldingDisplay;
+type PerpSortKey = keyof PerpHoldingDisplay;
+type SortableKey = SpotSortKey | PerpSortKey;
+
 type SortConfig = {
-  key: keyof HoldingDisplay | null;
+  key: SortableKey | null;
   direction: "asc" | "desc";
 };
 
 interface AssetsTableProps {
-  holdings: Holding[];
+  holdings: Holding[] | PerpHolding[];
   loading: boolean;
+  type: 'spot' | 'perp';
 }
 
 // Composant pour l'en-tête de colonne triable
@@ -44,8 +77,8 @@ const SortableColumnHeader = ({
   className = "" 
 }: { 
   label: string; 
-  sortKey: keyof HoldingDisplay; 
-  onSort: (key: keyof HoldingDisplay) => void;
+  sortKey: SortableKey; 
+  onSort: (key: SortableKey) => void;
   className?: string;
 }) => (
   <Button
@@ -62,14 +95,16 @@ const SortableColumnHeader = ({
 const TableLoadingOrEmpty = ({ 
   colSpan, 
   isLoading, 
-  isEmpty = false 
+  isEmpty = false,
+  type
 }: { 
   colSpan: number; 
   isLoading: boolean;
   isEmpty?: boolean;
+  type: 'spot' | 'perp';
 }) => (
   <TableRow>
-    <TableCell colSpan={colSpan} className="text-center py-8">
+    <TableCell colSpan={type === 'perp' ? 7 : 5} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
         {isLoading ? (
           <>
@@ -79,8 +114,8 @@ const TableLoadingOrEmpty = ({
         ) : isEmpty ? (
           <>
             <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-            <p className="text-white text-lg">Aucun asset trouvé</p>
-            <p className="text-[#FFFFFF80] text-sm mt-2">Ajoutez un wallet ou vérifiez plus tard</p>
+            <p className="text-white text-lg">Aucune position trouvée</p>
+            <p className="text-[#FFFFFF80] text-sm mt-2">Ajoutez une position ou vérifiez plus tard</p>
           </>
         ) : null}
       </div>
@@ -90,71 +125,162 @@ const TableLoadingOrEmpty = ({
 
 // Composant pour l'en-tête du tableau
 const TableHeaderComponent = ({ 
-  onSort 
+  onSort,
+  type,
 }: { 
-  onSort: (key: keyof HoldingDisplay) => void;
-}) => (
-  <TableHeader>
-    <TableRow className="border-none bg-[#051728]">
-      <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent pl-4 w-[30%]">
-        <SortableColumnHeader 
-          label="Token" 
-          sortKey="coin" 
-          onSort={onSort} 
-        />
-      </TableHead>
-      <TableHead className="text-[#FFFFFF99] font-normal py-2 bg-transparent w-[25%]">
-        <SortableColumnHeader 
-          label="Prix" 
-          sortKey="price" 
-          onSort={onSort}
-          className="ml-auto justify-end w-full" 
-        />
-      </TableHead>
-      <TableHead className="text-center text-[#FFFFFF99] font-normal py-2 bg-transparent w-[20%]">
-        <SortableColumnHeader 
-          label="Total" 
-          sortKey="total" 
-          onSort={onSort}
-          className="mx-auto justify-center w-full" 
-        />
-      </TableHead>
-      <TableHead className="text-right text-[#FFFFFF99] font-normal py-2 bg-transparent pr-4 w-[25%]">
-        <SortableColumnHeader 
-          label="Valeur" 
-          sortKey="totalValue" 
-          onSort={onSort}
-          className="ml-auto" 
-        />
-      </TableHead>
-    </TableRow>
-  </TableHeader>
-);
+  onSort: (key: SortableKey) => void;
+  type: 'spot' | 'perp';
+}) => {
+  if (type === 'perp') {
+    return (
+      <TableHeader>
+        <TableRow className="border-none bg-[#051728]">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4">
+            <SortableColumnHeader 
+              label="Name" 
+              sortKey="coin" 
+              onSort={onSort} 
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+            <SortableColumnHeader 
+              label="Type" 
+              sortKey="type" 
+              onSort={onSort}
+              className="ml-auto justify-end w-full" 
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+            <SortableColumnHeader 
+              label="Margin used" 
+              sortKey="marginUsed" 
+              onSort={onSort}
+              className="ml-auto justify-end w-full" 
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+            <SortableColumnHeader 
+              label="Position value" 
+              sortKey="positionValue" 
+              onSort={onSort}
+              className="ml-auto justify-end w-full" 
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+            <SortableColumnHeader 
+              label="Entry price" 
+              sortKey="entryPrice" 
+              onSort={onSort}
+              className="ml-auto justify-end w-full" 
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
+            <SortableColumnHeader 
+              label="Liquidation" 
+              sortKey="liquidation" 
+              onSort={onSort}
+              className="ml-auto justify-end w-full" 
+            />
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+    );
+  }
 
-export function AssetsTable({ holdings, loading }: AssetsTableProps) {
+  return (
+    <TableHeader>
+      <TableRow className="border-none bg-[#051728]">
+        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4">
+          <SortableColumnHeader 
+            label="Name" 
+            sortKey="coin" 
+            onSort={onSort} 
+          />
+        </TableHead>
+        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <SortableColumnHeader 
+            label="Size" 
+            sortKey="total" 
+            onSort={onSort}
+            className="ml-auto justify-end w-full" 
+          />
+        </TableHead>
+        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <SortableColumnHeader 
+            label="Price" 
+            sortKey="price" 
+            onSort={onSort}
+            className="ml-auto justify-end w-full" 
+          />
+        </TableHead>
+        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <SortableColumnHeader 
+            label="Change 24h" 
+            sortKey="pnlPercentage" 
+            onSort={onSort}
+            className="ml-auto justify-end w-full" 
+          />
+        </TableHead>
+        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
+          <SortableColumnHeader 
+            label="PNL" 
+            sortKey="pnl" 
+            onSort={onSort}
+            className="ml-auto justify-end w-full" 
+          />
+        </TableHead>
+      </TableRow>
+    </TableHeader>
+  );
+};
+
+export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: null,
+    key: type === 'spot' ? 'total' : null,
     direction: "desc",
   });
   const [isClient, setIsClient] = useState(false);
-
+  
   // Effet pour marquer que nous sommes côté client
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Récupérer les informations des marchés
+  const { data: perpMarkets } = usePerpMarkets({ limit: 100 });
+  const { data: spotMarketTokens } = useSpotTokens({ limit: 100 });
+  
   // Convertir les holdings en format d'affichage (mémorisé)
-  const displayHoldings = useMemo(() => 
-    holdings.map((holding) => ({
-      id: `${holding.coin}-${holding.token}`,
-      ...holding,
-      totalValue: parseFloat(holding.entryNtl),
-      price: parseFloat(holding.entryNtl) / parseFloat(holding.total) // Calcul du prix unitaire
-    })),
-  [holdings]);
+  const displayHoldings = useMemo(() => {
+    if (type === 'perp' && perpMarkets) {
+      return (holdings as PerpHolding[]).map((holding) => {
+        const marketInfo = perpMarkets.find((m: PerpMarketData) => m.name.toLowerCase() === holding.coin.toLowerCase());
+        return {
+          id: holding.coin,
+          ...holding,
+          logo: marketInfo?.logo,
+          marginUsedValue: parseFloat(holding.marginUsed),
+          positionValueNum: parseFloat(holding.positionValue),
+          entryPriceNum: parseFloat(holding.entryPrice),
+          liquidationNum: parseFloat(holding.liquidation),
+        };
+      });
+    } else if (type === 'spot' && spotMarketTokens) {
+      return (holdings as Holding[]).map((holding) => ({
+        id: `${holding.coin}-${holding.token}`,
+        ...holding,
+        totalValue: parseFloat(holding.entryNtl),
+        price: holding.price ? parseFloat(holding.price) : (parseFloat(holding.entryNtl) / parseFloat(holding.total)),
+        entryPrice: parseFloat(holding.entryNtl),
+        pnl: holding.pnl ? parseFloat(holding.pnl) : 0,
+        pnlPercentage: holding.pnlPercentage ? parseFloat(holding.pnlPercentage) : 0,
+      }));
+    }
+    return [];
+  }, [holdings, type, perpMarkets, spotMarketTokens]);
 
   // Trier les données (fonction mémorisée)
-  const sortData = useCallback((key: keyof HoldingDisplay) => {
+  const sortData = useCallback((key: SortableKey) => {
     setSortConfig(prevConfig => {
       let direction: "asc" | "desc" = "asc";
       if (prevConfig.key === key && prevConfig.direction === "asc") {
@@ -169,24 +295,41 @@ export function AssetsTable({ holdings, loading }: AssetsTableProps) {
     if (!sortConfig.key) return displayHoldings;
     
     return [...displayHoldings].sort((a, b) => {
-      const aValue = a[sortConfig.key!];
-      const bValue = b[sortConfig.key!];
-      
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortConfig.direction === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
-      
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortConfig.direction === "asc"
-          ? aValue - bValue
-          : bValue - aValue;
+      if (type === 'perp') {
+        const aValue = (a as PerpHoldingDisplay)[sortConfig.key as keyof PerpHoldingDisplay];
+        const bValue = (b as PerpHoldingDisplay)[sortConfig.key as keyof PerpHoldingDisplay];
+        
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return sortConfig.direction === "asc"
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        }
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortConfig.direction === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+        }
+      } else {
+        const aValue = (a as HoldingDisplay)[sortConfig.key as keyof HoldingDisplay];
+        const bValue = (b as HoldingDisplay)[sortConfig.key as keyof HoldingDisplay];
+        
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return sortConfig.direction === "asc"
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        }
+        
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return sortConfig.direction === "asc"
+            ? aValue - bValue
+            : bValue - aValue;
+        }
       }
       
       return 0;
     });
-  }, [displayHoldings, sortConfig]);
+  }, [displayHoldings, sortConfig, type]);
 
   // Formater les nombres (fonctions mémorisées)
   const formatCurrency = useCallback((value: string | number) => {
@@ -206,14 +349,18 @@ export function AssetsTable({ holdings, loading }: AssetsTableProps) {
     }).format(numValue);
   }, []);
 
+  const formatPercent = useCallback((value: number) => {
+    return `${value > 0 ? '+' : ''}${value.toFixed(0)}%`;
+  }, []);
+
   // Afficher un état de chargement initial côté serveur et client avant l'hydratation
   if (!isClient) {
     return (
       <div className="overflow-x-auto">
         <Table>
-          <TableHeaderComponent onSort={sortData} />
+          <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
-            <TableLoadingOrEmpty colSpan={4} isLoading={true} />
+            <TableLoadingOrEmpty colSpan={4} isLoading={true} type={type} />
           </TableBody>
         </Table>
       </div>
@@ -225,9 +372,9 @@ export function AssetsTable({ holdings, loading }: AssetsTableProps) {
     return (
       <div className="overflow-x-auto">
         <Table>
-          <TableHeaderComponent onSort={sortData} />
+          <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
-            <TableLoadingOrEmpty colSpan={4} isLoading={true} />
+            <TableLoadingOrEmpty colSpan={4} isLoading={true} type={type} />
           </TableBody>
         </Table>
       </div>
@@ -239,9 +386,9 @@ export function AssetsTable({ holdings, loading }: AssetsTableProps) {
     return (
       <div className="overflow-x-auto">
         <Table>
-          <TableHeaderComponent onSort={sortData} />
+          <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
-            <TableLoadingOrEmpty colSpan={4} isLoading={false} isEmpty={true} />
+            <TableLoadingOrEmpty colSpan={4} isLoading={false} isEmpty={true} type={type} />
           </TableBody>
         </Table>
       </div>
@@ -252,29 +399,78 @@ export function AssetsTable({ holdings, loading }: AssetsTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table>
-        <TableHeaderComponent onSort={sortData} />
-        <TableBody className="bg-[#051728CC]">
-          {sortedHoldings.map((holding) => (
-            <TableRow
-              key={holding.id}
-              className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors"
-            >
-              <TableCell className="py-4 pl-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-white text-sm md:text-base">{holding.coin}</span>
-                </div>
-              </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base">
-                {formatCurrency(holding.price)}
-              </TableCell>
-              <TableCell className="text-center text-white text-sm md:text-base">
-                {formatNumber(holding.total)}
-              </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base pr-4">
-                {formatCurrency(holding.totalValue)}
-              </TableCell>
-            </TableRow>
-          ))}
+        <TableHeaderComponent onSort={sortData} type={type} />
+        <TableBody className="bg-[#051728]">
+          {sortedHoldings.map((holding) => {
+            if (type === 'perp') {
+              const perpHolding = holding as PerpHoldingDisplay;
+              return (
+                <TableRow
+                  key={perpHolding.id}
+                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors"
+                >
+                  <TableCell className="py-2 pl-4">
+                    <div className="flex items-center gap-2">
+                      {perpHolding.logo ? (
+                        <img src={perpHolding.logo} alt={perpHolding.coin} className="w-5 h-5 rounded mr-2 object-contain" />
+                      ) : (
+                        <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
+                      )}
+                      <span className="text-white text-sm">{perpHolding.coin}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right py-2">
+                    <span className={perpHolding.type === 'Short' ? 'text-[#FF4D4F]' : 'text-[#52C41A]'}>
+                      {perpHolding.type}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2">
+                    {formatCurrency(perpHolding.marginUsed)}
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2">
+                    {formatCurrency(perpHolding.positionValue)}
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2">
+                    {formatCurrency(perpHolding.entryPrice)}
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2 pr-4">
+                    {formatCurrency(perpHolding.liquidation)}
+                  </TableCell>
+                </TableRow>
+              );
+            } else {
+              const spotHolding = holding as HoldingDisplay;
+              return (
+                <TableRow
+                  key={spotHolding.id}
+                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors"
+                >
+                  <TableCell className="py-2 pl-4">
+                    <div className="flex items-center gap-2">
+                      {spotHolding.logo ? (
+                        <img src={spotHolding.logo} alt={spotHolding.coin} className="w-5 h-5 rounded mr-2 object-contain" />
+                      ) : (
+                        <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
+                      )}
+                      <span className="text-white text-sm">{spotHolding.coin}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2">
+                    {formatNumber(spotHolding.total)}
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2">
+                    {formatCurrency(spotHolding.price)}
+                  </TableCell>
+                  <TableCell className="text-right text-sm py-2" style={{color: spotHolding.pnlPercentage < 0 ? '#FF4D4F' : '#52C41A'}}>
+                    {formatPercent(spotHolding.pnlPercentage)}
+                  </TableCell>
+                  <TableCell className="text-right text-white text-sm py-2 pr-4">
+                    {formatNumber(spotHolding.pnl)}
+                  </TableCell>
+                </TableRow>
+              );
+            }
+          })}
         </TableBody>
       </Table>
     </div>

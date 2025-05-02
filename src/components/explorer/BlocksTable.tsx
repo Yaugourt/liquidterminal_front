@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useExplorerStore } from "@/services/explorer/websocket.service";
-import { formatDistance } from "date-fns";
-import { fr } from "date-fns/locale";
+import { formatDistanceToNowStrict } from "date-fns";
 import { Pagination } from "./Pagination";
 
 const ITEMS_PER_PAGE = 10;
@@ -22,7 +21,7 @@ export function BlocksTable() {
   const displayedBlocks = blocks.slice(startIndex, endIndex);
 
   return (
-    <Card className="bg-[#051728E5] h-[500px] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
+    <Card className="bg-[#051728E5] h-[650px] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-white text-lg">Blocks</h2>
         <div className="flex items-center gap-2">
@@ -76,7 +75,7 @@ export function BlocksTable() {
                     >
                       <td className="py-3 px-2 text-[#83E9FF]">{block.height}</td>
                       <td className="py-3 px-2">
-                        {formatDistance(block.blockTime, new Date(), { addSuffix: true, locale: fr })}
+                        {formatDistanceToNowStrict(block.blockTime, { addSuffix: true })}
                       </td>
                       <td className="py-3 px-2 text-[#83E9FF]">
                         {block.hash.slice(0, 6)}...{block.hash.slice(-4)}

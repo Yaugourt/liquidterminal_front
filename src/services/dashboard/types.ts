@@ -11,6 +11,10 @@ export interface TrendingValidator {
   name: string;
   stake: number;
   apr: number;
+  commission: number;
+  uptime: number;
+  isActive: boolean;
+  nRecentBlocks: number;
 }
 
 // Type pour les informations d'enchère

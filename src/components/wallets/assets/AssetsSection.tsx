@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Database, RefreshCw, AlertCircle } from "lucide-react";
-import { AssetsTable, Holding } from "./AssetsTable";
+import { AssetsTable, Holding, PerpHolding } from "./AssetsTable";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
 import { useWallets } from "@/store/use-wallets";
-import { HyperliquidPerpAssetPosition } from "@/services/wallets/types";
+import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 
 export function AssetsSection() {
   const [viewType, setViewType] = useState<"spot" | "perp">("spot");
@@ -18,6 +18,7 @@ export function AssetsSection() {
   
   // Utiliser les hooks pour récupérer les balances
   const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances();
+  const { data: spotMarketTokens, isLoading: isSpotMarketLoading } = useSpotTokens({ limit: 100 });
   const { getActiveWallet } = useWallets();
   const activeWallet = getActiveWallet();
   
@@ -37,34 +38,41 @@ export function AssetsSection() {
     }
   }, [activeWallet]);
   
-  // Convertir les balances Hyperliquid en holdings
+  // Convertir les balances Hyperliquid en holdings enrichis avec le marché spot
   const convertedHoldings = useMemo(() => {
-    console.log("AssetsSection: viewType =", viewType);
-    console.log("AssetsSection: spotBalances =", spotBalances);
-    console.log("AssetsSection: perpPositions =", perpPositions);
-    
-    if (viewType === "spot" && spotBalances) {
-      const holdings = spotBalances.map(balance => ({
-        coin: balance.coin,
-        token: "USDC", // Conversion du token number en string
-        total: balance.total,
-        entryNtl: balance.entryNtl
-      })) as Holding[];
-      console.log("AssetsSection: Spot holdings =", holdings);
-      return holdings;
+    if (viewType === "spot" && spotBalances && spotMarketTokens) {
+      return spotBalances.map(balance => {
+        const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === balance.coin.toLowerCase());
+        return {
+          coin: balance.coin,
+          token: "USDC",
+          total: balance.total,
+          entryNtl: balance.entryNtl,
+          price: marketToken ? marketToken.price.toString() : undefined,
+          pnlPercentage: marketToken ? marketToken.change24h.toString() : undefined,
+          logo: marketToken ? marketToken.logo : undefined,
+        };
+      }) as Holding[];
     } else if (viewType === "perp" && perpPositions) {
-      const holdings = perpPositions.assetPositions.map(position => ({
-        coin: position.position.coin,
-        token: "USDC",
-        total: position.position.szi,
-        entryNtl: position.position.entryPx
-      })) as Holding[];
-      console.log("AssetsSection: Perp holdings =", holdings);
-      return holdings;
+      return perpPositions.assetPositions.map(position => {
+        const marketToken = spotMarketTokens?.find(t => t.name.toLowerCase() === position.position.coin.toLowerCase());
+        const szi = parseFloat(position.position.szi);
+        const entryPx = parseFloat(position.position.entryPx);
+        const positionValue = Math.abs(szi) * entryPx;
+        
+        return {
+          coin: position.position.coin,
+          type: szi > 0 ? 'Long' : 'Short',
+          marginUsed: position.position.marginUsed,
+          positionValue: positionValue.toString(),
+          entryPrice: position.position.entryPx,
+          liquidation: position.position.liquidationPx,
+          logo: marketToken?.logo,
+        };
+      }) as PerpHolding[];
     }
-    console.log("AssetsSection: No holdings to display");
     return [];
-  }, [spotBalances, perpPositions, viewType]);
+  }, [spotBalances, spotMarketTokens, perpPositions, viewType]);
   
   // Fonction pour rafraîchir manuellement les données
   const handleRefresh = useCallback(async () => {
@@ -162,7 +170,11 @@ export function AssetsSection() {
 
       <Card className="bg-transparent border-0 shadow-none overflow-hidden rounded-lg">
         <CardContent className="p-0">
-          <AssetsTable holdings={convertedHoldings} loading={isLoading || isRefreshing} />
+          <AssetsTable 
+            holdings={convertedHoldings} 
+            loading={isLoading || isRefreshing} 
+            type={viewType}
+          />
         </CardContent>
       </Card>
     </div>
