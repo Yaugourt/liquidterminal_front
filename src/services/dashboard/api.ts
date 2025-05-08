@@ -1,4 +1,4 @@
-import { DashboardGlobalStats, TrendingValidator, AuctionInfo } from './types';
+import { DashboardGlobalStats, TrendingValidator, AuctionInfo, HLBridgeData } from './types';
 import { fetchWithConfig } from '../api/base';
 
 /**
@@ -27,4 +27,16 @@ export const fetchLatestAuctions = async (limit: number = 5): Promise<AuctionInf
   return response
     .sort((a, b) => b.time - a.time)
     .slice(0, limit);
-}; 
+};
+
+
+/**
+ * Récupère les données TVL du bridge Hyperliquid
+ */
+export const fetchHLBridge = async (): Promise<HLBridgeData> => {
+  const response = await fetch('https://api.llama.fi/protocol/hyperliquid-bridge');
+  if (!response.ok) {
+    throw new Error('Failed to fetch Hyperliquid bridge data');
+  }
+  return response.json();
+};

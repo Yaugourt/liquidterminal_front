@@ -22,7 +22,8 @@ export function useSpotTokens({
       total: response.pagination.total,
       page: response.pagination.page,
       limit: response.pagination.limit,
-      totalPages: response.pagination.totalPages
+      totalPages: response.pagination.totalPages,
+      totalVolume: response.pagination.totalVolume
     };
   };
 
@@ -35,12 +36,11 @@ export function useSpotTokens({
     error,
     updateParams,
     refetch,
+    metadata
   } = usePaginatedData<SpotToken>({
     fetchFn: adaptFetchFn,
     defaultParams: {
       limit,
-      sortBy: 'volume',
-      sortOrder: 'desc',
       ...defaultParams,
     }
   });
@@ -54,16 +54,26 @@ export function useSpotTokens({
     error,
     updateParams,
     refetch,
+    totalVolume: metadata?.totalVolume
   };
 }
 
 // Hook spécifique pour les tokens tendance (top 5)
-export function useTrendingSpotTokens(limit: number = 5) {
-  return useSpotTokens({
+export function useTrendingSpotTokens(limit: number = 5, sortBy: string = 'volume', sortOrder: 'asc' | 'desc' = 'desc') {
+  const { data, isLoading, error, refetch, updateParams, totalVolume } = useSpotTokens({
     limit,
     defaultParams: {
-      sortBy: 'volume',
-      sortOrder: 'desc',
+      sortBy,
+      sortOrder,
     }
   });
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch,
+    updateParams,
+    totalVolume
+  };
 } 

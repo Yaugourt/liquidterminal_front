@@ -1,7 +1,7 @@
 import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
-import { formatNumberWithoutDecimals } from "@/lib/formatting";
+import { formatFullNumber } from "@/lib/formatting";
 
 export function StatsGrid() {
   const { stats, isLoading, error } = useDashboardStats();
@@ -33,22 +33,25 @@ export function StatsGrid() {
   // Afficher les données
   const statsItems = stats ? [
     {
-      title: "User",
-      value: formatNumberWithoutDecimals(stats.numberOfUsers),
+      title: "Users",
+      value: formatFullNumber(stats.numberOfUsers),
     },
     {
-      title: "Daily volume",
-      value: `$${formatNumberWithoutDecimals(stats.dailyVolume)}`,
+      title: "Daily Volume",
+      value: formatFullNumber(stats.dailyVolume, { prefix: '$' }),
     },
     {
       title: "Bridged USDC",
-      value: `${formatNumberWithoutDecimals(stats.bridgedUsdc)}M`,
+      value: formatFullNumber(stats.bridgedUsdc, { prefix: '$' }),
     },
     {
       title: "HYPE Staked",
-      value: formatNumberWithoutDecimals(stats.totalHypeStake),
+      value: formatFullNumber(stats.totalHypeStake),
     },
-    { title: "Total vault TVL", value: "$557.19M" },
+    {
+      title: "Vaults TVL",
+      value: formatFullNumber(stats.vaultsTvl, { prefix: '$' }),
+    },
   ] : [];
 
   return (

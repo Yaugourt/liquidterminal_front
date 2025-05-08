@@ -4,6 +4,7 @@ export interface DashboardGlobalStats {
   dailyVolume: number;
   bridgedUsdc: number;
   totalHypeStake: number;
+  vaultsTvl: number;
 }
 
 // Type pour les validateurs tendance
@@ -35,6 +36,7 @@ export interface PaginatedResponse<T> {
     page: number;
     limit: number;
     totalPages: number;
+    totalVolume: number;
   };
   metadata?: {
     lastUpdate: number;
@@ -57,6 +59,8 @@ export interface UseTopPerpTokensResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  updateParams: (params: any) => void;
+  totalVolume?: number;
 }
 
 export interface UseTopTokensResult {
@@ -64,6 +68,8 @@ export interface UseTopTokensResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  updateParams: (params: any) => void;
+  totalVolume?: number;
 }
 
 export interface UseLatestAuctionsResult {
@@ -75,6 +81,25 @@ export interface UseLatestAuctionsResult {
 
 export interface UseTrendingValidatorsResult {
   validators: TrendingValidator[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
+
+// Type pour les données du bridge Hyperliquid
+export interface HLBridgeData {
+  chainTvls: {
+    Arbitrum: {
+      tvl: Array<{
+        date: number;
+        totalLiquidityUSD: number;
+      }>;
+    };
+  };
+}
+
+export interface UseHLBridgeResult {
+  bridgeData: HLBridgeData | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;

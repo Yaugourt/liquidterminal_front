@@ -9,7 +9,7 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
         <div className="h-8 bg-[#1692AD] animate-pulse rounded" />
       ) : (
         <div className="flex items-baseline gap-2">
-          <span className="text-lg sm:text-xl font-semibold text-white">
+          <span className=" sm:text-l text-white">
             {value}
           </span>
           {change && (

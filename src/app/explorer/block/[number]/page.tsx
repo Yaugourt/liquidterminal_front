@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { useBlockDetails } from "@/services/explorer/hooks/useBlockDetails"
-import { UnifiedHeader } from "@/components/UnifiedHeader"
+import {  Header } from "@/components/Header"
 import { format } from "date-fns"
 import { use, useState } from "react"
 import { Pagination } from "@/components/explorer/Pagination"
@@ -25,7 +25,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     if (isLoading) {
         return (
             <div className="min-h-screen">
-                <UnifiedHeader customTitle="Explorer" />
+                < Header customTitle="Explorer" />
                 <div className="min-h-screen p-4 lg:p-12 space-y-6">
                     <div className="text-white text-center">Loading block details...</div>
                 </div>
@@ -36,7 +36,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     if (error || !blockDetails) {
         return (
             <div className="min-h-screen">
-                <UnifiedHeader customTitle="Explorer" />
+                < Header customTitle="Explorer" />
                 <div className="min-h-screen p-4 lg:p-12 space-y-6">
                     <div className="text-red-500 text-center">{error?.message || 'Failed to load block details'}</div>
                 </div>
@@ -51,7 +51,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
 
     return (
         <div className="min-h-screen">
-            <UnifiedHeader customTitle="Explorer" />
+            < Header customTitle="Explorer" />
             <div className="min-h-screen p-4 lg:p-12 space-y-6">
                 {/* Block Information */}
                 <h2 className="text-xl text-white font-medium flex items-center gap-2">

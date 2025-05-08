@@ -7,23 +7,68 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { formatNumberWithoutDecimals } from "@/lib/formatting";
+import { formatLargeNumber } from "@/lib/formatting";
 import { useTopTokens } from "@/services/dashboard/hooks/useTopSpotTokens";
 import { useTopPerpTokens } from "@/services/dashboard/hooks/useTopPerpTokens";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUpDown } from "lucide-react";
 import { TrendingTokensProps } from "@/components/types/dashboard.types";
+import { useState } from "react";
+import { PerpMarketData } from "@/services/market/perp/types";
+import { Button } from "@/components/ui/button";
+
+type SpotSortType = "marketcap" | "volume" | "change24h" | "price";
+type PerpSortType = "openInterest" | "volume" | "change24h" | "price";
+type SortType = SpotSortType | PerpSortType;
+type SortOrder = "asc" | "desc";
 
 export function TrendingTokens({ type, title }: TrendingTokensProps) {
-  const spotTokens = useTopTokens(5);
-  const perpTokens = useTopPerpTokens(5);
+  const defaultSort = type === "spot" ? "volume" : "volume";
+  const [sortBy, setSortBy] = useState<SortType>(defaultSort);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   
-  const { tokens, isLoading, error } = type === "spot" ? spotTokens : perpTokens;
+  const {
+    tokens: spotTokens,
+    isLoading: isLoadingSpot,
+    error: errorSpot,
+    updateParams: updateSpotParams,
+    totalVolume: spotTotalVolume
+  } = useTopTokens();
+
+  const {
+    tokens: perpTokens,
+    isLoading: isLoadingPerp,
+    error: errorPerp,
+    updateParams: updatePerpParams,
+    totalVolume: perpTotalVolume
+  } = useTopPerpTokens();
+
+  const tokens = type === "spot" ? spotTokens : perpTokens;
+  const isLoading = type === "spot" ? isLoadingSpot : isLoadingPerp;
+  const error = type === "spot" ? errorSpot : errorPerp;
+  const totalVolume = type === "spot" ? spotTotalVolume : perpTotalVolume;
+  const updateParams = type === "spot" ? updateSpotParams : updatePerpParams;
 
   // Obtenir la classe de couleur en fonction du changement de prix
   const getChangeColorClass = (change: number) => {
-    if (change > 0) return "text-[#83E9FF]"; // Bleu pour positif (comme dans le design)
+    if (change > 0) return "text-[#83E9FF]";
     if (change < 0) return "text-red-500";
     return "text-white";
+  };
+
+  // Gérer le tri des colonnes
+  const handleSort = (field: SortType) => {
+    const newOrder = sortBy === field && sortOrder === "desc" ? "asc" : "desc";
+    setSortBy(field);
+    setSortOrder(newOrder);
+    updateParams({ 
+      sortBy: field, 
+      sortOrder: newOrder 
+    });
+  };
+
+  // Obtenir la classe pour l'en-tête de colonne triable
+  const getSortableHeaderClass = (field: SortType) => {
+    return `text-[#FFFFFF99] font-normal hover:text-white cursor-pointer transition-colors`;
   };
 
   if (isLoading) {
@@ -44,18 +89,20 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
 
   return (
     <div className="w-full md:w-[48%] lg:w-[49%]">
-      <div className="flex justify-center gap-4 sm:gap-10 mb-2 w-full">
-        <div className="text-white">
-          <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Volume:</span>
-          <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
-            ${formatNumberWithoutDecimals(Array.isArray(tokens) ? tokens.reduce((sum, token) => sum + token.volume, 0) : 0)}
-          </span>
-        </div>
-        <div className="text-white">
-          <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Tokens:</span>
-          <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
-            {Array.isArray(tokens) ? tokens.length : 0}
-          </span>
+      <div className="flex justify-end items-center mb-2 w-full">
+        <div className="flex gap-4 sm:gap-10">
+          <div className="text-white">
+            <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Volume:</span>
+            <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
+              ${formatLargeNumber(totalVolume || 0, { decimals: 2 })}
+            </span>
+          </div>
+          <div className="text-white">
+            <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Tokens:</span>
+            <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
+              {tokens?.length || 0}
+            </span>
+          </div>
         </div>
       </div>
       <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden">
@@ -66,30 +113,51 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
                 <TableHead className="border-b-[1px] border-[#83E9FF4D] text-left p-2 sm:p-3 text-xs sm:text-sm font-normal text-[#FFFFFF99]">
                   {title || (type === "perp" ? "Top Perp Tokens" : "Top Spot Tokens")}
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3 text-xs sm:text-sm font-normal text-[#FFFFFF99]">
-                  Price
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort("price")}
+                    className={getSortableHeaderClass("price")}
+                  >
+                    Price
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3 text-xs sm:text-sm font-normal text-[#FFFFFF99]">
-                  24h
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort("change24h")}
+                    className={getSortableHeaderClass("change24h")}
+                  >
+                    24h
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3 text-xs sm:text-sm font-normal text-[#FFFFFF99]">
-                  Volume
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort(type === "perp" ? "openInterest" : "volume")}
+                    className={getSortableHeaderClass(type === "perp" ? "openInterest" : "volume")}
+                  >
+                    {type === "perp" ? "Open Interest" : "Volume"}
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="text-white">
-              {Array.isArray(tokens) && tokens.length > 0 ? (
+              {tokens && tokens.length > 0 ? (
                 tokens.map((token) => (
                   <TableRow key={token.name} className="border-t border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                     <TableCell className="p-2 sm:p-3 text-xs sm:text-sm">{token.name}</TableCell>
                     <TableCell className="text-right p-2 sm:p-3 text-xs sm:text-sm">
-                      ${token.price.toFixed(2)}
+                      ${formatLargeNumber(token.price, { decimals: 2 })}
                     </TableCell>
                     <TableCell className={`text-right p-2 sm:p-3 text-xs sm:text-sm ${getChangeColorClass(token.change24h)}`}>
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </TableCell>
                     <TableCell className="text-right p-2 sm:p-3 text-xs sm:text-sm">
-                      ${formatNumberWithoutDecimals(token.volume)}
+                      ${formatLargeNumber(type === "perp" ? (token as PerpMarketData).openInterest : token.volume, { decimals: 2 })}
                     </TableCell>
                   </TableRow>
                 ))

@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { SearchBar } from "@/components/SearchBar";
-import { UnifiedHeader } from "@/components/UnifiedHeader";
+import {  Header } from "@/components/Header";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { TrendingTokens } from "@/components/dashboard/TrendingTokens";
 import { TabSection } from "@/components/dashboard/TabSection";
+import { ChartSection } from "@/components/dashboard/ChartSection";
 
 export default function Home() {
   const { setTitle } = usePageTitle();
@@ -15,13 +16,10 @@ export default function Home() {
   const chartHeight = width >= 1024 ? 345 : width >= 640 ? 296 : 246;
   const [activeTab, setActiveTab] = useState("vault");
 
-  useEffect(() => {
-    setTitle("Dashboard");
-  }, [setTitle]);
 
   return (
     <div className="min-h-screen p-4">
-      <UnifiedHeader customTitle="Dashboard" />
+      < Header customTitle="Dashboard" />
       <div className="p-2 lg:hidden">
         <SearchBar placeholder="Search..." />
       </div>
@@ -34,11 +32,13 @@ export default function Home() {
           <TrendingTokens type="spot" />
         </div>
 
-        <TabSection
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          chartHeight={chartHeight}
-        />
+        <div className="flex flex-col lg:flex-row lg:gap-4">
+          <TabSection
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+          <ChartSection chartHeight={chartHeight} />
+        </div>
       </main>
     </div>
   );

@@ -1,87 +1,61 @@
 "use client"
 
-import { Menu, Bell } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useSidebar } from "@/hooks/use-sidebar"
-import Image from "next/image"
-import { useAuthContext } from "@/contexts/auth.context"
+import { SearchBar } from "@/components/SearchBar"
+import { usePageTitle } from "@/store/use-page-title"
+import { AccountHeader } from "@/components/AccountHeader"
+import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
+import { formatFullNumber } from "@/lib/formatting"
 
-export function Header() {
-    const { setIsOpen } = useSidebar()
-    const {  authenticated, login, logout, privyUser } = useAuthContext();
+interface HeaderProps {
+    searchPlaceholder?: string;
+    searchWidth?: string;
+    customTitle?: string;
+}
+
+export function Header({ 
+    searchPlaceholder = "Search...",
+    searchWidth = "w-[300px]",
+    customTitle
+}: HeaderProps) {
+    const { title } = usePageTitle();
+    const displayTitle = customTitle || title;
+    const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
 
     return (
-        <header className="p-2 lg:hidden bg-[#051728]">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="bg-[#1a2c38]"
-                        onClick={() => setIsOpen(true)}
-                    >
-                        <Menu className="h-5 w-5 text-white" />
-                    </Button>
-                    <h1 className="text-sm font-bold">
-                        <span className="text-[#83E9FF]">Liquid</span>
-                        <span className="text-white">Terminal</span>
-                    </h1>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="w-[47px] h-[47px] rounded-xl bg-[#11294199] border-2 border-[#83E9FF1A]">
-                        <Bell className="h-5 w-5 text-white" />
-                    </Button>
-
-                    {!authenticated ? (
-                        // Bouton de connexion si non authentifié
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="w-[47px] h-[47px] rounded-xl bg-[#11294199] border-2 border-[#83E9FF1A]"
-                            onClick={() => login()}
-                        >
-                            <Image
-                                src="/wallet-icon.svg" 
-                                alt="Se connecter"
-                                width={20}
-                                height={20}
-                                style={{ filter: "brightness(0) invert(1)" }}
-                            />
-                        </Button>
-                    ) : (
-                        // Affichage utilisateur si authentifié
-                        <div className="flex items-center gap-2 bg-[#11294199] px-2 py-1 rounded-xl border-2 border-[#83E9FF1A]">
-                            <Avatar className="h-8 w-8 border-2 border-[#1a2c38]">
-                                {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
-                                    <Image 
-                                        src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
-                                        alt="Avatar"
-                                        width={32}
-                                        height={32}
-                                    />
-                                ) : (
-                                    <AvatarFallback className="bg-[#1a2c38] text-white text-xs">
-                                        {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
-                                         privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
-                                         privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
-                                    </AvatarFallback>
-                                )}
-                            </Avatar>
-                            <div className="w-[1px] h-6 bg-[#1a2c38]" />
-                            <Button variant="ghost" size="icon" onClick={() => logout()}>
-                                <Image
-                                    src="/Sign_out_circle.svg"
-                                    alt="Sign out"
-                                    width={20}
-                                    height={20}
-                                />
-                            </Button>
-                        </div>
-                    )}
-                </div>
+        <div className="flex items-center justify-between w-full px-8 py-4">
+            <div className="flex items-center gap-4 flex-shrink-0">
+                <h2 className="text-xl font-bold text-white whitespace-nowrap">{displayTitle}</h2>
+                <SearchBar 
+                    placeholder={searchPlaceholder} 
+                    className={`border-[#83E9FF4D] border-[2px] rounded-lg ${searchWidth}`}
+                />
             </div>
-        </header>
+            <div className="flex items-center gap-x-4 gap-y-1 text-xs text-white flex-wrap justify-center mx-auto px-4 whitespace-nowrap flex-grow">
+                {feesLoading && (
+                    <>
+                        <span className="opacity-75">Hourly Fees: Loading...</span>
+                        <span className="opacity-75">Daily Fees: Loading...</span>
+                    </>
+                )}
+                {feesError && (
+                    <span className="text-red-400">Fees data unavailable</span>
+                )}
+                {feesStats && !feesLoading && !feesError && (
+                    <>
+                        <div className="flex items-center">
+                            <span className="text-gray-400 mr-1">Hourly:</span>
+                            <span>${formatFullNumber(feesStats.hourlyFees)}</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="text-gray-400 mr-1">Daily:</span>
+                            <span>${formatFullNumber(feesStats.dailyFees)}</span>
+                        </div>
+                    </>
+                )}
+            </div>
+            <div className="flex-shrink-0">
+                <AccountHeader />
+            </div>
+        </div>
     )
 } 

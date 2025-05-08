@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { Card } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
-import { Token } from "@/services/markets/types";
+import { Token } from "@/services/market/spot/types";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

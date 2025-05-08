@@ -18,8 +18,7 @@ export interface StatsCardProps {
 export interface TabSectionProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  chartHeight: number;
-} 
+}
 
 /**
  * Props pour le composant TabButtons
@@ -49,7 +48,7 @@ export interface AuctionsTableProps {
   auctions: Array<{
     name: string;
     deployer: string;
-    time: number;
+    deployGas: string;
   }>;
   isLoading: boolean;
   error: Error | null;

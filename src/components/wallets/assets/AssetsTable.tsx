@@ -14,60 +14,15 @@ import { Button } from "@/components/ui/button";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { PerpMarketData } from "@/services/market/perp/types";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
-
-// Types
-export interface Holding {
-  coin: string;
-  token: string;
-  total: string;
-  entryNtl: string;
-  price?: string;
-  pnl?: string;
-  pnlPercentage?: string;
-  logo?: string;
-}
-
-export interface PerpHolding {
-  coin: string;
-  type: 'Short' | 'Long';
-  marginUsed: string;
-  positionValue: string;
-  entryPrice: string;
-  liquidation: string;
-  logo?: string;
-}
-
-export interface PerpHoldingDisplay extends PerpHolding {
-  id: string;
-  marginUsedValue: number;
-  positionValueNum: number;
-  entryPriceNum: number;
-  liquidationNum: number;
-}
-
-export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 'price'> {
-  id: string;
-  totalValue: number;
-  price: number;
-  pnl: number;
-  pnlPercentage: number;
-  entryPrice: number;
-}
-
-type SpotSortKey = keyof HoldingDisplay;
-type PerpSortKey = keyof PerpHoldingDisplay;
-type SortableKey = SpotSortKey | PerpSortKey;
-
-type SortConfig = {
-  key: SortableKey | null;
-  direction: "asc" | "desc";
-};
-
-interface AssetsTableProps {
-  holdings: Holding[] | PerpHolding[];
-  loading: boolean;
-  type: 'spot' | 'perp';
-}
+import {
+  Holding,
+  PerpHolding,
+  PerpHoldingDisplay,
+  HoldingDisplay,
+  SortableKey,
+  SortConfig,
+  AssetsTableProps
+} from "@/components/types/wallet.types";
 
 // Composant pour l'en-tête de colonne triable
 const SortableColumnHeader = ({ 

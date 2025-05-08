@@ -13,8 +13,8 @@ export function AuctionsTable({ auctions, isLoading, error }: AuctionsTableProps
       accessor: (item: AuctionsTableProps["auctions"][0]) => truncateAddress(item.deployer),
     },
     {
-      header: "Date",
-      accessor: (item: AuctionsTableProps["auctions"][0]) => formatDate(item.time),
+      header: "Gas",
+      accessor: (item: AuctionsTableProps["auctions"][0]) => `$${formatNumberWithoutDecimals(parseFloat(item.deployGas))}`,
       align: "right",
     },
   ];

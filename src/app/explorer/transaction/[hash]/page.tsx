@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
-import { UnifiedHeader } from "@/components/UnifiedHeader"
+import {  Header } from "@/components/Header"
 
 export default function TransactionPage() {
     const params = useParams();
@@ -28,7 +28,7 @@ export default function TransactionPage() {
 
     return (
         <div className="min-h-screen">
-            <UnifiedHeader customTitle="Explorer" />
+            < Header customTitle="Explorer" />
             <div className="min-h-screen p-4 lg:p-12 space-y-6">
                 <button
                     onClick={() => router.back()}

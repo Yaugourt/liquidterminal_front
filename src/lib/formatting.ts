@@ -116,4 +116,63 @@ export const formatDate = (timestamp: number): string => {
 export const truncateAddress = (address: string): string => {
   if (address.length <= 10) return address;
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-}; 
+};
+
+export function formatLargeNumber(value: number, options: { 
+  prefix?: string, 
+  decimals?: number,
+  forceDecimals?: boolean,
+  suffix?: string 
+} = {}): string {
+  const { 
+    prefix = '', 
+    decimals = 2,
+    forceDecimals = false,
+    suffix = ''
+  } = options;
+
+  // Fonction helper pour formater le nombre
+  const formatNum = (num: number): string => {
+    const fixed = num.toFixed(decimals);
+    return forceDecimals ? fixed : fixed.replace(/\.?0+$/, '');
+  };
+
+  // Ajouter un espace après le préfixe s'il existe
+  const prefixWithSpace = prefix ? prefix + ' ' : '';
+
+  if (value >= 1e9) {
+    return `${prefixWithSpace}${formatNum(value / 1e9)}${suffix}B`;
+  }
+  
+  if (value >= 1e6) {
+    const formatted = formatNum(value / 1e6);
+    // Si on a des décimales, pas d'espace avant le M
+    return formatted.includes('.') 
+      ? `${prefixWithSpace}${formatted}${suffix}M`
+      : `${prefixWithSpace}${formatted} ${suffix}M`;
+  }
+  
+  if (value >= 1e3) {
+    return `${prefixWithSpace}${formatNum(value / 1e3)} ${suffix}K`;
+  }
+  
+  return `${prefixWithSpace}${formatNum(value)}${suffix}`;
+}
+
+export function formatFullNumber(value: number | undefined | null, options: { prefix?: string } = {}): string {
+  const { prefix = '' } = options;
+  
+  // Gérer les cas où value est undefined ou null
+  if (value === undefined || value === null) {
+    return prefix ? `${prefix} 0` : '0';
+  }
+  
+  // Ajouter des espaces tous les 3 chiffres
+  const parts = value.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  
+  // Ajouter un espace après le préfixe s'il existe
+  const prefixWithSpace = prefix ? prefix + ' ' : '';
+  
+  return `${prefixWithSpace}${parts.join('.')}`;
+} 

@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { useTransactions } from "@/services/explorer/hooks/useUserTransactions";
 import { usePortfolio } from '@/services/explorer/hooks/usePortfolio';
 import React, { useState } from "react";
-import { PortfolioApiResponse, PortfolioPeriodData } from '@/services/explorer/types';
+import { PortfolioPeriodData } from '@/services/explorer/types';
+import {  Header } from "@/components/Header";
 
 export default function AddressPage() {
   const params = useParams();
@@ -60,38 +61,7 @@ export default function AddressPage() {
 
   return (
     <div className="min-h-screen ">
-      {/* Header principal */}
-      <header className="  px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-white text-xl font-medium">HyperLiquid L1 explorer</h1>
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Search by Block, Txn Hash, User..." 
-                className="bg-[#051728] text-white placeholder-[#8B8B8B] px-4 py-2 rounded-lg w-[400px] border border-[#1E3851] focus:outline-none focus:border-[#83E9FF]"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-[#8B8B8B]">HYPE</span>
-              <span className="text-white">$21.16</span>
-            </div>
-            <button className="p-2 hover:bg-[#1E3851] rounded-lg transition-all">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" strokeWidth="2">
-                <path d="M21.5 12H2.5M21.5 12C21.5 16.9706 17.4706 21 12.5 21M21.5 12C21.5 7.02944 17.4706 3 12.5 3M2.5 12C2.5 16.9706 6.52944 21 11.5 21M2.5 12C2.5 7.02944 6.52944 3 11.5 3" />
-              </svg>
-            </button>
-            <button className="p-2 hover:bg-[#1E3851] rounded-lg transition-all">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" strokeWidth="2">
-                <circle cx="12" cy="12" r="5"/>
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
+      < Header customTitle="Explorer" />
       
       <div className="p-6">
         {/* En-tête de l'adresse */}

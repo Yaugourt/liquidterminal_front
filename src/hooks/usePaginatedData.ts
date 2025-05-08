@@ -14,6 +14,7 @@ interface PaginationResult<T> {
   page: number;
   limit: number;
   totalPages: number;
+  totalVolume?: number;
 }
 
 interface UsePaginatedDataOptions<T> {
@@ -22,11 +23,26 @@ interface UsePaginatedDataOptions<T> {
   refreshInterval?: number;
 }
 
+export interface PaginatedDataResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  totalPages: number;
+  isLoading: boolean;
+  error: Error | null;
+  updateParams: (newParams: Partial<PaginationParams>) => void;
+  refetch: () => Promise<void>;
+  metadata?: {
+    totalVolume?: number;
+    [key: string]: any;
+  };
+}
+
 export function usePaginatedData<T>({
   fetchFn,
   defaultParams = {},
   refreshInterval,
-}: UsePaginatedDataOptions<T>) {
+}: UsePaginatedDataOptions<T>): PaginatedDataResponse<T> {
   const [data, setData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -37,6 +53,7 @@ export function usePaginatedData<T>({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [totalVolume, setTotalVolume] = useState<number | undefined>(undefined);
   const paramsRef = useRef(params);
 
   // Mettre à jour la ref quand params change
@@ -53,6 +70,7 @@ export function usePaginatedData<T>({
       setData(result.data);
       setTotal(result.total);
       setTotalPages(result.totalPages);
+      setTotalVolume(result.totalVolume);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Une erreur est survenue'));
       console.error('Erreur lors de la récupération des données:', err);
@@ -87,5 +105,8 @@ export function usePaginatedData<T>({
     error,
     updateParams,
     refetch: fetchData,
+    metadata: {
+      totalVolume
+    }
   };
 } 

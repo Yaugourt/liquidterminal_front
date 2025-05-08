@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Database, RefreshCw, AlertCircle } from "lucide-react";
-import { AssetsTable, Holding, PerpHolding } from "./AssetsTable";
+import { AssetsTable } from "./AssetsTable";
+import { Holding, PerpHolding } from "@/components/types/wallet.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { WalletHeader } from "@/components/wallets/WalletHeader";
+import {  Header } from "@/components/Header";
 import { WalletTabs } from "@/components/wallets/WalletTabs";
 import { StatsSection } from "@/components/wallets/stats/StatsSection";
 import { AssetsSection } from "@/components/wallets/assets/AssetsSection";
@@ -17,7 +17,7 @@ export default function Wallets() {
   return (
     <div className="min-h-screen">
       <div className="p-8 space-y-8">
-        <WalletHeader />
+        < Header customTitle="Wallets" />
         <WalletTabs />
         <StatsSection />
         <AssetsSection />
