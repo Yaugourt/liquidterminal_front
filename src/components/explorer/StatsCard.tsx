@@ -1,18 +1,48 @@
 import { Card } from "@/components/ui/card";
+import { 
+  Blocks, 
+  Clock, 
+  ArrowRightLeft, 
+  Users, 
+  LucideIcon
+} from "lucide-react";
 
 interface StatsCardProps {
   title: string;
   value: string;
+  type: 'block' | 'blockTime' | 'transactions' | 'users';
 }
 
-export function StatsCard({ title, value }: StatsCardProps) {
+export function StatsCard({ title, value, type }: StatsCardProps) {
+  // Sélectionner l'icône appropriée selon le type
+  const iconMap: Record<string, LucideIcon> = {
+    block: Blocks,
+    blockTime: Clock,
+    transactions: ArrowRightLeft,
+    users: Users
+  };
+  
+  const Icon = iconMap[type] || Blocks;
+  
+  // Formatter la valeur pour une meilleure lisibilité
+  const formattedValue = value.includes(',') 
+    ? value 
+    : value.includes('.') 
+      ? value.replace(/\./g, ',') 
+      : value;
+  
   return (
-    <Card className="p-6 bg-[#051728E5] w-full border border-[#83E9FF4D] rounded-xl shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium text-[#FFFFFF99]">
-          {title}
-        </h3>
-        <p className="text-2xl font-semibold text-white">{value}</p>
+    <Card className="p-4 bg-[#051728E5] w-full border border-[#83E9FF4D] rounded-xl shadow-sm hover:border-[#83E9FF80] transition-all">
+      <div className="flex items-center">
+        <div className="bg-[#083050] p-2 rounded-lg mr-3">
+          <Icon size={16} className="text-[#83E9FF]" />
+        </div>
+        <div className="flex flex-col">
+          <h3 className="text-xs font-medium text-[#FFFFFF99]">
+            {title}
+          </h3>
+          <p className="text-xl font-semibold text-white">{formattedValue}</p>
+        </div>
       </div>
     </Card>
   );

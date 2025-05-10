@@ -175,4 +175,19 @@ export function formatFullNumber(value: number | undefined | null, options: { pr
   const prefixWithSpace = prefix ? prefix + ' ' : '';
   
   return `${prefixWithSpace}${parts.join('.')}`;
+}
+
+export function formatFullNumberWithCurrency(value: number | undefined | null, options: { prefix?: string, currency?: string } = {}): string {
+  const { prefix = '', currency = '$' } = options;
+  
+  // Gérer les cas où value est undefined ou null
+  if (value === undefined || value === null) {
+    return currency + '0';
+  }
+  
+  // Formater le nombre complet avec séparateur de milliers
+  return currency + value.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
 } 

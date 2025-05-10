@@ -6,35 +6,62 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useState } from "react"
 
-const navigation = [
+// Define navigation groups
+const navigationGroups = [
     {
-        name: 'Dashboard',
-        href: '/',
-        icon: '/sidebar/Home.svg'
-    },
-    {
-        name: 'Explorer',
-        href: '/explorer',
-        icon: '/sidebar/Search.svg'
-    },
-    {
-        name: 'Market',
-        icon: '/sidebar/Line_up.svg',
-        hasSubmenu: true,
-        submenu: [
-            { name: 'Spot', href: '/market/spot' },
-            { name: 'Perp', href: '/market/perp' }
+        groupName: null, // No group title for Home
+        items: [
+            {
+                name: 'Home',
+                href: '/',
+                icon: '/sidebar/Home.svg'
+            },
         ]
     },
     {
-        name: 'Project',
-        href: '/project',
-        icon: '/sidebar/Folder_line.svg'
+        groupName: 'Explorer',
+        items: [
+            {
+                name: 'Home',
+                href: '/explorer',
+                icon: '/sidebar/Search.svg'
+            },
+        ]
     },
     {
-        name: 'Wallets',
-        href: '/wallets',
-        icon: '/sidebar/Wallet_alt.svg'
+        groupName: 'Market',
+        items: [
+            {
+                name: 'Spot',
+                href: '/market/spot',
+                icon: '/sidebar/Line_up.svg'
+            },
+            {
+                name: 'Perp',
+                href: '/market/perp',
+                icon: '/sidebar/Line_up.svg'
+            },
+            {
+                name: 'Wallet',
+                href: '/wallets',
+                icon: '/sidebar/Wallet_alt.svg'
+            },
+        ]
+    },
+    {
+        groupName: 'Ecosystem',
+        items: [
+            {
+                name: 'L1 Project',
+                href: '/project/l1',
+                icon: '/sidebar/Folder_line.svg'
+            },
+            {
+                name: 'EVM Project',
+                href: '/project/evm',
+                icon: '/sidebar/Folder_line.svg'
+            },
+        ]
     },
 ]
 
@@ -101,19 +128,24 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
                 {/* Navigation */}
                 <nav className="flex-1">
-                    <ul className="space-y-2">
-                        {navigation.map((item) => (
-                            <li key={item.name}>
-                                {item.hasSubmenu ? (
-                                    <div>
-                                        <button
-                                            onClick={() => toggleSubmenu(item.name)}
-                                            className={cn(
-                                                "flex items-center justify-between w-full gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
-                                                "hover:text-white"
-                                            )}
-                                        >
-                                            <div className="flex items-center gap-3">
+                    <ul className="space-y-6">
+                        {navigationGroups.map((group, groupIndex) => (
+                            <li key={groupIndex} className="space-y-2">
+                                {group.groupName && (
+                                    <div className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                        {group.groupName}
+                                    </div>
+                                )}
+                                <ul className="space-y-1">
+                                    {group.items.map((item) => (
+                                        <li key={item.name}>
+                                            <Link
+                                                href={item.href}
+                                                className={cn(
+                                                    "flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
+                                                    "hover:text-white"
+                                                )}
+                                            >
                                                 <Image
                                                     src={item.icon}
                                                     alt={item.name}
@@ -121,45 +153,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                     height={20}
                                                 />
                                                 <span>{item.name}</span>
-                                            </div>
-                                            {openSubmenu === item.name ? (
-                                                <ChevronDown className="h-4 w-4" />
-                                            ) : (
-                                                <ChevronRight className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                        {openSubmenu === item.name && (
-                                            <ul className="pl-8 mt-1 space-y-1">
-                                                {item.submenu?.map((subItem) => (
-                                                    <li key={subItem.name}>
-                                                        <Link
-                                                            href={subItem.href}
-                                                            className="block px-3 py-1 text-sm text-white hover:text-[#83E9FF] transition-colors"
-                                                        >
-                                                            {subItem.name}
-                                                        </Link>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <Link
-                                        href={item.href!}
-                                        className={cn(
-                                            "flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
-                                            "hover:text-white"
-                                        )}
-                                    >
-                                        <Image
-                                            src={item.icon}
-                                            alt={item.name}
-                                            width={20}
-                                            height={20}
-                                        />
-                                        <span>{item.name}</span>
-                                    </Link>
-                                )}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
                             </li>
                         ))}
                     </ul>

@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen p-4">
-      < Header customTitle="Dashboard" />
+      < Header customTitle="Home" />
       <div className="p-2 lg:hidden">
         <SearchBar placeholder="Search..." />
       </div>

@@ -1,10 +1,26 @@
 import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
-import { formatFullNumber } from "@/lib/formatting";
 
 export function StatsGrid() {
   const { stats, isLoading, error } = useDashboardStats();
+
+  // Fonction pour formater les nombres avec plus de lisibilité
+  const formatStat = (value: number, options?: { prefix?: string; decimals?: number }) => {
+    const { prefix = '', decimals = 0 } = options || {};
+    
+    // Pour les grands nombres (millions+), formater avec K, M, B
+    if (value >= 1000000000) {
+      return `${prefix}${(value / 1000000000).toFixed(decimals)}B`;
+    } else if (value >= 1000000) {
+      return `${prefix}${(value / 1000000).toFixed(decimals)}M`;
+    } else if (value >= 1000) {
+      return `${prefix}${(value / 1000).toFixed(decimals)}K`;
+    }
+    
+    // Formater les petits nombres normalement
+    return `${prefix}${value.toLocaleString('en-US', { maximumFractionDigits: decimals })}`;
+  };
 
   // Afficher un état de chargement
   if (isLoading) {
@@ -34,23 +50,23 @@ export function StatsGrid() {
   const statsItems = stats ? [
     {
       title: "Users",
-      value: formatFullNumber(stats.numberOfUsers),
+      value: formatStat(stats.numberOfUsers),
     },
     {
       title: "Daily Volume",
-      value: formatFullNumber(stats.dailyVolume, { prefix: '$' }),
+      value: formatStat(stats.dailyVolume, { prefix: '$', decimals: 2 }),
     },
     {
       title: "Bridged USDC",
-      value: formatFullNumber(stats.bridgedUsdc, { prefix: '$' }),
+      value: formatStat(stats.bridgedUsdc, { prefix: '$', decimals: 1 }),
     },
     {
       title: "HYPE Staked",
-      value: formatFullNumber(stats.totalHypeStake),
+      value: formatStat(stats.totalHypeStake, { decimals: 1 }),
     },
     {
       title: "Vaults TVL",
-      value: formatFullNumber(stats.vaultsTvl, { prefix: '$' }),
+      value: formatStat(stats.vaultsTvl, { prefix: '$', decimals: 1 }),
     },
   ] : [];
 
