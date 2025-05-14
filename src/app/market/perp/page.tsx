@@ -13,7 +13,7 @@ export default function MarketPerp() {
   return (
     <div className="min-h-screen">
       <div className="p-4">
-        < Header customTitle="Market Perpetual" />
+        < Header customTitle="Market Perpetual" showFees={true} />
         <MarketStatsSectionPerp />
         <PerpTokensSection />
       </div>

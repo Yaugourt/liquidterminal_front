@@ -2,15 +2,20 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
+import { useWallets } from "@/store/use-wallets";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function PortfolioStats() {
   const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances();
-  const { data: spotMarketTokens, isLoading: isSpotMarketLoading } = useSpotTokens({ limit: 100 });
+  const { data: spotMarketTokens, isLoading: isSpotMarketLoading, refetch: refetchSpotMarket } = useSpotTokens({ limit: 100 });
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { getActiveWallet } = useWallets();
+  const activeWallet = getActiveWallet();
 
   // Calculer les statistiques du portefeuille
   const stats = useMemo(() => {
@@ -55,28 +60,76 @@ export function PortfolioStats() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await refresh();
+      await Promise.all([refresh(), refetchSpotMarket()]);
     } catch (error) {
       console.error("Erreur lors du rafraîchissement:", error);
     } finally {
       setTimeout(() => setIsRefreshing(false), 1000);
     }
-  }, [refresh]);
+  }, [refresh, refetchSpotMarket]);
+
+  // Fonction pour copier l'adresse dans le presse-papier
+  const copyToClipboard = useCallback(() => {
+    if (activeWallet?.address) {
+      navigator.clipboard.writeText(activeWallet.address)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch(err => {
+          console.error('Erreur lors de la copie :', err);
+        });
+    }
+  }, [activeWallet?.address]);
 
   return (
     <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 relative">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-white text-lg">Statistiques du portefeuille</h3>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing || isLoading}
-          className="text-[#83E9FF] hover:text-white hover:bg-[#1692ADB2]"
-        >
-          <RefreshCw className={`h-4 w-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Actualiser
-        </Button>
+        <div className="flex items-center">
+          <h3 className="text-white text-lg">Statistiques du portefeuille</h3>
+          {activeWallet && (
+            <div className="flex items-center ml-3">
+              <span className="text-[#FFFFFF99] text-xs truncate max-w-[160px]">
+                {activeWallet.address}
+              </span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 p-0 ml-1 text-[#83E9FF]"
+                      onClick={copyToClipboard}
+                    >
+                      {copied ? <Check size={14} /> : <Copy size={14} />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{copied ? "Adresse copiée !" : "Copier l'adresse"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          )}
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleRefresh}
+                disabled={isRefreshing || isLoading}
+                className="text-[#83E9FF] hover:text-white hover:bg-[#1692ADB2]"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Actualiser</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
       {(isLoading || isSpotMarketLoading) ? (

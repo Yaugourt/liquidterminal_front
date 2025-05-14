@@ -38,10 +38,10 @@ export function StatsCard({ title, value, type }: StatsCardProps) {
           <Icon size={16} className="text-[#83E9FF]" />
         </div>
         <div className="flex flex-col">
-          <h3 className="text-xs font-medium text-[#FFFFFF99]">
+          <h3 className="text-xs   text-[#FFFFFF99] font-serif">
             {title}
           </h3>
-          <p className="text-xl font-semibold text-white">{formattedValue}</p>
+          <p className="text-xl text-white">{formattedValue}</p>
         </div>
       </div>
     </Card>

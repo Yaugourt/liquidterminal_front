@@ -6,7 +6,7 @@ export function PerpTokensSection() {
     return (
         <div>
             <PerpTokenTabs />
-            <Card className="border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] overflow-hidden">
+            <Card className="bg-[#051728]/60 backdrop-blur-md border border-[#83E9FF20] shadow-lg hover:border-[#83E9FF30] transition-all duration-300 overflow-hidden rounded-xl">
                 <PerpTokenTable />
             </Card>
         </div>

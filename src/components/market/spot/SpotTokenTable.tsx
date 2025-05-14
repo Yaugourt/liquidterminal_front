@@ -79,22 +79,22 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
   // Fonction pour obtenir la classe du bouton de tri
   const getSortButtonClass = (field: string): string => {
     const isActive = sortField === field;
-    return `text-[#FFFFFF99] font-normal hover:text-white p-0 ml-auto ${
+    return `font-normal hover:text-white p-0 ml-auto transition-colors duration-200 ${
       !isSortable(field) ? 'cursor-default opacity-50' : ''
-    } ${isActive ? 'text-[#83E9FF]' : ''}`;
+    } ${isActive ? 'text-[#83E9FF]' : 'text-[#FFFFFF99]'}`;
   };
 
   // Fonction pour obtenir l'icône appropriée pour chaque colonne
   const getColumnIcon = (field: string) => {
     switch (field) {
       case "marketCap":
-        return <CreditCard className="mr-1.5 h-3.5 w-3.5" />;
+        return <CreditCard className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
       case "volume":
-        return <BarChart2 className="mr-1.5 h-3.5 w-3.5" />;
+        return <BarChart2 className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
       case "supply":
-        return <Package className="mr-1.5 h-3.5 w-3.5" />;
+        return <Package className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
       case "change24h":
-        return <TrendingUp className="mr-1.5 h-3.5 w-3.5" />;
+        return <TrendingUp className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
       default:
         return null;
     }
@@ -104,7 +104,7 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Loader2 className="w-10 h-10 mb-4 text-[#83E9FF4D] animate-spin" />
-        <p className="text-white text-lg">Loading...</p>
+        <p className="text-white text-lg font-serif">Loading...</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg">Error loading data</p>
+        <p className="text-white text-lg font-serif">Error loading data</p>
         <p className="text-[#FFFFFF80] text-sm mt-2">{error.message}</p>
       </div>
     );
@@ -123,38 +123,38 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg">No data available</p>
+        <p className="text-white text-lg font-serif">No data available</p>
         <p className="text-[#FFFFFF80] text-sm mt-2">Check back later for updated market information</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full rounded-xl">
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent rounded-xl">
       <Table className="min-w-[650px]">
         <TableHeader>
-          <TableRow className="border-none bg-[#051728]">
-            <TableHead className="text-[#FFFFFF99] font-medium py-3 bg-transparent pl-4 w-[120px]">
+          <TableRow className="border-none bg-transparent">
+            <TableHead className="text-xs uppercase tracking-wide font-medium py-4 bg-transparent pl-6 w-[120px]">
               <Button
                 variant="ghost"
                 className={getSortButtonClass("name")}
                 disabled={!isSortable("name")}
               >
                 Name
-                <ArrowUpDown className="ml-2 h-4 w-4 opacity-60" />
+                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
               </Button>
             </TableHead>
-            <TableHead className="text-[#FFFFFF99] font-medium py-3 bg-transparent w-[100px]">
+            <TableHead className="text-xs uppercase tracking-wide font-medium py-4 bg-transparent w-[100px]">
               <Button
                 variant="ghost"
                 className={getSortButtonClass("price")}
                 disabled={!isSortable("price")}
               >
                 Price
-                <ArrowUpDown className="ml-2 h-4 w-4 opacity-60" />
+                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-medium py-3 bg-transparent">
+            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
               <Button
                 variant="ghost"
                 onClick={() => handleSort("marketCap")}
@@ -164,10 +164,10 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
                   {getColumnIcon("marketCap")}
                   Market Cap
                 </div>
-                <ArrowUpDown className={`ml-2 h-4 w-4 ${sortField === 'marketCap' ? 'opacity-100' : 'opacity-60'}`} />
+                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'marketCap' ? 'opacity-100' : 'opacity-60'}`} />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-medium py-3 bg-transparent">
+            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
               <Button
                 variant="ghost"
                 onClick={() => handleSort("volume")}
@@ -177,10 +177,10 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
                   {getColumnIcon("volume")}
                   Volume
                 </div>
-                <ArrowUpDown className={`ml-2 h-4 w-4 ${sortField === 'volume' ? 'opacity-100' : 'opacity-60'}`} />
+                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'volume' ? 'opacity-100' : 'opacity-60'}`} />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-medium py-3 bg-transparent">
+            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
               <Button
                 variant="ghost"
                 className={getSortButtonClass("supply")}
@@ -190,10 +190,10 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
                   {getColumnIcon("supply")}
                   Supply
                 </div>
-                <ArrowUpDown className="ml-2 h-4 w-4 opacity-60" />
+                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
               </Button>
             </TableHead>
-            <TableHead className="text-right text-[#FFFFFF99] font-medium py-3 bg-transparent pr-4">
+            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent pr-6">
               <Button
                 variant="ghost"
                 onClick={() => handleSort("change24h")}
@@ -203,32 +203,32 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
                   {getColumnIcon("change24h")}
                   Change
                 </div>
-                <ArrowUpDown className={`ml-2 h-4 w-4 ${sortField === 'change24h' ? 'opacity-100' : 'opacity-60'}`} />
+                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'change24h' ? 'opacity-100' : 'opacity-60'}`} />
               </Button>
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="bg-[#051728]/80 backdrop-blur-sm">
+        <TableBody className="bg-transparent">
           {tokens.map((token) => (
             <TableRow
               key={token.name}
-              className="border-b border-[#FFFFFF1A] hover:bg-[#83E9FF0A] cursor-pointer transition-colors"
+              className="border-b border-[#FFFFFF0A] hover:bg-[#83E9FF0A] cursor-pointer transition-all"
               onClick={() => handleTokenClick(token.name)}
             >
-              <TableCell className="py-4 pl-4">
-                <div className="flex items-center gap-2">
+              <TableCell className="py-4 pl-6">
+                <div className="flex items-center gap-3">
                   {token.logo ? (
-                    <div className="relative w-7 h-7 rounded-full overflow-hidden border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)]">
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)] backdrop-blur-sm">
                       <Image
                         src={token.logo}
                         alt={token.name}
-                        width={28}
-                        height={28}
+                        width={32}
+                        height={32}
                         className="object-contain"
                       />
                     </div>
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
                       <span className="text-[#83E9FF] text-xs font-medium">{token.name.charAt(0)}</span>
                     </div>
                   )}
@@ -248,7 +248,7 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
                 {formatNumber(token.supply, "supply")}
               </TableCell>
               <TableCell
-                className={`text-right pr-4 text-sm md:text-base font-medium ${token.change24h >= 0 ? "text-green-500" : "text-red-500"}`}
+                className={`text-right pr-6 text-sm md:text-base font-medium ${token.change24h >= 0 ? "text-[#4ADE80]" : "text-[#F87171]"}`}
               >
                 {token.change24h >= 0 ? "+" : ""}
                 {formatNumber(token.change24h, "change")}%
@@ -258,9 +258,9 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
         </TableBody>
       </Table>
       
-      <div className="flex justify-between items-center mt-4 px-4 pb-2">
-        <div className="text-[#FFFFFF99] text-sm">
-          Page {page} sur {totalPages}
+      <div className="flex justify-between items-center mt-5 px-6 pb-4 pt-4 border-t border-[#FFFFFF0A]">
+        <div className="text-[#FFFFFF80] text-xs">
+          Page {page} of {totalPages}
         </div>
         <div className="flex gap-2">
           <Button
@@ -268,18 +268,18 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
             size="sm"
             onClick={() => updateParams({ page: page - 1 })}
             disabled={page <= 1}
-            className="border-[#83E9FF33] text-white hover:bg-[#83E9FF0A] hover:border-[#83E9FF66] transition-colors rounded-lg"
+            className="border-[#83E9FF33] text-white bg-[#FFFFFF08] hover:bg-[#83E9FF15] hover:border-[#83E9FF66] transition-all rounded-md px-4 py-1.5 h-auto text-xs"
           >
-            Précédent
+            Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => updateParams({ page: page + 1 })}
             disabled={page >= totalPages}
-            className="border-[#83E9FF33] text-white hover:bg-[#83E9FF0A] hover:border-[#83E9FF66] transition-colors rounded-lg"
+            className="border-[#83E9FF33] text-white bg-[#FFFFFF08] hover:bg-[#83E9FF15] hover:border-[#83E9FF66] transition-all rounded-md px-4 py-1.5 h-auto text-xs"
           >
-            Suivant
+            Next
           </Button>
         </div>
       </div>

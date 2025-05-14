@@ -28,7 +28,7 @@ export default function TransactionPage() {
 
     return (
         <div className="min-h-screen">
-            < Header customTitle="Explorer" />
+            < Header customTitle="Explorer" showFees={true} />
             <div className="min-h-screen p-4 lg:p-12 space-y-6">
                 <button
                     onClick={() => router.back()}

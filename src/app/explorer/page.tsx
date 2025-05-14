@@ -10,7 +10,7 @@ import { HoldersActivityChart } from "@/components/explorer/HoldersActivityChart
 export default function Explorer() {
   return (
     <div className="min-h-screen">
-      <Header customTitle="Explorer" />
+      <Header customTitle="Explorer" showFees={true} />
 
       <div className="p-4 space-y-6">
         {/* Simplified Stats Section en haut */}

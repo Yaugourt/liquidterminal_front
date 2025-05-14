@@ -1,0 +1,6 @@
+/* Classe pour tous les titres */
+h1, h2, h3, h4, h5, h6,
+.title, 
+.heading {
+  font-family: 'Higuen Elegant Serif', serif !important;
+} 

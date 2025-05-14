@@ -11,15 +11,27 @@ import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances"
 import { useWallets } from "@/store/use-wallets";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 
-export function AssetsSection() {
-  const [viewType, setViewType] = useState<"spot" | "perp">("spot");
+// Ajouter l'interface pour les props
+interface AssetsSectionProps {
+  initialViewType?: "spot" | "perp";
+  addressOverride?: string;
+}
+
+export function AssetsSection({ initialViewType = "spot", addressOverride }: AssetsSectionProps) {
+  const [viewType, setViewType] = useState<"spot" | "perp">(initialViewType);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [activeWalletDisplay, setActiveWalletDisplay] = useState<string | null>(null);
   
-  // Utiliser les hooks pour récupérer les balances
-  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances();
-  const { data: spotMarketTokens, isLoading: isSpotMarketLoading } = useSpotTokens({ limit: 100 });
+  // Utiliser les hooks pour récupérer les balances et les données de marché
+  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances(addressOverride);
+  const { data: spotMarketTokens, isLoading: isSpotMarketLoading, refetch: refetchSpotMarket } = useSpotTokens({ 
+    limit: 200, // Augmenté pour avoir plus de chances de trouver tous les tokens
+    defaultParams: {
+      sortBy: "volume",
+      sortOrder: "desc",
+    } 
+  });
   const { getActiveWallet } = useWallets();
   const activeWallet = getActiveWallet();
   
@@ -30,36 +42,76 @@ export function AssetsSection() {
   
   // Effet pour mettre à jour l'affichage du wallet actif
   useEffect(() => {
-    if (activeWallet) {
+    if (addressOverride) {
+      // Si nous avons une adresse override, l'utiliser pour l'affichage
+      setActiveWalletDisplay(`${addressOverride.slice(0, 6)}...${addressOverride.slice(-4)}`);
+    } else if (activeWallet) {
       const display = activeWallet.name || 
         `${activeWallet.address.slice(0, 6)}...${activeWallet.address.slice(-4)}`;
       setActiveWalletDisplay(display);
     } else {
       setActiveWalletDisplay(null);
     }
-  }, [activeWallet]);
+  }, [activeWallet, addressOverride]);
+
+  // Normaliser les noms de token pour faciliter la correspondance
+  const normalizeTokenName = useCallback((name: string): string => {
+    return name.toLowerCase().trim();
+  }, []);
   
-  // Convertir les balances Hyperliquid en holdings enrichis avec le marché spot
+  // Convertir les balances en holdings enrichis avec le marché spot
   const convertedHoldings = useMemo(() => {
     if (viewType === "spot" && spotBalances && spotMarketTokens) {
       return spotBalances.map(balance => {
-        const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === balance.coin.toLowerCase());
+        const normalizedBalanceCoin = normalizeTokenName(balance.coin);
+        
+        // Rechercher le token dans les données de marché en normalisant les noms
+        const marketToken = spotMarketTokens.find(t => {
+          const normalizedMarketName = normalizeTokenName(t.name);
+          return normalizedMarketName === normalizedBalanceCoin;
+        });
+        
+        // Calculer la valeur totale basée sur le prix du marché si disponible
+        const totalValue = marketToken 
+          ? parseFloat(balance.total) * parseFloat(marketToken.price.toString()) 
+          : parseFloat(balance.total);
+        
         return {
           coin: balance.coin,
           token: "USDC",
           total: balance.total,
-          entryNtl: balance.entryNtl,
+          entryNtl: balance.entryNtl || "0",
+          value: marketToken ? totalValue.toFixed(2) : undefined,
           price: marketToken ? marketToken.price.toString() : undefined,
           pnlPercentage: marketToken ? marketToken.change24h.toString() : undefined,
           logo: marketToken ? marketToken.logo : undefined,
+          marketCap: marketToken ? marketToken.marketCap : undefined,
+          volume24h: marketToken ? marketToken.volume : undefined,
         };
       }) as Holding[];
-    } else if (viewType === "perp" && perpPositions) {
+    } else if (viewType === "perp" && perpPositions && spotMarketTokens) {
       return perpPositions.assetPositions.map(position => {
-        const marketToken = spotMarketTokens?.find(t => t.name.toLowerCase() === position.position.coin.toLowerCase());
+        const normalizedPositionCoin = normalizeTokenName(position.position.coin);
+        
+        // Rechercher le token dans les données de marché
+        const marketToken = spotMarketTokens.find(t => {
+          const normalizedMarketName = normalizeTokenName(t.name);
+          return normalizedMarketName === normalizedPositionCoin;
+        });
+        
         const szi = parseFloat(position.position.szi);
         const entryPx = parseFloat(position.position.entryPx);
         const positionValue = Math.abs(szi) * entryPx;
+        
+        // Prix actuel du marché pour calculer le PNL
+        const currentPrice = marketToken ? parseFloat(marketToken.price.toString()) : entryPx;
+        const pnl = szi > 0 
+          ? (currentPrice - entryPx) * Math.abs(szi) 
+          : (entryPx - currentPrice) * Math.abs(szi);
+        
+        const pnlPercentage = entryPx > 0 
+          ? (pnl / (entryPx * Math.abs(szi))) * 100 
+          : 0;
         
         return {
           coin: position.position.coin,
@@ -68,24 +120,27 @@ export function AssetsSection() {
           positionValue: positionValue.toString(),
           entryPrice: position.position.entryPx,
           liquidation: position.position.liquidationPx,
+          currentPrice: marketToken ? marketToken.price.toString() : undefined,
+          pnl: pnl.toFixed(2),
+          pnlPercentage: pnlPercentage.toFixed(2),
           logo: marketToken?.logo,
         };
       }) as PerpHolding[];
     }
     return [];
-  }, [spotBalances, spotMarketTokens, perpPositions, viewType]);
+  }, [spotBalances, spotMarketTokens, perpPositions, viewType, normalizeTokenName]);
   
   // Fonction pour rafraîchir manuellement les données
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await refresh();
+      await Promise.all([refresh(), refetchSpotMarket()]);
     } catch (error) {
       console.error("Erreur lors du rafraîchissement:", error);
     } finally {
       setTimeout(() => setIsRefreshing(false), 1000);
     }
-  }, [refresh]);
+  }, [refresh, refetchSpotMarket]);
   
   // Fonction pour changer le type de vue
   const handleViewTypeChange = useCallback((type: "spot" | "perp") => {
@@ -160,10 +215,10 @@ export function AssetsSection() {
             variant="ghost" 
             size="sm"
             onClick={handleRefresh}
-            disabled={isRefreshing || isLoading}
+            disabled={isRefreshing || isLoading || isSpotMarketLoading}
             className="text-[#83E9FF] hover:text-white hover:bg-[#1692ADB2]"
           >
-            <RefreshCw className={`h-4 w-4 mr-1 ${(isRefreshing || isLoading) ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-1 ${(isRefreshing || isLoading || isSpotMarketLoading) ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualiser</span>
           </Button>
         </div>
@@ -173,7 +228,7 @@ export function AssetsSection() {
         <CardContent className="p-0">
           <AssetsTable 
             holdings={convertedHoldings} 
-            loading={isLoading || isRefreshing} 
+            loading={isLoading || isRefreshing || isSpotMarketLoading} 
             type={viewType}
           />
         </CardContent>

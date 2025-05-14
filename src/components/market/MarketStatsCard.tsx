@@ -18,19 +18,19 @@ export const MarketStatsCard = memo(function MarketStatsCard({
   return (
     <Card 
       className={cn(
-        "p-4 bg-[#051728E5] border-2 border-[#83E9FF4D]", 
-        "shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]", 
-        "transition-all duration-200 hover:border-[#83E9FF80]",
+        "p-5 bg-[#051728]/60 backdrop-blur-md border border-[#83E9FF20]", 
+        "shadow-lg rounded-xl", 
+        "transition-all duration-200 hover:border-[#83E9FF30] hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)]",
         className
       )}
     >
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white text-lg font-semibold">{title}</h3>
+      <div className="flex justify-between items-center mb-5">
+        <h3 className="text-white text-lg font-serif">{title}</h3>
         {headerRight}
       </div>
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
-          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
+          <Loader2 className="w-7 h-7 text-[#83E9FF4D] animate-spin" />
         </div>
       ) : (
         children

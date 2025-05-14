@@ -2,14 +2,12 @@
 
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
-import { usePageTitle } from "@/store/use-page-title";
 
 export default function L1ProjectPage() {
-  const { setTitle } = usePageTitle();
 
   return (
     <div className="min-h-screen p-4">
-      <Header customTitle="L1 Project" />
+      <Header customTitle="L1 Project" showFees={true} />
       <div className="p-2 lg:hidden">
         <SearchBar placeholder="Search..." />
       </div>

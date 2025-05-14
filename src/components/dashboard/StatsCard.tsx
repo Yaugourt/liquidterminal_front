@@ -25,14 +25,14 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
     <Card className="p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm hover:border-[#83E9FF66] transition-all">
       <div className="flex items-center gap-2 mb-2">
         {getIcon()}
-        <h3 className="text-xs sm:text-sm text-[#FFFFFF99]">{title}</h3>
+        <h3 className="text-xs sm:text-sm text-[#FFFFFF99] font-serif">{title}</h3>
       </div>
       
       {isLoading ? (
         <div className="h-8 bg-[#1692AD22] animate-pulse rounded" />
       ) : (
         <div className="flex items-baseline gap-2">
-          <span className="text-base sm:text-lg text-white font-bold">
+          <span className="text-base sm:text-lg text-white ">
             {value}
           </span>
           {change && (

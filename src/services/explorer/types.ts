@@ -157,9 +157,22 @@ export interface UseTransactionsResult {
 }
 
 export interface PortfolioPeriodData {
-  accountValueHistory: [number, string][];
+  accountValueHistory?: [number, string][];
   pnlHistory: [number, string][];
   vlm: string;
 }
 
-export type PortfolioApiResponse = [string, PortfolioPeriodData][]; 
+export type PortfolioApiResponse = [string, PortfolioPeriodData][];
+
+// Update TransactionType to match the actual return type from useTransactions
+export interface TransactionType {
+  hash: string;
+  method: string;
+  age: string;
+  from: string;
+  to: string;
+  amount: string;
+  token: string;
+  price?: string;
+  total?: string; // Make total optional
+} 

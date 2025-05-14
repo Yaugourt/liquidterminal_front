@@ -119,8 +119,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             height={24} 
                             className="h-6 w-6" 
                         />
-                        <h1 className="hidden lg:block text-sm font-bold">
-                            <span className="text-[#83E9FF]">Liquid</span>
+                        <h1 className="hidden lg:block text-sm font-bold font-serif">
+                            <span className="text-[#83E9FF]">Liquid </span>
                             <span className="text-white">Terminal</span>
                         </h1>
                     </div>

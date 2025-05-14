@@ -1,45 +1,72 @@
 "use client";
 
-import { useState } from "react";
-import { usePageTitle } from "@/store/use-page-title";
+import { useState, useEffect } from "react";
 import { SearchBar } from "@/components/SearchBar";
-import {  Header } from "@/components/Header";
+import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/Sidebar";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { TrendingTokens } from "@/components/dashboard/TrendingTokens";
 import { TabSection } from "@/components/dashboard/TabSection";
 import { ChartSection } from "@/components/dashboard/ChartSection";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
 export default function Home() {
-  const { setTitle } = usePageTitle();
   const { width } = useWindowSize();
   const chartHeight = width >= 1024 ? 345 : width >= 640 ? 296 : 246;
   const [activeTab, setActiveTab] = useState("vault");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    // Fermer automatiquement le sidebar sur les écrans plus larges
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
   return (
-    <div className="min-h-screen p-4">
-      < Header customTitle="Home" />
-      <div className="p-2 lg:hidden">
-        <SearchBar placeholder="Search..." />
+    <div className="min-h-screen">
+      {/* Mobile menu toggle button - visible uniquement sur mobile */}
+      <div className="fixed top-4 left-4 z-50 lg:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="bg-[#051728] hover:bg-[#112941]"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <Menu className="h-6 w-6 text-white" />
+        </Button>
       </div>
-
-      <main className="p-3 sm:p-4 lg:p-6 xl:p-12 space-y-4 sm:space-y-6">
-        <StatsGrid />
-
-        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 w-full">
-          <TrendingTokens type="perp" />
-          <TrendingTokens type="spot" />
+      
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      
+      {/* Main content */}
+      <div className="">
+        <Header customTitle="Home" showFees={true} />
+        
+        <div className="p-2 lg:hidden">
+          <SearchBar placeholder="Search..." />
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:gap-4">
-          <TabSection
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-          />
-          <ChartSection chartHeight={chartHeight} />
-        </div>
-      </main>
+        <main className="px-3 py-3 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-4 sm:space-y-6 max-w-[1920px] mx-auto">
+          <StatsGrid />
+
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4 w-full">
+            <TrendingTokens type="perp" />
+            <TrendingTokens type="spot" />
+          </div>
+
+          <div className="flex flex-col lg:flex-row lg:gap-4">
+            <TabSection
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+            <ChartSection chartHeight={chartHeight} />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

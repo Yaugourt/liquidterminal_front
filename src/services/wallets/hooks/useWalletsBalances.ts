@@ -12,9 +12,10 @@ import { HyperliquidBalance, HyperliquidPerpResponse } from '../types';
 
 /**
  * Hook pour récupérer les balances de tous les wallets suivis
+ * @param overrideAddress Adresse optionnelle pour récupérer les balances d'une adresse spécifique
  * @returns Les balances de tous les wallets, l'état de chargement, les erreurs et une fonction de rafraîchissement
  */
-export const useWalletsBalances = () => {
+export const useWalletsBalances = (overrideAddress?: string) => {
   const { wallets, activeWalletId } = useWallets();
   const activeWallet = wallets.find(w => w.id === activeWalletId);
   
@@ -24,8 +25,11 @@ export const useWalletsBalances = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchBalances = async () => {
-    if (!activeWallet?.address) {
-      console.warn('No active wallet address found');
+    // Utiliser l'adresse override si fournie, sinon utiliser l'adresse du wallet actif
+    const addressToUse = overrideAddress || activeWallet?.address;
+    
+    if (!addressToUse) {
+      console.warn('No address found');
       setSpotBalances([]);
       setPerpPositions(null);
       setIsLoading(false);
@@ -36,12 +40,12 @@ export const useWalletsBalances = () => {
     setError(null);
 
     try {
-      console.log('Fetching balances for wallet:', activeWallet.address);
+      console.log('Fetching balances for address:', addressToUse);
 
       // Fetch spot balances
       const spotRequest = {
         type: 'spotClearinghouseState',
-        user: activeWallet.address
+        user: addressToUse
       };
       console.log('Sending spot request:', spotRequest);
       const spotResponse = await fetchHyperliquidBalances(spotRequest);
@@ -51,7 +55,7 @@ export const useWalletsBalances = () => {
       // Fetch perpetual positions
       const perpRequest = {
         type: 'clearinghouse',
-        user: activeWallet.address
+        user: addressToUse
       };
       console.log('Sending perp request:', perpRequest);
       const perpResponse = await fetchHyperliquidPerpPositions(perpRequest);
@@ -70,7 +74,7 @@ export const useWalletsBalances = () => {
 
   useEffect(() => {
     fetchBalances();
-  }, [activeWallet?.address]);
+  }, [activeWallet?.address, overrideAddress]);
 
   return {
     spotBalances,

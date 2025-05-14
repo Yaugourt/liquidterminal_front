@@ -10,11 +10,12 @@ import { Card } from "@/components/ui/card";
 import { formatLargeNumber } from "@/lib/formatting";
 import { useTopTokens } from "@/services/dashboard/hooks/useTopSpotTokens";
 import { useTopPerpTokens } from "@/services/dashboard/hooks/useTopPerpTokens";
-import { Loader2, ArrowUpDown, TrendingUp, Coins } from "lucide-react";
+import { Loader2, ArrowUpDown,ArrowRight } from "lucide-react";
 import { TrendingTokensProps } from "@/components/types/dashboard.types";
 import { useState } from "react";
 import { PerpMarketData } from "@/services/market/perp/types";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type SpotSortType = "marketcap" | "volume" | "change24h" | "price" | "name";
 type PerpSortType = "openInterest" | "volume" | "change24h" | "price" | "name";
@@ -47,6 +48,9 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
   const error = type === "spot" ? errorSpot : errorPerp;
   const totalVolume = type === "spot" ? spotTotalVolume : perpTotalVolume;
   const updateParams = type === "spot" ? updateSpotParams : updatePerpParams;
+  
+  // Page destination based on type
+  const destinationPage = type === "spot" ? "/market/spot" : "/market/perp";
 
   // Obtenir la classe de couleur en fonction du changement de prix
   const getChangeColorClass = (change: number) => {
@@ -92,27 +96,36 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
   const tableTitle = title || (type === "perp" ? "Top Perp Tokens" : "Top Spot Tokens");
 
   return (
-    <div className="w-full md:w-[48%] lg:w-[49%]">
-      <div className="flex justify-between items-center mb-3 w-full">
-        <div className="flex items-center gap-2">
-       
-          <h3 className="text-white font-medium text-lg">{tableTitle}</h3>
+    <div className="w-full md:w-[49%] lg:w-[49.5%]">
+      <div className="flex items-center justify-between mb-3 w-full">
+        <div className="flex-shrink-0">
+          <h3 className="text-white font-medium text-lg font-serif">{tableTitle}</h3>
         </div>
-        <div className="flex gap-4 sm:gap-6">
-          <div className="text-white">
-            <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Volume:</span>
-            <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
-              ${formatLargeNumber(totalVolume || 0, { decimals: 2 })}
-            </span>
-          </div>
-          <div className="text-white">
-            <span className="text-[#FFFFFFCC] text-xs sm:text-sm font-normal">Tokens:</span>
-            <span className="ml-2 text-[#83E9FF] text-base sm:text-[20px] font-medium text-right">
-              {tokens?.length || 0}
-            </span>
-          </div>
+        
+        <div className="flex-grow flex justify-center items-center text-white whitespace-nowrap">
+          <span className="text-[#FFFFFFCC] text-xs">Volume:</span>
+          <span className="ml-2 text-[#83E9FF] text-base font-medium">
+            ${totalVolume ? totalVolume.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }) : '0.00'}
+          </span>
+        </div>
+        
+        <div className="flex-grow-0">
+          <Link href={destinationPage} passHref>
+            <Button 
+              variant="ghost" 
+              className="text-[#83E9FF] hover:text-white hover:bg-transparent transition-colors py-1 px-2 h-auto"
+              size="sm"
+            >
+              <span className="text-xs mr-1">See All</span>
+              <ArrowRight className="h-3 w-3" />
+            </Button>
+          </Link>
         </div>
       </div>
+      
       <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
           <Table className="border-separate border-spacing-0 rounded-lg min-w-[400px]">

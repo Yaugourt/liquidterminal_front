@@ -178,7 +178,7 @@ const TableHeaderComponent = ({
         </TableHead>
         <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
           <SortableColumnHeader 
-            label="PNL" 
+            label="Value" 
             sortKey="pnl" 
             onSort={onSort}
             className="ml-auto justify-end w-full" 
@@ -191,7 +191,7 @@ const TableHeaderComponent = ({
 
 export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    key: type === 'spot' ? 'total' : null,
+    key: type === 'spot' ? 'totalValue' : 'positionValueNum',
     direction: "desc",
   });
   const [isClient, setIsClient] = useState(false);
@@ -221,15 +221,21 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
         };
       });
     } else if (type === 'spot' && spotMarketTokens) {
-      return (holdings as Holding[]).map((holding) => ({
-        id: `${holding.coin}-${holding.token}`,
-        ...holding,
-        totalValue: parseFloat(holding.entryNtl),
-        price: holding.price ? parseFloat(holding.price) : (parseFloat(holding.entryNtl) / parseFloat(holding.total)),
-        entryPrice: parseFloat(holding.entryNtl),
-        pnl: holding.pnl ? parseFloat(holding.pnl) : 0,
-        pnlPercentage: holding.pnlPercentage ? parseFloat(holding.pnlPercentage) : 0,
-      }));
+      return (holdings as Holding[]).map((holding) => {
+        const total = parseFloat(holding.total);
+        const price = holding.price ? parseFloat(holding.price) : 0;
+        const totalValue = total * price; // Calculer la valeur totale (price × size)
+        
+        return {
+          id: `${holding.coin}-${holding.token}`,
+          ...holding,
+          totalValue: totalValue, // Stocker la valeur calculée
+          price: holding.price ? parseFloat(holding.price) : 0,
+          entryPrice: parseFloat(holding.entryNtl),
+          pnl: holding.pnl ? parseFloat(holding.pnl) : 0,
+          pnlPercentage: holding.pnlPercentage ? parseFloat(holding.pnlPercentage) : 0,
+        };
+      });
     }
     return [];
   }, [holdings, type, perpMarkets, spotMarketTokens]);
@@ -289,18 +295,42 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   // Formater les nombres (fonctions mémorisées)
   const formatCurrency = useCallback((value: string | number) => {
     const numValue = typeof value === "string" ? parseFloat(value) : value;
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(numValue);
+    
+    if (numValue === 0) {
+      return "$0.00";
+    }
+    
+    // Différentes précisions selon la valeur
+    if (Math.abs(numValue) >= 0.1) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(numValue);
+    } else {
+      // Pour les petites valeurs, montrer plus de décimales
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: Math.abs(numValue) < 0.01 ? 4 : 2,
+      }).format(numValue);
+    }
   }, []);
 
   const formatNumber = useCallback((value: string | number) => {
     const numValue = typeof value === "string" ? parseFloat(value) : value;
+    
+    if (numValue === 0) {
+      return "0";
+    }
+    
+    // Ajuster la précision selon la valeur
+    const decimals = Math.abs(numValue) >= 1 ? 2 : Math.abs(numValue) >= 0.1 ? 3 : 4;
+    
     return new Intl.NumberFormat("en-US", {
-      maximumFractionDigits: 4,
+      maximumFractionDigits: decimals,
     }).format(numValue);
   }, []);
 
@@ -420,7 +450,7 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
                     {formatPercent(spotHolding.pnlPercentage)}
                   </TableCell>
                   <TableCell className="text-right text-white text-sm py-2 pr-4">
-                    {formatNumber(spotHolding.pnl)}
+                    {formatCurrency(spotHolding.totalValue)}
                   </TableCell>
                 </TableRow>
               );
