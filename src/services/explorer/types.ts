@@ -175,4 +175,75 @@ export interface TransactionType {
   token: string;
   price?: string;
   total?: string; // Make total optional
+}
+
+// Types pour les transferts
+export interface TransferData {
+  time: number;
+  user: string;
+  action: {
+    type: string;
+    signatureChainId: string;
+    hyperliquidChain: string;
+    destination: string;
+    token: string;
+    amount: string;
+    time: number;
+  };
+  block: number;
+  hash: string;
+  error: null | string;
+}
+
+export interface FormattedTransfer {
+  hash: string;
+  time: string;
+  from: string;
+  to: string;
+  amount: string;
+  token: string;
+  blockNumber: number;
+}
+
+export interface UseTransfersResult {
+  transfers: FormattedTransfer[] | null;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+// Types pour les déploiements
+export interface DeployData {
+  time: number;
+  user: string;
+  action: {
+    type: string;
+    registerToken2?: {
+      spec?: {
+        name: string;
+        szDecimals: number;
+        weiDecimals: number;
+      };
+      maxGas?: number;
+    };
+    // Autres propriétés possibles selon la structure API
+  };
+  block: number;
+  hash: string;
+  error: string | null;
+}
+
+export interface FormattedDeploy {
+  hash: string;
+  time: string;
+  user: string;
+  action: string;
+  blockNumber: number;
+  status: 'success' | 'error';
+  errorMessage?: string;
+}
+
+export interface UseDeploysResult {
+  deploys: FormattedDeploy[] | null;
+  isLoading: boolean;
+  error: Error | null;
 } 

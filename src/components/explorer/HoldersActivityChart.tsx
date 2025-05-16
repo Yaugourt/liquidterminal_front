@@ -1,275 +1,189 @@
 import { Card } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ActivitySquare, TrendingUp, Clock } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+import { useState } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ActivitySquare, Clock, Code, ArrowRight, Copy, ExternalLink } from "lucide-react";
+import { useTransfers } from "@/services/explorer/hooks/useTransfers";
+import { useDeploys } from "@/services/explorer/hooks/useDeploys";
 
-// Type pour les données d'activité
-interface ActivityData {
-  date: string;
-  transactions: number;
-  uniqueAddresses: number;
-  volume: number;
-}
-
-type TimeRange = "24h" | "7d" | "30d" | "all";
-type ChartMetric = "transactions" | "uniqueAddresses" | "volume";
-
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label, metric }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
-        <p className="text-[#FFFFFF99] text-xs">{label}</p>
-        <p className="text-[#83E9FF] font-medium">
-          {metric === "volume" 
-            ? `$${payload[0].value.toLocaleString()}` 
-            : payload[0].value.toLocaleString()}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
+type ActivityTab = "transfers" | "deploy";
 
 export function HoldersActivityChart() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState<TimeRange>("7d");
-  const [metric, setMetric] = useState<ChartMetric>("transactions");
-  const [activityData, setActivityData] = useState<ActivityData[]>([]);
+  const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
+  
+  // Hooks pour récupérer les données API
+  const { transfers, isLoading: isLoadingTransfers, error: transfersError } = useTransfers();
+  const { deploys, isLoading: isLoadingDeploys, error: deploysError } = useDeploys();
 
-  // Générer des données fictives
-  const generateMockData = () => {
-    const now = new Date();
-    const data: ActivityData[] = [];
-    
-    // Générer des données pour les derniers 30 jours
-    for (let i = 30; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      
-      // Formater la date selon le format souhaité
-      const dateString = date.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit'
-      });
-      
-      // Générer des valeurs aléatoires avec une tendance à la hausse
-      const baseTx = 5000 + Math.random() * 1000;
-      const baseAddresses = 2000 + Math.random() * 500;
-      const baseVolume = 1000000 + Math.random() * 200000;
-      
-      // Ajouter une tendance de croissance
-      const growthFactor = 1 + (i / 30) * 0.5;
-      
-      data.push({
-        date: dateString,
-        transactions: Math.round(baseTx * growthFactor),
-        uniqueAddresses: Math.round(baseAddresses * growthFactor),
-        volume: Math.round(baseVolume * growthFactor)
-      });
+  // Fonction pour tronquer un hash
+  const truncateHash = (hash: string) => {
+    if (hash.length > 12) {
+      return `${hash.substring(0, 6)}...${hash.substring(hash.length - 4)}`;
     }
-    
-    return data;
+    return hash;
   };
 
-  // Filtrer les données selon la plage de temps sélectionnée
-  const getFilteredData = () => {
-    switch(timeRange) {
-      case "24h":
-        return activityData.slice(-2);
-      case "7d":
-        return activityData.slice(-8);
-      case "30d":
-        return activityData;
-      case "all":
-        return activityData;
-      default:
-        return activityData;
-    }
-  };
-
-  // Simuler le chargement des données
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const mockData = generateMockData();
-      setActivityData(mockData);
-      setIsLoading(false);
-    }, 1200);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Libellé pour la métrique sélectionnée
-  const metricLabel = {
-    transactions: "Transactions",
-    uniqueAddresses: "Unique Addresses",
-    volume: "Volume ($)"
-  };
-
-  // Données filtrées selon la plage de temps
-  const filteredData = getFilteredData();
+  // Limiter les déploiements à 5 éléments
+  const limitedDeploys = deploys?.slice(0, 5) || [];
+  
+  // Limiter les transferts à 5 éléments
+  const limitedTransfers = transfers?.slice(0, 5) || [];
 
   return (
-    <Card className="bg-[#051728E5] rounded-xl border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b border-[#83E9FF33]">
+    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <ActivitySquare className="w-5 h-5 mr-2 text-[#83E9FF]" />
-          <h3 className="text-white text-lg font-medium">Holders Activity</h3>
+          <h3 className="text-white text-lg">System Activity</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]">
-            <div className="flex items-center">
-              <span className="mr-1 text-xs">●</span>
-              Connected
-            </div>
-          </Badge>
-        </div>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActivityTab)} className="w-auto">
+          <TabsList className="bg-[#051728] border border-[#83E9FF33] h-8">
+            <TabsTrigger 
+              value="transfers" 
+              className="h-6 px-3 data-[state=active]:bg-[#1692AD] data-[state=active]:text-white"
+            >
+              <ArrowRight className="w-3.5 h-3.5 mr-1.5 opacity-70" />
+              Transfers
+            </TabsTrigger>
+            <TabsTrigger 
+              value="deploy" 
+              className="h-6 px-3 data-[state=active]:bg-[#1692AD] data-[state=active]:text-white"
+            >
+              <Code className="w-3.5 h-3.5 mr-1.5 opacity-70" />
+              Deploy
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      <div className="p-4">
-        <div className="flex flex-wrap justify-between items-center mb-4">
-          <div className="flex gap-2 mb-2 sm:mb-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMetric("transactions")}
-              className={`text-white px-3 py-1 text-xs ${
-                metric === "transactions"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              <TrendingUp className="w-3 h-3 mr-1" />
-              Transactions
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMetric("uniqueAddresses")}
-              className={`text-white px-3 py-1 text-xs ${
-                metric === "uniqueAddresses"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              <ActivitySquare className="w-3 h-3 mr-1" />
-              Addresses
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMetric("volume")}
-              className={`text-white px-3 py-1 text-xs ${
-                metric === "volume"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              <TrendingUp className="w-3 h-3 mr-1" />
-              Volume
-            </Button>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTimeRange("24h")}
-              className={`text-white px-3 py-1 text-xs ${
-                timeRange === "24h"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              <Clock className="w-3 h-3 mr-1" />
-              24H
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTimeRange("7d")}
-              className={`text-white px-3 py-1 text-xs ${
-                timeRange === "7d"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              7D
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTimeRange("30d")}
-              className={`text-white px-3 py-1 text-xs ${
-                timeRange === "30d"
-                  ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-                  : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              }`}
-            >
-              30D
-            </Button>
-          </div>
-        </div>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActivityTab)} className="w-full">
+        <div className="overflow-x-auto">
+          <TabsContent value="transfers" className="mt-0 pt-0">
+            {isLoadingTransfers ? (
+              <div className="flex justify-center items-center h-[260px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1692AD]"></div>
+              </div>
+            ) : transfersError ? (
+              <div className="flex flex-col items-center justify-center h-[260px] text-center">
+                <p className="text-red-500">Error loading transfers: {transfersError.message}</p>
+              </div>
+            ) : (
+              <table className="w-full text-sm text-white">
+                <thead className="text-[#FFFFFF99]">
+                  <tr>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">
+                      <div className="flex items-center">
+                        <Clock className="mr-2 h-3.5 w-3.5 opacity-70" />
+                        Time
+                      </div>
+                    </th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">Amount</th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">From</th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">To</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {limitedTransfers.map((transfer) => (
+                    <tr key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                      <td className="py-3 px-2">{transfer.time}</td>
+                      <td className="py-3 px-2 text-[#00FF85]">{transfer.amount} {transfer.token}</td>
+                      <td className="py-3 px-2 text-[#83E9FF]">
+                        <div className="flex items-center">
+                          {truncateHash(transfer.from)}
+                          <button className="ml-1.5 text-[#83E9FF] opacity-60 hover:opacity-100 transition-opacity">
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 text-[#83E9FF]">
+                        <div className="flex items-center">
+                          {truncateHash(transfer.to)}
+                          <button className="ml-1.5 text-[#83E9FF] opacity-60 hover:opacity-100 transition-opacity">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {limitedTransfers.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center text-[#FFFFFF80]">
+                        No transfer data available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+          </TabsContent>
 
-        <div className="h-[230px]">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1692AD]"></div>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={filteredData}
-                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#83E9FF" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#83E9FF" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#83E9FF1A" />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="#FFFFFF99"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="#FFFFFF99"
-                  fontSize={12}
-                  tickFormatter={(value) => 
-                    metric === "volume"
-                      ? `$${(value / 1000)}k`
-                      : value >= 1000 
-                        ? `${Math.round(value / 1000)}k` 
-                        : value
-                  }
-                />
-                <Tooltip content={<CustomTooltip metric={metric} />} />
-                <Area 
-                  type="monotone" 
-                  dataKey={metric} 
-                  stroke="#83E9FF" 
-                  fillOpacity={1}
-                  fill="url(#colorMetric)" 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
+          <TabsContent value="deploy" className="mt-0 pt-0">
+            {isLoadingDeploys ? (
+              <div className="flex justify-center items-center h-[260px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1692AD]"></div>
+              </div>
+            ) : deploysError ? (
+              <div className="flex flex-col items-center justify-center h-[260px] text-center">
+                <p className="text-red-500">Error loading deploys: {deploysError.message}</p>
+              </div>
+            ) : (
+              <table className="w-full text-sm text-white">
+                <thead className="text-[#FFFFFF99]">
+                  <tr>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">
+                      <div className="flex items-center">
+                        <Clock className="mr-2 h-3.5 w-3.5 opacity-70" />
+                        Time
+                      </div>
+                    </th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">User</th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">Action</th>
+                    <th className="text-left py-3 px-2 font-normal border-b border-[#83E9FF4D]">Hash</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {limitedDeploys.map((deploy) => (
+                    <tr key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                      <td className="py-3 px-2">{deploy.time}</td>
+                      <td className="py-3 px-2 text-[#83E9FF]">
+                        <div className="flex items-center">
+                          {truncateHash(deploy.user)}
+                          <button className="ml-1.5 text-[#83E9FF] opacity-60 hover:opacity-100 transition-opacity">
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-3 px-2">
+                        <span className={`px-2 py-0.5 rounded text-xs border ${
+                          deploy.status === 'error' 
+                            ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
+                            : 'bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]'
+                        }`}>
+                          {deploy.action}
+                        </span>
+                      </td>
+                      <td className="py-3 px-2 text-[#83E9FF]">
+                        <div className="flex items-center">
+                          {truncateHash(deploy.hash)}
+                          <button className="ml-1.5 text-[#83E9FF] opacity-60 hover:opacity-100 transition-opacity">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {limitedDeploys.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center text-[#FFFFFF80]">
+                        No deploy data available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+          </TabsContent>
         </div>
-      </div>
+      </Tabs>
     </Card>
   );
 } 

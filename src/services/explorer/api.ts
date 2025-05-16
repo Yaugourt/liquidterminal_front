@@ -5,7 +5,9 @@ import {
     NonFundingLedgerUpdate,
     UserFill,
     FormattedUserTransaction,
-    UserTransaction
+    UserTransaction,
+    TransferData,
+    DeployData
 } from './types';
 
 /**
@@ -298,4 +300,52 @@ export async function fetchPortfolio(address: string) {
     });
     if (!response.ok) throw new Error('Failed to fetch portfolio');
     return response.json();
+}
+
+/**
+ * Récupère les transferts depuis l'API Hypurrscan
+ * @returns Liste des transferts bruts
+ */
+export async function fetchTransfers(): Promise<TransferData[]> {
+    try {
+        const response = await fetch('https://api.hypurrscan.io/transfers', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch transfers: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching transfers:', error);
+        throw error;
+    }
+}
+
+/**
+ * Récupère les déploiements depuis l'API Hypurrscan
+ * @returns Liste des déploiements bruts
+ */
+export async function fetchDeploys(): Promise<DeployData[]> {
+    try {
+        const response = await fetch('https://api.hypurrscan.io/deploys', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch deploys: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching deploys:', error);
+        throw error;
+    }
 } 
