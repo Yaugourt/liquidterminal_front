@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
-import { Menu, ChevronDown, ChevronRight } from "lucide-react"
+import { Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
