@@ -105,10 +105,7 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
         <div className="flex-grow flex justify-center items-center text-white whitespace-nowrap">
           <span className="text-[#FFFFFFCC] text-xs">Volume:</span>
           <span className="ml-2 text-[#83E9FF] text-base font-medium">
-            ${totalVolume ? totalVolume.toLocaleString('en-US', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            }) : '0.00'}
+            ${formatLargeNumber(totalVolume || 0, { prefix: '$', decimals: 2 })}
           </span>
         </div>
         
@@ -128,10 +125,10 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
       
       <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
-          <Table className="border-separate border-spacing-0 rounded-lg min-w-[400px]">
+          <Table className="border-separate border-spacing-0 rounded-lg w-full table-fixed">
             <TableHeader>
               <TableRow className="bg-[#051728] hover:bg-[#0B2437]">
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-left p-2 sm:p-3 text-xs sm:text-sm">
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-left px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm w-[30%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("name")}
@@ -141,7 +138,7 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("price")}
@@ -151,7 +148,7 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("change24h")}
@@ -161,7 +158,7 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
                 </TableHead>
-                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right p-2 sm:p-3">
+                <TableHead className="border-b-[1px] border-[#83E9FF4D] text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm w-[30%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(type === "perp" ? "openInterest" : "volume")}
@@ -180,25 +177,25 @@ export function TrendingTokens({ type, title }: TrendingTokensProps) {
                     key={token.name} 
                     className={`hover:bg-[#FFFFFF0A] cursor-pointer transition-all ${index !== tokens.length - 1 ? 'border-b border-[#FFFFFF1A]' : ''}`}
                   >
-                    <TableCell className="p-2.5 sm:p-3.5 text-xs sm:text-sm font-medium">{token.name}</TableCell>
-                    <TableCell className="text-right p-2.5 sm:p-3.5 text-xs sm:text-sm">
+                    <TableCell className="px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium truncate">{token.name}</TableCell>
+                    <TableCell className="text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm whitespace-nowrap">
                       ${formatLargeNumber(token.price, { decimals: 2 })}
                     </TableCell>
-                    <TableCell className={`text-right p-2.5 sm:p-3.5 text-xs sm:text-sm ${getChangeColorClass(token.change24h)}`}>
-                      <span className="px-2 py-0.5 rounded-md bg-opacity-10" style={{ 
+                    <TableCell className={`text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm whitespace-nowrap ${getChangeColorClass(token.change24h)}`}>
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-opacity-10" style={{ 
                         backgroundColor: token.change24h > 0 ? 'rgba(131, 233, 255, 0.1)' : token.change24h < 0 ? 'rgba(255, 87, 87, 0.1)' : 'transparent' 
                       }}>
                         {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                       </span>
                     </TableCell>
-                    <TableCell className="text-right p-2.5 sm:p-3.5 text-xs sm:text-sm">
+                    <TableCell className="text-right px-1.5 sm:px-2 py-2.5 sm:py-3.5 text-xs sm:text-sm whitespace-nowrap">
                       ${formatLargeNumber(type === "perp" ? (token as PerpMarketData).openInterest : token.volume, { decimals: 2 })}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center p-5 text-[#FFFFFF80]">
+                  <TableCell colSpan={4} className="text-center px-3 py-5 text-[#FFFFFF80]">
                     Aucun token disponible
                   </TableCell>
                 </TableRow>

@@ -2,12 +2,12 @@
 
 import { SearchBar } from "@/components/SearchBar"
 import { usePageTitle } from "@/store/use-page-title"
-import { AccountHeader } from "@/components/AccountHeader"
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice"
 import { Clock, CalendarDays } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+
 interface HeaderProps {
     searchPlaceholder?: string;
     searchWidth?: string;
@@ -50,16 +50,16 @@ export function Header({
     return (
         <div className="flex flex-wrap items-center justify-between w-full px-4 lg:px-8 py-3 gap-2">
             <div className="flex items-center gap-3 flex-shrink-0 ml-8 lg:ml-0">
-                <h2 className="text-xl  text-white whitespace-nowrap !font-['Higuen_Elegant_Serif']">{displayTitle}</h2>
+                <h2 className="text-xl text-white whitespace-nowrap !font-['Higuen_Elegant_Serif'] max-lg:pl-3">{displayTitle}</h2>
                 <SearchBar 
                     placeholder={searchPlaceholder} 
                     className={`hidden md:block border border-[#83E9FF33] rounded-xl shadow-sm ${searchWidth} transition-all hover:border-[#83E9FF66] focus-within:border-[#83E9FF]`}
                 />
             </div>
             
-            {/* Compact fees and price section - only show if showFees is true */}
+            {/* Stats section - visible on all screen sizes */}
             {showFees && (
-                <div className="flex flex-wrap items-center gap-2 lg:gap-3 mx-auto flex-grow justify-center">
+                <div className="flex items-center gap-2 lg:gap-3">
                     {/* HYPE Price Display */}
                     <div className={cn(
                         "bg-[#051728]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
@@ -113,10 +113,6 @@ export function Header({
                     )}
                 </div>
             )}
-
-            <div className="flex-shrink-0">
-                <AccountHeader />
-            </div>
         </div>
     )
 } 

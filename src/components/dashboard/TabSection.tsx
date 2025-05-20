@@ -24,7 +24,7 @@ export function TabSection({
   }));
 
   return (
-    <div className="w-full lg:w-[400px]">
+    <div className="w-full">
       <TabButtons activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {activeTab === "stacking" && (

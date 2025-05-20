@@ -16,6 +16,31 @@ import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import Image from "next/image";
 
+// Composant d'image avec gestion d'erreur
+function TokenImage({ src, alt }: { src: string; alt: string }) {
+    const [hasError, setHasError] = useState(false);
+
+    if (hasError) {
+        return (
+            <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
+                <span className="text-[#83E9FF] text-xs font-medium">{alt.charAt(0)}</span>
+            </div>
+        );
+    }
+
+    return (
+        <Image
+            src={src}
+            alt={alt}
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)] backdrop-blur-sm"
+            onError={() => setHasError(true)}
+            unoptimized // Pour les images externes
+        />
+    );
+}
+
 // Types de tri supportés par l'API
 type SortableFields = "volume" | "marketCap" | "change24h";
 
@@ -218,15 +243,10 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
               <TableCell className="py-4 pl-6">
                 <div className="flex items-center gap-3">
                   {token.logo ? (
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)] backdrop-blur-sm">
-                      <Image
-                        src={token.logo}
-                        alt={token.name}
-                        width={32}
-                        height={32}
-                        className="object-contain"
-                      />
-                    </div>
+                    <TokenImage
+                      src={token.logo}
+                      alt={token.name}
+                    />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
                       <span className="text-[#83E9FF] text-xs font-medium">{token.name.charAt(0)}</span>

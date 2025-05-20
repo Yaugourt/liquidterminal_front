@@ -7,7 +7,7 @@ export function ValidatorsTable() {
   return (
     <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6">
       <h3 className="text-white text-lg mb-4">Validators</h3>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
         <table className="w-full text-sm text-white">
           <thead className="text-[#FFFFFF99]">
             <tr>

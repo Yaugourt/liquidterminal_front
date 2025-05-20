@@ -112,13 +112,13 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
 
   return (
     <div className="w-full lg:flex-1">
-      <div className="flex justify-between items-center mb-2">
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSelectedFilter("auction")}
-            className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap ${
+            className={`text-white px-3 sm:px-4 py-1 text-xs whitespace-nowrap ${
               selectedFilter === "auction"
                 ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
                 : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
@@ -152,12 +152,12 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
           </Button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSelectedPeriod("7d")}
-            className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap ${
+            className={`text-white px-3 sm:px-4 py-1 text-xs whitespace-nowrap ${
               selectedPeriod === "7d"
                 ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
                 : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
@@ -204,7 +204,7 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
         </div>
       </div>
 
-      <Card className="h-[250px] sm:h-[300px] lg:h-[350px] relative bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm">
+      <Card className="h-[250px] sm:h-[300px] lg:h-[350px] relative bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden">
         <div className="absolute top-2 sm:top-4 left-3 sm:left-6 z-10">
           <h2 className="text-sm sm:text-base text-white font-medium">
             {selectedFilter === "bridge" 

@@ -48,7 +48,6 @@ const SortableColumnHeader = ({
 
 // Composant pour l'état de chargement ou vide
 const TableLoadingOrEmpty = ({ 
-  colSpan, 
   isLoading, 
   isEmpty = false,
   type
@@ -341,7 +340,7 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   // Afficher un état de chargement initial côté serveur et client avant l'hydratation
   if (!isClient) {
     return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table>
           <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
@@ -355,7 +354,7 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   // Afficher l'état de chargement côté client
   if (loading) {
     return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table>
           <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
@@ -369,7 +368,7 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
   // Afficher l'état vide côté client
   if (sortedHoldings.length === 0) {
     return (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table>
           <TableHeaderComponent onSort={sortData} type={type} />
           <TableBody className="bg-[#051728CC]">
@@ -382,7 +381,7 @@ export function AssetsTable({ holdings, loading, type }: AssetsTableProps) {
 
   // Afficher les données côté client
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
       <Table>
         <TableHeaderComponent onSort={sortData} type={type} />
         <TableBody className="bg-[#051728]">

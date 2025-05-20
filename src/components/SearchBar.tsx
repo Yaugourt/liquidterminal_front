@@ -59,7 +59,7 @@ export function SearchBar({
     <form onSubmit={handleSearch} className={`relative ${className}`}>
       <Input
         placeholder={placeholder}
-        className="w-full pr-10 p-5 bg-[#051728]/60 backdrop-blur-sm border-none text-white placeholder:text-[#83E9FF66] text-sm transition-all focus:ring-1 focus:ring-[#83E9FF]"
+        className="w-full pr-10 p-5 bg-[#051728]/60 backdrop-blur-sm border-none text-white placeholder:text-[#83E9FF66] text-sm transition-all focus:ring-1 focus:ring-[#83E9FF] rounded-xl"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />

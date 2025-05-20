@@ -22,7 +22,11 @@ function TokenImage({ src, alt }: { src: string; alt: string }) {
     const [hasError, setHasError] = useState(false);
 
     if (hasError) {
-        return null;
+        return (
+            <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
+                <span className="text-[#83E9FF] text-xs font-medium">{alt.charAt(0)}</span>
+            </div>
+        );
     }
 
     return (

@@ -56,7 +56,7 @@ export function HoldersActivityChart() {
       </div>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActivityTab)} className="w-full">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
           <TabsContent value="transfers" className="mt-0 pt-0">
             {isLoadingTransfers ? (
               <div className="flex justify-center items-center h-[260px]">

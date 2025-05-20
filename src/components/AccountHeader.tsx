@@ -12,10 +12,10 @@ export function AccountHeader() {
     // Si non authentifié, afficher le bouton de connexion
     if (!authenticated) {
         return (
-            <div className="hidden lg:flex items-center">
+            <div className="lg:flex items-center">
                 <Button 
                     onClick={() => login()}
-                    className="flex items-center gap-2 bg-gradient-to-r from-[#2DCCFF] to-[#15748E] hover:from-[#83E9FF] hover:to-[#1692AD] text-white rounded-xl px-4 py-2 h-10 transition-all border-2 border-[#83E9FF33] shadow-[0_0_15px_rgba(131,233,255,0.15)]"
+                    className="flex items-center gap-2 bg-gradient-to-r from-[#2DCCFF] to-[#15748E] hover:from-[#83E9FF] hover:to-[#1692AD] text-white rounded-xl px-4 py-2 h-10 transition-all"
                 >
                     <Image
                         src="/wallet-icon.svg" 
@@ -32,7 +32,7 @@ export function AccountHeader() {
 
     // État authentifié
     return (
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="w-[45px] h-[45px] rounded-xl bg-[#051728] border-2 border-[#83E9FF4D]">
                 <Bell className="h-10 w-10 text-white" />
             </Button>
