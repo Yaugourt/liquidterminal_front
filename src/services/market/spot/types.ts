@@ -16,4 +16,26 @@ export interface SpotToken {
   change24h: number;
   liquidity: number;
   supply: number;
+}
+
+// Paramètres pour les requêtes de marché spot
+export interface SpotMarketParams {
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  limit: number;
+  page?: number;
+}
+
+export interface UseSpotTokensOptions {
+  limit?: number;
+  defaultParams?: Partial<SpotMarketParams>;
+}
+
+export interface SpotMarketResponse {
+  data: SpotToken[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalVolume: number;
 } 

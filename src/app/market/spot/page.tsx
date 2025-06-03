@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { TokensSection } from "@/components/market/spot/SpotTokensSection";
 import { VolumeCard } from "@/components/market/spot/GlobalStatsCard";
 import { TrendingTokensCard } from "@/components/market/spot/TrendingTokensCard";
-import { AuctionCard } from "@/components/market/spot/AuctionCard";
+import { AuctionCard } from "@/components/market/auction/AuctionCard";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";

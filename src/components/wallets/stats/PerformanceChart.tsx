@@ -136,25 +136,25 @@ export function PerformanceChart() {
     <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] relative">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-4">
-          <CardTitle className="text-white text-lg flex items-center gap-2">
-            <LineChartIcon size={18} className="text-[#83E9FF]" />
+          <CardTitle className="text-[15px] text-white font-medium flex items-center gap-2">
+            <LineChartIcon size={16} className="text-[#83E9FF]" />
             Performance
           </CardTitle>
           <Select value={selectedPeriod} onValueChange={(value: TimePeriod) => setSelectedPeriod(value)}>
-            <SelectTrigger className="w-[80px] bg-[#051728] border-[#83E9FF4D] text-white hover:bg-[#1692ADB2] hover:text-white">
+            <SelectTrigger className="w-[80px] bg-[#051728] border-[#83E9FF4D] text-white hover:bg-[#1692ADB2] hover:text-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-[#051728] border-[#83E9FF4D] text-white">
-              <SelectItem value="day" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white">24h</SelectItem>
-              <SelectItem value="week" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white">7d</SelectItem>
-              <SelectItem value="month" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white">30d</SelectItem>
+              <SelectItem value="day" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white text-xs">24h</SelectItem>
+              <SelectItem value="week" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white text-xs">7d</SelectItem>
+              <SelectItem value="month" className="hover:bg-[#1692ADB2] hover:text-white focus:bg-[#1692ADB2] focus:text-white text-xs">30d</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p className="text-[#FFFFFF99] text-sm mb-1">Total value</p>
-            <p className="text-white text-xl">{formatCurrency(totalValue)}</p>
+            <p className="text-[#FFFFFF80] text-xs mb-1">Total value</p>
+            <p className="text-white text-sm font-medium">{formatCurrency(totalValue)}</p>
           </div>
           <Button 
             variant="ghost" 
@@ -182,7 +182,7 @@ export function PerformanceChart() {
                   dataKey="timestamp"
                   tickFormatter={formatXAxis}
                   stroke="#FFFFFF99"
-                  tick={{ fill: '#FFFFFF99' }}
+                  tick={{ fill: '#FFFFFF99', fontSize: 11 }}
                   interval="preserveEnd"
                   minTickGap={50}
                   angle={-25}
@@ -191,7 +191,7 @@ export function PerformanceChart() {
                 />
                 <YAxis 
                   stroke="#FFFFFF99"
-                  tick={{ fill: '#FFFFFF99' }}
+                  tick={{ fill: '#FFFFFF99', fontSize: 11 }}
                   tickFormatter={formatYAxis}
                   scale="log"
                   domain={['auto', 'auto']}

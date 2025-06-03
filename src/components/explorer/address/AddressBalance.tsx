@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
-import { Loader2 } from "lucide-react";
+import { useNumberFormat } from '@/store/number-format.store';
+import { formatNumber } from '@/lib/formatting';
 
 interface AddressBalanceProps {
   address: string;
@@ -12,6 +13,7 @@ interface AddressBalanceProps {
 export function AddressBalance({ address }: AddressBalanceProps) {
   const { spotBalances, perpPositions, isLoading, error } = useWalletsBalances(address);
   const { data: spotMarketTokens, isLoading: isSpotMarketLoading } = useSpotTokens({ limit: 100 });
+  const { format } = useNumberFormat();
 
   // Calculer les statistiques du portefeuille
   const stats = useMemo(() => {
@@ -44,13 +46,8 @@ export function AddressBalance({ address }: AddressBalanceProps) {
 
   // Fonction pour formater les valeurs monétaires
   const formatCurrency = useCallback((value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-  }, []);
+    return formatNumber(value, format, { currency: '$', showCurrency: true });
+  }, [format]);
 
   if (isLoading || isSpotMarketLoading) {
     return <div className="text-white text-[16px]">Loading...</div>;

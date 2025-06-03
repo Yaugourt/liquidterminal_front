@@ -72,6 +72,7 @@ export default function AddressPage() {
             transactions={transactions || []}
             isLoading={isLoading}
             error={error}
+            currentAddress={address}
           />
         )}
 

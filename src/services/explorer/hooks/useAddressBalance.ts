@@ -3,12 +3,9 @@ import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances"
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 
 export function useAddressBalance(address: string) {
-  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances(address);
-  const { 
-    data: spotMarketTokens, 
-    isLoading: isSpotMarketLoading, 
-    refetch: refetchSpotMarket 
-  } = useSpotTokens({ limit: 100 });
+  // Utiliser les hooks directement dans le composant
+  const { spotBalances, perpPositions, isLoading: balancesLoading, error: balancesError, refresh: refreshBalances } = useWalletsBalances(address);
+  const { data: spotMarketTokens, isLoading: tokensLoading, error: tokensError, refetch: refreshTokens } = useSpotTokens({ limit: 100 });
 
   // Calculer les statistiques du portefeuille
   const balances = useMemo(() => {
@@ -47,15 +44,14 @@ export function useAddressBalance(address: string) {
     };
   }, [spotBalances, perpPositions, spotMarketTokens]);
 
-  const isBalanceLoading = isLoading || isSpotMarketLoading;
+  const refresh = async () => {
+    await Promise.all([refreshBalances(), refreshTokens()]);
+  };
 
   return {
     balances,
-    isLoading: isBalanceLoading,
-    error,
-    refresh: () => {
-      refresh();
-      refetchSpotMarket();
-    }
+    isLoading: balancesLoading || tokensLoading,
+    error: balancesError || tokensError,
+    refresh
   };
 } 

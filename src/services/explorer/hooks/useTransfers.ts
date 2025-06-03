@@ -17,9 +17,14 @@ const formatTransfer = (transfer: TransferData): FormattedTransfer => {
   const minutes = date.getMinutes().toString().padStart(2, '0');
   const formattedTime = `${month} ${day}, ${hours}:${minutes} ${ampm}`;
 
-  // Extraire le symbole du token (peut contenir une adresse après ":")
-  // Vérifier si token existe avant de faire split
-  const token = transfer.action.token ? transfer.action.token.split(':')[0] : 'Unknown';
+  // Déterminer le token en fonction du type de transfert
+  let token = 'Unknown';
+  if (transfer.action.type === 'usdClassTransfer' || transfer.action.type === 'usdSend') {
+    token = 'USDC';
+  } else {
+    // Extraire le symbole du token (peut contenir une adresse après ":")
+    token = transfer.action.token ? transfer.action.token.split(':')[0] : 'Unknown';
+  }
 
   return {
     hash: transfer.hash,

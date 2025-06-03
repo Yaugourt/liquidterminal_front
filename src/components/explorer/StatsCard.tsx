@@ -1,48 +1,40 @@
 import { Card } from "@/components/ui/card";
-import { 
-  Blocks, 
-  Clock, 
-  ArrowRightLeft, 
-  Users, 
-  LucideIcon
-} from "lucide-react";
+import { Users, BarChart3, CreditCard, Coins, Wallet } from "lucide-react";
 
-interface StatsCardProps {
+interface ExplorerStatsCardProps {
   title: string;
   value: string;
   type: 'block' | 'blockTime' | 'transactions' | 'users';
 }
 
-export function StatsCard({ title, value, type }: StatsCardProps) {
-  // Sélectionner l'icône appropriée selon le type
-  const iconMap: Record<string, LucideIcon> = {
-    block: Blocks,
-    blockTime: Clock,
-    transactions: ArrowRightLeft,
-    users: Users
+export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
+  // Fonction pour déterminer quelle icône afficher selon le type
+  const getIcon = () => {
+    switch (type) {
+      case "block":
+        return <BarChart3 size={16} className="text-[#83E9FF]" />;
+      case "blockTime":
+        return <CreditCard size={16} className="text-[#83E9FF]" />;
+      case "transactions":
+        return <Coins size={16} className="text-[#83E9FF]" />;
+      case "users":
+        return <Users size={16} className="text-[#83E9FF]" />;
+      default:
+        return <Wallet size={16} className="text-[#83E9FF]" />;
+    }
   };
-  
-  const Icon = iconMap[type] || Blocks;
-  
-  // Formatter la valeur pour une meilleure lisibilité
-  const formattedValue = value.includes(',') 
-    ? value 
-    : value.includes('.') 
-      ? value.replace(/\./g, ',') 
-      : value;
-  
+
   return (
-    <Card className="p-4 bg-[#051728E5] w-full border border-[#83E9FF4D] rounded-xl shadow-sm hover:border-[#83E9FF80] transition-all">
-      <div className="flex items-center">
-        <div className="bg-[#083050] p-2 rounded-lg mr-3">
-          <Icon size={16} className="text-[#83E9FF]" />
-        </div>
-        <div className="flex flex-col">
-          <h3 className="text-xs   text-[#FFFFFF99] font-serif">
-            {title}
-          </h3>
-          <p className="text-xl text-white">{formattedValue}</p>
-        </div>
+    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all">
+      <div className="flex items-center gap-1.5 mb-1.5">
+        {getIcon()}
+        <h3 className="text-[11px] text-[#FFFFFF99] font-medium tracking-wide">{title}</h3>
+      </div>
+      
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-sm text-white font-medium">
+          {value}
+        </span>
       </div>
     </Card>
   );

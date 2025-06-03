@@ -1,33 +1,23 @@
-import { useState, useEffect } from 'react';
 import { HLBridgeData, UseHLBridgeResult } from '../types';
 import { fetchHLBridge } from '../api';
+import { useDataFetching } from '@/hooks/useDataFetching';
 
 export function useHLBridge(): UseHLBridgeResult {
-  const [bridgeData, setBridgeData] = useState<HLBridgeData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const data = await fetchHLBridge();
-      setBridgeData(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch HL bridge data'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return {
-    bridgeData,
+  const {
+    data: bridgeData,
     isLoading,
     error,
-    refetch: fetchData
+    refetch
+  } = useDataFetching<HLBridgeData>({
+    fetchFn: fetchHLBridge,
+    refreshInterval: 10000, // Refresh every 10 seconds
+    maxRetries: 3
+  });
+
+  return {
+    bridgeData: bridgeData || null,
+    isLoading,
+    error,
+    refetch
   };
 } 

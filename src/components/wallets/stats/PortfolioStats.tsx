@@ -4,71 +4,34 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, RefreshCw, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
-import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAddressBalance } from "@/services/explorer/hooks/useAddressBalance";
+import { formatLargeNumber } from "@/lib/formatting";
 
 export function PortfolioStats() {
-  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances();
-  const { data: spotMarketTokens, isLoading: isSpotMarketLoading, refetch: refetchSpotMarket } = useSpotTokens({ limit: 100 });
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [pnlMode, setPnlMode] = useState<'percent' | 'dollar'>('percent');
   const { getActiveWallet } = useWallets();
   const activeWallet = getActiveWallet();
+  const { balances, isLoading, error, refresh } = useAddressBalance(activeWallet?.address || '');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  // Calculer les statistiques du portefeuille
-  const stats = useMemo(() => {
-    if (!spotBalances || !perpPositions || !spotMarketTokens) {
-      return {
-        totalBalance: 0,
-        spotBalance: 0,
-        perpBalance: 0
-      };
-    }
-
-    // Calculer la valeur totale des positions spot
-    const spotTotal = spotBalances.reduce((total, balance) => {
-      const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === balance.coin.toLowerCase());
-      if (!marketToken) return total;
-      
-      const value = parseFloat(balance.total) * marketToken.price;
-      return total + value;
-    }, 0);
-
-    // Récupérer la valeur du compte en perp directement depuis marginSummary
-    const perpTotal = parseFloat(perpPositions.marginSummary.accountValue);
-
-    return {
-      totalBalance: spotTotal + perpTotal,
-      spotBalance: spotTotal,
-      perpBalance: perpTotal
-    };
-  }, [spotBalances, perpPositions, spotMarketTokens]);
-
-  // Fonction pour formater les valeurs monétaires (mémorisée)
-  const formatCurrency = useCallback((value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
 
-  // Fonction pour rafraîchir manuellement les données
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      await Promise.all([refresh(), refetchSpotMarket()]);
-    } catch (error) {
-      console.error("Erreur lors du rafraîchissement:", error);
-    } finally {
-      setTimeout(() => setIsRefreshing(false), 1000);
-    }
-  }, [refresh, refetchSpotMarket]);
+  // Fonction pour formater les valeurs monétaires
+  const formatCurrency = useCallback((value: number) => {
+    return formatLargeNumber(value, {
+      prefix: '$',
+      decimals: 2,
+      forceDecimals: true
+    });
+  }, []);
 
-  // Fonction pour copier l'adresse dans le presse-papier
+  // Fonction pour copier l'adresse
   const copyToClipboard = useCallback(() => {
     if (activeWallet?.address) {
       navigator.clipboard.writeText(activeWallet.address)
@@ -82,11 +45,33 @@ export function PortfolioStats() {
     }
   }, [activeWallet?.address]);
 
+  // Fonction pour rafraîchir
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await refresh();
+    } catch (error) {
+      console.error("Erreur lors du rafraîchissement:", error);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 1000);
+    }
+  }, [refresh]);
+
+  if (!isMounted) {
+    return (
+      <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
+          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 relative">
+    <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <h3 className="text-white text-lg">Statistiques du portefeuille</h3>
+          <h3 className="text-[15px] text-white font-medium">Statistiques du portefeuille</h3>
           {activeWallet && (
             <div className="flex items-center ml-3">
               <span className="text-[#FFFFFF99] text-xs truncate max-w-[160px]">
@@ -132,7 +117,7 @@ export function PortfolioStats() {
         </TooltipProvider>
       </div>
       
-      {(isLoading || isSpotMarketLoading) ? (
+      {isLoading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
           <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
         </div>
@@ -141,22 +126,86 @@ export function PortfolioStats() {
           Une erreur est survenue lors du chargement des données
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-y-6">
-          <div>
-            <p className="text-[#FFFFFF99] text-sm mb-1">Balance totale:</p>
-            <p className="text-white text-xl">{formatCurrency(stats.totalBalance)}</p>
+        <div className="grid grid-cols-2 gap-6">
+          {/* Zone 1: Balances */}
+          <div className="space-y-3 border-r border-b border-[#1E3851] pr-6 pb-6">
+            <div className="flex justify-between items-center">
+              <p className="text-[#FFFFFF80] text-xs">Balance totale:</p>
+              <p className="text-white text-sm font-medium">{formatCurrency(balances.totalBalance)}</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-[#FFFFFF80] text-xs">Balance Spot:</p>
+              <p className="text-white text-sm font-medium">{formatCurrency(balances.spotBalance)}</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-[#FFFFFF80] text-xs">Balance Perp:</p>
+              <p className="text-white text-sm font-medium">{formatCurrency(balances.perpBalance)}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[#FFFFFF99] text-sm mb-1">Balance Spot:</p>
-            <p className="text-white text-xl">{formatCurrency(stats.spotBalance)}</p>
+
+          {/* Zone 2: PNL */}
+          <div className="space-y-3 border-b border-[#1E3851] pb-6">
+           
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <div>
+                <p className="text-[#FFFFFF80] text-xs">All Time:</p>
+                <p className="text-[#4ADE80] text-sm font-medium">-</p>
+              </div>
+              <div>
+                <p className="text-[#FFFFFF80] text-xs">24H:</p>
+                <p className="text-[#4ADE80] text-sm font-medium">+0.31%</p>
+              </div>
+              <div>
+                <p className="text-[#FFFFFF80] text-xs">7D:</p>
+                <p className="text-[#4ADE80] text-sm font-medium">+14.80%</p>
+              </div>
+              <div>
+                <p className="text-[#FFFFFF80] text-xs">30D:</p>
+                <p className="text-[#4ADE80] text-sm font-medium">+229.60%</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-[#FFFFFF99] text-sm mb-1">Balance Perp:</p>
-            <p className="text-white text-xl">{formatCurrency(stats.perpBalance)}</p>
+
+          {/* Zone 3: Vault & Staking */}
+          <div className="border-r border-[#1E3851] pt-6 pr-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <p className="text-[#FFFFFF80] text-xs">Total en Vault:</p>
+                <p className="text-white text-sm font-medium">{formatCurrency(balances.vaultBalance)}</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-[#FFFFFF80] text-xs">Total en Staking:</p>
+                <p className="text-white text-sm font-medium">{formatCurrency(balances.stakedBalance)}</p>
+              </div>
+              <div className="pt-2">
+                <p className="text-[#FFFFFF80] text-xs">
+                  Last transaction: <span className="text-[#83E9FF]">1h ago</span>
+                </p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="text-[#FFFFFF99] text-sm mb-1">Évolution 24h:</p>
-            <p className="text-[#FF5252] text-xl">-</p>
+
+          {/* Zone 4: Long/Short Ratio */}
+          <div className="pt-6">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-[#4ADE80] text-sm font-medium">
+                  Long: {formatCurrency(balances.perpBalance > 0 ? balances.perpBalance : 0)}
+                </span>
+                <span className="text-[#FF5757] text-sm font-medium">
+                  Short: {formatCurrency(balances.perpBalance < 0 ? Math.abs(balances.perpBalance) : 0)}
+                </span>
+              </div>
+              <div className="h-2 bg-[#051728] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#4ADE80] to-[#FF5757]"
+                  style={{
+                    width: '100%',
+                    backgroundSize: `${balances.perpBalance > 0 ? 75 : 25}% 100%`
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

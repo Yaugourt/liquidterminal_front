@@ -37,7 +37,6 @@ export function TabNavigation({ activeTab, onChange, tabs }: TabNavigationProps)
 export const ADDRESS_TABS = [
   { id: "transactions", label: "Transactions" },
   { id: "holdings", label: "Holdings" },
-  { id: "perps", label: "Perps" },
   { id: "orders", label: "Orders" },
   { id: "vaults", label: "Vaults" },
   { id: "staking", label: "Staking" },

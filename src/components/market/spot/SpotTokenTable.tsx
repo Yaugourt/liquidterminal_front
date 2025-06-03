@@ -10,82 +10,124 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Database, Loader2, TrendingUp, CreditCard, BarChart2, Package } from "lucide-react";
-import { formatNumber } from "@/lib/format";
+import { ArrowUpDown } from "lucide-react";
+import { formatNumber } from "@/lib/formatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
-import Image from "next/image";
+import { useNumberFormat } from "@/store/number-format.store";
+import { Pagination } from "@/components/ui/pagination";
+import { TokenImage } from "../common/TokenImage";
+import { LoadingState, ErrorState, EmptyState } from "../common/TableStates";
+import { 
+  SpotToken, 
+  SpotSortableFields, 
+  BaseTableProps, 
+} from "../common/types";
+import { getPriceChangeColor, formatPriceChange } from "@/components/ui/PriceChange";
 
-// Composant d'image avec gestion d'erreur
-function TokenImage({ src, alt }: { src: string; alt: string }) {
-    const [hasError, setHasError] = useState(false);
-
-    if (hasError) {
-        return (
-            <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
-                <span className="text-[#83E9FF] text-xs font-medium">{alt.charAt(0)}</span>
-            </div>
-        );
-    }
-
-    return (
-        <Image
-            src={src}
-            alt={alt}
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-full border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)] backdrop-blur-sm"
-            onError={() => setHasError(true)}
-            unoptimized // Pour les images externes
-        />
-    );
+interface TableHeadersProps {
+  sortField: SpotSortableFields;
+  onSort: (field: SpotSortableFields) => void;
 }
 
-// Types de tri supportés par l'API
-type SortableFields = "volume" | "marketCap" | "change24h";
-
-interface TokenTableProps {
-  loading?: boolean;
+function TableHeaders({ sortField, onSort }: TableHeadersProps) {
+  return (
+    <TableRow className="border-none bg-[#051728]">
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4">
+        <Button
+          variant="ghost"
+          className="text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center"
+        >
+          Name
+        </Button>
+      </TableHead>
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <Button
+          variant="ghost"
+          className="text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center ml-auto justify-end w-full"
+        >
+          Price
+        </Button>
+      </TableHead>
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <Button
+          variant="ghost"
+          onClick={() => onSort("change24h")}
+          className={`${sortField === "change24h" ? "text-[#83E9FF]" : "text-[#FFFFFF99]"} font-normal hover:text-white p-0 flex items-center ml-auto justify-end w-full`}
+        >
+          Change
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </TableHead>
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <Button
+          variant="ghost"
+          onClick={() => onSort("marketCap")}
+          className={`${sortField === "marketCap" ? "text-[#83E9FF]" : "text-[#FFFFFF99]"} font-normal hover:text-white p-0 flex items-center ml-auto justify-end w-full`}
+        >
+          Market Cap
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </TableHead>
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <Button
+          variant="ghost"
+          onClick={() => onSort("volume")}
+          className={`${sortField === "volume" ? "text-[#83E9FF]" : "text-[#FFFFFF99]"} font-normal hover:text-white p-0 flex items-center ml-auto justify-end w-full`}
+        >
+          Volume
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </TableHead>
+      <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
+        <Button
+          variant="ghost"
+          className="text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center ml-auto justify-end w-full"
+        >
+          Supply
+        </Button>
+      </TableHead>
+    </TableRow>
+  );
 }
 
-export function TokenTable({ loading: initialLoading = false }: TokenTableProps) {
+export function TokenTable({ loading: initialLoading = false }: BaseTableProps) {
   const router = useRouter();
-  const [sortField, setSortField] = useState<SortableFields>("volume");
+  const [sortField, setSortField] = useState<SpotSortableFields>("volume");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [pageSize, setPageSize] = useState(10);
+  const { format } = useNumberFormat();
   
   const { 
     data: tokens, 
     isLoading, 
     error, 
     page, 
-    totalPages, 
+    totalPages,
+    total,
     updateParams 
   } = useSpotTokens({
+    limit: pageSize,
     defaultParams: {
       sortBy: sortField,
       sortOrder: sortOrder,
     }
   });
 
-  const handleSort = (field: string) => {
-    if (!["volume", "marketCap", "change24h"].includes(field)) {
-      return;
-    }
-
-    const newField = field as SortableFields;
-    if (sortField === newField) {
+  const handleSort = (field: SpotSortableFields) => {
+    if (sortField === field) {
       const newOrder = sortOrder === "asc" ? "desc" : "asc";
       setSortOrder(newOrder);
       updateParams({ 
-        sortBy: newField, 
+        sortBy: field, 
         sortOrder: newOrder,
         page: 1
       });
     } else {
-      setSortField(newField);
+      setSortField(field);
       setSortOrder("desc");
       updateParams({ 
-        sortBy: newField, 
+        sortBy: field, 
         sortOrder: "desc",
         page: 1
       });
@@ -109,198 +151,74 @@ export function TokenTable({ loading: initialLoading = false }: TokenTableProps)
     } ${isActive ? 'text-[#83E9FF]' : 'text-[#FFFFFF99]'}`;
   };
 
-  // Fonction pour obtenir l'icône appropriée pour chaque colonne
-  const getColumnIcon = (field: string) => {
-    switch (field) {
-      case "marketCap":
-        return <CreditCard className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-      case "volume":
-        return <BarChart2 className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-      case "supply":
-        return <Package className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-      case "change24h":
-        return <TrendingUp className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-      default:
-        return null;
-    }
-  };
-
   if (isLoading || initialLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <Loader2 className="w-10 h-10 mb-4 text-[#83E9FF4D] animate-spin" />
-        <p className="text-white text-lg font-serif">Loading...</p>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg font-serif">Error loading data</p>
-        <p className="text-[#FFFFFF80] text-sm mt-2">{error.message}</p>
-      </div>
-    );
+    return <ErrorState message={error.message} />;
   }
 
   if (!tokens || tokens.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg font-serif">No data available</p>
-        <p className="text-[#FFFFFF80] text-sm mt-2">Check back later for updated market information</p>
-      </div>
-    );
+    return <EmptyState />;
   }
 
   return (
-    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent rounded-xl">
-      <Table className="min-w-[650px]">
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+      <Table>
         <TableHeader>
-          <TableRow className="border-none bg-transparent">
-            <TableHead className="text-xs uppercase tracking-wide font-medium py-4 bg-transparent pl-6 w-[120px]">
-              <Button
-                variant="ghost"
-                className={getSortButtonClass("name")}
-                disabled={!isSortable("name")}
-              >
-                Name
-                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
-              </Button>
-            </TableHead>
-            <TableHead className="text-xs uppercase tracking-wide font-medium py-4 bg-transparent w-[100px]">
-              <Button
-                variant="ghost"
-                className={getSortButtonClass("price")}
-                disabled={!isSortable("price")}
-              >
-                Price
-                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
-              </Button>
-            </TableHead>
-            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
-              <Button
-                variant="ghost"
-                onClick={() => handleSort("marketCap")}
-                className={getSortButtonClass("marketCap")}
-              >
-                <div className="flex items-center">
-                  {getColumnIcon("marketCap")}
-                  Market Cap
-                </div>
-                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'marketCap' ? 'opacity-100' : 'opacity-60'}`} />
-              </Button>
-            </TableHead>
-            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
-              <Button
-                variant="ghost"
-                onClick={() => handleSort("volume")}
-                className={getSortButtonClass("volume")}
-              >
-                <div className="flex items-center">
-                  {getColumnIcon("volume")}
-                  Volume
-                </div>
-                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'volume' ? 'opacity-100' : 'opacity-60'}`} />
-              </Button>
-            </TableHead>
-            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent">
-              <Button
-                variant="ghost"
-                className={getSortButtonClass("supply")}
-                disabled={!isSortable("supply")}
-              >
-                <div className="flex items-center">
-                  {getColumnIcon("supply")}
-                  Supply
-                </div>
-                <ArrowUpDown className="ml-2 h-3.5 w-3.5 opacity-60" />
-              </Button>
-            </TableHead>
-            <TableHead className="text-right text-xs uppercase tracking-wide font-medium py-4 bg-transparent pr-6">
-              <Button
-                variant="ghost"
-                onClick={() => handleSort("change24h")}
-                className={getSortButtonClass("change24h")}
-              >
-                <div className="flex items-center">
-                  {getColumnIcon("change24h")}
-                  Change
-                </div>
-                <ArrowUpDown className={`ml-2 h-3.5 w-3.5 transition-opacity ${sortField === 'change24h' ? 'opacity-100' : 'opacity-60'}`} />
-              </Button>
-            </TableHead>
-          </TableRow>
+          <TableHeaders sortField={sortField} onSort={handleSort} />
         </TableHeader>
-        <TableBody className="bg-transparent">
-          {tokens.map((token) => (
+        <TableBody className="bg-[#051728]">
+          {tokens.map((token: SpotToken) => (
             <TableRow
               key={token.name}
-              className="border-b border-[#FFFFFF0A] hover:bg-[#83E9FF0A] cursor-pointer transition-all"
+              className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
               onClick={() => handleTokenClick(token.name)}
             >
-              <TableCell className="py-4 pl-6">
-                <div className="flex items-center gap-3">
-                  {token.logo ? (
-                    <TokenImage
-                      src={token.logo}
-                      alt={token.name}
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
-                      <span className="text-[#83E9FF] text-xs font-medium">{token.name.charAt(0)}</span>
-                    </div>
-                  )}
-                  <span className="text-white text-sm md:text-base font-medium">{token.name}</span>
+              <TableCell className="py-2 pl-4">
+                <div className="flex items-center gap-2">
+                  <TokenImage src={token.logo} alt={token.name} />
+                  <span className="text-white text-sm">{token.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base font-medium">
-                ${formatNumber(token.price, "price")}
+              <TableCell className="text-right text-white text-sm py-2">
+                ${formatNumber(token.price, format)}
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base">
-                ${formatNumber(token.marketCap, "marketCap")}
+              <TableCell className="text-right text-sm py-2">
+                <span className={getPriceChangeColor(token.change24h)}>
+                  {formatPriceChange(token.change24h)}
+                </span>
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base">
-                ${formatNumber(token.volume, "volume")}
+              <TableCell className="text-right text-white text-sm py-2">
+                ${formatNumber(token.marketCap, format)}
               </TableCell>
-              <TableCell className="text-right text-white text-sm md:text-base">
-                {formatNumber(token.supply, "supply")}
+              <TableCell className="text-right text-white text-sm py-2">
+                ${formatNumber(token.volume, format)}
               </TableCell>
-              <TableCell
-                className={`text-right pr-6 text-sm md:text-base font-medium ${token.change24h >= 0 ? "text-[#4ADE80]" : "text-[#F87171]"}`}
-              >
-                {token.change24h >= 0 ? "+" : ""}
-                {formatNumber(token.change24h, "change")}%
+              <TableCell className="text-right text-white text-sm py-2 pr-4">
+                {formatNumber(token.supply, format)}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
       
-      <div className="flex justify-between items-center mt-5 px-6 pb-4 pt-4 border-t border-[#FFFFFF0A]">
-        <div className="text-[#FFFFFF80] text-xs">
-          Page {page} of {totalPages}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => updateParams({ page: page - 1 })}
-            disabled={page <= 1}
-            className="border-[#83E9FF33] text-white bg-[#FFFFFF08] hover:bg-[#83E9FF15] hover:border-[#83E9FF66] transition-all rounded-md px-4 py-1.5 h-auto text-xs"
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => updateParams({ page: page + 1 })}
-            disabled={page >= totalPages}
-            className="border-[#83E9FF33] text-white bg-[#FFFFFF08] hover:bg-[#83E9FF15] hover:border-[#83E9FF66] transition-all rounded-md px-4 py-1.5 h-auto text-xs"
-          >
-            Next
-          </Button>
+      <div className="border-t border-[#FFFFFF1A] flex items-center">
+        <div className="w-full px-4 py-3">
+          <Pagination
+            total={total}
+            page={page - 1}
+            rowsPerPage={pageSize}
+            onPageChange={(newPage) => updateParams({ page: newPage + 1 })}
+            onRowsPerPageChange={(newRowsPerPage) => {
+              setPageSize(newRowsPerPage);
+              updateParams({ 
+                page: 1,
+                limit: newRowsPerPage 
+              });
+            }}
+          />
         </div>
       </div>
     </div>

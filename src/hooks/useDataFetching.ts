@@ -10,7 +10,7 @@ interface UseDataFetchingOptions<T> {
 
 export function useDataFetching<T>({
   fetchFn,
-  refreshInterval = 10000,
+  refreshInterval = 20000,
   dependencies = [],
   maxRetries = 3,
   retryDelay = 1000

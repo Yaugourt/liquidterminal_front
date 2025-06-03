@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { PortfolioPeriodData } from "@/services/explorer/types";
 import { useAddressBalance } from "@/services/explorer/hooks/useAddressBalance";
+import { useNumberFormat } from '@/store/number-format.store';
+import { formatNumber } from '@/lib/formatting';
 
 interface AddressCardsProps {
   portfolio: any;
@@ -17,28 +19,50 @@ interface AddressCardsProps {
 export function AddressCards({ portfolio, loadingPortfolio, onAddClick, address }: AddressCardsProps) {
   const [pnlMode, setPnlMode] = useState<'percent' | 'dollar'>('percent');
   const { balances, isLoading: loadingBalances } = useAddressBalance(address);
+  const { format } = useNumberFormat();
 
-  // Fonction pour formater les valeurs monétaires
+  // Format currency values with the proper number format
   const formatCurrency = useCallback((value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    if (isNaN(value) || value === 0) return "$0.00";
+    return formatNumber(value, format, {
+      currency: '$',
+      showCurrency: true,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(value);
-  }, []);
+    });
+  }, [format]);
 
-  function getVariation(history: [number, string][] | undefined, periodKey?: string): string | null {
-    if (!history || history.length < 2) return null;
-    const first = parseFloat(history[0][1]);
+  function getVariation(history: [number, string][] | undefined, periodKey?: string): { value: string | null, numericValue: number | null } {
+    if (!history || history.length < 2) return { value: null, numericValue: null };
+    
+    // Pour le calcul, on prend la dernière valeur comme référence
     const last = parseFloat(history[history.length - 1][1]);
-    if (periodKey === 'allTime' && first < 10) return null;
-    if (periodKey !== 'allTime' && first < 1) return null;
+    const first = parseFloat(history[0][1]);
+    
+    if (periodKey === 'allTime' && first < 10) return { value: null, numericValue: null };
+    if (periodKey !== 'allTime' && first < 1) return { value: null, numericValue: null };
+    
     if (pnlMode === 'percent') {
-      return (((last - first) / first) * 100).toFixed(2) + '%';
+      // Calcul du pourcentage de variation
+      const percentChange = ((last - first) / first) * 100;
+      return {
+        value: (percentChange >= 0 ? '+' : '-') + formatNumber(Math.abs(percentChange), format, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }) + '%',
+        numericValue: percentChange
+      };
     } else {
       const diff = last - first;
-      return (diff > 0 ? '+' : '') + diff.toFixed(2) + ' $';
+      return {
+        value: (diff >= 0 ? '+' : '-') + formatNumber(Math.abs(diff), format, {
+          currency: '$',
+          showCurrency: true,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }),
+        numericValue: diff
+      };
     }
   }
 
@@ -128,15 +152,18 @@ export function AddressCards({ portfolio, loadingPortfolio, onAddClick, address 
           ) : (
             periods.map(({ key, label }) => {
               const periodData = portfolio?.find?.((entry: [string, PortfolioPeriodData]) => entry[0] === key)?.[1];
-              const value = getVariation(periodData?.accountValueHistory, key);
-              let valueNum: number | null = null;
-              if (value && pnlMode === 'percent') valueNum = Number(value.replace('%', ''));
-              if (value && pnlMode === 'dollar') valueNum = Number(value.replace('$', ''));
+              const variation = getVariation(periodData?.accountValueHistory, key);
               return (
                 <div key={key}>
                   <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide">{label}:</div>
-                  <div className={valueNum !== null && valueNum > 0 ? "text-[#4ADE80] text-sm font-medium" : valueNum !== null && valueNum < 0 ? "text-[#FF5757] text-sm font-medium" : "text-white text-sm font-medium"}>
-                    {value !== null ? value : '-'}
+                  <div className={
+                    variation.numericValue !== null 
+                      ? variation.numericValue >= 0 
+                        ? "text-[#4ADE80] text-sm font-medium" 
+                        : "text-[#FF5757] text-sm font-medium"
+                      : "text-white text-sm font-medium"
+                  }>
+                    {variation.value !== null ? variation.value : '-'}
                   </div>
                 </div>
               );

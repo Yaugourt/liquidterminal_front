@@ -1,65 +1,69 @@
-import { usePaginatedData } from '@/hooks/usePaginatedData';
+import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchPerpMarkets } from '../api';
-import { PerpMarketData } from '../types';
-
-interface UsePerpMarketsOptions {
-  limit?: number;
-  defaultParams?: {
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    [key: string]: any;
-  };
-}
+import { 
+   
+  PerpMarketParams,
+  UsePerpMarketsOptions,
+  PerpMarketResponse,
+  PerpSortableFields
+} from '../types';
+import { useState, useCallback } from 'react';
 
 export function usePerpMarkets({
   limit = 10,
   defaultParams = {},
 }: UsePerpMarketsOptions = {}) {
-  const adaptFetchFn = async (params: any) => {
-    const response = await fetchPerpMarkets(params);
-    return {
-      data: response.data,
-      total: response.pagination.total,
-      page: response.pagination.page,
-      limit: response.pagination.limit,
-      totalPages: response.pagination.totalPages,
-      totalVolume: response.pagination.totalVolume
-    };
-  };
+  const [params, setParams] = useState<PerpMarketParams>(() => ({
+    limit,
+    sortBy: defaultParams.sortBy || 'volume',
+    sortOrder: defaultParams.sortOrder || 'desc',
+    ...defaultParams,
+  }));
 
   const { 
-    data, 
-    total, 
-    page, 
-    totalPages, 
+    data: response, 
     isLoading, 
     error,
-    updateParams,
-    refetch,
-    metadata
-  } = usePaginatedData<PerpMarketData>({
-    fetchFn: adaptFetchFn,
-    defaultParams: {
-      limit,
-      ...defaultParams,
-    }
+    refetch
+  } = useDataFetching<PerpMarketResponse>({
+    fetchFn: async () => {
+      console.log('Fetching perp markets with params:', params); // Debug log
+      const response = await fetchPerpMarkets(params);
+      console.log('Received perp response:', response); // Debug log
+      return {
+        data: response.data,
+        total: response.pagination.total,
+        page: response.pagination.page,
+        limit: response.pagination.limit,
+        totalPages: response.pagination.totalPages,
+        totalVolume: response.pagination.totalVolume
+      };
+    },
+    refreshInterval: 10000,
+    maxRetries: 3,
+    dependencies: [params]
   });
 
+  const updateParams = useCallback((newParams: Partial<PerpMarketParams>) => {
+    console.log('Updating perp params:', newParams); // Debug log
+    setParams(prev => ({ ...prev, ...newParams }));
+  }, []);
+
   return {
-    data,
-    total,
-    page,
-    totalPages,
+    data: response?.data || [],
+    total: response?.total || 0,
+    page: response?.page || 1,
+    totalPages: response?.totalPages || 0,
     isLoading,
     error,
     updateParams,
     refetch,
-    totalVolume: metadata?.totalVolume
+    totalVolume: response?.totalVolume || 0
   };
 }
 
 // Hook spécifique pour les tokens tendance (top 5)
-export function useTopPerpMarkets(limit: number = 5, sortBy: string = 'volume', sortOrder: 'asc' | 'desc' = 'desc') {
+export function useTrendingPerpMarkets(limit: number = 5, sortBy: PerpSortableFields = 'change24h', sortOrder: 'asc' | 'desc' = 'desc') {
   const { data, isLoading, error, refetch, updateParams, totalVolume } = usePerpMarkets({
     limit,
     defaultParams: {

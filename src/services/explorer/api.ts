@@ -10,6 +10,8 @@ import {
     DeployData
 } from './types';
 
+const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
+
 /**
  * Récupère les détails d'un block spécifique
  */
@@ -141,18 +143,22 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
         console.log('ledgerUpdates', ledgerUpdates);
 
         // Traiter les fills d'abord
-        const fillTransactions = mergeFillsByHash(fills).map(fill => ({
-            hash: fill.hash,
-            method: fill.dir,
-            age: formatAge(fill.time),
-            from: address,
-            to: "HIP-2",
-            amount: fill.sz,
-            token: fill.coin,
-            price: fill.px,
-            total: (Number(fill.px) * Number(fill.sz)).toFixed(2),
-            time: fill.time
-        }));
+        const fillTransactions = mergeFillsByHash(fills).map(fill => {
+            const isClosePosition = fill.dir.toLowerCase().includes('close');
+            
+            return {
+                hash: fill.hash,
+                method: fill.dir,
+                age: formatAge(fill.time),
+                from: isClosePosition ? HIP2_ADDRESS : address,
+                to: isClosePosition ? address : HIP2_ADDRESS,
+                amount: fill.sz,
+                token: fill.coin,
+                price: fill.px,
+                total: (Number(fill.px) * Number(fill.sz)).toFixed(2),
+                time: fill.time
+            };
+        });
 
         // Créer un Set des hashs déjà traités
         const processedHashes = new Set(fillTransactions.map(tx => tx.hash));
@@ -163,6 +169,7 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
             .filter((tx: UserTransaction) => {
                 if (processedHashes.has(tx.hash)) return false;
                 if (tx.action.type === "evmRawTx" && !tx.action.orders?.[0]?.s) return false;
+                if (tx.action.type === "withdraw3") return false;
                 return true;
             })
             .map((tx: UserTransaction) => {
@@ -175,9 +182,7 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
                         method: ledgerUpdate.delta.type,
                         age: formatAge(tx.time),
                         from: address,
-                        to: (ledgerUpdate.delta.type === "withdraw")
-                            ? "arbitrum"
-                            : ledgerUpdate.delta.destination || "0x2222222222222222222222222222222222222222",
+                        to: ledgerUpdate.delta.type === "withdraw" ? "Arbitrum" : address,
                         amount: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer" 
                             ? ledgerUpdate.delta.usdc || "0"
                             : ledgerUpdate.delta.amount || ledgerUpdate.delta.usdc || "0",
@@ -202,7 +207,7 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
                     method: tx.action.type,
                     age: formatAge(tx.time),
                     from: address,
-                    to: tx.action.destination || "0x2222222222222222222222222222222222222222",
+                    to: address,
                     amount,
                     token: order?.a?.toString() || tx.action.token || "unknown",
                     time: tx.time
@@ -215,15 +220,13 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
             ...otherTransactions.map(tx => tx.hash)
         ]);
         const orphanLedgerTxs = ledgerUpdates
-            .filter(update => !allHashes.has(update.hash))
+            .filter(update => !allHashes.has(update.hash) && update.delta.type !== "withdraw3")
             .map(ledgerUpdate => ({
                 hash: ledgerUpdate.hash,
                 method: ledgerUpdate.delta.type,
                 age: formatAge(ledgerUpdate.time),
                 from: address,
-                to: (ledgerUpdate.delta.type === "withdraw")
-                    ? "arbitrum"
-                    : ledgerUpdate.delta.destination || "0x2222222222222222222222222222222222222222",
+                to: ledgerUpdate.delta.type === "withdraw" ? "Arbitrum" : address,
                 amount: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer"
                     ? ledgerUpdate.delta.usdc || "0"
                     : ledgerUpdate.delta.amount || ledgerUpdate.delta.usdc || "0",
@@ -302,10 +305,7 @@ export async function fetchPortfolio(address: string) {
     return response.json();
 }
 
-/**
- * Récupère les transferts depuis l'API Hypurrscan
- * @returns Liste des transferts bruts
- */
+
 export async function fetchTransfers(): Promise<TransferData[]> {
     try {
         const response = await fetch('https://api.hypurrscan.io/transfers', {

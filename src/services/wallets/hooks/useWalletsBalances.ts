@@ -2,85 +2,83 @@
  * Hook pour récupérer les balances de tous les wallets suivis
  */
 
-import { useState, useEffect } from 'react';
-import { useWallets } from '../../../store/use-wallets';
+import { useDataFetching } from '@/hooks/useDataFetching';
 import { 
   fetchHyperliquidBalances, 
   fetchHyperliquidPerpPositions 
 } from '../hyperliquid.service';
 import { HyperliquidBalance, HyperliquidPerpResponse } from '../types';
 
+interface WalletBalancesData {
+  spotBalances: HyperliquidBalance[];
+  perpPositions: HyperliquidPerpResponse | null;
+}
+
 /**
  * Hook pour récupérer les balances de tous les wallets suivis
- * @param overrideAddress Adresse optionnelle pour récupérer les balances d'une adresse spécifique
+ * @param address Adresse du wallet pour lequel récupérer les balances
  * @returns Les balances de tous les wallets, l'état de chargement, les erreurs et une fonction de rafraîchissement
  */
-export const useWalletsBalances = (overrideAddress?: string) => {
-  const { wallets, activeWalletId } = useWallets();
-  const activeWallet = wallets.find(w => w.id === activeWalletId);
-  
-  const [spotBalances, setSpotBalances] = useState<HyperliquidBalance[]>([]);
-  const [perpPositions, setPerpPositions] = useState<HyperliquidPerpResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchBalances = async () => {
-    // Utiliser l'adresse override si fournie, sinon utiliser l'adresse du wallet actif
-    const addressToUse = overrideAddress || activeWallet?.address;
-    
-    if (!addressToUse) {
-      console.warn('No address found');
-      setSpotBalances([]);
-      setPerpPositions(null);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      console.log('Fetching balances for address:', addressToUse);
-
-      // Fetch spot balances
-      const spotRequest = {
-        type: 'spotClearinghouseState',
-        user: addressToUse
-      };
-      console.log('Sending spot request:', spotRequest);
-      const spotResponse = await fetchHyperliquidBalances(spotRequest);
-      console.log('Received spot balances:', spotResponse);
-      setSpotBalances(spotResponse);
-
-      // Fetch perpetual positions
-      const perpRequest = {
-        type: 'clearinghouse',
-        user: addressToUse
-      };
-      console.log('Sending perp request:', perpRequest);
-      const perpResponse = await fetchHyperliquidPerpPositions(perpRequest);
-      console.log('Received perp positions:', perpResponse);
-      setPerpPositions(perpResponse);
-
-    } catch (err: any) {
-      console.error('Error fetching balances:', err);
-      setError(err.message || 'Failed to fetch balances');
-      setSpotBalances([]);
-      setPerpPositions(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchBalances();
-  }, [activeWallet?.address, overrideAddress]);
-
-  return {
-    spotBalances,
-    perpPositions,
+export const useWalletsBalances = (address?: string) => {
+  const { 
+    data,
     isLoading,
     error,
-    refresh: fetchBalances
+    refetch
+  } = useDataFetching<WalletBalancesData>({
+    fetchFn: async () => {
+      // Utiliser l'adresse fournie
+      if (!address) {
+        console.warn('No address provided for wallet balances');
+        return {
+          spotBalances: [],
+          perpPositions: null
+        };
+      }
+
+      console.log('Fetching balances for address:', address);
+
+      try {
+        // Fetch both balances in parallel
+        const [spotResponse, perpResponse] = await Promise.all([
+          // Fetch spot balances
+          fetchHyperliquidBalances({
+            type: 'spotClearinghouseState',
+            user: address
+          }).then(response => {
+            console.log('Received spot balances:', response);
+            return response;
+          }),
+
+          // Fetch perpetual positions
+          fetchHyperliquidPerpPositions({
+            type: 'clearinghouse',
+            user: address
+          }).then(response => {
+            console.log('Received perp positions:', response);
+            return response;
+          })
+        ]);
+
+        return {
+          spotBalances: spotResponse,
+          perpPositions: perpResponse
+        };
+      } catch (err: any) {
+        console.error('Error fetching balances:', err);
+        throw new Error(err.message || 'Failed to fetch balances');
+      }
+    },
+    refreshInterval: 30000, // Rafraîchir toutes les 20 secondes
+    maxRetries: 3,
+    dependencies: [address]
+  });
+
+  return {
+    spotBalances: data?.spotBalances || [],
+    perpPositions: data?.perpPositions || null,
+    isLoading,
+    error,
+    refresh: refetch
   };
 }; 

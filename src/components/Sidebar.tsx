@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { usePathname } from 'next/navigation'
 
 // Define navigation groups
 const navigationGroups = [
@@ -27,6 +28,16 @@ const navigationGroups = [
                 name: 'Home',
                 href: '/explorer',
                 icon: '/sidebar/Search.svg'
+            },
+            {
+                name: 'Validator',
+                href: '/explorer/validator',
+                icon: '/sidebar/Folder_line.svg'
+            },
+            {
+                name: 'Vaults',
+                href: '/explorer/vault',
+                icon: '/sidebar/Folder_line.svg'
             },
         ]
     },
@@ -54,13 +65,8 @@ const navigationGroups = [
         groupName: 'Ecosystem',
         items: [
             {
-                name: 'L1 Project',
-                href: '/project/l1',
-                icon: '/sidebar/Folder_line.svg'
-            },
-            {
-                name: 'EVM Project',
-                href: '/project/evm',
+                name: 'Project',
+                href: '/project',
                 icon: '/sidebar/Folder_line.svg'
             },
         ]
@@ -81,14 +87,15 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const { authenticated, login, logout, privyUser } = useAuthContext();
+    const pathname = usePathname();
 
     const toggleSubmenu = (name: string) => {
-            setOpenSubmenu(openSubmenu === name ? null : name);
-        };
+        setOpenSubmenu(openSubmenu === name ? null : name);
+    };
 
     return (
         <>
-            {/* Overlay - visible uniquement sur mobile quand la sidebar est ouverte */}
+            {/* Overlay */}
             {isOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -98,28 +105,29 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
             <div
                 className={cn(
-                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-[#051728] p-2 flex flex-col",
+                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-[#051728] flex flex-col",
+                    "border-r border-[#83E9FF1A]",
                     "transition-transform duration-300 ease-in-out z-50",
                     "lg:translate-x-0",
                     isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center justify-between p-3 border-b border-[#83E9FF1A]">
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="bg-[#1a2c38] lg:hidden"
+                        className="lg:hidden hover:bg-[#83E9FF1A]"
                         onClick={() => setIsOpen(false)}
                     >
-                        <Menu className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                        <Menu className="h-5 w-5 text-[#83E9FF]" />
                     </Button>
                     <div className="flex items-center gap-2">
                         <Image 
                             src="/logo.svg" 
                             alt="Logo" 
                             width={24} 
-                            height={24} 
+                            height={24}
                             className="h-6 w-6" 
                         />
                         <h1 className="hidden lg:block text-sm font-bold font-serif">
@@ -130,35 +138,50 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1">
-                    <ul className="space-y-6">
+                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#83E9FF1A] scrollbar-track-transparent">
+                    <ul className="space-y-4">
                         {navigationGroups.map((group, groupIndex) => (
-                            <li key={groupIndex} className="space-y-2">
+                            <li key={groupIndex} className="space-y-1">
                                 {group.groupName && (
-                                    <div className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                    <div className="px-3 text-[11px] font-medium text-[#83E9FF99] uppercase tracking-wider">
                                         {group.groupName}
                                     </div>
                                 )}
-                                <ul className="space-y-1">
-                                    {group.items.map((item) => (
-                                        <li key={item.name}>
-                                            <Link
-                                                href={item.href}
-                                                className={cn(
-                                                    "flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-[#112941] transition-colors",
-                                                    "hover:text-white"
+                                <ul className="space-y-[2px]">
+                                    {group.items.map((item) => {
+                                        const isActive = pathname === item.href;
+                                        return (
+                                            <li key={item.name} className="relative">
+                                                {/* Barre verticale active */}
+                                                {isActive && (
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#83E9FF] rounded-r shadow-[0_0_8px_0_rgba(131,233,255,0.3)]" />
                                                 )}
-                                            >
-                                                <Image
-                                                    src={item.icon}
-                                                    alt={item.name}
-                                                    width={20}
-                                                    height={20}
-                                                />
-                                                <span>{item.name}</span>
-                                            </Link>
-                                        </li>
-                                    ))}
+                                                <Link
+                                                    href={item.href}
+                                                    className={cn(
+                                                        "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all",
+                                                        "relative group",
+                                                        isActive 
+                                                            ? "bg-[#83E9FF0A] text-[#83E9FF]" 
+                                                            : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                    )}
+                                                >
+                                                    <div className={cn(
+                                                        "transition-transform",
+                                                        isActive ? "scale-110" : "group-hover:scale-105"
+                                                    )}>
+                                                        <Image
+                                                            src={item.icon}
+                                                            alt={item.name}
+                                                            width={18}
+                                                            height={18}
+                                                        />
+                                                    </div>
+                                                    <span className="text-sm">{item.name}</span>
+                                                </Link>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </li>
                         ))}
@@ -166,68 +189,89 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </nav>
 
                 {/* Account Section */}
-                <div className="mb-4 px-3">
+                <div className="p-3">
                     {!authenticated ? (
                         <Button 
                             onClick={() => login()}
-                            className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#2DCCFF] to-[#15748E] hover:from-[#83E9FF] hover:to-[#1692AD] text-white rounded-xl px-4 py-2 h-10 transition-all"
+                            className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
                         >
-                            <Image
-                                src="/wallet-icon.svg" 
-                                alt="Connecter"
-                                width={20}
-                                height={20}
-                                style={{ filter: "brightness(0) invert(1)" }}
-                            />
-                            <span className="font-medium">Login</span>
-                        </Button>
-                    ) : (
-                        <div className="flex items-center gap-3 bg-[#051728] px-2 py-1 rounded-xl border-2 border-[#83E9FF4D]">
-                            <div className="flex items-center gap-2">
-                                <Avatar className="h-8 w-8 border-2 border-[#1a2c38]">
-                                    {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
-                                        <Image 
-                                            src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
-                                            alt="Avatar"
-                                            width={32}
-                                            height={32}
-                                        />
-                                    ) : (
-                                        <AvatarFallback className="bg-[#1a2c38] text-white text-xs">
-                                            {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
-                                             privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
-                                             privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
-                                        </AvatarFallback>
-                                    )}
-                                </Avatar>
-                                <span className="text-[#FFFFFF99] text-sm truncate">
-                                    {privyUser?.twitter?.username || 
-                                     privyUser?.farcaster?.username || 
-                                     privyUser?.github?.username || "User"}
+                            <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
+                            <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
+                            <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
+                                <Image
+                                    src="/wallet-icon.svg" 
+                                    alt="Connecter"
+                                    width={18}
+                                    height={18}
+                                    className="brightness-0 invert group-hover:scale-110 transition-transform duration-300"
+                                />
+                                <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
+                                    Login
                                 </span>
                             </div>
-                            <div className="w-[1px] h-6 bg-[#1a2c38]" />
-                            <Button variant="ghost" size="icon" onClick={() => logout()}>
-                                <Image
-                                    src="/Sign_out_circle.svg"
-                                    alt="Sign out"
-                                    width={20}
-                                    height={20}
-                                />
-                            </Button>
+                        </Button>
+                    ) : (
+                        <div className="p-2 bg-[#83E9FF0A] rounded-xl border border-[#83E9FF1A] backdrop-blur-sm">
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <div className="absolute -inset-1 bg-[#83E9FF] rounded-full blur opacity-20" />
+                                    <Avatar className="relative h-9 w-9 ring-2 ring-[#83E9FF1A] ring-offset-2 ring-offset-[#051728]">
+                                        {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
+                                            <Image 
+                                                src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
+                                                alt="Avatar"
+                                                width={36}
+                                                height={36}
+                                                className="object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] font-medium">
+                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
+                                                 privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
+                                                 privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
+                                            </AvatarFallback>
+                                        )}
+                                    </Avatar>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-white font-medium truncate">
+                                        {privyUser?.twitter?.username || 
+                                         privyUser?.farcaster?.username || 
+                                         privyUser?.github?.username || "User"}
+                                    </p>
+                                    <p className="text-[#FFFFFF80] text-xs truncate">Connected</p>
+                                </div>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={() => logout()}
+                                    className="hover:bg-[#83E9FF1A] text-[#83E9FF]"
+                                >
+                                    <Image
+                                        src="/Sign_out_circle.svg"
+                                        alt="Sign out"
+                                        width={20}
+                                        height={20}
+                                    />
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center gap-8 mb-4">
+                <div className="flex items-center justify-center gap-6 py-4 px-2 border-t border-[#83E9FF1A] bg-[#83E9FF05]">
                     {socials.map((item) => (
                         <Link
                             key={item.name}
                             href={item.href}
-                            className="text-[#83E9FFCC] hover:text-white transition-colors"
+                            className="group relative p-2"
                         >
-                            <Icon icon={item.iconName} className="h-6 w-6" />
+                            <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
+                            <Icon 
+                                icon={item.iconName} 
+                                className="h-5 w-5 text-[#83E9FFCC] group-hover:text-[#83E9FF] transition-colors relative z-10" 
+                            />
                         </Link>
                     ))}
                 </div>

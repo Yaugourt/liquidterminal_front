@@ -100,13 +100,23 @@ export async function fetchPaginated<T>(
 ): Promise<PaginatedResponse<T>> {
   const queryParams = new URLSearchParams();
   
+  // Ensure we properly handle all parameter types
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
-      queryParams.append(key, value.toString());
+    if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+        value.forEach(v => queryParams.append(key, v.toString()));
+      } else {
+        queryParams.append(key, value.toString());
+      }
     }
   });
 
-  const url = `${endpoint}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  // Ensure proper URL construction
+  const queryString = queryParams.toString();
+  const url = `${endpoint}${queryString ? `?${queryString}` : ''}`;
+  
+  console.log('Fetching URL:', url, 'with params:', params); // Debug log
+  
   return fetchWithConfig<PaginatedResponse<T>>(url, options);
 }
 

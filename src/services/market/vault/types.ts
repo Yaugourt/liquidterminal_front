@@ -40,4 +40,17 @@ export interface VaultsParams {
   limit?: number;
   sortBy?: 'apr' | 'tvl';
   [key: string]: any;
+}
+
+export interface UseVaultsOptions {
+  page?: number;
+  limit?: number;
+  sortBy?: 'apr' | 'tvl';
+}
+
+export interface VaultResponse {
+  data: VaultSummary[];
+  pagination: {
+    totalVolume: number;
+  };
 } 

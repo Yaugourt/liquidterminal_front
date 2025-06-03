@@ -1,14 +1,8 @@
-import { PerpMarketData, PerpGlobalStats } from './types';
+import { PerpMarketData, PerpGlobalStats, PerpMarketParams } from './types';
 import { fetchPaginated, fetchWithConfig } from '../../api/base';
 import { PaginatedResponse } from '../../dashboard/types';
 
-export async function fetchPerpMarkets(params: {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  [key: string]: any;
-}): Promise<PaginatedResponse<PerpMarketData>> {
+export async function fetchPerpMarkets(params: PerpMarketParams): Promise<PaginatedResponse<PerpMarketData>> {
   return fetchPaginated<PerpMarketData>('/market/perp', params);
 } 
 

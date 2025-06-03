@@ -5,7 +5,7 @@ import { StatsGrid } from "@/components/explorer/StatsGrid";
 import { BlocksTable } from "@/components/explorer/BlocksTable";
 import { RecentTransactionsTable } from "@/components/explorer/RecentTransactionsTable";
 import { ValidatorsTable } from "@/components/explorer/ValidatorsTable";
-import { HoldersActivityChart } from "@/components/explorer/HoldersActivityChart";
+import { HoldersActivityChart } from "@/components/explorer/TransfersDeployTable";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";

@@ -1,5 +1,7 @@
 import { StatsCard } from "./StatsCard";
 import { useEffect, useState } from "react";
+import { useNumberFormat } from "@/store/number-format.store";
+import { formatNumber } from "@/lib/formatting";
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,6 +10,15 @@ export function StatsGrid() {
     value: string;
     type: 'block' | 'blockTime' | 'transactions' | 'users';
   }>>([]);
+  const { format } = useNumberFormat();
+
+  // Fonction pour formater les nombres selon le type
+  const formatValue = (value: number, type: 'block' | 'blockTime' | 'transactions' | 'users') => {
+    if (type === 'blockTime') {
+      return `${value}s`;
+    }
+    return formatNumber(value, format);
+  };
 
   // Simulation d'un chargement de données
   useEffect(() => {
@@ -15,22 +26,22 @@ export function StatsGrid() {
       setStats([
         {
           title: "Block",
-          value: "652,365,195",
+          value: formatValue(652365195, "block"),
           type: "block"
         },
         {
           title: "Block time",
-          value: "13.5s",
+          value: formatValue(13.5, "blockTime"),
           type: "blockTime"
         },
         {
           title: "Transactions",
-          value: "2,856,947",
+          value: formatValue(2856947, "transactions"),
           type: "transactions"
         },
         {
           title: "Users",
-          value: "8,254,103",
+          value: formatValue(8254103, "users"),
           type: "users"
         }
       ]);
@@ -38,7 +49,7 @@ export function StatsGrid() {
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [format]); // Ajouter format comme dépendance pour mettre à jour quand le format change
 
   if (isLoading) {
     return (

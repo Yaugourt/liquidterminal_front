@@ -6,7 +6,8 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { WalletTabs } from "@/components/wallets/WalletTabs";
-import { StatsSection } from "@/components/wallets/stats/StatsSection";
+import { PortfolioStats } from "@/components/wallets/stats/PortfolioStats";
+import { PerformanceChart } from "@/components/wallets/stats/PerformanceChart";
 import { AssetsSection } from "@/components/wallets/assets/AssetsSection";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
@@ -78,7 +79,10 @@ export default function Wallets() {
               <WalletTabs />
             </div>
             <div className="mb-8">
-              <StatsSection />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative">
+                <PortfolioStats />
+                <PerformanceChart />
+              </div>
             </div>
             <AssetsSection />
           </div>

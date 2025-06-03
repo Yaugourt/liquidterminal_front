@@ -7,38 +7,38 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   const getIcon = () => {
     switch (title) {
       case "Users":
-        return <Users size={20} className="text-[#83E9FF]" />;
+        return <Users size={16} className="text-[#83E9FF]" />;
       case "Daily Volume":
-        return <BarChart3 size={20} className="text-[#83E9FF]" />;
+        return <BarChart3 size={16} className="text-[#83E9FF]" />;
       case "Bridged USDC":
-        return <CreditCard size={20} className="text-[#83E9FF]" />;
+        return <CreditCard size={16} className="text-[#83E9FF]" />;
       case "HYPE Staked":
-        return <Coins size={20} className="text-[#83E9FF]" />;
+        return <Coins size={16} className="text-[#83E9FF]" />;
       case "Vaults TVL":
-        return <Wallet size={20} className="text-[#83E9FF]" />;
+        return <Wallet size={16} className="text-[#83E9FF]" />;
       default:
         return null;
     }
   };
 
   return (
-    <Card className="p-4 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm hover:border-[#83E9FF66] transition-all">
-      <div className="flex items-center gap-2 mb-2">
+    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all">
+      <div className="flex items-center gap-1.5 mb-1.5">
         {getIcon()}
-        <h3 className="text-xs sm:text-sm text-[#FFFFFF99] font-serif">{title}</h3>
+        <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide">{title}</h3>
       </div>
       
       {isLoading ? (
-        <div className="h-8 bg-[#1692AD22] animate-pulse rounded" />
+        <div className="h-6 bg-[#1692AD22] animate-pulse rounded" />
       ) : (
-        <div className="flex items-baseline gap-2">
-          <span className="text-base sm:text-lg text-white ">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-sm text-white font-medium">
             {value}
           </span>
           {change && (
             <span
-              className={`text-xs ${
-                change >= 0 ? "text-green-500" : "text-red-500"
+              className={`text-[10px] ${
+                change >= 0 ? "text-[#4ADE80]" : "text-[#FF5757]"
               }`}
             >
               {change >= 0 ? "+" : ""}

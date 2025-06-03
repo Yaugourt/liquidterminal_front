@@ -1,34 +1,37 @@
 import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
+import { useNumberFormat } from "@/store/number-format.store";
+import { formatNumber } from "@/lib/formatting";
 
 export function StatsGrid() {
   const { stats, isLoading, error } = useDashboardStats();
+  const { format } = useNumberFormat();
 
-  // Fonction pour formater les nombres avec plus de lisibilité
-  const formatStat = (value: number, options?: { prefix?: string; decimals?: number }) => {
+  // Fonction pour formater les statistiques
+  const formatStat = (value: number | undefined | null, options?: { prefix?: string; decimals?: number }) => {
     const { prefix = '', decimals = 0 } = options || {};
     
-    // Pour les grands nombres (millions+), formater avec K, M, B
-    if (value >= 1000000000) {
-      return `${prefix}${(value / 1000000000).toFixed(decimals)}B`;
-    } else if (value >= 1000000) {
-      return `${prefix}${(value / 1000000).toFixed(decimals)}M`;
-    } else if (value >= 1000) {
-      return `${prefix}${(value / 1000).toFixed(decimals)}K`;
+    // Handle undefined or null values
+    if (value === undefined || value === null) {
+      return `${prefix}0`;
     }
     
-    // Formater les petits nombres normalement
-    return `${prefix}${value.toLocaleString('en-US', { maximumFractionDigits: decimals })}`;
+    return formatNumber(value, format, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: decimals,
+      currency: prefix,
+      showCurrency: !!prefix
+    });
   };
 
   // Afficher un état de chargement
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(5)].map((_, index) => (
-          <div key={index} className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-4 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 text-[#83E9FF4D] animate-spin" />
+          <div key={index} className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 flex items-center justify-center">
+            <Loader2 className="w-4 h-4 text-[#83E9FF4D] animate-spin" />
           </div>
         ))}
       </div>
@@ -38,8 +41,8 @@ export function StatsGrid() {
   // Afficher une erreur
   if (error) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
-        <div className="col-span-full bg-[#051728] border-2 border-red-500 rounded-lg p-4 text-center text-red-500">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
+        <div className="col-span-full bg-[#051728] border border-red-500 rounded-lg p-3 text-center text-red-500 text-sm">
           Error: {error.message}
         </div>
       </div>
@@ -71,7 +74,7 @@ export function StatsGrid() {
   ] : [];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
       {statsItems.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}

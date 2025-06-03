@@ -7,7 +7,7 @@ module.exports = {
         fontFamily: {
             sans: ["var(--font-inter)"],
             mono: ["var(--font-geist-mono)"],
-            serif: ["Higuen Elegant Serif", "serif"],
+            serif: ["var(--font-inter)"],
         },
         extend: {
             // ... other extensions ...

@@ -4,6 +4,9 @@ import { Card } from "@/components/ui/card";
 import { ChartSectionProps } from "@/components/types/dashboard.types";
 import { useLatestAuctions } from "@/services/dashboard/hooks/useLatestAuctions";
 import { useHLBridge } from "@/services/dashboard/hooks/useHLBridge";
+import { useNumberFormat } from "@/store/number-format.store";
+import { formatNumber } from "@/lib/formatting";
+import { Loader2 } from "lucide-react";
 
 import {
   LineChart,
@@ -27,17 +30,9 @@ interface CustomTooltipProps {
   dataType: "gas" | "bridge" | "fees";
 }
 
-const formatValue = (value: number) => {
-  if (value >= 1e9) {
-    return `${(value / 1e9).toFixed(2)}B`;
-  }
-  if (value >= 1e6) {
-    return `${(value / 1e6).toFixed(2)}M`;
-  }
-  return value.toFixed(2);
-};
-
 const CustomTooltip = ({ active, payload, label, dataType }: CustomTooltipProps) => {
+  const { format } = useNumberFormat();
+
   if (active && payload && payload.length && label) {
     return (
       <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
@@ -46,10 +41,13 @@ const CustomTooltip = ({ active, payload, label, dataType }: CustomTooltipProps)
         </p>
         <p className="text-[#83E9FF] font-medium">
           {dataType === "gas" 
-            ? `${payload[0].value.toFixed(2)} Gas`
-            : dataType === "bridge"
-            ? `$${formatValue(payload[0].value)}`
-            : `$${formatValue(payload[0].value)} Fees`
+            ? formatNumber(payload[0].value, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " Gas"
+            : formatNumber(payload[0].value, format, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                currency: '$',
+                showCurrency: true
+              }) + (dataType === "fees" ? " Fees" : "")
           }
         </p>
       </div>
@@ -63,6 +61,7 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>("auction");
   const { auctions, isLoading: auctionsLoading } = useLatestAuctions(200);
   const { bridgeData, isLoading: bridgeLoading } = useHLBridge();
+  const { format } = useNumberFormat();
 
   const getDateLimit = () => {
     if (selectedPeriod === "auction") return 0;
@@ -204,7 +203,7 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
         </div>
       </div>
 
-      <Card className="h-[250px] sm:h-[300px] lg:h-[350px] relative bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden">
+      <Card className="w-full h-[300px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl">
         <div className="absolute top-2 sm:top-4 left-3 sm:left-6 z-10">
           <h2 className="text-sm sm:text-base text-white font-medium">
             {selectedFilter === "bridge" 
@@ -218,8 +217,12 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
 
         <div className="absolute inset-0 p-4 pt-12">
           {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1692AD]"></div>
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            </div>
+          ) : chartData.length === 0 ? (
+            <div className="flex justify-center items-center h-full">
+              <p className="text-[#FFFFFF80]">Aucune donnée disponible</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -245,10 +248,10 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
                   fontSize={12}
                   tickFormatter={(value) => 
                     selectedFilter === "bridge"
-                      ? `$${formatValue(value)}`
+                      ? formatNumber(value, format, { currency: '$', showCurrency: true })
                       : selectedFilter === "strict"
-                      ? `$${formatValue(value)}`
-                      : value.toFixed(0)
+                      ? formatNumber(value, format, { currency: '$', showCurrency: true })
+                      : formatNumber(value, format, { maximumFractionDigits: 0 })
                   }
                   domain={['dataMin', 'dataMax']}
                   padding={{ top: 20, bottom: 20 }}
@@ -263,15 +266,10 @@ export function ChartSection({ chartHeight }: ChartSectionProps) {
                 <Line
                   type="monotone"
                   dataKey="value"
-                  stroke={
-                    selectedFilter === "bridge" 
-                      ? "#2DCCFF" 
-                      : selectedFilter === "strict"
-                      ? "#83E9FF"
-                      : "#FFEB3B"
-                  }
+                  stroke="#83E9FF"
                   strokeWidth={2}
                   dot={false}
+                  activeDot={{ r: 4, fill: "#83E9FF" }}
                 />
               </LineChart>
             </ResponsiveContainer>

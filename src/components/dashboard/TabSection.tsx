@@ -1,6 +1,6 @@
 import { useTrendingValidators } from "@/services/dashboard/hooks/useTrendingValidators";
 import { useLatestAuctions } from "@/services/dashboard/hooks/useLatestAuctions";
-import { useVaults } from "@/services/market/vault/hooks/useVaults";
+import { useVaults } from "@/services/vault/hooks/useVaults";
 import { TabSectionProps } from "@/components/types/dashboard.types";
 import { TabButtons } from "./TabButtons";
 import { ValidatorsTable, AuctionsTable, VaultTable } from "./DataTablesContent";

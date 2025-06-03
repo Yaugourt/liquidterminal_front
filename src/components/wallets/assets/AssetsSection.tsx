@@ -4,12 +4,14 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Database, RefreshCw, AlertCircle } from "lucide-react";
 import { AssetsTable } from "./AssetsTable";
-import { Holding, PerpHolding } from "@/components/types/wallet.types";
+import { HoldingDisplay, PerpHoldingDisplay } from "@/components/types/wallet.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
 import { useWallets } from "@/store/use-wallets";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
+import { useNumberFormat } from '@/store/number-format.store';
+import { formatNumber } from '@/lib/formatting';
 
 // Ajouter l'interface pour les props
 interface AssetsSectionProps {
@@ -20,30 +22,49 @@ interface AssetsSectionProps {
 export function AssetsSection({ initialViewType = "spot", addressOverride }: AssetsSectionProps) {
   const [viewType, setViewType] = useState<"spot" | "perp">(initialViewType);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [activeWalletDisplay, setActiveWalletDisplay] = useState<string | null>(null);
+  const { format } = useNumberFormat();
+  
+  const { getActiveWallet } = useWallets();
+  const activeWallet = getActiveWallet();
+  
+  // Utiliser l'adresse override ou l'adresse du wallet actif
+  const walletAddress = addressOverride || activeWallet?.address;
   
   // Utiliser les hooks pour récupérer les balances et les données de marché
-  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances(addressOverride);
+  const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances(walletAddress);
   const { data: spotMarketTokens, isLoading: isSpotMarketLoading, refetch: refetchSpotMarket } = useSpotTokens({ 
-    limit: 200, // Augmenté pour avoir plus de chances de trouver tous les tokens
+    limit: 200,
     defaultParams: {
       sortBy: "volume",
       sortOrder: "desc",
     } 
   });
-  const { getActiveWallet } = useWallets();
-  const activeWallet = getActiveWallet();
   
-  // Effet pour marquer que nous sommes côté client
+  // Si aucune adresse n'est disponible, afficher un message
+  if (!walletAddress) {
+    return (
+      <Card className="bg-transparent border-0 shadow-none overflow-hidden rounded-lg">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center text-[#FFFFFF99] space-x-2">
+            <AlertCircle className="h-5 w-5" />
+            <span>Veuillez sélectionner un wallet pour voir vos assets</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
   
   // Effet pour mettre à jour l'affichage du wallet actif
   useEffect(() => {
+    if (!isMounted) return;
+
     if (addressOverride) {
-      // Si nous avons une adresse override, l'utiliser pour l'affichage
       setActiveWalletDisplay(`${addressOverride.slice(0, 6)}...${addressOverride.slice(-4)}`);
     } else if (activeWallet) {
       const display = activeWallet.name || 
@@ -52,7 +73,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
     } else {
       setActiveWalletDisplay(null);
     }
-  }, [activeWallet, addressOverride]);
+  }, [activeWallet, addressOverride, isMounted]);
 
   // Normaliser les noms de token pour faciliter la correspondance
   const normalizeTokenName = useCallback((name: string): string => {
@@ -72,23 +93,28 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
         });
         
         // Calculer la valeur totale basée sur le prix du marché si disponible
-        const totalValue = marketToken 
-          ? parseFloat(balance.total) * parseFloat(marketToken.price.toString()) 
-          : parseFloat(balance.total);
+        const price = marketToken ? parseFloat(marketToken.price.toString()) : 0;
+        const total = parseFloat(balance.total);
+        const totalValue = price * total;
+        const entryPrice = parseFloat(balance.entryNtl || "0");
+        const pnl = totalValue - (entryPrice * total);
         
-        return {
+        const holding: HoldingDisplay = {
+          id: `${balance.coin}-${balance.token || 'USDC'}`,
           coin: balance.coin,
           token: "USDC",
           total: balance.total,
+          totalValue: totalValue,
+          entryPrice: entryPrice,
           entryNtl: balance.entryNtl || "0",
-          value: marketToken ? totalValue.toFixed(2) : undefined,
-          price: marketToken ? marketToken.price.toString() : undefined,
-          pnlPercentage: marketToken ? marketToken.change24h.toString() : undefined,
-          logo: marketToken ? marketToken.logo : undefined,
-          marketCap: marketToken ? marketToken.marketCap : undefined,
-          volume24h: marketToken ? marketToken.volume : undefined,
+          price: price,
+          pnl: pnl,
+          pnlPercentage: marketToken ? parseFloat(marketToken.change24h.toString()) : 0,
+          logo: marketToken?.logo || undefined,
         };
-      }) as Holding[];
+        
+        return holding;
+      });
     } else if (viewType === "perp" && perpPositions && spotMarketTokens) {
       return perpPositions.assetPositions.map(position => {
         const normalizedPositionCoin = normalizeTokenName(position.position.coin);
@@ -101,6 +127,8 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
         
         const szi = parseFloat(position.position.szi);
         const entryPx = parseFloat(position.position.entryPx);
+        const marginUsed = parseFloat(position.position.marginUsed);
+        const liquidationPx = parseFloat(position.position.liquidationPx);
         const positionValue = Math.abs(szi) * entryPx;
         
         // Prix actuel du marché pour calculer le PNL
@@ -113,19 +141,23 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
           ? (pnl / (entryPx * Math.abs(szi))) * 100 
           : 0;
         
-        return {
+        const holding: PerpHoldingDisplay = {
+          id: `${position.position.coin}-${szi > 0 ? 'long' : 'short'}`,
           coin: position.position.coin,
           type: szi > 0 ? 'Long' : 'Short',
           marginUsed: position.position.marginUsed,
+          marginUsedValue: marginUsed,
           positionValue: positionValue.toString(),
+          positionValueNum: positionValue,
           entryPrice: position.position.entryPx,
+          entryPriceNum: entryPx,
           liquidation: position.position.liquidationPx,
-          currentPrice: marketToken ? marketToken.price.toString() : undefined,
-          pnl: pnl.toFixed(2),
-          pnlPercentage: pnlPercentage.toFixed(2),
-          logo: marketToken?.logo,
+          liquidationNum: liquidationPx,
+          logo: marketToken?.logo || undefined,
         };
-      }) as PerpHolding[];
+        
+        return holding;
+      });
     }
     return [];
   }, [spotBalances, spotMarketTokens, perpPositions, viewType, normalizeTokenName]);
@@ -175,7 +207,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
         <CardContent className="p-4">
           <div className="flex items-center justify-center text-red-500 space-x-2">
             <AlertCircle className="h-5 w-5" />
-            <span>{error || "Une erreur est survenue lors du chargement des assets"}</span>
+            <span>{error.message || "Une erreur est survenue lors du chargement des assets"}</span>
           </div>
         </CardContent>
       </Card>
@@ -205,7 +237,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
           <div className="flex items-center text-[#FFFFFF99] text-xs sm:text-sm">
             <Database size={16} className="mr-2" />
             Total assets: {convertedHoldings.length}
-            {isClient && activeWalletDisplay && (
+            {isMounted && activeWalletDisplay && (
               <span className="ml-2 text-[#83E9FF]">
                 ({activeWalletDisplay})
               </span>
@@ -228,8 +260,26 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
         <CardContent className="p-0">
           <AssetsTable 
             holdings={convertedHoldings} 
-            loading={isLoading || isRefreshing || isSpotMarketLoading} 
+            isLoading={isLoading || isRefreshing || isSpotMarketLoading} 
             type={viewType}
+            onSort={() => {}} // TODO: Implement sorting
+            formatCurrency={(value) => formatNumber(Number(value), format, {
+              currency: '$',
+              showCurrency: true,
+              minimumFractionDigits: Math.abs(Number(value)) < 0.01 ? 4 : 2,
+              maximumFractionDigits: Math.abs(Number(value)) < 0.01 ? 4 : 2
+            })}
+            formatTokenAmount={(value) => formatNumber(Number(value), format, {
+              minimumFractionDigits: Math.abs(Number(value)) >= 1 ? 2 : Math.abs(Number(value)) >= 0.1 ? 3 : 4,
+              maximumFractionDigits: Math.abs(Number(value)) >= 1 ? 2 : Math.abs(Number(value)) >= 0.1 ? 3 : 4
+            })}
+            formatPercent={(value) => {
+              const sign = value >= 0 ? '+' : '';
+              return sign + formatNumber(Math.abs(value), format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }) + '%';
+            }}
           />
         </CardContent>
       </Card>

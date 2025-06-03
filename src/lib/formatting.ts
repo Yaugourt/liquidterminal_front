@@ -1,3 +1,5 @@
+import { NUMBER_FORMATS, NumberFormatType } from '@/store/number-format.store';
+
 /**
  * Formate un nombre sans décimales avec des suffixes pour les grands nombres
  * @param num Nombre à formater
@@ -131,32 +133,27 @@ export function formatLargeNumber(value: number, options: {
     suffix = ''
   } = options;
 
-  // Fonction helper pour formater le nombre
+  // Fonction helper pour formater le nombre sans arrondi
   const formatNum = (num: number): string => {
-    const fixed = num.toFixed(decimals);
+    const factor = Math.pow(10, decimals);
+    const truncated = Math.floor(num * factor) / factor;
+    const fixed = truncated.toFixed(decimals);
     return forceDecimals ? fixed : fixed.replace(/\.?0+$/, '');
   };
 
-  // Ajouter un espace après le préfixe s'il existe
-  const prefixWithSpace = prefix ? prefix + ' ' : '';
-
   if (value >= 1e9) {
-    return `${prefixWithSpace}${formatNum(value / 1e9)}${suffix}B`;
+    return `${prefix}${formatNum(value / 1e9)} B`;
   }
   
   if (value >= 1e6) {
-    const formatted = formatNum(value / 1e6);
-    // Si on a des décimales, pas d'espace avant le M
-    return formatted.includes('.') 
-      ? `${prefixWithSpace}${formatted}${suffix}M`
-      : `${prefixWithSpace}${formatted} ${suffix}M`;
+    return `${prefix}${formatNum(value / 1e6)} M`;
   }
   
   if (value >= 1e3) {
-    return `${prefixWithSpace}${formatNum(value / 1e3)} ${suffix}K`;
+    return `${prefix}${formatNum(value / 1e3)} K`;
   }
   
-  return `${prefixWithSpace}${formatNum(value)}${suffix}`;
+  return `${prefix}${formatNum(value)}${suffix ? ' ' + suffix : ''}`;
 }
 
 export function formatFullNumber(value: number | undefined | null, options: { prefix?: string } = {}): string {
@@ -190,4 +187,180 @@ export function formatFullNumberWithCurrency(value: number | undefined | null, o
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   });
+}
+
+/**
+ * Formate un nombre selon le format sélectionné
+ * @param value Nombre à formater
+ * @param format Type de format à utiliser
+ * @param options Options de formatage
+ * @returns Chaîne formatée selon le format choisi
+ */
+export function formatNumber(
+  value: number,
+  format: NumberFormatType,
+  options: {
+    minimumFractionDigits?: number;
+    maximumFractionDigits?: number;
+    currency?: string;
+    showCurrency?: boolean;
+  } = {}
+): string {
+  const {
+    minimumFractionDigits = 0,
+    maximumFractionDigits = 2,
+    currency,
+    showCurrency = false
+  } = options;
+
+  const formatConfig = NUMBER_FORMATS[format];
+  
+  // Formatter le nombre en chaîne avec les décimales appropriées
+  let parts = Math.abs(value).toFixed(maximumFractionDigits).split('.');
+  
+  // Ajouter les séparateurs de milliers
+  if (formatConfig.thousandsSeparator) {
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, formatConfig.thousandsSeparator);
+  }
+  
+  // Assembler le nombre avec le séparateur décimal approprié
+  let formattedNumber = parts.join(formatConfig.decimalSeparator);
+  
+  // Ajouter le signe négatif si nécessaire
+  if (value < 0) {
+    formattedNumber = '-' + formattedNumber;
+  }
+  
+  // Ajouter la devise si demandé
+  if (showCurrency && currency) {
+    formattedNumber = `${currency}${formattedNumber}`;
+  }
+  
+  return formattedNumber;
+}
+
+/**
+ * Options communes pour le formatage des valeurs numériques
+ */
+export interface ValueFormattingOptions {
+  prefix?: string;
+  suffix?: string;
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+  format?: NumberFormatType;
+  showCurrency?: boolean;
+}
+
+/**
+ * Formate une valeur numérique avec des suffixes K, M selon des règles spécifiques
+ */
+export function formatMetricValue(
+  value: number | string,
+  options: ValueFormattingOptions = {}
+): string {
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  const {
+    prefix = '',
+    suffix = '',
+    minimumFractionDigits = 2,
+    maximumFractionDigits = 2,
+    format = 'standard' as NumberFormatType,
+    showCurrency = false
+  } = options;
+
+  if (isNaN(numValue)) return '0';
+
+  const formatOptions = {
+    minimumFractionDigits,
+    maximumFractionDigits,
+    showCurrency
+  };
+
+  if (numValue >= 1000000) {
+    return `${prefix}${formatNumber(numValue / 1000000, format, formatOptions)}${suffix}M`;
+  }
+  if (numValue >= 1000) {
+    return `${prefix}${formatNumber(numValue / 1000, format, formatOptions)}${suffix}K`;
+  }
+  return `${prefix}${formatNumber(numValue, format, formatOptions)}${suffix}`;
+}
+
+/**
+ * Formate une valeur de Gas
+ */
+export function formatGasValue(value: string | number, format: NumberFormatType): string {
+  return formatMetricValue(value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    format
+  });
+}
+
+/**
+ * Formate une valeur de Stake
+ */
+export function formatStakeValue(value: number, format: NumberFormatType): string {
+  return formatMetricValue(value, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    format
+  });
+}
+
+/**
+ * Formate une valeur de TVL (Total Value Locked)
+ */
+export function formatTVLValue(value: number, format: NumberFormatType): string {
+  return formatMetricValue(value, {
+    prefix: '$',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    format,
+    showCurrency: value < 1000 // Affiche le symbole $ uniquement pour les petites valeurs
+  });
+}
+
+/**
+ * Formate une valeur d'APR (Annual Percentage Rate)
+ */
+export function formatAPRValue(value: number, format: NumberFormatType): string {
+  const formattedValue = formatNumber(value, format, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  return `${formattedValue}%`;
+}
+
+/**
+ * Formate un montant de token avec une précision adaptative
+ * @param amount Montant à formater
+ * @param token Symbole du token
+ * @param format Format de nombre à utiliser
+ * @returns Montant formaté avec le symbole du token
+ */
+export function formatTokenAmount(
+  amount: string | number,
+  token: string,
+  format: NumberFormatType
+): string {
+  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  
+  // Si le nombre est entier, pas de décimales
+  if (Number.isInteger(numericAmount)) {
+    return `${formatNumber(numericAmount, format)} ${token}`;
+  }
+  
+  // Pour les très petits nombres (< 0.00001), on garde plus de précision
+  if (numericAmount < 0.00001) {
+    return `${formatNumber(numericAmount, format, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 8
+    })} ${token}`;
+  }
+  
+  // Pour les autres nombres, on limite à 4 décimales maximum
+  return `${formatNumber(numericAmount, format, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4
+  })} ${token}`;
 } 

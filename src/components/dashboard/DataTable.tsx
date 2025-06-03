@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Database, ArrowUpDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTableProps, Column } from "@/components/types/dashboard.types";
+import { Button } from "@/components/ui/button";
 
 export type { Column };
 
@@ -20,63 +21,94 @@ export function DataTable<T>({
   emptyMessage = "Aucune donnée disponible",
 }: DataTableProps<T>) {
   return (
-    <Card className="h-[250px] sm:h-[300px] lg:h-[350px] bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
-        </div>
-      ) : error ? (
-        <div className="flex justify-center items-center h-full">
-          <p className="text-red-500">Une erreur est survenue lors du chargement des données</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
-          <Table className="border-separate border-spacing-0 min-w-[300px]">
-            <TableHeader>
-              <TableRow className="bg-[#051728E5] hover:bg-[#0B2437]">
-                {columns.map((column, index) => (
-                  <TableHead
-                    key={index}
-                    className={`border-b-[1px] border-[#83E9FF4D] p-2 sm:p-3 text-xs sm:text-sm font-normal text-[#FFFFFF99] text-${column.align || "left"}`}
-                  >
-                    {column.header}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody className="text-white">
-              {data.length > 0 ? (
-                data.map((item, rowIndex) => (
-                  <TableRow
-                    key={rowIndex}
-                    className="bg-[#051728E5] border-t border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
-                  >
-                    {columns.map((column, colIndex) => (
-                      <TableCell
-                        key={colIndex}
-                        className={`p-2 sm:p-3 text-xs sm:text-sm text-${column.align || "left"}`}
+    <Card className="w-full h-[300px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl">
+      <div className="relative h-full">
+        {/* Header Background Gradient */}
+        <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#051728] to-transparent pointer-events-none" />
+        
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <div className="flex flex-col items-center">
+              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+              <span className="text-[#FFFFFF80] text-sm">Chargement...</span>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center h-full">
+            <div className="flex flex-col items-center text-center px-4">
+              <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
+              <p className="text-[#FF5757] text-sm mb-1">Une erreur est survenue</p>
+              <p className="text-[#FFFFFF80] text-xs">Veuillez réessayer plus tard</p>
+            </div>
+          </div>
+        ) : (
+          <div className="h-full overflow-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+            <Table>
+              <TableHeader className="sticky top-0 z-10">
+                <TableRow className="border-b border-[#83E9FF33] bg-[#051728]/95 backdrop-blur-sm">
+                  {columns.map((column, index) => (
+                    <TableHead
+                      key={index}
+                      className={`py-3 first:pl-6 last:pr-6 ${
+                        column.align === 'right' ? 'text-right' : ''
+                      }`}
+                    >
+                      <Button
+                        variant="ghost"
+                        className={`text-[#FFFFFF99] hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center gap-1.5 transition-colors ${
+                          column.align === 'right' ? 'ml-auto' : ''
+                        }`}
                       >
-                        {typeof column.accessor === "function"
-                          ? column.accessor(item)
-                          : String(item[column.accessor])}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="p-6 text-center"
-                  >
-                    <p className="text-[#FFFFFF99] text-sm">{emptyMessage}</p>
-                  </TableCell>
+                        {column.header}
+                        <ArrowUpDown className="h-3 w-3 opacity-50" />
+                      </Button>
+                    </TableHead>
+                  ))}
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+              </TableHeader>
+              <TableBody>
+                {data.length > 0 ? (
+                  data.map((item, rowIndex) => (
+                    <TableRow
+                      key={rowIndex}
+                      className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+                    >
+                      {columns.map((column, colIndex) => (
+                        <TableCell
+                          key={colIndex}
+                          className={`py-3 first:pl-6 last:pr-6 ${
+                            column.align === 'right' ? 'text-right' : ''
+                          } text-sm text-white`}
+                        >
+                          {typeof column.accessor === "function"
+                            ? column.accessor(item)
+                            : String(item[column.accessor])}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-[240px]"
+                    >
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                        <p className="text-white text-sm mb-1">{emptyMessage}</p>
+                        <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+        
+        {/* Footer Background Gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#051728] to-transparent pointer-events-none" />
+      </div>
     </Card>
   );
 } 
