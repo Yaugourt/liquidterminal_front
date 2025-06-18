@@ -15,6 +15,34 @@ export function useAuth() {
     setIsInitialized(true);
   }, []);
 
+  const ensureUserInitialized = useCallback(async () => {
+    if (!authenticated || !privyUser) return false;
+    
+    const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
+    if (!username) return false;
+
+    try {
+      const token = await getAccessToken();
+      if (!token) return false;
+
+      const credentials: LoginCredentials = {
+        privyUserId: privyUser.id,
+        name: username,
+        privyToken: token
+      };
+
+      const response = await authService.login(credentials);
+      if (response.success && response.user) {
+        setUser(response.user);
+        setUserProcessed(true);
+        return true;
+      }
+    } catch (err) {
+      setError(err as AuthError);
+    }
+    return false;
+  }, [authenticated, privyUser, getAccessToken]);
+
   const login = useCallback(async (credentials?: LoginCredentials) => {
     if (credentials) {
       try {
@@ -23,6 +51,7 @@ export function useAuth() {
         const response = await authService.login(credentials);
         if (response.success && response.user) {
           setUser(response.user);
+          setUserProcessed(true);
         }
       } catch (err) {
         setError(err as AuthError);
@@ -36,6 +65,7 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     setUser(null);
+    setUserProcessed(false);
     privyLogout();
   }, [privyLogout]);
 
@@ -58,36 +88,10 @@ export function useAuth() {
   }, [getAccessToken]);
 
   useEffect(() => {
-    const initUser = async () => {
-      if (authenticated && privyUser) {
-        const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
-        
-        if (!username) {
-          return;
-        }
-
-        if (!userProcessed) {
-          try {
-            const token = await getAccessToken();
-            if (!token) return;
-
-            const credentials: LoginCredentials = {
-              privyUserId: privyUser.id,
-              name: username,
-              privyToken: token
-            };
-
-            await login(credentials);
-            setUserProcessed(true);
-          } catch (error) {
-            // Error is already handled by the login function
-          }
-        }
-      }
-    };
-
-    initUser();
-  }, [authenticated, privyUser, userProcessed, login, getAccessToken]);
+    if (authenticated && privyUser && !userProcessed) {
+      ensureUserInitialized();
+    }
+  }, [authenticated, privyUser, userProcessed, ensureUserInitialized]);
 
   return {
     user,
@@ -96,9 +100,11 @@ export function useAuth() {
     login,
     logout,
     fetchUser,
+    ensureUserInitialized,
     isAuthenticated: authenticated,
     isInitialized,
     authenticated,
-    privyUser
+    privyUser,
+    userProcessed
   };
 } 

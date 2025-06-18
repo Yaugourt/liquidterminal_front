@@ -1,19 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { TransactionType } from "@/services/explorer/types";
 import Link from "next/link";
 import { Copy } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatting';
-import { Pagination } from "@/components/ui/pagination";
-
-interface TransactionListProps {
-  transactions: TransactionType[];
-  isLoading: boolean;
-  error: Error | null;
-  currentAddress: string;
-}
+import { Pagination } from '@/components/common';
+import { TransactionListProps } from "@/components/types/explorer.types";
 
 export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
   const { format } = useNumberFormat();

@@ -4,9 +4,7 @@ import { useRouter } from "next/navigation"
 import { useBlockDetails } from "@/services/explorer/hooks/useBlockDetails"
 import { Header } from "@/components/Header"
 import { use, useCallback } from "react"
-import { BlockHeader } from "@/components/explorer/block/BlockHeader"
-import { TransactionList } from "@/components/explorer/block/TransactionList"
-import { LoadingState, ErrorState } from "@/components/explorer/LoadingErrorStates"
+import { BlockHeader, BlockTransactionList as TransactionList, LoadingState, ErrorState } from "@/components/explorer"
 
 interface BlockDetailsProps {
     params: Promise<{

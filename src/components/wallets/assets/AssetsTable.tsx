@@ -1,16 +1,18 @@
 "use client";
 
 import { Table, TableBody } from "@/components/ui/table";
-import { TableHeaderComponent } from "./TableHeader";
+import { TableHeaderComponent, SortKey } from "./TableHeader";
 import { TableLoadingState } from "./TableLoadingState";
 import { SpotTableRow, PerpTableRow } from "./TableRow";
-import { HoldingDisplay, PerpHoldingDisplay, SortableKey } from "@/components/types/wallet.types";
+import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
 
 interface AssetsTableProps {
   type: 'spot' | 'perp';
-  holdings: HoldingDisplay[] | PerpHoldingDisplay[];
+  holdings: SortableHolding[];
   isLoading: boolean;
-  onSort: (key: SortableKey) => void;
+  onSort: (key: SortKey) => void;
+  activeSortKey: SortKey;
+  sortDirection: 'asc' | 'desc';
   formatCurrency: (value: number | string) => string;
   formatTokenAmount?: (value: number | string) => string;
   formatPercent?: (value: number) => string;
@@ -21,6 +23,8 @@ export function AssetsTable({
   holdings,
   isLoading,
   onSort,
+  activeSortKey,
+  sortDirection,
   formatCurrency,
   formatTokenAmount = (v) => v.toString(),
   formatPercent = (v) => `${v}%`
@@ -30,19 +34,21 @@ export function AssetsTable({
       <Table>
         <TableHeaderComponent 
           type={type} 
-          onSort={onSort} 
+          onSort={onSort}
+          activeSortKey={activeSortKey}
+          sortDirection={sortDirection}
         />
         <TableBody>
           {isLoading ? (
             <TableLoadingState 
               type={type}
-              colSpan={type === 'perp' ? 7 : 5} 
+              colSpan={type === 'perp' ? 8 : 5} 
               isLoading={true} 
             />
           ) : holdings.length === 0 ? (
             <TableLoadingState 
               type={type}
-              colSpan={type === 'perp' ? 7 : 5} 
+              colSpan={type === 'perp' ? 8 : 5} 
               isLoading={false} 
               isEmpty={true} 
             />
@@ -61,6 +67,7 @@ export function AssetsTable({
                   key={holding.coin}
                   holding={holding as PerpHoldingDisplay}
                   formatCurrency={formatCurrency}
+                  formatPercent={formatPercent}
                 />
               )
             ))

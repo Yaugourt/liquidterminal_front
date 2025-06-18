@@ -81,7 +81,7 @@ export function Header({
                                     height={11}
                                     className="text-[#83E9FF]" 
                                 />
-                                <span className="text-[#83E9FF99] text-[10px] font-medium">HYPE</span>
+                                <span className="text-[#FFFFFF] text-[10px] font-medium">HYPE</span>
                             </div>
                             <div className={cn(
                                 "text-white text-xs lg:text-sm font-medium transition-colors", 
@@ -97,8 +97,8 @@ export function Header({
                             <div className="flex gap-2 lg:gap-3">
                                 <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
                                     <div className="flex items-center gap-1.5">
-                                        <Clock size={11} className="text-[#83E9FF]" />
-                                        <span className="text-[#83E9FF99] text-[10px] font-medium">Hourly fees</span>
+                                        <Clock size={11} className="text-[#f9e370]" />
+                                        <span className="text-[#FFFFFF] text-[10px] font-medium">Hourly fees</span>
                                     </div>
                                     <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
                                         {formatFee(feesStats.hourlyFees)}
@@ -107,8 +107,8 @@ export function Header({
                                 
                                 <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
                                     <div className="flex items-center gap-1.5">
-                                        <CalendarDays size={11} className="text-[#83E9FF]" />
-                                        <span className="text-[#83E9FF99] text-[10px] font-medium">Daily fees</span>
+                                        <CalendarDays size={11} className="text-[#f9e370]" />
+                                        <span className="text-[#FFFFFF] text-[10px] font-medium">Daily fees</span>
                                     </div>
                                     <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
                                         {formatFee(feesStats.dailyFees)}

@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { GlobalStats } from "@/components/market/perp/GlobalStats";
-import { TrendingTokens } from "@/components/market/perp/TrendingTokens";
-import { PerpTokensSection } from "@/components/market/perp/PerpTokensSection";
+import { GlobalStats, TrendingTokens, PerpTokensSection, AuctionCard } from "@/components/market";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
-import { AuctionCard } from "@/components/market/auction/AuctionCard";
 
 export default function MarketPerp() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

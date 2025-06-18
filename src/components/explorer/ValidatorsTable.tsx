@@ -4,15 +4,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-
-// Types pour les transactions (à déplacer dans un fichier de types approprié plus tard)
-interface Transaction {
-  hash: string;
-  method: string;
-  age: string;
-  from: string;
-  data: string;
-}
+import { Transaction } from "@/components/types/explorer.types";
 
 interface Error {
   message: string;
@@ -31,7 +23,7 @@ const useTransactions = () => {
         data: "0x123456789abcdef",
       },
       // Ajouter plus de données de test si nécessaire
-    ],
+    ] as Transaction[],
     isLoading: false,
     error: null as Error | null,
   };

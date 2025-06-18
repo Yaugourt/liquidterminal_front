@@ -7,15 +7,15 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   const getIcon = () => {
     switch (title) {
       case "Users":
-        return <Users size={16} className="text-[#83E9FF]" />;
+        return <Users size={16} className="text-[#f9e370]" />;
       case "Daily Volume":
-        return <BarChart3 size={16} className="text-[#83E9FF]" />;
+        return <BarChart3 size={16} className="text-[#f9e370]" />;
       case "Bridged USDC":
-        return <CreditCard size={16} className="text-[#83E9FF]" />;
+        return <CreditCard size={16} className="text-[#f9e370]" />;
       case "HYPE Staked":
-        return <Coins size={16} className="text-[#83E9FF]" />;
+        return <Coins size={16} className="text-[#f9e370]" />;
       case "Vaults TVL":
-        return <Wallet size={16} className="text-[#83E9FF]" />;
+        return <Wallet size={16} className="text-[#f9e370]" />;
       default:
         return null;
     }
@@ -29,9 +29,9 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
       </div>
       
       {isLoading ? (
-        <div className="h-6 bg-[#1692AD22] animate-pulse rounded" />
+        <div className="h-6 bg-[#1692AD22] animate-pulse rounded ml-[24px]" />
       ) : (
-        <div className="flex items-baseline gap-1.5">
+        <div className="flex items-baseline gap-1.5 ml-[24px]">
           <span className="text-sm text-white font-medium">
             {value}
           </span>

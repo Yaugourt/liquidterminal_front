@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/auth.context";
+import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
 
@@ -25,6 +26,7 @@ export function WalletTabs() {
     setActiveWallet,
   } = useWallets();
   const { privyUser } = useAuthContext();
+  const { getAccessToken } = usePrivy();
 
   // Fetch wallets when privyUser changes
   useEffect(() => {
@@ -34,11 +36,27 @@ export function WalletTabs() {
           console.log("Fetching wallets for user:", privyUser.id);
           setIsLoading(true);
           setError(null);
-          await initialize(privyUser.id);
+
+          const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
+          if (!username) {
+            throw new Error("No username available");
+          }
+
+          const token = await getAccessToken();
+          if (!token) {
+            throw new Error("No access token available");
+          }
+
+          await initialize({
+            privyUserId: privyUser.id,
+            username,
+            privyToken: token
+          });
+          
           console.log("Wallets fetched successfully:", wallets);
         } catch (err) {
           console.error("Error fetching wallets:", err);
-          setError("Failed to fetch wallets. Please try again later.");
+          setError(err instanceof Error ? err.message : "Failed to fetch wallets. Please try again later.");
         } finally {
           setIsLoading(false);
         }
@@ -48,7 +66,7 @@ export function WalletTabs() {
     };
 
     fetchWallets();
-  }, [privyUser?.id, initialize]);
+  }, [privyUser?.id, initialize, getAccessToken]);
 
   // Log when wallets change
   useEffect(() => {
@@ -72,7 +90,16 @@ export function WalletTabs() {
   const handleWalletActionSuccess = async () => {
     // Reload wallets after successful add/delete
     if (privyUser?.id) {
-      await initialize(privyUser.id);
+      const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
+      const token = await getAccessToken();
+      
+      if (username && token) {
+        await initialize({
+          privyUserId: privyUser.id,
+          username,
+          privyToken: token
+        });
+      }
     }
   };
 

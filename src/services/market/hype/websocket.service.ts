@@ -4,89 +4,103 @@ import { HypePriceState, HypePriceStore, HypeTradeResponse } from './types';
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const HYPE_COIN_ID = '@107';
 
-export const useHypePriceStore = create<HypePriceStore>((set) => ({
-  currentPrice: 0,
-  lastSide: null,
-  isConnected: false,
-  error: null,
+export const useHypePriceStore = create<HypePriceStore>((set) => {
+  let resetTimeout: NodeJS.Timeout | null = null;
 
-  connect: () => {
-    try {
-      const ws = new WebSocket(WS_URL);
+  return {
+    currentPrice: 0,
+    lastSide: null,
+    isConnected: false,
+    error: null,
 
-      ws.onopen = () => {
-        console.log('HYPE WebSocket connected');
-        set({ isConnected: true, error: null });
-        
-        // Subscribe to HYPE trades
-        ws.send(JSON.stringify({
-          method: "subscribe",
-          subscription: { type: "trades", coin: HYPE_COIN_ID }
-        }));
-      };
+    connect: () => {
+      try {
+        const ws = new WebSocket(WS_URL);
 
-      ws.onmessage = (event) => {
-        try {
-          const response = JSON.parse(event.data) as HypeTradeResponse;
+        ws.onopen = () => {
+          console.log('HYPE WebSocket connected');
+          set({ isConnected: true, error: null });
           
-          // Check if it's a trade message and contains data
-          if (response.channel === 'trades' && response.data && response.data.length > 0) {
-            const trade = response.data[0];
+          // Subscribe to HYPE trades
+          ws.send(JSON.stringify({
+            method: "subscribe",
+            subscription: { type: "trades", coin: HYPE_COIN_ID }
+          }));
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const response = JSON.parse(event.data) as HypeTradeResponse;
             
-            // Make sure it's for HYPE
-            if (trade.coin === HYPE_COIN_ID) {
-              set({
-                currentPrice: parseFloat(trade.px),
-                lastSide: trade.side
-              });
+            // Check if it's a trade message and contains data
+            if (response.channel === 'trades' && response.data && response.data.length > 0) {
+              const trade = response.data[0];
               
-              // Reset the animation after 1 second
-              setTimeout(() => {
-                set({ lastSide: null });
-              }, 1000);
+              // Make sure it's for HYPE
+              if (trade.coin === HYPE_COIN_ID) {
+                // Clear any existing timeout
+                if (resetTimeout) {
+                  clearTimeout(resetTimeout);
+                }
+
+                set({
+                  currentPrice: parseFloat(trade.px),
+                  lastSide: trade.side
+                });
+                
+                // Set new timeout
+                resetTimeout = setTimeout(() => {
+                  set({ lastSide: null });
+                }, 1000);
+              }
             }
+          } catch (error) {
+            console.error('Error parsing HYPE WebSocket message:', error);
+            set({ error: 'Failed to parse HYPE price data' });
           }
-        } catch (error) {
-          console.error('Error parsing HYPE WebSocket message:', error);
-          set({ error: 'Failed to parse HYPE price data' });
-        }
-      };
+        };
 
-      ws.onerror = (error) => {
-        console.error('HYPE WebSocket error:', error);
-        set({ error: 'HYPE WebSocket connection error', isConnected: false });
-      };
+        ws.onerror = (error) => {
+          console.error('HYPE WebSocket error:', error);
+          set({ error: 'HYPE WebSocket connection error', isConnected: false });
+        };
 
-      ws.onclose = () => {
-        console.log('HYPE WebSocket disconnected');
+        ws.onclose = () => {
+          console.log('HYPE WebSocket disconnected');
+          set({ isConnected: false });
+          
+          // Try to reconnect after 5 seconds
+          setTimeout(() => {
+            if ((window as any).hypePriceWs === ws) {
+              useHypePriceStore.getState().connect();
+            }
+          }, 5000);
+        };
+
+        // Store WebSocket instance
+        (window as any).hypePriceWs = ws;
+      } catch (error) {
+        console.error('Failed to create HYPE WebSocket:', error);
+        set({ error: 'Failed to connect to HYPE WebSocket', isConnected: false });
+      }
+    },
+
+    disconnect: () => {
+      const ws = (window as any).hypePriceWs;
+      if (ws) {
+        ws.close();
+        (window as any).hypePriceWs = null;
         set({ isConnected: false });
-        
-        // Try to reconnect after 5 seconds
-        setTimeout(() => {
-          if ((window as any).hypePriceWs === ws) {
-            useHypePriceStore.getState().connect();
-          }
-        }, 5000);
-      };
+      }
+      // Clear any existing timeout
+      if (resetTimeout) {
+        clearTimeout(resetTimeout);
+        resetTimeout = null;
+      }
+    },
 
-      // Store WebSocket instance
-      (window as any).hypePriceWs = ws;
-    } catch (error) {
-      console.error('Failed to create HYPE WebSocket:', error);
-      set({ error: 'Failed to connect to HYPE WebSocket', isConnected: false });
+    resetPriceAnimation: () => {
+      set({ lastSide: null });
     }
-  },
-
-  disconnect: () => {
-    const ws = (window as any).hypePriceWs;
-    if (ws) {
-      ws.close();
-      (window as any).hypePriceWs = null;
-      set({ isConnected: false });
-    }
-  },
-
-  resetPriceAnimation: () => {
-    set({ lastSide: null });
-  }
-})); 
+  };
+}); 

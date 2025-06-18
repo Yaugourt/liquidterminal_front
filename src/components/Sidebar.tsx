@@ -1,6 +1,9 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
 import { Menu } from "lucide-react"
+import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiChartLine, PiWallet, PiSignIn, PiSignOut } from "react-icons/pi";
+import { AiOutlineHome } from "react-icons/ai";
+import { MdOutlineCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -17,7 +20,8 @@ const navigationGroups = [
             {
                 name: 'Home',
                 href: '/',
-                icon: '/sidebar/Home.svg'
+                icon: null,
+                IconComponent: AiOutlineHome
             },
         ]
     },
@@ -32,12 +36,14 @@ const navigationGroups = [
             {
                 name: 'Validator',
                 href: '/explorer/validator',
-                icon: '/sidebar/Folder_line.svg'
+                icon: null,
+                IconComponent: PiShareNetworkBold
             },
             {
                 name: 'Vaults',
                 href: '/explorer/vault',
-                icon: '/sidebar/Folder_line.svg'
+                icon: null,
+                IconComponent: PiVault
             },
         ]
     },
@@ -47,17 +53,20 @@ const navigationGroups = [
             {
                 name: 'Spot',
                 href: '/market/spot',
-                icon: '/sidebar/Line_up.svg'
+                icon: null,
+                IconComponent: MdOutlineCandlestickChart
             },
             {
-                name: 'Perp',
+                name: 'Perpetual',
                 href: '/market/perp',
-                icon: '/sidebar/Line_up.svg'
+                icon: null,
+                IconComponent: PiInfinity
             },
             {
                 name: 'Wallet',
                 href: '/wallets',
-                icon: '/sidebar/Wallet_alt.svg'
+                icon: null,
+                IconComponent: PiWallet
             },
         ]
     },
@@ -67,7 +76,8 @@ const navigationGroups = [
             {
                 name: 'Project',
                 href: '/project',
-                icon: '/sidebar/Folder_line.svg'
+                icon: null,
+                IconComponent: PiListMagnifyingGlass
             },
         ]
     },
@@ -154,7 +164,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             <li key={item.name} className="relative">
                                                 {/* Barre verticale active */}
                                                 {isActive && (
-                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#83E9FF] rounded-r shadow-[0_0_8px_0_rgba(131,233,255,0.3)]" />
+                                                    <div className="absolute left-0 top-1/2 h-5 bg-[#83E9FF] rounded-r shadow-[0_0_8px_0_rgba(131,233,255,0.3)]" />
                                                 )}
                                                 <Link
                                                     href={item.href}
@@ -170,12 +180,16 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                         "transition-transform",
                                                         isActive ? "scale-110" : "group-hover:scale-105"
                                                     )}>
-                                                        <Image
-                                                            src={item.icon}
-                                                            alt={item.name}
-                                                            width={18}
-                                                            height={18}
-                                                        />
+                                                        {item.icon ? (
+                                                            <Image
+                                                                src={item.icon}
+                                                                alt={item.name}
+                                                                width={18}
+                                                                height={18}
+                                                            />
+                                                        ) : item.IconComponent ? (
+                                                            <item.IconComponent className="w-5 h-5" />
+                                                        ) : null}
                                                     </div>
                                                     <span className="text-sm">{item.name}</span>
                                                 </Link>
@@ -198,13 +212,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
                             <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
                             <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
-                                <Image
-                                    src="/wallet-icon.svg" 
-                                    alt="Connecter"
-                                    width={18}
-                                    height={18}
-                                    className="brightness-0 invert group-hover:scale-110 transition-transform duration-300"
-                                />
+                                <PiSignIn className="w-6 h-6 brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
                                 <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
                                     Login
                                 </span>
@@ -216,9 +224,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 <div className="relative">
                                     <div className="absolute -inset-1 bg-[#83E9FF] rounded-full blur opacity-20" />
                                     <Avatar className="relative h-9 w-9 ring-2 ring-[#83E9FF1A] ring-offset-2 ring-offset-[#051728]">
-                                        {privyUser?.twitter?.profilePictureUrl || privyUser?.farcaster?.pfp ? (
+                                        {privyUser?.twitter?.profilePictureUrl ? (
                                             <Image 
-                                                src={privyUser.twitter?.profilePictureUrl || privyUser.farcaster?.pfp || ""}
+                                                src={privyUser.twitter.profilePictureUrl}
                                                 alt="Avatar"
                                                 width={36}
                                                 height={36}
@@ -226,20 +234,16 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             />
                                         ) : (
                                             <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] font-medium">
-                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || 
-                                                 privyUser?.farcaster?.username?.[0]?.toUpperCase() || 
-                                                 privyUser?.github?.username?.[0]?.toUpperCase() || "U"}
+                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
                                             </AvatarFallback>
                                         )}
                                     </Avatar>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-white font-medium truncate">
-                                        {privyUser?.twitter?.username || 
-                                         privyUser?.farcaster?.username || 
-                                         privyUser?.github?.username || "User"}
+                                        {privyUser?.twitter?.username || "User"}
                                     </p>
-                                    <p className="text-[#FFFFFF80] text-xs truncate">Connected</p>
+                                    <p className="text-[#FFFFFF80] text-xs truncate">Connected with Twitter</p>
                                 </div>
                                 <Button 
                                     variant="ghost" 
@@ -247,12 +251,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                     onClick={() => logout()}
                                     className="hover:bg-[#83E9FF1A] text-[#83E9FF]"
                                 >
-                                    <Image
-                                        src="/Sign_out_circle.svg"
-                                        alt="Sign out"
-                                        width={20}
-                                        height={20}
-                                    />
+                                    <PiSignOut className="w-6 h-6" />
                                 </Button>
                             </div>
                         </div>

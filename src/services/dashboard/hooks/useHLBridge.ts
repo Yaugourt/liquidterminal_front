@@ -1,4 +1,4 @@
-import { HLBridgeData, UseHLBridgeResult } from '../types';
+import { BridgeData, UseHLBridgeResult } from '../types';
 import { fetchHLBridge } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
@@ -8,9 +8,9 @@ export function useHLBridge(): UseHLBridgeResult {
     isLoading,
     error,
     refetch
-  } = useDataFetching<HLBridgeData>({
+  } = useDataFetching<BridgeData>({
     fetchFn: fetchHLBridge,
-    refreshInterval: 10000, // Refresh every 10 seconds
+    refreshInterval: 60000, // Refresh every 10 seconds
     maxRetries: 3
   });
 

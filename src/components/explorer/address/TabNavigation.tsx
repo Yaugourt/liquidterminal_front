@@ -1,17 +1,7 @@
 "use client";
 
 import React from "react";
-
-type Tab = {
-  id: string;
-  label: string;
-};
-
-interface TabNavigationProps {
-  activeTab: string;
-  onChange: (tabId: string) => void;
-  tabs: Tab[];
-}
+import { TabNavigationProps, Tab } from "@/components/types/explorer.types";
 
 export function TabNavigation({ activeTab, onChange, tabs }: TabNavigationProps) {
   return (

@@ -5,10 +5,7 @@ import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances"
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatting';
-
-interface AddressBalanceProps {
-  address: string;
-}
+import { AddressBalanceProps } from "@/components/types/explorer.types";
 
 export function AddressBalance({ address }: AddressBalanceProps) {
   const { spotBalances, perpPositions, isLoading, error } = useWalletsBalances(address);

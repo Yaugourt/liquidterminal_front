@@ -363,4 +363,37 @@ export function formatTokenAmount(
     minimumFractionDigits: 0,
     maximumFractionDigits: 4
   })} ${token}`;
+}
+
+/**
+ * Formate une valeur monétaire pour l'affichage des assets
+ */
+export function formatAssetValue(value: number, format: NumberFormatType): string {
+  return formatNumber(value, format, {
+    currency: '$',
+    showCurrency: true,
+    minimumFractionDigits: Math.abs(value) < 0.01 ? 4 : 2,
+    maximumFractionDigits: Math.abs(value) < 0.01 ? 4 : 2
+  });
+}
+
+/**
+ * Formate une quantité de token pour l'affichage des assets
+ */
+export function formatAssetTokenAmount(value: number, format: NumberFormatType): string {
+  return formatNumber(value, format, {
+    minimumFractionDigits: Math.abs(value) >= 1 ? 2 : Math.abs(value) >= 0.1 ? 3 : 4,
+    maximumFractionDigits: Math.abs(value) >= 1 ? 2 : Math.abs(value) >= 0.1 ? 3 : 4
+  });
+}
+
+/**
+ * Formate un pourcentage pour l'affichage des assets
+ */
+export function formatAssetPercent(value: number, format: NumberFormatType): string {
+  const sign = value >= 0 ? '+' : '';
+  return sign + formatNumber(Math.abs(value), format, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }) + '%';
 } 

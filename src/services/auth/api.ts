@@ -14,6 +14,12 @@ export const authService = {
         };
       }
 
+      console.log('Attempting login with:', {
+        privyUserId: credentials.privyUserId,
+        name: credentials.name,
+        apiUrl: API_URL
+      });
+
       const requestData = {
         privyUserId: credentials.privyUserId,
         name: credentials.name
@@ -26,17 +32,37 @@ export const authService = {
         },
       });
       
+      console.log('Login response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Login error:', error);
+      
       if (axios.isAxiosError(error)) {
+        // Gestion spécifique des codes d'erreur de l'API
+        if (error.response?.status === 401) {
+          throw {
+            success: false,
+            message: 'Invalid or expired token',
+            code: 'UNAUTHORIZED'
+          };
+        }
+        
+        if (error.response?.status === 400) {
+          throw {
+            success: false,
+            message: 'PrivyUserId does not match token',
+            code: 'INVALID_USER'
+          };
+        }
+
         if (error.response?.data) {
           throw error.response.data;
         }
         
         throw {
           success: false,
-          message: error.message || 'An error occurred during login',
-          code: `HTTP_${error.response?.status || 500}`
+          message: 'Server error occurred',
+          code: 'SERVER_ERROR'
         };
       }
       
@@ -50,23 +76,36 @@ export const authService = {
 
   getUser: async (privyUserId: string, privyToken: string): Promise<AuthResponse> => {
     try {
+      console.log('Fetching user:', { privyUserId });
+      
       const response = await axios.get(`${API_URL}/auth/user/${privyUserId}`, {
         headers: {
           'Authorization': `Bearer ${privyToken}`,
         },
       });
       
+      console.log('User response:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Get user error:', error);
+      
       if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          throw {
+            success: false,
+            message: 'Invalid or expired token',
+            code: 'UNAUTHORIZED'
+          };
+        }
+
         if (error.response?.data) {
           throw error.response.data;
         }
         
         throw {
           success: false,
-          message: error.message || 'An error occurred while fetching user data',
-          code: `HTTP_${error.response?.status || 500}`
+          message: 'Server error occurred',
+          code: 'SERVER_ERROR'
         };
       }
       

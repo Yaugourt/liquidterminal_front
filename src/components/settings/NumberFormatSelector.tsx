@@ -17,7 +17,7 @@ export function NumberFormatSelector() {
         <Button 
           variant="ghost" 
           size="icon"
-          className="hover:bg-[#83E9FF1A] text-[#83E9FF]"
+          className="hover:bg-[#83E9FF1A] text-[#f9e370]"
         >
           <Settings className="h-5 w-5" />
         </Button>

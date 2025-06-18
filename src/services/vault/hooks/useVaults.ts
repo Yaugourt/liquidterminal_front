@@ -4,7 +4,8 @@ import {
   UseVaultsResult, 
   VaultSummary, 
   VaultsParams, 
-  UseVaultsOptions 
+  UseVaultsOptions,
+  VaultsResponse
 } from '../types';
 import { useState, useCallback } from 'react';
 import { PaginatedResponse } from '../../dashboard/types';
@@ -12,45 +13,39 @@ import { PaginatedResponse } from '../../dashboard/types';
 /**
  * Hook pour récupérer la liste des vaults avec pagination et tri
  */
-export function useVaults({
+export const useVaults = ({
   page = 1,
-  limit = 20,
-  sortBy = 'tvl'
-}: UseVaultsOptions = {}): UseVaultsResult {
-  const [params, setParams] = useState<VaultsParams>({
-    page,
-    limit,
-    sortBy
+  limit = 10,
+  sortBy = 'tvl',
+  initialData
+}: UseVaultsOptions & { initialData?: VaultSummary[] } = {}): UseVaultsResult => {
+  const [params, setParams] = useState({ page, limit, sortBy });
+
+  const { data, isLoading, error, refetch } = useDataFetching<VaultsResponse>({
+    fetchFn: () => fetchVaults(params),
+    dependencies: [params],
+    initialData: initialData ? {
+      success: true,
+      data: initialData,
+      pagination: {
+        totalTvl: 0, // Will be updated on first fetch
+        total: initialData.length,
+        page: 1
+      }
+    } : null,
+    refreshInterval: 30000 // 30 seconds
   });
 
-  const {
-    data: response,
-    isLoading,
-    error,
-    refetch
-  } = useDataFetching<PaginatedResponse<VaultSummary>>({
-    fetchFn: async () => {
-      console.log('Fetching vaults with params:', params);
-      const response = await fetchVaults(params);
-      console.log('Received vaults:', response);
-      return response;
-    },
-    refreshInterval: 30000, // Rafraîchir toutes les 30 secondes
-    maxRetries: 3,
-    dependencies: [params]
-  });
-
-  const updateParams = useCallback((newParams: Partial<VaultsParams>) => {
-    console.log('Updating vault params:', newParams);
+  const updateParams = useCallback((newParams: Partial<UseVaultsOptions>) => {
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 
   return {
-    vaults: response?.data || [],
-    totalTvl: response?.pagination.totalVolume || 0,
+    vaults: data?.data || [],
+    totalTvl: data?.pagination.totalTvl || 0,
     isLoading,
     error,
     refetch,
     updateParams
   };
-} 
+}; 

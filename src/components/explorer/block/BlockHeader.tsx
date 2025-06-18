@@ -6,12 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy, Check, Clock, Hash, User, FileText } from "lucide-react";
 import { format } from "date-fns";
-import { BlockDetails } from "@/services/explorer/types";
-
-interface BlockHeaderProps {
-  blockDetails: BlockDetails;
-  onAddressClick: (address: string) => void;
-}
+import { BlockHeaderProps } from "@/components/types/explorer.types";
 
 export function BlockHeader({ blockDetails, onAddressClick }: BlockHeaderProps) {
   const [copiedValues, setCopiedValues] = useState<Record<string, boolean>>({});

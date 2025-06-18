@@ -1,11 +1,7 @@
 "use client";
 
-import { AssetsSection } from "@/components/wallets/assets/AssetsSection";
-
-interface HoldingTabsProps {
-  address: string;
-  viewType?: "spot" | "perp";
-}
+import { AssetsSection } from "@/components/wallets/assets";
+import { HoldingTabsProps } from "@/components/types/explorer.types";
 
 export function HoldingTabs({ address, viewType = "spot" }: HoldingTabsProps) {
   return (

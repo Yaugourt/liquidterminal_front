@@ -1,17 +1,26 @@
-import { formatDate, truncateAddress, formatGasValue, formatStakeValue, formatTVLValue, formatAPRValue } from "@/lib/formatting";
+import { memo, useMemo } from "react";
+import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/formatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
 import { DataTable, Column } from "./DataTable";
 import { useNumberFormat } from "@/store/number-format.store";
 import Link from "next/link";
-import { PriceChange } from "@/components/ui/PriceChange";
+import { PriceChange } from '@/components/common';
 
-export function AuctionsTable({ auctions, isLoading, error }: AuctionsTableProps) {
+export const AuctionsTable = memo(({ auctions, isLoading, error }: AuctionsTableProps) => {
   const { format } = useNumberFormat();
 
-  const columns: Column<AuctionsTableProps["auctions"][0]>[] = [
+  const sortedAuctions = useMemo(() => {
+    return [...auctions]
+      .sort((a, b) => b.time - a.time)
+      .slice(0, 5);
+  }, [auctions]);
+
+  const columns = useMemo(() => [
     {
       header: "Name",
       accessor: "name",
+      align: "left",
+      className: "w-1/3 px-4"
     },
     {
       header: "Deployer",
@@ -23,46 +32,57 @@ export function AuctionsTable({ auctions, isLoading, error }: AuctionsTableProps
           {truncateAddress(item.deployer)}
         </Link>
       ),
-      align: "right",
+      align: "left",
+      className: "w-1/3 px-4"
     },
     {
-      header: "Gas",
-      accessor: (item: AuctionsTableProps["auctions"][0]) => formatGasValue(item.deployGas, format),
-      align: "right",
+      header: "Price",
+      accessor: (item: any) => {
+        const amount = parseFloat(item.deployGasAbs);
+        return (
+          <span>{amount.toFixed(2)} {item.currency}</span>
+        );
+      },
+      align: "left",
+      className: "w-1/3 px-4 text-left"
     },
-  ];
+  ] as Column<typeof auctions[0]>[], [format]);
 
   return (
     <DataTable
-      data={auctions}
+      data={sortedAuctions}
       columns={columns}
       isLoading={isLoading}
       error={error}
     />
   );
-}
+});
 
-export function ValidatorsTable({ validators, isLoading, error }: ValidatorsTableProps) {
+export const ValidatorsTable = memo(({ validators, isLoading, error }: ValidatorsTableProps) => {
   const { format } = useNumberFormat();
 
-  const columns: Column<ValidatorsTableProps["validators"][0]>[] = [
+  const columns = useMemo(() => [
     {
       header: "Name",
       accessor: "name",
+      align: "left",
+      className: "px-6"
     },
     {
       header: "APR",
       accessor: (item: ValidatorsTableProps["validators"][0]) => (
         <PriceChange value={item.apr} suffix="%" />
       ),
-      align: "right",
+      align: "left",
+      className: "px-6 text-left"
     },
     {
       header: "Stake",
       accessor: (item: ValidatorsTableProps["validators"][0]) => formatStakeValue(item.stake, format),
-      align: "right",
+      align: "left",
+      className: "px-6 text-left"
     },
-  ];
+  ] as Column<ValidatorsTableProps["validators"][0]>[], [format]);
 
   return (
     <DataTable
@@ -72,29 +92,33 @@ export function ValidatorsTable({ validators, isLoading, error }: ValidatorsTabl
       error={error}
     />
   );
-}
+});
 
-export function VaultTable({ vaults, isLoading, error }: VaultTableProps) {
+export const VaultTable = memo(({ vaults, isLoading, error }: VaultTableProps) => {
   const { format } = useNumberFormat();
 
-  const columns: Column<VaultTableProps["vaults"][0]>[] = [
+  const columns = useMemo(() => [
     {
       header: "Name",
       accessor: "name",
+      align: "left",
+      className: "px-6"
     },
     {
       header: "APR",
       accessor: (item: VaultTableProps["vaults"][0]) => (
         <PriceChange value={item.apr} suffix="%" />
       ),
-      align: "right",
+      align: "left",
+      className: "px-6 text-left"
     },
     {
       header: "TVL",
       accessor: (item: VaultTableProps["vaults"][0]) => formatTVLValue(item.tvl, format),
-      align: "right",
+      align: "left",
+      className: "px-6 text-left"
     },
-  ];
+  ] as Column<VaultTableProps["vaults"][0]>[], [format]);
 
   return (
     <DataTable
@@ -104,4 +128,4 @@ export function VaultTable({ vaults, isLoading, error }: VaultTableProps) {
       error={error}
     />
   );
-} 
+}); 

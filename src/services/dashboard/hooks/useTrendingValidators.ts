@@ -1,11 +1,15 @@
-import { TrendingValidator, UseTrendingValidatorsResult } from '../types';
+import { TrendingValidator } from '../types';
 import { fetchTrendingValidators } from '../api';
 import { useDataFetching } from '../../../hooks/useDataFetching';
 
-export const useTrendingValidators = (sortBy: 'stake' | 'apr' = 'stake'): UseTrendingValidatorsResult => {
+export const useTrendingValidators = (
+  sortBy: 'stake' | 'apr' = 'stake',
+  initialData?: TrendingValidator[]
+) => {
   const { data, isLoading, error, refetch } = useDataFetching<TrendingValidator[]>({
     fetchFn: () => fetchTrendingValidators(sortBy),
-    dependencies: [sortBy]
+    initialData,
+    refreshInterval: 30000 // 30 seconds
   });
 
   return {

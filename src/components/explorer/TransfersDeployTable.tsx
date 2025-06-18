@@ -7,10 +7,9 @@ import { useDeploys } from "@/services/explorer/hooks/useDeploys";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatTokenAmount } from "@/lib/formatting";
 import Link from "next/link";
+import { ActivityTab } from "@/components/types/explorer.types";
 
-type ActivityTab = "transfers" | "deploy";
-
-export function HoldersActivityChart() {
+export function TransfersDeployTable() {
   const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();

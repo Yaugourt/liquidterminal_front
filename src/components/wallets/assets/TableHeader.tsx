@@ -7,87 +7,110 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SortableKey } from "@/components/types/wallet.types";
+
+// Définir explicitement les clés de tri possibles
+export type SortKey = 'coin' | 'price' | 'type' | 'marginUsedValue' | 'positionValueNum' | 'entryPriceNum' | 'liquidationNum' | 'total' | 'pnlPercentage' | 'totalValue';
 
 interface SortableColumnHeaderProps {
   label: string;
-  sortKey: SortableKey;
-  onSort: (key: SortableKey) => void;
+  sortKey: SortKey;
+  onSort: (key: SortKey) => void;
   className?: string;
+  isActive?: boolean;
+  sortDirection?: 'asc' | 'desc';
 }
 
-// Composant pour l'en-tête de colonne triable
 const SortableColumnHeader = ({ 
   label, 
   sortKey, 
   onSort, 
-  className = "" 
+  className = "",
+  isActive = false,
+  sortDirection
 }: SortableColumnHeaderProps) => (
   <Button
     variant="ghost"
     onClick={() => onSort(sortKey)}
-    className={`text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center ${className}`}
+    className={`text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center ${isActive ? 'text-[#83E9FF]' : ''} ${className}`}
   >
     {label}
-    <ArrowUpDown className="ml-2 h-4 w-4" />
+    <ArrowUpDown className={`ml-2 h-4 w-4 ${isActive ? 'text-[#83E9FF]' : ''}`} />
   </Button>
 );
 
 interface TableHeaderComponentProps {
-  onSort: (key: SortableKey) => void;
+  onSort: (key: SortKey) => void;
   type: 'spot' | 'perp';
+  activeSortKey?: SortKey;
+  sortDirection?: 'asc' | 'desc';
 }
 
-export function TableHeaderComponent({ onSort, type }: TableHeaderComponentProps) {
+export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirection }: TableHeaderComponentProps) {
   if (type === 'perp') {
     return (
       <TableHeader>
         <TableRow className="border-none bg-[#051728]">
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[160px]">
             <SortableColumnHeader 
               label="Name" 
               sortKey="coin" 
-              onSort={onSort} 
+              onSort={onSort}
+              isActive={activeSortKey === 'coin'}
+              sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[100px]">
+            <SortableColumnHeader 
+              label="Price" 
+              sortKey="price" 
+              onSort={onSort}
+              isActive={activeSortKey === 'price'}
+              sortDirection={sortDirection}
+            />
+          </TableHead>
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[80px]">
             <SortableColumnHeader 
               label="Type" 
               sortKey="type" 
               onSort={onSort}
-              className="ml-auto justify-end w-full" 
+              isActive={activeSortKey === 'type'}
+              sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Margin used" 
-              sortKey="marginUsed" 
+              sortKey="marginUsedValue" 
               onSort={onSort}
-              className="ml-auto justify-end w-full" 
+              isActive={activeSortKey === 'marginUsedValue'}
+              sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Position value" 
-              sortKey="positionValue" 
+              sortKey="positionValueNum" 
               onSort={onSort}
-              className="ml-auto justify-end w-full" 
+              isActive={activeSortKey === 'positionValueNum'}
+              sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Entry price" 
-              sortKey="entryPrice" 
+              sortKey="entryPriceNum" 
               onSort={onSort}
-              className="ml-auto justify-end w-full" 
+              isActive={activeSortKey === 'entryPriceNum'}
+              sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
+          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4 w-[140px]">
             <SortableColumnHeader 
               label="Liquidation" 
-              sortKey="liquidation" 
+              sortKey="liquidationNum" 
               onSort={onSort}
-              className="ml-auto justify-end w-full" 
+              isActive={activeSortKey === 'liquidationNum'}
+              sortDirection={sortDirection}
             />
           </TableHead>
         </TableRow>
@@ -102,7 +125,9 @@ export function TableHeaderComponent({ onSort, type }: TableHeaderComponentProps
           <SortableColumnHeader 
             label="Name" 
             sortKey="coin" 
-            onSort={onSort} 
+            onSort={onSort}
+            isActive={activeSortKey === 'coin'}
+            sortDirection={sortDirection}
           />
         </TableHead>
         <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
@@ -110,7 +135,8 @@ export function TableHeaderComponent({ onSort, type }: TableHeaderComponentProps
             label="Size" 
             sortKey="total" 
             onSort={onSort}
-            className="ml-auto justify-end w-full" 
+            isActive={activeSortKey === 'total'}
+            sortDirection={sortDirection}
           />
         </TableHead>
         <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
@@ -118,7 +144,8 @@ export function TableHeaderComponent({ onSort, type }: TableHeaderComponentProps
             label="Price" 
             sortKey="price" 
             onSort={onSort}
-            className="ml-auto justify-end w-full" 
+            isActive={activeSortKey === 'price'}
+            sortDirection={sortDirection}
           />
         </TableHead>
         <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
@@ -126,15 +153,17 @@ export function TableHeaderComponent({ onSort, type }: TableHeaderComponentProps
             label="Change 24h" 
             sortKey="pnlPercentage" 
             onSort={onSort}
-            className="ml-auto justify-end w-full" 
+            isActive={activeSortKey === 'pnlPercentage'}
+            sortDirection={sortDirection}
           />
         </TableHead>
         <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
           <SortableColumnHeader 
             label="Value" 
-            sortKey="pnl" 
+            sortKey="totalValue" 
             onSort={onSort}
-            className="ml-auto justify-end w-full" 
+            isActive={activeSortKey === 'totalValue'}
+            sortDirection={sortDirection}
           />
         </TableHead>
       </TableRow>

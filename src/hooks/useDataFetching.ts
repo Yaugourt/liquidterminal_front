@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface UseDataFetchingOptions<T> {
   fetchFn: () => Promise<T>;
@@ -6,117 +6,125 @@ interface UseDataFetchingOptions<T> {
   dependencies?: any[];
   maxRetries?: number;
   retryDelay?: number;
+  initialData?: T | null;
 }
 
 export function useDataFetching<T>({
   fetchFn,
-  refreshInterval = 20000,
+  refreshInterval = 30000,
   dependencies = [],
   maxRetries = 3,
-  retryDelay = 1000
+  retryDelay = 1000,
+  initialData = null
 }: UseDataFetchingOptions<T>) {
-  const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // States
+  const [data, setData] = useState<T | null>(initialData);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   
-  const retryCountRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const isMountedRef = useRef<boolean>(true);
-  const fetchFnRef = useRef(fetchFn);
+  // Only keep necessary refs
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mountedRef = useRef(true);
 
-  // Update fetchFn ref when it changes
+  // Cleanup effect
   useEffect(() => {
-    fetchFnRef.current = fetchFn;
-  }, [fetchFn]);
-  
-  // Cleanup function
-  useEffect(() => {
-    isMountedRef.current = true;
+    mountedRef.current = true;
     return () => {
-      isMountedRef.current = false;
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = undefined;
+      mountedRef.current = false;
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
       }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = undefined;
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
       }
     };
   }, []);
 
-  const fetchData = useCallback(async (): Promise<void> => {
-    if (!isMountedRef.current) return;
+  // Main fetch function with retry logic
+  const fetchData = async (isRetry = false) => {
+    if (!mountedRef.current) return;
 
     try {
-      setIsLoading(true);
-      setError(null);
-      const result = await fetchFnRef.current();
+      if (!isRetry) {
+        setIsLoading(true);
+        setError(null);
+        setRetryCount(0);
+      }
+
+      const result = await fetchFn();
       
-      if (!isMountedRef.current) return;
-      
-      setData(result);
-      retryCountRef.current = 0;
+      if (mountedRef.current) {
+        setData(result);
+        setError(null);
+        setRetryCount(0);
+      }
     } catch (err) {
-      if (!isMountedRef.current) return;
+      if (!mountedRef.current) return;
 
       console.error('Error fetching data:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+      const error = err instanceof Error ? err : new Error('Unknown error occurred');
       
-      if (retryCountRef.current < maxRetries) {
-        const delay = retryDelay * Math.pow(2, retryCountRef.current);
-        retryCountRef.current += 1;
+      if (retryCount < maxRetries) {
+        const nextRetryCount = retryCount + 1;
+        setRetryCount(nextRetryCount);
+        const retryDelayWithBackoff = retryDelay * Math.pow(2, nextRetryCount - 1);
         
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
+        console.log(`Retry attempt ${nextRetryCount} of ${maxRetries} in ${retryDelayWithBackoff}ms`);
+        
+        if (retryTimeoutRef.current) {
+          clearTimeout(retryTimeoutRef.current);
         }
         
-        timeoutRef.current = setTimeout(() => {
-          if (isMountedRef.current) {
-            fetchData();
+        retryTimeoutRef.current = setTimeout(() => {
+          if (mountedRef.current) {
+            fetchData(true);
           }
-        }, delay);
+        }, retryDelayWithBackoff);
+        
+        setError(new Error(`Retry attempt ${nextRetryCount} of ${maxRetries}: ${error.message}`));
+      } else {
+        setError(error);
+        setRetryCount(0);
       }
     } finally {
-      if (isMountedRef.current) {
+      if (mountedRef.current && !isRetry) {
         setIsLoading(false);
       }
     }
-  }, [maxRetries, retryDelay]); // Removed fetchFn from dependencies
+  };
 
-  // Initial fetch and refresh interval setup
+  // Setup interval effect
   useEffect(() => {
-    if (!isMountedRef.current) return;
-
-    // Clear any existing intervals
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
+    // Clear existing interval
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
     }
 
-    fetchData();
-    
+    // Only set up interval if refreshInterval is positive
     if (refreshInterval > 0) {
-      intervalRef.current = setInterval(() => {
-        if (isMountedRef.current) {
-          fetchData();
-        }
-      }, refreshInterval);
+      intervalIdRef.current = setInterval(fetchData, refreshInterval);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = undefined;
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
       }
     };
-  }, [fetchData, refreshInterval, ...dependencies]);
+  }, [refreshInterval, ...dependencies]); // Include dependencies for refetching
+
+  // Initial fetch effect
+  useEffect(() => {
+    if (!initialData) {
+      fetchData();
+    }
+  }, []); // Empty deps array - only run once on mount
 
   return {
     data,
     isLoading,
     error,
-    refetch: fetchData
+    refetch: () => fetchData()
   };
 } 

@@ -6,16 +6,15 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
-import { TrendingTokens } from "@/components/dashboard/TrendingTokens";
-import { TabSection } from "@/components/dashboard/TabSection";
-import { ChartSection } from "@/components/dashboard/ChartSection";
+import { TrendingTokens } from "@/components/dashboard/tokens/TrendingTokens";
+import { TabSection } from "@/components/dashboard/vaultStakingAuction";
+import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 
 export default function Home() {
   const { width } = useWindowSize();
   const chartHeight = width >= 1024 ? 345 : width >= 640 ? 296 : 246;
-  const [activeTab, setActiveTab] = useState("vault");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -50,22 +49,19 @@ export default function Home() {
           <SearchBar placeholder="Search..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6 max-w-[1920px] mx-auto">
+        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           <StatsGrid />
 
-          <div className="flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-4 w-full">
+          <div className="flex flex-col md:flex-row gap-6 w-full">
             <TrendingTokens type="perp" />
             <TrendingTokens type="spot" />
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:gap-4">
-            <div className="w-full lg:w-[400px] mb-4 lg:mb-0 lg:mt-10 xl:mt-0">
-              <TabSection
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-              />
+          <div className="flex flex-col lg:flex-row lg:gap-8">
+            <div className="w-full lg:w-[500px]">
+              <TabSection />
             </div>
-            <div className="w-full lg:flex-1">
+            <div className="w-full lg:flex-1 lg:max-w-[calc(100%-520px)]">
               <ChartSection chartHeight={chartHeight} />
             </div>
           </div>

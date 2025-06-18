@@ -1,4 +1,4 @@
-import { DashboardGlobalStats, TrendingValidator, AuctionInfo, HLBridgeData } from './types';
+import { DashboardGlobalStats, TrendingValidator, BridgeData, AuctionsResponse } from './types';
 import { fetchWithConfig } from '../api/base';
 
 /**
@@ -22,18 +22,26 @@ export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake')
 /**
  * Récupère les dernières enchères
  */
-export const fetchLatestAuctions = async (limit: number = 5): Promise<AuctionInfo[]> => {
-  const response = await fetchWithConfig<AuctionInfo[]>('/market/auction');
-  return response
+export const fetchLatestAuctions = async (limit: number = 5): Promise<AuctionsResponse> => {
+  const response = await fetchWithConfig<AuctionsResponse>('/market/auction');
+  
+  // Sort and limit both USDC and HYPE auctions
+  response.data.usdcAuctions = response.data.usdcAuctions
     .sort((a, b) => b.time - a.time)
     .slice(0, limit);
+  
+  response.data.hypeAuctions = response.data.hypeAuctions
+    .sort((a, b) => b.time - a.time)
+    .slice(0, limit);
+  
+  return response;
 };
 
 
 /**
  * Récupère les données TVL du bridge Hyperliquid
  */
-export const fetchHLBridge = async (): Promise<HLBridgeData> => {
+export const fetchHLBridge = async (): Promise<BridgeData> => {
   const response = await fetch('https://api.llama.fi/protocol/hyperliquid-bridge');
   if (!response.ok) {
     throw new Error('Failed to fetch Hyperliquid bridge data');

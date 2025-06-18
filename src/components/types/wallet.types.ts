@@ -28,6 +28,12 @@ export interface PerpHoldingDisplay extends PerpHolding {
   positionValueNum: number;
   entryPriceNum: number;
   liquidationNum: number;
+  price: number;
+  change24h: number;
+  type: 'Short' | 'Long';
+  marginUsed: string;
+  positionValue: string;
+  liquidation: string;
 }
 
 export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 'price'> {
@@ -37,12 +43,12 @@ export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 
   pnl: number;
   pnlPercentage: number;
   entryPrice: number;
+  total: string;
 }
 
-// Types pour le tri
-export type SpotSortKey = keyof HoldingDisplay;
-export type PerpSortKey = keyof PerpHoldingDisplay;
-export type SortableKey = SpotSortKey | PerpSortKey;
+// Type commun pour le tri
+export type SortableHolding = HoldingDisplay | PerpHoldingDisplay;
+export type SortableKey = keyof SortableHolding;
 
 export type SortConfig = {
   key: SortableKey | null;

@@ -65,7 +65,7 @@ export function SearchBar({
       />
       <button 
         type="submit"
-        className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-[#83E9FF99] hover:text-[#83E9FF] transition-colors cursor-pointer"
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-[#f9e370] hover:text-[#83E9FF] transition-colors cursor-pointer"
       >
         <Search className="h-4 w-4" />
       </button>

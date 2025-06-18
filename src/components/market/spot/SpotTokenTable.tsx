@@ -15,15 +15,12 @@ import { formatNumber } from "@/lib/formatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useNumberFormat } from "@/store/number-format.store";
-import { Pagination } from "@/components/ui/pagination";
-import { TokenImage } from "../common/TokenImage";
-import { LoadingState, ErrorState, EmptyState } from "../common/TableStates";
+import { Pagination, TokenIcon, getPriceChangeColor, formatPriceChange } from "@/components/common";
 import { 
   SpotToken, 
   SpotSortableFields, 
   BaseTableProps, 
 } from "../common/types";
-import { getPriceChangeColor, formatPriceChange } from "@/components/ui/PriceChange";
 
 interface TableHeadersProps {
   sortField: SpotSortableFields;
@@ -100,10 +97,7 @@ export function TokenTable({ loading: initialLoading = false }: BaseTableProps) 
   
   const { 
     data: tokens, 
-    isLoading, 
-    error, 
     page, 
-    totalPages,
     total,
     updateParams 
   } = useSpotTokens({
@@ -138,30 +132,6 @@ export function TokenTable({ loading: initialLoading = false }: BaseTableProps) 
     router.push(`/market/${encodeURIComponent(tokenName)}`);
   };
 
-  // Fonction pour vérifier si un champ est triable
-  const isSortable = (field: string): boolean => {
-    return ["volume", "marketCap", "change24h"].includes(field);
-  };
-
-  // Fonction pour obtenir la classe du bouton de tri
-  const getSortButtonClass = (field: string): string => {
-    const isActive = sortField === field;
-    return `font-normal hover:text-white p-0 ml-auto transition-colors duration-200 ${
-      !isSortable(field) ? 'cursor-default opacity-50' : ''
-    } ${isActive ? 'text-[#83E9FF]' : 'text-[#FFFFFF99]'}`;
-  };
-
-  if (isLoading || initialLoading) {
-    return <LoadingState />;
-  }
-
-  if (error) {
-    return <ErrorState message={error.message} />;
-  }
-
-  if (!tokens || tokens.length === 0) {
-    return <EmptyState />;
-  }
 
   return (
     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
@@ -178,7 +148,7 @@ export function TokenTable({ loading: initialLoading = false }: BaseTableProps) 
             >
               <TableCell className="py-2 pl-4">
                 <div className="flex items-center gap-2">
-                  <TokenImage src={token.logo} alt={token.name} />
+                  <TokenIcon src={token.logo} name={token.name} size="sm" />
                   <span className="text-white text-sm">{token.name}</span>
                 </div>
               </TableCell>

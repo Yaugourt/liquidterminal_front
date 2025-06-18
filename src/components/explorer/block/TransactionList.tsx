@@ -6,20 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy, Check, Clock, FileText, User } from "lucide-react";
 import { format } from "date-fns";
-import { Pagination } from "@/components/explorer/Pagination";
-import { BlockTransaction } from "@/services/explorer/types";
-
-interface TransactionListProps {
-  transactions: BlockTransaction[];
-  onTransactionClick: (hash: string) => void;
-  onAddressClick: (address: string) => void;
-}
+import { Pagination } from "@/components/explorer";
+import { BlockTransactionListProps } from "@/components/types/explorer.types";
 
 export function TransactionList({
   transactions,
   onTransactionClick,
   onAddressClick,
-}: TransactionListProps) {
+}: BlockTransactionListProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedValues, setCopiedValues] = useState<Record<string, boolean>>({});
   const ITEMS_PER_PAGE = 15;

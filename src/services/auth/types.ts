@@ -2,15 +2,14 @@ export interface User {
   id: string;
   privyUserId: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface AuthResponse {
   success: boolean;
   message: string;
   user?: User;
-  code?: string;
 }
 
 export interface LoginCredentials {

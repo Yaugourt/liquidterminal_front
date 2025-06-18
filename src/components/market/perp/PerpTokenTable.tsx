@@ -15,12 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, TrendingUp, BarChart2, Scale } from "lucide-react";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
-import { Pagination } from "@/components/ui/pagination";
-import { TokenImage } from "../common/TokenImage";
+import { Pagination, TokenIcon, getPriceChangeColor, formatPriceChange } from "@/components/common";
 import { LoadingState, ErrorState, EmptyState } from "../common/TableStates";
 import { COLORS, STYLES } from "../common/constants";
 import { PerpToken, SortOrder } from "../common/types";
-import { getPriceChangeColor, formatPriceChange } from "@/components/ui/PriceChange";
 
 export const PerpTokenTable = memo(function PerpTokenTable() {
     const router = useRouter();
@@ -187,7 +185,7 @@ export const PerpTokenTable = memo(function PerpTokenTable() {
                         >
                             <TableCell className={`${STYLES.table.cell.base} ${STYLES.table.cell.first}`}>
                                 <div className="flex items-center gap-2">
-                                    <TokenImage src={token.logo} alt={token.name} />
+                                    <TokenIcon src={token.logo} name={token.name} size="sm" />
                                     <span className={`text-[${COLORS.neutral}] text-sm`}>{token.name}</span>
                                 </div>
                             </TableCell>

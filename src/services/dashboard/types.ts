@@ -24,8 +24,8 @@ export interface AuctionInfo {
   deployer: string;
   name: string;
   deployGas: string;
-  tokenId?: string;
-  index?: number;
+  currency: "USDC" | "HYPE";
+  deployGasAbs: string;
 }
 
 // Type pour la réponse API paginée
@@ -87,7 +87,7 @@ export interface UseTrendingValidatorsResult {
 }
 
 // Type pour les données du bridge Hyperliquid
-export interface HLBridgeData {
+export interface BridgeData {
   chainTvls: {
     Arbitrum: {
       tvl: Array<{
@@ -99,8 +99,17 @@ export interface HLBridgeData {
 }
 
 export interface UseHLBridgeResult {
-  bridgeData: HLBridgeData | null;
+  bridgeData: BridgeData | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+}
+
+export interface AuctionsResponse {
+  success: boolean;
+  data: {
+    usdcAuctions: AuctionInfo[];
+    hypeAuctions: AuctionInfo[];
+    splitTimestamp: number;
+  }
 } 

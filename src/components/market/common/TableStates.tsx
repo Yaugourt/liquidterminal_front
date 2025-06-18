@@ -1,12 +1,5 @@
 import { Database, Loader2 } from "lucide-react";
-import { StateComponentProps } from "../types";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { StateComponentProps } from "./types";
 
 const baseContainerClasses = "overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent";
 const baseContentClasses = "flex flex-col items-center justify-center";

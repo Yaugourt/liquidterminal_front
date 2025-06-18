@@ -3,10 +3,7 @@
 import React, { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Copy } from "lucide-react";
-
-interface AddressHeaderProps {
-  address: string;
-}
+import { AddressHeaderProps } from "@/components/types/explorer.types";
 
 export function AddressHeader({ address }: AddressHeaderProps) {
   const [showCopied, setShowCopied] = useState(false);

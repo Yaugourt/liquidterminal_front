@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, Database, ArrowUpDown } from "lucide-react";
 import {
@@ -8,10 +9,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTableProps, Column } from "@/components/types/dashboard.types";
+import { 
+  DataTableProps, 
+  Column, 
+  TableHeaderButtonProps, 
+  TableRowCellProps 
+} from "@/components/types/dashboard.types";
 import { Button } from "@/components/ui/button";
 
 export type { Column };
+
+// Optimisation des composants répétés
+const TableHeaderButton = memo(({ header, align }: TableHeaderButtonProps & { align?: string }) => (
+  <Button
+    variant="ghost"
+    className={`text-[#FFFFFF99] hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+  >
+    {header}
+  </Button>
+));
+
+const TableRowCell = memo(({ column, item }: TableRowCellProps) => (
+  <TableCell
+    className={`py-3 ${column.className || ''}`}
+  >
+    {typeof column.accessor === "function"
+      ? column.accessor(item)
+      : String(item[column.accessor])}
+  </TableCell>
+));
 
 export function DataTable<T>({
   data,
@@ -21,7 +47,7 @@ export function DataTable<T>({
   emptyMessage = "Aucune donnée disponible",
 }: DataTableProps<T>) {
   return (
-    <Card className="w-full h-[300px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl">
+    <Card className="w-full h-[300px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl mx-auto">
       <div className="relative h-full">
         {/* Header Background Gradient */}
         <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#051728] to-transparent pointer-events-none" />
@@ -42,31 +68,21 @@ export function DataTable<T>({
             </div>
           </div>
         ) : (
-          <div className="h-full overflow-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+          <div className="h-full overflow-auto flex flex-col h-full">
             <Table>
               <TableHeader className="sticky top-0 z-10">
                 <TableRow className="border-b border-[#83E9FF33] bg-[#051728]/95 backdrop-blur-sm">
                   {columns.map((column, index) => (
                     <TableHead
                       key={index}
-                      className={`py-3 first:pl-6 last:pr-6 ${
-                        column.align === 'right' ? 'text-right' : ''
-                      }`}
+                      className={`py-3 px-4 ${column.className || ''}`}
                     >
-                      <Button
-                        variant="ghost"
-                        className={`text-[#FFFFFF99] hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center gap-1.5 transition-colors ${
-                          column.align === 'right' ? 'ml-auto' : ''
-                        }`}
-                      >
-                        {column.header}
-                        <ArrowUpDown className="h-3 w-3 opacity-50" />
-                      </Button>
+                      <TableHeaderButton header={column.header} align={column.align} />
                     </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="flex-grow">
                 {data.length > 0 ? (
                   data.map((item, rowIndex) => (
                     <TableRow
@@ -76,9 +92,7 @@ export function DataTable<T>({
                       {columns.map((column, colIndex) => (
                         <TableCell
                           key={colIndex}
-                          className={`py-3 first:pl-6 last:pr-6 ${
-                            column.align === 'right' ? 'text-right' : ''
-                          } text-sm text-white`}
+                          className={`py-3 px-4 ${column.className || ''} text-sm text-white`}
                         >
                           {typeof column.accessor === "function"
                             ? column.accessor(item)

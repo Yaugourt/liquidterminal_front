@@ -9,13 +9,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-
-// Import our new components
-import { AddressHeader } from "@/components/explorer/address/AddressHeader";
-import { AddressCards } from "@/components/explorer/address/AddressCards";
-import { TransactionList } from "@/components/explorer/address/TransactionList";
-import { TabNavigation, ADDRESS_TABS } from "@/components/explorer/address/TabNavigation";
-import { HoldingTabs } from "@/components/explorer/address/HoldingTabs";
+import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS } from "@/components/explorer";
 
 export default function AddressPage() {
   const params = useParams();
@@ -53,7 +47,7 @@ export default function AddressPage() {
 
         {/* Address Cards */}
         <AddressCards 
-          portfolio={portfolio} 
+          portfolio={portfolio || []} 
           loadingPortfolio={loadingPortfolio}
           onAddClick={handleAddWalletClick}
           address={address}

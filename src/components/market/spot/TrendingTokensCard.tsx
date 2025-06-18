@@ -3,8 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { Loader2, Database, ArrowUpDown } from "lucide-react";
 import { formatNumber } from "@/lib/format";
-import Image from "next/image";
-import { getPriceChangeColor, formatPriceChange } from "@/components/ui/PriceChange";
+import { formatPriceChange, TokenIcon } from "@/components/common";
 import {
   Table,
   TableBody,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { SpotSortableFields } from "@/components/market/common/types";
+import { SpotSortableFields } from "@/components/market";
 
 /**
  * Carte affichant les tokens les plus populaires sans titre
@@ -109,20 +108,7 @@ export const TrendingTokensCard = memo(function TrendingTokensCard() {
                 >
                   <TableCell className="py-1.5 pl-3">
                     <div className="flex items-center gap-1.5">
-                      {token.logo ? (
-                        <Image
-                          src={token.logo}
-                          alt={token.name}
-                          width={20}
-                          height={20}
-                          className="w-5 h-5 rounded-full border border-[#83E9FF33] shadow-[0_0_8px_rgba(131,233,255,0.15)] backdrop-blur-sm"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-[#051728] border border-[#83E9FF33] flex items-center justify-center shadow-[0_0_8px_rgba(131,233,255,0.08)]">
-                          <span className="text-[#83E9FF] text-xs">{token.name.charAt(0)}</span>
-                        </div>
-                      )}
+                      <TokenIcon src={token.logo} name={token.name} size="sm" />
                       <span className="text-white text-xs">{token.name}</span>
                     </div>
                   </TableCell>

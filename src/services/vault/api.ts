@@ -4,7 +4,8 @@ import {
   VaultDepositsResponse,
   VaultSummary,
   VaultsParams,
-  VaultsResponse
+  VaultsResponse,
+  VaultResponse
 } from './types';
 import { PaginatedResponse } from '../dashboard/types';
 
@@ -27,7 +28,7 @@ const adaptVaultResponse = (response: VaultsResponse): PaginatedResponse<VaultSu
 /**
  * Fetches vaults with pagination and sorting
  */
-export async function fetchVaults(params: VaultsParams): Promise<PaginatedResponse<VaultSummary>> {
+export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse> => {
   const queryParams = new URLSearchParams();
   
   Object.entries(params).forEach(([key, value]) => {
@@ -36,12 +37,20 @@ export async function fetchVaults(params: VaultsParams): Promise<PaginatedRespon
     }
   });
 
-  const response = await fetchWithConfig<VaultsResponse>(
+  const response = await fetchWithConfig<VaultResponse>(
     `/market/vaults${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
   );
-  
-  return adaptVaultResponse(response);
-}
+
+  return {
+    success: true,
+    data: response.data,
+    pagination: {
+      totalTvl: response.pagination.totalVolume,
+      total: response.data.length,
+      page: params.page || 1
+    }
+  };
+};
 
 /**
  * Récupère les dépôts de vault d'un utilisateur

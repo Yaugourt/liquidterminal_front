@@ -1,10 +1,7 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { TokensSection } from "@/components/market/spot/SpotTokensSection";
-import { VolumeCard } from "@/components/market/spot/GlobalStatsCard";
-import { TrendingTokensCard } from "@/components/market/spot/TrendingTokensCard";
-import { AuctionCard } from "@/components/market/auction/AuctionCard";
+import { SpotTokensSection as TokensSection,GlobalStatsCard as VolumeCard,TrendingTokensCard,AuctionCard } from "@/components/market";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";

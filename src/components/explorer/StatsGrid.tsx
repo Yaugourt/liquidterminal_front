@@ -2,18 +2,15 @@ import { StatsCard } from "./StatsCard";
 import { useEffect, useState } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
+import { ExplorerStat, ExplorerStatsCardProps } from "@/components/types/explorer.types";
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState<Array<{
-    title: string;
-    value: string;
-    type: 'block' | 'blockTime' | 'transactions' | 'users';
-  }>>([]);
+  const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
 
   // Fonction pour formater les nombres selon le type
-  const formatValue = (value: number, type: 'block' | 'blockTime' | 'transactions' | 'users') => {
+  const formatValue = (value: number, type: ExplorerStatsCardProps['type']) => {
     if (type === 'blockTime') {
       return `${value}s`;
     }

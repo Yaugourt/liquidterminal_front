@@ -33,6 +33,12 @@ export interface AddWalletResponse {
   userWallet?: UserWallet;
 }
 
+export interface InitializeParams {
+  privyUserId: string;
+  username: string;
+  privyToken: string;
+}
+
 // Types pour le store use-wallets
 export interface WalletsState {
   wallets: Wallet[];
@@ -41,7 +47,7 @@ export interface WalletsState {
   loading: boolean;
   error: string | null;
   
-  initialize: (privyUserId: string | number) => Promise<void>;
+  initialize: (params: InitializeParams) => Promise<void>;
   addWallet: (address: string, name?: string, privyUserId?: string | number) => Promise<Wallet | void>;
   removeWallet: (id: number) => Promise<void>;
   setActiveWallet: (id: number) => void;

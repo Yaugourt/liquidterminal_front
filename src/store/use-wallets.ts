@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Wallet, UserWallet, WalletsState } from "../services/wallets/types";
 import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/wallets/api";
+import { AuthService } from "../services/auth/service";
+
+interface InitializeParams {
+  privyUserId: string;
+  username: string;
+  privyToken: string;
+}
 
 export const useWallets = create<WalletsState>()(
   persist(
@@ -12,10 +19,17 @@ export const useWallets = create<WalletsState>()(
       loading: false,
       error: null,
       
-      initialize: async (privyUserId: string | number): Promise<void> => {
+      initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
         try {
           set({ loading: true, error: null });
           console.log("Initializing wallets for user:", privyUserId);
+          
+          // Ensure user is initialized in our DB first
+          const authService = AuthService.getInstance();
+          const isInitialized = await authService.ensureUserInitialized(privyUserId, username, privyToken);
+          if (!isInitialized) {
+            throw new Error("Failed to initialize user in database");
+          }
           
           const response = await getWalletsByUser(String(privyUserId));
           console.log("API response:", response);
@@ -59,7 +73,6 @@ export const useWallets = create<WalletsState>()(
               };
             })
             .filter((wallet): wallet is Wallet => {
-              // Validation assouplie - on accepte les wallets sans adresse pour le moment
               const isValid = wallet !== undefined && 
                 typeof wallet.id === 'number' &&
                 typeof wallet.name === 'string';

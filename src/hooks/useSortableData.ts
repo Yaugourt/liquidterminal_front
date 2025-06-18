@@ -1,22 +1,29 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { SortKey } from '@/components/wallets/assets';
+import { SortableHolding } from '@/components/types/wallet.types';
 
 export type SortDirection = 'asc' | 'desc';
 
-export interface SortConfig<T> {
-  key: keyof T | null;
+export interface SortConfig {
+  key: SortKey | null;
   direction: SortDirection;
 }
 
-export function useSortableData<T extends Record<string, any>>(
+export function useSortableData<T extends SortableHolding>(
   items: T[],
-  config: SortConfig<T> = { key: null, direction: 'desc' }
+  config: SortConfig = { key: null, direction: 'desc' }
 ) {
-  const [sortConfig, setSortConfig] = useState<SortConfig<T>>(config);
+  const [sortConfig, setSortConfig] = useState<SortConfig>(config);
+
+  // Mettre à jour la configuration de tri quand config change
+  useEffect(() => {
+    setSortConfig(config);
+  }, [config.key]);
 
   const sortedItems = useMemo(() => {
-    if (!sortConfig.key) return items;
+    if (!sortConfig.key || !items) return items;
 
     return [...items].sort((a, b) => {
       const aValue = a[sortConfig.key as keyof T];
@@ -48,20 +55,11 @@ export function useSortableData<T extends Record<string, any>>(
           : (aValue === bValue ? 0 : aValue ? -1 : 1);
       }
 
-      // Pour les dates (vérifier si c'est un timestamp valide)
-      const aDate = new Date(aValue).getTime();
-      const bDate = new Date(bValue).getTime();
-      if (!isNaN(aDate) && !isNaN(bDate)) {
-        return sortConfig.direction === 'asc'
-          ? aDate - bDate
-          : bDate - aDate;
-      }
-
       return 0;
     });
   }, [items, sortConfig]);
 
-  const requestSort = (key: keyof T) => {
+  const requestSort = (key: SortKey) => {
     setSortConfig(prevConfig => {
       if (prevConfig.key === key) {
         // Si même clé, inverser la direction

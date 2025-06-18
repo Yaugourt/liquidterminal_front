@@ -1,11 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Users, BarChart3, CreditCard, Coins, Wallet } from "lucide-react";
-
-interface ExplorerStatsCardProps {
-  title: string;
-  value: string;
-  type: 'block' | 'blockTime' | 'transactions' | 'users';
-}
+import { ExplorerStatsCardProps } from "@/components/types/explorer.types";
 
 export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
   // Fonction pour déterminer quelle icône afficher selon le type

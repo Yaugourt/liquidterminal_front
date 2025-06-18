@@ -3,9 +3,14 @@ import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
+import type { DashboardGlobalStats } from "@/services/dashboard/types";
 
-export function StatsGrid() {
-  const { stats, isLoading, error } = useDashboardStats();
+interface StatsGridProps {
+  stats?: DashboardGlobalStats;
+}
+
+export function StatsGrid({ stats: initialData }: StatsGridProps) {
+  const { stats, isLoading, error } = useDashboardStats(initialData);
   const { format } = useNumberFormat();
 
   // Fonction pour formater les statistiques
@@ -26,7 +31,7 @@ export function StatsGrid() {
   };
 
   // Afficher un état de chargement
-  if (isLoading) {
+  if (isLoading && !initialData) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(5)].map((_, index) => (
@@ -49,27 +54,29 @@ export function StatsGrid() {
     );
   }
 
+  const currentStats = stats || initialData;
+
   // Afficher les données
-  const statsItems = stats ? [
+  const statsItems = currentStats ? [
     {
       title: "Users",
-      value: formatStat(stats.numberOfUsers),
+      value: formatStat(currentStats.numberOfUsers),
     },
     {
       title: "Daily Volume",
-      value: formatStat(stats.dailyVolume, { prefix: '$', decimals: 2 }),
+      value: formatStat(currentStats.dailyVolume, { prefix: '$', decimals: 2 }),
     },
     {
       title: "Bridged USDC",
-      value: formatStat(stats.bridgedUsdc, { prefix: '$', decimals: 1 }),
+      value: formatStat(currentStats.bridgedUsdc, { prefix: '$', decimals: 1 }),
     },
     {
       title: "HYPE Staked",
-      value: formatStat(stats.totalHypeStake, { decimals: 1 }),
+      value: formatStat(currentStats.totalHypeStake, { decimals: 1 }),
     },
     {
       title: "Vaults TVL",
-      value: formatStat(stats.vaultsTvl, { prefix: '$', decimals: 1 }),
+      value: formatStat(currentStats.vaultsTvl, { prefix: '$', decimals: 1 }),
     },
   ] : [];
 
