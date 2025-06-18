@@ -48,7 +48,7 @@ export interface PaginatedResponse<T> {
 // Types pour les résultats des hooks
 
 export interface UseDashboardStatsResult {
-  stats: DashboardGlobalStats | null;
+  stats: DashboardGlobalStats | undefined;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;

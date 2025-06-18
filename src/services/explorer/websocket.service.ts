@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useState, useEffect } from 'react';
 
 interface Block {
   height: number;
@@ -138,4 +139,55 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   setError: (error: string | null) => set({ error })
-})); 
+}));
+
+interface WebSocketState {
+  lastBlock: number | null;
+}
+
+export function useWebSocket() {
+  const [state, setState] = useState<WebSocketState>({
+    lastBlock: null
+  });
+
+  useEffect(() => {
+    const ws = new WebSocket('wss://api.hyperliquid.xyz/ws');
+
+    ws.onopen = () => {
+      console.log('Connected to Hyperliquid WebSocket');
+      // Subscribe to block updates
+      ws.send(JSON.stringify({
+        method: "subscribe",
+        subscription: "blocks"
+      }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'block') {
+          setState(prev => ({
+            ...prev,
+            lastBlock: data.blockNumber
+          }));
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('Disconnected from Hyperliquid WebSocket');
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  return state;
+} 

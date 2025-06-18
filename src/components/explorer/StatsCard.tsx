@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, BarChart3, CreditCard, Coins, Wallet } from "lucide-react";
+import { Users, Timer, Zap, Activity } from "lucide-react";
 import { ExplorerStatsCardProps } from "@/components/types/explorer.types";
 
 export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
@@ -7,15 +7,15 @@ export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
   const getIcon = () => {
     switch (type) {
       case "block":
-        return <BarChart3 size={16} className="text-[#83E9FF]" />;
+        return <Activity size={16} className="text-[#83E9FF]" />;
       case "blockTime":
-        return <CreditCard size={16} className="text-[#83E9FF]" />;
+        return <Timer size={16} className="text-[#83E9FF]" />;
       case "transactions":
-        return <Coins size={16} className="text-[#83E9FF]" />;
+        return <Zap size={16} className="text-[#83E9FF]" />;
       case "users":
         return <Users size={16} className="text-[#83E9FF]" />;
       default:
-        return <Wallet size={16} className="text-[#83E9FF]" />;
+        return <Activity size={16} className="text-[#83E9FF]" />;
     }
   };
 

@@ -3,50 +3,52 @@ import { useEffect, useState } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
 import { ExplorerStat, ExplorerStatsCardProps } from "@/components/types/explorer.types";
+import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
+import { useWebSocket } from "@/services/explorer/websocket.service";
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
+  const { stats: dashboardStats, isLoading: isDashboardLoading } = useDashboardStats();
+  const { lastBlock } = useWebSocket();
 
   // Fonction pour formater les nombres selon le type
-  const formatValue = (value: number, type: ExplorerStatsCardProps['type']) => {
+  const formatValue = (value: number | string, type: ExplorerStatsCardProps['type']) => {
     if (type === 'blockTime') {
       return `${value}s`;
     }
+    if (typeof value === 'string') return value;
     return formatNumber(value, format);
   };
 
-  // Simulation d'un chargement de données
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (!isDashboardLoading) {
       setStats([
         {
           title: "Block",
-          value: formatValue(652365195, "block"),
+          value: formatValue(lastBlock || 0, "block"),
           type: "block"
         },
         {
           title: "Block time",
-          value: formatValue(13.5, "blockTime"),
+          value: formatValue(0.07, "blockTime"),
           type: "blockTime"
         },
         {
-          title: "Transactions",
-          value: formatValue(2856947, "transactions"),
+          title: "Max TPS",
+          value: formatValue(200000, "transactions"),
           type: "transactions"
         },
         {
           title: "Users",
-          value: formatValue(8254103, "users"),
+          value: formatValue(dashboardStats?.numberOfUsers || 0, "users"),
           type: "users"
         }
       ]);
       setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [format]); // Ajouter format comme dépendance pour mettre à jour quand le format change
+    }
+  }, [format, lastBlock, dashboardStats, isDashboardLoading]);
 
   if (isLoading) {
     return (
