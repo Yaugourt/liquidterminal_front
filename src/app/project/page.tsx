@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { ProjectsGrid } from "@/components/project";
 
 export default function L1ProjectPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,11 +34,11 @@ export default function L1ProjectPage() {
           <SearchBar placeholder="Search..." />
         </div>
 
-        <main className="p-3 sm:p-4 lg:p-6 xl:p-12 space-y-4 sm:space-y-6">
-          <h1 className="text-xl font-bold text-white">L1 Project</h1>
-          <div className="bg-[#051728] rounded-lg p-4 text-white">
-            <p>L1 Project content will be displayed here.</p>
+        <main className="p-3 sm:p-4 lg:p-6 xl:p-12 space-y-6 max-w-[1920px] mx-auto">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-medium text-white">Ecosystem Projects</h1>
           </div>
+          <ProjectsGrid />
         </main>
       </div>
     </div>
