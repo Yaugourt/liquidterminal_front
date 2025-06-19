@@ -4,84 +4,68 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
 import { ExplorerStat, ExplorerStatsCardProps } from "@/components/types/explorer.types";
 import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
-import { useWebSocket } from "@/services/explorer/websocket.service";
+import { useExplorerStore } from "@/services/explorer/websocket.service";
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
   const { stats: dashboardStats, isLoading: isDashboardLoading } = useDashboardStats();
-  const { lastBlock } = useWebSocket();
+  const { blocks, connect, disconnect } = useExplorerStore();
 
-  // Fonction pour formater les nombres selon le type
-  const formatValue = (value: number | string, type: ExplorerStatsCardProps['type']) => {
-    if (type === 'blockTime') {
-      return `${value}s`;
+  useEffect(() => {
+    connect();
+    return () => disconnect();
+  }, [connect, disconnect]);
+
+  // Fonction pour formater les nombres selon le format sélectionné
+  const formatValue = (value: number, type: string) => {
+    if (type === "users") {
+      return formatNumber(value, format, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
     }
-    if (typeof value === 'string') return value;
-    return formatNumber(value, format);
+    return formatNumber(value, format, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
   };
 
   useEffect(() => {
-    if (!isDashboardLoading) {
+    if (!isDashboardLoading && blocks.length > 0) {
+      const latestBlock = blocks[0];
       setStats([
         {
-          title: "Block",
-          value: formatValue(lastBlock || 0, "block"),
-          type: "block"
+          title: "Blocks",
+          type: "block",
+          value: formatValue(latestBlock.height, "blocks"),
         },
         {
-          title: "Block time",
-          value: formatValue(0.07, "blockTime"),
-          type: "blockTime"
+          title: "Block Time",
+          type: "blockTime",
+          value: "0.07s",
         },
         {
           title: "Max TPS",
-          value: formatValue(200000, "transactions"),
-          type: "transactions"
+          type: "transactions",
+          value: "200,000",
         },
         {
           title: "Users",
+          type: "users",
           value: formatValue(dashboardStats?.numberOfUsers || 0, "users"),
-          type: "users"
-        }
+        },
       ]);
       setIsLoading(false);
     }
-  }, [format, lastBlock, dashboardStats, isDashboardLoading]);
-
-  if (isLoading) {
-    return (
-      <div className="w-full py-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="p-4 bg-[#051728E5] w-full border border-[#83E9FF4D] rounded-xl shadow-sm animate-pulse">
-              <div className="flex items-start">
-                <div className="bg-[#083050] p-2 rounded-lg mr-3 w-8 h-8"></div>
-                <div className="flex flex-col gap-2 w-full">
-                  <div className="h-3 bg-[#FFFFFF20] rounded w-14"></div>
-                  <div className="h-6 bg-[#FFFFFF30] rounded w-20"></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  }, [blocks, dashboardStats, format, isDashboardLoading]);
 
   return (
-    <div className="w-full py-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <StatsCard 
-            key={index}
-            title={stat.title}
-            value={stat.value}
-            type={stat.type}
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3 w-full">
+      {stats.map((stat, index) => (
+        <StatsCard key={index} {...stat} />
+      ))}
     </div>
   );
 }
