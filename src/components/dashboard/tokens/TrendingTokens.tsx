@@ -59,9 +59,11 @@ export const TrendingTokens = memo(({ type, title }: TrendingTokensProps) => {
     }), [type, spotTokens, perpTokens, isLoadingSpot, isLoadingPerp, handleSort, sortBy]);
 
     return (
-        <div className="w-full md:w-[49%] lg:w-[49.5%]">
-            <TokensHeader {...headerProps} />
+        <div className="w-full">
+            <TokensHeader {...headerProps} />   
             <TokensTable {...tableProps} />
         </div>
     );
-}); 
+});
+
+TrendingTokens.displayName = 'TrendingTokens'; 

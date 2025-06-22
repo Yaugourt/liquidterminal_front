@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
-import { formatNumber, formatLargeNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/formatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
 import { 
@@ -11,7 +11,6 @@ import {
   TokenRowProps, 
   TokensTableProps 
 } from "@/components/types/dashboard.types";
-import { PerpMarketData } from "@/services/market/perp/types";
 
 // Composant pour l'en-tête de colonne
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps & { isActive?: boolean }) => (
@@ -27,10 +26,12 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
     </TableHead>
 ));
 
+TableHeaderCell.displayName = 'TableHeaderCell';
+
 // Composant pour l'état vide
 const EmptyState = memo(() => (
     <TableRow>
-        <TableCell colSpan={4} className="text-center py-8">
+        <TableCell colSpan={3} className="text-center py-8">
             <div className="flex flex-col items-center justify-center">
                 <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
                 <p className="text-white text-lg">Aucun token disponible</p>
@@ -39,6 +40,8 @@ const EmptyState = memo(() => (
         </TableCell>
     </TableRow>
 ));
+
+EmptyState.displayName = 'EmptyState';
 
 // Composant pour une ligne de token
 const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
@@ -66,31 +69,15 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
                     })}
             </div>
         </TableCell>
-        <TableCell className="py-2 pl-4">
+        <TableCell className="py-2 pl-4 pr-4">
             <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
                 {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
             </div>
         </TableCell>
-        <TableCell className="py-2 pl-4 pr-4">
-            <div className="text-white text-sm">
-                {(() => {
-                    const value = type === "perp" ? (token as PerpMarketData).openInterest : token.volume;
-                    return value >= 1_000_000 
-                        ? formatLargeNumber(value, {
-                            prefix: '$',
-                            decimals: 1
-                        })
-                        : formatNumber(value, format, {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                            currency: '$',
-                            showCurrency: true
-                        });
-                })()}
-            </div>
-        </TableCell>
     </TableRow>
 ));
+
+TokenRow.displayName = 'TokenRow';
 
 export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "change24h" }: TokensTableProps & { activeSort?: string }) => {
     const { format } = useNumberFormat();
@@ -140,12 +127,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 isActive={activeSort === "change24h"}
                                 className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[20%]"
                             />
-                            <TableHeaderCell
-                                label={type === "perp" ? "Open Interest" : "Volume"}
-                                onClick={handleSort(type === "perp" ? "openInterest" : "volume")}
-                                isActive={activeSort === (type === "perp" ? "openInterest" : "volume")}
-                                className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 pr-4 w-[25%]"
-                            />
                         </TableRow>
                     </TableHeader>
                     <TableBody className="bg-[#051728]">
@@ -167,4 +148,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
             </div>
         </Card>
     );
-}); 
+});
+
+TokensTable.displayName = 'TokensTable'; 

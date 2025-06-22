@@ -9,6 +9,9 @@ export default {
   plugins: [],
     theme: {
     	extend: {
+    		screens: {
+    			'custom': '1227px',
+    		},
     		colors: {
     			sidebar: {
     				DEFAULT: 'hsl(var(--sidebar-background))',

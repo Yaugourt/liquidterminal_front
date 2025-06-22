@@ -15,6 +15,8 @@ const StatItem = memo(({ label, value }: StatItemProps) => (
     </div>
 ));
 
+StatItem.displayName = 'StatItem';
+
 export const TokensHeader = memo(({ type, title, totalVolume, dailyFees, openInterest }: TokensHeaderProps) => {
     const secondaryMetric = type === "spot" 
         ? { label: "Daily Fees", value: dailyFees || 0 }
@@ -26,7 +28,7 @@ export const TokensHeader = memo(({ type, title, totalVolume, dailyFees, openInt
                 {title || (type === "perp" ? "Trending perpetual" : "Trending spot")}
             </h3>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 max-[480px]:hidden">
                 <StatItem label="Volume" value={totalVolume} />
                 <StatItem label={secondaryMetric.label} value={secondaryMetric.value} />
             </div>
@@ -43,4 +45,6 @@ export const TokensHeader = memo(({ type, title, totalVolume, dailyFees, openInt
             </Link>
         </div>
     );
-}); 
+});
+
+TokensHeader.displayName = 'TokensHeader'; 

@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, useEffect, useRef } from "react";
+import { memo, useMemo, useState } from "react";
 import { useTrendingValidators } from "@/services/dashboard/hooks/useTrendingValidators";
 import { useLatestAuctions } from "@/services/dashboard/hooks/useLatestAuctions";
 import { useVaults } from "@/services/vault/hooks/useVaults";
@@ -37,14 +37,6 @@ export const TabSection = memo(({
     tvl: parseFloat(vault.summary.tvl)
   })), [vaults]);
 
-  // Pas de conversion HYPE -> $
-  const convertedAuctions = useMemo(() => 
-    usdcAuctions.map(auction => ({
-      ...auction,
-      deployGas: auction.deployGas,
-      hypeAmount: Math.abs(parseFloat(auction.deployGas)),
-    })), [usdcAuctions]);
-
   const allAuctions = useMemo(() => (
     [...(usdcAuctions || []), ...(hypeAuctions || [])]
       .sort((a, b) => b.time - a.time)
@@ -81,3 +73,5 @@ export const TabSection = memo(({
     </div>
   );
 });
+
+TabSection.displayName = 'TabSection';

@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
-import { TrendingTokens } from "@/components/dashboard/tokens/TrendingTokens";
+import { TrendingTokensTabs } from "@/components/dashboard/tokens/TrendingTokensTabs";
 import { TabSection } from "@/components/dashboard/vaultStakingAuction";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Button } from "@/components/ui/button";
@@ -53,15 +53,14 @@ export default function Home() {
           <StatsGrid />
 
           <div className="flex flex-col md:flex-row gap-6 w-full">
-            <TrendingTokens type="perp" />
-            <TrendingTokens type="spot" />
+            <TrendingTokensTabs />
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:gap-8">
-            <div className="w-full lg:w-[500px]">
+          <div className="flex flex-col custom:flex-row custom:gap-8">
+            <div className="w-full custom:w-[500px] mb-6 custom:mb-0">
               <TabSection />
             </div>
-            <div className="w-full lg:flex-1 lg:max-w-[calc(100%-520px)]">
+            <div className="w-full custom:flex-1 custom:max-w-[calc(100%-520px)]">
               <ChartSection chartHeight={chartHeight} />
             </div>
           </div>

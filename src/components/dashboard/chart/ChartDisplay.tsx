@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useChartFormat, useChartData } from '@/components/common/charts';
 import { ChartDisplayProps } from "@/components/types/dashboard.types";
-import { AuctionInfo } from "@/services/dashboard/types";
 import {
   LineChart,
   Line,
@@ -16,7 +15,6 @@ import {
 } from 'recharts';
 import { Button } from "@/components/ui/button";
 import { formatLargeNumber, formatNumber } from '@/lib/formatting';
-import { NumberFormatType } from '@/store/number-format.store';
 import { useNumberFormat } from '@/store/number-format.store';
 
 interface Props extends ChartDisplayProps {
@@ -46,9 +44,9 @@ export const ChartDisplay = ({
   const getTitle = () => {
     switch (selectedFilter) {
       case "bridge":
-        return "Hyperliquid Bridge TVL Evolution";
+        return "Bridge TVL Evolution";
       case "strict":
-        return "Fees Evolution";
+         return "Fees Evolution";
       default:
         return `Auction price evolution (${selectedCurrency})`;
     }

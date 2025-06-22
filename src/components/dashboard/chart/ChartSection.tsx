@@ -23,7 +23,7 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col sm:flex-row mb-2 justify-between items-start sm:items-center">
+      <div className="flex flex-row mb-2 justify-between items-start">
         <FilterButtons
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
@@ -32,7 +32,7 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
           selectedPeriod={selectedPeriod}
           onPeriodChange={handlePeriodChange}
           availablePeriods={availablePeriods}
-          className="w-full sm:w-auto"
+          className="w-auto"
         />
       </div>
 

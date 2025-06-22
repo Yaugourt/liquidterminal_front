@@ -22,7 +22,7 @@ export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsP
         variant="ghost"
         size="sm"
         onClick={() => onFilterChange("gas")}
-        className={`px-4 sm:px-6 py-1 text-xs whitespace-nowrap transition-colors uppercase font-bold
+        className={`px-3 sm:px-4 py-1 text-xs whitespace-nowrap transition-colors uppercase font-bold
           ${selectedFilter === "gas"
             ? "bg-[#051728] text-white border border-[#83E9FF4D]"
             : "bg-[#1692AD] text-white border-transparent"}
