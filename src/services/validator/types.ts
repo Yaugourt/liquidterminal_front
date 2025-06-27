@@ -35,4 +35,37 @@ export interface UseValidatorDelegationsResult extends ValidatorDelegationsCalcu
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
+}
+
+/**
+ * Interface pour un validateur avec toutes ses informations
+ */
+export interface Validator {
+  name: string;
+  stake: number;
+  apr: number;
+  commission: number;
+  uptime: number;
+  isActive: boolean;
+  nRecentBlocks: number;
+}
+
+/**
+ * Statistiques des validateurs
+ */
+export interface ValidatorStats {
+  total: number;
+  active: number;
+  inactive: number;
+}
+
+/**
+ * Résultat du hook pour récupérer tous les validateurs
+ */
+export interface UseValidatorsResult {
+  validators: Validator[];
+  stats: ValidatorStats;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
 } 

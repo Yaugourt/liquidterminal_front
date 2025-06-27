@@ -1,4 +1,4 @@
-import {  PaginatedResponse } from '../dashboard/types';
+import { PaginatedResponse } from '../common';
 
 // Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';

@@ -1,9 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Copy, ExternalLink, Check } from "lucide-react";
-import { useTransfers } from "@/services/explorer/hooks/useTransfers";
-import { useDeploys } from "@/services/explorer/hooks/useDeploys";
+import { useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Copy, ExternalLink, Check, Loader2, Database } from "lucide-react";
+import { useTransfers, useDeploys } from "@/services/explorer";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatTokenAmount } from "@/lib/formatting";
 import Link from "next/link";
@@ -17,6 +16,9 @@ export function TransfersDeployTable() {
   const { transfers, isLoading: isLoadingTransfers, error: transfersError } = useTransfers();
   const { deploys, isLoading: isLoadingDeploys, error: deploysError } = useDeploys();
 
+  const handleTransfersClick = useCallback(() => setActiveTab("transfers"), []);
+  const handleDeployClick = useCallback(() => setActiveTab("deploy"), []);
+
   const truncateHash = (hash: string) => {
     if (hash.length > 12) {
       return `${hash.substring(0, 6)}...${hash.substring(hash.length - 4)}`;
@@ -28,7 +30,7 @@ export function TransfersDeployTable() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
-      setTimeout(() => setCopiedAddress(null), 2000); // Reset après 2 secondes
+      setTimeout(() => setCopiedAddress(null), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -58,121 +60,190 @@ export function TransfersDeployTable() {
     </div>
   );
 
-  const limitedDeploys = deploys?.slice(0, 5) || [];
-  const limitedTransfers = transfers?.slice(0, 5) || [];
+  const TransfersContent = () => {
+    const limitedTransfers = transfers?.slice(0, 5) || [];
+
+    if (isLoadingTransfers) {
+      return (
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center">
+            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+            <span className="text-[#FFFFFF80] text-sm">Chargement...</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (transfersError) {
+      return (
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center text-center px-4">
+            <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
+            <p className="text-[#FF5757] text-sm mb-1">Une erreur est survenue</p>
+            <p className="text-[#FFFFFF80] text-xs">Veuillez réessayer plus tard</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+        <table className="w-full">
+          <thead>
+            <tr className="border-none bg-[#051728]">
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Time</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-right text-xs">Amount</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">From</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">To</th>
+            </tr>
+          </thead>
+          <tbody className="bg-[#051728]">
+            {limitedTransfers.length > 0 ? (
+              limitedTransfers.map((transfer) => (
+                <tr key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                  <td className="py-3 px-4 text-sm text-white">{transfer.time}</td>
+                  <td className="py-3 px-4 text-sm text-white text-right">
+                    {formatTokenAmount(transfer.amount, transfer.token, format)}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                    <AddressLink address={transfer.from} />
+                  </td>
+                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                    <AddressLink address={transfer.to} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="py-8">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                    <p className="text-white text-sm mb-1">Aucun transfer disponible</p>
+                    <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const DeployContent = () => {
+    const limitedDeploys = deploys?.slice(0, 5) || [];
+
+    if (isLoadingDeploys) {
+      return (
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center">
+            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+            <span className="text-[#FFFFFF80] text-sm">Chargement...</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (deploysError) {
+      return (
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center text-center px-4">
+            <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
+            <p className="text-[#FF5757] text-sm mb-1">Une erreur est survenue</p>
+            <p className="text-[#FFFFFF80] text-xs">Veuillez réessayer plus tard</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+        <table className="w-full">
+          <thead>
+            <tr className="border-none bg-[#051728]">
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Time</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">User</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Action</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Hash</th>
+            </tr>
+          </thead>
+          <tbody className="bg-[#051728]">
+            {limitedDeploys.length > 0 ? (
+              limitedDeploys.map((deploy) => (
+                <tr key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                  <td className="py-3 px-4 text-sm text-white">{deploy.time}</td>
+                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                    <AddressLink address={deploy.user} />
+                  </td>
+                  <td className="py-3 px-4 text-sm">
+                    <span className={`px-2 py-0.5 rounded text-xs border ${
+                      deploy.status === 'error' 
+                        ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
+                        : 'bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]'
+                    }`}>
+                      {deploy.action}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                    <div className="flex items-center">
+                      {truncateHash(deploy.hash)}
+                      <ExternalLink className="ml-1.5 h-3.5 w-3.5 opacity-60 hover:opacity-100 cursor-pointer" />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="py-8">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                    <p className="text-white text-sm mb-1">Aucun deploy disponible</p>
+                    <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4">
-      <Tabs defaultValue="transfers" className="w-full" onValueChange={(value) => setActiveTab(value as ActivityTab)}>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[15px] text-white font-medium pl-4">Activity</h3>
-          <TabsList className="h-8 p-0.5 bg-[#051728] border border-[#83E9FF4D]">
-            <TabsTrigger 
-              value="transfers"
-              className="h-6 px-3 text-xs data-[state=active]:bg-[#83E9FF1A] data-[state=active]:text-[#83E9FF] text-[#FFFFFF99]"
-            >
-              Transfers
-            </TabsTrigger>
-            <TabsTrigger 
-              value="deploy"
-              className="h-6 px-3 text-xs data-[state=active]:bg-[#83E9FF1A] data-[state=active]:text-[#83E9FF] text-[#FFFFFF99]"
-            >
-              Deploy
-            </TabsTrigger>
-          </TabsList>
-        </div>
+    <div className="w-full">
+      {/* Tab Buttons */}
+      <div className="flex gap-2 mb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
+        <Button
+          onClick={handleTransfersClick}
+          variant="ghost"
+          size="sm"
+          className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
+            ${activeTab === "transfers"
+              ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
+              : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
+          `}
+        >
+          TRANSFERS
+        </Button>
+        <Button
+          onClick={handleDeployClick}
+          variant="ghost"
+          size="sm"
+          className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
+            ${activeTab === "deploy"
+              ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
+              : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
+          `}
+        >
+          DEPLOY
+        </Button>
+      </div>
 
-        <TabsContent value="transfers" className="mt-0">
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728]">
-            <table className="w-full text-sm text-white">
-              <thead className="text-[#FFFFFF99]">
-                <tr>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">Time</th>
-                  <th className="text-right py-2 px-3 font-normal border-b border-[#83E9FF4D]">Amount</th>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">From</th>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">To</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoadingTransfers ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-2 text-[#FFFFFF99]">Loading...</td>
-                  </tr>
-                ) : transfersError ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-2 text-red-500">{transfersError.message}</td>
-                  </tr>
-                ) : (
-                  limitedTransfers.map((transfer) => (
-                    <tr key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#83E9FF08]">
-                      <td className="py-2.5 px-3">{transfer.time}</td>
-                      <td className="py-2.5 px-3 text-right text-[#4ADE80]">
-                        {formatTokenAmount(transfer.amount, transfer.token, format)}
-                      </td>
-                      <td className="py-2.5 px-3 text-[#83E9FF]">
-                        <AddressLink address={transfer.from} />
-                      </td>
-                      <td className="py-2.5 px-3 text-[#83E9FF]">
-                        <AddressLink address={transfer.to} />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="deploy" className="mt-0">
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728]">
-            <table className="w-full text-sm text-white">
-              <thead className="text-[#FFFFFF99]">
-                <tr>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">Time</th>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">User</th>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">Action</th>
-                  <th className="text-left py-2 px-3 font-normal border-b border-[#83E9FF4D]">Hash</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoadingDeploys ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-2 text-[#FFFFFF99]">Loading...</td>
-                  </tr>
-                ) : deploysError ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-2 text-red-500">{deploysError.message}</td>
-                  </tr>
-                ) : (
-                  limitedDeploys.map((deploy) => (
-                    <tr key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#83E9FF08]">
-                      <td className="py-2.5 px-3">{deploy.time}</td>
-                      <td className="py-2.5 px-3 text-[#83E9FF]">
-                        <AddressLink address={deploy.user} />
-                      </td>
-                      <td className="py-2.5 px-3">
-                        <span className={`px-2 py-0.5 rounded text-xs border ${
-                          deploy.status === 'error' 
-                            ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
-                            : 'bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]'
-                        }`}>
-                          {deploy.action}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-[#83E9FF]">
-                        <div className="flex items-center">
-                          {truncateHash(deploy.hash)}
-                          <ExternalLink className="ml-1.5 h-3.5 w-3.5 opacity-60 hover:opacity-100 cursor-pointer" />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </Card>
+      {/* Content */}
+      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl mx-auto">
+        {activeTab === "transfers" && <TransfersContent />}
+        {activeTab === "deploy" && <DeployContent />}
+      </Card>
+    </div>
   );
 } 

@@ -1,5 +1,4 @@
-import { BlockDetails, UseBlockDetailsResult } from '../types';
-import { fetchBlockDetails } from '../api';
+import { BlockDetails, UseBlockDetailsResult, fetchBlockDetails } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 export const useBlockDetails = (blockNumber: string): UseBlockDetailsResult => {

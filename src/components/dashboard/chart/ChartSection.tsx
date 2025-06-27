@@ -5,7 +5,7 @@ import { FilterType } from "@/components/types/dashboard.types";
 import { ChartDisplay } from "./ChartDisplay";
 import { FilterButtons } from "./FilterButtons";
 import { Period, useChartPeriod } from '@/components/common/charts';
-import { useChartTimeSeriesData } from "@/services/dashboard/hooks/useChartTimeSeriesData";
+import { useChartTimeSeriesData } from "@/services/dashboard";
 
 interface ChartSectionProps {
   chartHeight: number;
@@ -22,8 +22,8 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
   const { data, isLoading } = useChartTimeSeriesData(selectedFilter, selectedPeriod, selectedCurrency);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row mb-2 justify-between items-start">
+    <div className="flex flex-col h-full">
+      <div className="flex flex-row mb-4 justify-between items-start">
         <FilterButtons
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
@@ -43,7 +43,7 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
         selectedPeriod={selectedPeriod}
         selectedCurrency={selectedCurrency}
         onCurrencyChange={setSelectedCurrency}
-        chartHeight={300}
+        chartHeight={chartHeight}
       />
     </div>
   );

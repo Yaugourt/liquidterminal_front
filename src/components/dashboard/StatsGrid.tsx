@@ -1,9 +1,8 @@
-import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
+import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
-import type { DashboardGlobalStats } from "@/services/dashboard/types";
 
 interface StatsGridProps {
   stats?: DashboardGlobalStats;

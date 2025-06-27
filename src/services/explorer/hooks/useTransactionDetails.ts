@@ -1,5 +1,4 @@
-import { TransactionDetails, UseTransactionDetailsResult } from '../types';
-import { fetchTransactionDetails } from '../api';
+import { TransactionDetails, UseTransactionDetailsResult, fetchTransactionDetails } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 export const useTransactionDetails = (txHash: string): UseTransactionDetailsResult => {

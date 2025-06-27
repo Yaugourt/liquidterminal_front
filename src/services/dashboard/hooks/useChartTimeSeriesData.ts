@@ -2,18 +2,18 @@ import { useCallback, useMemo } from "react";
 import { useHLBridge } from "./useHLBridge";
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
 import { ChartPeriod } from '@/components/common/charts';
-import { useDataFetching } from "@/hooks/useDataFetching";
-import { AuctionsResponse, AuctionInfo } from "../types";
-import { fetchLatestAuctions } from "../api";
+import { useAuctions } from "../../market/auction";
+import { AuctionInfo } from "../../market/auction/types";
 
 export function useChartTimeSeriesData(
   selectedFilter: FilterType, 
   selectedPeriod: ChartPeriod,
   selectedCurrency: "HYPE" | "USDC"
 ): { data: DashboardData[], isLoading: boolean } {
-  const { data: auctionsData, isLoading: auctionsLoading } = useDataFetching<AuctionsResponse>({
-    fetchFn: () => fetchLatestAuctions(1000),
-    refreshInterval: 30000
+  // Utiliser le nouveau hook auctions avec une limite élevée pour récupérer toutes les données
+  const { auctions: allAuctions, isLoading: auctionsLoading } = useAuctions({
+    limit: 10000, // Limite élevée pour récupérer toutes les données
+    currency: "ALL" // Récupérer HYPE et USDC
   });
 
   const { bridgeData, isLoading: bridgeLoading } = useHLBridge();
@@ -38,7 +38,7 @@ export function useChartTimeSeriesData(
   }, [selectedPeriod]);
 
   // ----------------------------------------------
-  // Memoised parsing of raw auctions response
+  // Séparation et validation des auctions par currency
   // ----------------------------------------------
   const {
     validUsdcAuctions,
@@ -46,7 +46,7 @@ export function useChartTimeSeriesData(
     latestUsdcTime,
     latestHypeTime
   } = useMemo(() => {
-    if (!auctionsData?.success) {
+    if (!allAuctions || allAuctions.length === 0) {
       const now = Date.now();
       return {
         validUsdcAuctions: [] as AuctionInfo[],
@@ -56,11 +56,18 @@ export function useChartTimeSeriesData(
       };
     }
 
-    const filterValid = (arr: AuctionInfo[]): AuctionInfo[] =>
-      arr.filter((a) => !!a && !!a.time && !!a.deployGas && !isNaN(parseFloat(a.deployGas)));
-
-    const usdc = filterValid(auctionsData.data.usdcAuctions);
-    const hype = filterValid(auctionsData.data.hypeAuctions);
+    // Séparer les auctions par currency et filtrer les valides
+    const usdc = allAuctions.filter((a) => 
+      a.currency === "USDC" && 
+      !!a && !!a.time && !!a.deployGas && 
+      !isNaN(parseFloat(a.deployGas))
+    );
+    
+    const hype = allAuctions.filter((a) => 
+      a.currency === "HYPE" && 
+      !!a && !!a.time && !!a.deployGas && 
+      !isNaN(parseFloat(a.deployGas))
+    );
 
     return {
       validUsdcAuctions: usdc,
@@ -68,7 +75,7 @@ export function useChartTimeSeriesData(
       latestUsdcTime: usdc.length ? Math.max(...usdc.map((a) => a.time)) : Date.now(),
       latestHypeTime: hype.length ? Math.max(...hype.map((a) => a.time)) : Date.now()
     };
-  }, [auctionsData]);
+  }, [allAuctions]);
 
   const data = useMemo(() => {
     // Handle Bridge TVL ---------------------------------------------
@@ -88,7 +95,7 @@ export function useChartTimeSeriesData(
         }));
     }
 
-    if (!auctionsData?.success) return [];
+    if (!allAuctions || allAuctions.length === 0) return [];
 
     // Use the latest timestamp of the *selected currency* to compute the date limit.
     // Using the max of both currencies could incorrectly exclude all data for the
@@ -115,7 +122,7 @@ export function useChartTimeSeriesData(
       .sort((a: DashboardData, b: DashboardData) => a.time - b.time);
 
     return selectedCurrency === "USDC" ? usdcAuctions : hypeAuctions;
-  }, [selectedFilter, bridgeData, auctionsData, selectedCurrency, getDateLimit, validUsdcAuctions, validHypeAuctions, latestUsdcTime, latestHypeTime]);
+  }, [selectedFilter, bridgeData, allAuctions, selectedCurrency, getDateLimit, validUsdcAuctions, validHypeAuctions, latestUsdcTime, latestHypeTime]);
 
   const isLoading = useMemo(() => 
     selectedFilter === "bridge" 

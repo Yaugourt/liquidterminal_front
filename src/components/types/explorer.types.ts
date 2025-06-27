@@ -1,6 +1,5 @@
-import { PortfolioPeriodData } from "@/services/explorer/types";
+import { PortfolioPeriodData, TransactionType, BlockDetails, BlockTransaction } from "@/services/explorer";
 import { NumberFormatType } from "@/store/number-format.store";
-import { TransactionType, BlockDetails, BlockTransaction } from "@/services/explorer/types";
 
 /**
  * Types pour les composants Block
@@ -32,7 +31,7 @@ export interface Transaction {
 export interface ExplorerStatsCardProps {
   title: string;
   value: string;
-  type: 'block' | 'blockTime' | 'transactions' | 'users';
+  type: 'block' | 'blockTime' | 'transactions' | 'users' | 'hypeStaked';
 }
 
 export interface ExplorerStat {

@@ -1,6 +1,6 @@
 import { SpotGlobalStats, SpotToken } from './types';
 import { fetchWithConfig, fetchPaginated } from '../../api/base';
-import { PaginatedResponse } from '../../dashboard/types';
+import { PaginatedResponse } from '../../common';
 
 /**
  * Récupère les statistiques globales du marché spot

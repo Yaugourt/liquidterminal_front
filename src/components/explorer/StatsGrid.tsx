@@ -3,20 +3,21 @@ import { useEffect, useState } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
 import { ExplorerStat, ExplorerStatsCardProps } from "@/components/types/explorer.types";
-import { useDashboardStats } from "@/services/dashboard/hooks/useDashboardStats";
-import { useExplorerStore } from "@/services/explorer/websocket.service";
+import { useDashboardStats } from "@/services/dashboard";
+import { useExplorerStore } from "@/services/explorer";
+import { Loader2 } from "lucide-react";
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
   const { stats: dashboardStats, isLoading: isDashboardLoading } = useDashboardStats();
-  const { blocks, connect, disconnect } = useExplorerStore();
+  const { blocks, connectBlocks, disconnectBlocks } = useExplorerStore();
 
   useEffect(() => {
-    connect();
-    return () => disconnect();
-  }, [connect, disconnect]);
+    connectBlocks(); // Connecter seulement les blocks, pas les transactions
+    return () => disconnectBlocks();
+  }, [connectBlocks, disconnectBlocks]);
 
   // Fonction pour formater les nombres selon le format sélectionné
   const formatValue = (value: number, type: string) => {
@@ -24,6 +25,12 @@ export function StatsGrid() {
       return formatNumber(value, format, {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
+      });
+    }
+    if (type === "hypeStaked") {
+      return formatNumber(value, format, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
       });
     }
     return formatNumber(value, format, {
@@ -56,13 +63,31 @@ export function StatsGrid() {
           type: "users",
           value: formatValue(dashboardStats?.numberOfUsers || 0, "users"),
         },
+        {
+          title: "HYPE Staked",
+          type: "hypeStaked",
+          value: formatValue(dashboardStats?.totalHypeStake || 0, "hypeStaked"),
+        },
       ]);
       setIsLoading(false);
     }
   }, [blocks, dashboardStats, format, isDashboardLoading]);
 
+  // Afficher un état de chargement
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
+        {[...Array(5)].map((_, index) => (
+          <div key={index} className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 flex items-center justify-center">
+            <Loader2 className="w-4 h-4 text-[#83E9FF4D] animate-spin" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3 w-full">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
       {stats.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}

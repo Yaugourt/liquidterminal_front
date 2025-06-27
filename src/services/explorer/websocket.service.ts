@@ -1,68 +1,96 @@
 import { create } from 'zustand';
 import { useState, useEffect } from 'react';
-
-interface Block {
-  height: number;
-  blockTime: number;
-  hash: string;
-  numTxs: number;
-  proposer: string;
-}
-
-interface Transaction {
-  time: number;
-  user: string;
-  hash: string;
-  block: number;
-  error: string | null;
-  action: {
-    type: string;
-    cancels?: Array<{
-      a: number;
-      o: number;
-    }>;
-    // Add other action types as needed
-  };
-}
-
-interface ExplorerState {
-  blocks: Block[];
-  transactions: Transaction[];
-  isConnected: boolean;
-  error: string | null;
-}
-
-interface ExplorerStore extends ExplorerState {
-  connect: () => void;
-  disconnect: () => void;
-  addBlock: (block: Block) => void;
-  addTransaction: (transaction: Transaction) => void;
-  setError: (error: string | null) => void;
-}
+import { Block, Transaction, ExplorerStore } from './types';
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
 
 export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   blocks: [],
   transactions: [],
-  isConnected: false,
+  isBlocksConnected: false,
+  isTransactionsConnected: false,
   error: null,
 
-  connect: () => {
+  connectBlocks: () => {
     try {
+      // Disconnect existing blocks connection if any
+      const existingWs = (window as any).explorerBlocksWs;
+      if (existingWs) {
+        existingWs.close();
+      }
+
       const ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
-        console.log('WebSocket connected');
-        set({ isConnected: true, error: null });
+        console.log('Blocks WebSocket connected');
+        set({ isBlocksConnected: true, error: null });
         
-        // Subscribe to block updates
+        // Subscribe to block updates only
         ws.send(JSON.stringify({
           method: "subscribe",
           subscription: { type: "explorerBlock" }
         }));
+      };
 
-        // Subscribe to transaction updates
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (!Array.isArray(data) || data.length === 0) return;
+
+          const item = data[0];
+          
+          // Only handle blocks
+          if ('blockTime' in item) {
+            get().addBlock(item);
+          }
+        } catch (error) {
+          console.error('Error parsing Blocks WebSocket message:', error);
+          set({ error: 'Failed to parse blocks data' });
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('Blocks WebSocket error:', error);
+        set({ error: 'Blocks WebSocket connection error', isBlocksConnected: false });
+      };
+
+      ws.onclose = () => {
+        console.log('Blocks WebSocket disconnected');
+        set({ isBlocksConnected: false });
+      };
+
+      // Store WebSocket instance
+      (window as any).explorerBlocksWs = ws;
+    } catch (error) {
+      console.error('Failed to create Blocks WebSocket:', error);
+      set({ error: 'Failed to connect to Blocks WebSocket', isBlocksConnected: false });
+    }
+  },
+
+  disconnectBlocks: () => {
+    const ws = (window as any).explorerBlocksWs;
+    if (ws) {
+      ws.close();
+      (window as any).explorerBlocksWs = null;
+      set({ isBlocksConnected: false });
+    }
+  },
+
+  connectTransactions: () => {
+    try {
+      // Disconnect existing transactions connection if any
+      const existingWs = (window as any).explorerTransactionsWs;
+      if (existingWs) {
+        existingWs.close();
+      }
+
+      const ws = new WebSocket(WS_URL);
+
+      ws.onopen = () => {
+        console.log('Transactions WebSocket connected');
+        set({ isTransactionsConnected: true, error: null });
+        
+        // Subscribe to transaction updates only
         ws.send(JSON.stringify({
           method: "subscribe",
           subscription: { type: "explorerTxs" }
@@ -76,42 +104,52 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
           const item = data[0];
           
-          // Determine if it's a block or transaction based on the data structure
-          if ('blockTime' in item) {
-            get().addBlock(item);
-          } else if ('time' in item && 'action' in item) {
+          // Only handle transactions
+          if ('time' in item && 'action' in item) {
             get().addTransaction(item);
           }
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-          set({ error: 'Failed to parse data' });
+          console.error('Error parsing Transactions WebSocket message:', error);
+          set({ error: 'Failed to parse transactions data' });
         }
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        set({ error: 'WebSocket connection error', isConnected: false });
+        console.error('Transactions WebSocket error:', error);
+        set({ error: 'Transactions WebSocket connection error', isTransactionsConnected: false });
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
-        set({ isConnected: false });
+        console.log('Transactions WebSocket disconnected');
+        set({ isTransactionsConnected: false });
       };
 
       // Store WebSocket instance
-      (window as any).explorerWs = ws;
+      (window as any).explorerTransactionsWs = ws;
     } catch (error) {
-      console.error('Failed to create WebSocket:', error);
-      set({ error: 'Failed to connect to WebSocket', isConnected: false });
+      console.error('Failed to create Transactions WebSocket:', error);
+      set({ error: 'Failed to connect to Transactions WebSocket', isTransactionsConnected: false });
     }
   },
 
-  disconnect: () => {
-    const ws = (window as any).explorerWs;
+  disconnectTransactions: () => {
+    const ws = (window as any).explorerTransactionsWs;
     if (ws) {
       ws.close();
-      set({ isConnected: false });
+      (window as any).explorerTransactionsWs = null;
+      set({ isTransactionsConnected: false });
     }
+  },
+
+  // Keep legacy methods for backward compatibility
+  connect: () => {
+    get().connectBlocks();
+    get().connectTransactions();
+  },
+
+  disconnect: () => {
+    get().disconnectBlocks();
+    get().disconnectTransactions();
   },
 
   addBlock: (block: Block) => {

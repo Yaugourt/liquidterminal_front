@@ -18,33 +18,6 @@ export interface TrendingValidator {
   nRecentBlocks: number;
 }
 
-// Type pour les informations d'enchère
-export interface AuctionInfo {
-  time: number;
-  deployer: string;
-  name: string;
-  deployGas: string;
-  currency: "USDC" | "HYPE";
-  deployGasAbs: string;
-}
-
-// Type pour la réponse API paginée
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    totalVolume: number;
-  };
-  metadata?: {
-    lastUpdate: number;
-    isFresh: boolean;
-    timeSinceLastUpdate: number;
-  };
-}
-
 // Types pour les résultats des hooks
 
 export interface UseDashboardStatsResult {
@@ -72,12 +45,7 @@ export interface UseTopTokensResult {
   totalVolume?: number;
 }
 
-export interface UseLatestAuctionsResult {
-  auctions: AuctionInfo[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
+// UseLatestAuctionsResult supprimé - utiliser le module market/auction
 
 export interface UseTrendingValidatorsResult {
   validators: TrendingValidator[];
@@ -105,11 +73,4 @@ export interface UseHLBridgeResult {
   refetch: () => Promise<void>;
 }
 
-export interface AuctionsResponse {
-  success: boolean;
-  data: {
-    usdcAuctions: AuctionInfo[];
-    hypeAuctions: AuctionInfo[];
-    splitTimestamp: number;
-  }
-} 
+// AuctionsResponse supprimé - utiliser le module market/auction 

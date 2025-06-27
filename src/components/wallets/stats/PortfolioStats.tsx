@@ -6,7 +6,7 @@ import { Loader2, RefreshCw, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAddressBalance } from "@/services/explorer/hooks/useAddressBalance";
+import { useAddressBalance } from "@/services/explorer";
 import { formatLargeNumber } from "@/lib/formatting";
 
 export function PortfolioStats() {

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
-import { authService } from "../api";
-import { User, AuthError, LoginCredentials } from "../types";
+import { authService, User, AuthError, LoginCredentials } from "../index";
 
 export function useAuth() {
   const [isInitialized, setIsInitialized] = useState(false);

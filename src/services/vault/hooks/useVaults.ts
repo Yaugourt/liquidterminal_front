@@ -3,12 +3,11 @@ import { fetchVaults } from '../api';
 import { 
   UseVaultsResult, 
   VaultSummary, 
-  VaultsParams, 
   UseVaultsOptions,
   VaultsResponse
 } from '../types';
 import { useState, useCallback } from 'react';
-import { PaginatedResponse } from '../../dashboard/types';
+
 
 /**
  * Hook pour récupérer la liste des vaults avec pagination et tri

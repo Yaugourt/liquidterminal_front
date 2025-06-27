@@ -198,6 +198,7 @@ export interface TransferData {
 export interface FormattedTransfer {
   hash: string;
   time: string;
+  timestamp: number;
   from: string;
   to: string;
   amount: string;
@@ -235,6 +236,7 @@ export interface DeployData {
 export interface FormattedDeploy {
   hash: string;
   time: string;
+  timestamp: number;
   user: string;
   action: string;
   blockNumber: number;
@@ -246,4 +248,49 @@ export interface UseDeploysResult {
   deploys: FormattedDeploy[] | null;
   isLoading: boolean;
   error: Error | null;
+}
+
+// Types pour les données WebSocket temps réel
+export interface Block {
+  height: number;
+  blockTime: number;
+  hash: string;
+  numTxs: number;
+  proposer: string;
+}
+
+export interface Transaction {
+  time: number;
+  user: string;
+  hash: string;
+  block: number;
+  error: string | null;
+  action: {
+    type: string;
+    cancels?: Array<{
+      a: number;
+      o: number;
+    }>;
+    // Add other action types as needed
+  };
+}
+
+export interface ExplorerState {
+  blocks: Block[];
+  transactions: Transaction[];
+  isBlocksConnected: boolean;
+  isTransactionsConnected: boolean;
+  error: string | null;
+}
+
+export interface ExplorerStore extends ExplorerState {
+  connectBlocks: () => void;
+  disconnectBlocks: () => void;
+  connectTransactions: () => void;
+  disconnectTransactions: () => void;
+  connect: () => void;
+  disconnect: () => void;
+  addBlock: (block: Block) => void;
+  addTransaction: (transaction: Transaction) => void;
+  setError: (error: string | null) => void;
 } 

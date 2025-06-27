@@ -1,27 +1,21 @@
-import { AuctionInfo, AuctionsResponse } from '../types';
-import { fetchLatestAuctions } from '../api';
-import { useDataFetching } from '../../../hooks/useDataFetching';
+// Import depuis le nouveau module auction
+import { useLatestAuctions as useMarketLatestAuctions } from '../../market/auction';
+import { AuctionInfo } from '../../market/auction/types';
 
+// Hook de compatibilité qui utilise la nouvelle logique
 export const useLatestAuctions = (
   limit: number = 5,
   currency: "HYPE" | "USDC",
   initialData?: AuctionInfo[]
 ) => {
-  const { data, isLoading, error, refetch } = useDataFetching<AuctionsResponse>({
-    fetchFn: () => fetchLatestAuctions(limit),
-    initialData: initialData ? { success: true, data: { usdcAuctions: initialData, hypeAuctions: [], splitTimestamp: 0 } } : undefined,
-    refreshInterval: 30000 // 30 seconds
-  });
-
-  const auctions = data?.success ? (
-    currency === "USDC" ? data.data.usdcAuctions : data.data.hypeAuctions
-  ).sort((a, b) => b.time - a.time) : [];
-
+  // Utiliser le nouveau hook avec la même interface
+  const result = useMarketLatestAuctions(limit, currency, initialData);
+  
   return {
-    auctions: auctions.slice(0, limit),
-    isLoading,
-    error,
-    refetch,
-    splitTimestamp: data?.data.splitTimestamp
+    auctions: result.auctions.slice(0, limit), // Assurer la limitation
+    isLoading: result.isLoading,
+    error: result.error,
+    refetch: result.refetch,
+    splitTimestamp: result.splitTimestamp
   };
 }; 

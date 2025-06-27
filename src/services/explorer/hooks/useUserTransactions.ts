@@ -1,5 +1,4 @@
-import { FormattedUserTransaction, UseTransactionsResult } from '../types';
-import { getUserTransactions } from '../api';
+import { FormattedUserTransaction, UseTransactionsResult, getUserTransactions } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 export const useTransactions = (address: string): UseTransactionsResult => {

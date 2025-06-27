@@ -1,5 +1,4 @@
-import { BridgeData, UseHLBridgeResult } from '../types';
-import { fetchHLBridge } from '../api';
+import { BridgeData, UseHLBridgeResult, fetchHLBridge } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 export function useHLBridge(): UseHLBridgeResult {

@@ -1,6 +1,5 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchPortfolio } from '../api';
-import { PortfolioApiResponse } from '../types';
+import { fetchPortfolio, PortfolioApiResponse } from '../index';
 
 export function usePortfolio(address: string) {
   const { data, isLoading, error } = useDataFetching<PortfolioApiResponse>({

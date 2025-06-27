@@ -1,5 +1,4 @@
-import { DashboardGlobalStats, UseDashboardStatsResult } from '../types';
-import { fetchDashboardGlobalStats } from '../api';
+import { DashboardGlobalStats, UseDashboardStatsResult, fetchDashboardGlobalStats } from '../index';
 import { useDataFetching } from '../../../hooks/useDataFetching';
 
 export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashboardStatsResult => {
@@ -9,7 +8,7 @@ export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashbo
   });
 
   return {
-    stats: data,
+    stats: data ?? undefined,
     isLoading,
     error,
     refetch

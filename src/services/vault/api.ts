@@ -7,7 +7,7 @@ import {
   VaultsResponse,
   VaultResponse
 } from './types';
-import { PaginatedResponse } from '../dashboard/types';
+import { PaginatedResponse } from '../common';
 
 /**
  * Adapts the vault response to match the PaginatedResponse format

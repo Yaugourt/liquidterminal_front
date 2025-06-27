@@ -1,5 +1,4 @@
-import { FormattedDeploy, DeployData, UseDeploysResult } from '../types';
-import { fetchDeploys } from '../api';
+import { FormattedDeploy, DeployData, UseDeploysResult, fetchDeploys } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 /**
@@ -29,6 +28,7 @@ const formatDeploy = (deploy: DeployData): FormattedDeploy => {
   return {
     hash: deploy.hash,
     time: formattedTime,
+    timestamp: deploy.time,
     user: deploy.user,
     action: action,
     blockNumber: deploy.block,
@@ -44,7 +44,9 @@ export const useDeploys = (): UseDeploysResult => {
   const { data, isLoading, error } = useDataFetching<FormattedDeploy[]>({
     fetchFn: async () => {
       const rawDeploys = await fetchDeploys();
-      return rawDeploys.map(formatDeploy);
+      return rawDeploys
+        .filter(deploy => deploy.error === null) // Filtrer les déploiements sans erreur
+        .map(formatDeploy);
     },
     dependencies: [],
     refreshInterval: 30000 // Rafraîchir toutes les 30 secondes

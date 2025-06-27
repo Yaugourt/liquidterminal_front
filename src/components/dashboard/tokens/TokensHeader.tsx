@@ -23,11 +23,7 @@ export const TokensHeader = memo(({ type, title, totalVolume, dailyFees, openInt
         : { label: "Open Interest", value: openInterest || 0 };
 
     return (
-        <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[13px] text-white font-medium">
-                {title || (type === "perp" ? "Trending perpetual" : "Trending spot")}
-            </h3>
-
+        <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-4 max-[480px]:hidden">
                 <StatItem label="Volume" value={totalVolume} />
                 <StatItem label={secondaryMetric.label} value={secondaryMetric.value} />

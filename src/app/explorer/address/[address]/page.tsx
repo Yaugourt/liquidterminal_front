@@ -1,8 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useTransactions } from "@/services/explorer/hooks/useUserTransactions";
-import { usePortfolio } from '@/services/explorer/hooks/usePortfolio';
+import { useTransactions, usePortfolio } from "@/services/explorer";
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { useAuthContext } from "@/contexts/auth.context";

@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useBlockDetails } from "@/services/explorer/hooks/useBlockDetails"
+import { useBlockDetails } from "@/services/explorer"
 import { Header } from "@/components/Header"
 import { use, useCallback } from "react"
 import { BlockHeader, BlockTransactionList as TransactionList, LoadingState, ErrorState } from "@/components/explorer"

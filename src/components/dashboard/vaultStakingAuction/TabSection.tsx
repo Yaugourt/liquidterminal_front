@@ -1,11 +1,9 @@
 import { memo, useMemo, useState } from "react";
-import { useTrendingValidators } from "@/services/dashboard/hooks/useTrendingValidators";
-import { useLatestAuctions } from "@/services/dashboard/hooks/useLatestAuctions";
+import { useTrendingValidators, useLatestAuctions, TrendingValidator } from "@/services/dashboard";
+import { AuctionInfo } from "@/services/market/auction";
 import { useVaults } from "@/services/vault/hooks/useVaults";
 import { TabButtons } from "./TabButtons";
 import { ValidatorsTable, AuctionsTable, VaultTable } from "./DataTablesContent";
-import type { TrendingValidator } from "@/services/dashboard/types";
-import type { AuctionInfo } from "@/services/dashboard/types";
 import type { VaultSummary } from "@/services/vault/types";
 
 interface TabSectionComponentProps {

@@ -8,7 +8,7 @@ export const TrendingTokensTabs = () => {
   const [activeTab, setActiveTab] = useState<"perp" | "spot">("perp");
 
   return (
-    <div className="w-[35%]">
+    <div className="w-full">
       {/* Onglets */}
       <div className="flex gap-2 mb-4">
         <Button

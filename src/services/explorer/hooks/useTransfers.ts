@@ -1,5 +1,4 @@
-import { FormattedTransfer, TransferData, UseTransfersResult } from '../types';
-import { fetchTransfers } from '../api';
+import { FormattedTransfer, TransferData, UseTransfersResult, fetchTransfers } from '../index';
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 /**
@@ -29,6 +28,7 @@ const formatTransfer = (transfer: TransferData): FormattedTransfer => {
   return {
     hash: transfer.hash,
     time: formattedTime,
+    timestamp: transfer.time,
     from: transfer.user,
     to: transfer.action.destination || 'Unknown',
     amount: transfer.action.amount || '0',
@@ -44,7 +44,16 @@ export const useTransfers = (): UseTransfersResult => {
   const { data, isLoading, error } = useDataFetching<FormattedTransfer[]>({
     fetchFn: async () => {
       const rawTransfers = await fetchTransfers();
-      return rawTransfers.map(formatTransfer);
+      const formattedTransfers = rawTransfers.map(formatTransfer);
+      
+      // Filtrer les transactions USDC inférieures à 100 USDC
+      return formattedTransfers.filter(transfer => {
+        if (transfer.token === 'USDC') {
+          const amount = parseFloat(transfer.amount);
+          return amount >= 100;
+        }
+        return true; // Garder toutes les autres transactions non-USDC
+      });
     },
     dependencies: [],
     refreshInterval: 30000 // Rafraîchir toutes les 30 secondes

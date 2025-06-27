@@ -14,7 +14,7 @@ import { Menu } from "lucide-react";
 
 export default function Home() {
   const { width } = useWindowSize();
-  const chartHeight = width >= 1024 ? 345 : width >= 640 ? 296 : 246;
+  const chartHeight = 270; // Hauteur exacte pour s'aligner avec le tableau
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -52,16 +52,18 @@ export default function Home() {
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           <StatsGrid />
 
-          <div className="flex flex-col md:flex-row gap-6 w-full">
-            <TrendingTokensTabs />
+          <div className="flex flex-col md:flex-row gap-6 w-full md:items-start">
+            <div className="w-full md:w-[35%]">
+              <TrendingTokensTabs />
+            </div>
+            <div className="flex-1 flex flex-col justify-start">
+              <ChartSection chartHeight={chartHeight} />
+            </div>
           </div>
 
           <div className="flex flex-col custom:flex-row custom:gap-8">
             <div className="w-full custom:w-[500px] mb-6 custom:mb-0">
               <TabSection />
-            </div>
-            <div className="w-full custom:flex-1 custom:max-w-[calc(100%-520px)]">
-              <ChartSection chartHeight={chartHeight} />
             </div>
           </div>
         </main>

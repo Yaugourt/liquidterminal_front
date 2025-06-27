@@ -17,5 +17,4 @@ export { TransfersDeployTable } from './TransfersDeployTable';
 export { StatsCard } from './StatsCard';
 export { StatsGrid } from './StatsGrid';
 export { ValidatorsTable } from './ValidatorsTable';
-export { BlocksTable } from './BlocksTable';
-export { RecentTransactionsTable } from './RecentTransactionsTable'; 
+export { RecentDataTable } from './RecentDataTable/RecentDataTable'; 

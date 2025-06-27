@@ -1,5 +1,4 @@
-import { TrendingValidator } from '../types';
-import { fetchTrendingValidators } from '../api';
+import { TrendingValidator, fetchTrendingValidators } from '../index';
 import { useDataFetching } from '../../../hooks/useDataFetching';
 
 export const useTrendingValidators = (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransactionDetails } from '@/services/explorer/hooks/useTransactionDetails';
+import { useTransactionDetails } from '@/services/explorer';
 import { format } from 'date-fns';
 import { useParams } from 'next/navigation';
 import { Card } from "@/components/ui/card"

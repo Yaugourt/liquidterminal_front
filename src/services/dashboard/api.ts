@@ -1,4 +1,4 @@
-import { DashboardGlobalStats, TrendingValidator, BridgeData, AuctionsResponse } from './types';
+import { DashboardGlobalStats, TrendingValidator, BridgeData } from './index';
 import { fetchWithConfig } from '../api/base';
 
 /**
@@ -9,7 +9,6 @@ export const fetchDashboardGlobalStats = async (): Promise<DashboardGlobalStats>
 };
 
 /**
-
  * Récupère les validateurs tendance
  */
 export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake'): Promise<TrendingValidator[]> => {
@@ -18,25 +17,6 @@ export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake')
   );
   return response.data;
 };
-
-/**
- * Récupère les dernières enchères
- */
-export const fetchLatestAuctions = async (limit: number = 5): Promise<AuctionsResponse> => {
-  const response = await fetchWithConfig<AuctionsResponse>('/market/auction');
-  
-  // Sort and limit both USDC and HYPE auctions
-  response.data.usdcAuctions = response.data.usdcAuctions
-    .sort((a, b) => b.time - a.time)
-    .slice(0, limit);
-  
-  response.data.hypeAuctions = response.data.hypeAuctions
-    .sort((a, b) => b.time - a.time)
-    .slice(0, limit);
-  
-  return response;
-};
-
 
 /**
  * Récupère les données TVL du bridge Hyperliquid

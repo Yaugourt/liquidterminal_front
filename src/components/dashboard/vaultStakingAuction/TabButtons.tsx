@@ -8,7 +8,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
   const handleAuctionClick = useCallback(() => setActiveTab("auction"), [setActiveTab]);
 
   return (
-    <div className="flex gap-2 mb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
+    <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
       <Button
         onClick={handleVaultClick}
         variant="ghost"
