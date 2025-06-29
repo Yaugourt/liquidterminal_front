@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FilterType } from "@/components/types/dashboard.types";
 import { ChartDisplay } from "./ChartDisplay";
-import { FilterButtons } from "./FilterButtons";
+import { FilterButtons } from "./TabsButton";
 import { Period, useChartPeriod } from '@/components/common/charts';
 import { useChartTimeSeriesData } from "@/services/dashboard";
 

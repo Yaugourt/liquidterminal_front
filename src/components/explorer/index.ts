@@ -16,5 +16,5 @@ export { Pagination } from './Pagination';
 export { TransfersDeployTable } from './TransfersDeployTable';
 export { StatsCard } from './StatsCard';
 export { StatsGrid } from './StatsGrid';
-export { ValidatorsTable } from './ValidatorsTable';
-export { RecentDataTable } from './RecentDataTable/RecentDataTable'; 
+export { ValidatorsTable } from './vaultValidatorSum/ValidatorsVaults';
+export { RecentDataTable } from './recentBlockTx/RecentDataTable'; 

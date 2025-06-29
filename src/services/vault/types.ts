@@ -96,6 +96,7 @@ export interface UseVaultsOptions {
 export interface UseVaultsResult {
   vaults: VaultSummary[];
   totalTvl: number;
+  totalCount: number;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
@@ -108,6 +109,11 @@ export interface UseVaultsResult {
 export interface VaultResponse {
   data: VaultSummary[];
   pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
     totalVolume: number;
+    vaultsNumber: number;
   };
 } 

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
 import { Menu } from "lucide-react"
-import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiChartLine, PiWallet, PiSignIn, PiSignOut } from "react-icons/pi";
+import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiChartLine, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight } from "react-icons/pi";
 import { AiOutlineHome } from "react-icons/ai";
 import { MdOutlineCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/utils"
@@ -78,6 +78,12 @@ const navigationGroups = [
                 href: '/project',
                 icon: null,
                 IconComponent: PiListMagnifyingGlass
+            },
+            {
+                name: 'Education',
+                href: '/education',
+                icon: null,
+                IconComponent: PiChalkboardTeacherLight
             },
         ]
     },
@@ -259,17 +265,17 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center gap-6 py-4 px-2 border-t border-[#83E9FF1A] bg-[#83E9FF05]">
+                <div className="flex items-center justify-center gap-3 py-2 px-2 border-t border-[#83E9FF1A] bg-[#83E9FF05]">
                     {socials.map((item) => (
                         <Link
                             key={item.name}
                             href={item.href}
-                            className="group relative p-2"
+                            className="group relative p-1.5"
                         >
                             <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
                             <Icon 
                                 icon={item.iconName} 
-                                className="h-5 w-5 text-[#83E9FFCC] group-hover:text-[#83E9FF] transition-colors relative z-10" 
+                                className="h-4 w-4 text-[#83E9FFCC] group-hover:text-[#83E9FF] transition-colors relative z-10" 
                             />
                         </Link>
                     ))}

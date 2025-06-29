@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
 import { Copy, ExternalLink, Check, Loader2, Database } from "lucide-react";
 import { useTransfers, useDeploys } from "@/services/explorer";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -15,9 +14,6 @@ export function TransfersDeployTable() {
   
   const { transfers, isLoading: isLoadingTransfers, error: transfersError } = useTransfers();
   const { deploys, isLoading: isLoadingDeploys, error: deploysError } = useDeploys();
-
-  const handleTransfersClick = useCallback(() => setActiveTab("transfers"), []);
-  const handleDeployClick = useCallback(() => setActiveTab("deploy"), []);
 
   const truncateHash = (hash: string) => {
     if (hash.length > 12) {
@@ -49,12 +45,12 @@ export function TransfersDeployTable() {
           e.preventDefault();
           copyToClipboard(address);
         }}
-        className="group hover:bg-[#83E9FF1A] p-1 rounded transition-colors"
+        className="group p-1 rounded transition-colors"
       >
         {copiedAddress === address ? (
           <Check className="h-3.5 w-3.5 text-green-500" />
         ) : (
-          <Copy className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
         )}
       </button>
     </div>
@@ -209,34 +205,30 @@ export function TransfersDeployTable() {
     );
   };
 
+  const tabs: { key: ActivityTab; label: string }[] = [
+    { key: 'transfers', label: 'Transfers' },
+    { key: 'deploy', label: 'Deploy' }
+  ];
+
   return (
     <div className="w-full">
-      {/* Tab Buttons */}
-      <div className="flex gap-2 mb-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
-        <Button
-          onClick={handleTransfersClick}
-          variant="ghost"
-          size="sm"
-          className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
-            ${activeTab === "transfers"
-              ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
-          `}
-        >
-          TRANSFERS
-        </Button>
-        <Button
-          onClick={handleDeployClick}
-          variant="ghost"
-          size="sm"
-          className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
-            ${activeTab === "deploy"
-              ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-              : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
-          `}
-        >
-          DEPLOY
-        </Button>
+      {/* Header avec TabSelector */}
+      <div className="flex justify-start items-center mb-4">
+        <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                  : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Content */}

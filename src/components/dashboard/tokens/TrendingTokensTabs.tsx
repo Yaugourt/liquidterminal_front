@@ -2,39 +2,34 @@
 
 import { useState } from "react";
 import { TrendingTokens } from "./TrendingTokens";
-import { Button } from "@/components/ui/button";
 
 export const TrendingTokensTabs = () => {
   const [activeTab, setActiveTab] = useState<"perp" | "spot">("perp");
 
+  const tabs: { key: "perp" | "spot"; label: string }[] = [
+    { key: 'perp', label: 'Perpetual' },
+    { key: 'spot', label: 'Spot' }
+  ];
+
   return (
     <div className="w-full">
-      {/* Onglets */}
-      <div className="flex gap-2 mb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setActiveTab("perp")}
-          className={`px-4 py-2 text-sm transition-colors ${
-            activeTab === "perp"
-              ? "bg-[#051728] text-white border border-[#83E9FF4D]"
-              : "bg-[#1692AD] text-white border-transparent"
-          }`}
-        >
-          Perpetual
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setActiveTab("spot")}
-          className={`px-4 py-2 text-sm transition-colors ${
-            activeTab === "spot"
-              ? "bg-[#051728] text-white border border-[#83E9FF4D]"
-              : "bg-[#1692AD] text-white border-transparent"
-          }`}
-        >
-          Spot
-        </Button>
+      {/* Header avec TabSelector */}
+      <div className="flex justify-start items-center mb-4">
+        <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                  : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Contenu de l'onglet actif */}

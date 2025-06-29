@@ -42,6 +42,7 @@ export const useVaults = ({
   return {
     vaults: data?.data || [],
     totalTvl: data?.pagination.totalTvl || 0,
+    totalCount: data?.pagination.total || 0,
     isLoading,
     error,
     refetch,

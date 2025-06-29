@@ -1,50 +1,30 @@
-import { memo, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import { memo } from "react";
 import { TabButtonsProps } from "@/components/types/dashboard.types";
 
 export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) => {
-  const handleVaultClick = useCallback(() => setActiveTab("vault"), [setActiveTab]);
-  const handleStackingClick = useCallback(() => setActiveTab("stacking"), [setActiveTab]);
-  const handleAuctionClick = useCallback(() => setActiveTab("auction"), [setActiveTab]);
+  const tabs: { key: string; label: string }[] = [
+    { key: 'vault', label: 'Vault' },
+    { key: 'stacking', label: 'Staking' },
+    { key: 'auction', label: 'Auction' }
+  ];
 
   return (
-    <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#051728] scrollbar-thumb-rounded-full">
-      <Button
-        onClick={handleVaultClick}
-        variant="ghost"
-        size="sm"
-        className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
-          ${activeTab === "vault"
-            ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-            : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
-        `}
-      >
-        VAULT
-      </Button>
-      <Button
-        onClick={handleStackingClick}
-        variant="ghost"
-        size="sm"
-        className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
-          ${activeTab === "stacking"
-            ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-            : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
-        `}
-      >
-        STAKING
-      </Button>
-      <Button
-        onClick={handleAuctionClick}
-        variant="ghost"
-        size="sm"
-        className={`text-white px-4 sm:px-6 py-1 text-xs whitespace-nowrap uppercase font-bold
-          ${activeTab === "auction"
-            ? "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
-            : "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"}
-        `}
-      >
-        AUCTION
-      </Button>
+    <div className="flex justify-start items-center mb-4">
+      <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+        {tabs.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              activeTab === tab.key
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }); 
