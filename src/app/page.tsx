@@ -8,6 +8,7 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { TrendingTokensTabs } from "@/components/dashboard/tokens/TrendingTokensTabs";
 import { TabSection } from "@/components/dashboard/vaultStakingAuction";
+import { TwapSection } from "@/components/dashboard/twap";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -62,8 +63,11 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col custom:flex-row custom:gap-8">
-            <div className="w-full custom:w-[500px] mb-6 custom:mb-0">
+            <div className="w-full custom:flex-1 mb-6 custom:mb-0">
               <TabSection />
+            </div>
+            <div className="w-full custom:flex-1">
+              <TwapSection />
             </div>
           </div>
         </main>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FilterType } from "@/components/types/dashboard.types";
 import { ChartDisplay } from "./ChartDisplay";
 import { FilterButtons } from "./TabsButton";
-import { Period, useChartPeriod } from '@/components/common/charts';
+import { useChartPeriod } from '@/components/common/charts';
 import { useChartTimeSeriesData } from "@/services/dashboard";
 
 interface ChartSectionProps {
@@ -23,16 +23,10 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-row mb-4 justify-between items-start">
+      <div className="flex flex-row mb-4 justify-start items-start">
         <FilterButtons
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
-        />
-        <Period
-          selectedPeriod={selectedPeriod}
-          onPeriodChange={handlePeriodChange}
-          availablePeriods={availablePeriods}
-          className="w-auto"
         />
       </div>
 
@@ -43,6 +37,8 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
         selectedPeriod={selectedPeriod}
         selectedCurrency={selectedCurrency}
         onCurrencyChange={setSelectedCurrency}
+        onPeriodChange={handlePeriodChange}
+        availablePeriods={availablePeriods}
         chartHeight={chartHeight}
       />
     </div>

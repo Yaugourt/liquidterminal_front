@@ -6,7 +6,21 @@ import { useNumberFormat } from "@/store/number-format.store";
 import Link from "next/link";
 import { PriceChange } from '@/components/common';
 
-export const AuctionsTable = memo(({ auctions, isLoading, error }: AuctionsTableProps) => {
+interface PaginationProps {
+  total?: number;
+  page?: number;
+  rowsPerPage?: number;
+  onPageChange?: (newPage: number) => void;
+  onRowsPerPageChange?: (newRowsPerPage: number) => void;
+  showPagination?: boolean;
+}
+
+export const AuctionsTable = memo(({ 
+  auctions, 
+  isLoading, 
+  error, 
+  ...paginationProps 
+}: AuctionsTableProps & PaginationProps) => {
   const { format } = useNumberFormat();
 
   const sortedAuctions = useMemo(() => {
@@ -54,11 +68,17 @@ export const AuctionsTable = memo(({ auctions, isLoading, error }: AuctionsTable
       columns={columns}
       isLoading={isLoading}
       error={error}
+      {...paginationProps}
     />
   );
 });
 
-export const ValidatorsTable = memo(({ validators, isLoading, error }: ValidatorsTableProps) => {
+export const ValidatorsTable = memo(({ 
+  validators, 
+  isLoading, 
+  error, 
+  ...paginationProps 
+}: ValidatorsTableProps & PaginationProps) => {
   const { format } = useNumberFormat();
 
   const columns = useMemo(() => [
@@ -90,11 +110,17 @@ export const ValidatorsTable = memo(({ validators, isLoading, error }: Validator
       columns={columns}
       isLoading={isLoading}
       error={error}
+      {...paginationProps}
     />
   );
 });
 
-export const VaultTable = memo(({ vaults, isLoading, error }: VaultTableProps) => {
+export const VaultTable = memo(({ 
+  vaults, 
+  isLoading, 
+  error, 
+  ...paginationProps 
+}: VaultTableProps & PaginationProps) => {
   const { format } = useNumberFormat();
 
   const columns = useMemo(() => [
@@ -126,6 +152,7 @@ export const VaultTable = memo(({ vaults, isLoading, error }: VaultTableProps) =
       columns={columns}
       isLoading={isLoading}
       error={error}
+      {...paginationProps}
     />
   );
 }); 

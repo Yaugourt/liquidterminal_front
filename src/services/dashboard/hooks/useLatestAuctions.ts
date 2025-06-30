@@ -4,7 +4,7 @@ import { AuctionInfo } from '../../market/auction/types';
 
 // Hook de compatibilité qui utilise la nouvelle logique
 export const useLatestAuctions = (
-  limit: number = 5,
+  limit: number = 1000,
   currency: "HYPE" | "USDC",
   initialData?: AuctionInfo[]
 ) => {
@@ -12,7 +12,7 @@ export const useLatestAuctions = (
   const result = useMarketLatestAuctions(limit, currency, initialData);
   
   return {
-    auctions: result.auctions.slice(0, limit), // Assurer la limitation
+    auctions: result.auctions, // Suppression de la limitation artificielle
     isLoading: result.isLoading,
     error: result.error,
     refetch: result.refetch,

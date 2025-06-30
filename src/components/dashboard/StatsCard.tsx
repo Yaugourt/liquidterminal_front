@@ -22,7 +22,7 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   };
 
   return (
-    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all">
+    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
       <div className="flex items-center gap-1.5 mb-1.5">
         {getIcon()}
         <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide">{title}</h3>

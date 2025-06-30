@@ -9,7 +9,7 @@ import {
 } from '../types';
 
 export function useAuctions({
-  limit = 50,
+  limit = 1000,
   currency = "ALL",
   defaultParams = {},
   initialData
@@ -77,7 +77,7 @@ export function useAuctions({
  * Hook spécialisé pour récupérer les dernières auctions
  */
 export function useLatestAuctions(
-  limit: number = 50,
+  limit: number = 1000,
   currency: "HYPE" | "USDC" | "ALL" = "ALL",
   initialData?: AuctionInfo[]
 ) {

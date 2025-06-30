@@ -34,7 +34,7 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(5)].map((_, index) => (
-          <div key={index} className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 flex items-center justify-center">
+          <div key={index} className="bg-[#051728] border border-[#83E9FF4D] rounded-md p-3 flex items-center justify-center">
             <Loader2 className="w-4 h-4 text-[#83E9FF4D] animate-spin" />
           </div>
         ))}
@@ -46,7 +46,7 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   if (error) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-        <div className="col-span-full bg-[#051728] border border-red-500 rounded-lg p-3 text-center text-red-500 text-sm">
+        <div className="col-span-full bg-[#051728] border border-red-500 rounded-md p-3 text-center text-red-500 text-sm">
           Error: {error.message}
         </div>
       </div>

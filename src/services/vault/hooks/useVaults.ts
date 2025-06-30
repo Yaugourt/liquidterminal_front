@@ -14,7 +14,7 @@ import { useState, useCallback } from 'react';
  */
 export const useVaults = ({
   page = 1,
-  limit = 10,
+  limit = 1000,
   sortBy = 'tvl',
   initialData
 }: UseVaultsOptions & { initialData?: VaultSummary[] } = {}): UseVaultsResult => {

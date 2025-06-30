@@ -1,4 +1,4 @@
-import { DashboardGlobalStats, TrendingValidator, BridgeData } from './index';
+import { DashboardGlobalStats, BridgeData } from './index';
 import { fetchWithConfig } from '../api/base';
 
 /**
@@ -8,15 +8,7 @@ export const fetchDashboardGlobalStats = async (): Promise<DashboardGlobalStats>
   return fetchWithConfig<DashboardGlobalStats>('/home/globalstats');
 };
 
-/**
- * Récupère les validateurs tendance
- */
-export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake'): Promise<TrendingValidator[]> => {
-  const response = await fetchWithConfig<{ data: TrendingValidator[] }>(
-    `/staking/validators/trending?sortBy=${sortBy}`
-  );
-  return response.data;
-};
+
 
 /**
  * Récupère les données TVL du bridge Hyperliquid

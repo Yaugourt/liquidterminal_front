@@ -29,7 +29,7 @@ const navigationGroups = [
         groupName: 'Explorer',
         items: [
             {
-                name: 'Home',
+                name: 'Dashboard',
                 href: '/explorer',
                 icon: '/sidebar/Search.svg'
             },

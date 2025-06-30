@@ -7,16 +7,7 @@ export interface DashboardGlobalStats {
   vaultsTvl: number;
 }
 
-// Type pour les validateurs tendance
-export interface TrendingValidator {
-  name: string;
-  stake: number;
-  apr: number;
-  commission: number;
-  uptime: number;
-  isActive: boolean;
-  nRecentBlocks: number;
-}
+
 
 // Types pour les résultats des hooks
 
@@ -47,12 +38,7 @@ export interface UseTopTokensResult {
 
 // UseLatestAuctionsResult supprimé - utiliser le module market/auction
 
-export interface UseTrendingValidatorsResult {
-  validators: TrendingValidator[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
+
 
 // Type pour les données du bridge Hyperliquid
 export interface BridgeData {

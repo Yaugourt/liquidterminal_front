@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { useChartFormat, useChartData } from '@/components/common/charts';
+import { useChartFormat, useChartData, ChartPeriod } from '@/components/common/charts';
 import { ChartDisplayProps } from "@/components/types/dashboard.types";
 import {
   LineChart,
@@ -16,11 +16,68 @@ import {
 import { Button } from "@/components/ui/button";
 import { formatLargeNumber, formatNumber } from '@/lib/formatting';
 import { useNumberFormat } from '@/store/number-format.store';
+import { useState, useRef, useEffect } from 'react';
 
 interface Props extends ChartDisplayProps {
   selectedCurrency?: "HYPE" | "USDC";
   onCurrencyChange?: (currency: "HYPE" | "USDC") => void;
+  onPeriodChange: (period: ChartPeriod) => void;
+  availablePeriods: ChartPeriod[];
 }
+
+const AnimatedPeriodSelector = ({ 
+  selectedPeriod, 
+  onPeriodChange, 
+  availablePeriods 
+}: { 
+  selectedPeriod: ChartPeriod; 
+  onPeriodChange: (period: ChartPeriod) => void; 
+  availablePeriods: ChartPeriod[]; 
+}) => {
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  useEffect(() => {
+    const selectedButton = buttonRefs.current[selectedPeriod];
+    if (selectedButton && containerRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const buttonRect = selectedButton.getBoundingClientRect();
+      
+      setIndicatorStyle({
+        left: buttonRect.left - containerRect.left,
+        width: buttonRect.width,
+      });
+    }
+  }, [selectedPeriod]);
+
+  return (
+    <div 
+      ref={containerRef}
+      className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]"
+    >
+      <div
+        className="absolute top-0.5 bottom-0.5 bg-[#1692AD] rounded-sm transition-all duration-300 ease-out"
+        style={{
+          left: indicatorStyle.left,
+          width: indicatorStyle.width,
+        }}
+      />
+      {availablePeriods.map((period) => (
+        <button
+          key={period}
+          ref={(el) => { 
+            buttonRefs.current[period] = el; 
+          }}
+          onClick={() => onPeriodChange(period)}
+          className="relative z-10 px-2.5 py-0.5 text-xs font-medium text-white transition-colors duration-200 whitespace-nowrap"
+        >
+          {period}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export const ChartDisplay = ({ 
   data,
@@ -29,7 +86,9 @@ export const ChartDisplay = ({
   selectedPeriod,
   chartHeight,
   selectedCurrency = "USDC",
-  onCurrencyChange
+  onCurrencyChange,
+  onPeriodChange,
+  availablePeriods
 }: Props) => {
   const { format } = useNumberFormat();
   const { formatValue } = useChartFormat();
@@ -110,40 +169,48 @@ export const ChartDisplay = ({
   };
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl" style={{ height: chartHeight }}>
-      <div className="absolute top-2 sm:top-4 left-3 sm:left-6 z-10">
-        <div className="flex items-center gap-4">
-          <h2 className="text-sm sm:text-base text-white font-medium">
-            {getTitle()}
-          </h2>
-          {selectedFilter !== "bridge" && onCurrencyChange && (
-            <div className="flex items-center gap-1 bg-[#051728] rounded-lg p-0.5">
-              <Button
-                variant={selectedCurrency === "USDC" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onCurrencyChange("USDC")}
-                className={`text-[10px] h-6 px-2 transition-colors ${
-                  selectedCurrency === "USDC"
-                    ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
-                    : "text-[#f9e370] hover:text-white"
-                }`}
-              >
-                USDC
-              </Button>
-              <Button
-                variant={selectedCurrency === "HYPE" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onCurrencyChange("HYPE")}
-                className={`text-[10px] h-6 px-2 transition-colors ${
-                  selectedCurrency === "HYPE"
-                    ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
-                    : "text-[#f9e370] hover:text-white"
-                }`}
-              >
-                HYPE
-              </Button>
-            </div>
-          )}
+    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg" style={{ height: chartHeight }}>
+      <div className="absolute top-2 left-3 sm:left-6 right-3 sm:right-6 z-10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm text-white font-medium">
+              {getTitle()}
+            </h2>
+            {selectedFilter !== "bridge" && onCurrencyChange && (
+              <div className="flex items-center bg-[#051728] rounded-md p-0.5">
+                <Button
+                  variant={selectedCurrency === "USDC" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onCurrencyChange("USDC")}
+                  className={`text-[10px] h-5 px-2 transition-colors ${
+                    selectedCurrency === "USDC"
+                      ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
+                      : "text-[#f9e370] hover:text-white"
+                  }`}
+                >
+                  USDC
+                </Button>
+                <Button
+                  variant={selectedCurrency === "HYPE" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onCurrencyChange("HYPE")}
+                  className={`text-[10px] h-5 px-2 transition-colors ${
+                    selectedCurrency === "HYPE"
+                      ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
+                      : "text-[#f9e370] hover:text-white"
+                  }`}
+                >
+                  HYPE
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          <AnimatedPeriodSelector
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={onPeriodChange}
+            availablePeriods={availablePeriods}
+          />
         </div>
       </div>
 
