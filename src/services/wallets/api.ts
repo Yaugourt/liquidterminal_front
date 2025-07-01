@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../../config';
+import { API_URLS } from '../api/base';
 import { 
   AddWalletResponse, 
   WalletResponse
@@ -25,14 +25,14 @@ export const addWallet = async (
   privyUserId?: string
 ): Promise<AddWalletResponse> => {
   try {
-    console.log("Adding wallet with address:", address, "name:", name, "privyUserId:", privyUserId);
-    const response = await axios.post(`${API_BASE_URL}/wallet`, {
+  
+    const response = await axios.post(`${API_URLS.LOCAL_BACKEND}/wallet`, {
       address,
       name,
       privyUserId
     });
     
-    console.log("Add wallet response:", response.data);
+
     
     // Vérifier si la réponse indique un succès
     if (response.data && response.data.success === true) {
@@ -103,9 +103,9 @@ export const getWalletsByUser = async (
   privyUserId: string
 ): Promise<WalletResponse> => {
   try {
-    console.log("Fetching wallets for user:", privyUserId);
-    const response = await axios.get(`${API_BASE_URL}/wallet/user/${privyUserId}`);
-    console.log("API response:", response.data);
+  
+    const response = await axios.get(`${API_URLS.LOCAL_BACKEND}/wallet/user/${privyUserId}`);
+  
     
     // Vérifier que la réponse contient les données attendues
     if (!response.data) {
@@ -146,9 +146,9 @@ export const getWalletsByUser = async (
  */
 export const deleteWallet = async (walletId: string): Promise<void> => {
   try {
-    console.log("Deleting wallet with ID:", walletId);
-    const response = await axios.delete(`${API_BASE_URL}/wallet/${walletId}`);
-    console.log("Delete wallet response:", response.data);
+  
+    const response = await axios.delete(`${API_URLS.LOCAL_BACKEND}/wallet/${walletId}`);
+  
   } catch (error: any) {
     console.error('Error deleting wallet:', error);
     
@@ -175,9 +175,9 @@ export const deleteWallet = async (walletId: string): Promise<void> => {
  */
 export const removeWalletFromUser = async (privyUserId: number, walletId: number): Promise<void> => {
   try {
-    console.log(`Removing wallet ${walletId} from user ${privyUserId}`);
-    const response = await axios.delete(`${API_BASE_URL}/wallet/user/${privyUserId}/wallet/${walletId}`);
-    console.log("Remove wallet from user response:", response.data);
+  
+    const response = await axios.delete(`${API_URLS.LOCAL_BACKEND}/wallet/user/${privyUserId}/wallet/${walletId}`);
+  
   } catch (error: any) {
     console.error('Error removing wallet from user:', error);
     

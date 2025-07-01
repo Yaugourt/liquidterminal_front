@@ -71,7 +71,7 @@ export function useDataFetching<T>({
         setRetryCount(nextRetryCount);
         const retryDelayWithBackoff = retryDelay * Math.pow(2, nextRetryCount - 1);
         
-        console.log(`Retry attempt ${nextRetryCount} of ${maxRetries} in ${retryDelayWithBackoff}ms`);
+
         
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);

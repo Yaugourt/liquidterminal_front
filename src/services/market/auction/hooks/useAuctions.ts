@@ -30,9 +30,9 @@ export function useAuctions({
     refetch
   } = useDataFetching<AuctionPaginatedResponse>({
     fetchFn: async () => {
-      console.log('Fetching auctions with params:', params);
+
       const response = await fetchAuctions(params);
-      console.log('Received auction response:', response);
+
       return response;
     },
     refreshInterval: 30000,
@@ -51,7 +51,7 @@ export function useAuctions({
   });
 
   const updateParams = useCallback((newParams: Partial<AuctionParams>) => {
-    console.log('Updating auction params:', newParams);
+
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 

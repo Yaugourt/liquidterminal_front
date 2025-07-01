@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { AuthResponse, LoginCredentials } from './types';
+import { API_URLS } from '../api/base';
 
-const API_URL = process.env.NEXT_PUBLIC_API;
+const API_URL = API_URLS.LOCAL_BACKEND;
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
@@ -14,11 +15,7 @@ export const authService = {
         };
       }
 
-      console.log('Attempting login with:', {
-        privyUserId: credentials.privyUserId,
-        name: credentials.name,
-        apiUrl: API_URL
-      });
+
 
       const requestData = {
         privyUserId: credentials.privyUserId,
@@ -32,7 +29,7 @@ export const authService = {
         },
       });
       
-      console.log('Login response:', response.data);
+  
       return response.data;
     } catch (error) {
       console.error('Login error:', error);
@@ -76,7 +73,7 @@ export const authService = {
 
   getUser: async (privyUserId: string, privyToken: string): Promise<AuthResponse> => {
     try {
-      console.log('Fetching user:', { privyUserId });
+    
       
       const response = await axios.get(`${API_URL}/auth/user/${privyUserId}`, {
         headers: {
@@ -84,7 +81,7 @@ export const authService = {
         },
       });
       
-      console.log('User response:', response.data);
+  
       return response.data;
     } catch (error) {
       console.error('Get user error:', error);

@@ -18,7 +18,7 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
         const ws = new WebSocket(WS_URL);
 
         ws.onopen = () => {
-          console.log('HYPE WebSocket connected');
+    
           set({ isConnected: true, error: null });
           
           // Subscribe to HYPE trades
@@ -66,7 +66,7 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
         };
 
         ws.onclose = () => {
-          console.log('HYPE WebSocket disconnected');
+    
           set({ isConnected: false });
           
           // Try to reconnect after 5 seconds

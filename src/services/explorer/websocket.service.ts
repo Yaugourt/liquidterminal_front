@@ -22,7 +22,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       const ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
-        console.log('Blocks WebSocket connected');
+
         set({ isBlocksConnected: true, error: null });
         
         // Subscribe to block updates only
@@ -55,7 +55,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       };
 
       ws.onclose = () => {
-        console.log('Blocks WebSocket disconnected');
+
         set({ isBlocksConnected: false });
       };
 
@@ -87,7 +87,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       const ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
-        console.log('Transactions WebSocket connected');
+
         set({ isTransactionsConnected: true, error: null });
         
         // Subscribe to transaction updates only
@@ -120,7 +120,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       };
 
       ws.onclose = () => {
-        console.log('Transactions WebSocket disconnected');
+
         set({ isTransactionsConnected: false });
       };
 
@@ -192,7 +192,7 @@ export function useWebSocket() {
     const ws = new WebSocket('wss://api.hyperliquid.xyz/ws');
 
     ws.onopen = () => {
-      console.log('Connected to Hyperliquid WebSocket');
+
       // Subscribe to block updates
       ws.send(JSON.stringify({
         method: "subscribe",
@@ -219,7 +219,7 @@ export function useWebSocket() {
     };
 
     ws.onclose = () => {
-      console.log('Disconnected from Hyperliquid WebSocket');
+
     };
 
     return () => {

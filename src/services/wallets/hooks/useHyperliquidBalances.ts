@@ -20,11 +20,11 @@ export function useHyperliquidBalances(userAddress: string | undefined): UseHype
   } = useDataFetching<HyperliquidBalance[] | null>({
     fetchFn: async () => {
       if (!userAddress) {
-        console.log("useHyperliquidBalances: Pas d'adresse de wallet fournie");
+  
         return null;
       }
 
-      console.log("useHyperliquidBalances: Récupération des balances pour l'adresse:", userAddress);
+  
       
       const request: HyperliquidBalancesRequest = {
         type: "spotClearinghouseState",
@@ -32,7 +32,7 @@ export function useHyperliquidBalances(userAddress: string | undefined): UseHype
       };
       
       const response = await fetchHyperliquidBalances(request);
-      console.log("useHyperliquidBalances: Réponse reçue:", response);
+
       
       return response;
     },

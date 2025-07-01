@@ -4,10 +4,11 @@ import { SearchBar } from "@/components/SearchBar"
 import { usePageTitle } from "@/store/use-page-title"
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice"
-import { Clock, CalendarDays } from "lucide-react"
+import { useHypeBuyPressure } from "@/services/market/order/hooks/useHypeBuyPressure"
+import { Clock, CalendarDays, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { NumberFormatSelector } from "@/components/settings/NumberFormatSelector"
+import { NumberFormatSelector } from "@/components/common/settings/NumberFormatSelector"
 import { useNumberFormat } from "@/store/number-format.store"
 import { formatNumber } from "@/lib/formatting"
 
@@ -28,6 +29,7 @@ export function Header({
     const displayTitle = customTitle || title;
     const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
     const { price: hypePrice, lastSide, isLoading: hypePriceLoading } = useHypePrice();
+    const { buyPressure, isLoading: buyPressureLoading } = useHypeBuyPressure();
     const { format } = useNumberFormat();
     
     // Format numbers with up to 2 decimal places
@@ -49,6 +51,22 @@ export function Header({
             currency: '$',
             showCurrency: true
         });
+    };
+
+    // Format buy pressure with appropriate sign and color (integer only)
+    const formatBuyPressure = (value: number) => {
+        const isPositive = value >= 0;
+        const formatted = formatNumber(Math.abs(value), format, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+            currency: '$',
+            showCurrency: true
+        });
+        return {
+            value: formatted,
+            isPositive,
+            display: isPositive ? `+${formatted}` : `-${formatted}`
+        };
     };
 
     return (
@@ -91,6 +109,32 @@ export function Header({
                                     "group-hover:text-[#83E9FF]"
                                 )}>
                                     {hypePriceLoading ? "Loading..." : formatPrice(hypePrice)}
+                                </div>
+                            </div>
+
+                            {/* HYPE Buy Pressure Display */}
+                            <div className={cn(
+                                "bg-[#051728]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
+                                buyPressure > 0 ? "border-green-500/50 hover:border-green-500" : 
+                                buyPressure < 0 ? "border-red-500/50 hover:border-red-500" : 
+                                "border-[#83E9FF33] hover:border-[#83E9FF66]",
+                                "group"
+                            )}>
+                                <div className="flex items-center gap-1.5">
+                                    <TrendingUp size={11} className={cn(
+                                        buyPressure > 0 ? "text-green-400" : 
+                                        buyPressure < 0 ? "text-red-400" : 
+                                        "text-[#83E9FF]"
+                                    )} />
+                                    <span className="text-[#FFFFFF] text-[10px] font-medium">TWAPs HYPE buy</span>
+                                </div>
+                                <div className={cn(
+                                    "text-xs lg:text-sm font-medium transition-colors",
+                                    buyPressure > 0 ? "text-green-400" : 
+                                    buyPressure < 0 ? "text-red-400" : 
+                                    "text-white group-hover:text-[#83E9FF]"
+                                )}>
+                                    {buyPressureLoading ? "Loading..." : formatBuyPressure(buyPressure).display}
                                 </div>
                             </div>
 

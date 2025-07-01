@@ -20,7 +20,7 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult => {
         return [];
       }
 
-      console.log('Fetching vault deposits for address:', address);
+
 
       try {
         const response = await fetchVaultDeposits({
@@ -28,7 +28,7 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult => {
           user: address
         });
 
-        console.log('Received vault deposits:', response);
+  
         return response;
       } catch (err: any) {
         console.error('Error fetching vault deposits:', err);

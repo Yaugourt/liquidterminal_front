@@ -4,4 +4,5 @@ export { useAddressBalance } from './useAddressBalance';
 export { usePortfolio } from './usePortfolio';
 export { useTransactionDetails } from './useTransactionDetails';
 export { useTransactions } from './useUserTransactions';
-export { useBlockDetails } from './useBlockDetails'; 
+export { useBlockDetails } from './useBlockDetails';
+export { useStakingValidations } from './useStakingValidations'; 

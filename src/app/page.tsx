@@ -63,10 +63,10 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col custom:flex-row custom:gap-8">
-            <div className="w-full custom:flex-1 mb-6 custom:mb-0">
+            <div className="w-full custom:w-[35%] mb-6 custom:mb-0">
               <TabSection />
             </div>
-            <div className="w-full custom:flex-1">
+            <div className="w-full custom:w-[65%]">
               <TwapSection />
             </div>
           </div>

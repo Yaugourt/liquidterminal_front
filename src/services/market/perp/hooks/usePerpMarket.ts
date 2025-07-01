@@ -27,9 +27,9 @@ export function usePerpMarkets({
     refetch
   } = useDataFetching<PerpMarketResponse>({
     fetchFn: async () => {
-      console.log('Fetching perp markets with params:', params); // Debug log
+
       const response = await fetchPerpMarkets(params);
-      console.log('Received perp response:', response); // Debug log
+
       return {
         data: response.data,
         total: response.pagination.total,
@@ -45,7 +45,7 @@ export function usePerpMarkets({
   });
 
   const updateParams = useCallback((newParams: Partial<PerpMarketParams>) => {
-    console.log('Updating perp params:', newParams); // Debug log
+
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 

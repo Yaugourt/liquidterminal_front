@@ -1,4 +1,4 @@
-import { fetchWithConfig } from '../../api/base';
+import {  fetchExternal, buildHypurrscanUrl } from '../../api/base';
 import { TwapOrder, TwapOrderParams, TwapOrderPaginatedResponse, EnrichedTwapOrder } from './types';
 import { fetchSpotTokens } from '../spot/api';
 import { SpotToken } from '../spot/types';
@@ -8,14 +8,8 @@ import { SpotToken } from '../spot/types';
  */
 export const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
   // L'API retourne directement un array d'ordres TWAP
-  const response = await fetch('https://api.hypurrscan.io/twap/*');
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch TWAP orders: ${response.statusText}`);
-  }
-  
-  const data: TwapOrder[] = await response.json();
-  return data;
+  const url = buildHypurrscanUrl('HYPURRSCAN_TWAP');
+  return await fetchExternal<TwapOrder[]>(url);
 };
 
 /**

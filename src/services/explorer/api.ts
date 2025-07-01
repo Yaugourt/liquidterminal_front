@@ -7,8 +7,20 @@ import {
     FormattedUserTransaction,
     UserTransaction,
     TransferData,
-    DeployData
+    DeployData,
+    FormattedStakingValidation,
+    StakingValidationsResponse
 } from './types';
+import { 
+    fetchExternal, 
+    fetchWithConfig,
+    buildHyperliquidRpcUrl,
+    buildHyperliquidUrl,
+    buildHyperliquidUiUrl,
+    buildHypurrscanUrl,
+    buildLlamaFiUrl,
+    ENDPOINTS
+} from '../api/base';
 
 const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
 
@@ -17,7 +29,8 @@ const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
  */
 export async function fetchBlockDetails(height: number): Promise<BlockDetailsResponse> {
     try {
-        const response = await fetch('https://rpc.hyperliquid.xyz/explorer', {
+        const url = buildHyperliquidRpcUrl('EXPLORER_BLOCK_DETAILS');
+        return await fetchExternal<BlockDetailsResponse>(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -27,12 +40,6 @@ export async function fetchBlockDetails(height: number): Promise<BlockDetailsRes
                 height: height
             })
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch block details: ${response.statusText}`);
-        }
-
-        return response.json();
     } catch (error) {
         console.error('Error fetching block details:', error);
         throw error;
@@ -44,7 +51,8 @@ export async function fetchBlockDetails(height: number): Promise<BlockDetailsRes
  */
 export async function fetchTransactionDetails(hash: string): Promise<TransactionDetailsResponse> {
     try {
-        const response = await fetch('https://rpc.hyperliquid.xyz/explorer', {
+        const url = buildHyperliquidRpcUrl('EXPLORER_TX_DETAILS');
+        return await fetchExternal<TransactionDetailsResponse>(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,12 +62,6 @@ export async function fetchTransactionDetails(hash: string): Promise<Transaction
                 hash: hash
             })
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch transaction details: ${response.statusText}`);
-        }
-
-        return response.json();
     } catch (error) {
         console.error('Error fetching transaction details:', error);
         throw error;
@@ -68,7 +70,8 @@ export async function fetchTransactionDetails(hash: string): Promise<Transaction
 
 export async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
     try {
-        const response = await fetch('https://rpc.hyperliquid.xyz/explorer', {
+        const url = buildHyperliquidRpcUrl('EXPLORER_USER_DETAILS');
+        return await fetchExternal<UserTransactionsResponse>(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -76,12 +79,6 @@ export async function getUserTransactionsRaw(address: string): Promise<UserTrans
                 user: address
             })
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
     } catch (error) {
         console.error('Error fetching raw transactions:', error);
         throw error;
@@ -90,7 +87,8 @@ export async function getUserTransactionsRaw(address: string): Promise<UserTrans
 
 export async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
     try {
-        const response = await fetch('https://api.hyperliquid.xyz/info', {
+        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+        return await fetchExternal<NonFundingLedgerUpdate[]>(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -99,12 +97,6 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
                 startTime: 1640995200000 // 1er janvier 2022 en ms
             })
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
     } catch (error) {
         console.error('Error fetching ledger updates:', error);
         throw error;
@@ -113,7 +105,8 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
 
 export async function getUserFills(address: string): Promise<UserFill[]> {
     try {
-        const response = await fetch('https://api.hyperliquid.xyz/info', {
+        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+        return await fetchExternal<UserFill[]>(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -121,12 +114,6 @@ export async function getUserFills(address: string): Promise<UserFill[]> {
                 user: address
             })
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
     } catch (error) {
         console.error('Error fetching user fills:', error);
         throw error;
@@ -140,7 +127,7 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
             getUserNonFundingLedgerUpdates(address),
             getUserFills(address)
         ]);
-        console.log('ledgerUpdates', ledgerUpdates);
+    
 
         // Traiter les fills d'abord
         const fillTransactions = mergeFillsByHash(fills).map(fill => {
@@ -235,11 +222,11 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
                     : ledgerUpdate.delta.token || ledgerUpdate.delta.coin || "unknown",
                 time: ledgerUpdate.time
             }));
-        console.log('orphanLedgerTxs', orphanLedgerTxs);
+    
 
         // Combiner et trier les transactions
         const allTxs = [...fillTransactions, ...otherTransactions, ...orphanLedgerTxs].sort((a, b) => b.time - a.time);
-        console.log('Total transactions returned:', allTxs.length);
+    
         return allTxs;
     } catch (error) {
         console.error("Error formatting user transactions:", error);
@@ -293,7 +280,8 @@ function mergeFillsByHash(fills: UserFill[]): UserFill[] {
 }
 
 export async function fetchPortfolio(address: string) {
-    const response = await fetch('https://api-ui.hyperliquid.xyz/info', {
+    const url = buildHyperliquidUiUrl('HYPERLIQUID_UI_INFO');
+    return await fetchExternal(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -301,25 +289,18 @@ export async function fetchPortfolio(address: string) {
             user: address,
         }),
     });
-    if (!response.ok) throw new Error('Failed to fetch portfolio');
-    return response.json();
 }
 
 
 export async function fetchTransfers(): Promise<TransferData[]> {
     try {
-        const response = await fetch('https://api.hypurrscan.io/transfers', {
+        const url = buildHypurrscanUrl('HYPURRSCAN_TRANSFERS');
+        return await fetchExternal<TransferData[]>(url, {
             method: 'GET',
             headers: {
                 'accept': 'application/json',
             },
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch transfers: ${response.statusText}`);
-        }
-
-        return await response.json();
     } catch (error) {
         console.error('Error fetching transfers:', error);
         throw error;
@@ -332,20 +313,51 @@ export async function fetchTransfers(): Promise<TransferData[]> {
  */
 export async function fetchDeploys(): Promise<DeployData[]> {
     try {
-        const response = await fetch('https://api.hypurrscan.io/deploys', {
+        const url = buildHypurrscanUrl('HYPURRSCAN_DEPLOYS');
+        return await fetchExternal<DeployData[]>(url, {
             method: 'GET',
             headers: {
                 'accept': 'application/json',
             },
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch deploys: ${response.statusText}`);
-        }
-
-        return await response.json();
     } catch (error) {
         console.error('Error fetching deploys:', error);
+        throw error;
+    }
+}
+
+/**
+ * Récupère les validations de staking depuis notre backend
+ * @returns Liste des validations de staking formatées
+ */
+export async function fetchStakingValidations(): Promise<FormattedStakingValidation[]> {
+    try {
+        const result = await fetchWithConfig<StakingValidationsResponse>(
+            ENDPOINTS.STAKING_VALIDATIONS,
+            {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json',
+                },
+            }
+        );
+        
+        if (!result.success || !result.data) {
+            throw new Error('Invalid response format from staking validations API');
+        }
+
+        // Formater les données pour l'affichage
+        return result.data.map(validation => ({
+            time: new Date(validation.time).toLocaleString(),
+            timestamp: new Date(validation.time).getTime(),
+            user: validation.user,
+            type: validation.type,
+            amount: validation.amount,
+            validator: validation.validator,
+            hash: validation.hash,
+        }));
+    } catch (error) {
+        console.error('Error fetching staking validations:', error);
         throw error;
     }
 } 

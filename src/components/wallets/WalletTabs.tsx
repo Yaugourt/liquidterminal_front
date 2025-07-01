@@ -33,7 +33,6 @@ export function WalletTabs() {
     const fetchWallets = async () => {
       if (privyUser?.id) {
         try {
-          console.log("Fetching wallets for user:", privyUser.id);
           setIsLoading(true);
           setError(null);
 
@@ -52,16 +51,12 @@ export function WalletTabs() {
             username,
             privyToken: token
           });
-          
-          console.log("Wallets fetched successfully:", wallets);
         } catch (err) {
           console.error("Error fetching wallets:", err);
           setError(err instanceof Error ? err.message : "Failed to fetch wallets. Please try again later.");
         } finally {
           setIsLoading(false);
         }
-      } else {
-        console.log("No privyUser.id available, skipping wallet fetch");
       }
     };
 
@@ -70,7 +65,7 @@ export function WalletTabs() {
 
   // Log when wallets change
   useEffect(() => {
-    console.log("Wallets updated:", wallets);
+    // Wallets updated
   }, [wallets]);
 
   // Log when global error changes

@@ -26,9 +26,7 @@ export default function TokenPage() {
     useEffect(() => {
         const fetchToken = async () => {
             try {
-                console.log(`Recherche du token spot: "${tokenName}"`);
                 const data = await getToken(tokenName);
-                console.log("Résultat de la recherche spot:", data);
                 setToken(data);
                 if (!data) {
                     setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Spot.`);

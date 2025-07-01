@@ -1,4 +1,4 @@
-import { fetchWithConfig } from '../api/base';
+import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
 import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator } from './types';
 
 /**
@@ -10,20 +10,15 @@ export const fetchValidatorDelegations = async (
   params: ValidatorDelegationsRequest
 ): Promise<ValidatorDelegationsResponse> => {
   try {
-    console.log('Fetching validator delegations for user:', params.user);
-    
-    const response = await fetchWithConfig<ValidatorDelegationsResponse>(
-      'https://api.hyperliquid.xyz/info',
-      {
-        method: 'POST',
-        body: JSON.stringify(params),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+    const response = await fetchExternal<ValidatorDelegationsResponse>(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    );
+    });
 
-    console.log('Received validator delegations:', response);
     return response;
   } catch (error: any) {
     console.error('Error fetching validator delegations:', error);
@@ -48,13 +43,10 @@ export const fetchValidatorDelegations = async (
  */
 export const fetchAllValidators = async (): Promise<Validator[]> => {
   try {
-    console.log('Fetching all validators');
-    
     const response = await fetchWithConfig<{ data: Validator[] }>(
-      '/staking/validators'
+      ENDPOINTS.STAKING_VALIDATORS
     );
 
-    console.log('Received all validators:', response);
     return response.data;
   } catch (error: any) {
     console.error('Error fetching all validators:', error);
@@ -78,13 +70,10 @@ export const fetchAllValidators = async (): Promise<Validator[]> => {
  */
 export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake'): Promise<Validator[]> => {
   try {
-    console.log('Fetching trending validators, sortBy:', sortBy);
-    
     const response = await fetchWithConfig<{ data: Validator[] }>(
-      `/staking/validators/trending?sortBy=${sortBy}`
+      `${ENDPOINTS.STAKING_VALIDATORS_TRENDING}?sortBy=${sortBy}`
     );
 
-    console.log('Received trending validators:', response);
     return response.data;
   } catch (error: any) {
     console.error('Error fetching trending validators:', error);

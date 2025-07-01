@@ -131,6 +131,28 @@ export const TwapTable = memo(({
     return Math.round(progression * 100) / 100; // Round to 2 decimal places for smooth display
   };
 
+  const getRemainingTime = (twap: any) => {
+    const startTime = twap.time;
+    const durationMs = twap.duration * 60 * 1000;
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - startTime;
+    const remainingMs = Math.max(0, durationMs - elapsedTime);
+    
+    if (remainingMs === 0) return "Completed";
+    
+    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  };
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -230,18 +252,25 @@ export const TwapTable = memo(({
                         <AddressCell address={twap.user} />
                       </TableCell>
                       <TableCell className="py-3 px-4 text-sm text-white">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-[#FFFFFF1A] rounded-full h-2">
-                            <div
-                              className={`h-full rounded-full transition-all ${getProgressColor(
-                                getTwapProgression(twap)
-                              )}`}
-                              style={{ width: `${getTwapProgression(twap)}%` }}
-                            />
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-[#FFFFFF80] font-mono">
+                              {getRemainingTime(twap)}
+                            </span>
+                            <span className="text-xs text-[#FFFFFF99] min-w-[40px]">
+                              {getTwapProgression(twap)}%
+                            </span>
                           </div>
-                          <span className="text-xs text-[#FFFFFF99] min-w-[40px]">
-                            {getTwapProgression(twap)}%
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-[#FFFFFF1A] rounded-full h-2">
+                              <div
+                                className={`h-full rounded-full transition-all ${getProgressColor(
+                                  getTwapProgression(twap)
+                                )}`}
+                                style={{ width: `${getTwapProgression(twap)}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>

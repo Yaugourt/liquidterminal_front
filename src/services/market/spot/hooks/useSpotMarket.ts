@@ -25,9 +25,9 @@ export function useSpotTokens({
     refetch
   } = useDataFetching<SpotMarketResponse>({
     fetchFn: async () => {
-      console.log('Fetching spot tokens with params:', params); // Debug log
+
       const response = await fetchSpotTokens(params);
-      console.log('Received response:', response); // Debug log
+
       return {
         data: response.data,
         total: response.pagination.total,
@@ -43,7 +43,7 @@ export function useSpotTokens({
   });
 
   const updateParams = useCallback((newParams: Partial<SpotMarketParams>) => {
-    console.log('Updating params:', newParams); // Debug log
+
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 

@@ -1,7 +1,8 @@
 import { PaginatedResponse } from '../common';
+import { API_URLS, buildUrl } from './constants';
 
 // Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+const API_BASE_URL = API_URLS.LOCAL_BACKEND;
 const TIMEOUT_MS = 10000; // 10 seconds
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY = 1000;
@@ -14,6 +15,10 @@ interface RequestOptions extends RequestInit {
   useCache?: boolean;
   retryOnError?: boolean;
 }
+
+// Export des URLs pour usage dans d'autres services
+export { API_URLS, buildUrl } from './constants';
+export * from './constants';
 
 /**
  * Fetches data with timeout, retry mechanism, and caching
@@ -79,7 +84,81 @@ export async function fetchWithConfig<T>(
 
       // Calculate exponential backoff delay
       const delay = BASE_RETRY_DELAY * Math.pow(2, retries);
-      console.log(`Retry ${retries + 1}/${MAX_RETRIES} after ${delay}ms for ${url}`);
+      
+
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, delay));
+      retries++;
+    }
+  }
+
+  throw lastError || new Error('Request failed');
+}
+
+/**
+ * Fetches data from external APIs without our backend's URL prefix
+ */
+export async function fetchExternal<T>(
+  fullUrl: string,
+  options: RequestOptions = {}
+): Promise<T> {
+  const {
+    useCache = true,
+    retryOnError = true,
+    ...fetchOptions
+  } = options;
+
+  const cacheKey = `${fullUrl}-${JSON.stringify(fetchOptions)}`;
+
+  // Check cache if enabled
+  if (useCache) {
+    const cached = cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data;
+    }
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  let retries = 0;
+  let lastError: Error | null = null;
+
+  while (retries <= MAX_RETRIES) {
+    try {
+      const response = await fetch(fullUrl, {
+        ...fetchOptions,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Cache the result if caching is enabled
+      if (useCache) {
+        cache.set(cacheKey, {
+          data,
+          timestamp: Date.now(),
+        });
+      }
+
+      return data;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastError = error as Error;
+
+      if (!retryOnError || retries >= MAX_RETRIES) {
+        break;
+      }
+
+      // Calculate exponential backoff delay
+      const delay = BASE_RETRY_DELAY * Math.pow(2, retries);
+      
 
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -115,7 +194,7 @@ export async function fetchPaginated<T>(
   const queryString = queryParams.toString();
   const url = `${endpoint}${queryString ? `?${queryString}` : ''}`;
   
-  console.log('Fetching URL:', url, 'with params:', params); // Debug log
+
   
   return fetchWithConfig<PaginatedResponse<T>>(url, options);
 }

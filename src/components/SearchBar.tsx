@@ -52,7 +52,7 @@ export function SearchBar({
     }
     
     // Si nous arrivons ici, le format n'est pas reconnu, on peut rediriger vers une page de recherche générale
-    console.log("Format de recherche non reconnu:", trimmedValue);
+    
   }, [searchValue, router]);
 
   return (

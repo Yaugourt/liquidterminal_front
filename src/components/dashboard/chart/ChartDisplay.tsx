@@ -57,10 +57,10 @@ const AnimatedPeriodSelector = ({
       className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]"
     >
       <div
-        className="absolute top-0.5 bottom-0.5 bg-[#1692AD] rounded-sm transition-all duration-300 ease-out"
+        className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-sm transition-all duration-300 ease-out opacity-80"
         style={{
-          left: indicatorStyle.left,
-          width: indicatorStyle.width,
+          left: indicatorStyle.left + 2,
+          width: indicatorStyle.width - 4,
         }}
       />
       {availablePeriods.map((period) => (
@@ -70,7 +70,7 @@ const AnimatedPeriodSelector = ({
             buttonRefs.current[period] = el; 
           }}
           onClick={() => onPeriodChange(period)}
-          className="relative z-10 px-2.5 py-0.5 text-xs font-medium text-white transition-colors duration-200 whitespace-nowrap"
+          className="relative z-10 px-2 py-1 text-xs font-medium text-white transition-colors duration-200 whitespace-nowrap hover:text-[#83E9FF]"
         >
           {period}
         </button>

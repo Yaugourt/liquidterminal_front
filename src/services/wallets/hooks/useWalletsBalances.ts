@@ -36,7 +36,7 @@ export const useWalletsBalances = (address?: string) => {
         };
       }
 
-      console.log('Fetching balances for address:', address);
+
 
       try {
         // Fetch both balances in parallel
@@ -46,7 +46,7 @@ export const useWalletsBalances = (address?: string) => {
             type: 'spotClearinghouseState',
             user: address
           }).then(response => {
-            console.log('Received spot balances:', response);
+    
             return response;
           }),
 
@@ -55,7 +55,7 @@ export const useWalletsBalances = (address?: string) => {
             type: 'clearinghouse',
             user: address
           }).then(response => {
-            console.log('Received perp positions:', response);
+    
             return response;
           })
         ]);

@@ -15,7 +15,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
       case 'vault':
         return '/vault';
       case 'stacking':
-        return '/validator';
+        return '/validator';  
       case 'auction':
         return null; // Pas encore disponible
       default:

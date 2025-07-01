@@ -1,4 +1,4 @@
-import { fetchWithConfig } from '../api/base';
+import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
 import { 
   VaultDepositsRequest, 
   VaultDepositsResponse,
@@ -38,7 +38,7 @@ export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse>
   });
 
   const response = await fetchWithConfig<VaultResponse>(
-    `/market/vaults${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+    `${ENDPOINTS.MARKET_VAULTS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
   );
 
   return {
@@ -61,20 +61,18 @@ export const fetchVaultDeposits = async (
   params: VaultDepositsRequest
 ): Promise<VaultDepositsResponse> => {
   try {
-    console.log('Fetching vault deposits for user:', params.user);
+  
     
-    const response = await fetchWithConfig<VaultDepositsResponse>(
-      'https://api.hyperliquid.xyz/info',
-      {
-        method: 'POST',
-        body: JSON.stringify(params),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+    const response = await fetchExternal<VaultDepositsResponse>(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    );
+    });
 
-    console.log('Received vault deposits:', response);
+
     return response;
   } catch (error: any) {
     console.error('Error fetching vault deposits:', error);

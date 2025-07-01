@@ -31,12 +31,12 @@ export async function fetchHyperliquidBalances(
   request: HyperliquidBalancesRequest
 ): Promise<HyperliquidBalancesResponse> {
   try {
-    console.log("HyperliquidService: Envoi de la requête de balances:", request);
+
     const response = await api.post('', {
       type: "spotClearinghouseState",
       user: request.user
     });
-    console.log("HyperliquidService: Réponse de balances reçue:", response.data);
+
     
     // Vérifier si la réponse contient les balances
     if (response.data && response.data.balances) {
@@ -60,16 +60,16 @@ export async function fetchHyperliquidPerpPositions(
   request: HyperliquidPerpRequest
 ): Promise<HyperliquidPerpResponse> {
   try {
-    console.log("HyperliquidService: Envoi de la requête de positions perp:", request);
+
     const response = await api.post('', {
       type: "clearinghouseState",
       user: request.user
     });
-    console.log("HyperliquidService: Réponse de positions perp reçue:", response.data);
+
     
     // Vérifier si la réponse contient les données attendues
     if (response.data && response.data.assetPositions) {
-      console.log("HyperliquidService: Nombre de positions perp:", response.data.assetPositions.length);
+  
       return response.data;
     } else {
       console.error("HyperliquidService: Format de réponse invalide pour les positions perp:", response.data);

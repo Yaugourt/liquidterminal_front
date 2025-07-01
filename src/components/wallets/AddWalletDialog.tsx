@@ -35,7 +35,6 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
     try {
       // Ensure name is not undefined
       const walletName = name.trim() || undefined;
-      console.log("Adding wallet with name:", walletName);
       
       // Ajouter le wallet
       const result = await addWallet(address, walletName, privyUser.id);

@@ -22,7 +22,7 @@ export const useWallets = create<WalletsState>()(
       initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
         try {
           set({ loading: true, error: null });
-          console.log("Initializing wallets for user:", privyUserId);
+      
           
           // Ensure user is initialized in our DB first
           const authService = AuthService.getInstance();
@@ -32,29 +32,21 @@ export const useWallets = create<WalletsState>()(
           }
           
           const response = await getWalletsByUser(String(privyUserId));
-          console.log("API response:", response);
+    
           
           if (!response.data || !Array.isArray(response.data)) {
             throw new Error("Invalid response format from server");
           }
           
           const userWallets = response.data;
-          console.log("User wallets from API:", userWallets);
+    
           
           const wallets = userWallets
             .map((uw: UserWallet) => {
-              console.log("Processing user wallet:", uw);
-              console.log("Wallet object:", uw.wallet);
-              console.log("Basic info:", {
-                id: uw.id,
-                walletId: uw.walletId,
-                name: uw.name,
-                address: uw.address
-              });
+
               
               // Si nous avons un objet wallet complet
               if (uw.wallet && typeof uw.wallet === 'object') {
-                console.log("Found complete wallet object:", uw.wallet);
                 return {
                   id: uw.wallet.id,
                   address: uw.wallet.address || uw.address || '',
@@ -64,7 +56,6 @@ export const useWallets = create<WalletsState>()(
               }
               
               // Si nous n'avons que les informations de base
-              console.log("Using basic wallet info");
               return {
                 id: uw.walletId,
                 address: uw.address || '',
@@ -84,7 +75,7 @@ export const useWallets = create<WalletsState>()(
               return isValid;
             });
           
-          console.log("Processed wallets:", wallets);
+
           
           // Ensure we have a valid active wallet
           const currentActiveId = get().activeWalletId;

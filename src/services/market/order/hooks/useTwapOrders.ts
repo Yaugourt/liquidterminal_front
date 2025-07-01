@@ -32,9 +32,9 @@ export function useTwapOrders({
     refetch
   } = useDataFetching<TwapOrderPaginatedResponse>({
     fetchFn: async () => {
-      console.log('Fetching TWAP orders with params:', params);
+
       const response = await fetchTwapOrders(params);
-      console.log('Received TWAP orders response:', response);
+
       return response;
     },
     refreshInterval: 30000,
@@ -55,7 +55,7 @@ export function useTwapOrders({
   });
 
   const updateParams = useCallback((newParams: Partial<TwapOrderParams>) => {
-    console.log('Updating TWAP order params:', newParams);
+
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 

@@ -25,8 +25,7 @@ export const AuctionsTable = memo(({
 
   const sortedAuctions = useMemo(() => {
     return [...auctions]
-      .sort((a, b) => b.time - a.time)
-      .slice(0, 5);
+      .sort((a, b) => b.time - a.time);
   }, [auctions]);
 
   const columns = useMemo(() => [
@@ -86,7 +85,7 @@ export const ValidatorsTable = memo(({
       header: "Name",
       accessor: "name",
       align: "left",
-      className: "px-6"
+      className: "px-4"
     },
     {
       header: "APR",
@@ -94,13 +93,13 @@ export const ValidatorsTable = memo(({
         <PriceChange value={item.apr} suffix="%" />
       ),
       align: "left",
-      className: "px-6 text-left"
+      className: "px-4 text-left"
     },
     {
       header: "Stake",
       accessor: (item: ValidatorsTableProps["validators"][0]) => formatStakeValue(item.stake, format),
       align: "left",
-      className: "px-6 text-left"
+      className: "px-4 text-left"
     },
   ] as Column<ValidatorsTableProps["validators"][0]>[], [format]);
 
@@ -128,7 +127,7 @@ export const VaultTable = memo(({
       header: "Name",
       accessor: "name",
       align: "left",
-      className: "px-6"
+      className: "px-4"
     },
     {
       header: "APR",
@@ -136,13 +135,13 @@ export const VaultTable = memo(({
         <PriceChange value={item.apr} suffix="%" />
       ),
       align: "left",
-      className: "px-6 text-left"
+      className: "px-4 text-left"
     },
     {
       header: "TVL",
       accessor: (item: VaultTableProps["vaults"][0]) => formatTVLValue(item.tvl, format),
       align: "left",
-      className: "px-6 text-left"
+      className: "px-4 text-left"
     },
   ] as Column<VaultTableProps["vaults"][0]>[], [format]);
 

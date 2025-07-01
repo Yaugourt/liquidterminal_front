@@ -20,7 +20,7 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
         return [];
       }
 
-      console.log('Fetching validator delegations for address:', address);
+
 
       try {
         const response = await fetchValidatorDelegations({
@@ -28,7 +28,7 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
           user: address
         });
 
-        console.log('Received validator delegations:', response);
+  
         return response;
       } catch (err: any) {
         console.error('Error fetching validator delegations:', err);
