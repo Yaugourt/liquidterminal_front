@@ -36,6 +36,7 @@ export const ENDPOINTS = {
   
   // Notre backend endpoints
   STAKING_VALIDATIONS: '/staking/validations',
+  STAKING_UNSTAKING_QUEUE: '/staking/unstaking-queue',
   STAKING_VALIDATORS: '/staking/validators',
   STAKING_VALIDATORS_TRENDING: '/staking/validators/trending',
   MARKET_VAULTS: '/market/vaults',

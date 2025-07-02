@@ -1,5 +1,5 @@
 import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
-import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator } from './types';
+import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, StakingValidationsResponse, FormattedStakingValidation, StakingValidationsParams, StakingValidationsPaginatedResponse, StakingValidation, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UnstakingQueueItem } from './types';
 
 /**
  * Récupère les délégations de staking d'un utilisateur
@@ -88,6 +88,189 @@ export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake')
       };
     }
     
+    throw error;
+  }
+};
+
+/**
+ * Récupère les validations de staking depuis notre backend (version simple - dépréciée)
+ * @returns Liste des validations de staking formatées
+ */
+export const fetchStakingValidations = async (): Promise<FormattedStakingValidation[]> => {
+  try {
+    const result = await fetchWithConfig<StakingValidationsResponse>(
+      ENDPOINTS.STAKING_VALIDATIONS,
+      {
+        method: 'GET',
+        headers: {
+          'accept': 'application/json',
+        },
+      }
+    );
+    
+    if (!result.success || !result.data) {
+      throw new Error('Invalid response format from staking validations API');
+    }
+
+    // Formater les données pour l'affichage
+    return result.data.map(validation => ({
+      time: new Date(validation.time).toLocaleString(),
+      timestamp: new Date(validation.time).getTime(),
+      user: validation.user,
+      type: validation.type,
+      amount: validation.amount,
+      validator: validation.validator,
+      hash: validation.hash,
+    }));
+  } catch (error) {
+    console.error('Error fetching staking validations:', error);
+    throw error;
+  }
+};
+
+/**
+ * Récupère les validations de staking avec pagination depuis notre backend
+ * @param params Paramètres de pagination (page et limit uniquement)
+ * @returns Réponse paginée avec les validations de staking formatées
+ */
+export const fetchStakingValidationsPaginated = async (params: StakingValidationsParams = {}): Promise<StakingValidationsPaginatedResponse> => {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    // Ajouter seulement les paramètres de pagination supportés
+    if (params.page !== undefined) {
+      queryParams.append('page', params.page.toString());
+    }
+    if (params.limit !== undefined) {
+      queryParams.append('limit', params.limit.toString());
+    }
+
+    const url = `${ENDPOINTS.STAKING_VALIDATIONS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    
+    const result = await fetchWithConfig<{
+      success: boolean;
+      data: StakingValidation[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }>(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    });
+    
+    if (!result.success || !result.data) {
+      throw new Error('Invalid response format from staking validations API');
+    }
+
+    // Formater les données pour l'affichage
+    const formattedData = result.data.map(validation => ({
+      time: new Date(validation.time).toLocaleString(),
+      timestamp: new Date(validation.time).getTime(),
+      user: validation.user,
+      type: validation.type,
+      amount: validation.amount,
+      validator: validation.validator,
+      hash: validation.hash,
+    }));
+
+    // Le backend trie déjà par date décroissante, pas besoin de trier côté client
+
+    return {
+      data: formattedData,
+      pagination: {
+        total: result.pagination.totalItems,
+        page: result.pagination.currentPage,
+        limit: result.pagination.itemsPerPage,
+        totalPages: result.pagination.totalPages,
+        totalVolume: formattedData.reduce((sum, validation) => sum + validation.amount, 0),
+        hasNextPage: result.pagination.hasNextPage,
+        hasPreviousPage: result.pagination.hasPreviousPage,
+      },
+      metadata: {
+        lastUpdate: Date.now(),
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching paginated staking validations:', error);
+    throw error;
+  }
+};
+
+/**
+ * Récupère la queue d'unstaking avec pagination depuis notre backend
+ * @param params Paramètres de pagination (page et limit uniquement)
+ * @returns Réponse paginée avec la queue d'unstaking formatée
+ */
+export const fetchUnstakingQueuePaginated = async (params: UnstakingQueueParams = {}): Promise<UnstakingQueuePaginatedResponse> => {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    // Ajouter seulement les paramètres de pagination supportés
+    if (params.page !== undefined) {
+      queryParams.append('page', params.page.toString());
+    }
+    if (params.limit !== undefined) {
+      queryParams.append('limit', params.limit.toString());
+    }
+
+    const url = `${ENDPOINTS.STAKING_UNSTAKING_QUEUE}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    
+    const result = await fetchWithConfig<{
+      success: boolean;
+      data: UnstakingQueueItem[];
+      pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }>(url, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+      },
+    });
+    
+    if (!result.success || !result.data) {
+      throw new Error('Invalid response format from unstaking queue API');
+    }
+
+    // Formater les données pour l'affichage
+    const formattedData = result.data.map(item => ({
+      time: new Date(item.time).toLocaleString(),
+      timestamp: new Date(item.time).getTime(),
+      user: item.user,
+      amount: item.amount,
+    }));
+
+    // Le backend trie déjà par date décroissante, pas besoin de trier côté client
+
+    return {
+      data: formattedData,
+      pagination: {
+        total: result.pagination.totalItems,
+        page: result.pagination.currentPage,
+        limit: result.pagination.itemsPerPage,
+        totalPages: result.pagination.totalPages,
+        totalVolume: formattedData.reduce((sum, item) => sum + item.amount, 0),
+        hasNextPage: result.pagination.hasNextPage,
+        hasPreviousPage: result.pagination.hasPreviousPage,
+      },
+      metadata: {
+        lastUpdate: Date.now(),
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching paginated unstaking queue:', error);
     throw error;
   }
 }; 

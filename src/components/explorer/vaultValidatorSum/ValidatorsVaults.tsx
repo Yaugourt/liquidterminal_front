@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { useValidators } from "@/services/validator";
 import { useVaults } from "@/services/vault/hooks/useVaults";
-import { useStakingValidations } from "@/services/explorer";
+import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/validator";
 import { useNumberFormat } from "@/store/number-format.store";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Pagination } from "../../common/pagination";
 import { TabButtons, TableContent } from ".";
 
@@ -14,14 +14,35 @@ export function ValidatorsTable() {
   const [activeTab, setActiveTab] = useState<TabType>('validators');
   const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>('all');
   const { validators, stats, isLoading: validatorsLoading, error: validatorsError } = useValidators();
-  const { validations: stakingValidations, isLoading: stakingLoading, error: stakingError } = useStakingValidations();
   const [currentPage, setCurrentPage] = useState(0); // 0-based pour le composant common
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Start with 25
+  
+  // Use paginated staking validations when on transactions tab
+  const { 
+    validations: stakingValidations, 
+    total: stakingTotal,
+    isLoading: stakingLoading, 
+    error: stakingError,
+    updateParams: updateStakingParams
+  } = useStakingValidationsPaginated({
+    limit: rowsPerPage
+  });
+
+  // Use paginated unstaking queue when on unstaking tab
+  const { 
+    unstakingQueue, 
+    total: unstakingTotal,
+    isLoading: unstakingLoading, 
+    error: unstakingError,
+    updateParams: updateUnstakingParams
+  } = useUnstakingQueuePaginated({
+    limit: rowsPerPage
+  });
   
   // For vaults, use API pagination instead of client-side pagination
-  const { vaults, totalTvl, totalCount: vaultsTotalCount, isLoading: vaultsLoading, error: vaultsError } = useVaults({ 
-    page: activeTab === 'vaults' ? currentPage + 1 : 1, // API uses 1-based pagination
-    limit: activeTab === 'vaults' ? rowsPerPage : 10,
+  const { vaults, totalTvl, totalCount: vaultsTotalCount, isLoading: vaultsLoading, error: vaultsError, updateParams: updateVaultsParams } = useVaults({ 
+    page: currentPage + 1, // Convert 0-based to 1-based for API
+    limit: rowsPerPage,
     sortBy: 'tvl'
   });
   const { format } = useNumberFormat();
@@ -40,11 +61,75 @@ export function ValidatorsTable() {
     setCurrentPage(0);
   }, []);
 
+  // Sync hooks pagination when switching to transactions tab
+  useEffect(() => {
+    if (activeTab === 'validators' && validatorSubTab === 'transactions') {
+      console.log('Syncing staking validations pagination on tab switch');
+      updateStakingParams({ 
+        page: currentPage + 1,
+        limit: rowsPerPage 
+      });
+    }
+  }, [activeTab, validatorSubTab, currentPage, rowsPerPage, updateStakingParams]);
+
+  // Sync hooks pagination when switching to unstaking tab
+  useEffect(() => {
+    if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
+      console.log('Syncing unstaking queue pagination on tab switch');
+      updateUnstakingParams({ 
+        page: currentPage + 1,
+        limit: rowsPerPage 
+      });
+    }
+  }, [activeTab, validatorSubTab, currentPage, rowsPerPage, updateUnstakingParams]);
+
+  // Handle page changes from Pagination component (receives 0-based page)
+  const handlePageChange = useCallback((newPage: number) => {
+    console.log('handlePageChange called with newPage:', newPage, 'activeTab:', activeTab, 'validatorSubTab:', validatorSubTab);
+    setCurrentPage(newPage);
+    
+    if (activeTab === 'validators' && validatorSubTab === 'transactions') {
+      console.log('Updating staking validations page to:', newPage + 1);
+      updateStakingParams({ page: newPage + 1 }); // Convert to 1-based for API
+    } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
+      console.log('Updating unstaking queue page to:', newPage + 1);
+      updateUnstakingParams({ page: newPage + 1 }); // Convert to 1-based for API
+    } else if (activeTab === 'vaults') {
+      updateVaultsParams({ page: newPage + 1 }); // Convert to 1-based for API
+    }
+  }, [activeTab, validatorSubTab, updateStakingParams, updateUnstakingParams, updateVaultsParams]);
+
+  // Handle rows per page changes from Pagination component
+  const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
+    console.log('handleRowsPerPageChange called with newRowsPerPage:', newRowsPerPage);
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(0); // Reset to first page
+    
+    if (activeTab === 'validators' && validatorSubTab === 'transactions') {
+      console.log('Updating staking validations limit to:', newRowsPerPage);
+      updateStakingParams({ 
+        page: 1, // Reset to first page (1-based for API)
+        limit: newRowsPerPage 
+      });
+    } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
+      console.log('Updating unstaking queue limit to:', newRowsPerPage);
+      updateUnstakingParams({ 
+        page: 1, // Reset to first page (1-based for API)
+        limit: newRowsPerPage 
+      });
+    } else if (activeTab === 'vaults') {
+      updateVaultsParams({ 
+        page: 1, // Reset to first page (1-based for API)
+        limit: newRowsPerPage 
+      });
+    }
+  }, [activeTab, validatorSubTab, updateStakingParams, updateUnstakingParams, updateVaultsParams]);
+
   // Get current data based on active tab
   const isLoading = activeTab === 'validators' ? validatorsLoading : vaultsLoading;
   const error = activeTab === 'validators' ? validatorsError : vaultsError;
 
-  // Calculate pagination for validators (client-side)
+  // Calculate pagination for validators (client-side) - only for 'all' tab
   const startIndex = currentPage * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
@@ -68,7 +153,9 @@ export function ValidatorsTable() {
   const getTotalItems = () => {
     if (activeTab === 'validators') {
       if (validatorSubTab === 'transactions') {
-        return stakingValidations?.length || 0;
+        return stakingTotal; // Use server-side total for transactions
+      } else if (validatorSubTab === 'unstaking') {
+        return unstakingTotal; // Use server-side total for unstaking queue
       }
       return validators.length;
     }
@@ -94,7 +181,7 @@ export function ValidatorsTable() {
               {['all', 'transactions', 'unstaking'].map(tab => (
                 <button
                   key={tab}
-                  onClick={() => setValidatorSubTab(tab as ValidatorSubTab)}
+                  onClick={() => handleValidatorSubTabChange(tab as ValidatorSubTab)}
                   className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
                     validatorSubTab === tab
                       ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
@@ -132,18 +219,24 @@ export function ValidatorsTable() {
                 loading: stakingLoading,
                 error: stakingError
               }}
+              unstakingData={{
+                unstakingQueue,
+                loading: unstakingLoading,
+                error: unstakingError
+              }}
               format={format}
-              startIndex={startIndex}
-              endIndex={endIndex}
+              startIndex={activeTab === 'validators' && validatorSubTab === 'all' ? startIndex : 0}
+              endIndex={activeTab === 'validators' && validatorSubTab === 'all' ? endIndex : 0}
             />
           </div>
           <div className="mt-4">
             <Pagination
               total={totalItems}
-              page={currentPage}
+              page={currentPage} // 0-based page for the component
               rowsPerPage={rowsPerPage}
-              onPageChange={setCurrentPage}
-              onRowsPerPageChange={setRowsPerPage}
+              rowsPerPageOptions={[10, 25, 50, 100]} // Normal options
+              onPageChange={handlePageChange} // Receives 0-based page
+              onRowsPerPageChange={handleRowsPerPageChange}
             />
           </div>
         </div>

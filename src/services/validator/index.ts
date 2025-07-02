@@ -1,8 +1,8 @@
-// API exports
-export * from './api';
-
-// Types exports
+// Exports des types
 export * from './types';
 
-// Hooks exports
+// Exports des API
+export * from './api';
+
+// Exports des hooks
 export * from './hooks'; 

@@ -3,34 +3,6 @@ import { DataTable } from "./DataTable";
 import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
-
-// Données temporaires pour l'unstaking queue
-const mockUnstaking = [
-  {
-    time: 1748908147628,
-    user: "0xc285f7e39affafbef242880c52f51260ab1989f3",
-    wei: 10100000000
-  },
-  {
-    time: 1748907947628,
-    user: "0x1234567890abcdef1234567890abcdef12345678",
-    wei: 5500000000
-  },
-  {
-    time: 1748907747628,
-    user: "0x9876543210fedcba0987654321fedcba09876543",
-    wei: 8750000000
-  },
-  {
-    time: 1748907547628,
-    user: "0xabcdef1234567890abcdef1234567890abcdef12",
-    wei: 12300000000
-  }
-];
-
-// Le composant ValidatorSubTabs a été déplacé dans ValidatorsVaults.tsx
-
 const CopyButton = ({ text }: { text: string }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
@@ -51,10 +23,10 @@ const CopyButton = ({ text }: { text: string }) => {
 export function TableContent({ 
   activeTab, 
   validatorSubTab,
-  onValidatorSubTabChange,
   validatorsData, 
   vaultsData,
   stakingData,
+  unstakingData,
   format, 
   startIndex, 
   endIndex 
@@ -62,6 +34,7 @@ export function TableContent({
   const { validators, loading: validatorsLoading, error: validatorsError } = validatorsData;
   const { vaults, loading: vaultsLoading, error: vaultsError } = vaultsData;
   const { validations: stakingValidations, loading: stakingLoading, error: stakingError } = stakingData;
+  const { unstakingQueue, loading: unstakingLoading, error: unstakingError } = unstakingData;
 
   if (activeTab === 'validators') {
     return (
@@ -135,7 +108,7 @@ export function TableContent({
               </tr>
             </thead>
             <tbody>
-              {stakingValidations?.slice(startIndex, endIndex).map((tx: any) => (
+              {stakingValidations?.map((tx: any) => (
                 <tr key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <td className="py-3 px-4 text-[#FFFFFF80]">
                     {tx.time}
@@ -184,8 +157,8 @@ export function TableContent({
 
         {validatorSubTab === 'unstaking' && (
           <DataTable 
-            isLoading={false} 
-            error={null}
+            isLoading={unstakingLoading} 
+            error={unstakingError}
             emptyMessage="Aucune demande d'unstaking en attente"
           >
             <thead className="text-[#FFFFFF99]">
@@ -196,10 +169,10 @@ export function TableContent({
               </tr>
             </thead>
             <tbody>
-              {mockUnstaking.slice(startIndex, endIndex).map((item: any, index: number) => (
-                <tr key={`${item.user}-${item.time}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+              {unstakingQueue?.map((item: any, index: number) => (
+                <tr key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <td className="py-3 px-4 text-[#FFFFFF80]">
-                    {new Date(item.time).toLocaleString()}
+                    {item.time}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
@@ -210,7 +183,7 @@ export function TableContent({
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right text-[#F9E370]">
-                    {formatNumber(item.wei / 1e18, format, { maximumFractionDigits: 6 })} HYPE
+                    {formatNumber(item.amount, format, { maximumFractionDigits: 6 })} HYPE
                   </td>
                 </tr>
               ))}

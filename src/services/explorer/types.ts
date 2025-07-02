@@ -295,33 +295,4 @@ export interface ExplorerStore extends ExplorerState {
   setError: (error: string | null) => void;
 }
 
-// Types pour les validations de staking
-export interface StakingValidation {
-  time: string; // ISO timestamp
-  user: string;
-  type: 'Delegate' | 'Undelegate';
-  amount: number; // HYPE amount (already converted from wei)
-  validator: string;
-  hash: string;
-}
-
-export interface StakingValidationsResponse {
-  success: boolean;
-  data: StakingValidation[];
-}
-
-export interface FormattedStakingValidation {
-  time: string;
-  timestamp: number;
-  user: string;
-  type: 'Delegate' | 'Undelegate';
-  amount: number;
-  validator: string;
-  hash: string;
-}
-
-export interface UseStakingValidationsResult {
-  validations: FormattedStakingValidation[] | null;
-  isLoading: boolean;
-  error: Error | null;
-} 
+ 

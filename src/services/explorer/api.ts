@@ -8,18 +8,14 @@ import {
     UserTransaction,
     TransferData,
     DeployData,
-    FormattedStakingValidation,
-    StakingValidationsResponse
+
 } from './types';
 import { 
     fetchExternal, 
-    fetchWithConfig,
     buildHyperliquidRpcUrl,
     buildHyperliquidUrl,
     buildHyperliquidUiUrl,
     buildHypurrscanUrl,
-    buildLlamaFiUrl,
-    ENDPOINTS
 } from '../api/base';
 
 const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
@@ -326,38 +322,4 @@ export async function fetchDeploys(): Promise<DeployData[]> {
     }
 }
 
-/**
- * Récupère les validations de staking depuis notre backend
- * @returns Liste des validations de staking formatées
- */
-export async function fetchStakingValidations(): Promise<FormattedStakingValidation[]> {
-    try {
-        const result = await fetchWithConfig<StakingValidationsResponse>(
-            ENDPOINTS.STAKING_VALIDATIONS,
-            {
-                method: 'GET',
-                headers: {
-                    'accept': 'application/json',
-                },
-            }
-        );
-        
-        if (!result.success || !result.data) {
-            throw new Error('Invalid response format from staking validations API');
-        }
-
-        // Formater les données pour l'affichage
-        return result.data.map(validation => ({
-            time: new Date(validation.time).toLocaleString(),
-            timestamp: new Date(validation.time).getTime(),
-            user: validation.user,
-            type: validation.type,
-            amount: validation.amount,
-            validator: validation.validator,
-            hash: validation.hash,
-        }));
-    } catch (error) {
-        console.error('Error fetching staking validations:', error);
-        throw error;
-    }
-} 
+ 

@@ -95,12 +95,15 @@ export function useDataFetching<T>({
     }
   };
 
-  // Setup interval effect
+  // Combined effect for both initial fetch and dependencies changes
   useEffect(() => {
     // Clear existing interval
     if (intervalIdRef.current) {
       clearInterval(intervalIdRef.current);
     }
+
+    // Fetch data when dependencies change
+    fetchData();
 
     // Only set up interval if refreshInterval is positive
     if (refreshInterval > 0) {
@@ -113,13 +116,6 @@ export function useDataFetching<T>({
       }
     };
   }, [refreshInterval, ...dependencies]); // Include dependencies for refetching
-
-  // Initial fetch effect
-  useEffect(() => {
-    if (!initialData) {
-      fetchData();
-    }
-  }, []); // Empty deps array - only run once on mount
 
   return {
     data,
