@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, Database, Copy, Check } from "lucide-react";
-import { useNumberFormat } from "@/store/number-format.store";
+import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatting";
 import {
   Table,
@@ -14,16 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/common/pagination";
 import { TwapTableProps } from "./types";
-
-// Fonctions de formatage locales
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-};
+import Link from "next/link";
 
 const formatAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -66,6 +57,134 @@ const calculateRealTimeProgression = (twap: any) => {
   };
 };
 
+// Composant mémorisé pour la cellule Value (dynamique)
+const ValueCell = memo(({ twap, realTimeData, format }: { twap: any, realTimeData: Map<string, any>, format: NumberFormatType }) => {
+  const realTime = realTimeData.get(twap.id);
+  const value = realTime ? realTime.remainingValue : twap.value;
+  
+  return (
+    <TableCell className="py-3 px-4 text-sm text-white font-medium w-[150px]">
+      ${formatNumber(value, format)}
+    </TableCell>
+  );
+});
+
+// Composant mémorisé pour la cellule Token (dynamique)
+const TokenCell = memo(({ twap, realTimeData, format }: { twap: any, realTimeData: Map<string, any>, format: NumberFormatType }) => {
+  const realTime = realTimeData.get(twap.id);
+  const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
+  
+  return (
+    <TableCell className="py-3 px-4 text-sm text-white w-[180px]">
+      {formatNumber(displayAmount, format)} {twap.token}
+    </TableCell>
+  );
+});
+
+// Composant mémorisé pour la cellule Progression (dynamique)
+const ProgressionCell = memo(({ twap, realTimeData }: { twap: any, realTimeData: Map<string, any> }) => {
+  const realTime = realTimeData.get(twap.id);
+  const progression = realTime ? realTime.progression : twap.progression;
+  const roundedProgression = Math.round(progression * 100) / 100;
+  
+  const getRemainingTime = () => {
+    const startTime = twap.time;
+    const durationMs = twap.duration * 60 * 1000;
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - startTime;
+    const remainingMs = Math.max(0, durationMs - elapsedTime);
+    
+    if (remainingMs === 0) return "Completed";
+    
+    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  };
+
+  const getProgressColor = (progression: number) => {
+    if (progression < 30) return "bg-red-500";
+    if (progression < 70) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+  
+  return (
+    <TableCell className="py-3 px-4 text-sm text-white w-[170px]">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between w-[120px]">
+          <span className="text-xs text-[#FFFFFF80] font-mono">
+            {getRemainingTime()}
+          </span>
+          <span className="text-xs text-[#FFFFFF99]">
+            {roundedProgression.toFixed(1)}%
+          </span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-[120px] bg-[#FFFFFF1A] rounded-full h-1.5">
+            <div
+              className={`h-full rounded-full transition-all duration-300 ${getProgressColor(roundedProgression)}`}
+              style={{ width: `${roundedProgression}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </TableCell>
+  );
+});
+
+// Composant mémorisé pour la cellule Type (statique)
+const TypeCell = memo(({ twap }: { twap: any }) => (
+  <TableCell className="py-3 px-4 text-sm text-white w-[80px]">
+    <span
+      className={`px-2 py-1 rounded text-xs font-medium ${
+        twap.type === 'Buy'
+          ? 'bg-green-500/20 text-green-400'
+          : 'bg-red-500/20 text-red-400'
+      }`}
+    >
+      {twap.type}
+    </span>
+  </TableCell>
+));
+
+// Composant mémorisé pour la cellule User (statique)
+const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: { 
+  twap: any, 
+  copiedAddress: string | null, 
+  copyToClipboard: (text: string) => void 
+}) => (
+  <TableCell className="py-3 px-4 text-sm w-[180px]">
+    <div className="flex items-center gap-1.5">
+      <Link 
+        href={`/explorer/address/${twap.user}`}
+        className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
+      >
+        {formatAddress(twap.user)}
+      </Link>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          copyToClipboard(twap.user);
+        }}
+        className="group p-1 rounded transition-colors"
+      >
+        {copiedAddress === twap.user ? (
+          <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+        ) : (
+          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+        )}
+      </button>
+    </div>
+  </TableCell>
+));
+
 export const TwapTable = memo(({
   twaps,
   isLoading,
@@ -102,56 +221,11 @@ export const TwapTable = memo(({
     // Initial calculation
     updateRealTimeData();
 
-    // Update every 100ms for smooth visual effect
-    const interval = setInterval(updateRealTimeData, 100);
+    // Update every 50ms for ultra real-time precision
+    const interval = setInterval(updateRealTimeData, 50);
 
     return () => clearInterval(interval);
   }, [twaps]);
-
-  const getProgressColor = (progression: number) => {
-    if (progression < 30) return "bg-red-500";
-    if (progression < 70) return "bg-yellow-500";
-    return "bg-green-500";
-  };
-
-  const formatTokenAmount = (amount: string, token: string, twapId: string) => {
-    const realTime = realTimeData.get(twapId);
-    const displayAmount = realTime ? realTime.remainingAmount : parseFloat(amount);
-    return `${formatNumber(displayAmount, format)} ${token}`;
-  };
-
-  const getTwapValue = (twap: any) => {
-    const realTime = realTimeData.get(twap.id);
-    return realTime ? realTime.remainingValue : twap.value;
-  };
-
-  const getTwapProgression = (twap: any) => {
-    const realTime = realTimeData.get(twap.id);
-    const progression = realTime ? realTime.progression : twap.progression;
-    return Math.round(progression * 100) / 100; // Round to 2 decimal places for smooth display
-  };
-
-  const getRemainingTime = (twap: any) => {
-    const startTime = twap.time;
-    const durationMs = twap.duration * 60 * 1000;
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const remainingMs = Math.max(0, durationMs - elapsedTime);
-    
-    if (remainingMs === 0) return "Completed";
-    
-    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
-      return `${minutes}m ${seconds}s`;
-    } else {
-      return `${seconds}s`;
-    }
-  };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -162,27 +236,6 @@ export const TwapTable = memo(({
       console.error('Failed to copy text: ', err);
     }
   };
-
-  const AddressCell = ({ address }: { address: string }) => (
-    <div className="flex items-center gap-1.5">
-      <span className="text-[#83E9FF] font-mono">
-        {formatAddress(address)}
-      </span>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          copyToClipboard(address);
-        }}
-        className="group p-1 rounded transition-colors"
-      >
-        {copiedAddress === address ? (
-          <Check className="h-3.5 w-3.5 text-green-500" />
-        ) : (
-          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
-        )}
-      </button>
-    </div>
-  );
 
   return (
     <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg mx-auto">
@@ -204,22 +257,22 @@ export const TwapTable = memo(({
       ) : (
         <div className="flex flex-col h-full">
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1">
-            <Table>
+            <Table className="table-fixed w-full">
               <TableHeader>
                 <TableRow className="border-none bg-[#051728]">
-                  <TableHead className="py-3 px-4">
+                  <TableHead className="py-3 px-4 w-[80px]">
                     <TableHeaderButton header="Type" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4">
+                  <TableHead className="py-3 px-4 w-[150px]">
                     <TableHeaderButton header="Value" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4">
+                  <TableHead className="py-3 px-4 w-[180px]">
                     <TableHeaderButton header="Token" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4">
+                  <TableHead className="py-3 px-4 w-[180px]">
                     <TableHeaderButton header="User" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4">
+                  <TableHead className="py-3 px-4 w-[170px]">
                     <TableHeaderButton header="Progression" align="left" />
                   </TableHead>
                 </TableRow>
@@ -231,48 +284,11 @@ export const TwapTable = memo(({
                       key={twap.id}
                       className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
                     >
-                      <TableCell className="py-3 px-4 text-sm text-white">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            twap.type === 'Buy'
-                              ? 'bg-green-500/20 text-green-400'
-                              : 'bg-red-500/20 text-red-400'
-                          }`}
-                        >
-                          {twap.type}
-                        </span>
-                      </TableCell>
-                      <TableCell className="py-3 px-4 text-sm text-white font-medium">
-                        ${formatNumber(getTwapValue(twap), format)}
-                      </TableCell>
-                      <TableCell className="py-3 px-4 text-sm text-white">
-                        {formatTokenAmount(twap.amount, twap.token, twap.id)}
-                      </TableCell>
-                      <TableCell className="py-3 px-4 text-sm">
-                        <AddressCell address={twap.user} />
-                      </TableCell>
-                      <TableCell className="py-3 px-4 text-sm text-white">
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-[#FFFFFF80] font-mono">
-                              {getRemainingTime(twap)}
-                            </span>
-                            <span className="text-xs text-[#FFFFFF99] min-w-[40px]">
-                              {getTwapProgression(twap)}%
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-[#FFFFFF1A] rounded-full h-2">
-                              <div
-                                className={`h-full rounded-full transition-all ${getProgressColor(
-                                  getTwapProgression(twap)
-                                )}`}
-                                style={{ width: `${getTwapProgression(twap)}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
+                      <TypeCell twap={twap} />
+                      <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
+                      <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
+                      <UserCell twap={twap} copiedAddress={copiedAddress} copyToClipboard={copyToClipboard} />
+                      <ProgressionCell twap={twap} realTimeData={realTimeData} />
                     </TableRow>
                   ))
                 ) : (

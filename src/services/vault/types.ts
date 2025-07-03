@@ -113,7 +113,7 @@ export interface VaultResponse {
     page: number;
     limit: number;
     totalPages: number;
-    totalVolume: number;
+    totalTvl: number;
     vaultsNumber: number;
   };
 } 

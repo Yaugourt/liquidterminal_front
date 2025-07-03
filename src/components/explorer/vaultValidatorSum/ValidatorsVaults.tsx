@@ -3,9 +3,11 @@ import { useValidators } from "@/services/validator";
 import { useVaults } from "@/services/vault/hooks/useVaults";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/validator";
 import { useNumberFormat } from "@/store/number-format.store";
+import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect } from "react";
 import { Pagination } from "../../common/pagination";
 import { TabButtons, TableContent } from ".";
+import { formatNumber } from "@/lib/formatting";
 
 type TabType = 'validators' | 'vaults';
 type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
@@ -15,7 +17,7 @@ export function ValidatorsTable() {
   const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>('all');
   const { validators, stats, isLoading: validatorsLoading, error: validatorsError } = useValidators();
   const [currentPage, setCurrentPage] = useState(0); // 0-based pour le composant common
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Start with 25
+  const [rowsPerPage, setRowsPerPage] = useState(10); 
   
   // Use paginated staking validations when on transactions tab
   const { 
@@ -46,6 +48,7 @@ export function ValidatorsTable() {
     sortBy: 'tvl'
   });
   const { format } = useNumberFormat();
+  const { price: hypePrice } = useHypePrice();
 
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab);
@@ -185,7 +188,7 @@ export function ValidatorsTable() {
                   className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
                     validatorSubTab === tab
                       ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                      : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+                      : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
                   }`}
                 >
                   {tab === 'all' ? 'All' : tab === 'transactions' ? 'Transactions' : 'Unstaking Queue'}
@@ -193,9 +196,45 @@ export function ValidatorsTable() {
               ))}
             </div>
           )}
-          <div className="text-white text-sm">
-            {headerInfo.subtitle}
-          </div>
+          {activeTab === 'validators' ? (
+            <div className="flex items-center gap-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-white text-xs font-medium">Total:</span>
+                <span className="text-[#83E9FF] text-sm font-semibold">{stats.total}</span>
+              </div>
+              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-white text-xs font-medium">Active:</span>
+                <span className="text-[#4ADE80] text-sm font-semibold">{stats.active}</span>
+              </div>
+              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-white text-xs font-medium">HYPE Staked:</span>
+                <span className="text-[#F9E370] text-sm font-semibold">
+                  {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
+                  {hypePrice && (
+                    <span className="text-white text-xs ml-1">
+                      (${formatNumber(stats.totalHypeStaked * hypePrice, format, { maximumFractionDigits: 0 })})
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-white text-xs font-medium">Vaults:</span>
+                <span className="text-[#83E9FF] text-sm font-semibold">{vaultsTotalCount}</span>
+              </div>
+              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-white text-xs font-medium">Total TVL:</span>
+                <span className="text-[#F9E370] text-sm font-semibold">
+                  ${formatNumber(totalTvl, format, { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-col flex-1">

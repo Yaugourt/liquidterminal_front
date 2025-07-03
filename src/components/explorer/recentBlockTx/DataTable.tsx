@@ -2,6 +2,7 @@ import { useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Copy, Check, Database } from "lucide-react";
 import { Block, Transaction } from "@/services/explorer/types";
+import Link from "next/link";
 
 type TabType = 'blocks' | 'transactions';
 
@@ -24,11 +25,35 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
     }
   };
 
+  const HashDisplay = ({ hash }: { hash: string }) => (
+    <div className="flex items-center gap-1.5">
+      <span className="text-white font-inter">
+        {hash.slice(0, 4)}..{hash.slice(-3)}
+      </span>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          copyToClipboard(hash);
+        }}
+        className="group p-1 rounded transition-colors"
+      >
+        {copiedAddress === hash ? (
+          <Check className="h-3.5 w-3.5 text-green-500" />
+        ) : (
+          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        )}
+      </button>
+    </div>
+  );
+
   const AddressLink = ({ address }: { address: string }) => (
     <div className="flex items-center gap-1.5">
-      <span className="text-[#83E9FF]">
-        {address.slice(0, 6)}...{address.slice(-4)}
-      </span>
+      <Link 
+        href={`/explorer/address/${address}`}
+        className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
+      >
+        {address.slice(0, 4)}..{address.slice(-3)}
+      </Link>
       <button
         onClick={(e) => {
           e.preventDefault();
@@ -62,10 +87,17 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
           {blocks.length > 0 ? (
             blocks.map((block) => (
               <tr key={block.height} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                <td className="py-3 px-4 text-sm text-[#83E9FF]">{block.height}</td>
+                <td className="py-3 px-4 text-sm">
+                  <Link 
+                    href={`/explorer/block/${block.height}`}
+                    className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
+                  >
+                    {block.height}
+                  </Link>
+                </td>
                 <td className="py-3 px-4 text-sm text-white">{formatDistanceToNowStrict(block.blockTime, { addSuffix: false })}</td>
                 <td className="py-3 px-4 text-sm">
-                  <AddressLink address={block.hash} />
+                  <HashDisplay hash={block.hash} />
                 </td>
                 <td className="py-3 px-4 text-sm">
                   <AddressLink address={block.proposer} />
@@ -103,18 +135,41 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
         </tr>
       </thead>
       <tbody className="bg-[#051728]">
-        {transactions.length > 0 ? (
+                  {transactions.length > 0 ? (
           transactions.map((tx) => (
             <tr key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
               <td className="py-3 px-4 text-sm text-white">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</td>
-              <td className="py-3 px-4 text-sm text-[#FFFFFF]">{tx.action?.type || 'Unknown'}</td>
+              <td className="py-3 px-4 text-sm text-[#FFFFFF]">
+                <div className="relative group">
+                  <span>
+                    {(tx.action?.type || 'Unknown').length > 7 
+                      ? `${(tx.action?.type || 'Unknown').substring(0, 7)}...` 
+                      : (tx.action?.type || 'Unknown')
+                    }
+                  </span>
+                  {(tx.action?.type || 'Unknown').length > 7 && (
+                    <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
+                      <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
+                        {tx.action?.type || 'Unknown'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </td>
               <td className="py-3 px-4 text-sm">
                 <AddressLink address={tx.user} />
               </td>
               <td className="py-3 px-4 text-sm">
-                <AddressLink address={tx.hash} />
+                <HashDisplay hash={tx.hash} />
               </td>
-              <td className="py-3 px-4 text-sm text-white text-right">{tx.block}</td>
+              <td className="py-3 px-4 text-sm text-right">
+                <Link 
+                  href={`/explorer/block/${tx.block}`}
+                  className="text-white font-inter hover:text-[#83E9FF] transition-colors"
+                >
+                  {tx.block}
+                </Link>
+              </td>
             </tr>
           ))
         ) : (

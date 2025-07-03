@@ -1,4 +1,0 @@
-/* Custom Scrollbar */
-.custom-scrollbar {
-  @apply scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent;
-} 

@@ -34,7 +34,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center">
       <Database className={baseIconClasses} />
-      <p className={`${baseTextClasses} font-serif`}>{message}</p>
+      <p className={`${baseTextClasses} font-inter`}>{message}</p>
       <p className="text-[#FFFFFF80] text-sm mt-2">
         Check back later for updated market information
       </p>

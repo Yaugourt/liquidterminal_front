@@ -35,7 +35,7 @@ export const TabSection = memo(({
   // Transform vaults data to match VaultTableProps type
   const transformedVaults = useMemo(() => vaults.map(vault => ({
     name: vault.summary.name,
-    apr: vault.apr * 100,
+    apr: vault.apr,
     tvl: parseFloat(vault.summary.tvl)
   })), [vaults]);
 

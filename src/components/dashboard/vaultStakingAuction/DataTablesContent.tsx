@@ -1,10 +1,11 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/formatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
 import { DataTable, Column } from "./DataTable";
 import { useNumberFormat } from "@/store/number-format.store";
 import Link from "next/link";
 import { PriceChange } from '@/components/common';
+import { Copy, Check } from "lucide-react";
 
 interface PaginationProps {
   total?: number;
@@ -22,6 +23,41 @@ export const AuctionsTable = memo(({
   ...paginationProps 
 }: AuctionsTableProps & PaginationProps) => {
   const { format } = useNumberFormat();
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedAddress(text);
+      setTimeout(() => setCopiedAddress(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const AddressLink = ({ address }: { address: string }) => (
+    <div className="  flex items-center gap-1.5">
+      <Link 
+        href={`/explorer/address/${address}`}
+        className="text-[#83E9FF] hover:text-white transition-colors"
+      >
+        {truncateAddress(address)}
+      </Link>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          copyToClipboard(address);
+        }}  
+        className="group p-1 rounded transition-colors"
+      >
+        {copiedAddress === address ? (
+          <Check className="h-3.5 w-3.5 text-green-500" />
+        ) : (
+          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        )}
+      </button>
+    </div>
+  );
 
   const sortedAuctions = useMemo(() => {
     return [...auctions]
@@ -33,20 +69,15 @@ export const AuctionsTable = memo(({
       header: "Name",
       accessor: "name",
       align: "left",
-      className: "w-1/3 px-4"
+      className: "w-[120px] px-4"
     },
     {
       header: "Deployer",
       accessor: (item: AuctionsTableProps["auctions"][0]) => (
-        <Link 
-          href={`/explorer/address/${item.deployer}`}
-          className="text-[#83E9FF] hover:text-white transition-colors"
-        >
-          {truncateAddress(item.deployer)}
-        </Link>
+        <AddressLink address={item.deployer} />
       ),
       align: "left",
-      className: "w-1/3 px-4"
+      className: "w-[140px] px-4"
     },
     {
       header: "Price",
@@ -57,9 +88,9 @@ export const AuctionsTable = memo(({
         );
       },
       align: "left",
-      className: "w-1/3 px-4 text-left"
+      className: "w-[180px] px-4 text-left"
     },
-  ] as Column<typeof auctions[0]>[], [format]);
+  ] as Column<typeof auctions[0]>[], [format, copiedAddress, copyToClipboard]);
 
   return (
     <DataTable
@@ -79,29 +110,66 @@ export const ValidatorsTable = memo(({
   ...paginationProps 
 }: ValidatorsTableProps & PaginationProps) => {
   const { format } = useNumberFormat();
+  const [copiedValidatorAddress, setCopiedValidatorAddress] = useState<string | null>(null);
+
+  const copyValidatorToClipboard = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopiedValidatorAddress(address);
+      setTimeout(() => setCopiedValidatorAddress(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy validator address: ', err);
+    }
+  };
+
+  const ValidatorNameWithCopy = ({ validator }: { validator: any }) => (
+    <div className="flex items-center gap-1.5">
+      <Link 
+        href={`/explorer/address/${validator.validator || validator.address}`}
+        className="text-white font-inter hover:text-[#83E9FF] transition-colors"
+      >
+        {validator.name}
+      </Link>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          copyValidatorToClipboard(validator.validator || validator.address);
+        }}
+        className="group p-1 rounded transition-colors"
+      >
+        {copiedValidatorAddress === (validator.validator || validator.address) ? (
+          <Check className="h-3.5 w-3.5 text-green-500" />
+        ) : (
+          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        )}
+      </button>
+    </div>
+  );
 
   const columns = useMemo(() => [
     {
       header: "Name",
-      accessor: "name",
+      accessor: (item: any) => (
+        <ValidatorNameWithCopy validator={item} />
+      ),
       align: "left",
-      className: "px-4"
+      className: "w-[220px] px-4"
     },
     {
       header: "APR",
       accessor: (item: ValidatorsTableProps["validators"][0]) => (
         <PriceChange value={item.apr} suffix="%" />
       ),
-      align: "left",
-      className: "px-4 text-left"
+      align: "center",
+      className: "w-[120px] px-2 text-center"
     },
     {
       header: "Stake",
       accessor: (item: ValidatorsTableProps["validators"][0]) => formatStakeValue(item.stake, format),
-      align: "left",
-      className: "px-4 text-left"
+      align: "right",
+      className: "w-[120px] px-4 pr-6 text-right"
     },
-  ] as Column<ValidatorsTableProps["validators"][0]>[], [format]);
+  ] as Column<any>[], [format, copiedValidatorAddress, copyValidatorToClipboard]);
 
   return (
     <DataTable
@@ -125,23 +193,36 @@ export const VaultTable = memo(({
   const columns = useMemo(() => [
     {
       header: "Name",
-      accessor: "name",
+      accessor: (item: VaultTableProps["vaults"][0]) => (
+        <div className="relative group">
+          <span className="text-sm">
+            {item.name.length > 20 ? `${item.name.substring(0, 20)}...` : item.name}
+          </span>
+          {item.name.length > 20 && (
+            <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
+              <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
+                {item.name}
+              </div>
+            </div>
+          )}
+        </div>
+      ),
       align: "left",
-      className: "px-4"
+      className: "w-[400px] px-4"
     },
     {
       header: "APR",
       accessor: (item: VaultTableProps["vaults"][0]) => (
         <PriceChange value={item.apr} suffix="%" />
       ),
-      align: "left",
-      className: "px-4 text-left"
+      align: "center",
+      className: "w-[100px] px-4 text-center"
     },
     {
       header: "TVL",
       accessor: (item: VaultTableProps["vaults"][0]) => formatTVLValue(item.tvl, format),
       align: "left",
-      className: "px-4 text-left"
+      className: "w-[100px] px-4 text-right"
     },
   ] as Column<VaultTableProps["vaults"][0]>[], [format]);
 

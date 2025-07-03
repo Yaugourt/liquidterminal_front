@@ -8,7 +8,7 @@ import { CARD_BASE_CLASSES } from "./constants";
 export const InfoCard = memo(({ onAddClick }: InfoCardProps) => {
     return (
         <Card className={CARD_BASE_CLASSES}>
-            <h3 className="text-white text-[16px] font-serif mb-5">More Info</h3>
+            <h3 className="text-white text-[16px] font-inter mb-5">More Info</h3>
             <div className="space-y-5">
                 <div>
                     <div className="flex items-center justify-between mb-3">

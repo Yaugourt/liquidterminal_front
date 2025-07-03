@@ -39,10 +39,16 @@ export const useVaults = ({
     setParams(prev => ({ ...prev, ...newParams }));
   }, []);
 
+  // Transform APR from ratio to percentage
+  const transformedVaults = data?.data?.map(vault => ({
+    ...vault,
+    apr: vault.apr * 100 // Convert ratio to percentage
+  })) || [];
+
   return {
-    vaults: data?.data || [],
-    totalTvl: data?.pagination.totalTvl || 0,
-    totalCount: data?.pagination.total || 0,
+    vaults: transformedVaults,
+    totalTvl: data?.pagination?.totalTvl || 0,
+    totalCount: data?.pagination?.total || 0,
     isLoading,
     error,
     refetch,

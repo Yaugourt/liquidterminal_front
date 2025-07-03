@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AssetsTable } from "./AssetsTable";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue, formatAssetTokenAmount, formatAssetPercent } from '@/lib/formatting';
-import { ErrorCard, ViewTypeSelector, AssetsHeader } from './components';
+import { ErrorCard } from './components';
 import { useWalletData } from './hooks/useWalletData';
 import { useHoldingsConverter } from './hooks/useHoldingsConverter';
 import { useSortableData } from '@/hooks/useSortableData';
@@ -67,20 +67,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
   }
 
   return (
-    <div className="relative space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <ViewTypeSelector 
-          viewType={viewType} 
-          onViewTypeChange={setViewType} 
-        />
-        <AssetsHeader
-          totalAssets={sortedHoldings.length}
-          walletDisplay={activeWalletDisplay}
-          onRefresh={handleRefresh}
-          isRefreshing={isRefreshing}
-          isLoading={isLoading || isSpotMarketLoading || isPerpMarketLoading}
-        />
-      </div>
+    <div className="relative">
       <AssetsTable
         holdings={sortedHoldings}
         isLoading={isLoading || isSpotMarketLoading || isPerpMarketLoading}
@@ -91,6 +78,11 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
         formatCurrency={(value) => formatAssetValue(Number(value), format)}
         formatTokenAmount={(value) => formatAssetTokenAmount(Number(value), format)}
         formatPercent={(value) => formatAssetPercent(value, format)}
+        onViewTypeChange={setViewType}
+        totalAssets={sortedHoldings.length}
+        walletDisplay={activeWalletDisplay}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
       />
     </div>
   );

@@ -4,22 +4,18 @@ import { useDataFetching } from '../../../hooks/useDataFetching';
 import { useMemo } from 'react';
 
 export const useValidators = (initialData?: Validator[]): UseValidatorsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<Validator[]>({
+  const { data, isLoading, error, refetch } = useDataFetching<{ validators: Validator[], stats: ValidatorStats }>({
     fetchFn: fetchAllValidators,
-    initialData,
     refreshInterval: 30000 // 30 seconds
   });
 
-  const validators = data || [];
-
-  // Calculate validator statistics
-  const stats: ValidatorStats = useMemo(() => {
-    const total = validators.length;
-    const active = validators.filter(validator => validator.isActive).length;
-    const inactive = total - active;
-
-    return { total, active, inactive };
-  }, [validators]);
+  const validators = data?.validators || initialData || [];
+  const stats = data?.stats || {
+    total: 0,
+    active: 0,
+    inactive: 0,
+    totalHypeStaked: 0
+  };
 
   return {
     validators,

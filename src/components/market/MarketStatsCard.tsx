@@ -25,7 +25,7 @@ export const MarketStatsCard = memo(function MarketStatsCard({
       )}
     >
       <div className="flex justify-between items-center mb-5">
-        <h3 className="text-white text-lg font-serif">{title}</h3>
+        <h3 className="text-white text-lg font-inter">{title}</h3>
         {headerRight}
       </div>
       {isLoading ? (

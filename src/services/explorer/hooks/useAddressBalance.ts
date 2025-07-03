@@ -21,10 +21,23 @@ export function useAddressBalance(address: string) {
 
     // Calculer la valeur totale des positions spot
     const spotTotal = spotBalances.reduce((total, balance) => {
-      const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === balance.coin.toLowerCase());
-      if (!marketToken) return total;
+      const normalizedCoin = balance.coin.toLowerCase();
       
-      const value = parseFloat(balance.total) * marketToken.price;
+      // Stablecoins ont toujours un prix de $1
+      const stablecoins = ['usdc', 'usdt', 'dai', 'busd', 'tusd'];
+      const isStablecoin = stablecoins.includes(normalizedCoin);
+      
+      let price = 0;
+      if (isStablecoin) {
+        price = 1;
+      } else {
+        const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === normalizedCoin);
+        price = marketToken ? marketToken.price : 0;
+      }
+      
+      if (price === 0) return total;
+      
+      const value = parseFloat(balance.total) * price;
       return total + value;
     }, 0);
 

@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { StatsCardProps } from "@/components/types/dashboard.types";
 import { Users, BarChart3, CreditCard, Coins, Wallet } from "lucide-react";
+import Image from "next/image";
 
 export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   // Fonction pour déterminer quelle icône afficher selon le titre
@@ -13,7 +14,12 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
       case "Bridged USDC":
         return <CreditCard size={16} className="text-[#f9e370]" />;
       case "HYPE Staked":
-        return <Coins size={16} className="text-[#f9e370]" />;
+        return <Image 
+          src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg" 
+          alt="HYPE Logo" 
+          width={16} 
+          height={16}
+        />;
       case "Vaults TVL":
         return <Wallet size={16} className="text-[#f9e370]" />;
       default:

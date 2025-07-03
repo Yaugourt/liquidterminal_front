@@ -1,6 +1,6 @@
 import { memo, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingUp, Percent, DollarSign } from "lucide-react";
 import { PnLCardProps, PnLVariation } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES, PERIODS } from "./constants";
 import { formatNumber } from "@/lib/formatting";
@@ -56,7 +56,9 @@ export const PnLCard = memo(({ portfolio, isLoading, format }: PnLCardProps) => 
 
         return (
             <div key={key}>
-                <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide">{label}:</div>
+                <div className="text-xs text-white mb-1 tracking-wide font-medium">
+                    {label}
+                </div>
                 <div className={
                     variation.numericValue !== null 
                         ? variation.numericValue >= 0 
@@ -72,10 +74,14 @@ export const PnLCard = memo(({ portfolio, isLoading, format }: PnLCardProps) => 
 
     return (
         <Card className={CARD_BASE_CLASSES}>
-            <div className="flex items-center justify-between mb-5">
-                <h3 className="text-white text-[16px] font-serif">PnL</h3>
+            {/* Header avec titre décalé et bouton à droite */}
+            <div className="flex justify-between items-center gap-2 mb-5">
+                <div className="flex items-center gap-1.5 ml-4">
+                    <TrendingUp size={16} className="text-[#f9e370]" />
+                    <h3 className="text-white text-[16px] font-inter">PNL</h3>
+                </div>
                 <select
-                    className="bg-[#051728] text-[#83E9FF] border border-[#1E3851] rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#83E9FF]"
+                    className="bg-[#051728] text-[#f9e370] border border-[#83E9FF4D] rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#83E9FF] mr-4"
                     value={pnlMode}
                     onChange={handlePnLModeChange}
                 >
@@ -83,7 +89,9 @@ export const PnLCard = memo(({ portfolio, isLoading, format }: PnLCardProps) => 
                     <option value="dollar">$</option>
                 </select>
             </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+
+            {/* PnL breakdown en grille 2x2 */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {isLoading ? (
                     <div className="col-span-2 flex justify-center items-center p-4">
                         <Loader2 className="w-5 h-5 text-[#83E9FF] animate-spin" />

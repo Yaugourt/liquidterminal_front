@@ -3,6 +3,6 @@ export { useTransfers } from './useTransfers';
 export { useAddressBalance } from './useAddressBalance';
 export { usePortfolio } from './usePortfolio';
 export { useTransactionDetails } from './useTransactionDetails';
-export { useTransactions } from './useUserTransactions';
+export { useTransactions, formatAddress, formatHash, formatNumberValue, calculateValue } from './useUserTransactions';
 export { useBlockDetails } from './useBlockDetails';
  

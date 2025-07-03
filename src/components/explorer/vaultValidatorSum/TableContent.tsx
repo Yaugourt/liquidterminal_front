@@ -1,22 +1,38 @@
 import { formatNumber } from "@/lib/formatting";
 import { DataTable } from "./DataTable";
-import { Copy } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDateFormat } from "@/store/date-format.store";
+import { formatDate, formatDateTime } from "@/lib/date-formatting";
+import { useState } from "react";
 
 const CopyButton = ({ text }: { text: string }) => {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedAddress(text);
+      setTimeout(() => setCopiedAddress(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={handleCopy}
-      className="p-1 h-auto hover:bg-[#83E9FF20] transition-colors"
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        copyToClipboard(text);
+      }}
+      className="group p-1 rounded transition-colors"
     >
-      <Copy className="h-3 w-3 text-[#83E9FF]" />
-    </Button>
+      {copiedAddress === text ? (
+        <Check className="h-3.5 w-3.5 text-green-500" />
+      ) : (
+        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+      )}
+    </button>
   );
 };
 
@@ -35,6 +51,7 @@ export function TableContent({
   const { vaults, loading: vaultsLoading, error: vaultsError } = vaultsData;
   const { validations: stakingValidations, loading: stakingLoading, error: stakingError } = stakingData;
   const { unstakingQueue, loading: unstakingLoading, error: unstakingError } = unstakingData;
+  const { format: dateFormat } = useDateFormat();
 
   if (activeTab === 'validators') {
     return (
@@ -62,7 +79,7 @@ export function TableContent({
                 <tr key={validator.name} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <td className="py-3 px-4 text-[#83E9FF] font-medium">{validator.name}</td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       validator.isActive 
                         ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
                         : 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
@@ -100,18 +117,18 @@ export function TableContent({
             <thead className="text-[#FFFFFF99]">
               <tr>
                 <th className="text-left py-3 px-4 font-normal">Time</th>
-                <th className="text-left py-3 px-4 font-normal">User</th>
-                <th className="text-left py-3 px-4 font-normal">Type</th>
-                <th className="text-right py-3 px-4 font-normal">Amount</th>
-                <th className="text-left py-3 px-4 font-normal">Validator</th>
-                <th className="text-left py-3 px-4 font-normal">Hash</th>
+                <th className="text-left py-3 pl-4 pr-4 font-normal">User</th>
+                <th className="text-left py-3 pl-6 pr-4 font-normal">Type</th>
+                <th className="text-left py-3 px-4 font-normal w-48">Amount</th>
+                <th className="text-left py-3 pl-4 pr-4 font-normal">Validator</th>
+                <th className="text-left py-3 pl-4 pr-4 font-normal">Hash</th>
               </tr>
             </thead>
             <tbody>
               {stakingValidations?.map((tx: any) => (
                 <tr key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <td className="py-3 px-4 text-[#FFFFFF80]">
-                    {tx.time}
+                  <td className="py-3 px-4 text-white">
+                    {formatDateTime(tx.timestamp, dateFormat)}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
@@ -122,7 +139,7 @@ export function TableContent({
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       tx.type === 'Undelegate'
                         ? 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
                         : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
@@ -130,8 +147,10 @@ export function TableContent({
                       {tx.type}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right">
-                    {formatNumber(tx.amount, format, { maximumFractionDigits: 6 })} HYPE
+                  <td className="py-3 px-4 text-left w-48">
+                    <span className="inline-block">
+                      {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
+                    </span>
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
@@ -164,15 +183,15 @@ export function TableContent({
             <thead className="text-[#FFFFFF99]">
               <tr>
                 <th className="text-left py-3 px-4 font-normal">Time</th>
-                <th className="text-left py-3 px-4 font-normal">Address</th>
-                <th className="text-right py-3 px-4 font-normal">Amount</th>
+                <th className="text-left py-3 pl-4 pr-4 font-normal">Address</th>
+                <th className="text-left py-3 px-4 font-normal w-48">Amount</th>
               </tr>
             </thead>
             <tbody>
               {unstakingQueue?.map((item: any, index: number) => (
                 <tr key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <td className="py-3 px-4 text-[#FFFFFF80]">
-                    {item.time}
+                  <td className="py-3 px-4 text-white">
+                    {formatDateTime(item.timestamp, dateFormat)}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
@@ -182,8 +201,10 @@ export function TableContent({
                       <CopyButton text={item.user} />
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-right text-[#F9E370]">
-                    {formatNumber(item.amount, format, { maximumFractionDigits: 6 })} HYPE
+                  <td className="py-3 px-4 text-left text-white w-48">
+                    <span className="inline-block">
+                      {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -202,20 +223,20 @@ export function TableContent({
     >
       <thead className="text-[#FFFFFF99]">
         <tr>
-          <th className="text-left py-3 px-4 font-normal">Name</th>
-          <th className="text-left py-3 px-4 font-normal">Status</th>
-          <th className="text-right py-3 px-4 font-normal">TVL</th>
-          <th className="text-right py-3 px-4 font-normal">APR</th>
-          <th className="text-left py-3 px-4 font-normal">Leader</th>
-          <th className="text-left py-3 px-4 font-normal">Created</th>
+          <th className="text-left py-3 px-6 font-normal">Name</th>
+          <th className="text-left py-3 px-6 font-normal">Status</th>
+          <th className="text-left py-3 px-6 font-normal">TVL</th>
+          <th className="text-right py-3 px-6 font-normal">APR</th>
+          <th className="text-left py-3 px-6 font-normal">Leader</th>
+          <th className="text-left py-3 px-6 font-normal">Created</th>
         </tr>
       </thead>
       <tbody>
         {vaults.map((vault: any) => (
           <tr key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-            <td className="py-3 px-4 text-[#83E9FF] font-medium">{vault.summary.name}</td>
-            <td className="py-3 px-4">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+            <td className="py-3 px-6 text-[#83E9FF] font-medium">{vault.summary.name}</td>
+            <td className="py-3 px-6">
+              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                 !vault.summary.isClosed 
                   ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
                   : 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
@@ -223,17 +244,17 @@ export function TableContent({
                 {!vault.summary.isClosed ? 'Open' : 'Closed'}
               </span>
             </td>
-            <td className="py-3 px-4 text-right">
+            <td className="py-3 px-6 text-left">
               ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
             </td>
-            <td className="py-3 px-4 text-right text-[#4ADE80]">
+            <td className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
               {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
             </td>
-            <td className="py-3 px-4 text-[#83E9FF]">
+            <td className="py-3 px-6 text-[#83E9FF]">
               {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
             </td>
-            <td className="py-3 px-4 text-[#FFFFFF80]">
-              {new Date(vault.summary.createTimeMillis).toLocaleDateString()}
+            <td className="py-3 px-6 text-white">
+              {formatDate(vault.summary.createTimeMillis, dateFormat)}
             </td>
           </tr>
         ))}

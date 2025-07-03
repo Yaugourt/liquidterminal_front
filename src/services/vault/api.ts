@@ -45,7 +45,7 @@ export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse>
     success: true,
     data: response.data,
     pagination: {
-      totalTvl: response.pagination.totalVolume,
+      totalTvl: response.pagination.totalTvl,
       total: response.pagination.vaultsNumber,
       page: response.pagination.page
     }

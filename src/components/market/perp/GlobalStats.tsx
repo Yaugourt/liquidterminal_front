@@ -20,7 +20,7 @@ function GlobalStatsComponent() {
   return (
     <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all">
       <div className="flex justify-between items-start mb-5">
-        <h3 className="text-[15px] text-white font-medium font-serif">Market Stats</h3>
+        <h3 className="text-[15px] text-white font-medium font-inter">Market Stats</h3>
         {isLoading && <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />}
       </div>
 

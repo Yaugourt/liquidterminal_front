@@ -38,7 +38,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     return (
         <div className="min-h-screen">
             <Header customTitle="Explorer" showFees={true} />
-            <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-[1800px] mx-auto">
+            <div className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-6 max-w-[1920px] mx-auto">
                 {/* Block Header */}
                 <BlockHeader 
                     blockDetails={blockDetails} 

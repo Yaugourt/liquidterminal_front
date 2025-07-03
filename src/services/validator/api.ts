@@ -1,5 +1,5 @@
 import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
-import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, StakingValidationsResponse, FormattedStakingValidation, StakingValidationsParams, StakingValidationsPaginatedResponse, StakingValidation, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UnstakingQueueItem } from './types';
+import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, StakingValidationsResponse, FormattedStakingValidation, StakingValidationsParams, StakingValidationsPaginatedResponse, StakingValidation, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UnstakingQueueItem, ValidatorStats } from './types';
 
 /**
  * Récupère les délégations de staking d'un utilisateur
@@ -39,15 +39,29 @@ export const fetchValidatorDelegations = async (
 };
 
 /**
- * Récupère tous les validateurs
+ * Récupère tous les validateurs avec les stats
  */
-export const fetchAllValidators = async (): Promise<Validator[]> => {
+export const fetchAllValidators = async (): Promise<{ validators: Validator[], stats: ValidatorStats }> => {
   try {
-    const response = await fetchWithConfig<{ data: Validator[] }>(
+    const response = await fetchWithConfig<{ 
+      data: Validator[],
+      stats: {
+        totalValidators: number;
+        activeValidators: number;
+        totalHypeStaked: number;
+      }
+    }>(
       ENDPOINTS.STAKING_VALIDATORS
     );
 
-    return response.data;
+    const stats: ValidatorStats = {
+      total: response.stats.totalValidators,
+      active: response.stats.activeValidators,
+      inactive: response.stats.totalValidators - response.stats.activeValidators,
+      totalHypeStaked: response.stats.totalHypeStaked
+    };
+
+    return { validators: response.data, stats };
   } catch (error: any) {
     console.error('Error fetching all validators:', error);
     

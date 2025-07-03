@@ -31,7 +31,7 @@ export interface Transaction {
 export interface ExplorerStatsCardProps {
   title: string;
   value: string;
-  type: 'block' | 'blockTime' | 'transactions' | 'users' | 'hypeStaked';
+  type: 'block' | 'blockTime' | 'transactions' | 'users' | 'hypeStaked' | 'vaultsTvl';
 }
 
 export interface ExplorerStat {

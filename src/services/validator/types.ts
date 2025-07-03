@@ -57,6 +57,7 @@ export interface ValidatorStats {
   total: number;
   active: number;
   inactive: number;
+  totalHypeStaked: number;
 }
 
 /**

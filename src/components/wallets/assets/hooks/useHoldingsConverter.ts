@@ -45,7 +45,10 @@ export function useHoldingsConverter({
         });
         
         // Calculer la valeur totale basée sur le prix du marché si disponible
-        const price = marketToken ? parseFloat(marketToken.price.toString()) : 0;
+        // Stablecoins ont toujours un prix de $1
+        const stablecoins = ['usdc', 'usdt', 'dai', 'busd', 'tusd'];
+        const isStablecoin = stablecoins.includes(normalizedBalanceCoin);
+        const price = isStablecoin ? 1 : (marketToken ? parseFloat(marketToken.price.toString()) : 0);
         const total = parseFloat(balance.total);
         const totalValue = price * total;
         const entryPrice = parseFloat(balance.entryNtl || "0");

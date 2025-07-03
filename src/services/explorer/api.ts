@@ -90,7 +90,7 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
             body: JSON.stringify({
                 type: "userNonFundingLedgerUpdates",
                 user: address,
-                startTime: 1640995200000 // 1er janvier 2022 en ms
+                startTime: 1640995200000 
             })
         });
     } catch (error) {
@@ -160,12 +160,13 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
                 const ledgerUpdate = ledgerMap.get(tx.hash);
 
                 if (ledgerUpdate) {
+                    const addresses = getTransactionAddresses({ action: { type: ledgerUpdate.delta.type } } as UserTransaction, address, ledgerUpdate);
                     return {
                         hash: tx.hash,
                         method: ledgerUpdate.delta.type,
                         age: formatAge(tx.time),
-                        from: address,
-                        to: ledgerUpdate.delta.type === "withdraw" ? "Arbitrum" : address,
+                        from: addresses.from,
+                        to: addresses.to,
                         amount: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer" 
                             ? ledgerUpdate.delta.usdc || "0"
                             : ledgerUpdate.delta.amount || ledgerUpdate.delta.usdc || "0",
@@ -185,12 +186,13 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
                     amount = tx.action.amount;
                 }
 
+                const addresses = getTransactionAddresses(tx, address);
                 return {
                     hash: tx.hash,
                     method: tx.action.type,
                     age: formatAge(tx.time),
-                    from: address,
-                    to: address,
+                    from: addresses.from,
+                    to: addresses.to,
                     amount,
                     token: order?.a?.toString() || tx.action.token || "unknown",
                     time: tx.time
@@ -204,20 +206,23 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
         ]);
         const orphanLedgerTxs = ledgerUpdates
             .filter(update => !allHashes.has(update.hash) && update.delta.type !== "withdraw3")
-            .map(ledgerUpdate => ({
-                hash: ledgerUpdate.hash,
-                method: ledgerUpdate.delta.type,
-                age: formatAge(ledgerUpdate.time),
-                from: address,
-                to: ledgerUpdate.delta.type === "withdraw" ? "Arbitrum" : address,
-                amount: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer"
-                    ? ledgerUpdate.delta.usdc || "0"
-                    : ledgerUpdate.delta.amount || ledgerUpdate.delta.usdc || "0",
-                token: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer"
-                    ? "USDC"
-                    : ledgerUpdate.delta.token || ledgerUpdate.delta.coin || "unknown",
-                time: ledgerUpdate.time
-            }));
+            .map(ledgerUpdate => {
+                const addresses = getTransactionAddresses({ action: { type: ledgerUpdate.delta.type } } as UserTransaction, address, ledgerUpdate);
+                return {
+                    hash: ledgerUpdate.hash,
+                    method: ledgerUpdate.delta.type,
+                    age: formatAge(ledgerUpdate.time),
+                    from: addresses.from,
+                    to: addresses.to,
+                    amount: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer"
+                        ? ledgerUpdate.delta.usdc || "0"
+                        : ledgerUpdate.delta.amount || ledgerUpdate.delta.usdc || "0",
+                    token: ledgerUpdate.delta.type === "withdraw" || ledgerUpdate.delta.type === "accountClassTransfer"
+                        ? "USDC"
+                        : ledgerUpdate.delta.token || ledgerUpdate.delta.coin || "unknown",
+                    time: ledgerUpdate.time
+                };
+            });
     
 
         // Combiner et trier les transactions
@@ -227,6 +232,63 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
     } catch (error) {
         console.error("Error formatting user transactions:", error);
         throw error;
+    }
+}
+
+// Helper function pour déterminer from/to selon le type de transaction
+function getTransactionAddresses(tx: UserTransaction, address: string, ledgerUpdate?: any) {
+    const method = tx.action.type;
+    
+    switch (method) {
+        case "deposit":
+            return { from: "Arbitrum", to: address };
+            
+        case "VoteEthDepositAction":
+        case "approveAgent":
+            return { from: address, to: "" };
+            
+        case "order":
+            // Pour les orders, le 'to' dépend du type d'ordre (t property)
+            const orderType = tx.action.orders?.[0]?.t;
+            let toValue = "";
+            if (orderType) {
+                const keys = Object.keys(orderType);
+                if (keys.length > 0) {
+                    toValue = keys[0]; // Prend le premier type (limit, trigger, market, etc.)
+                }
+            }
+            return { from: address, to: toValue };
+            
+        case "accountClassTransfer":
+            if (ledgerUpdate?.delta) {
+                // Pour accountClassTransfer, utiliser toPerp pour déterminer la direction
+                if (ledgerUpdate.delta.toPerp === true) {
+                    return { from: "Spot", to: "Perp" };
+                } else if (ledgerUpdate.delta.toPerp === false) {
+                    return { from: "Perp", to: "Spot" };
+                }
+                // Fallback au comportement normal si toPerp n'est pas défini
+                return {
+                    from: ledgerUpdate.delta.user || address,
+                    to: ledgerUpdate.delta.destination || address
+                };
+            }
+            return { from: address, to: address };
+            
+        case "spotTransfer":
+            if (ledgerUpdate?.delta) {
+                return {
+                    from: ledgerUpdate.delta.user || address,
+                    to: ledgerUpdate.delta.destination || address
+                };
+            }
+            return { from: address, to: address };
+            
+        case "withdraw":
+            return { from: address, to: "Arbitrum" };
+            
+        default:
+            return { from: address, to: address };
     }
 }
 

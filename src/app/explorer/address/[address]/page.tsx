@@ -40,7 +40,7 @@ export default function AddressPage() {
     <div className="min-h-screen">
       <Header customTitle="Explorer" showFees={true} />
       
-      <div className="p-6">
+      <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
         {/* Address Header */}
         <AddressHeader address={address} />
 
@@ -87,8 +87,8 @@ export default function AddressPage() {
           <div className="bg-[#0A1F32] h-[400px] border border-[#1E3851] rounded-xl flex items-center justify-center">
             <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
           </div>
-              )}
-            </div>
+        )}
+      </main>
 
       {/* Authentication Warning Dialog */}
       <Dialog open={isAuthWarningOpen} onOpenChange={setIsAuthWarningOpen}>

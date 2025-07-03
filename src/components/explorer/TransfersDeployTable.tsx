@@ -3,7 +3,10 @@ import { useState, useCallback } from "react";
 import { Copy, ExternalLink, Check, Loader2, Database } from "lucide-react";
 import { useTransfers, useDeploys } from "@/services/explorer";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatTokenAmount } from "@/lib/formatting";
+import { useDateFormat } from "@/store/date-format.store";
+import { formatTokenAmount, formatNumber } from "@/lib/formatting";
+import { formatDateTime } from "@/lib/date-formatting";
+import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
 import { ActivityTab } from "@/components/types/explorer.types";
 
@@ -11,13 +14,14 @@ export function TransfersDeployTable() {
   const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();
+  const { format: dateFormat } = useDateFormat();
   
   const { transfers, isLoading: isLoadingTransfers, error: transfersError } = useTransfers();
   const { deploys, isLoading: isLoadingDeploys, error: deploysError } = useDeploys();
 
   const truncateHash = (hash: string) => {
     if (hash.length > 12) {
-      return `${hash.substring(0, 6)}...${hash.substring(hash.length - 4)}`;
+      return `${hash.substring(0, 4)}..${hash.substring(hash.length - 3)}`;
     }
     return hash;
   };
@@ -88,7 +92,7 @@ export function TransfersDeployTable() {
           <thead>
             <tr className="border-none bg-[#051728]">
               <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Time</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-right text-xs">Amount</th>
+              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Amount</th>
               <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">From</th>
               <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">To</th>
             </tr>
@@ -97,9 +101,17 @@ export function TransfersDeployTable() {
             {limitedTransfers.length > 0 ? (
               limitedTransfers.map((transfer) => (
                 <tr key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <td className="py-3 px-4 text-sm text-white">{transfer.time}</td>
-                  <td className="py-3 px-4 text-sm text-white text-right">
-                    {formatTokenAmount(transfer.amount, transfer.token, format)}
+                  <td className="py-3 px-4 text-sm text-white">
+                    {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-white text-left">
+                    {(() => {
+                      const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
+                      return `${formatNumber(numericAmount, format, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                      })} ${transfer.token}`;
+                    })()}
                   </td>
                   <td className="py-3 px-4 text-sm text-[#83E9FF]">
                     <AddressLink address={transfer.from} />
@@ -167,7 +179,9 @@ export function TransfersDeployTable() {
             {limitedDeploys.length > 0 ? (
               limitedDeploys.map((deploy) => (
                 <tr key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <td className="py-3 px-4 text-sm text-white">{deploy.time}</td>
+                  <td className="py-3 px-4 text-sm text-white">
+                    {formatDateTime(deploy.timestamp, dateFormat)}
+                  </td>
                   <td className="py-3 px-4 text-sm text-[#83E9FF]">
                     <AddressLink address={deploy.user} />
                   </td>

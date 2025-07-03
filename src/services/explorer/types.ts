@@ -104,6 +104,7 @@ export interface NonFundingLedgerUpdate {
         fee?: string;
         nativeTokenFee?: string;
         usdcValue?: string;
+        toPerp?: boolean;
     };
     hash: string;
     time: number;

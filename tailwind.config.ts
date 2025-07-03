@@ -10,6 +10,11 @@ export default {
   plugins: [scrollbar],
     theme: {
     	extend: {
+    		fontFamily: {
+    			'higuen': ['Higuen_Elegant_Serif', 'serif'],
+    			'inter': ['var(--font-inter)', 'Inter', 'sans-serif'],
+    			'sans': ['var(--font-inter)', 'Inter', 'sans-serif'],
+    		},
     		screens: {
     			'custom': '1227px',
     		},

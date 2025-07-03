@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { Users, Timer, Zap, Activity, Coins } from "lucide-react";
+import { Users, Timer, Zap, Activity, Coins, Wallet } from "lucide-react";
 import { ExplorerStatsCardProps } from "@/components/types/explorer.types";
+import Image from "next/image";
 
 export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
   // Fonction pour déterminer quelle icône afficher selon le type
@@ -15,7 +16,14 @@ export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
       case "users":
         return <Users size={16} className="text-[#f9e370]" />;
       case "hypeStaked":
-        return <Coins size={16} className="text-[#f9e370]" />;
+        return <Image 
+          src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg" 
+          alt="HYPE Logo" 
+          width={16} 
+          height={16}
+        />;
+      case "vaultsTvl":
+        return <Wallet size={16} className="text-[#f9e370]" />;
       default:
         return <Activity size={16} className="text-[#f9e370]" />;
     }

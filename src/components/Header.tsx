@@ -8,7 +8,7 @@ import { useHypeBuyPressure } from "@/services/market/order/hooks/useHypeBuyPres
 import { Clock, CalendarDays, TrendingUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
-import { NumberFormatSelector } from "@/components/common/settings/NumberFormatSelector"
+import { SettingsSelector } from "@/components/common/settings/SettingsSelector"
 import { useNumberFormat } from "@/store/number-format.store"
 import { formatNumber } from "@/lib/formatting"
 
@@ -164,9 +164,9 @@ export function Header({
                         </div>
                     )}
                     
-                    {/* Number Format Selector */}
+                    {/* Settings Selector */}
                     <div className="flex items-center">
-                        <NumberFormatSelector />
+                        <SettingsSelector />
                     </div>
                 </div>
             </div>

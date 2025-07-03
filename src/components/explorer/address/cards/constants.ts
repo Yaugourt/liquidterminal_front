@@ -1,4 +1,4 @@
-import { Period } from "./types";
+import { Period } from "@/components/types/explorer.types";
 
 export const PERIODS: Period[] = [
     { key: 'allTime', label: 'All Time' },
@@ -7,4 +7,4 @@ export const PERIODS: Period[] = [
     { key: 'month', label: '30D' },
 ];
 
-export const CARD_BASE_CLASSES = "bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all"; 
+export const CARD_BASE_CLASSES = "p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md"; 
