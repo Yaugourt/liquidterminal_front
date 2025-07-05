@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
-import { useAddressBalance } from "@/services/explorer";
+import { useAddressBalance } from "@/services/explorer/address";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatting';
 import { OverviewCard } from "./OverviewCard";

@@ -7,7 +7,7 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatting';
 import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";
-import { formatAddress, formatHash, formatNumberValue } from '@/services/explorer';
+import { formatAddress, formatHash, formatNumberValue } from '@/services/explorer/address';
 import { useSpotTokens } from '@/services/market/spot/hooks/useSpotMarket';
 
 export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
@@ -93,8 +93,16 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     const formattedAmount = formatNumberValue(tx.amount, format);
     const tokenDisplay = `${formattedAmount} ${tx.token}`;
     
-    // Pour accountClassTransfer, pas de signe (transfert interne)
-    if (tx.method === 'accountClassTransfer') {
+    // Pour les positions Short/Long, appliquer la logique de signe
+    if (tx.isShort) {
+      return `-${tokenDisplay}`;
+    }
+    if (tx.isLong) {
+      return `+${tokenDisplay}`;
+    }
+    
+    // Pour accountClassTransfer et cStakingTransfer, pas de signe (transfert interne)
+    if (tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer') {
       return tokenDisplay;
     }
     
@@ -115,8 +123,16 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
 
   // Fonction pour obtenir la classe CSS de couleur selon le sens du transfert
   const getAmountColorClass = (tx: any) => {
-    // Pour accountClassTransfer, toujours vert (transfert interne)
-    if (tx.method === 'accountClassTransfer') {
+    // Pour les positions Short/Long, appliquer les couleurs appropriées
+    if (tx.isShort) {
+      return 'text-[#FF5757]'; // Rouge pour Short
+    }
+    if (tx.isLong) {
+      return 'text-[#4ADE80]'; // Vert pour Long
+    }
+    
+    // Pour accountClassTransfer et cStakingTransfer, toujours vert (transfert interne)
+    if (tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer') {
       return 'text-[#4ADE80]'; // Vert pour transfert interne
     }
     
@@ -134,6 +150,8 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     
     return 'text-white'; // Blanc par défaut
   };
+
+
   
   // Pagination state
   const [page, setPage] = useState(0);
@@ -182,7 +200,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     }
 
     // Cas spéciaux non-cliquables
-    if (address === "Spot" || address === "Perp") {
+    if (address === "Spot" || address === "Perp" || address === "Staking") {
       return (
         <td className="py-3 px-4 text-sm text-white">
           <span>{address}</span>
@@ -307,7 +325,9 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
                     </button>
                   </div>
                 </td>
-                <td className="py-3 px-4 text-sm text-white">{tx.method}</td>
+                <td className="py-3 px-4 text-sm text-white">
+                  {tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer' ? 'Internal Transfer' : tx.method}
+                </td>
                 <td className="py-3 px-4 text-sm text-white">{tx.age}</td>
                 {renderAddressCell(tx.from)}
                 {renderAddressCell(tx.to)}
@@ -315,12 +335,12 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
                   {formatAmountWithDirection(tx)}
                 </td>
                 <td className="py-3 px-4 text-sm text-white text-right">
-                  {tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(tx.token), format, {
+                  {tx.price ? `$${tx.price.replace('-', '')}` : (tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(tx.token), format, {
                     currency: '$',
                     showCurrency: true
-                  }) : '-'}
+                  }) : '-')}
                 </td>
-                <td className={`py-3 px-4 text-sm text-right ${getAmountColorClass(tx)}`}>{calculateValueWithDirection(tx)}</td>
+                <td className="py-3 px-4 text-sm text-white text-right">{calculateValueWithDirection(tx)}</td>
               </tr>
             ))}
           </tbody>

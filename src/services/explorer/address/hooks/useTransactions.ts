@@ -1,7 +1,7 @@
-import { FormattedUserTransaction, UseTransactionsResult, getUserTransactions, getUserNonFundingLedgerUpdates } from '../index';
+import { FormattedUserTransaction, UseTransactionsResult } from '../types';
+import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { formatNumber } from '@/lib/formatting';
-import { useNumberFormat } from '@/store/number-format.store';
 
 const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
 

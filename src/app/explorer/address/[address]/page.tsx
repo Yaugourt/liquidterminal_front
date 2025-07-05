@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useTransactions, usePortfolio } from "@/services/explorer";
+import { useTransactions, usePortfolio } from "@/services/explorer/address";
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { useAuthContext } from "@/contexts/auth.context";
