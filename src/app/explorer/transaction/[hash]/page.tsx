@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import {  Header } from "@/components/Header"
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table"
 
 export default function TransactionPage() {
     const params = useParams();
@@ -68,16 +69,16 @@ export default function TransactionPage() {
                     <Card className="bg-[#051728CC] border-2 border-[#83E9FF4D] p-0 shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] mt-6">
                         <h2 className="text-xl text-white font-medium p-6 bg-[#051728] border-b border-[#FFFFFF1A] rounded-t-xl">Overview</h2>
                         <div className="p-6">
-                            <table className="w-full text-base">
-                                <tbody className="space-y-4">
-                                    <tr className="flex justify-between py-2">
-                                        <td className="text-[#FFFFFF99]">Type:</td>
-                                        <td className="text-white">{transactionDetails.action.type}</td>
-                                    </tr>
+                            <Table className="w-full text-base">
+                                <TableBody className="space-y-4">
+                                    <TableRow className="flex justify-between py-2">
+                                        <TableCell className="text-[#FFFFFF99]">Type:</TableCell>
+                                        <TableCell className="text-white">{transactionDetails.action.type}</TableCell>
+                                    </TableRow>
                                     {transactionDetails.action.cancels && (
-                                        <tr className="flex justify-between py-2">
-                                            <td className="text-[#FFFFFF99]">Cancels:</td>
-                                            <td className="text-white">
+                                        <TableRow className="flex justify-between py-2">
+                                            <TableCell className="text-[#FFFFFF99]">Cancels:</TableCell>
+                                            <TableCell className="text-white">
                                                 <div className="space-y-2">
                                                     {transactionDetails.action.cancels.map((cancel, index) => (
                                                         <div key={index} className="bg-[#83E9FF4D] p-2 rounded">
@@ -86,17 +87,17 @@ export default function TransactionPage() {
                                                         </div>
                                                     ))}
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </TableCell>
+                                        </TableRow>
                                     )}
                                     {transactionDetails.error && (
-                                        <tr className="flex justify-between py-2">
-                                            <td className="text-[#FFFFFF99]">Error:</td>
-                                            <td className="text-red-500">{transactionDetails.error}</td>
-                                        </tr>
+                                        <TableRow className="flex justify-between py-2">
+                                            <TableCell className="text-[#FFFFFF99]">Error:</TableCell>
+                                            <TableCell className="text-red-500">{transactionDetails.error}</TableCell>
+                                        </TableRow>
                                     )}
-                                </tbody>
-                            </table>
+                                </TableBody>
+                            </Table>
                         </div>
                     </Card>
                 </Card>

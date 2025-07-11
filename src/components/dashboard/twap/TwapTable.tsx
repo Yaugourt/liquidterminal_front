@@ -24,7 +24,7 @@ const formatAddress = (address: string) => {
 const TableHeaderButton = memo(({ header, align }: { header: string; align?: string }) => (
   <Button
     variant="ghost"
-    className={`text-[#FFFFFF99] hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+    className={`text-white hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>
@@ -119,7 +119,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: any, realTimeData:
     <TableCell className="py-3 px-4 text-sm text-white w-[170px]">
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-[120px]">
-          <span className="text-xs text-[#FFFFFF80] font-mono">
+          <span className="text-xs text-[#FFFFFF80]  font-inter">
             {getRemainingTime()}
           </span>
           <span className="text-xs text-[#FFFFFF99]">

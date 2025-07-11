@@ -1,23 +1,21 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchSpotTokens } from '../api';
-import {  
-  UseSpotTokensOptions, 
-  SpotMarketResponse,
-  SpotMarketParams
-} from '../types';
-import { useState, useCallback } from 'react';
+import { SpotMarketResponse } from '../types';
+import strictList from '@/../public/strict.json';
 
 export function useSpotTokens({
   limit = 10,
-  defaultParams = {},
-}: UseSpotTokensOptions = {}) {
-  const [params, setParams] = useState<SpotMarketParams>({ 
-    limit, 
-    ...defaultParams,
-    sortBy: defaultParams.sortBy || 'volume',
-    sortOrder: defaultParams.sortOrder || 'desc'
-  });
-
+  page = 1,
+  sortBy = 'volume',
+  sortOrder = 'desc',
+  strict = false,
+}: {
+  limit?: number;
+  page?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  strict?: boolean;
+} = {}) {
   const { 
     data: response, 
     isLoading, 
@@ -25,27 +23,48 @@ export function useSpotTokens({
     refetch
   } = useDataFetching<SpotMarketResponse>({
     fetchFn: async () => {
-
-      const response = await fetchSpotTokens(params);
-
-      return {
-        data: response.data,
-        total: response.pagination.total,
-        page: response.pagination.page,
-        limit: response.pagination.limit,
-        totalPages: response.pagination.totalPages,
-        totalVolume: response.pagination.totalVolume
-      };
+      if (!strict) {
+        // Mode ALL : pagination côté serveur
+        const response = await fetchSpotTokens({
+          limit,
+          page,
+          sortBy,
+          sortOrder
+        });
+        return {
+          data: response.data,
+          total: response.pagination.total,
+          page: response.pagination.page,
+          limit: response.pagination.limit,
+          totalPages: response.pagination.totalPages,
+          totalVolume: response.pagination.totalVolume
+        };
+      } else {
+        // Mode STRICT : tout récupérer, filtrer, paginer localement
+        const response = await fetchSpotTokens({
+          limit: 1000,
+          page: 1,
+          sortBy,
+          sortOrder
+        });
+        let filteredData = response.data.filter(token => strictList.includes(token.name.trim()));
+        const start = (page - 1) * limit;
+        const end = start + limit;
+        const paginated = filteredData.slice(start, end);
+        return {
+          data: paginated,
+          total: filteredData.length,
+          page,
+          limit,
+          totalPages: Math.ceil(filteredData.length / limit),
+          totalVolume: response.pagination.totalVolume
+        };
+      }
     },
     refreshInterval: 10000,
     maxRetries: 3,
-    dependencies: [params]
+    dependencies: [strict, page, limit, sortBy, sortOrder]
   });
-
-  const updateParams = useCallback((newParams: Partial<SpotMarketParams>) => {
-
-    setParams(prev => ({ ...prev, ...newParams }));
-  }, []);
 
   return {
     data: response?.data || [],
@@ -54,20 +73,20 @@ export function useSpotTokens({
     totalPages: response?.totalPages || 0,
     isLoading,
     error,
-    updateParams,
     refetch,
-    totalVolume: response?.totalVolume || 0
+    totalVolume: response?.totalVolume || 0,
+    strict
   };
 }
 
 // Hook spécifique pour les tokens tendance (top 5)
 export function useTrendingSpotTokens(limit: number = 5, sortBy: string = 'change24h', sortOrder: 'asc' | 'desc' = 'desc') {
-  const { data, isLoading, error, refetch, updateParams, totalVolume } = useSpotTokens({
+  const { data, isLoading, error, refetch, totalVolume } = useSpotTokens({
     limit,
-    defaultParams: {
-      sortBy,
-      sortOrder,
-    }
+    page: 1,
+    sortBy,
+    sortOrder,
+    strict: false
   });
 
   return {
@@ -75,7 +94,6 @@ export function useTrendingSpotTokens(limit: number = 5, sortBy: string = 'chang
     isLoading,
     error,
     refetch,
-    updateParams,
     totalVolume
   };
 } 

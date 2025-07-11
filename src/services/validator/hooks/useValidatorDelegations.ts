@@ -1,6 +1,8 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchValidatorDelegations } from '../api';
 import { UseValidatorDelegationsResult, ValidatorDelegation } from '../types';
+import { useValidators } from './useValidators';
+import { useMemo, useCallback } from 'react';
 
 /**
  * Hook pour récupérer les délégations de staking d'un utilisateur et calculer le total
@@ -10,8 +12,8 @@ import { UseValidatorDelegationsResult, ValidatorDelegation } from '../types';
 export const useValidatorDelegations = (address: string): UseValidatorDelegationsResult => {
   const { 
     data: delegations,
-    isLoading,
-    error,
+    isLoading: delegationsLoading,
+    error: delegationsError,
     refetch
   } = useDataFetching<ValidatorDelegation[]>({
     fetchFn: async () => {
@@ -20,15 +22,12 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
         return [];
       }
 
-
-
       try {
         const response = await fetchValidatorDelegations({
           type: 'delegations',
           user: address
         });
 
-  
         return response;
       } catch (err: any) {
         console.error('Error fetching validator delegations:', err);
@@ -40,14 +39,43 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
     dependencies: [address]
   });
 
+  // Hook pour récupérer les informations des validators
+  const { 
+    validators, 
+    isLoading: validatorsLoading, 
+    error: validatorsError 
+  } = useValidators();
+
+  // Fonction pour obtenir le nom du validator à partir de son adresse
+  const getValidatorName = useCallback((validatorAddress: string) => {
+    const validator = validators.find(v => 
+      v.validator?.toLowerCase() === validatorAddress.toLowerCase()
+    );
+    return validator?.name || `${validatorAddress.slice(0, 8)}...${validatorAddress.slice(-6)}`;
+  }, [validators]);
+
+  // Enrichir les délégations avec les noms des validators
+  const enrichedDelegations = useMemo(() => {
+    if (!delegations) return [];
+    
+    return delegations.map(delegation => ({
+      ...delegation,
+      validatorName: getValidatorName(delegation.validator)
+    }));
+  }, [delegations, getValidatorName]);
+
   // Calculer le total staké
   const totalStaked = delegations?.reduce((total, delegation) => {
     // Convertir la chaîne en nombre et l'ajouter au total
     return total + parseFloat(delegation.amount);
   }, 0) || 0;
 
+  // États de chargement et d'erreur combinés
+  const isLoading = delegationsLoading || validatorsLoading;
+  const error = delegationsError || validatorsError;
+
   return {
-    delegations: delegations || [],
+    delegations: enrichedDelegations,
     totalStaked,
     isLoading,
     error,

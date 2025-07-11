@@ -18,7 +18,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
         <Button
             variant="ghost"
             onClick={onClick}
-            className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-[#FFFFFF99] hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+            className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
         >
             {label}
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -113,19 +113,19 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 label="Name"
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
-                                className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[35%]"
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[35%]"
                             />
                             <TableHeaderCell
                                 label="Price"
                                 onClick={handleSort("price")}
                                 isActive={activeSort === "price"}
-                                className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[20%]"
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]"
                             />
                             <TableHeaderCell
                                 label="24h"
                                 onClick={handleSort("change24h")}
                                 isActive={activeSort === "change24h"}
-                                className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[20%]"
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]"
                             />
                         </TableRow>
                     </TableHeader>

@@ -1,7 +1,6 @@
 import { fetchAllValidators } from '../api';
 import { UseValidatorsResult, Validator, ValidatorStats } from '../types';
 import { useDataFetching } from '../../../hooks/useDataFetching';
-import { useMemo } from 'react';
 
 export const useValidators = (initialData?: Validator[]): UseValidatorsResult => {
   const { data, isLoading, error, refetch } = useDataFetching<{ validators: Validator[], stats: ValidatorStats }>({

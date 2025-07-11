@@ -11,6 +11,7 @@ import { useDateFormat } from "@/store/date-format.store";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatDateTime } from "@/lib/date-formatting";
 import { formatNumber } from "@/lib/formatting";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 // DataTable component similar to ValidatorsVaults
 function DataTable({ isLoading, error, emptyMessage, children }: any) {
@@ -51,9 +52,9 @@ function DataTable({ isLoading, error, emptyMessage, children }: any) {
 
   return (
     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent -mx-4 px-4">
-      <table className="w-full text-sm text-white font-inter table-fixed">
+      <Table className="w-full text-sm text-white font-inter table-fixed">
         {children}
-      </table>
+      </Table>
     </div>
   );
 }
@@ -115,22 +116,22 @@ export function TransactionList({
           >
             {transactions.length > 0 && (
               <>
-                <thead className="text-[#FFFFFF99]">
-                  <tr>
-                    <th className="text-left py-2 pl-0 pr-4 font-normal w-1/5">Hash</th>
-                    <th className="text-left py-2 px-4 font-normal w-1/5">Action</th>
-                    <th className="text-left py-2 px-4 font-normal w-1/5">Block</th>
-                    <th className="text-left py-2 px-4 font-normal w-1/5">Time</th>
-                    <th className="text-left py-2 px-4 font-normal w-1/5">User</th>
-                  </tr>
-                </thead>
-                <tbody>
+                <TableHeader className="text-white">
+                  <TableRow>
+                    <TableHead className="text-left py-2 pl-0 pr-4 font-normal w-1/5">Hash</TableHead>
+                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Action</TableHead>
+                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Block</TableHead>
+                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Time</TableHead>
+                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">User</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {displayedTransactions.map((tx) => (
-                    <tr
+                    <TableRow
                       key={tx.hash}
                       className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
                     >
-                      <td className="py-3 pl-0 pr-4">
+                      <TableCell className="py-3 pl-0 pr-4">
                         <div className="flex items-center gap-2">
                           <span
                             className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
@@ -140,17 +141,17 @@ export function TransactionList({
                           </span>
                           <CopyButton text={tx.hash} />
                         </div>
-                      </td>
-                      <td className="py-3 px-4">
+                      </TableCell>
+                      <TableCell className="py-3 px-4">
                         <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-[#83E9FF] border border-[#83E9FF40]">
                           {tx.action.type}
                         </span>
-                      </td>
-                      <td className="py-3 px-4 text-white text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</td>
-                      <td className="py-3 px-4 text-white text-sm">
+                      </TableCell>
+                      <TableCell className="py-3 px-4 text-white text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</TableCell>
+                      <TableCell className="py-3 px-4 text-white text-sm">
                         {formatDateTime(tx.time, dateFormat)}
-                      </td>
-                      <td className="py-3 px-4">
+                      </TableCell>
+                      <TableCell className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <span
                             className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
@@ -160,10 +161,10 @@ export function TransactionList({
                           </span>
                           <CopyButton text={tx.user} />
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
+                </TableBody>
               </>
             )}
           </DataTable>

@@ -34,9 +34,9 @@ export const OverviewCard = memo(({ balances, isLoading, formatCurrency }: Overv
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
                     <Wallet size={16} className="text-[#f9e370]" />
-                    <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide">OVERVIEW</h3>
+                    <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">OVERVIEW</h3>
                 </div>
-                <span className="text-[16px] text-white font-medium mr-4">
+                <span className="text-[16px] text-white font-medium font-inter mr-4">
                     {isLoading ? (
                         <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />
                     ) : (
@@ -49,10 +49,10 @@ export const OverviewCard = memo(({ balances, isLoading, formatCurrency }: Overv
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {balanceItems.map((item) => (
                     <div key={item.type}>
-                        <div className="text-xs text-white mb-1 tracking-wide font-medium">
+                        <div className="text-xs text-white mb-1 tracking-wide font-medium font-inter">
                             {item.label}
                         </div>
-                        <div className="text-sm text-white font-medium">
+                        <div className="text-sm text-white font-medium font-inter">
                             {isLoading ? (
                                 <span className="text-[#83E9FF60]">Loading...</span>
                             ) : (

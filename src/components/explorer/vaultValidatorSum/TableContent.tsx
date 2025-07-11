@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/date-formatting";
 import { useState } from "react";
+import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
@@ -63,22 +64,22 @@ export function TableContent({
             error={validatorsError}
             emptyMessage="Aucun validator disponible"
           >
-            <thead className="text-[#FFFFFF99]">
-              <tr>
-                <th className="text-left py-3 px-4 font-normal">Name</th>
-                <th className="text-left py-3 px-4 font-normal">Status</th>
-                <th className="text-right py-3 px-4 font-normal">Staked HYPE</th>
-                <th className="text-right py-3 px-4 font-normal">APR</th>
-                <th className="text-right py-3 px-4 font-normal">Commission</th>
-                <th className="text-right py-3 px-4 font-normal">Uptime</th>
-                <th className="text-right py-3 px-4 font-normal">Recent Blocks</th>
-              </tr>
-            </thead>
-            <tbody>
+            <TableHeader className="text-white">
+              <TableRow>
+                <TableHead className="text-left py-3 px-4 font-normal">Name</TableHead>
+                <TableHead className="text-left py-3 px-4 font-normal">Status</TableHead>
+                <TableHead className="text-right py-3 px-4 font-normal">Staked HYPE</TableHead>
+                <TableHead className="text-right py-3 px-4 font-normal">APR</TableHead>
+                <TableHead className="text-right py-3 px-4 font-normal">Commission</TableHead>
+                <TableHead className="text-right py-3 px-4 font-normal">Uptime</TableHead>
+                <TableHead className="text-right py-3 px-4 font-normal">Recent Blocks</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {validators.slice(startIndex, endIndex).map((validator: any) => (
-                <tr key={validator.name} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <td className="py-3 px-4 text-[#83E9FF] font-medium">{validator.name}</td>
-                  <td className="py-3 px-4">
+                <TableRow key={validator.name} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                  <TableCell className="py-3 px-4 text-[#83E9FF] font-medium">{validator.name}</TableCell>
+                  <TableCell className="py-3 px-4">
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       validator.isActive 
                         ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
@@ -86,25 +87,25 @@ export function TableContent({
                     }`}>
                       {validator.isActive ? 'Active' : 'Inactive'}
                     </span>
-                  </td>
-                  <td className="py-3 px-4 text-right">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right">
                     {formatNumber(validator.stake, format, { maximumFractionDigits: 2 })}
-                  </td>
-                  <td className="py-3 px-4 text-right text-[#4ADE80]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right text-[#4ADE80]">
                     {formatNumber(validator.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                  </td>
-                  <td className="py-3 px-4 text-right">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right">
                     {formatNumber(validator.commission, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%
-                  </td>
-                  <td className="py-3 px-4 text-right">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right">
                     {formatNumber(validator.uptime, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                  </td>
-                  <td className="py-3 px-4 text-right text-[#83E9FF]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-right text-[#83E9FF]">
                     {formatNumber(validator.nRecentBlocks, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </DataTable>
         )}
 
@@ -114,31 +115,31 @@ export function TableContent({
             error={stakingError}
             emptyMessage="Aucune transaction disponible"
           >
-            <thead className="text-[#FFFFFF99]">
-              <tr>
-                <th className="text-left py-3 px-4 font-normal">Time</th>
-                <th className="text-left py-3 pl-4 pr-4 font-normal">User</th>
-                <th className="text-left py-3 pl-6 pr-4 font-normal">Type</th>
-                <th className="text-left py-3 px-4 font-normal w-48">Amount</th>
-                <th className="text-left py-3 pl-4 pr-4 font-normal">Validator</th>
-                <th className="text-left py-3 pl-4 pr-4 font-normal">Hash</th>
-              </tr>
-            </thead>
-            <tbody>
+            <TableHeader className="text-white">
+              <TableRow>
+                <TableHead className="text-left py-3 px-4 font-normal">Time</TableHead>
+                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">User</TableHead>
+                <TableHead className="text-left py-3 pl-6 pr-4 font-normal">Type</TableHead>
+                <TableHead className="text-left py-3 px-4 font-normal w-48">Amount</TableHead>
+                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Validator</TableHead>
+                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Hash</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {stakingValidations?.map((tx: any) => (
-                <tr key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <td className="py-3 px-4 text-white">
+                <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                  <TableCell className="py-3 px-4 text-white">
                     {formatDateTime(tx.timestamp, dateFormat)}
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF] font-mono text-sm">
+                      <span className="text-[#83E9FF]  font-inter text-sm">
                         {tx.user.slice(0, 6)}...{tx.user.slice(-4)}
                       </span>
                       <CopyButton text={tx.user} />
                     </div>
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       tx.type === 'Undelegate'
                         ? 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
@@ -146,31 +147,31 @@ export function TableContent({
                     }`}>
                       {tx.type}
                     </span>
-                  </td>
-                  <td className="py-3 px-4 text-left w-48">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-left w-48">
                     <span className="inline-block">
                       {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
                     </span>
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF] font-mono text-sm">
+                      <span className="text-[#83E9FF]  font-inter text-sm">
                         {tx.validator.slice(0, 6)}...{tx.validator.slice(-4)}
                       </span>
                       <CopyButton text={tx.validator} />
                     </div>
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF] font-mono text-sm">
+                      <span className="text-[#83E9FF]  font-inter text-sm">
                         {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
                       </span>
                       <CopyButton text={tx.hash} />
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </DataTable>
         )}
 
@@ -180,35 +181,35 @@ export function TableContent({
             error={unstakingError}
             emptyMessage="Aucune demande d'unstaking en attente"
           >
-            <thead className="text-[#FFFFFF99]">
-              <tr>
-                <th className="text-left py-3 px-4 font-normal">Time</th>
-                <th className="text-left py-3 pl-4 pr-4 font-normal">Address</th>
-                <th className="text-left py-3 px-4 font-normal w-48">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
+            <TableHeader className="text-white">
+              <TableRow>
+                <TableHead className="text-left py-3 px-4 font-normal">Time</TableHead>
+                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Address</TableHead>
+                <TableHead className="text-left py-3 px-4 font-normal w-48">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {unstakingQueue?.map((item: any, index: number) => (
-                <tr key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <td className="py-3 px-4 text-white">
+                <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                  <TableCell className="py-3 px-4 text-white">
                     {formatDateTime(item.timestamp, dateFormat)}
-                  </td>
-                  <td className="py-3 px-4">
+                  </TableCell>
+                  <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF] font-mono text-sm">
+                      <span className="text-[#83E9FF]  font-inter text-sm">
                         {item.user.slice(0, 6)}...{item.user.slice(-4)}
                       </span>
                       <CopyButton text={item.user} />
                     </div>
-                  </td>
-                  <td className="py-3 px-4 text-left text-white w-48">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-left text-white w-48">
                     <span className="inline-block">
                       {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
                     </span>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </DataTable>
         )}
       </div>
@@ -221,21 +222,21 @@ export function TableContent({
       error={vaultsError}
       emptyMessage="Aucun vault disponible"
     >
-      <thead className="text-[#FFFFFF99]">
-        <tr>
-          <th className="text-left py-3 px-6 font-normal">Name</th>
-          <th className="text-left py-3 px-6 font-normal">Status</th>
-          <th className="text-left py-3 px-6 font-normal">TVL</th>
-          <th className="text-right py-3 px-6 font-normal">APR</th>
-          <th className="text-left py-3 px-6 font-normal">Leader</th>
-          <th className="text-left py-3 px-6 font-normal">Created</th>
-        </tr>
-      </thead>
-      <tbody>
+      <TableHeader className="text-white">
+        <TableRow>
+          <TableHead className="text-left py-3 px-6 font-normal">Name</TableHead>
+          <TableHead className="text-left py-3 px-6 font-normal">Status</TableHead>
+          <TableHead className="text-left py-3 px-6 font-normal">TVL</TableHead>
+          <TableHead className="text-right py-3 px-6 font-normal">APR</TableHead>
+          <TableHead className="text-left py-3 px-6 font-normal">Leader</TableHead>
+          <TableHead className="text-left py-3 px-6 font-normal">Created</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {vaults.map((vault: any) => (
-          <tr key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-            <td className="py-3 px-6 text-[#83E9FF] font-medium">{vault.summary.name}</td>
-            <td className="py-3 px-6">
+          <TableRow key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+            <TableCell className="py-3 px-6 text-[#83E9FF] font-medium">{vault.summary.name}</TableCell>
+            <TableCell className="py-3 px-6">
               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                 !vault.summary.isClosed 
                   ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
@@ -243,22 +244,22 @@ export function TableContent({
               }`}>
                 {!vault.summary.isClosed ? 'Open' : 'Closed'}
               </span>
-            </td>
-            <td className="py-3 px-6 text-left">
+            </TableCell>
+            <TableCell className="py-3 px-6 text-left">
               ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
-            </td>
-            <td className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
+            </TableCell>
+            <TableCell className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
               {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-            </td>
-            <td className="py-3 px-6 text-[#83E9FF]">
+            </TableCell>
+            <TableCell className="py-3 px-6 text-[#83E9FF]">
               {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
-            </td>
-            <td className="py-3 px-6 text-white">
+            </TableCell>
+            <TableCell className="py-3 px-6 text-white">
               {formatDate(vault.summary.createTimeMillis, dateFormat)}
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
+      </TableBody>
     </DataTable>
   );
 } 

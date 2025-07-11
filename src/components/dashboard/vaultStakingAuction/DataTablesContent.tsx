@@ -186,29 +186,51 @@ export const VaultTable = memo(({
   vaults, 
   isLoading, 
   error, 
+  paginationDisabled = false,
+  hidePageNavigation = false,
   ...paginationProps 
-}: VaultTableProps & PaginationProps) => {
+}: VaultTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
   const { format } = useNumberFormat();
+  const [copiedVaultAddress, setCopiedVaultAddress] = useState<string | null>(null);
+
+  const copyVaultToClipboard = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopiedVaultAddress(address);
+      setTimeout(() => setCopiedVaultAddress(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy vault address: ', err);
+    }
+  };
 
   const columns = useMemo(() => [
     {
       header: "Name",
       accessor: (item: VaultTableProps["vaults"][0]) => (
-        <div className="relative group">
-          <span className="text-sm">
+        <div className="flex items-center gap-1.5">
+          <Link 
+            href={`/explorer/address/${item.vaultAddress}`}
+            className="text-white font-inter hover:text-[#83E9FF] transition-colors"
+          >
             {item.name.length > 20 ? `${item.name.substring(0, 20)}...` : item.name}
-          </span>
-          {item.name.length > 20 && (
-            <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
-              <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
-                {item.name}
-              </div>
-            </div>
-          )}
+          </Link>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              copyVaultToClipboard(item.vaultAddress || "");
+            }}
+            className="group p-1 rounded transition-colors"
+          >
+            {String(copiedVaultAddress ?? "") === String(item.vaultAddress ?? "") ? (
+              <Check className="h-3.5 w-3.5 text-green-500" />
+            ) : (
+              <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+            )}
+          </button>
         </div>
       ),
       align: "left",
-      className: "w-[400px] px-4"
+      className: "w-[220px] px-4"
     },
     {
       header: "APR",
@@ -224,7 +246,7 @@ export const VaultTable = memo(({
       align: "left",
       className: "w-[100px] px-4 text-right"
     },
-  ] as Column<VaultTableProps["vaults"][0]>[], [format]);
+  ] as Column<VaultTableProps["vaults"][0]>[], [format, copiedVaultAddress, copyVaultToClipboard]);
 
   return (
     <DataTable
@@ -232,6 +254,8 @@ export const VaultTable = memo(({
       columns={columns}
       isLoading={isLoading}
       error={error}
+      paginationDisabled={paginationDisabled}
+      hidePageNavigation={hidePageNavigation}
       {...paginationProps}
     />
   );

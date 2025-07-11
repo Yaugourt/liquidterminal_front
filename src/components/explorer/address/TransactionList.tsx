@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
@@ -9,6 +9,7 @@ import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";
 import { formatAddress, formatHash, formatNumberValue } from '@/services/explorer/address';
 import { useSpotTokens } from '@/services/market/spot/hooks/useSpotMarket';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
   const { format } = useNumberFormat();
@@ -193,24 +194,24 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
   const renderAddressCell = (address: string) => {
     if (!address) {
       return (
-        <td className="py-3 px-4 text-sm text-white">
+        <TableCell className="py-3 px-4 text-sm text-white">
           <span>-</span>
-        </td>
+        </TableCell>
       );
     }
 
     // Cas spéciaux non-cliquables
     if (address === "Spot" || address === "Perp" || address === "Staking") {
       return (
-        <td className="py-3 px-4 text-sm text-white">
+        <TableCell className="py-3 px-4 text-sm text-white">
           <span>{address}</span>
-        </td>
+        </TableCell>
       );
     }
 
     if (address === "Arbitrum") {
       return (
-        <td className="py-3 px-4 text-sm">
+        <TableCell className="py-3 px-4 text-sm">
           <Link 
             href={`https://arbiscan.io/address/${currentAddress}#tokentxns`}
             className="text-[#83E9FF] hover:text-[#83E9FF]/80 truncate block"
@@ -219,13 +220,13 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
           >
             {address}
           </Link>
-        </td>
+        </TableCell>
       );
     }
 
     if (currentAddress && address.toLowerCase() === currentAddress.toLowerCase()) {
       return (
-        <td className="py-3 px-4 text-sm">
+        <TableCell className="py-3 px-4 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-white truncate">
               {formatAddress(address)}
@@ -238,12 +239,12 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
               <Copy size={14} />
             </button>
           </div>
-        </td>
+        </TableCell>
       );
     }
 
     return (
-      <td className="py-3 px-4 text-sm">
+      <TableCell className="py-3 px-4 text-sm">
         <Link 
           href={`/explorer/address/${address}`}
           className="text-[#83E9FF] hover:text-[#83E9FF]/80 truncate block"
@@ -251,7 +252,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
         >
           {formatAddress(address)}
         </Link>
-      </td>
+      </TableCell>
     );
   };
 
@@ -282,26 +283,26 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     return (
     <div className={containerClass}>
       <div className={tableContainerClass}>
-        <table className="w-full">
-          <thead>
-            <tr className="border-none bg-[#051728]">
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Hash</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Method</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Age</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">From</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">To</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Token</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Price</th>
-              <th className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Value</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[#051728]">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow className="border-none bg-[#051728]">
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Hash</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Method</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Age</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">From</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">To</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Token</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Price</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Value</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="bg-[#051728]">
             {paginatedTxs.map((tx, index) => (
-              <tr 
+              <TableRow 
                 key={tx.hash} 
                 className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
               >
-                <td className="py-3 px-4 text-sm">
+                <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
                     <Link 
                       href={`/explorer/transaction/${tx.hash}`}
@@ -324,27 +325,27 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
                       )}
                     </button>
                   </div>
-                </td>
-                <td className="py-3 px-4 text-sm text-white">
+                </TableCell>
+                <TableCell className="py-3 px-4 text-sm text-white">
                   {tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer' ? 'Internal Transfer' : tx.method}
-                </td>
-                <td className="py-3 px-4 text-sm text-white">{tx.age}</td>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-sm text-white">{tx.age}</TableCell>
                 {renderAddressCell(tx.from)}
                 {renderAddressCell(tx.to)}
-                <td className={`py-3 px-4 text-sm ${getAmountColorClass(tx)}`}>
+                <TableCell className={`py-3 px-4 text-sm ${getAmountColorClass(tx)}`}>
                   {formatAmountWithDirection(tx)}
-                </td>
-                <td className="py-3 px-4 text-sm text-white text-right">
+                </TableCell>
+                <TableCell className="py-3 px-4 text-sm text-white text-right">
                   {tx.price ? `$${tx.price.replace('-', '')}` : (tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(tx.token), format, {
                     currency: '$',
                     showCurrency: true
                   }) : '-')}
-                </td>
-                <td className="py-3 px-4 text-sm text-white text-right">{calculateValueWithDirection(tx)}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-sm text-white text-right">{calculateValueWithDirection(tx)}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       
       <div className="border-t border-[#FFFFFF1A] flex items-center mt-auto">

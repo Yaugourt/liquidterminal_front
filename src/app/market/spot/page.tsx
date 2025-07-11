@@ -1,7 +1,8 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { SpotTokensSection as TokensSection,GlobalStatsCard as VolumeCard,TrendingTokensCard,AuctionCard } from "@/components/market";
+import { SpotTokensSection as TokensSection, GlobalStatsCard as VolumeCard, TrendingTokensCard } from "@/components/market";
+import { AuctionCard } from "@/components/market/spot/auction/AuctionCard";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -28,21 +29,22 @@ export default function Market() {
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-      {/* Header toujours en haut */}
+      {/* Main content */}
+      <div className="">
       <Header customTitle="Market Spot" showFees={true} />
       
-      {/* Barre de recherche mobile */}
       <div className="p-2 lg:hidden">
         <SearchBar placeholder="Search..." />
       </div>
 
-      <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mb-6">
+        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
           <VolumeCard />
           <TrendingTokensCard />
           <AuctionCard/>
         </div>
         <TokensSection />
+        </main>
       </div>
     </div>
   );

@@ -1,9 +1,7 @@
 "use client";
 
-import { memo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { PerpSortableFields } from "@/services/market/perp/types";
-import { formatNumber } from "@/lib/format";
+import { useState, memo, useCallback } from "react";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -13,27 +11,119 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, TrendingUp, BarChart2, Scale } from "lucide-react";
+import { ArrowUpDown, Database, Loader2 } from "lucide-react";
+import { formatNumber } from "@/lib/formatting";
+import { useRouter } from "next/navigation";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
+import { useNumberFormat } from "@/store/number-format.store";
 import { Pagination, TokenIcon, getPriceChangeColor, formatPriceChange } from "@/components/common";
-import { LoadingState, ErrorState, EmptyState } from "../common/TableStates";
-import { COLORS, STYLES } from "../common/constants";
-import { PerpToken, SortOrder } from "../common/types";
+import { PerpSortableFields } from "@/services/market/perp/types";
+import { PerpToken } from "../common/types";
 
-export const PerpTokenTable = memo(function PerpTokenTable() {
+interface TableHeaderCellProps {
+  label: string;
+  onClick?: () => void;
+  className?: string;
+  isActive?: boolean;
+}
+
+// Composant pour l'en-tête de colonne
+const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps) => (
+  <TableHead className={className}>
+    <Button
+      variant="ghost"
+      onClick={onClick}
+      className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+    >
+      {label}
+      {onClick && <ArrowUpDown className="ml-2 h-4 w-4" />}
+    </Button>
+  </TableHead>
+));
+
+TableHeaderCell.displayName = 'TableHeaderCell';
+
+// Composant pour l'état vide
+const EmptyState = memo(() => (
+  <TableRow>
+    <TableCell colSpan={6} className="text-center py-8">
+      <div className="flex flex-col items-center justify-center">
+        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
+        <p className="text-white text-lg">Aucun token disponible</p>
+        <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
+      </div>
+    </TableCell>
+  </TableRow>
+));
+
+EmptyState.displayName = 'EmptyState';
+
+// Composant pour une ligne de token
+const TokenRow = memo(({ token, onClick, format }: { token: PerpToken; onClick: () => void; format: any }) => {
+  const formatFunding = (funding: number) => {
+    const percentage = funding * 100;
+    return `${percentage > 0 ? '+' : ''}${percentage.toFixed(4)}%`;
+  };
+
+  return (
+    <TableRow
+      className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
+      onClick={onClick}
+    >
+      <TableCell className="py-2 pl-4 w-[17%]">
+        <div className="flex items-center gap-2">
+          <TokenIcon src={token.logo} name={token.name} size="sm" />
+          <span className="text-white text-sm">{token.name}</span>
+        </div>
+      </TableCell>
+      <TableCell className="py-2 pl-0 pr-8 w-[10%]">
+        <div className="text-white text-sm">
+          ${formatNumber(token.price, format)}
+        </div>
+      </TableCell>
+      <TableCell className="py-2 pl-4 pr-20 w-[10%]">
+        <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+          {formatPriceChange(token.change24h)}
+        </div>
+      </TableCell>
+      <TableCell className="py-2 pl-0 w-[20%]">
+        <div className="text-white text-sm">
+          ${formatNumber(token.volume, format)}
+        </div>
+      </TableCell>
+      <TableCell className="py-2 pl-4 pr-12 w-[20%]">
+        <div className="text-white text-sm">
+          ${formatNumber(token.openInterest, format)}
+        </div>
+      </TableCell>
+      <TableCell className="py-2 pr-0 w-[11%]">
+        <div className="text-sm" style={{color: token.funding >= 0 ? '#52C41A' : '#FF4D4F'}}>
+          {formatFunding(token.funding)}
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+});
+
+TokenRow.displayName = 'TokenRow';
+
+interface BaseTableProps {
+  loading?: boolean;
+}
+
+export function PerpTokenTable({ loading: initialLoading = false }: BaseTableProps) {
     const router = useRouter();
     const [sortField, setSortField] = useState<PerpSortableFields>("volume");
-    const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [pageSize, setPageSize] = useState(10);
+  const { format } = useNumberFormat();
     
     const { 
         data: tokens, 
-        isLoading, 
-        error,
         page,
-        totalPages,
         total,
-        updateParams
+    updateParams,
+    isLoading
     } = usePerpMarkets({
         limit: pageSize,
         defaultParams: {
@@ -42,179 +132,99 @@ export const PerpTokenTable = memo(function PerpTokenTable() {
         }
     });
     
-    const handleTokenClick = (tokenName: string) => {
-        router.push(`/market/perp/${tokenName}`);
-    };
-
-    const handleSort = (field: string) => {
-        if (!["volume", "openInterest", "change24h"].includes(field)) {
-            return;
-        }
-
-        const newField = field as PerpSortableFields;
-        if (sortField === newField) {
+  const handleSort = useCallback((field: PerpSortableFields) => {
+    if (sortField === field) {
             const newOrder = sortOrder === "asc" ? "desc" : "asc";
             setSortOrder(newOrder);
             updateParams({ 
-                sortBy: newField, 
+        sortBy: field, 
                 sortOrder: newOrder,
                 page: 1
             });
         } else {
-            setSortField(newField);
+      setSortField(field);
             setSortOrder("desc");
             updateParams({ 
-                sortBy: newField, 
+        sortBy: field, 
                 sortOrder: "desc",
                 page: 1
             });
         }
-    };
-    
-    const formatFunding = (funding: number) => {
-        const percentage = funding * 100;
-        return `${percentage > 0 ? '+' : ''}${percentage.toFixed(4)}%`;
-    };
+  }, [sortField, sortOrder, updateParams]);
 
-    const isSortable = (field: string): boolean => {
-        return ["volume", "openInterest", "change24h"].includes(field);
-    };
+  const handleTokenClick = useCallback((tokenName: string) => {
+    router.push(`/market/perp/${encodeURIComponent(tokenName)}`);
+  }, [router]);
 
-    const getSortButtonClass = (field: string): string => {
-        const isActive = sortField === field;
-        return `${STYLES.button.base} ${STYLES.button.sortable} ${
-            !isSortable(field) ? 'cursor-default opacity-50' : ''
-        } ${isActive ? `text-[${COLORS.primary}]` : `text-[${COLORS.textSecondary}]`}`;
-    };
-    
-    const getColumnIcon = (field: string) => {
-        switch (field) {
-            case "change24h":
-                return <TrendingUp className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-            case "volume":
-                return <BarChart2 className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-            case "openInterest":
-                return <Scale className="mr-1.5 h-3.5 w-3.5 opacity-70" />;
-            default:
-                return null;
-        }
-    };
-    
-    if (isLoading) {
-        return <LoadingState />;
-    }
-
-    if (error) {
-        return <ErrorState message={error.message} />;
-    }
-
-    if (!tokens || tokens.length === 0) {
-        return <EmptyState />;
+  if (isLoading && !tokens.length) {
+    return (
+      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+        <div className="flex justify-center items-center h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+        </div>
+      </Card>
+    );
     }
     
     return (
-        <div className={STYLES.table.container}>
+    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
             <Table>
                 <TableHeader>
                     <TableRow className="border-none bg-[#051728]">
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}] pl-4`}>
-                            <Button
-                                variant="ghost"
-                                className={`text-[${COLORS.textSecondary}] ${STYLES.button.base}`}
-                            >
-                                Name
-                            </Button>
-                        </TableHead>
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}]`}>
-                            <Button
-                                variant="ghost"
-                                className={getSortButtonClass("price")}
-                            >
-                                Price
-                            </Button>
-                        </TableHead>
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}]`}>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("change24h")}
-                                className={getSortButtonClass("change24h")}
-                            >
-                                {getColumnIcon("change24h")}
-                                Change
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}]`}>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("volume")}
-                                className={getSortButtonClass("volume")}
-                            >
-                                {getColumnIcon("volume")}
-                                Volume
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}]`}>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("openInterest")}
-                                className={getSortButtonClass("openInterest")}
-                            >
-                                {getColumnIcon("openInterest")}
-                                Open Interest
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead className={`text-[${COLORS.textSecondary}] font-normal py-1 bg-[${COLORS.background}] pr-4`}>
-                            <Button
-                                variant="ghost"
-                                className={getSortButtonClass("funding")}
-                            >
-                                Funding Rate
-                            </Button>
-                        </TableHead>
+              <TableHeaderCell
+                label="Name"
+                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[17%]"
+              />
+              <TableHeaderCell
+                label="Price"
+                onClick={() => handleSort("price")}
+                isActive={sortField === "price"}
+                className="text-white font-normal py-1 bg-[#051728] pl-0 pr-8 w-[10%]"
+              />
+              <TableHeaderCell
+                label="24h"
+                onClick={() => handleSort("change24h")}
+                isActive={sortField === "change24h"}
+                className="text-white font-normal py-1 bg-[#051728] pl-4 pr-20 w-[10%]"
+              />
+              <TableHeaderCell
+                label="Volume"
+                onClick={() => handleSort("volume")}
+                isActive={sortField === "volume"}
+                className="text-white font-normal py-1 bg-[#051728] pl-0 w-[20%]"
+              />
+              <TableHeaderCell
+                label="Open Interest"
+                onClick={() => handleSort("openInterest")}
+                isActive={sortField === "openInterest"}
+                className="text-white font-normal py-1 bg-[#051728] pl-4 pr-12 w-[20%]"
+              />
+              <TableHeaderCell
+                label="Funding Rate"
+                className="text-white font-normal py-1 bg-[#051728] pr-0 w-[11%]"
+              />
                     </TableRow>
                 </TableHeader>
-                <TableBody className={`bg-[${COLORS.background}]`}>
-                    {tokens.map((token: PerpToken) => (
-                        <TableRow
+          <TableBody className="bg-[#051728]">
+            {tokens && tokens.length > 0 ? (
+              tokens.map((token) => (
+                <TokenRow
                             key={token.name}
-                            className={STYLES.table.row}
+                  token={token}
                             onClick={() => handleTokenClick(token.name)}
-                        >
-                            <TableCell className={`${STYLES.table.cell.base} ${STYLES.table.cell.first}`}>
-                                <div className="flex items-center gap-2">
-                                    <TokenIcon src={token.logo} name={token.name} size="sm" />
-                                    <span className={`text-[${COLORS.neutral}] text-sm`}>{token.name}</span>
-                                </div>
-                            </TableCell>
-                            <TableCell className={`${STYLES.table.cell.base} text-right text-[${COLORS.neutral}] text-sm`}>
-                                ${formatNumber(token.price)}
-                            </TableCell>
-                            <TableCell className={`${STYLES.table.cell.base} text-right text-sm`}>
-                                <span className={getPriceChangeColor(token.change24h)}>
-                                    {formatPriceChange(token.change24h)}
-                                </span>
-                            </TableCell>
-                            <TableCell className={`${STYLES.table.cell.base} text-right text-[${COLORS.neutral}] text-sm`}>
-                                ${formatNumber(token.volume, 'volume')}
-                            </TableCell>
-                            <TableCell className={`${STYLES.table.cell.base} text-right text-[${COLORS.neutral}] text-sm`}>
-                                ${formatNumber(token.openInterest, 'volume')}
-                            </TableCell>
-                            <TableCell className={`${STYLES.table.cell.base} ${STYLES.table.cell.last} text-right text-sm`}>
-                                <span className={getPriceChangeColor(token.funding * 100)}>
-                                    {formatPriceChange(token.funding * 100, 4)}
-                                </span>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                  format={format}
+                />
+              ))
+            ) : (
+              <EmptyState />
+            )}
                 </TableBody>
             </Table>
+      </div>
 
-            <div className={`border-t border-[${COLORS.border}] flex items-center`}>
-                <div className="w-full px-4 py-3">
+      {/* Pagination intégrée */}
+      <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
                     <Pagination
                         total={total}
                         page={page - 1}
@@ -227,9 +237,9 @@ export const PerpTokenTable = memo(function PerpTokenTable() {
                                 limit: newRowsPerPage 
                             });
                         }}
+          rowsPerPageOptions={[5, 10, 15, 20]}
                     />
                 </div>
-            </div>
-        </div>
+    </Card>
     );
-});
+}

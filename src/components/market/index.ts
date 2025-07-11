@@ -8,7 +8,7 @@ export * from './spot';
 export * from './perp';
 
 // Auction exports
-export * from './auction';
+export * from './perp/auction';
 
 // Root exports
 export { MarketStatsCard } from './MarketStatsCard'; 

@@ -27,13 +27,15 @@ interface DataTableWithPaginationProps<T> extends DataTableProps<T> {
   onPageChange?: (newPage: number) => void;
   onRowsPerPageChange?: (newRowsPerPage: number) => void;
   showPagination?: boolean;
+  paginationDisabled?: boolean;
+  hidePageNavigation?: boolean;
 }
 
 // Optimisation des composants répétés
 const TableHeaderButton = memo(({ header, align }: TableHeaderButtonProps & { align?: string }) => (
   <Button
     variant="ghost"
-    className={`text-[#FFFFFF99] hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+    className={`text-white hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>
@@ -51,6 +53,8 @@ export function DataTable<T>({
   onPageChange,
   onRowsPerPageChange,
   showPagination = false,
+  paginationDisabled = false,
+  hidePageNavigation = false,
 }: DataTableWithPaginationProps<T>) {
   return (
     <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg mx-auto">
@@ -131,6 +135,8 @@ export function DataTable<T>({
                 onPageChange={onPageChange}
                 onRowsPerPageChange={onRowsPerPageChange}
                 rowsPerPageOptions={[5, 10, 15, 20]}
+                disabled={paginationDisabled}
+                hidePageNavigation={hidePageNavigation}
               />
             </div>
           )}

@@ -4,7 +4,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
-import { MessageProvider } from "@/components/message/MessageProvider";
+
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
@@ -28,10 +28,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <AuthProvider>
-        <MessageProvider>
+       
           <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
           {children}
-        </MessageProvider>
+    
       </AuthProvider>
     </PrivyProvider>
   );

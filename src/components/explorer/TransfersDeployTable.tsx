@@ -1,14 +1,15 @@
 import { Card } from "@/components/ui/card";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Copy, ExternalLink, Check, Loader2, Database } from "lucide-react";
 import { useTransfers, useDeploys } from "@/services/explorer";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatTokenAmount, formatNumber } from "@/lib/formatting";
+import {  formatNumber } from "@/lib/formatting";
 import { formatDateTime } from "@/lib/date-formatting";
 import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
 import { ActivityTab } from "@/components/types/explorer.types";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 export function TransfersDeployTable() {
   const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
@@ -88,23 +89,23 @@ export function TransfersDeployTable() {
 
     return (
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <table className="w-full">
-          <thead>
-            <tr className="border-none bg-[#051728]">
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Time</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Amount</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">From</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">To</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[#051728]">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow className="border-none bg-[#051728]">
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Amount</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">From</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">To</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="bg-[#051728]">
             {limitedTransfers.length > 0 ? (
               limitedTransfers.map((transfer) => (
-                <tr key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <td className="py-3 px-4 text-sm text-white">
+                <TableRow key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                  <TableCell className="py-3 px-4 text-sm text-white">
                     {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-white text-left">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-white text-left">
                     {(() => {
                       const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
                       return `${formatNumber(numericAmount, format, {
@@ -112,28 +113,28 @@ export function TransfersDeployTable() {
                         maximumFractionDigits: 2
                       })} ${transfer.token}`;
                     })()}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
                     <AddressLink address={transfer.from} />
-                  </td>
-                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
                     <AddressLink address={transfer.to} />
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan={4} className="py-8">
+              <TableRow>
+                <TableCell colSpan={4} className="py-8">
                   <div className="flex flex-col items-center justify-center text-center">
                     <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
                     <p className="text-white text-sm mb-1">Aucun transfer disponible</p>
                     <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     );
   };
@@ -166,26 +167,26 @@ export function TransfersDeployTable() {
 
     return (
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <table className="w-full">
-          <thead>
-            <tr className="border-none bg-[#051728]">
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Time</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">User</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Action</th>
-              <th className="text-[#FFFFFF99] font-normal py-3 px-4 text-left text-xs">Hash</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[#051728]">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow className="border-none bg-[#051728]">
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">User</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Action</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Hash</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="bg-[#051728]">
             {limitedDeploys.length > 0 ? (
               limitedDeploys.map((deploy) => (
-                <tr key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <td className="py-3 px-4 text-sm text-white">
+                <TableRow key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                  <TableCell className="py-3 px-4 text-sm text-white">
                     {formatDateTime(deploy.timestamp, dateFormat)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
                     <AddressLink address={deploy.user} />
-                  </td>
-                  <td className="py-3 px-4 text-sm">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm">
                     <span className={`px-2 py-0.5 rounded text-xs border ${
                       deploy.status === 'error' 
                         ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
@@ -193,28 +194,28 @@ export function TransfersDeployTable() {
                     }`}>
                       {deploy.action}
                     </span>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-[#83E9FF]">
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
                     <div className="flex items-center">
                       {truncateHash(deploy.hash)}
                       <ExternalLink className="ml-1.5 h-3.5 w-3.5 opacity-60 hover:opacity-100 cursor-pointer" />
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan={4} className="py-8">
+              <TableRow>
+                <TableCell colSpan={4} className="py-8">
                   <div className="flex flex-col items-center justify-center text-center">
                     <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
                     <p className="text-white text-sm mb-1">Aucun deploy disponible</p>
                     <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     );
   };

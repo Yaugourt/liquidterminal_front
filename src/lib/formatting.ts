@@ -214,7 +214,8 @@ export function formatNumber(
   } = options;
 
   const formatConfig = NUMBER_FORMATS[format];
-  
+  // PATCH: Utilise la locale du format pour le formatage natif si besoin
+  const locale = formatConfig.locale || 'en-US';
   // Formatter le nombre en chaîne avec les décimales appropriées
   let parts = Math.abs(value).toFixed(maximumFractionDigits).split('.');
   
@@ -276,11 +277,14 @@ export function formatMetricValue(
     showCurrency
   };
 
+  if (numValue >= 1000000000) {
+    return `${prefix}${formatNumber(numValue / 1000000000, format, formatOptions)}${suffix} B`;
+  }
   if (numValue >= 1000000) {
-    return `${prefix}${formatNumber(numValue / 1000000, format, formatOptions)}${suffix}M`;
+    return `${prefix}${formatNumber(numValue / 1000000, format, formatOptions)}${suffix} M`;
   }
   if (numValue >= 1000) {
-    return `${prefix}${formatNumber(numValue / 1000, format, formatOptions)}${suffix}K`;
+    return `${prefix}${formatNumber(numValue / 1000, format, formatOptions)}${suffix} K`;
   }
   return `${prefix}${formatNumber(numValue, format, formatOptions)}${suffix}`;
 }

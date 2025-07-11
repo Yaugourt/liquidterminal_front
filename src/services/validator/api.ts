@@ -1,5 +1,5 @@
 import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
-import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, StakingValidationsResponse, FormattedStakingValidation, StakingValidationsParams, StakingValidationsPaginatedResponse, StakingValidation, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UnstakingQueueItem, ValidatorStats } from './types';
+import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, StakingValidationsResponse, FormattedStakingValidation, StakingValidationsParams, StakingValidationsPaginatedResponse, StakingValidation, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UnstakingQueueItem, ValidatorStats, DelegatorHistoryRequest, DelegatorHistoryResponse, DelegatorRewardsRequest, DelegatorRewardsResponse, DelegatorSummaryRequest, DelegatorSummaryResponse } from './types';
 
 /**
  * Récupère les délégations de staking d'un utilisateur
@@ -285,6 +285,117 @@ export const fetchUnstakingQueuePaginated = async (params: UnstakingQueueParams 
     };
   } catch (error) {
     console.error('Error fetching paginated unstaking queue:', error);
+    throw error;
+  }
+};
+
+/**
+ * Récupère l'historique des délégations d'un utilisateur
+ * @param params Les paramètres de la requête
+ * @returns L'historique des délégations de l'utilisateur
+ */
+export const fetchDelegatorHistory = async (
+  params: DelegatorHistoryRequest
+): Promise<DelegatorHistoryResponse> => {
+  try {
+    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+    const response = await fetchExternal<DelegatorHistoryResponse>(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error('Error fetching delegator history:', error);
+    
+    if (error.response) {
+      // Propager l'erreur avec le statut HTTP et le message
+      throw {
+        message: error.response.data.message || 'Failed to fetch delegator history',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
+    }
+    
+    throw error;
+  }
+};
+
+/**
+ * Récupère les récompenses des délégations d'un utilisateur
+ * @param params Les paramètres de la requête
+ * @returns Les récompenses des délégations de l'utilisateur
+ */
+export const fetchDelegatorRewards = async (
+  params: DelegatorRewardsRequest
+): Promise<DelegatorRewardsResponse> => {
+  try {
+    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+    const response = await fetchExternal<DelegatorRewardsResponse>(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error('Error fetching delegator rewards:', error);
+    
+    if (error.response) {
+      // Propager l'erreur avec le statut HTTP et le message
+      throw {
+        message: error.response.data.message || 'Failed to fetch delegator rewards',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
+    }
+    
+    throw error;
+  }
+};
+
+/**
+ * Récupère le résumé des délégations d'un utilisateur
+ * @param params Les paramètres de la requête
+ * @returns Le résumé des délégations de l'utilisateur
+ */
+export const fetchDelegatorSummary = async (
+  params: DelegatorSummaryRequest
+): Promise<DelegatorSummaryResponse> => {
+  try {
+    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+    const response = await fetchExternal<DelegatorSummaryResponse>(url, {
+      method: 'POST',
+      body: JSON.stringify(params),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error('Error fetching delegator summary:', error);
+    
+    if (error.response) {
+      // Propager l'erreur avec le statut HTTP et le message
+      throw {
+        message: error.response.data.message || 'Failed to fetch delegator summary',
+        response: {
+          status: error.response.status,
+          data: error.response.data
+        }
+      };
+    }
+    
     throw error;
   }
 }; 

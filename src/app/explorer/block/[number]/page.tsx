@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation"
 import { useBlockDetails } from "@/services/explorer"
 import { Header } from "@/components/Header"
 import { use, useCallback } from "react"
-import { BlockHeader, BlockTransactionList as TransactionList, LoadingState, ErrorState } from "@/components/explorer"
+import { BlockHeader, BlockTransactionList as TransactionList } from "@/components/explorer"
+import { Loader2, AlertCircle } from "lucide-react"
 
 interface BlockDetailsProps {
     params: Promise<{
@@ -28,11 +29,31 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     }, [router]);
 
     if (isLoading) {
-        return <LoadingState message="Loading block details..." />;
+        return (
+            <div className="min-h-screen">
+                <Header customTitle="Explorer" showFees={true} />
+                <div className="flex justify-center items-center h-[400px]">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+                        <p className="text-white text-lg">Loading block details...</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error || !blockDetails) {
-        return <ErrorState message={error?.message || 'Failed to load block details'} />;
+        return (
+            <div className="min-h-screen">
+                <Header customTitle="Explorer" showFees={true} />
+                <div className="flex justify-center items-center h-[400px]">
+                    <div className="flex flex-col items-center gap-4">
+                        <AlertCircle className="h-8 w-8 text-red-500" />
+                        <p className="text-red-500 text-lg">{error?.message || 'Failed to load block details'}</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (

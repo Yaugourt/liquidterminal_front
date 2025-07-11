@@ -36,7 +36,8 @@ export const TabSection = memo(({
   const transformedVaults = useMemo(() => vaults.map(vault => ({
     name: vault.summary.name,
     apr: vault.apr,
-    tvl: parseFloat(vault.summary.tvl)
+    tvl: parseFloat(vault.summary.tvl),
+    vaultAddress: vault.summary.vaultAddress
   })), [vaults]);
 
   const allAuctions = useMemo(() => (
@@ -110,6 +111,8 @@ export const TabSection = memo(({
             vaults={paginatedVaults}
             isLoading={vaultsLoading && !initialVaults}
             error={vaultsError}
+            paginationDisabled={false}
+            hidePageNavigation={true}
             {...paginationProps}
           />
         )}

@@ -1,78 +1,107 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, Scale, BarChart2, Clock, Wallet } from "lucide-react";
+import { formatNumber } from "@/lib/formatting";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
-import { formatNumber } from "@/lib/format";
+import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
+import { Loader2, BarChart2, Clock, Scale, Wallet } from "lucide-react";
+import { useNumberFormat } from "@/store/number-format.store";
 
-function GlobalStatsComponent() {
-  const { stats: globalStats, isLoading, error } = usePerpGlobalStats();
+/**
+ * Carte affichant les statistiques globales du marché perpetuel
+ */
+export const GlobalStats = memo(function GlobalStats() {
+  const { stats, isLoading, error } = usePerpGlobalStats();
+  const { feesStats, isLoading: feesLoading } = useFeesStats();
+  const { format } = useNumberFormat();
 
   if (error) {
     return (
-      <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all">
-        <div className="flex justify-center items-center h-24">
-          <p className="text-red-500">Une erreur est survenue lors du chargement des statistiques</p>
+      <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full">
+        <div className="flex justify-center items-center h-full">
+          <p className="text-red-500 text-sm">Une erreur est survenue</p>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all">
-      <div className="flex justify-between items-start mb-5">
-        <h3 className="text-[15px] text-white font-medium font-inter">Market Stats</h3>
-        {isLoading && <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />}
+    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full flex flex-col">
+      {/* Header avec icône et titre */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-1.5">
+          <BarChart2 size={18} className="text-[#f9e370]" />
+          <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">GLOBAL STATS</h3>
+        </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center p-4">
-          <Loader2 className="w-5 h-5 text-[#83E9FF] animate-spin" />
+      {/* Statistiques détaillées - flex-1 pour occuper l'espace restant */}
+      {isLoading || feesLoading ? (
+        <div className="flex justify-center items-center flex-1">
+          <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm flex-1 content-center">
           <div>
-            <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide flex items-center">
-              <Scale className="h-3.5 w-3.5 text-[#83E9FF80] mr-1.5" />
-              Total Open Interest
+            <div className="text-white mb-2 flex items-center font-medium">
+              <Scale className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              Open Interest
             </div>
-            <div className="text-white text-sm font-medium">
-              ${formatNumber(globalStats?.totalOpenInterest || 0)}
+            <div className="text-white font-medium text-xs pl-5">
+              {stats ? formatNumber(stats.totalOpenInterest, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
             </div>
           </div>
 
           <div>
-            <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide flex items-center">
-              <BarChart2 className="h-3.5 w-3.5 text-[#83E9FF80] mr-1.5" />
+            <div className="text-white mb-2 flex items-center font-medium">
+              <BarChart2 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
               24h Volume
             </div>
-            <div className="text-white text-sm font-medium">
-              ${formatNumber(globalStats?.totalVolume24h || 0)}
+            <div className="text-white font-medium text-xs pl-5">
+              {stats ? formatNumber(stats.totalVolume24h, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
             </div>
           </div>
 
           <div>
-            <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide flex items-center">
-              <Clock className="h-3.5 w-3.5 text-[#83E9FF80] mr-1.5" />
-              Total liquidations 24h
+            <div className="text-white mb-2 flex items-center font-medium">
+              <Clock className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              Daily Fees
             </div>
-            <div className="text-white text-sm font-medium">
-              {globalStats?.totalTrades24h ? `$${formatNumber(globalStats?.totalTrades24h)}` : "Coming soon"}
+            <div className="text-white font-medium text-xs pl-5">
+              {feesStats ? formatNumber(feesStats.dailyFees, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
             </div>
           </div>
 
           <div>
-            <div className="text-[#FFFFFF80] text-xs mb-1 tracking-wide flex items-center">
-              <Wallet className="h-3.5 w-3.5 text-[#83E9FF80] mr-1.5" />
+            <div className="text-white mb-2 flex items-center font-medium">
+              <Wallet className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
               HLP TVL
             </div>
-            <div className="text-white text-sm font-medium">
-              ${formatNumber(globalStats?.hlpTvl || 0)}
+            <div className="text-white font-medium text-xs pl-5">
+              {stats ? formatNumber(stats.hlpTvl, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
             </div>
           </div>
         </div>
       )}
     </Card>
   );
-}
-
-export const GlobalStats = memo(GlobalStatsComponent); 
+}); 

@@ -161,9 +161,10 @@ export interface VaultTableProps {
     name: string;
     apr: number;
     tvl: number;
+    vaultAddress?: string;
   }>;
-  isLoading: boolean;
-  error: Error | null;
+  isLoading?: boolean;
+  error?: any;
 }
 
 /**

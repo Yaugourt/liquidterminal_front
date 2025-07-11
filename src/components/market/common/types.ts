@@ -18,8 +18,8 @@ export interface PerpToken extends BaseToken {
 
 export type SortOrder = "asc" | "desc";
 
-export type SpotSortableFields = "volume" | "marketCap" | "change24h";
-export type PerpSortableFields = "volume" | "openInterest" | "change24h";
+export type SpotSortableFields = "volume" | "marketCap" | "change24h" | "price" | "name";
+export type PerpSortableFields = "volume" | "openInterest" | "change24h" | "price";
 
 export interface TableState {
   sortField: SpotSortableFields | PerpSortableFields;

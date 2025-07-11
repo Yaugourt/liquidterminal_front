@@ -6,6 +6,8 @@ export interface AuctionInfo {
   deployGas: string;
   currency: "USDC" | "HYPE";
   deployGasAbs: string;
+  tokenId: string;
+  index: number;
 }
 
 // Type pour la réponse API des auctions

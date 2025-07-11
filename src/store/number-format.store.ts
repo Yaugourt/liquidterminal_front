@@ -8,6 +8,7 @@ export interface NumberFormat {
   example: string;
   thousandsSeparator: string;
   decimalSeparator: string;
+  locale: string;
 }
 
 export const NUMBER_FORMATS: Record<NumberFormatType, NumberFormat> = {
@@ -15,25 +16,29 @@ export const NUMBER_FORMATS: Record<NumberFormatType, NumberFormat> = {
     type: 'US', 
     example: '1,234.56', 
     thousandsSeparator: ',', 
-    decimalSeparator: '.' 
+    decimalSeparator: '.',
+    locale: 'en-US'
   },
   EU: { 
     type: 'EU', 
     example: '1.234,56', 
     thousandsSeparator: '.', 
-    decimalSeparator: ',' 
+    decimalSeparator: ',',
+    locale: 'de-DE'
   },
   FR: { 
     type: 'FR', 
     example: '1 234,56', 
     thousandsSeparator: ' ', 
-    decimalSeparator: ',' 
+    decimalSeparator: ',',
+    locale: 'fr-FR'
   },
   PLAIN: { 
     type: 'PLAIN', 
     example: '1234,56', 
     thousandsSeparator: '', 
-    decimalSeparator: ',' 
+    decimalSeparator: ',',
+    locale: 'en-US'
   }
 };
 
@@ -45,7 +50,7 @@ interface NumberFormatState {
 export const useNumberFormat = create<NumberFormatState>()(
   persist(
     (set) => ({
-      format: 'FR', // Format par défaut
+      format: 'US', // Format par défaut (était 'FR')
       setFormat: (format) => set({ format }),
     }),
     {

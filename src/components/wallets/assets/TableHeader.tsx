@@ -31,7 +31,7 @@ const SortableColumnHeader = ({
   <Button
     variant="ghost"
     onClick={() => onSort(sortKey)}
-    className={`text-[#FFFFFF99] font-normal hover:text-white p-0 flex items-center ${isActive ? 'text-[#83E9FF]' : ''} ${className}`}
+    className={`text-white font-normal hover:text-white p-0 flex items-center ${isActive ? 'text-[#83E9FF]' : ''} ${className}`}
   >
     {label}
     <ArrowUpDown className={`ml-2 h-4 w-4 ${isActive ? 'text-[#83E9FF]' : ''}`} />
@@ -50,7 +50,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
     return (
       <TableHeader>
         <TableRow className="border-none bg-[#051728]">
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4 w-[160px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[160px]">
             <SortableColumnHeader 
               label="Name" 
               sortKey="coin" 
@@ -59,7 +59,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[100px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[100px]">
             <SortableColumnHeader 
               label="Price" 
               sortKey="price" 
@@ -68,7 +68,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[80px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[80px]">
             <SortableColumnHeader 
               label="Type" 
               sortKey="type" 
@@ -77,7 +77,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Margin used" 
               sortKey="marginUsedValue" 
@@ -86,7 +86,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Position value" 
               sortKey="positionValueNum" 
@@ -95,7 +95,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] w-[140px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
               label="Entry price" 
               sortKey="entryPriceNum" 
@@ -104,7 +104,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4 w-[140px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4 w-[140px]">
             <SortableColumnHeader 
               label="Liquidation" 
               sortKey="liquidationNum" 
@@ -121,7 +121,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
   return (
     <TableHeader>
       <TableRow className="border-none bg-[#051728]">
-        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pl-4">
+        <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4">
           <SortableColumnHeader 
             label="Name" 
             sortKey="coin" 
@@ -130,7 +130,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortDirection={sortDirection}
           />
         </TableHead>
-        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <TableHead className="text-white font-normal py-1 bg-[#051728]">
           <SortableColumnHeader 
             label="Size" 
             sortKey="total" 
@@ -139,7 +139,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortDirection={sortDirection}
           />
         </TableHead>
-        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <TableHead className="text-white font-normal py-1 bg-[#051728]">
           <SortableColumnHeader 
             label="Price" 
             sortKey="price" 
@@ -148,7 +148,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortDirection={sortDirection}
           />
         </TableHead>
-        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728]">
+        <TableHead className="text-white font-normal py-1 bg-[#051728]">
           <SortableColumnHeader 
             label="Change 24h" 
             sortKey="pnlPercentage" 
@@ -157,7 +157,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortDirection={sortDirection}
           />
         </TableHead>
-        <TableHead className="text-[#FFFFFF99] font-normal py-1 bg-[#051728] pr-4">
+        <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4">
           <SortableColumnHeader 
             label="Value" 
             sortKey="totalValue" 

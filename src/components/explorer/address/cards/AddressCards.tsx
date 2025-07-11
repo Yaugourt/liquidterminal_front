@@ -6,6 +6,7 @@ import { OverviewCard } from "./OverviewCard";
 import { PnLCard } from "./PnLCard";
 import { InfoCard } from "./InfoCard";
 import { AddressCardsProps } from "@/components/types/explorer.types";
+import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
 
 const GRID_CLASSES = "grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6";
 
@@ -17,6 +18,7 @@ export const AddressCards = memo(({
 }: AddressCardsProps) => {
     const { balances, isLoading: loadingBalances } = useAddressBalance(address);
     const { format } = useNumberFormat();
+    const { totalEquity, isLoading: loadingVaultDeposits } = useVaultDeposits(address);
 
     // Mémoisation de la fonction de formatage
     const formatCurrency = useCallback((value: number) => {
@@ -31,10 +33,13 @@ export const AddressCards = memo(({
 
     // Mémoisation des props des composants enfants
     const overviewProps = useMemo(() => ({
-        balances,
-        isLoading: loadingBalances,
+        balances: {
+            ...balances,
+            vaultBalance: totalEquity,
+        },
+        isLoading: loadingBalances || loadingVaultDeposits,
         formatCurrency
-    }), [balances, loadingBalances, formatCurrency]);
+    }), [balances, loadingBalances, loadingVaultDeposits, totalEquity, formatCurrency]);
 
     const pnlProps = useMemo(() => ({
         portfolio,

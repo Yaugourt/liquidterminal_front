@@ -1,13 +1,15 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchVaultDeposits } from '../api';
 import { UseVaultDepositsResult, VaultDeposit } from '../types';
+import { useVaults } from './useVaults';
+import { useMemo } from 'react';
 
 /**
  * Hook pour récupérer les dépôts de vault d'un utilisateur et calculer le total
  * @param address L'adresse de l'utilisateur
  * @returns Les dépôts, le total des dépôts, l'état de chargement, les erreurs et une fonction de rafraîchissement
  */
-export const useVaultDeposits = (address: string): UseVaultDepositsResult => {
+export const useVaultDeposits = (address: string): UseVaultDepositsResult & { enrichedDeposits: any[] } => {
   const { 
     data: deposits,
     isLoading,
@@ -19,26 +21,37 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult => {
         console.warn('No address provided for vault deposits');
         return [];
       }
-
-
-
       try {
         const response = await fetchVaultDeposits({
           type: 'userVaultEquities',
           user: address
         });
-
-  
         return response;
       } catch (err: any) {
         console.error('Error fetching vault deposits:', err);
         throw new Error(err.message || 'Failed to fetch vault deposits');
       }
     },
-    refreshInterval: 30000, // Rafraîchir toutes les 30 secondes
+    refreshInterval: 60000, // Rafraîchir toutes les 60 secondes
     maxRetries: 3,
     dependencies: [address]
   });
+
+  const { vaults, isLoading: vaultsLoading } = useVaults();
+
+  // Jointure enrichie
+  const enrichedDeposits = useMemo(() => {
+    if (!deposits || !vaults) return [];
+    return deposits.map(deposit => {
+      const vault = vaults.find(v => v.summary.vaultAddress.toLowerCase() === deposit.vaultAddress.toLowerCase());
+      return {
+        ...deposit,
+        name: vault?.summary.name || deposit.vaultAddress,
+        apr: vault?.apr ?? null,
+        tvl: vault ? parseFloat(vault.summary.tvl) : null,
+      };
+    });
+  }, [deposits, vaults]);
 
   // Calculer le total des dépôts
   const totalEquity = deposits?.reduce((total, deposit) => {
@@ -48,8 +61,9 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult => {
 
   return {
     deposits: deposits || [],
+    enrichedDeposits,
     totalEquity,
-    isLoading,
+    isLoading: isLoading || vaultsLoading,
     error,
     refetch
   };

@@ -8,6 +8,8 @@ export interface PaginationProps {
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   className?: string;
+  disabled?: boolean;
+  hidePageNavigation?: boolean;
 }
 
 export function Pagination({
@@ -18,6 +20,8 @@ export function Pagination({
   onPageChange,
   onRowsPerPageChange,
   className = "",
+  disabled = false,
+  hidePageNavigation = false,
 }: PaginationProps) {
   // Pagination calculations
   const from = total === 0 ? 0 : page * rowsPerPage + 1;
@@ -42,6 +46,7 @@ export function Pagination({
           className="bg-[#151e2c] border border-[#1E3851] rounded px-2 py-1 text-white hover:border-[#f9e370] focus:border-[#f9e370] focus:outline-none transition-colors"
           value={rowsPerPage}
           onChange={handleChangeRowsPerPage}
+          disabled={disabled}
         >
           {rowsPerPageOptions.map((opt) => (
             <option key={opt} value={opt}>{opt}</option>
@@ -53,36 +58,38 @@ export function Pagination({
         {from}-{to} of {total}
       </div>
       
-      <div className="flex items-center gap-1">
-        <button 
-          onClick={handleFirstPage} 
-          disabled={page === 0} 
-          className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
-        >
-          &#171;
-        </button>
-        <button 
-          onClick={handlePrevPage} 
-          disabled={page === 0} 
-          className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
-        >
-          &#60;
-        </button>
-        <button 
-          onClick={handleNextPage} 
-          disabled={page >= pageCount - 1} 
-          className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
-        >
-          &#62;
-        </button>
-        <button 
-          onClick={handleLastPage} 
-          disabled={page >= pageCount - 1} 
-          className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
-        >
-          &#187;
-        </button>
-      </div>
+      {!hidePageNavigation && (
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={handleFirstPage} 
+            disabled={page === 0 || disabled} 
+            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+          >
+            &#171;
+          </button>
+          <button 
+            onClick={handlePrevPage} 
+            disabled={page === 0 || disabled} 
+            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+          >
+            &#60;
+          </button>
+          <button 
+            onClick={handleNextPage} 
+            disabled={page >= pageCount - 1 || disabled} 
+            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+          >
+            &#62;
+          </button>
+          <button 
+            onClick={handleLastPage} 
+            disabled={page >= pageCount - 1 || disabled} 
+            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+          >
+            &#187;
+          </button>
+        </div>
+      )}
     </div>
   );
 } 

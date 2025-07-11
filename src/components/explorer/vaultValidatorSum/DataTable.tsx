@@ -1,4 +1,5 @@
 import { Loader2, Database } from "lucide-react";
+import { Table } from "@/components/ui/table";
 
 export function DataTable({ isLoading, error, emptyMessage, children }: any) {
   if (isLoading) {
@@ -38,9 +39,9 @@ export function DataTable({ isLoading, error, emptyMessage, children }: any) {
 
   return (
     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-      <table className="w-full text-sm text-white font-inter">
+      <Table className="w-full text-sm text-white font-inter">
         {children}
-      </table>
+      </Table>
     </div>
   );
 } 

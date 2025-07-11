@@ -8,7 +8,8 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS } from "@/components/explorer";
+import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable } from "@/components/explorer";
+import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 
 export default function AddressPage() {
   const params = useParams();
@@ -60,6 +61,10 @@ export default function AddressPage() {
         />
 
         {/* Content based on active tab */}
+        {activeTab === "vaults" && (
+          <VaultDepositList address={address} />
+        )}
+
         {activeTab === "transactions" && (
           <TransactionList 
             transactions={transactions || []}
@@ -83,7 +88,11 @@ export default function AddressPage() {
           />
         )}
 
-        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "perps" && (
+        {activeTab === "staking" && (
+          <StakingTable address={address} />
+        )}
+
+        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
           <div className="bg-[#0A1F32] h-[400px] border border-[#1E3851] rounded-xl flex items-center justify-center">
             <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
           </div>
