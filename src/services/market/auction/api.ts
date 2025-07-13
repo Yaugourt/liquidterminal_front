@@ -1,5 +1,13 @@
 import { fetchWithConfig } from '../../api/base';
-import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse } from './types';
+import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse, AuctionTiming } from './types';
+
+/**
+ * Récupère les informations de timing de l'auction en cours
+ */
+export const fetchAuctionTiming = async (): Promise<AuctionTiming> => {
+  const response = await fetchWithConfig<AuctionTiming>('/market/auction/timing');
+  return response;
+};
 
 /**
  * Récupère toutes les auctions sans limitation

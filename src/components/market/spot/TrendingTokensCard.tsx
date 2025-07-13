@@ -52,8 +52,8 @@ export const TrendingTokensCard = memo(function TrendingTokensCard() {
 
   if (isLoading) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-        <div className="flex justify-center items-center h-[200px]">
+      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full">
+        <div className="flex justify-center items-center h-full">
           <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
       </div>
       </Card>
@@ -62,8 +62,8 @@ export const TrendingTokensCard = memo(function TrendingTokensCard() {
 
   if (error) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-        <div className="flex justify-center items-center h-[200px]">
+      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full">
+        <div className="flex justify-center items-center h-full">
           <p className="text-red-500 text-sm">Une erreur est survenue</p>
       </div>
       </Card>
@@ -71,40 +71,44 @@ export const TrendingTokensCard = memo(function TrendingTokensCard() {
   }
 
   return (
-    <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <Table>
+    <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full flex flex-col">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1">
+        <Table className="h-full">
           <TableHeader>
             <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[35%]">
+              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[35%]">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-white font-normal p-0 flex items-center justify-start w-full"
+                  className="text-white hover:text-white p-0 flex items-center justify-start w-full"
+                  style={{fontWeight: 400, fontSize: '0.875rem'}}
                 >
                   Name
                 </Button>
               </TableHead>
-              <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]">
+              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-white font-normal p-0 flex items-center justify-start w-full"
+                  className="text-white hover:text-white p-0 flex items-center justify-start w-full"
+                  style={{fontWeight: 400, fontSize: '0.875rem'}}
                 >
                   Price
                 </Button>
               </TableHead>
-              <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]">
+              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-white font-normal p-0 flex items-center justify-start w-full"
+                  className="text-white hover:text-white p-0 flex items-center justify-start w-full"
+                  style={{fontWeight: 400, fontSize: '0.875rem'}}
                 >
                   Volume
                 </Button>
               </TableHead>
-              <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]">
+              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
                 <Button
                   variant="ghost"
                   onClick={() => handleSort("change24h")}
-                  className={`${sortField === "change24h" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+                  className={`${sortField === "change24h" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center justify-start w-full`}
+                  style={{fontWeight: 400, fontSize: '0.875rem'}}
                 >
                   24h
                   <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -114,10 +118,11 @@ export const TrendingTokensCard = memo(function TrendingTokensCard() {
           </TableHeader>
           <TableBody className="bg-[#051728]">
             {trendingTokens && trendingTokens.length > 0 ? (
-              trendingTokens.map((token) => (
+              trendingTokens.map((token, index) => (
                 <TableRow
                   key={token.name}
-                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors"
+                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors h-[1fr]"
+                  style={{ height: `${100 / trendingTokens.length}%` }}
                 >
                   <TableCell className="py-1.5 pl-4">
                     <div className="flex items-center gap-1.5">

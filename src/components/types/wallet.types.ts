@@ -34,6 +34,14 @@ export interface PerpHoldingDisplay extends PerpHolding {
   marginUsed: string;
   positionValue: string;
   liquidation: string;
+  // Nouvelles propriétés
+  leverage: {
+    type: string;
+    value: number;
+  };
+  szi: string;
+  unrealizedPnl: string;
+  funding: string;
 }
 
 export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 'price'> {

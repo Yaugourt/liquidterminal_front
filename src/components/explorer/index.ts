@@ -5,6 +5,7 @@ export { AddressHeader } from './address/AddressHeader';
 export { HoldingTabs } from './address/HoldingTabs';
 export { TabNavigation, ADDRESS_TABS } from './address/TabNavigation';
 export { StakingTable } from './address/StakingTable';
+export { OpenOrdersList } from './address/OpenOrdersList';
 export * from './address/cards';
 
 // Block exports

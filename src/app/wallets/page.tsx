@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { WalletTabs } from "@/components/wallets";
 import { PortfolioStats, PerformanceChart } from "@/components/wallets/stats";
 import { AssetsSection } from "@/components/wallets/assets";
+import { WalletAssetsNavigation } from "@/components/wallets/WalletAssetsNavigation";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -19,6 +20,7 @@ export default function Wallets() {
   const { isAuthenticated, login } = useAuthContext();
   const { width } = useWindowSize();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
 
   useEffect(() => {
     setTitle("Wallets");
@@ -83,7 +85,33 @@ export default function Wallets() {
                 <PerformanceChart />
               </div>
             </div>
-            <AssetsSection />
+            <WalletAssetsNavigation 
+              activeTab={activeAssetsTab}
+              onChange={setActiveAssetsTab}
+            />
+            
+            {activeAssetsTab === "holdings" && <AssetsSection />}
+            
+            {activeAssetsTab === "orders" && (
+              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+                <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
+                <p className="text-[#FFFFFF80] text-sm">Orders functionality coming soon...</p>
+              </div>
+            )}
+            
+            {activeAssetsTab === "twap" && (
+              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+                <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
+                <p className="text-[#FFFFFF80] text-sm">TWAP functionality coming soon...</p>
+              </div>
+            )}
+            
+            {activeAssetsTab === "recent-fills" && (
+              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+                <h3 className="text-white text-lg font-medium mb-2">Recent Fills</h3>
+                <p className="text-[#FFFFFF80] text-sm">Recent fills functionality coming soon...</p>
+              </div>
+            )}
           </div>
         </main>
       </div>

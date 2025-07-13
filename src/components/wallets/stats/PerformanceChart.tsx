@@ -152,7 +152,7 @@ export function PerformanceChart() {
                 </div>
               ),
               empty: (
-                <div className="h-[240px] w-full bg-[#041220] rounded-md flex items-center justify-center text-[#FFFFFF99]">
+                <div className="h-[240px] w-full bg-[#041220] rounded-md flex items-center justify-center text-white">
                   Aucune donnée disponible
                 </div>
               ),
@@ -165,7 +165,7 @@ export function PerformanceChart() {
                 if (active && payload && payload.length && label) {
                   return (
                     <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded">
-                      <p className="text-[#FFFFFF99] text-xs">
+                      <p className="text-white text-xs">
                         {new Date(label).toLocaleString()}
                       </p>
                       <p className="text-white text-sm">

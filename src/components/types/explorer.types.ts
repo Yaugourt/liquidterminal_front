@@ -1,4 +1,5 @@
-import { PortfolioPeriodData, TransactionType, BlockDetails, BlockTransaction } from "@/services/explorer";
+import { BlockDetails, BlockTransaction } from "@/services/explorer";
+import { PortfolioPeriodData, TransactionType } from "@/services/explorer/address";
 import { NumberFormatType } from "@/store/number-format.store";
 
 /**

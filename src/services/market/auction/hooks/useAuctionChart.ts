@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { ChartPeriod } from '@/components/common/charts';
+import { useAuctions } from '../hooks/useAuctions';
 
 interface AuctionChartData {
   time: number;
@@ -7,45 +8,62 @@ interface AuctionChartData {
 }
 
 export const useAuctionChart = (period: ChartPeriod, currency: "HYPE" | "USDC") => {
-  const [data, setData] = useState<AuctionChartData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Utiliser le même hook que le dashboard
+  const { auctions: allAuctions, isLoading } = useAuctions({
+    limit: 10000,
+    currency: "ALL"
+  });
 
-  useEffect(() => {
-    const fetchAuctionChartData = async () => {
-      setIsLoading(true);
-      setError(null);
+  const data = useMemo(() => {
+    if (!allAuctions || allAuctions.length === 0) return [];
 
-      try {
-        // Simuler des données d'auction pour le moment
-        // Tu peux remplacer par un vrai appel API plus tard
-        const mockData: AuctionChartData[] = [];
-        const now = Date.now();
-        const periodHours = period === "7d" ? 7 * 24 : period === "30d" ? 30 * 24 : period === "90d" ? 90 * 24 : 365 * 24;
-        const intervalMs = (periodHours * 60 * 60 * 1000) / 50; // 50 points de données
+    // Séparer les auctions par currency et filtrer les valides
+    const validAuctions = allAuctions.filter((a) => 
+      a.currency === currency && 
+      !!a && !!a.time && !!a.deployGas && 
+      !isNaN(parseFloat(a.deployGas))
+    );
 
-        for (let i = 0; i < 50; i++) {
-          const time = now - (49 - i) * intervalMs;
-          const baseValue = currency === "USDC" ? 1000 : 500;
-          const variation = Math.sin(i * 0.3) * 100 + Math.random() * 50;
-          const value = Math.max(baseValue + variation, 0);
-          
-          mockData.push({
-            time,
-            value: Math.round(value * 100) / 100
-          });
-        }
+    if (validAuctions.length === 0) return [];
 
-        setData(mockData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erreur lors du chargement des données');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Calculer la limite de date basée sur la période
+    const latestTime = Math.max(...validAuctions.map((a) => a.time));
+    const DAY = 24 * 60 * 60 * 1000;
+    
+    let dateLimit: number;
+    switch (period) {
+      case "24h":
+        dateLimit = latestTime - DAY;
+        break;
+      case "7d":
+        dateLimit = latestTime - 7 * DAY;
+        break;
+      case "30d":
+        dateLimit = latestTime - 30 * DAY;
+        break;
+      case "90d":
+        dateLimit = latestTime - 90 * DAY;
+        break;
+      case "1y":
+        dateLimit = latestTime - 365 * DAY;
+        break;
+      default:
+        dateLimit = 0;
+    }
 
-    fetchAuctionChartData();
-  }, [period, currency]);
+    // Transformer les données exactement comme le dashboard
+    return validAuctions
+      .filter((auction) => auction.time >= dateLimit)
+      .map((auction) => ({
+        time: auction.time,
+        value: parseFloat(auction.deployGas)
+      }))
+      .sort((a, b) => a.time - b.time);
+  }, [allAuctions, currency, period]);
 
-  return { data, isLoading, error };
+  return { 
+    data, 
+    isLoading, 
+    error: null 
+  };
 }; 

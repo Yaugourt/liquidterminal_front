@@ -67,7 +67,7 @@ export function DeleteWalletDialog({
       <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
           <DialogTitle>Supprimer le wallet</DialogTitle>
-          <DialogDescription className="text-[#FFFFFF99]">
+          <DialogDescription className="text-white">
             Êtes-vous sûr de vouloir supprimer ce wallet ?
           </DialogDescription>
         </DialogHeader>

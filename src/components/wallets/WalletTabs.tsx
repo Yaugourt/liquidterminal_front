@@ -123,8 +123,8 @@ export function WalletTabs() {
                   className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
                 >
                   <div className="flex flex-col items-start">
-                    <span className="font-medium">{wallet.name || 'Unnamed Wallet'}</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="font-medium text-white">{wallet.name || 'Unnamed Wallet'}</span>
+                    <span className="text-xs text-white">
                       Added: {new Date(wallet.addedAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -133,9 +133,9 @@ export function WalletTabs() {
                       <TooltipTrigger asChild>
                         <div
                           onClick={(e) => handleDeleteClick(wallet.id, wallet.name, e)}
-                          className="ml-2 p-1 rounded-full hover:bg-[#FF5252]/20 transition-colors cursor-pointer"
+                          className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
                         >
-                          <Trash2 className="h-3.5 w-3.5 text-[#FF5252]" />
+                          <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>

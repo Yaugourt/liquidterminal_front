@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { Card } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
-import { Token } from "@/services/market/spot/types";
+import { SpotToken } from "@/services/market/spot/types";
+import { getToken } from "@/services/market/spot/api";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,7 @@ export default function TokenPage() {
     const params = useParams();
     const token_param = params.token as string;
     const tokenName = decodeURIComponent(token_param);
-    const [token, setToken] = useState<Token | null>(null);
+    const [token, setToken] = useState<SpotToken | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +55,7 @@ export default function TokenPage() {
         return (
             <div className="text-white p-4 flex flex-col items-center justify-center min-h-[50vh]">
                 <div className="text-xl mb-4">Token non trouvé</div>
-                <div className="text-[#FFFFFF99] mb-6">{error}</div>
+                <div className="text-white mb-6">{error}</div>
                 <Button
                     onClick={handleBackToList}
                     className="bg-[#83E9FF4D] hover:bg-[#83E9FF80] text-white"
@@ -84,29 +85,29 @@ export default function TokenPage() {
 
                             <div className="space-y-2">
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Price:</div>
+                                    <div className="text-white text-xs sm:text-sm">Price:</div>
                                     <div className="text-white text-base sm:text-lg">${formatNumber(token.price, 'price')}</div>
                                 </div>
 
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Change 24h:</div>
+                                    <div className="text-white text-xs sm:text-sm">Change 24h:</div>
                                     <div className={`text-base sm:text-lg ${token.change24h >= 0 ? 'text-[#4ADE80]' : 'text-red-500'}`}>
                                         {token.change24h >= 0 ? '+' : ''}{token.change24h}%
                                     </div>
                                 </div>
 
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Volume:</div>
+                                    <div className="text-white text-xs sm:text-sm">Volume:</div>
                                     <div className="text-white text-base sm:text-lg">${formatNumber(token.volume, 'volume')}</div>
                                 </div>
 
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Market Cap:</div>
+                                    <div className="text-white text-xs sm:text-sm">Market Cap:</div>
                                     <div className="text-white text-base sm:text-lg">${formatNumber(token.marketCap, 'marketCap')}</div>
                                 </div>
 
                                 <div>
-                                    <div className="text-[#FFFFFF99] text-xs sm:text-sm">Contract:</div>
+                                    <div className="text-white text-xs sm:text-sm">Contract:</div>
                                     <div className="text-[#83E9FF] text-xs sm:text-sm flex items-center gap-2">
                                         0x55db...d99a
                                         <svg className="w-3 h-3 sm:w-4 sm:h-4 cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,7 +126,7 @@ export default function TokenPage() {
 
                             <div className="space-y-1 sm:space-y-2 mb-auto">
                                 <h3 className="text-white text-base sm:text-xl font-bold">Nom du projet</h3>
-                                <p className="text-[#FFFFFF99] text-xs sm:text-sm">Description</p>
+                                <p className="text-white text-xs sm:text-sm">Description</p>
                             </div>
 
                             <div className="space-y-3 sm:space-y-4">

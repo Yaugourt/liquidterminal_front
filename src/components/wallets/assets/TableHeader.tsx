@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 
 // Définir explicitement les clés de tri possibles
-export type SortKey = 'coin' | 'price' | 'type' | 'marginUsedValue' | 'positionValueNum' | 'entryPriceNum' | 'liquidationNum' | 'total' | 'pnlPercentage' | 'totalValue';
+export type SortKey = 'coin' | 'price' | 'type' | 'marginUsedValue' | 'positionValueNum' | 'entryPriceNum' | 'liquidationNum' | 'total' | 'pnlPercentage' | 'totalValue' | 'unrealizedPnl' | 'funding';
 
 interface SortableColumnHeaderProps {
   label: string;
@@ -50,12 +50,39 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
     return (
       <TableHeader>
         <TableRow className="border-none bg-[#051728]">
-          <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[160px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] pl-4 w-[140px]">
             <SortableColumnHeader 
               label="Name" 
               sortKey="coin" 
               onSort={onSort}
               isActive={activeSortKey === 'coin'}
+              sortDirection={sortDirection}
+            />
+          </TableHead>
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[100px]">
+            <SortableColumnHeader 
+              label="Type" 
+              sortKey="type" 
+              onSort={onSort}
+              isActive={activeSortKey === 'type'}
+              sortDirection={sortDirection}
+            />
+          </TableHead>
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[120px]">
+            <SortableColumnHeader 
+              label="Entry Price" 
+              sortKey="entryPriceNum" 
+              onSort={onSort}
+              isActive={activeSortKey === 'entryPriceNum'}
+              sortDirection={sortDirection}
+            />
+          </TableHead>
+          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[120px]">
+            <SortableColumnHeader 
+              label="Liquidation Price" 
+              sortKey="liquidationNum" 
+              onSort={onSort}
+              isActive={activeSortKey === 'liquidationNum'}
               sortDirection={sortDirection}
             />
           </TableHead>
@@ -68,27 +95,9 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[80px]">
-            <SortableColumnHeader 
-              label="Type" 
-              sortKey="type" 
-              onSort={onSort}
-              isActive={activeSortKey === 'type'}
-              sortDirection={sortDirection}
-            />
-          </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
-              label="Margin used" 
-              sortKey="marginUsedValue" 
-              onSort={onSort}
-              isActive={activeSortKey === 'marginUsedValue'}
-              sortDirection={sortDirection}
-            />
-          </TableHead>
-          <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
-            <SortableColumnHeader 
-              label="Position value" 
+              label="Value" 
               sortKey="positionValueNum" 
               onSort={onSort}
               isActive={activeSortKey === 'positionValueNum'}
@@ -97,19 +106,19 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
             <SortableColumnHeader 
-              label="Entry price" 
-              sortKey="entryPriceNum" 
+              label="Unrealized PNL" 
+              sortKey="unrealizedPnl" 
               onSort={onSort}
-              isActive={activeSortKey === 'entryPriceNum'}
+              isActive={activeSortKey === 'unrealizedPnl'}
               sortDirection={sortDirection}
             />
           </TableHead>
-          <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4 w-[140px]">
+          <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4 w-[120px]">
             <SortableColumnHeader 
-              label="Liquidation" 
-              sortKey="liquidationNum" 
+              label="Funding" 
+              sortKey="funding" 
               onSort={onSort}
-              isActive={activeSortKey === 'liquidationNum'}
+              isActive={activeSortKey === 'funding'}
               sortDirection={sortDirection}
             />
           </TableHead>

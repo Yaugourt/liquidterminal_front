@@ -200,12 +200,12 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-8">
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Total:</span>
-                <span className="text-[#83E9FF] text-sm font-semibold">{stats.total}</span>
+                <span className="text-white text-sm font-semibold">{stats.total}</span>
               </div>
               <div className="w-px h-4 bg-[#FFFFFF20]"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Active:</span>
-                <span className="text-[#4ADE80] text-sm font-semibold">{stats.active}</span>
+                <span className="text-[#83E9FF] text-sm font-semibold">{stats.active}</span>
               </div>
               <div className="w-px h-4 bg-[#FFFFFF20]"></div>
               <div className="flex items-baseline gap-2">
@@ -221,10 +221,10 @@ export function ValidatorsTable() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-8 justify-start pl-6">
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Vaults:</span>
-                <span className="text-[#83E9FF] text-sm font-semibold">{vaultsTotalCount}</span>
+                <span className="text-white text-xs font-medium">Total:</span>
+                <span className="text-white text-sm font-semibold">{vaultsTotalCount}</span>
               </div>
               <div className="w-px h-4 bg-[#FFFFFF20]"></div>
               <div className="flex items-baseline gap-2">

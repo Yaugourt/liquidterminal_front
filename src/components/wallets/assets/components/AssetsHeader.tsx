@@ -19,7 +19,7 @@ export function AssetsHeader({
 }: AssetsHeaderProps) {
   return (
     <div className="flex items-center gap-4 justify-between sm:justify-end">
-      <div className="flex items-center text-[#FFFFFF99] text-xs sm:text-sm">
+      <div className="flex items-center text-white text-xs sm:text-sm">
         <Database size={16} className="mr-2" />
         Total assets: {totalAssets}
         {walletDisplay && (
@@ -34,7 +34,7 @@ export function AssetsHeader({
         onClick={onRefresh}
         disabled={isRefreshing || isLoading}
         className={cn(
-          "p-2 text-[#FFFFFF99] hover:text-white transition-colors",
+          "p-2 text-white hover:text-white transition-colors",
           isRefreshing && "animate-spin"
         )}
       >

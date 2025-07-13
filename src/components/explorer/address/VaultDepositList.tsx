@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Database } from "lucide-react";
 import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
 import { useVaults } from '@/services/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
@@ -81,8 +81,12 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center h-[400px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-[#FFFFFF99]">
-        No vault deposits found
+      <div className="flex items-center justify-center h-[400px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+        <div className="flex flex-col items-center text-center px-4">
+          <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
+          <p className="text-white text-lg mb-2">No vault deposits found</p>
+          <p className="text-[#FFFFFF80] text-sm">This address has not deposited in any vault yet.</p>
+        </div>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import {
     UserFill,
     FormattedUserTransaction,
     PortfolioApiResponse,
+    OpenOrdersResponse,
 } from './types';
 import { 
     fetchExternal, 
@@ -116,6 +117,23 @@ export async function fetchPortfolio(address: string): Promise<PortfolioApiRespo
             user: address,
         }),
     });
+}
+
+export async function getUserOpenOrders(address: string): Promise<OpenOrdersResponse> {
+    try {
+        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
+        return await fetchExternal<OpenOrdersResponse>(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: "frontendOpenOrders",
+                user: address
+            })
+        });
+    } catch (error) {
+        console.error('Error fetching open orders:', error);
+        throw error;
+    }
 }
 
  

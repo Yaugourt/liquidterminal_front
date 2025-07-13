@@ -45,7 +45,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
     isMounted
   });
 
-  const defaultSortKey = viewType === 'perp' ? 'positionValueNum' : 'totalValue';
+  const defaultSortKey = viewType === 'perp' ? 'unrealizedPnl' : 'totalValue';
   const { items: sortedHoldings, requestSort, sortConfig } = useSortableData<SortableHolding>(
     convertedHoldings as SortableHolding[],
     { key: defaultSortKey as SortKey, direction: 'desc' }

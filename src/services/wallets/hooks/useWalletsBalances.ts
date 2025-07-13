@@ -28,7 +28,7 @@ export const useWalletsBalances = (address?: string) => {
   } = useDataFetching<WalletBalancesData>({
     fetchFn: async () => {
       // Utiliser l'adresse fournie
-      if (!address) {
+      if (!address || address.trim() === '') {
         console.warn('No address provided for wallet balances');
         return {
           spotBalances: [],

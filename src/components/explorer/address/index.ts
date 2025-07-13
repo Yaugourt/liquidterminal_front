@@ -4,4 +4,6 @@ export { AddressBalance } from './AddressBalance';
 export { AddressHeader } from './AddressHeader';
 export { HoldingTabs } from './HoldingTabs';
 export { TabNavigation } from './TabNavigation';
-export { StakingTable } from './StakingTable'; 
+export { StakingTable } from './StakingTable';
+export { VaultDepositList } from './VaultDepositList';
+export { OpenOrdersList } from './OpenOrdersList'; 

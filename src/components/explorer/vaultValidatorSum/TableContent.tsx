@@ -6,6 +6,7 @@ import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/date-formatting";
 import { useState } from "react";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import Link from "next/link";
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
@@ -53,6 +54,12 @@ export function TableContent({
   const { validations: stakingValidations, loading: stakingLoading, error: stakingError } = stakingData;
   const { unstakingQueue, loading: unstakingLoading, error: unstakingError } = unstakingData;
   const { format: dateFormat } = useDateFormat();
+
+  // Fonction pour trouver le nom du validator par son adresse
+  const getValidatorName = (validatorAddress: string) => {
+    const validator = validators.find((v: any) => v.address === validatorAddress || v.validator === validatorAddress);
+    return validator ? validator.name : `${validatorAddress.slice(0, 6)}...${validatorAddress.slice(-4)}`;
+  };
 
   if (activeTab === 'validators') {
     return (
@@ -133,9 +140,12 @@ export function TableContent({
                   </TableCell>
                   <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF]  font-inter text-sm">
+                      <Link 
+                        href={`/explorer/address/${tx.user}`}
+                        className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                      >
                         {tx.user.slice(0, 6)}...{tx.user.slice(-4)}
-                      </span>
+                      </Link>
                       <CopyButton text={tx.user} />
                     </div>
                   </TableCell>
@@ -155,8 +165,8 @@ export function TableContent({
                   </TableCell>
                   <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF]  font-inter text-sm">
-                        {tx.validator.slice(0, 6)}...{tx.validator.slice(-4)}
+                      <span className="text-[#83E9FF] font-inter text-sm">
+                        {getValidatorName(tx.validator)}
                       </span>
                       <CopyButton text={tx.validator} />
                     </div>
@@ -184,7 +194,7 @@ export function TableContent({
             <TableHeader className="text-white">
               <TableRow>
                 <TableHead className="text-left py-3 px-4 font-normal">Time</TableHead>
-                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Address</TableHead>
+                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">User</TableHead>
                 <TableHead className="text-left py-3 px-4 font-normal w-48">Amount</TableHead>
               </TableRow>
             </TableHeader>
@@ -196,9 +206,12 @@ export function TableContent({
                   </TableCell>
                   <TableCell className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF]  font-inter text-sm">
+                      <Link 
+                        href={`/explorer/address/${item.user}`}
+                        className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                      >
                         {item.user.slice(0, 6)}...{item.user.slice(-4)}
-                      </span>
+                      </Link>
                       <CopyButton text={item.user} />
                     </div>
                   </TableCell>

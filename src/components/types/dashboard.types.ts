@@ -163,8 +163,8 @@ export interface VaultTableProps {
     tvl: number;
     vaultAddress?: string;
   }>;
-  isLoading?: boolean;
-  error?: any;
+  isLoading: boolean;
+  error: Error | null;
 }
 
 /**
@@ -206,4 +206,6 @@ export interface DataTableProps<T> {
   isLoading: boolean;
   error: Error | null;
   emptyMessage?: string;
+  paginationDisabled?: boolean;
+  hidePageNavigation?: boolean;
 } 

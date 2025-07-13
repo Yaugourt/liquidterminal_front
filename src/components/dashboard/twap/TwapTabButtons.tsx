@@ -78,7 +78,7 @@ export const TwapTabButtons = memo(({
         {canScrollLeft && (
           <button
             onClick={scrollLeft}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-[#FFFFFF99] hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
             title="Défiler vers la gauche"
           >
             <ChevronLeft size={16} />
@@ -102,7 +102,7 @@ export const TwapTabButtons = memo(({
                 className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                    : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
                 }`}
               >
                 {tab.label}
@@ -115,7 +115,7 @@ export const TwapTabButtons = memo(({
         {canScrollRight && (
           <button
             onClick={scrollRight}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-[#FFFFFF99] hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
             title="Défiler vers la droite"
           >
             <ChevronRight size={16} />
@@ -124,7 +124,7 @@ export const TwapTabButtons = memo(({
       </div>
       
       {/* Label "Active Orders" - largeur fixe */}
-      <div className="flex items-center gap-1 px-3 py-1 text-sm text-[#83E9FF] flex-shrink-0 whitespace-nowrap">
+      <div className="flex items-center gap-1 px-3 py-1 text-sm text-white flex-shrink-0 whitespace-nowrap">
         Active Twaps
       </div>
     </div>

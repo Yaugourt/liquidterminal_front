@@ -1,47 +1,98 @@
-import { memo } from "react";
-import { ProjectCard } from "./ProjectCard";
+"use client";
 
-// Temporary mock data
-const MOCK_PROJECTS = [
-  {
-    id: 1,
-    title: "HyperLend",
-    desc: "Decentralized lending protocol built on Hyperliquid",
-    logo: "/images/hyperlend.svg",
-    twitter: "https://twitter.com/hyperlend",
-    discord: "https://discord.gg/hyperlend",
-    telegram: "https://t.me/hyperlend",
-    website: "https://hyperlend.xyz",
-    category: "DeFi"
-  },
-  {
-    id: 2,
-    title: "HyperSwap",
-    desc: "Automated market maker for Hyperliquid ecosystem",
-    logo: "/images/hyperswap.svg",
-    twitter: "https://twitter.com/hyperswap",
-    discord: "https://discord.gg/hyperswap",
-    website: "https://hyperswap.fi",
-    category: "DEX"
-  },
-  {
-    id: 3,
-    title: "HyperStake",
-    desc: "Liquid staking solution for HYPE tokens",
-    logo: "/images/hyperstake.svg",
-    twitter: "https://twitter.com/hyperstake",
-    telegram: "https://t.me/hyperstake",
-    website: "https://hyperstake.finance",
-    category: "Staking"
-  }
-];
+import { memo, useState } from "react";
+import { ProjectCard } from "./ProjectCard";
+import { useProjects, useCategories } from "@/services/project";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ProjectsGrid = memo(function ProjectsGrid() {
+  const [activeTab, setActiveTab] = useState<'all' | number>('all');
+  
+  // Récupérer les catégories
+  const { categories, isLoading: categoriesLoading } = useCategories();
+  
+  // Récupérer les projets selon l'onglet actif
+  const { projects, isLoading: projectsLoading } = useProjects({
+    categoryId: activeTab === 'all' ? undefined : activeTab,
+    limit: 50
+  });
+
+  if (categoriesLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex gap-4 border-b border-[#83E9FF1A]">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-10 w-24 bg-[#112941]" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-32 bg-[#112941]" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {MOCK_PROJECTS.map((project) => (
-        <ProjectCard key={project.id} {...project} />
-      ))}
+    <div className="space-y-6">
+      {/* Tabs Navigation */}
+      <div className="border-b border-[#83E9FF1A]">
+        <nav className="flex gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF33] scrollbar-track-transparent">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
+              activeTab === 'all'
+                ? 'border-[#83E9FF] text-[#83E9FF]'
+                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-600'
+            }`}
+          >
+            All Projects
+          </button>
+          
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setActiveTab(category.id)}
+              className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
+                activeTab === category.id
+                  ? 'border-[#83E9FF] text-[#83E9FF]'
+                  : 'border-transparent text-gray-400 hover:text-white hover:border-gray-600'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Projects Grid */}
+      {projectsLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-32 bg-[#112941]" />
+          ))}
+        </div>
+      ) : (
+        <>
+          {projects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-gray-400 text-lg">No projects found</p>
+              <p className="text-gray-500 text-sm mt-2">
+                {activeTab === 'all' 
+                  ? "No projects have been added yet."
+                  : "No projects in this category yet."}
+              </p>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }); 

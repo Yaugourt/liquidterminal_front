@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { TrendingTokens } from "./TrendingTokens";
+import { AuctionSection } from "./AuctionSection";
 
 export const TrendingTokensTabs = () => {
-  const [activeTab, setActiveTab] = useState<"perp" | "spot">("perp");
+  const [activeTab, setActiveTab] = useState<"perp" | "spot" | "auction">("perp");
 
-  const tabs: { key: "perp" | "spot"; label: string }[] = [
+  const tabs: { key: "perp" | "spot" | "auction"; label: string }[] = [
     { key: 'perp', label: 'Perpetual' },
-    { key: 'spot', label: 'Spot' }
+    { key: 'spot', label: 'Spot' },
+    { key: 'auction', label: 'Auction' }
   ];
 
   return (
@@ -23,7 +25,7 @@ export const TrendingTokensTabs = () => {
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.key
                   ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                  : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+                  : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
               }`}
             >
               {tab.label}
@@ -33,10 +35,14 @@ export const TrendingTokensTabs = () => {
       </div>
 
       {/* Contenu de l'onglet actif */}
-      <TrendingTokens 
-        type={activeTab} 
-        title={activeTab === "perp" ? "Trending perpetual" : "Trending spot"} 
-      />
+      {activeTab === "auction" ? (
+        <AuctionSection />
+      ) : (
+        <TrendingTokens 
+          type={activeTab} 
+          title={activeTab === "perp" ? "Trending perpetual" : "Trending spot"} 
+        />
+      )}
     </div>
   );
 }; 

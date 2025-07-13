@@ -7,7 +7,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
   const tabs: { key: string; label: string }[] = [
     { key: 'vault', label: 'Vault' },
     { key: 'stacking', label: 'Validators' },
-    { key: 'auction', label: 'Auction' }
+    { key: 'auction', label: 'Past auctions' }
   ];
 
   const getSeeAllLink = () => {
@@ -35,7 +35,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
             }`}
           >
             {tab.label}
@@ -46,7 +46,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
       {seeAllLink && (
         <Link
           href={seeAllLink}
-          className="flex items-center gap-1 px-3 py-1 text-sm text-[#83E9FF] hover:text-white transition-colors"
+          className="flex items-center gap-1 px-3 py-1 text-sm text-[#f9e370] hover:text-white transition-colors"
         >
           See All
           <ExternalLink size={14} />

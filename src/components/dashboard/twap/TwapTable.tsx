@@ -122,7 +122,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: any, realTimeData:
           <span className="text-xs text-[#FFFFFF80]  font-inter">
             {getRemainingTime()}
           </span>
-          <span className="text-xs text-[#FFFFFF99]">
+          <span className="text-xs text-white">
             {roundedProgression.toFixed(1)}%
           </span>
         </div>

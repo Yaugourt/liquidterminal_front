@@ -17,7 +17,7 @@ export function Pagination({ currentPage, totalItems, itemsPerPage, onPageChange
       </Button>
 
       <div className="flex items-center gap-4">
-        <span className="text-sm text-[#FFFFFF99]">
+        <span className="text-sm text-white">
           {startItem}-{endItem} of {totalItems}
         </span>
         
@@ -27,7 +27,7 @@ export function Pagination({ currentPage, totalItems, itemsPerPage, onPageChange
             size="icon"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="h-8 w-8 text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]"
+            className="h-8 w-8 text-white hover:text-white hover:bg-[#FFFFFF0A]"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -37,7 +37,7 @@ export function Pagination({ currentPage, totalItems, itemsPerPage, onPageChange
             size="icon"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="h-8 w-8 text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]"
+            className="h-8 w-8 text-white hover:text-white hover:bg-[#FFFFFF0A]"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

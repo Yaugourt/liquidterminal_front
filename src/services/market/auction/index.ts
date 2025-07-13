@@ -1,8 +1,8 @@
-// Exports des types
-export * from './types';
-
-// Exports des API
+// API
 export * from './api';
 
-// Exports des hooks
-export * from './hooks'; 
+// Types
+export * from './types';
+
+// Hooks
+export { useAuctions, useLatestAuctions, useAuctionChart, useAuctionTiming } from './hooks'; 

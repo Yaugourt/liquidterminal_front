@@ -10,6 +10,37 @@ export interface AuctionInfo {
   index: number;
 }
 
+// Nouveaux types pour l'auction timing
+export interface CurrentAuction {
+  startTime: number;
+  endTime: number;
+  startGas: string;
+  currentGas: string;
+  endGas: string;
+}
+
+export interface NextAuction {
+  startTime: number;
+  startGas: string;
+}
+
+export interface AuctionTiming {
+  currentAuction: CurrentAuction;
+  nextAuction: NextAuction;
+}
+
+// Type pour les données calculées de l'auction
+export interface AuctionState {
+  isActive: boolean;
+  timeRemaining: string;
+  currentPrice: number;
+  currentPriceUSD: number;
+  progressPercentage: number;
+  lastAuctionPrice: number;
+  lastAuctionName: string;
+  nextAuctionStart: string;
+}
+
 // Type pour la réponse API des auctions
 export interface AuctionsResponse {
   success: boolean;
@@ -59,4 +90,12 @@ export interface UseAuctionsOptions {
   currency?: "HYPE" | "USDC" | "ALL";
   defaultParams?: Partial<AuctionParams>;
   initialData?: AuctionInfo[];
+}
+
+// Hook pour l'auction timing
+export interface UseAuctionTimingResult {
+  auctionState: AuctionState;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
 } 

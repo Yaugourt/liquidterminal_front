@@ -1,3 +1,4 @@
 export { TokensTable } from './TokensTable';
 export { TrendingTokens } from './TrendingTokens';
-export { TokensHeader } from './TokensHeader'; 
+export { TrendingTokensTabs } from './TrendingTokensTabs';
+export { AuctionSection } from './AuctionSection'; 

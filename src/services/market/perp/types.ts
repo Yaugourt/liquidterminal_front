@@ -8,6 +8,7 @@ export interface PerpMarketData {
   funding: number;
   maxLeverage: number;
   onlyIsolated: boolean;
+  index: number;
 }
 
 // Types de tri supportés par l'API

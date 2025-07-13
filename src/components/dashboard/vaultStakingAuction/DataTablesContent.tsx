@@ -20,8 +20,10 @@ export const AuctionsTable = memo(({
   auctions, 
   isLoading, 
   error, 
+  paginationDisabled = false,
+  hidePageNavigation = false,
   ...paginationProps 
-}: AuctionsTableProps & PaginationProps) => {
+}: AuctionsTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
   const { format } = useNumberFormat();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
@@ -98,6 +100,8 @@ export const AuctionsTable = memo(({
       columns={columns}
       isLoading={isLoading}
       error={error}
+      paginationDisabled={paginationDisabled ?? false}
+      hidePageNavigation={hidePageNavigation ?? false}
       {...paginationProps}
     />
   );
@@ -107,8 +111,10 @@ export const ValidatorsTable = memo(({
   validators, 
   isLoading, 
   error, 
+  paginationDisabled = false,
+  hidePageNavigation = false,
   ...paginationProps 
-}: ValidatorsTableProps & PaginationProps) => {
+}: ValidatorsTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
   const { format } = useNumberFormat();
   const [copiedValidatorAddress, setCopiedValidatorAddress] = useState<string | null>(null);
 
@@ -177,6 +183,8 @@ export const ValidatorsTable = memo(({
       columns={columns}
       isLoading={isLoading}
       error={error}
+      paginationDisabled={paginationDisabled ?? false}
+      hidePageNavigation={hidePageNavigation ?? false}
       {...paginationProps}
     />
   );
@@ -212,7 +220,7 @@ export const VaultTable = memo(({
             href={`/explorer/address/${item.vaultAddress}`}
             className="text-white font-inter hover:text-[#83E9FF] transition-colors"
           >
-            {item.name.length > 20 ? `${item.name.substring(0, 20)}...` : item.name}
+            {item.name.length > 18 ? `${item.name.substring(0, 18)}...` : item.name}
           </Link>
           <button
             onClick={(e) => {
@@ -252,10 +260,10 @@ export const VaultTable = memo(({
     <DataTable
       data={vaults}
       columns={columns}
-      isLoading={isLoading}
+      isLoading={isLoading ?? false}
       error={error}
-      paginationDisabled={paginationDisabled}
-      hidePageNavigation={hidePageNavigation}
+      paginationDisabled={paginationDisabled ?? false}
+      hidePageNavigation={hidePageNavigation ?? false}
       {...paginationProps}
     />
   );

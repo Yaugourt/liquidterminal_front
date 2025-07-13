@@ -37,6 +37,16 @@ export function useSortableData<T extends SortableHolding>(
 
       // Tri selon le type de données
       if (typeof aValue === 'string' && typeof bValue === 'string') {
+        // Vérifier si c'est un nombre sous forme de string (pour unrealizedPnl et funding)
+        const aNum = parseFloat(aValue);
+        const bNum = parseFloat(bValue);
+        
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return sortConfig.direction === 'asc'
+            ? aNum - bNum
+            : bNum - aNum;
+        }
+        
         return sortConfig.direction === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);

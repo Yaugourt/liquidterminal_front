@@ -5,26 +5,41 @@ const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
 
 export function processFillTransactions(fills: UserFill[], address: string): FormattedUserTransaction[] {
     return mergeFillsByHash(fills).map(fill => {
-        const isClosePosition = fill.dir.toLowerCase().includes('close');
-        const isShort = fill.dir.toLowerCase().includes('short');
-        const isLong = fill.dir.toLowerCase().includes('long');
+        const isSpot = fill.coin.startsWith('@');
+        let isClosePosition = false;
+        let isShort = false;
+        let isLong = false;
+        
+        if (isSpot) {
+            isLong = fill.dir === 'Buy';
+            isShort = fill.dir === 'Sell';
+            isClosePosition = false; // No close for spot
+        } else {
+            isClosePosition = fill.dir.toLowerCase().includes('close');
+            isShort = fill.dir.toLowerCase().includes('short');
+            isLong = fill.dir.toLowerCase().includes('long');
+        }
         
         // Le prix reste toujours positif, la logique de signe est sur le montant
         const displayPrice = fill.px;
+        
+        const fromAddress = isSpot ? (isShort ? address : 'HIP2') : (isClosePosition ? HIP2_ADDRESS : address);
+        const toAddress = isSpot ? (isLong ? address : 'HIP2') : (isClosePosition ? address : HIP2_ADDRESS);
         
         return {
             hash: fill.hash,
             method: fill.dir,
             age: formatAge(fill.time),
-            from: isClosePosition ? HIP2_ADDRESS : address,
-            to: isClosePosition ? address : HIP2_ADDRESS,
+            from: fromAddress,
+            to: toAddress,
             amount: fill.sz,
             token: fill.coin,
             price: displayPrice,
             total: (Number(fill.px) * Number(fill.sz)).toFixed(2),
             time: fill.time,
             isShort: isShort,
-            isLong: isLong
+            isLong: isLong,
+            isClose: isClosePosition
         };
     });
 }
@@ -44,7 +59,13 @@ export function processUserTransactions(
             return true;
         })
         .map((tx: UserTransaction) => {
-            const order = tx.action.orders?.[0];
+            let order;
+            if (tx.action.type === 'order') {
+                order = tx.action.orders?.[0];
+            } else if (tx.action.type === 'twapOrder') {
+                order = tx.action.twap;
+            }
+
             const ledgerUpdate = ledgerMap.get(tx.hash);
 
             if (ledgerUpdate) {
@@ -76,15 +97,23 @@ export function processUserTransactions(
 
             const addresses = getTransactionAddresses(tx, address);
             
+            if (tx.action.type === 'twapOrder' && order) {
+                addresses.from = order.b ? HIP2_ADDRESS : address;
+                addresses.to = order.b ? address : HIP2_ADDRESS;
+            }
+            
             // Récupérer le prix depuis userFills si disponible
             const fill = fillsMap?.get(tx.hash);
-            const isShort = fill?.dir.toLowerCase().includes('short');
-            const isLong = fill?.dir.toLowerCase().includes('long');
-            const displayPrice = fill ? fill.px : undefined;
+            const isShortFromFill = fill?.dir.toLowerCase().includes('short');
+            const isLongFromFill = fill?.dir.toLowerCase().includes('long');
+            
+            const isShort = isShortFromFill || ((tx.action.type === 'order' || tx.action.type === 'twapOrder') && order && !order.b && order.a > 10000);
+            const isLong = isLongFromFill || ((tx.action.type === 'order' || tx.action.type === 'twapOrder') && order && order.b && order.a > 10000);
+            const displayPrice = fill ? fill.px : (order && 'p' in order ? order.p : undefined);
             
             return {
                 hash: tx.hash,
-                method: tx.action.type,
+                method: (tx.action.type === 'order' || tx.action.type === 'twapOrder') && order && order.a > 10000 ? (order.b ? 'Buy' : 'Sell') : tx.action.type,
                 age: formatAge(tx.time),
                 from: addresses.from,
                 to: addresses.to,

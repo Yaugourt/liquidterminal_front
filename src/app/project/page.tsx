@@ -28,16 +28,13 @@ export default function L1ProjectPage() {
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-      <div className="p-4">
+      <div className="">
         <Header customTitle="L1 Project" showFees={true} />
         <div className="p-2 lg:hidden">
-          <SearchBar placeholder="Search..." />
+          <SearchBar placeholder="Search projects..." />
         </div>
 
-        <main className="p-3 sm:p-4 lg:p-6 xl:p-12 space-y-6 max-w-[1920px] mx-auto">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-medium text-white">Ecosystem Projects</h1>
-          </div>
+        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           <ProjectsGrid />
         </main>
       </div>

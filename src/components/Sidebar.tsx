@@ -77,7 +77,15 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 name: 'Perpetual',
                 href: '/market/perp',
                 icon: null,
-                IconComponent: PiInfinity
+                IconComponent: PiInfinity,
+                children: [
+                    {
+                        name: 'Auction',
+                        href: '/market/perp/auction',
+                        icon: null,
+                        IconComponent: Gavel
+                    }
+                ]
             },
             {
                 name: 'Wallet',
@@ -191,37 +199,48 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                     <div className="absolute left-0 top-1/2 h-5 bg-[#83E9FF] rounded-r shadow-[0_0_8px_0_rgba(131,233,255,0.3)]" />
                                                 )}
                                                 {item.children ? (
-                                                    <div
-                                                        className={cn(
-                                                            "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all cursor-pointer relative group",
-                                                            isActive 
-                                                                ? "bg-[#83E9FF0A] text-[#83E9FF]" 
-                                                                : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
-                                                        )}
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            toggleSubmenu(item.name);
-                                                        }}
-                                                        role="button"
-                                                        tabIndex={0}
-                                                    >
-                                                        <div className={cn(
-                                                            "transition-transform",
-                                                            isActive ? "scale-110" : "group-hover:scale-105"
-                                                        )}>
-                                                            {item.icon ? (
-                                                                <Image
-                                                                    src={item.icon}
-                                                                    alt={item.name}
-                                                                    width={18}
-                                                                    height={18}
-                                                                />
-                                                            ) : item.IconComponent ? (
-                                                                <item.IconComponent className="w-5 h-5" />
-                                                            ) : null}
-                                                        </div>
-                                                        <span className="text-sm">{item.name}</span>
-                                                        <span className="ml-auto text-xs">{isOpen ? '▲' : '▼'}</span>
+                                                    <div className="flex items-center">
+                                                        <Link
+                                                            href={item.href}
+                                                            className={cn(
+                                                                "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
+                                                                isActive 
+                                                                    ? "bg-[#83E9FF0A] text-[#83E9FF]" 
+                                                                    : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                            )}
+                                                            onClick={() => setIsOpen(false)}
+                                                        >
+                                                            <div className={cn(
+                                                                "transition-transform",
+                                                                isActive ? "scale-110" : "group-hover:scale-105"
+                                                            )}>
+                                                                {item.icon ? (
+                                                                    <Image
+                                                                        src={item.icon}
+                                                                        alt={item.name}
+                                                                        width={18}
+                                                                        height={18}
+                                                                    />
+                                                                ) : item.IconComponent ? (
+                                                                    <item.IconComponent className="w-5 h-5" />
+                                                                ) : null}
+                                                            </div>
+                                                            <span className="text-sm">{item.name}</span>
+                                                        </Link>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                toggleSubmenu(item.name);
+                                                            }}
+                                                            className={cn(
+                                                                "p-1 rounded transition-all",
+                                                                isActive 
+                                                                    ? "text-[#83E9FF] hover:bg-[#83E9FF1A]" 
+                                                                    : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                            )}
+                                                        >
+                                                            <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
+                                                        </button>
                                                     </div>
                                                 ) : (
                                                     <Link

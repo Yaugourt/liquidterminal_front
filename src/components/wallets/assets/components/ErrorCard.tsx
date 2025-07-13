@@ -10,7 +10,7 @@ export function ErrorCard({ message, variant = 'info' }: ErrorCardProps) {
   const colors = {
     error: 'text-red-500',
     warning: 'text-yellow-500',
-    info: 'text-[#FFFFFF99]'
+    info: 'text-white'
   };
 
   return (

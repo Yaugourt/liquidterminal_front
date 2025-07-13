@@ -156,7 +156,7 @@ export const ChartDisplay = ({
       }
       return (
         <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
-          <p className="text-[#FFFFFF99] text-xs">
+          <p className="text-white text-xs">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
           <p className="text-[#83E9FF] font-medium">
@@ -250,10 +250,10 @@ export const ChartDisplay = ({
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke="#83E9FF"
+                stroke="#f9e370"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: "#83E9FF" }}
+                activeDot={{ r: 4, fill: "#f9e370" }}
               />
             </LineChart>
           </ResponsiveContainer>

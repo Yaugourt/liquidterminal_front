@@ -127,7 +127,7 @@ export const AuctionChart = ({
       }
       return (
         <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
-          <p className="text-[#FFFFFF99] text-xs">
+          <p className="text-white text-xs">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
           <p className="text-[#83E9FF] font-medium">

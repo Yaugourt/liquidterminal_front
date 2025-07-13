@@ -5,6 +5,7 @@ export {
   getUserFills,
   getUserTransactions,
   fetchPortfolio,
+  getUserOpenOrders,
 } from './api';
 
 // Types exports
@@ -21,6 +22,8 @@ export type {
   PortfolioPeriodData,
   PortfolioApiResponse,
   TransactionType,
+  OpenOrder,
+  OpenOrdersResponse,
 } from './types';
 
 // Hooks exports
@@ -28,6 +31,7 @@ export {
   useTransactions,
   usePortfolio,
   useAddressBalance,
+  useOpenOrders,
   formatAddress,
   formatHash,
   formatNumberValue,

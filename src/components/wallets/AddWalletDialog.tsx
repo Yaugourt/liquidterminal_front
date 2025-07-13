@@ -80,13 +80,13 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
           <DialogTitle>Ajouter un nouveau wallet</DialogTitle>
-          <DialogDescription className="text-[#FFFFFF99]">
+          <DialogDescription className="text-white">
             Entrez l'adresse de votre wallet Ethereum et un nom optionnel.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label htmlFor="address" className="text-sm text-[#FFFFFF99]">
+            <label htmlFor="address" className="text-sm text-white">
               Adresse du wallet (obligatoire)
             </label>
             <Input
@@ -98,7 +98,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm text-[#FFFFFF99]">
+            <label htmlFor="name" className="text-sm text-white">
               Nom du wallet (facultatif)
             </label>
             <Input

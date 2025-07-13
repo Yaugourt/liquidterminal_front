@@ -104,6 +104,14 @@ export function useHoldingsConverter({
           logo: marketToken?.logo || undefined,
           price: currentPrice,
           change24h: marketToken ? marketToken.change24h : 0,
+          // Nouvelles propriétés
+          leverage: {
+            type: position.position.leverage.type,
+            value: position.position.leverage.value
+          },
+          szi: position.position.szi,
+          unrealizedPnl: position.position.unrealizedPnl,
+          funding: position.position.cumFunding.sinceOpen,
         };
         
         return holding;

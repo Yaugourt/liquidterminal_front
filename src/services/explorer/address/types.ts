@@ -19,6 +19,14 @@ export interface OrderAction {
             };
         };
     }>;
+    twap?: {
+        a: number;
+        b: boolean;
+        s: string;
+        r: boolean;
+        m: number;
+        t: boolean;
+    };
     amount?: string;
     token?: string;
     destination?: string;
@@ -91,6 +99,7 @@ export interface FormattedUserTransaction {
     time: number;
     isShort?: boolean;
     isLong?: boolean;
+    isClose?: boolean;
 }
 
 // Response finale avec les transactions formatées
@@ -128,3 +137,25 @@ export interface TransactionType {
   isShort?: boolean;
   isLong?: boolean;
 } 
+
+// Types pour les ordres ouverts
+export interface OpenOrder {
+    coin: string;
+    side: "B" | "A"; // B = Buy, A = Sell
+    limitPx: string;
+    sz: string;
+    oid: number;
+    children: any[];
+    cloid: string | null;
+    isPositionTpsl: boolean;
+    isTrigger: boolean;
+    orderType: string;
+    origSz: string;
+    reduceOnly: boolean;
+    tif: string;
+    timestamp: number;
+    triggerCondition: string;
+    triggerPx: string;
+}
+
+export type OpenOrdersResponse = OpenOrder[]; 

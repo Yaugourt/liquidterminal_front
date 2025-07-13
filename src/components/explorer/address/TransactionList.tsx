@@ -9,13 +9,16 @@ import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";
 import { formatAddress, formatHash, formatNumberValue } from '@/services/explorer/address';
 import { useSpotTokens } from '@/services/market/spot/hooks/useSpotMarket';
+import { usePerpMarkets } from '@/services/market/perp/hooks/usePerpMarket';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
+  const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
   const { format } = useNumberFormat();
   
   // Récupération des données de marché pour les prix
   const { data: spotTokens, isLoading: spotLoading } = useSpotTokens({ limit: 100 });
+  const { data: perpMarkets } = usePerpMarkets({ limit: 1000 });
   
   // Fonction pour récupérer le prix d'un token
   const getTokenPrice = (tokenSymbol: string): number => {
@@ -55,8 +58,16 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
   const calculateValueWithDirection = (tx: any) => {
     if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
     
-    const price = getTokenPrice(tx.token);
-    if (price === 0) return '-';
+    const tokenName = getTokenName(tx.token);
+    
+    let price: number;
+    if (tx.price) {
+      price = parseFloat(tx.price);
+    } else {
+      price = getTokenPrice(tokenName);
+    }
+    
+    if (isNaN(price) || price === 0) return '-';
     
     const numericAmount = parseFloat(tx.amount.replace(/,/g, ''));
     if (isNaN(numericAmount)) return '-';
@@ -87,19 +98,54 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     return formattedValue;
   };
 
+  // Fonction pour convertir le token (@107 -> HYPE)
+  const getTokenName = (token: string) => {
+    if (!token || token === 'unknown') return token;
+    
+    let isSpotPrefix = false;
+    let marketIndex: number;
+    
+    if (token.startsWith('@')) {
+      marketIndex = parseInt(token.substring(1));
+      isSpotPrefix = true;
+    } else {
+      marketIndex = parseInt(token);
+    }
+    
+    if (isNaN(marketIndex)) return token;
+    
+    if (marketIndex > 10000 || isSpotPrefix) {
+      const spotIndex = isSpotPrefix ? marketIndex : marketIndex - 10000;
+      const spotToken = spotTokens?.find(t => t.marketIndex === spotIndex);
+      return spotToken ? spotToken.name : token;
+    } else {
+      const perpMarket = perpMarkets?.find(t => t.index === marketIndex);
+      return perpMarket ? perpMarket.name : token;
+    }
+  };
+
   // Fonction pour formater le montant avec couleur selon le sens du transfert
   const formatAmountWithDirection = (tx: any) => {
     if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
     
     const formattedAmount = formatNumberValue(tx.amount, format);
-    const tokenDisplay = `${formattedAmount} ${tx.token}`;
+    const tokenName = getTokenName(tx.token);
+    let tokenDisplay = `${formattedAmount} ${tokenName}`;
     
-    // Pour les positions Short/Long, appliquer la logique de signe
+    // Pour les positions Short/Long, appliquer la logique de signe en tenant compte de open/close
     if (tx.isShort) {
-      return `-${tokenDisplay}`;
+      if (tx.isClose) {
+        return `+${tokenDisplay}`; // Close short: positif
+      } else {
+        return `-${tokenDisplay}`; // Open short: négatif
+      }
     }
     if (tx.isLong) {
-      return `+${tokenDisplay}`;
+      if (tx.isClose) {
+        return `-${tokenDisplay}`; // Close long: négatif
+      } else {
+        return `+${tokenDisplay}`; // Open long: positif
+      }
     }
     
     // Pour accountClassTransfer et cStakingTransfer, pas de signe (transfert interne)
@@ -124,12 +170,20 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
 
   // Fonction pour obtenir la classe CSS de couleur selon le sens du transfert
   const getAmountColorClass = (tx: any) => {
-    // Pour les positions Short/Long, appliquer les couleurs appropriées
+    // Pour les positions Short/Long, appliquer les couleurs en tenant compte de open/close
     if (tx.isShort) {
-      return 'text-[#FF5757]'; // Rouge pour Short
+      if (tx.isClose) {
+        return 'text-[#4ADE80]'; // Close short: vert
+      } else {
+        return 'text-[#FF5757]'; // Open short: rouge
+      }
     }
     if (tx.isLong) {
-      return 'text-[#4ADE80]'; // Vert pour Long
+      if (tx.isClose) {
+        return 'text-[#FF5757]'; // Close long: rouge
+      } else {
+        return 'text-[#4ADE80]'; // Open long: vert
+      }
     }
     
     // Pour accountClassTransfer et cStakingTransfer, toujours vert (transfert interne)
@@ -224,6 +278,19 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
       );
     }
 
+    if (address === HIP2_ADDRESS) {
+      return (
+        <TableCell className="py-3 px-4 text-sm">
+          <Link 
+            href={`/explorer/address/${HIP2_ADDRESS}`}
+            className="text-[#83E9FF] hover:text-[#83E9FF]/80 truncate block"
+          >
+            HIP2
+          </Link>
+        </TableCell>
+      );
+    }
+
     if (currentAddress && address.toLowerCase() === currentAddress.toLowerCase()) {
       return (
         <TableCell className="py-3 px-4 text-sm">
@@ -274,7 +341,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-[#FFFFFF99]">
+      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-white">
         No transactions found
       </div>
     );
@@ -292,7 +359,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
               <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">From</TableHead>
               <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">To</TableHead>
               <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Token</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Price</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Price</TableHead>
               <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Value</TableHead>
             </TableRow>
           </TableHeader>
@@ -336,9 +403,14 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
                   {formatAmountWithDirection(tx)}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-sm text-white text-right">
-                  {tx.price ? `$${tx.price.replace('-', '')}` : (tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(tx.token), format, {
+                  {tx.price ? formatNumber(parseFloat(tx.price), format, {
                     currency: '$',
-                    showCurrency: true
+                    showCurrency: true,
+                    minimumFractionDigits: 4
+                  }) : (tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(getTokenName(tx.token)), format, {
+                    currency: '$',
+                    showCurrency: true,
+                    minimumFractionDigits: 4
                   }) : '-')}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-sm text-white text-right">{calculateValueWithDirection(tx)}</TableCell>

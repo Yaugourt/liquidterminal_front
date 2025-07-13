@@ -18,7 +18,7 @@ export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsP
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               selectedFilter === tab.key
                 ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                : 'text-[#FFFFFF99] hover:text-white hover:bg-[#FFFFFF0A]'
+                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
             }`}
           >
             {tab.label}

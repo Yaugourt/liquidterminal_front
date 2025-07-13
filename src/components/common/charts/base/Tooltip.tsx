@@ -22,7 +22,7 @@ export function BaseTooltip({
   if (active && payload && payload.length > 0 && label) {
     return (
       <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded">
-        <p className="text-[#FFFFFF99] text-xs">
+        <p className="text-white text-xs">
           {formatTime(label)}
         </p>
         <p className="text-[#83E9FF] font-medium">

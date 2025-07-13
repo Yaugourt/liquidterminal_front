@@ -93,6 +93,8 @@ export const TabSection = memo(({
             validators={paginatedValidators}
             isLoading={validatorsLoading && !initialValidators}
             error={validatorsError}
+            paginationDisabled={false}
+            hidePageNavigation={true}
             {...paginationProps}
           />
         )}
@@ -102,6 +104,8 @@ export const TabSection = memo(({
             auctions={paginatedAuctions}
             isLoading={(usdcLoading || hypeLoading) && !initialAuctions}
             error={usdcError || hypeError}
+            paginationDisabled={false}
+            hidePageNavigation={true}
             {...paginationProps}
           />
         )}

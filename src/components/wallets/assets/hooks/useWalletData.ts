@@ -24,10 +24,8 @@ export function useWalletData({ addressOverride }: UseWalletDataProps) {
   const { spotBalances, perpPositions, isLoading, error, refresh } = useWalletsBalances(walletAddress);
   const { data: spotMarketTokens, isLoading: isSpotMarketLoading, refetch: refetchSpotMarket } = useSpotTokens({ 
     limit: 200,
-    defaultParams: {
-      sortBy: "volume",
-      sortOrder: "desc",
-    } 
+    sortBy: "volume",
+    sortOrder: "desc",
   });
   const { data: perpMarketTokens, isLoading: isPerpMarketLoading, refetch: refetchPerpMarket } = usePerpMarkets({
     limit: 200,

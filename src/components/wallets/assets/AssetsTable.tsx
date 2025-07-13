@@ -81,7 +81,7 @@ export function AssetsTable({
           <button
             onClick={onRefresh}
             disabled={isRefreshing || isLoading}
-            className={`p-2 text-[#FFFFFF99] hover:text-white transition-colors ${
+            className={`p-2 text-white hover:text-white transition-colors ${
               isRefreshing ? 'animate-spin' : ''
             }`}
           >
@@ -133,6 +133,7 @@ export function AssetsTable({
                     key={holding.coin}
                     holding={holding as PerpHoldingDisplay}
                     formatCurrency={formatCurrency}
+                    formatTokenAmount={formatTokenAmount}
                     formatPercent={formatPercent}
                   />
                 )

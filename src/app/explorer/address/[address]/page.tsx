@@ -1,14 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useTransactions, usePortfolio } from "@/services/explorer/address";
+import { useTransactions, usePortfolio, useOpenOrders } from "@/services/explorer/address";
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable } from "@/components/explorer";
+import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OpenOrdersList } from "@/components/explorer";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 
 export default function AddressPage() {
@@ -16,6 +16,7 @@ export default function AddressPage() {
   const address = params.address as string;
   const { transactions, isLoading, error } = useTransactions(address);
   const { data: portfolio, isLoading: loadingPortfolio } = usePortfolio(address);
+  const { data: openOrders, isLoading: loadingOrders } = useOpenOrders(address);
   const { isAuthenticated, login } = useAuthContext();
   
   // States for dialogs
@@ -51,6 +52,8 @@ export default function AddressPage() {
           loadingPortfolio={loadingPortfolio}
           onAddClick={handleAddWalletClick}
           address={address}
+          transactions={transactions}
+          isLoadingTransactions={isLoading}
         />
 
         {/* Tab Navigation */}
@@ -81,6 +84,13 @@ export default function AddressPage() {
           />
         )}
 
+        {activeTab === "orders" && (
+          <OpenOrdersList 
+            orders={openOrders}
+            isLoading={loadingOrders}
+          />
+        )}
+
         {activeTab === "perps" && (
           <HoldingTabs 
             address={address}
@@ -92,7 +102,7 @@ export default function AddressPage() {
           <StakingTable address={address} />
         )}
 
-        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
+        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
           <div className="bg-[#0A1F32] h-[400px] border border-[#1E3851] rounded-xl flex items-center justify-center">
             <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
           </div>
@@ -104,7 +114,7 @@ export default function AddressPage() {
         <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
           <DialogHeader>
             <DialogTitle>Authentication Required</DialogTitle>
-            <DialogDescription className="text-[#FFFFFF99]">
+            <DialogDescription className="text-white">
               You need to be logged in to add this wallet to your list.
             </DialogDescription>
           </DialogHeader>

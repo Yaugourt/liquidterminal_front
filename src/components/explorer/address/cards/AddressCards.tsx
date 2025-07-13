@@ -7,15 +7,23 @@ import { PnLCard } from "./PnLCard";
 import { InfoCard } from "./InfoCard";
 import { AddressCardsProps } from "@/components/types/explorer.types";
 import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
+import { FormattedUserTransaction } from "@/services/explorer/address/types";
 
 const GRID_CLASSES = "grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6";
+
+interface AddressCardsPropsWithTransactions extends AddressCardsProps {
+    transactions?: FormattedUserTransaction[] | null;
+    isLoadingTransactions?: boolean;
+}
 
 export const AddressCards = memo(({ 
     portfolio, 
     loadingPortfolio, 
     onAddClick, 
-    address 
-}: AddressCardsProps) => {
+    address,
+    transactions,
+    isLoadingTransactions
+}: AddressCardsPropsWithTransactions) => {
     const { balances, isLoading: loadingBalances } = useAddressBalance(address);
     const { format } = useNumberFormat();
     const { totalEquity, isLoading: loadingVaultDeposits } = useVaultDeposits(address);
@@ -47,11 +55,17 @@ export const AddressCards = memo(({
         format
     }), [portfolio, loadingPortfolio, format]);
 
+    const infoProps = useMemo(() => ({
+        onAddClick,
+        transactions,
+        isLoadingTransactions
+    }), [onAddClick, transactions, isLoadingTransactions]);
+
     return (
         <div className={GRID_CLASSES}>
             <OverviewCard {...overviewProps} />
             <PnLCard {...pnlProps} />
-            <InfoCard onAddClick={onAddClick} />
+            <InfoCard {...infoProps} />
         </div>
     );
 }); 

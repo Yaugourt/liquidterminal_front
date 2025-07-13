@@ -10,6 +10,8 @@ const nextConfig = {
             "lh3.googleusercontent.com",
             // GitHub
             "avatars.githubusercontent.com",
+            // Hyperliquid
+            "app.hyperliquid.xyz",
         ],
     },
 };

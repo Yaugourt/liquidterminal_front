@@ -45,21 +45,21 @@ export default function TransactionPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <div>
-                                <p className="text-[#FFFFFF99] text-sm mb-1">Hash:</p>
+                                <p className="text-white text-sm mb-1">Hash:</p>
                                 <p className="text-[#83E9FF] break-all text-base">{transactionDetails.hash}</p>
                             </div>
                             <div>
-                                <p className="text-[#FFFFFF99] text-sm mb-1">Time:</p>
+                                <p className="text-white text-sm mb-1">Time:</p>
                                 <p className="text-white text-base">{format(transactionDetails.time, 'dd/MM/yyyy HH:mm:ss')}</p>
                             </div>
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <p className="text-[#FFFFFF99] text-sm mb-1">Block:</p>
+                                <p className="text-white text-sm mb-1">Block:</p>
                                 <p className="text-[#F9E370] text-base">{transactionDetails.block}</p>
                             </div>
                             <div>
-                                <p className="text-[#FFFFFF99] text-sm mb-1">User:</p>
+                                <p className="text-white text-sm mb-1">User:</p>
                                 <p className="text-[#83E9FF] break-all text-base">{transactionDetails.user}</p>
                             </div>
                         </div>
@@ -72,12 +72,12 @@ export default function TransactionPage() {
                             <Table className="w-full text-base">
                                 <TableBody className="space-y-4">
                                     <TableRow className="flex justify-between py-2">
-                                        <TableCell className="text-[#FFFFFF99]">Type:</TableCell>
+                                        <TableCell className="text-white">Type:</TableCell>
                                         <TableCell className="text-white">{transactionDetails.action.type}</TableCell>
                                     </TableRow>
                                     {transactionDetails.action.cancels && (
                                         <TableRow className="flex justify-between py-2">
-                                            <TableCell className="text-[#FFFFFF99]">Cancels:</TableCell>
+                                            <TableCell className="text-white">Cancels:</TableCell>
                                             <TableCell className="text-white">
                                                 <div className="space-y-2">
                                                     {transactionDetails.action.cancels.map((cancel, index) => (
@@ -92,7 +92,7 @@ export default function TransactionPage() {
                                     )}
                                     {transactionDetails.error && (
                                         <TableRow className="flex justify-between py-2">
-                                            <TableCell className="text-[#FFFFFF99]">Error:</TableCell>
+                                            <TableCell className="text-white">Error:</TableCell>
                                             <TableCell className="text-red-500">{transactionDetails.error}</TableCell>
                                         </TableRow>
                                     )}
