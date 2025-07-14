@@ -65,7 +65,7 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-[#83E9FF] transition-colors"
+                    className="text-[#F9E370] hover:text-white transition-colors"
                     aria-label={link.label}
                   >
                     <Icon size={16} />

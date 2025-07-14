@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { HypePriceState, HypePriceStore, HypeTradeResponse } from './types';
+import {  HypePriceStore, HypeTradeResponse } from './types';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const HYPE_COIN_ID = '@107';

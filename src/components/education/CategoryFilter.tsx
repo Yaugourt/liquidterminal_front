@@ -69,7 +69,7 @@ export function CategoryFilter({ categories, selectedCategories, onCategoryChang
         <span className="text-sm font-medium">{getButtonText()}</span>
         <ChevronDown 
           size={16} 
-          className={`text-[#83E9FF] transition-transform ${isOpen ? "rotate-180" : ""}`} 
+          className={`text-[#F9E370] transition-transform ${isOpen ? "rotate-180" : ""}`} 
         />
       </button>
 
@@ -83,7 +83,7 @@ export function CategoryFilter({ categories, selectedCategories, onCategoryChang
             <span className="text-sm text-white font-medium">Select All</span>
             <div className={`w-4 h-4 rounded border ${
               selectedCategories.length === categories.length 
-                ? "bg-[#83E9FF] border-[#83E9FF]" 
+                ? "bg-[#F9E370] border-[#F9E370]" 
                 : "border-gray-500"
             } flex items-center justify-center`}>
               {selectedCategories.length === categories.length && (
@@ -106,7 +106,7 @@ export function CategoryFilter({ categories, selectedCategories, onCategoryChang
                 </div>
                 <div className={`w-4 h-4 rounded border ${
                   selectedCategories.includes(category.id) 
-                    ? "bg-[#83E9FF] border-[#83E9FF]" 
+                    ? "bg-[#F9E370] border-[#F9E370]" 
                     : "border-gray-500"
                 } flex items-center justify-center`}>
                   {selectedCategories.includes(category.id) && (

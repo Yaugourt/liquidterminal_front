@@ -63,8 +63,8 @@ export function ResourcesSection({ categories, sectionColor }: ResourcesSectionP
             {/* Category header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-semibold text-white">{category.title}</h2>
-                <span className="px-3 py-1 bg-[#83E9FF20] text-[#83E9FF] rounded-full text-sm font-medium">
+                <h2 className="text-lg font-semibold text-white">{category.title}</h2>
+                <span className="px-3 py-1 bg-[#F9E37020] text-[#F9E370] rounded-full text-xs font-medium">
                   {category.resources.length} resources
                 </span>
               </div>
@@ -73,7 +73,7 @@ export function ResourcesSection({ categories, sectionColor }: ResourcesSectionP
                 size="sm"
                 className="border-[#83E9FF4D] hover:border-[#83E9FF80] text-white hover:bg-[#83E9FF20] transition-all"
               >
-                <Plus size={16} className="mr-2" />
+                <Plus size={16} className="mr-2 text-[#F9E370]" />
                 Add resource
               </Button>
             </div>

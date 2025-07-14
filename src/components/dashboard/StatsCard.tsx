@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { StatsCardProps } from "@/components/types/dashboard.types";
-import { Users, BarChart3, CreditCard, Coins, Wallet } from "lucide-react";
+import { Users, BarChart3, CreditCard, Wallet } from "lucide-react";
 import Image from "next/image";
 
 export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {

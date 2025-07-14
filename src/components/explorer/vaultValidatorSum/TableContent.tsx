@@ -248,7 +248,7 @@ export function TableContent({
       <TableBody>
         {vaults.map((vault: any) => (
           <TableRow key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-            <TableCell className="py-3 px-6 text-[#83E9FF] font-medium">{vault.summary.name}</TableCell>
+            <TableCell className="py-3 px-6 text-white font-medium">{vault.summary.name}</TableCell>
             <TableCell className="py-3 px-6">
               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                 !vault.summary.isClosed 
@@ -264,8 +264,16 @@ export function TableContent({
             <TableCell className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
               {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
             </TableCell>
-            <TableCell className="py-3 px-6 text-[#83E9FF]">
+            <TableCell className="py-3 px-6">
+              <div className="flex items-center gap-2">
+                <Link 
+                  href={`/explorer/address/${vault.summary.leader}`}
+                  className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                >
               {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
+                </Link>
+                <CopyButton text={vault.summary.leader} />
+              </div>
             </TableCell>
             <TableCell className="py-3 px-6 text-white">
               {formatDate(vault.summary.createTimeMillis, dateFormat)}

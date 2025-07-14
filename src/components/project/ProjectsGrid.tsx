@@ -37,14 +37,14 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
   return (
     <div className="space-y-6">
       {/* Tabs Navigation */}
-      <div className="border-b border-[#83E9FF1A]">
+              <div className="border-b border-[#F9E37020]">
         <nav className="flex gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF33] scrollbar-track-transparent">
           <button
             onClick={() => setActiveTab('all')}
             className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
               activeTab === 'all'
                 ? 'border-[#83E9FF] text-[#83E9FF]'
-                : 'border-transparent text-gray-400 hover:text-white hover:border-gray-600'
+                : 'border-transparent text-white hover:text-[#F9E370] hover:border-gray-600'
             }`}
           >
             All Projects
@@ -57,7 +57,7 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
               className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
                 activeTab === category.id
                   ? 'border-[#83E9FF] text-[#83E9FF]'
-                  : 'border-transparent text-gray-400 hover:text-white hover:border-gray-600'
+                  : 'border-transparent text-white hover:text-[#F9E370] hover:border-gray-600'
               }`}
             >
               {category.name}

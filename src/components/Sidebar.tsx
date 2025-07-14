@@ -50,7 +50,7 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
             },
             {
                 name: 'Vaults',
-                href: '/explorer/vault',
+                href: '/explorer/vaults',
                 icon: null,
                 IconComponent: PiVault
             },

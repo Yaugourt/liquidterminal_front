@@ -18,10 +18,10 @@ interface EducationSidebarProps {
 
 export function EducationSidebar({ info }: EducationSidebarProps) {
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl p-6">
+    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg p-6">
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-white mb-2">{info.title}</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">{info.title}</h2>
           {info.description && (
             <p className="text-sm text-gray-400">{info.description}</p>
           )}
@@ -64,7 +64,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 className="flex items-center justify-between p-3 rounded-lg bg-[#112941] hover:bg-[#1a3654] transition-colors group"
               >
                 <div className="flex items-center gap-2">
-                  <FileText size={16} className="text-[#83E9FF]" />
+                  <FileText size={16} className="text-[#F9E370]" />
                   <span className="text-sm text-white">Whitepaper</span>
                 </div>
                 <ExternalLink size={14} className="text-gray-400 group-hover:text-[#83E9FF] transition-colors" />
@@ -79,7 +79,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 className="flex items-center justify-between p-3 rounded-lg bg-[#112941] hover:bg-[#1a3654] transition-colors group"
               >
                 <div className="flex items-center gap-2">
-                  <Globe size={16} className="text-[#83E9FF]" />
+                  <Globe size={16} className="text-[#F9E370]" />
                   <span className="text-sm text-white">Website</span>
                 </div>
                 <ExternalLink size={14} className="text-gray-400 group-hover:text-[#83E9FF] transition-colors" />
@@ -94,7 +94,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 className="flex items-center justify-between p-3 rounded-lg bg-[#112941] hover:bg-[#1a3654] transition-colors group"
               >
                 <div className="flex items-center gap-2">
-                  <Twitter size={16} className="text-[#83E9FF]" />
+                  <Twitter size={16} className="text-[#F9E370]" />
                   <span className="text-sm text-white">Twitter</span>
                 </div>
                 <ExternalLink size={14} className="text-gray-400 group-hover:text-[#83E9FF] transition-colors" />

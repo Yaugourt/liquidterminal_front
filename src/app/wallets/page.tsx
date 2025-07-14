@@ -11,8 +11,8 @@ import { AssetsSection } from "@/components/wallets/assets";
 import { WalletAssetsNavigation } from "@/components/wallets/WalletAssetsNavigation";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Menu } from "lucide-react";
+import { PiSignIn } from "react-icons/pi";
 import { SearchBar } from "@/components/SearchBar";
 
 export default function Wallets() {
@@ -54,22 +54,24 @@ export default function Wallets() {
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6 max-w-[1920px] mx-auto">
           {!isAuthenticated && (
-            <div className="fixed inset-0 z-40 bg-[#051728]/10 backdrop-blur-sm flex flex-col items-center justify-center">
-              <div className="bg-[#051728]/90 border border-[#83E9FF33] rounded-xl p-8 shadow-lg shadow-[#83E9FF]/10 max-w-md w-full text-center">
-                <h2 className="text-2xl font-bold text-white mb-4">Authentication Required</h2>
-                <p className="text-[#83E9FF99] mb-6">You need to login to access your wallet data</p>
+            <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
+              <div className="bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md p-6 max-w-md w-full mx-4">
+                <div className="text-center mb-6">
+                  <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
+                  <p className="text-[#83E9FF]/60 text-sm">You need to login to access your wallet data</p>
+                </div>
                 <Button 
                   onClick={() => login()}
-                  className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-[#2DCCFF] to-[#15748E] hover:from-[#83E9FF] hover:to-[#1692AD] text-white rounded-xl px-4 py-3 h-12 transition-all border-2 border-[#83E9FF33] shadow-[0_0_15px_rgba(131,233,255,0.15)]"
+                  className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
                 >
-                  <Image
-                    src="/wallet-icon.svg" 
-                    alt="Login"
-                    width={20}
-                    height={20}
-                    style={{ filter: "brightness(0) invert(1)" }}
-                  />
-                  <span className="font-medium">Login</span>
+                  <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
+                  <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
+                  <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
+                    <PiSignIn className="w-5 h-5 brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
+                    <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
+                      Login
+                    </span>
+                  </div>
                 </Button>
               </div>
             </div>
