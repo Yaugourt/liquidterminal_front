@@ -1,5 +1,5 @@
 import { FormattedStakingValidation, UseStakingValidationsResult, StakingValidationsParams, StakingValidationsPaginatedResponse, UseStakingValidationsOptions, UseStakingValidationsPaginatedResult, UnstakingQueueParams, UnstakingQueuePaginatedResponse, UseUnstakingQueueOptions, UseUnstakingQueuePaginatedResult } from '../types';
-import { fetchStakingValidations, fetchStakingValidationsPaginated, fetchUnstakingQueuePaginated } from '../api';
+import { fetchStakingValidations, fetchStakingValidationsPaginated, fetchUnstakingQueuePaginated } from '../staking';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 

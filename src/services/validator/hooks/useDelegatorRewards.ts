@@ -1,5 +1,5 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchDelegatorRewards } from '../api';
+import { fetchDelegatorRewards } from '../delegator';
 import { UseDelegatorRewardsResult, FormattedDelegatorRewardItem } from '../types';
 
 /**

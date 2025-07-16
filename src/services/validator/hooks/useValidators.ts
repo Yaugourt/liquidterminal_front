@@ -1,4 +1,4 @@
-import { fetchAllValidators } from '../api';
+import { fetchAllValidators } from '../validators';
 import { UseValidatorsResult, Validator, ValidatorStats } from '../types';
 import { useDataFetching } from '../../../hooks/useDataFetching';
 

@@ -1,23 +1,46 @@
 import { SpotGlobalStats, SpotToken } from './types';
-import { fetchWithConfig, fetchPaginated } from '../../api/base';
+import { get } from '../../api/axios-config';
+import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse } from '../../common';
 
 /**
  * Récupère les statistiques globales du marché spot
  */
 export const fetchSpotGlobalStats = async (): Promise<SpotGlobalStats> => {
-  return fetchWithConfig<SpotGlobalStats>('/market/spot/globalstats');
+  return withErrorHandling(async () => {
+    return await get<SpotGlobalStats>('/market/spot/globalstats');
+  }, 'fetching spot global stats');
 };
 
-export async function fetchSpotTokens(params: {
-  page?: number;
+/**
+ * Récupère les tokens spot avec pagination
+ */
+export const fetchSpotTokens = async (params: {
   limit?: number;
+  page?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  [key: string]: any;
-}): Promise<PaginatedResponse<SpotToken>> {
-  return fetchPaginated<SpotToken>('/market/spot', params);
-}
+}): Promise<PaginatedResponse<SpotToken>> => {
+  return withErrorHandling(async () => {
+    const queryParams = new URLSearchParams();
+    
+    if (params.limit !== undefined) {
+      queryParams.append('limit', params.limit.toString());
+    }
+    if (params.page !== undefined) {
+      queryParams.append('page', params.page.toString());
+    }
+    if (params.sortBy) {
+      queryParams.append('sortBy', params.sortBy);
+    }
+    if (params.sortOrder) {
+      queryParams.append('sortOrder', params.sortOrder);
+    }
+    
+    const url = `/market/spot${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return await get<PaginatedResponse<SpotToken>>(url);
+  }, 'fetching spot tokens');
+};
 
 /**
  * Récupère un token spécifique par son nom

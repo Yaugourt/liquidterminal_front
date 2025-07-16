@@ -1,4 +1,6 @@
-import { fetchWithConfig, fetchExternal, buildHyperliquidUrl, ENDPOINTS } from '../api/base';
+import { get, postExternal } from '../api/axios-config';
+import { withErrorHandling } from '../api/error-handler';
+import { ENDPOINTS, API_URLS } from '../api/constants';
 import { 
   VaultDepositsRequest, 
   VaultDepositsResponse,
@@ -29,27 +31,29 @@ const adaptVaultResponse = (response: VaultsResponse): PaginatedResponse<VaultSu
  * Fetches vaults with pagination and sorting
  */
 export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse> => {
-  const queryParams = new URLSearchParams();
-  
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
-      queryParams.append(key, value.toString());
-    }
-  });
+  return withErrorHandling(async () => {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.append(key, value.toString());
+      }
+    });
 
-  const response = await fetchWithConfig<VaultResponse>(
-    `${ENDPOINTS.MARKET_VAULTS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
-  );
+    const response = await get<VaultResponse>(
+      `${ENDPOINTS.MARKET_VAULTS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+    );
 
-  return {
-    success: true,
-    data: response.data,
-    pagination: {
-      totalTvl: response.pagination.totalTvl,
-      total: response.pagination.vaultsNumber,
-      page: response.pagination.page
-    }
-  };
+    return {
+      success: true,
+      data: response.data,
+      pagination: {
+        totalTvl: response.pagination.totalTvl,
+        total: response.pagination.vaultsNumber,
+        page: response.pagination.page
+      }
+    };
+  }, 'fetching vaults');
 };
 
 /**
@@ -60,34 +64,8 @@ export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse>
 export const fetchVaultDeposits = async (
   params: VaultDepositsRequest
 ): Promise<VaultDepositsResponse> => {
-  try {
-  
-    
-    const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
-    const response = await fetchExternal<VaultDepositsResponse>(url, {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-
-    return response;
-  } catch (error: any) {
-    console.error('Error fetching vault deposits:', error);
-    
-    if (error.response) {
-      // Propager l'erreur avec le statut HTTP et le message
-      throw {
-        message: error.response.data.message || 'Failed to fetch vault deposits',
-        response: {
-          status: error.response.status,
-          data: error.response.data
-        }
-      };
-    }
-    
-    throw error;
-  }
+  return withErrorHandling(async () => {
+    const url = `${API_URLS.HYPERLIQUID_API}/info`;
+    return await postExternal<VaultDepositsResponse>(url, params);
+  }, 'fetching vault deposits');
 }; 

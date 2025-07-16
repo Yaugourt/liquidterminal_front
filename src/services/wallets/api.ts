@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { API_URLS } from '../api/base';
+import { post, get, del } from '../api/axios-config';
+import { withErrorHandling } from '../api/error-handler';
 import { 
   AddWalletResponse, 
   WalletResponse
@@ -24,31 +24,28 @@ export const addWallet = async (
   name?: string,
   privyUserId?: string
 ): Promise<AddWalletResponse> => {
-  try {
-  
-    const response = await axios.post(`${API_URLS.LOCAL_BACKEND}/wallet`, {
+  return withErrorHandling(async () => {
+    const response = await post<any>('/wallet', {
       address,
       name,
       privyUserId
     });
     
-
-    
     // Vérifier si la réponse indique un succès
-    if (response.data && response.data.success === true) {
+    if (response && response.success === true) {
       // Si la réponse contient les données attendues
-      if (response.data.wallet && response.data.userWallet) {
+      if (response.wallet && response.userWallet) {
         return {
           success: true,
-          wallet: response.data.wallet,
-          userWallet: response.data.userWallet
+          wallet: response.wallet,
+          userWallet: response.userWallet
         };
       }
       
       // Si la réponse contient seulement userWallet
-      if (response.data.userWallet) {
+      if (response.userWallet) {
         // Créer un wallet à partir des données de userWallet
-        const userWallet = response.data.userWallet;
+        const userWallet = response.userWallet;
         const wallet = {
           id: userWallet.walletId || 0,
           address: address,
@@ -66,32 +63,17 @@ export const addWallet = async (
       // Si la réponse contient seulement un message de succès
       return {
         success: true,
-        message: response.data.message || "Wallet ajouté avec succès"
+        message: response.message || "Wallet ajouté avec succès"
       };
     }
     
     // Si la réponse n'indique pas un succès
-    console.error("Invalid response format from addWallet:", response.data);
+    console.error("Invalid response format from addWallet:", response);
     return {
       success: false,
-      message: response.data.message || "Invalid response format from server"
+      message: response.message || "Invalid response format from server"
     };
-  } catch (error: any) {
-    console.error('Error adding wallet:', error);
-    
-    if (error.response) {
-      // Propager l'erreur avec le statut HTTP et le message
-      throw {
-        message: error.response.data.message || 'Failed to add wallet',
-        response: {
-          status: error.response.status,
-          data: error.response.data
-        }
-      };
-    }
-    
-    throw error;
-  }
+  }, 'adding wallet');
 };
 
 /**
@@ -102,41 +84,36 @@ export const addWallet = async (
 export const getWalletsByUser = async (
   privyUserId: string
 ): Promise<WalletResponse> => {
-  try {
-  
-    const response = await axios.get(`${API_URLS.LOCAL_BACKEND}/wallet/user/${privyUserId}`);
-  
+  return withErrorHandling(async () => {
+    const response = await get<any>(`/wallet/user/${privyUserId}`);
     
     // Vérifier que la réponse contient les données attendues
-    if (!response.data) {
-      console.error("Invalid response format from getWalletsByUser:", response.data);
+    if (!response) {
+      console.error("Invalid response format from getWalletsByUser:", response);
       return {
         data: []
       };
     }
     
     // Vérifier si la réponse contient une structure paginée
-    if (response.data.data && Array.isArray(response.data.data)) {
-      return {
-        data: response.data.data
-      };
-    }
-    
-    // Si la réponse est directement un tableau
-    if (Array.isArray(response.data)) {
+    if (response.data && Array.isArray(response.data)) {
       return {
         data: response.data
       };
     }
     
-    console.error("Unexpected response format:", response.data);
+    // Si la réponse est directement un tableau
+    if (Array.isArray(response)) {
+      return {
+        data: response
+      };
+    }
+    
+    console.error("Unexpected response format:", response);
     return {
       data: []
     };
-  } catch (error: any) {
-    console.error('Error fetching wallets:', error);
-    throw error;
-  }
+  }, 'fetching wallets');
 };
 
 /**
@@ -145,26 +122,9 @@ export const getWalletsByUser = async (
  * @returns Promise that resolves when the wallet is deleted
  */
 export const deleteWallet = async (walletId: string): Promise<void> => {
-  try {
-  
-    const response = await axios.delete(`${API_URLS.LOCAL_BACKEND}/wallet/${walletId}`);
-  
-  } catch (error: any) {
-    console.error('Error deleting wallet:', error);
-    
-    // Propager l'erreur avec le statut HTTP et le message
-    if (error.response) {
-      throw {
-        message: error.response.data.message || 'Failed to delete wallet',
-        response: {
-          status: error.response.status,
-          data: error.response.data
-        }
-      };
-    }
-    
-    throw error;
-  }
+  return withErrorHandling(async () => {
+    await del(`/wallet/${walletId}`);
+  }, 'deleting wallet');
 };
 
 /**
@@ -174,24 +134,7 @@ export const deleteWallet = async (walletId: string): Promise<void> => {
  * @returns Promise that resolves when the wallet is removed from the user
  */
 export const removeWalletFromUser = async (privyUserId: number, walletId: number): Promise<void> => {
-  try {
-  
-    const response = await axios.delete(`${API_URLS.LOCAL_BACKEND}/wallet/user/${privyUserId}/wallet/${walletId}`);
-  
-  } catch (error: any) {
-    console.error('Error removing wallet from user:', error);
-    
-    // Propager l'erreur avec le statut HTTP et le message
-    if (error.response) {
-      throw {
-        message: error.response.data.message || 'Failed to remove wallet from user',
-        response: {
-          status: error.response.status,
-          data: error.response.data
-        }
-      };
-    }
-    
-    throw error;
-  }
+  return withErrorHandling(async () => {
+    await del(`/wallet/user/${privyUserId}/wallet/${walletId}`);
+  }, 'removing wallet from user');
 }; 

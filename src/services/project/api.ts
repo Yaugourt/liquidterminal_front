@@ -1,4 +1,5 @@
-import { fetchWithConfig, fetchPaginated } from '../api/base';
+import { get } from '../api/axios-config';
+import { withErrorHandling } from '../api/error-handler';
 import { 
   Project, 
   Category, 
@@ -19,18 +20,20 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
     return Promise.resolve(getMockProjectsResponse(params));
   }
 
-  const queryParams = new URLSearchParams();
-  
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        queryParams.append(key, value.toString());
-      }
-    });
-  }
-  
-  const endpoint = `/api/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-  return fetchWithConfig<ProjectsResponse>(endpoint);
+  return withErrorHandling(async () => {
+    const queryParams = new URLSearchParams();
+    
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    
+    const endpoint = `/api/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return await get<ProjectsResponse>(endpoint);
+  }, 'fetching projects');
 };
 
 /**
@@ -45,7 +48,9 @@ export const fetchProject = async (id: number): Promise<{ success: boolean; data
     });
   }
 
-  return fetchWithConfig<{ success: boolean; data: Project }>(`/api/project/${id}`);
+  return withErrorHandling(async () => {
+    return await get<{ success: boolean; data: Project }>(`/api/project/${id}`);
+  }, 'fetching project');
 };
 
 /**
@@ -56,7 +61,9 @@ export const fetchCategories = async (): Promise<CategoriesResponse> => {
     return Promise.resolve(getMockCategoriesResponse());
   }
 
-  return fetchWithConfig<CategoriesResponse>('/api/category');
+  return withErrorHandling(async () => {
+    return await get<CategoriesResponse>('/api/category');
+  }, 'fetching categories');
 };
 
 /**
@@ -72,7 +79,9 @@ export const fetchCategory = async (id: number): Promise<{ success: boolean; dat
     });
   }
 
-  return fetchWithConfig<{ success: boolean; data: Category }>(`/api/category/${id}`);
+  return withErrorHandling(async () => {
+    return await get<{ success: boolean; data: Category }>(`/api/category/${id}`);
+  }, 'fetching category');
 };
 
 /**
@@ -83,8 +92,10 @@ export const fetchProjectsByCategory = async (categoryId: number): Promise<Proje
     return Promise.resolve(MOCK_PROJECTS.filter(p => p.categoryId === categoryId));
   }
 
-  const response = await fetchWithConfig<{ success: boolean; data: Project[] }>(
-    `/api/project/category/${categoryId}`
-  );
-  return response.data;
+  return withErrorHandling(async () => {
+    const response = await get<{ success: boolean; data: Project[] }>(
+      `/api/project/category/${categoryId}`
+    );
+    return response.data;
+  }, 'fetching projects by category');
 }; 

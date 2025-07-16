@@ -1,5 +1,5 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchDelegatorSummary } from '../api';
+import { fetchDelegatorSummary } from '../delegator';
 import { UseDelegatorSummaryResult, DelegatorSummaryData } from '../types';
 
 /**

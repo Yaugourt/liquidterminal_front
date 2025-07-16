@@ -1,5 +1,5 @@
 import { PaginatedResponse } from '../common';
-import { API_URLS, buildUrl } from './constants';
+import { API_URLS } from './constants';
 
 // Configuration
 const API_BASE_URL = API_URLS.LOCAL_BACKEND;

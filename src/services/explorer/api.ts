@@ -4,74 +4,44 @@ import {
     TransferData,
     DeployData,
 } from './types';
-import { 
-    fetchExternal, 
-    buildHyperliquidRpcUrl,
-    buildHypurrscanUrl,
-} from '../api/base';
-
-
+import { postExternal, getExternal } from '../api/axios-config';
+import { withErrorHandling } from '../api/error-handler';
+import { API_URLS } from '../api/constants';
 
 /**
  * Récupère les détails d'un block spécifique
  */
 export async function fetchBlockDetails(height: number): Promise<BlockDetailsResponse> {
-    try {
-        const url = buildHyperliquidRpcUrl('EXPLORER_BLOCK_DETAILS');
-        return await fetchExternal<BlockDetailsResponse>(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "blockDetails",
-                height: height
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_RPC}/explorer`;
+        return await postExternal<BlockDetailsResponse>(url, {
+            type: "blockDetails",
+            height: height
         });
-    } catch (error) {
-        console.error('Error fetching block details:', error);
-        throw error;
-    }
+    }, 'fetching block details');
 }
 
 /**
  * Récupère les détails d'une transaction spécifique
  */
 export async function fetchTransactionDetails(hash: string): Promise<TransactionDetailsResponse> {
-    try {
-        const url = buildHyperliquidRpcUrl('EXPLORER_TX_DETAILS');
-        return await fetchExternal<TransactionDetailsResponse>(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: "txDetails",
-                hash: hash
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_RPC}/explorer`;
+        return await postExternal<TransactionDetailsResponse>(url, {
+            type: "txDetails",
+            hash: hash
         });
-    } catch (error) {
-        console.error('Error fetching transaction details:', error);
-        throw error;
-    }
+    }, 'fetching transaction details');
 }
 
-
-
-
+/**
+ * Récupère les transferts depuis l'API Hypurrscan
+ */
 export async function fetchTransfers(): Promise<TransferData[]> {
-    try {
-        const url = buildHypurrscanUrl('HYPURRSCAN_TRANSFERS');
-        return await fetchExternal<TransferData[]>(url, {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json',
-            },
-        });
-    } catch (error) {
-        console.error('Error fetching transfers:', error);
-        throw error;
-    }
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPURRSCAN_API}/transfers`;
+        return await getExternal<TransferData[]>(url);
+    }, 'fetching transfers');
 }
 
 /**
@@ -79,18 +49,10 @@ export async function fetchTransfers(): Promise<TransferData[]> {
  * @returns Liste des déploiements bruts
  */
 export async function fetchDeploys(): Promise<DeployData[]> {
-    try {
-        const url = buildHypurrscanUrl('HYPURRSCAN_DEPLOYS');
-        return await fetchExternal<DeployData[]>(url, {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json',
-            },
-        });
-    } catch (error) {
-        console.error('Error fetching deploys:', error);
-        throw error;
-    }
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPURRSCAN_API}/deploys`;
+        return await getExternal<DeployData[]>(url);
+    }, 'fetching deploys');
 }
 
  

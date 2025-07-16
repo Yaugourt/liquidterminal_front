@@ -6,134 +6,93 @@ import {
     PortfolioApiResponse,
     OpenOrdersResponse,
 } from './types';
-import { 
-    fetchExternal, 
-    buildHyperliquidRpcUrl,
-    buildHyperliquidUrl,
-    buildHyperliquidUiUrl,
-} from '../../api/base';
+import { postExternal } from '../../api/axios-config';
+import { withErrorHandling } from '../../api/error-handler';
+import { API_URLS } from '../../api/constants';
 import { 
     processFillTransactions, 
     processUserTransactions, 
     processOrphanLedgerUpdates 
 } from './processors';
 
-
 export async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
-    try {
-        const url = buildHyperliquidRpcUrl('EXPLORER_USER_DETAILS');
-        return await fetchExternal<UserTransactionsResponse>(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: "userDetails",
-                user: address
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_RPC}/explorer`;
+        return await postExternal<UserTransactionsResponse>(url, {
+            type: "userDetails",
+            user: address
         });
-    } catch (error) {
-        console.error('Error fetching raw transactions:', error);
-        throw error;
-    }
+    }, 'fetching raw transactions');
 }
 
 export async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
-    try {
-        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
-        return await fetchExternal<NonFundingLedgerUpdate[]>(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: "userNonFundingLedgerUpdates",
-                user: address,
-                startTime: 1640995200000 
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_API}/info`;
+        return await postExternal<NonFundingLedgerUpdate[]>(url, {
+            type: "userNonFundingLedgerUpdates",
+            user: address,
+            startTime: 1640995200000 
         });
-    } catch (error) {
-        console.error('Error fetching ledger updates:', error);
-        throw error;
-    }
+    }, 'fetching ledger updates');
 }
 
 export async function getUserFills(address: string): Promise<UserFill[]> {
-    try {
-        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
-        return await fetchExternal<UserFill[]>(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: "userFills",
-                user: address
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_API}/info`;
+        return await postExternal<UserFill[]>(url, {
+            type: "userFills",
+            user: address
         });
-    } catch (error) {
-        console.error('Error fetching user fills:', error);
-        throw error;
-    }
+    }, 'fetching user fills');
 }
 
 export async function getUserTransactions(address: string): Promise<FormattedUserTransaction[]> {
-    try {
-        const [txsResponse, ledgerUpdates, fills] = await Promise.all([
+    return withErrorHandling(async () => {
+        const [rawTransactions, ledgerUpdates, fills] = await Promise.all([
             getUserTransactionsRaw(address),
             getUserNonFundingLedgerUpdates(address),
             getUserFills(address)
         ]);
 
-        // Traiter les fills d'abord
         const fillTransactions = processFillTransactions(fills, address);
-
+        
         // Créer un Set des hashs déjà traités
         const processedHashes = new Set(fillTransactions.map(tx => tx.hash));
         const ledgerMap = new Map(ledgerUpdates.map(update => [update.hash, update]));
         const fillsMap = new Map(fills.map(fill => [fill.hash, fill]));
-
-        // Traiter les autres transactions
-        const otherTransactions = processUserTransactions(txsResponse.txs, address, processedHashes, ledgerMap, fillsMap);
-
+        
+        const userTransactions = processUserTransactions(rawTransactions.txs, address, processedHashes, ledgerMap, fillsMap);
+        
         // Ajout des ledgerUpdates orphelins (withdraw/deposit sans tx brute associée)
         const allHashes = new Set([
             ...fillTransactions.map(tx => tx.hash),
-            ...otherTransactions.map(tx => tx.hash)
+            ...userTransactions.map(tx => tx.hash)
         ]);
-        const orphanLedgerTxs = processOrphanLedgerUpdates(ledgerUpdates, allHashes, address);
+        const orphanLedgerUpdates = processOrphanLedgerUpdates(ledgerUpdates, allHashes, address);
 
-        // Combiner et trier les transactions
-        const allTxs = [...fillTransactions, ...otherTransactions, ...orphanLedgerTxs].sort((a, b) => b.time - a.time);
-    
-        return allTxs;
-    } catch (error) {
-        console.error("Error formatting user transactions:", error);
-        throw error;
-    }
+        return [...fillTransactions, ...userTransactions, ...orphanLedgerUpdates]
+            .sort((a, b) => b.time - a.time);
+    }, 'fetching user transactions');
 }
 
 export async function fetchPortfolio(address: string): Promise<PortfolioApiResponse> {
-    const url = buildHyperliquidUiUrl('HYPERLIQUID_UI_INFO');
-    return await fetchExternal(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_UI_API}/info`;
+        return await postExternal<PortfolioApiResponse>(url, {
             type: 'portfolio',
             user: address,
-        }),
-    });
+        });
+    }, 'fetching portfolio');
 }
 
 export async function getUserOpenOrders(address: string): Promise<OpenOrdersResponse> {
-    try {
-        const url = buildHyperliquidUrl('HYPERLIQUID_INFO');
-        return await fetchExternal<OpenOrdersResponse>(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: "frontendOpenOrders",
-                user: address
-            })
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_API}/info`;
+        return await postExternal<OpenOrdersResponse>(url, {
+            type: "frontendOpenOrders",
+            user: address
         });
-    } catch (error) {
-        console.error('Error fetching open orders:', error);
-        throw error;
-    }
+    }, 'fetching open orders');
 }
 
  

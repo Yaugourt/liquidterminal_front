@@ -1,5 +1,5 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchDelegatorHistory } from '../api';
+import { fetchDelegatorHistory } from '../delegator';
 import { UseDelegatorHistoryResult, FormattedDelegatorHistoryItem } from '../types';
 import { useValidators } from './useValidators';
 import { useMemo, useCallback } from 'react';

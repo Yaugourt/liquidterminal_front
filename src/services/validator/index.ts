@@ -1,12 +1,7 @@
-// Exports des types
+// Barrel export - réexporte toutes les fonctions des modules
+export * from './validators';
+export * from './staking';
+export * from './delegator';
+export * from './utils';
 export * from './types';
-
-// Exports des API
-export * from './api';
-
-// Exports des hooks
-export * from './hooks';
-
-export { useDelegatorHistory } from './hooks/useDelegatorHistory';
-export { useDelegatorRewards } from './hooks/useDelegatorRewards';
-export { useDelegatorSummary } from './hooks/useDelegatorSummary'; 
+export * from './hooks'; 

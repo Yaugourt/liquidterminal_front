@@ -1,12 +1,10 @@
-import axios from 'axios';
+import { apiClient, axiosWithConfig } from '../api/axios-config';
+import { withErrorHandling } from '../api/error-handler';
 import { AuthResponse, LoginCredentials } from './types';
-import { API_URLS } from '../api/base';
-
-const API_URL = API_URLS.LOCAL_BACKEND;
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    try {
+    return withErrorHandling(async () => {
       if (!credentials.privyUserId || !credentials.name || !credentials.privyToken) {
         throw {
           success: false,
@@ -15,102 +13,36 @@ export const authService = {
         };
       }
 
-
-
       const requestData = {
         privyUserId: credentials.privyUserId,
         name: credentials.name
       };
 
-      const response = await axios.post(`${API_URL}/auth/login`, requestData, {
+      // Use axiosWithConfig with custom auth header
+      return await axiosWithConfig<AuthResponse>(apiClient, {
+        method: 'POST',
+        url: '/auth/login',
+        data: requestData,
         headers: {
           'Authorization': `Bearer ${credentials.privyToken}`,
-          'Content-Type': 'application/json',
-        },
+        }
+      }, {
+        skipAuth: true // Skip auto auth token since we're providing custom auth
       });
-      
-  
-      return response.data;
-    } catch (error) {
-      console.error('Login error:', error);
-      
-      if (axios.isAxiosError(error)) {
-        // Gestion spécifique des codes d'erreur de l'API
-        if (error.response?.status === 401) {
-          throw {
-            success: false,
-            message: 'Invalid or expired token',
-            code: 'UNAUTHORIZED'
-          };
-        }
-        
-        if (error.response?.status === 400) {
-          throw {
-            success: false,
-            message: 'PrivyUserId does not match token',
-            code: 'INVALID_USER'
-          };
-        }
-
-        if (error.response?.data) {
-          throw error.response.data;
-        }
-        
-        throw {
-          success: false,
-          message: 'Server error occurred',
-          code: 'SERVER_ERROR'
-        };
-      }
-      
-      throw {
-        success: false,
-        message: error instanceof Error ? error.message : 'An unknown error occurred',
-        code: 'UNKNOWN_ERROR'
-      };
-    }
+    }, 'authenticating user');
   },
 
   getUser: async (privyUserId: string, privyToken: string): Promise<AuthResponse> => {
-    try {
-    
-      
-      const response = await axios.get(`${API_URL}/auth/user/${privyUserId}`, {
+    return withErrorHandling(async () => {
+      return await axiosWithConfig<AuthResponse>(apiClient, {
+        method: 'GET',
+        url: `/auth/user/${privyUserId}`,
         headers: {
           'Authorization': `Bearer ${privyToken}`,
-        },
+        }
+      }, {
+        skipAuth: true // Skip auto auth token since we're providing custom auth
       });
-      
-  
-      return response.data;
-    } catch (error) {
-      console.error('Get user error:', error);
-      
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          throw {
-            success: false,
-            message: 'Invalid or expired token',
-            code: 'UNAUTHORIZED'
-          };
-        }
-
-        if (error.response?.data) {
-          throw error.response.data;
-        }
-        
-        throw {
-          success: false,
-          message: 'Server error occurred',
-          code: 'SERVER_ERROR'
-        };
-      }
-      
-      throw {
-        success: false,
-        message: error instanceof Error ? error.message : 'An unknown error occurred',
-        code: 'UNKNOWN_ERROR'
-      };
-    }
+    }, 'fetching user');
   },
 }; 
