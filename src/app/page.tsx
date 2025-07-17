@@ -7,7 +7,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { TrendingTokensTabs } from "@/components/dashboard/tokens/TrendingTokensTabs";
-import { TabSection } from "@/components/dashboard/vaultStakingAuction";
+import { TabSection } from "@/components/dashboard/vaultValidator";
 import { TwapSection } from "@/components/dashboard/twap";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,16 @@ export default function Home() {
   const { width } = useWindowSize();
   const chartHeight = 270; // Hauteur exacte pour s'aligner avec le tableau
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTokenTab, setActiveTokenTab] = useState<"perp" | "spot" | "auction" | "past-auction">("perp");
+  const [pastAuctionHeight, setPastAuctionHeight] = useState<number>(chartHeight);
+
+  // Reset la hauteur quand on quitte past-auction
+  useEffect(() => {
+    if (activeTokenTab !== "past-auction") {
+      setPastAuctionHeight(chartHeight);
+    }
+  }, [activeTokenTab, chartHeight]);
+
 
   useEffect(() => {
     // Fermer automatiquement le sidebar sur les écrans plus larges
@@ -51,14 +61,22 @@ export default function Home() {
         </div>
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+       
           <StatsGrid />
 
-          <div className="flex flex-col md:flex-row gap-6 w-full md:items-start">
-            <div className="w-full md:w-[35%]">
-              <TrendingTokensTabs />
+          <div className={`flex flex-col md:flex-row gap-6 w-full ${activeTokenTab === "auction" || activeTokenTab === "past-auction" ? "md:items-stretch" : "md:items-start"}`}>
+            <div className="w-full md:w-[35%] flex flex-col">
+              <TrendingTokensTabs 
+                onTabChange={setActiveTokenTab} 
+                onPastAuctionHeightChange={setPastAuctionHeight}
+              />
             </div>
             <div className="flex-1 flex flex-col justify-start">
-              <ChartSection chartHeight={chartHeight} />
+              <ChartSection 
+                chartHeight={activeTokenTab === "past-auction" ? pastAuctionHeight : chartHeight} 
+                isAuctionTabActive={activeTokenTab === "auction"} 
+                isPastAuctionTabActive={activeTokenTab === "past-auction"}
+              />
             </div>
           </div>
 

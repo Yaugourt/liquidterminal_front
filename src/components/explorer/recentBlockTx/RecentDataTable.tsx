@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { TabSelector } from "./TabSelector";
 import { ConnectionStatus } from "./ConnectionStatus";
 import { DataTable } from "./DataTable";
+import { Pagination } from "@/components/common/pagination";
 
 type TabType = 'blocks' | 'transactions';
 
@@ -15,6 +16,12 @@ export function RecentDataTable() {
   const [activeTab, setActiveTab] = useState<TabType>('blocks');
   const [isBlocksPaused, setIsBlocksPaused] = useState(false);
   const [isTransactionsPaused, setIsTransactionsPaused] = useState(false);
+  
+  // États de pagination
+  const [blocksPage, setBlocksPage] = useState(0);
+  const [blocksRowsPerPage, setBlocksRowsPerPage] = useState(5);
+  const [transactionsPage, setTransactionsPage] = useState(0);
+  const [transactionsRowsPerPage, setTransactionsRowsPerPage] = useState(5);
 
   // Gestion des connexions WebSocket avec délai pour éviter les erreurs au chargement
   useEffect(() => {
@@ -55,9 +62,26 @@ export function RecentDataTable() {
 
   const getCurrentData = () => {
     if (activeTab === 'blocks') {
-      return store.blocks.slice(0, 5); // Limiter à 5 pour le petit format
+      const page = blocksPage;
+      const rowsPerPage = blocksRowsPerPage;
+      const startIndex = page * rowsPerPage;
+      return {
+        data: store.blocks.slice(startIndex, startIndex + rowsPerPage),
+        total: store.blocks.length,
+        page,
+        rowsPerPage
+      };
+    } else {
+      const page = transactionsPage;
+      const rowsPerPage = transactionsRowsPerPage;
+      const startIndex = page * rowsPerPage;
+      return {
+        data: store.transactions.slice(startIndex, startIndex + rowsPerPage),
+        total: store.transactions.length,
+        page,
+        rowsPerPage
+      };
     }
-    return store.transactions.slice(0, 5);
   };
 
   const getEmptyMessage = () => {
@@ -67,8 +91,26 @@ export function RecentDataTable() {
     return isTransactionsPaused ? 'En pause' : 'En attente de transactions...';
   };
 
-  const data = getCurrentData();
-  const showLoading = !isConnected && data.length === 0;
+  const currentData = getCurrentData();
+  const showLoading = !isConnected && currentData.data.length === 0;
+
+  const handlePageChange = (newPage: number) => {
+    if (activeTab === 'blocks') {
+      setBlocksPage(newPage);
+    } else {
+      setTransactionsPage(newPage);
+    }
+  };
+
+  const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    if (activeTab === 'blocks') {
+      setBlocksRowsPerPage(newRowsPerPage);
+      setBlocksPage(0);
+    } else {
+      setTransactionsRowsPerPage(newRowsPerPage);
+      setTransactionsPage(0);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -100,12 +142,28 @@ export function RecentDataTable() {
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-            <DataTable 
-              type={activeTab}
-              data={data}
-              emptyMessage={getEmptyMessage()}
-            />
+          <div className="space-y-0">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+              <DataTable 
+                type={activeTab}
+                data={currentData.data}
+                emptyMessage={getEmptyMessage()}
+              />
+            </div>
+            
+            {currentData.total > 0 && (
+              <div className="px-4 py-2 bg-[#051728] border-t border-[#FFFFFF1A]">
+                <Pagination
+                  total={currentData.total}
+                  page={currentData.page}
+                  rowsPerPage={currentData.rowsPerPage}
+                  rowsPerPageOptions={[5, 10, 25, 50, 100, 500]}
+                  onPageChange={handlePageChange}
+                  onRowsPerPageChange={handleRowsPerPageChange}
+                  disabled={false}
+                />
+              </div>
+            )}
           </div>
         )}
       </Card>

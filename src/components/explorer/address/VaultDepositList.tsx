@@ -81,11 +81,11 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center h-[400px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="flex items-center justify-center h-[200px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
         <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-          <p className="text-white text-lg mb-2">No vault deposits found</p>
-          <p className="text-[#FFFFFF80] text-sm">This address has not deposited in any vault yet.</p>
+          <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
+          <p className="text-white text-sm mb-1">No vault deposits found</p>
+          <p className="text-[#FFFFFF80] text-xs">This address has not deposited in any vault yet.</p>
         </div>
       </div>
     );
@@ -97,11 +97,11 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Name</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">User deposits</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">APR</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">TVL</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Time lock</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">Name</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">User deposits</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">APR</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">TVL</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">Time lock</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#051728]">

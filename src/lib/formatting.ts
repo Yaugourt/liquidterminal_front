@@ -216,8 +216,13 @@ export function formatNumber(
   const formatConfig = NUMBER_FORMATS[format];
   // PATCH: Utilise la locale du format pour le formatage natif si besoin
   const locale = formatConfig.locale || 'en-US';
+  
+  // Règle: Si le nombre dépasse 1 million, enlever toutes les décimales
+  const finalMaximumFractionDigits = Math.abs(value) >= 1_000_000 ? 0 : maximumFractionDigits;
+  const finalMinimumFractionDigits = Math.abs(value) >= 1_000_000 ? 0 : minimumFractionDigits;
+  
   // Formatter le nombre en chaîne avec les décimales appropriées
-  let parts = Math.abs(value).toFixed(maximumFractionDigits).split('.');
+  let parts = Math.abs(value).toFixed(finalMaximumFractionDigits).split('.');
   
   // Ajouter les séparateurs de milliers
   if (formatConfig.thousandsSeparator) {

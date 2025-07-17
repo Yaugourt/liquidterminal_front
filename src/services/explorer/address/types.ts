@@ -158,4 +158,27 @@ export interface OpenOrder {
     triggerPx: string;
 }
 
-export type OpenOrdersResponse = OpenOrder[]; 
+export type OpenOrdersResponse = OpenOrder[];
+
+// TWAP Orders types
+export interface TwapTableData {
+  id: string;
+  type: 'Buy' | 'Sell';
+  value: number;
+  token: string;
+  amount: string;
+  progression: number;
+  time: number;
+  hash: string;
+  duration: number;
+  reduceOnly: boolean;
+  ended: string | null;
+  error: string | null;
+}
+
+export interface UseUserTwapOrdersResult {
+  orders: TwapTableData[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+} 

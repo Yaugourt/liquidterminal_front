@@ -6,8 +6,7 @@ import { ExternalLink } from "lucide-react";
 export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) => {
   const tabs: { key: string; label: string }[] = [
     { key: 'vault', label: 'Vault' },
-    { key: 'stacking', label: 'Validators' },
-    { key: 'auction', label: 'Past auctions' }
+    { key: 'stacking', label: 'Validators' }
   ];
 
   const getSeeAllLink = () => {
@@ -16,8 +15,6 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
         return '/vault';
       case 'stacking':
         return '/validator';  
-      case 'auction':
-        return null; // Pas encore disponible
       default:
         return null;
     }

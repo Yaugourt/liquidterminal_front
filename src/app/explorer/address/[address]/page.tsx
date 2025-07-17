@@ -1,14 +1,14 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useTransactions, usePortfolio, useOpenOrders } from "@/services/explorer/address";
+import { useTransactions, usePortfolio } from "@/services/explorer/address";
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OpenOrdersList } from "@/components/explorer";
+import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OrdersTable } from "@/components/explorer";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 
 export default function AddressPage() {
@@ -16,7 +16,7 @@ export default function AddressPage() {
   const address = params.address as string;
   const { transactions, isLoading, error } = useTransactions(address);
   const { data: portfolio, isLoading: loadingPortfolio } = usePortfolio(address);
-  const { data: openOrders, isLoading: loadingOrders } = useOpenOrders(address);
+
   const { isAuthenticated, login } = useAuthContext();
   
   // States for dialogs
@@ -85,9 +85,8 @@ export default function AddressPage() {
         )}
 
         {activeTab === "orders" && (
-          <OpenOrdersList 
-            orders={openOrders}
-            isLoading={loadingOrders}
+          <OrdersTable 
+            address={address}
           />
         )}
 

@@ -1,22 +1,18 @@
 import { memo, useMemo, useState } from "react";
-import { useLatestAuctions } from "@/services/dashboard";
 import { useValidators } from "@/services/validator";
-import { AuctionInfo } from "@/services/market/auction";
 import { useVaults } from "@/services/vault/hooks/useVaults";
 import { TabButtons } from "./TabButtons";
-import { ValidatorsTable, AuctionsTable, VaultTable } from "./DataTablesContent";
+import { ValidatorsTable, VaultTable } from "./DataTablesContent";
 import type { VaultSummary } from "@/services/vault/types";
 import type { Validator } from "@/services/validator/types";
 
 interface TabSectionComponentProps {
   validators?: Validator[];
-  auctions?: AuctionInfo[];
   vaults?: VaultSummary[];
 }
 
 export const TabSection = memo(({
   validators: initialValidators,
-  auctions: initialAuctions,
   vaults: initialVaults,
 }: TabSectionComponentProps) => {
   const [activeTab, setActiveTab] = useState("vault");
@@ -24,8 +20,6 @@ export const TabSection = memo(({
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const { validators, isLoading: validatorsLoading, error: validatorsError } = useValidators(initialValidators);
-  const { auctions: usdcAuctions, isLoading: usdcLoading, error: usdcError } = useLatestAuctions(undefined, 'USDC', initialAuctions);
-  const { auctions: hypeAuctions, isLoading: hypeLoading, error: hypeError } = useLatestAuctions(undefined, 'HYPE');
   const { vaults, isLoading: vaultsLoading, error: vaultsError } = useVaults({
     limit: 5000,
     sortBy: 'tvl',
@@ -40,11 +34,6 @@ export const TabSection = memo(({
     vaultAddress: vault.summary.vaultAddress
   })), [vaults]);
 
-  const allAuctions = useMemo(() => (
-    [...(usdcAuctions || []), ...(hypeAuctions || [])]
-      .sort((a, b) => b.time - a.time)
-  ), [usdcAuctions, hypeAuctions]);
-
   // Reset pagination when tab changes
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
@@ -57,7 +46,6 @@ export const TabSection = memo(({
 
   const paginatedVaults = transformedVaults.slice(startIndex, endIndex);
   const paginatedValidators = validators.slice(startIndex, endIndex);
-  const paginatedAuctions = allAuctions.slice(startIndex, endIndex);
 
   const getTotalCount = () => {
     switch (activeTab) {
@@ -65,8 +53,6 @@ export const TabSection = memo(({
         return transformedVaults.length;
       case 'stacking':
         return validators.length;
-      case 'auction':
-        return allAuctions.length;
       default:
         return 0;
     }
@@ -99,16 +85,7 @@ export const TabSection = memo(({
           />
         )}
 
-        {activeTab === "auction" && (
-          <AuctionsTable
-            auctions={paginatedAuctions}
-            isLoading={(usdcLoading || hypeLoading) && !initialAuctions}
-            error={usdcError || hypeError}
-            paginationDisabled={false}
-            hidePageNavigation={true}
-            {...paginationProps}
-          />
-        )}
+
 
         {activeTab === "vault" && (
           <VaultTable

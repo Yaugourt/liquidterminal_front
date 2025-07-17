@@ -11,7 +11,13 @@ interface ChartSectionProps {
   chartHeight: number;
 }
 
-export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
+interface ChartSectionProps {
+  chartHeight: number;
+  isAuctionTabActive?: boolean;
+  isPastAuctionTabActive?: boolean;
+}
+
+export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAuctionTabActive = false }: ChartSectionProps) => {
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("bridge");
   const [selectedCurrency, setSelectedCurrency] = useState<"HYPE" | "USDC">("USDC");
   const { selectedPeriod, handlePeriodChange, availablePeriods } = useChartPeriod({
@@ -22,7 +28,7 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
   const { data, isLoading } = useChartTimeSeriesData(selectedFilter, selectedPeriod, selectedCurrency);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={isAuctionTabActive || isPastAuctionTabActive ? "flex flex-col h-full" : "flex flex-col"}>
       <div className="flex flex-row mb-4 justify-start items-start">
         <FilterButtons
           selectedFilter={selectedFilter}
@@ -30,17 +36,21 @@ export const ChartSection = ({ chartHeight }: ChartSectionProps) => {
         />
       </div>
 
-      <ChartDisplay
-        data={data}
-        isLoading={isLoading}
-        selectedFilter={selectedFilter}
-        selectedPeriod={selectedPeriod}
-        selectedCurrency={selectedCurrency}
-        onCurrencyChange={setSelectedCurrency}
-        onPeriodChange={handlePeriodChange}
-        availablePeriods={availablePeriods}
-        chartHeight={chartHeight}
-      />
+      <div className={isAuctionTabActive || isPastAuctionTabActive ? "flex-1 flex flex-col" : ""}>
+        <ChartDisplay
+          data={data}
+          isLoading={isLoading}
+          selectedFilter={selectedFilter}
+          selectedPeriod={selectedPeriod}
+          selectedCurrency={selectedCurrency}
+          onCurrencyChange={setSelectedCurrency}
+          onPeriodChange={handlePeriodChange}
+          availablePeriods={availablePeriods}
+          chartHeight={chartHeight}
+          isAuctionTabActive={isAuctionTabActive}
+          isPastAuctionTabActive={isPastAuctionTabActive}
+        />
+      </div>
     </div>
   );
 }; 

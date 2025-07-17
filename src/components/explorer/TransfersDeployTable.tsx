@@ -10,10 +10,15 @@ import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
 import { ActivityTab } from "@/components/types/explorer.types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Pagination } from "@/components/common/pagination";
 
 export function TransfersDeployTable() {
   const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const [transfersPage, setTransfersPage] = useState(0);
+  const [transfersRowsPerPage, setTransfersRowsPerPage] = useState(5);
+  const [deploysPage, setDeploysPage] = useState(0);
+  const [deploysRowsPerPage, setDeploysRowsPerPage] = useState(5);
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
   
@@ -62,7 +67,9 @@ export function TransfersDeployTable() {
   );
 
   const TransfersContent = () => {
-    const limitedTransfers = transfers?.slice(0, 5) || [];
+    const allTransfers = transfers || [];
+    const startIndex = transfersPage * transfersRowsPerPage;
+    const paginatedTransfers = allTransfers.slice(startIndex, startIndex + transfersRowsPerPage);
 
     if (isLoadingTransfers) {
       return (
@@ -88,59 +95,80 @@ export function TransfersDeployTable() {
     }
 
     return (
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Amount</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">From</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">To</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="bg-[#051728]">
-            {limitedTransfers.length > 0 ? (
-              limitedTransfers.map((transfer) => (
-                <TableRow key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <TableCell className="py-3 px-4 text-sm text-white">
-                    {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-white text-left">
-                    {(() => {
-                      const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
-                      return `${formatNumber(numericAmount, format, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 2
-                      })} ${transfer.token}`;
-                    })()}
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
-                    <AddressLink address={transfer.from} />
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
-                    <AddressLink address={transfer.to} />
+      <div className="space-y-0">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+          <Table className="w-full">
+            <TableHeader>
+              <TableRow className="border-none bg-[#051728]">
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Amount</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">From</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">To</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="bg-[#051728]">
+              {paginatedTransfers.length > 0 ? (
+                paginatedTransfers.map((transfer) => (
+                  <TableRow key={transfer.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                    <TableCell className="py-3 px-4 text-sm text-white">
+                      {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm text-white text-left">
+                      {(() => {
+                        const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
+                        return `${formatNumber(numericAmount, format, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 2
+                        })} ${transfer.token}`;
+                      })()}
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
+                      <AddressLink address={transfer.from} />
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
+                      <AddressLink address={transfer.to} />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="py-8">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                      <p className="text-white text-sm mb-1">Aucun transfer disponible</p>
+                      <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="py-8">
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
-                    <p className="text-white text-sm mb-1">Aucun transfer disponible</p>
-                    <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        
+        {allTransfers.length > 0 && (
+          <div className="px-4 py-2 bg-[#051728] border-t border-[#FFFFFF1A]">
+            <Pagination
+              total={allTransfers.length}
+              page={transfersPage}
+              rowsPerPage={transfersRowsPerPage}
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              onPageChange={setTransfersPage}
+              onRowsPerPageChange={(newRowsPerPage) => {
+                setTransfersRowsPerPage(newRowsPerPage);
+                setTransfersPage(0);
+              }}
+              disabled={isLoadingTransfers}
+            />
+          </div>
+        )}
       </div>
     );
   };
 
   const DeployContent = () => {
-    const limitedDeploys = deploys?.slice(0, 5) || [];
+    const allDeploys = deploys || [];
+    const startIndex = deploysPage * deploysRowsPerPage;
+    const paginatedDeploys = allDeploys.slice(startIndex, startIndex + deploysRowsPerPage);
 
     if (isLoadingDeploys) {
       return (
@@ -166,56 +194,75 @@ export function TransfersDeployTable() {
     }
 
     return (
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">User</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Action</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Hash</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="bg-[#051728]">
-            {limitedDeploys.length > 0 ? (
-              limitedDeploys.map((deploy) => (
-                <TableRow key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
-                  <TableCell className="py-3 px-4 text-sm text-white">
-                    {formatDateTime(deploy.timestamp, dateFormat)}
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
-                    <AddressLink address={deploy.user} />
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm">
-                    <span className={`px-2 py-0.5 rounded text-xs border ${
-                      deploy.status === 'error' 
-                        ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
-                        : 'bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]'
-                    }`}>
-                      {deploy.action}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
-                    <div className="flex items-center">
-                      {truncateHash(deploy.hash)}
-                      <ExternalLink className="ml-1.5 h-3.5 w-3.5 opacity-60 hover:opacity-100 cursor-pointer" />
+      <div className="space-y-0">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+          <Table className="w-full">
+            <TableHeader>
+              <TableRow className="border-none bg-[#051728]">
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Time</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">User</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Action</TableHead>
+                <TableHead className="text-white font-normal py-3 px-4 text-left text-xs">Hash</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="bg-[#051728]">
+              {paginatedDeploys.length > 0 ? (
+                paginatedDeploys.map((deploy) => (
+                  <TableRow key={deploy.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
+                    <TableCell className="py-3 px-4 text-sm text-white">
+                      {formatDateTime(deploy.timestamp, dateFormat)}
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
+                      <AddressLink address={deploy.user} />
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm">
+                      <span className={`px-2 py-0.5 rounded text-xs border ${
+                        deploy.status === 'error' 
+                          ? 'bg-[#FF000033] text-[#FF6B6B] border-[#FF000066]' 
+                          : 'bg-[#83E9FF1A] text-[#83E9FF] border-[#83E9FF33]'
+                      }`}>
+                        {deploy.action}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3 px-4 text-sm text-[#83E9FF]">
+                      <div className="flex items-center">
+                        {truncateHash(deploy.hash)}
+                        <ExternalLink className="text-[#f9e370] ml-1.5 h-3.5 w-3.5 opacity-60 hover:opacity-100 cursor-pointer" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="py-8">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                      <p className="text-white text-sm mb-1">Aucun deploy disponible</p>
+                      <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={4} className="py-8">
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
-                    <p className="text-white text-sm mb-1">Aucun deploy disponible</p>
-                    <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        
+        {allDeploys.length > 0 && (
+          <div className="px-4 py-2 bg-[#051728] border-t border-[#FFFFFF1A]">
+            <Pagination
+              total={allDeploys.length}
+              page={deploysPage}
+              rowsPerPage={deploysRowsPerPage}
+              rowsPerPageOptions={[5, 10, 25, 50]}
+              onPageChange={setDeploysPage}
+              onRowsPerPageChange={(newRowsPerPage) => {
+                setDeploysRowsPerPage(newRowsPerPage);
+                setDeploysPage(0);
+              }}
+              disabled={isLoadingDeploys}
+            />
+          </div>
+        )}
       </div>
     );
   };

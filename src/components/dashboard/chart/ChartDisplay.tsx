@@ -88,10 +88,15 @@ export const ChartDisplay = ({
   selectedCurrency = "USDC",
   onCurrencyChange,
   onPeriodChange,
-  availablePeriods
+  availablePeriods,
+  isAuctionTabActive = false,
+  isPastAuctionTabActive = false
 }: Props) => {
   const { format } = useNumberFormat();
   const { formatValue } = useChartFormat();
+  
+  // Utiliser directement la hauteur passée
+  const adaptedHeight = chartHeight;
   
   const chartData = useChartData({
     data,
@@ -169,7 +174,7 @@ export const ChartDisplay = ({
   };
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg" style={{ height: chartHeight }}>
+    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg" style={{ height: adaptedHeight }}>
       <div className="absolute top-2 left-3 sm:left-6 right-3 sm:right-6 z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

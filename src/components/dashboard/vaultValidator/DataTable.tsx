@@ -29,6 +29,8 @@ interface DataTableWithPaginationProps<T> extends DataTableProps<T> {
   showPagination?: boolean;
   paginationDisabled?: boolean;
   hidePageNavigation?: boolean;
+  // Text size prop
+  textSize?: 'xs' | 'sm';
 }
 
 // Optimisation des composants répétés
@@ -55,6 +57,7 @@ export function DataTable<T>({
   showPagination = false,
   paginationDisabled = false,
   hidePageNavigation = false,
+  textSize = 'sm',
 }: DataTableWithPaginationProps<T>) {
   return (
     <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg mx-auto">
@@ -82,7 +85,7 @@ export function DataTable<T>({
                   {columns.map((column, index) => (
                     <TableHead
                       key={index}
-                      className={`py-3 px-4 ${column.className || ''}`}
+                      className={`${textSize === 'xs' ? 'py-2' : 'py-3'} px-4 ${column.className || ''}`}
                     >
                       <TableHeaderButton header={column.header} align={column.align} />
                     </TableHead>
@@ -99,7 +102,7 @@ export function DataTable<T>({
                       {columns.map((column, colIndex) => (
                         <TableCell
                           key={colIndex}
-                          className={`py-3 px-4 ${column.className || ''} text-sm text-white`}
+                          className={`${textSize === 'xs' ? 'py-2' : 'py-3'} px-4 ${column.className || ''} text-${textSize} text-white`}
                         >
                           {typeof column.accessor === "function"
                             ? column.accessor(item)

@@ -159,7 +159,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       if (exists) return state;
 
       return {
-        blocks: [block, ...state.blocks].slice(0, 100) // Keep last 100 blocks
+        blocks: [block, ...state.blocks].slice(0, 500) // Keep last 500 blocks
       };
     });
   },
@@ -171,7 +171,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       if (exists) return state;
 
       return {
-        transactions: [transaction, ...state.transactions].slice(0, 100) // Keep last 100 transactions
+        transactions: [transaction, ...state.transactions].slice(0, 500) // Keep last 500 transactions
       };
     });
   },

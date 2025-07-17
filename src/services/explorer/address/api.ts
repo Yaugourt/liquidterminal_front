@@ -95,4 +95,23 @@ export async function getUserOpenOrders(address: string): Promise<OpenOrdersResp
     }, 'fetching open orders');
 }
 
+/**
+ * Récupère les TWAP orders d'un utilisateur
+ */
+export const getUserTwapOrders = async (address: string): Promise<any[]> => {
+  try {
+    const response = await fetch(`https://api.hypurrscan.io/twap/${address}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching user TWAP orders:', error);
+    throw error;
+  }
+};
+
  

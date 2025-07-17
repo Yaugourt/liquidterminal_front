@@ -3,25 +3,37 @@
 import { useState } from "react";
 import { TrendingTokens } from "./TrendingTokens";
 import { AuctionSection } from "./AuctionSection";
+import { PastAuctionSection } from "./PastAuctionSection";
 
-export const TrendingTokensTabs = () => {
-  const [activeTab, setActiveTab] = useState<"perp" | "spot" | "auction">("perp");
+interface TrendingTokensTabsProps {
+  onTabChange?: (tab: "perp" | "spot" | "auction" | "past-auction") => void;
+  onPastAuctionHeightChange?: (height: number) => void;
+}
 
-  const tabs: { key: "perp" | "spot" | "auction"; label: string }[] = [
+export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: TrendingTokensTabsProps = {}) => {
+  const [activeTab, setActiveTab] = useState<"perp" | "spot" | "auction" | "past-auction">("perp");
+
+  const handleTabChange = (tab: "perp" | "spot" | "auction" | "past-auction") => {
+    setActiveTab(tab);
+    onTabChange?.(tab);
+  };
+
+  const tabs: { key: "perp" | "spot" | "auction" | "past-auction"; label: string }[] = [
     { key: 'perp', label: 'Perpetual' },
     { key: 'spot', label: 'Spot' },
-    { key: 'auction', label: 'Auction' }
+    { key: 'auction', label: 'Auction' },
+    { key: 'past-auction', label: 'Past auction' }
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector */}
       <div className="flex justify-start items-center mb-4">
         <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
           {tabs.map(tab => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.key
                   ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
@@ -35,14 +47,18 @@ export const TrendingTokensTabs = () => {
       </div>
 
       {/* Contenu de l'onglet actif */}
-      {activeTab === "auction" ? (
-        <AuctionSection />
-      ) : (
-        <TrendingTokens 
-          type={activeTab} 
-          title={activeTab === "perp" ? "Trending perpetual" : "Trending spot"} 
-        />
-      )}
+      <div className="flex-1 flex flex-col">
+        {activeTab === "auction" ? (
+          <AuctionSection />
+        ) : activeTab === "past-auction" ? (
+          <PastAuctionSection onHeightChange={onPastAuctionHeightChange} />
+        ) : (
+          <TrendingTokens 
+            type={activeTab} 
+            title={activeTab === "perp" ? "Trending perpetual" : "Trending spot"} 
+          />
+        )}
+      </div>
     </div>
   );
 }; 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 interface UseDataFetchingOptions<T> {
   fetchFn: () => Promise<T>;
@@ -20,6 +20,8 @@ export function useDataFetching<T>({
   // States
   const [data, setData] = useState<T | null>(initialData);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // NEW: Only true for first load
+  const [isRefreshing, setIsRefreshing] = useState(false); // NEW: True during background refresh
   const [error, setError] = useState<Error | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   
@@ -27,6 +29,7 @@ export function useDataFetching<T>({
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
+  const hasInitialDataRef = useRef(false); // NEW: Track if we've loaded data before
 
   // Cleanup effect
   useEffect(() => {
@@ -43,12 +46,19 @@ export function useDataFetching<T>({
   }, []);
 
   // Main fetch function with retry logic
-  const fetchData = async (isRetry = false) => {
+  const fetchData = async (isRetry = false, isPolling = false) => {
     if (!mountedRef.current) return;
 
     try {
       if (!isRetry) {
-        setIsLoading(true);
+        if (hasInitialDataRef.current && isPolling) {
+          // Background refresh - don't show full loading
+          setIsRefreshing(true);
+        } else {
+          // Initial load or manual refetch
+          setIsLoading(true);
+          setIsInitialLoading(true);
+        }
         setError(null);
         setRetryCount(0);
       }
@@ -59,6 +69,7 @@ export function useDataFetching<T>({
         setData(result);
         setError(null);
         setRetryCount(0);
+        hasInitialDataRef.current = true; // Mark that we have data now
       }
     } catch (err) {
       if (!mountedRef.current) return;
@@ -79,7 +90,7 @@ export function useDataFetching<T>({
         
         retryTimeoutRef.current = setTimeout(() => {
           if (mountedRef.current) {
-            fetchData(true);
+            fetchData(true, isPolling);
           }
         }, retryDelayWithBackoff);
         
@@ -91,9 +102,14 @@ export function useDataFetching<T>({
     } finally {
       if (mountedRef.current && !isRetry) {
         setIsLoading(false);
+        setIsInitialLoading(false);
+        setIsRefreshing(false);
       }
     }
   };
+
+  // Stabilize dependencies to prevent infinite loops
+  const stableDependencies = useMemo(() => dependencies, [JSON.stringify(dependencies)]);
 
   // Combined effect for both initial fetch and dependencies changes
   useEffect(() => {
@@ -102,12 +118,15 @@ export function useDataFetching<T>({
       clearInterval(intervalIdRef.current);
     }
 
+    // Reset initial loading state when dependencies change
+    hasInitialDataRef.current = false;
+
     // Fetch data when dependencies change
     fetchData();
 
     // Only set up interval if refreshInterval is positive
     if (refreshInterval > 0) {
-      intervalIdRef.current = setInterval(fetchData, refreshInterval);
+      intervalIdRef.current = setInterval(() => fetchData(false, true), refreshInterval); // Pass isPolling=true
     }
 
     return () => {
@@ -115,11 +134,13 @@ export function useDataFetching<T>({
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [refreshInterval, ...dependencies]); // Include dependencies for refetching
+  }, [refreshInterval, ...stableDependencies]); // Use stable dependencies
 
   return {
     data,
-    isLoading,
+    isLoading, // Keep for backward compatibility
+    isInitialLoading, // NEW: Only true during first load
+    isRefreshing, // NEW: True during background refresh
     error,
     refetch: () => fetchData()
   };

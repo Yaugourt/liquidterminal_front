@@ -5,7 +5,6 @@ import {
   TwapOrderParams, 
   TwapOrderPaginatedResponse, 
   UseTwapOrdersOptions,
-  TwapOrder,
   EnrichedTwapOrder,
   UseTwapOrdersResult
 } from '../types';

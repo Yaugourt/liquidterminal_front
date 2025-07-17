@@ -29,9 +29,10 @@ export type {
 // Hooks exports
 export {
   useTransactions,
+  useOpenOrders,
+  useUserTwapOrders,
   usePortfolio,
   useAddressBalance,
-  useOpenOrders,
   formatAddress,
   formatHash,
   formatNumberValue,

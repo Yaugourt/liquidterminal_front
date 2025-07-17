@@ -53,6 +53,135 @@ export interface UseTransactionDetailsResult {
   error: Error | null;
 }
 
+// Types étendus pour les détails de transaction
+export interface TransactionAction {
+  type: string;
+  
+  // Pour les ordres
+  orders?: Array<{
+    a: number;        // asset/amount
+    b: boolean;       // buy/sell
+    p: string;        // price
+    s: string;        // size
+    r: boolean;       // reduce only
+    t: {
+      limit?: {
+        tif: string;  // time in force
+      };
+      trigger?: {
+        triggerPx: string;
+        tpsl: string;
+        isMarket: boolean;
+      };
+    };
+  }>;
+  
+  // Pour les ordres TWAP
+  twap?: {
+    a: number;
+    b: boolean;
+    s: string;
+    r: boolean;
+    m: number;
+    t: boolean;
+  };
+  
+  // Pour les annulations
+  cancels?: Array<{
+    a: number;
+    o: number;
+  }>;
+  
+  // Pour les transferts
+  destination?: string;
+  amount?: string;
+  token?: string;
+  wei?: string;
+  
+  // Pour les transferts spot
+  signatureChainId?: string;
+  hyperliquidChain?: string;
+  
+  // Pour les déploiements
+  registerToken2?: {
+    spec?: {
+      name: string;
+      szDecimals: number;
+      weiDecimals: number;
+    };
+    maxGas?: number;
+  };
+  
+  // Pour les déploiements spot
+  userGenesis?: {
+    token: number;
+    userAndWei: Array<[string, string]>;
+  };
+  
+  genesis?: {
+    token: number;
+    maxSupply: string;
+    noHyperliquidity?: boolean;
+  };
+  
+  registerSpot?: {
+    tokens: number[];
+  };
+  
+  // Pour les staking
+  validator?: string;
+  
+  // Pour les votes
+  proposal?: number;
+  vote?: boolean;
+  
+  // Propriétés génériques
+  [key: string]: any;
+}
+
+export interface ExtendedTransactionDetails {
+  time: number;
+  user: string;
+  action: TransactionAction;
+  block: number;
+  error: string | null;
+  hash: string;
+}
+
+export interface ExtendedTransactionDetailsResponse {
+  type: "txDetails";
+  tx: ExtendedTransactionDetails;
+}
+
+// Types pour l'affichage formaté
+export interface FormattedTransactionField {
+  label: string;
+  value: string | number | boolean | null;
+  type: 'text' | 'hash' | 'address' | 'amount' | 'boolean' | 'timestamp' | 'link' | 'json';
+  subFields?: FormattedTransactionField[];
+}
+
+export interface FormattedTransactionSection {
+  title: string;
+  fields: FormattedTransactionField[];
+}
+
+export interface FormattedTransactionData {
+  hash: string;
+  time: number;
+  user: string;
+  block: number;
+  error: string | null;
+  sections: FormattedTransactionSection[];
+}
+
+// Types pour les hooks étendus
+export interface UseExtendedTransactionDetailsResult {
+  transactionDetails: ExtendedTransactionDetails | null;
+  isLoading: boolean;
+  error: Error | null;
+}
+
 
 
 // Types pour les transferts

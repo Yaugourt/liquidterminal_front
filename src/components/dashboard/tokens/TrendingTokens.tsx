@@ -59,9 +59,11 @@ export const TrendingTokens = memo(({ type, title }: TrendingTokensProps) => {
     }), [type, spotTokens, perpTokens, isLoadingSpot, isLoadingPerp, handleSort, sortBy]);
 
     return (
-        <div className="w-full">
+        <div className="w-full h-full flex flex-col">
             <TokensHeader {...headerProps} />   
-            <TokensTable {...tableProps} />
+            <div className="flex-1 flex flex-col">
+                <TokensTable {...tableProps} />
+            </div>
         </div>
     );
 });

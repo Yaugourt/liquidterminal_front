@@ -86,6 +86,8 @@ export interface ChartDisplayProps {
   selectedCurrency?: "HYPE" | "USDC";
   onCurrencyChange?: (currency: "HYPE" | "USDC") => void;
   chartHeight: number;
+  isAuctionTabActive?: boolean;
+  isPastAuctionTabActive?: boolean;
 }
 
 export interface FilterButtonsProps {
