@@ -9,8 +9,9 @@ import {
   StakingValidation,
   UnstakingQueueParams,
   UnstakingQueuePaginatedResponse,
-  UnstakingQueueItem
-} from './types';
+  UnstakingQueueItem,
+  UnstakingStatsResponse
+} from './types/staking';
 import { 
   buildPaginationParams, 
   formatValidationData, 
@@ -106,4 +107,15 @@ export const fetchUnstakingQueuePaginated = async (params: UnstakingQueueParams 
       (data) => data.reduce((sum, item) => sum + item.amount, 0)
     );
   }, 'fetching paginated unstaking queue');
+};
+
+/**
+ * Récupère les statistiques d'unstaking par jour
+ * @returns Les statistiques d'unstaking avec données quotidiennes
+ */
+export const fetchUnstakingStats = async (): Promise<UnstakingStatsResponse> => {
+  return withErrorHandling(async () => {
+    const response = await get<UnstakingStatsResponse>(`${ENDPOINTS.STAKING_UNSTAKING_QUEUE}/stats`);
+    return response;
+  }, 'fetching unstaking stats');
 }; 

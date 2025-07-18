@@ -5,7 +5,7 @@ import {
   DelegatorRewardsResponse, 
   DelegatorSummaryRequest, 
   DelegatorSummaryResponse 
-} from './types';
+} from './types/delegator';
 import { callHyperliquidApi } from './utils';
 
 /**

@@ -4,7 +4,7 @@ import { useVaults } from "@/services/vault/hooks/useVaults";
 import { TabButtons } from "./TabButtons";
 import { ValidatorsTable, VaultTable } from "./DataTablesContent";
 import type { VaultSummary } from "@/services/vault/types";
-import type { Validator } from "@/services/validator/types";
+import type { Validator } from "@/services/validator/types/validators";
 
 interface TabSectionComponentProps {
   validators?: Validator[];

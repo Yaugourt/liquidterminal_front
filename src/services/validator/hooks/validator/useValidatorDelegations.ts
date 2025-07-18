@@ -1,6 +1,6 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchValidatorDelegations } from '../validators';
-import { UseValidatorDelegationsResult, ValidatorDelegation } from '../types';
+import { fetchValidatorDelegations } from '../../validators';
+import { UseValidatorDelegationsResult, ValidatorDelegation } from '../../types/validators';
 import { useValidators } from './useValidators';
 import { useMemo, useCallback } from 'react';
 

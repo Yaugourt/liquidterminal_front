@@ -39,6 +39,9 @@ export const ENDPOINTS = {
   STAKING_UNSTAKING_QUEUE: '/staking/unstaking-queue',
   STAKING_VALIDATORS: '/staking/validators',
   STAKING_VALIDATORS_TRENDING: '/staking/validators/trending',
+  STAKING_HOLDERS: '/staking/holders',
+  STAKING_HOLDERS_TOP: '/staking/holders/top',
+  STAKING_HOLDERS_STATS: '/staking/holders/stats',
   MARKET_VAULTS: '/market/vaults',
 } as const;
 

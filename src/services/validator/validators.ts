@@ -1,7 +1,7 @@
 import { get } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { ENDPOINTS } from '../api/constants';
-import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, ValidatorStats } from './types';
+import { ValidatorDelegationsRequest, ValidatorDelegationsResponse, Validator, ValidatorStats } from './types/validators';
 import { callHyperliquidApi } from './utils';
 
 /**

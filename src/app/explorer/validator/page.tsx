@@ -11,8 +11,7 @@ import { ValidatorStatsCard } from "@/components/validator/ValidatorStatsCard";
 import { ValidatorTable } from "@/components/validator/ValidatorTable";
 import { ValidatorChartSection } from "@/components/validator/ValidatorChartSection";
 import { ValidatorTabButtons } from "@/components/validator/ValidatorTabButtons";
-
-type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
+import { ValidatorSubTab } from "@/components/validator/types";
 
 export default function ValidatorPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchDelegatorSummary } from '../delegator';
-import { UseDelegatorSummaryResult, DelegatorSummaryData } from '../types';
+import { fetchDelegatorSummary } from '../../delegator';
+import { UseDelegatorSummaryResult, DelegatorSummaryData } from '../../types/delegator';
 
 /**
  * Hook pour récupérer le résumé des délégations d'un utilisateur

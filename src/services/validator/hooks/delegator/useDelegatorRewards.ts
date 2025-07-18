@@ -1,6 +1,6 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchDelegatorRewards } from '../delegator';
-import { UseDelegatorRewardsResult, FormattedDelegatorRewardItem } from '../types';
+import { fetchDelegatorRewards } from '../../delegator';
+import { UseDelegatorRewardsResult, FormattedDelegatorRewardItem } from '../../types/delegator';
 
 /**
  * Hook pour récupérer les récompenses des délégations d'un utilisateur

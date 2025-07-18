@@ -1,6 +1,5 @@
 import { memo } from "react";
-
-type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
+import { ValidatorSubTab } from "./types";
 
 interface ValidatorTabButtonsProps {
   activeTab: ValidatorSubTab;
@@ -14,7 +13,8 @@ export const ValidatorTabButtons = memo(function ValidatorTabButtons({
   const tabs: { key: ValidatorSubTab; label: string }[] = [
     { key: 'all', label: 'All Validators' },
     { key: 'transactions', label: 'Staking Transactions' },
-    { key: 'unstaking', label: 'Unstaking Queue' }
+    { key: 'unstaking', label: 'Unstaking Queue' },
+    { key: 'stakers', label: 'Stakers' }
   ];
 
   return (

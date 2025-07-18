@@ -5,9 +5,8 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { useCallback, useEffect, useState } from "react";
 import { Pagination } from "../common/pagination";
 import { TableContent } from "../explorer/vaultValidatorSum";
-import { formatNumber } from "@/lib/formatting";
-
-type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
+import { ValidatorSubTab } from "./types";
+import { StakersTable } from "./StakersTable";
 
 interface ValidatorTableProps {
   activeTab: ValidatorSubTab;
@@ -120,45 +119,51 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
         
         <div className="flex flex-col flex-1">
           <div className="flex-1">
-            <TableContent
-              activeTab="validators"
-              validatorSubTab={validatorSubTab}
-              onValidatorSubTabChange={handleValidatorSubTabChange}
-              validatorsData={{
-                validators,
-                loading: validatorsLoading,
-                error: validatorsError
-              }}
-              vaultsData={{
-                vaults: [],
-                loading: false,
-                error: null
-              }}
-              stakingData={{
-                validations: stakingValidations,
-                loading: stakingLoading,
-                error: stakingError
-              }}
-              unstakingData={{
-                unstakingQueue,
-                loading: unstakingLoading,
-                error: unstakingError
-              }}
-              format={format}
-              startIndex={validatorSubTab === 'all' ? startIndex : 0}
-              endIndex={validatorSubTab === 'all' ? endIndex : 0}
-            />
+            {validatorSubTab === 'stakers' ? (
+              <StakersTable />
+            ) : (
+              <TableContent
+                activeTab="validators"
+                validatorSubTab={validatorSubTab}
+                onValidatorSubTabChange={handleValidatorSubTabChange}
+                validatorsData={{
+                  validators,
+                  loading: validatorsLoading,
+                  error: validatorsError
+                }}
+                vaultsData={{
+                  vaults: [],
+                  loading: false,
+                  error: null
+                }}
+                stakingData={{
+                  validations: stakingValidations,
+                  loading: stakingLoading,
+                  error: stakingError
+                }}
+                unstakingData={{
+                  unstakingQueue,
+                  loading: unstakingLoading,
+                  error: unstakingError
+                }}
+                format={format}
+                startIndex={validatorSubTab === 'all' ? startIndex : 0}
+                endIndex={validatorSubTab === 'all' ? endIndex : 0}
+              />
+            )}
           </div>
-          <div className="mt-4">
-            <Pagination
-              total={totalItems}
-              page={currentPage}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </div>
+          {validatorSubTab !== 'stakers' && (
+            <div className="mt-4">
+              <Pagination
+                total={totalItems}
+                page={currentPage}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[10, 25, 50, 100]}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+              />
+            </div>
+          )}
         </div>
       </Card>
     </div>

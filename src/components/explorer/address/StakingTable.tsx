@@ -3,11 +3,11 @@ import { formatNumber } from "@/lib/formatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { Pagination } from "@/components/common/pagination";
 import { StakingTabButtons, StakingTableContent } from "./staking";
-import { useValidatorDelegations } from "@/services/validator/hooks/useValidatorDelegations";
-import { useStakingValidationsPaginated } from "@/services/validator/hooks/useStakingValidations";
-import { useDelegatorHistory } from "@/services/validator/hooks/useDelegatorHistory";
-import { useDelegatorRewards } from "@/services/validator/hooks/useDelegatorRewards";
-import { useDelegatorSummary } from "@/services/validator/hooks/useDelegatorSummary";
+import { useValidatorDelegations } from "@/services/validator/hooks/validator/useValidatorDelegations";
+import { useStakingValidationsPaginated } from "@/services/validator/hooks/staking/useStakingValidationsPaginated";
+import { useDelegatorHistory } from "@/services/validator/hooks/delegator/useDelegatorHistory";
+import { useDelegatorRewards } from "@/services/validator/hooks/delegator/useDelegatorRewards";
+import { useDelegatorSummary } from "@/services/validator/hooks/delegator/useDelegatorSummary";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect, useMemo } from "react";
 
