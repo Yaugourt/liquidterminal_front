@@ -1,10 +1,11 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink, Bookmark, BookmarkCheck } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import Image from "next/image";
+import { AddToReadListButton } from "./read-list/AddToReadListButton";
 
 interface Resource {
   id: string;
@@ -20,7 +21,6 @@ interface ResourceCardProps {
 }
 
 export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   return (
@@ -50,21 +50,20 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
               </div>
             )}
             
-            {/* Bookmark button */}
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsBookmarked(!isBookmarked);
-              }}
-              className="absolute top-3 right-3 p-2 bg-[#051728]/80 backdrop-blur-sm rounded-lg hover:bg-[#051728] transition-colors"
-            >
-              {isBookmarked ? (
-                <BookmarkCheck size={16} className="text-[#F9E370]" />
-              ) : (
-                <Bookmark size={16} className="text-white" />
-              )}
-            </button>
+            {/* Add to Read List button */}
+            <div className="absolute top-3 right-3">
+              <AddToReadListButton
+                article={{
+                  title: resource.title,
+                  description: resource.description,
+                  url: resource.url,
+                  image: resource.image,
+                  category: "Article",
+                  tags: ["education"]
+                }}
+                className="bg-[#051728]/80 backdrop-blur-sm rounded-lg hover:bg-[#051728]"
+              />
+            </div>
           </div>
 
           {/* Content section */}

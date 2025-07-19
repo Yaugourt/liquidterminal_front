@@ -108,7 +108,15 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 name: 'Education',
                 href: '/education',
                 icon: null,
-                IconComponent: PiChalkboardTeacherLight
+                IconComponent: PiChalkboardTeacherLight,
+                children: [
+                    {
+                        name: 'Read List',
+                        href: '/education/readlist',
+                        icon: null,
+                        IconComponent: PiListMagnifyingGlass
+                    }
+                ]
             },
         ]
     },
