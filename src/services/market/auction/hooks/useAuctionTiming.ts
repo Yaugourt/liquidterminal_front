@@ -16,9 +16,16 @@ const calculateCurrentPrice = (timing: AuctionTiming): number => {
   const { currentAuction } = timing;
   const now = Date.now();
   
-  // Si pas d'auction active, retourner le prix de base
-  if (now < currentAuction.startTime || now > currentAuction.endTime) {
+  // Si pas d'auction active (temps ou currentGas null), retourner le prix de base
+  if (now < currentAuction.startTime || 
+      now > currentAuction.endTime || 
+      currentAuction.currentGas === null) {
     return BASE_PRICE;
+  }
+  
+  // Si on a currentGas de l'API, l'utiliser directement
+  if (currentAuction.currentGas) {
+    return parseFloat(currentAuction.currentGas);
   }
   
   const startGas = parseFloat(currentAuction.startGas);
@@ -59,7 +66,7 @@ const calculateProgress = (timing: AuctionTiming): number => {
   const now = Date.now();
   
   if (now < currentAuction.startTime) return 0;
-  if (now > currentAuction.endTime) return 100;
+  if (now > currentAuction.endTime || currentAuction.currentGas === null) return 0;
   
   const totalDuration = currentAuction.endTime - currentAuction.startTime;
   const elapsed = now - currentAuction.startTime;
@@ -105,13 +112,22 @@ export const useAuctionTiming = (refreshInterval: number = 1000): UseAuctionTimi
     const now = Date.now();
     const { currentAuction, nextAuction } = timingData;
     
-    const isActive = now >= currentAuction.startTime && now <= currentAuction.endTime;
+    // Une auction est active seulement si elle est dans la période ET que currentGas n'est pas null
+    const isActive = now >= currentAuction.startTime && 
+                     now <= currentAuction.endTime && 
+                     currentAuction.currentGas !== null;
     const timeRemaining = isActive 
       ? formatTimeRemaining(currentAuction.endTime - now)
       : "0m";
     
     // Calcul du prix en temps réel
-    const currentPrice = calculateCurrentPrice(timingData);
+    let currentPrice;
+    if (isActive) {
+      currentPrice = calculateCurrentPrice(timingData);
+    } else {
+      // Si inactive, afficher le prix de départ de la prochaine auction
+      currentPrice = parseFloat(nextAuction.startGas);
+    }
     const currentPriceUSD = currentPrice * (hypePrice || 0);
     const progressPercentage = calculateProgress(timingData);
     

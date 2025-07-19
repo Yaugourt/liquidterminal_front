@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OrdersTable } from "@/components/explorer";
+import { TwapSection } from "@/components/explorer/address/orders";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 
 export default function AddressPage() {
@@ -90,6 +91,12 @@ export default function AddressPage() {
           />
         )}
 
+        {activeTab === "twap" && (
+          <TwapSection 
+            address={address}
+          />
+        )}
+
         {activeTab === "perps" && (
           <HoldingTabs 
             address={address}
@@ -101,7 +108,7 @@ export default function AddressPage() {
           <StakingTable address={address} />
         )}
 
-        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
+        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "twap" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
           <div className="bg-[#0A1F32] h-[400px] border border-[#1E3851] rounded-xl flex items-center justify-center">
             <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
           </div>

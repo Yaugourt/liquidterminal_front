@@ -295,6 +295,63 @@ export function formatMetricValue(
 }
 
 /**
+ * Formate un prix avec un nombre adaptatif de décimales
+ * @param price Prix à formater
+ * @param format Format de nombre à utiliser
+ * @param options Options supplémentaires
+ * @returns Prix formaté avec le bon nombre de décimales
+ */
+export function formatPrice(
+  price: number,
+  format: NumberFormatType,
+  options: {
+    prefix?: string;
+    showCurrency?: boolean;
+    currency?: string;
+  } = {}
+): string {
+  const { prefix = '$', showCurrency = true, currency = '$' } = options;
+  
+  if (isNaN(price) || price === 0) {
+    return showCurrency ? `${currency}0.00` : '0.00';
+  }
+
+  // Déterminer le nombre de décimales selon la valeur
+  let maximumFractionDigits = 2; // Défaut pour les prix >= 0.01
+  let minimumFractionDigits = 2;
+
+  if (price < 0.01) {
+    // Pour les très petits prix, montrer jusqu'à 6 décimales significatives
+    if (price < 0.000001) {
+      maximumFractionDigits = 8;
+      minimumFractionDigits = 8;
+    } else if (price < 0.0001) {
+      maximumFractionDigits = 6;
+      minimumFractionDigits = 6;
+    } else if (price < 0.001) {
+      maximumFractionDigits = 5;
+      minimumFractionDigits = 5;
+    } else {
+      maximumFractionDigits = 4;
+      minimumFractionDigits = 4;
+    }
+  } else if (price >= 1000) {
+    // Pour les gros prix, pas de décimales
+    maximumFractionDigits = 0;
+    minimumFractionDigits = 0;
+  }
+
+  const formattedNumber = formatNumber(price, format, {
+    minimumFractionDigits,
+    maximumFractionDigits,
+    currency: showCurrency ? currency : undefined,
+    showCurrency
+  });
+
+  return formattedNumber;
+}
+
+/**
  * Formate une valeur de Gas
  */
 export function formatGasValue(value: string | number, format: NumberFormatType): string {
@@ -400,7 +457,7 @@ export function formatAssetTokenAmount(value: number, format: NumberFormatType):
  * Formate un pourcentage pour l'affichage des assets
  */
 export function formatAssetPercent(value: number, format: NumberFormatType): string {
-  const sign = value >= 0 ? '+' : '';
+  const sign = value >= 0 ? '+' : '-';
   return sign + formatNumber(Math.abs(value), format, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0

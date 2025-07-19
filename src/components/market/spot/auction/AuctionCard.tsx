@@ -34,7 +34,7 @@ export const AuctionCard = memo(function AuctionCard() {
             AUCTION {auctionState.isActive ? (
               <span className="text-[#4ade80]">(● Active)</span>
             ) : (
-              "(INACTIVE)"
+              <span className="text-[#ff5757]">(● INACTIVE)</span>
             )}
           </h3>
         </div>
@@ -108,13 +108,19 @@ export const AuctionCard = memo(function AuctionCard() {
               </div>
             </div>
 
-            {/* Statut et dernière enchère */}
+            {/* Statut et informations */}
             <div className="text-xs space-y-1">
               {auctionState.isActive ? (
                 <div className="h-3"></div>
               ) : (
-                <div>
-                  <span className="text-[#f97316]">● Next auction in {auctionState.nextAuctionStart}</span>
+                <div className="space-y-1">
+                  <div>
+                    <span className="text-[#f97316]">● Next auction starts in {auctionState.nextAuctionStart}</span>
+                  </div>
+                  <div>
+                    <span className="text-white">Starting price </span>
+                    <span className="text-[#4ade80] font-medium">{formatNumber(auctionState.currentPrice, format)} HYPE</span>
+                  </div>
                 </div>
               )}
               <div>

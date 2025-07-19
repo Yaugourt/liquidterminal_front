@@ -30,6 +30,7 @@ export const ADDRESS_TABS = [
   { id: "transactions", label: "Transactions" },
   { id: "holdings", label: "Holdings" },
   { id: "orders", label: "Orders" },
+  { id: "twap", label: "TWAP" },
   { id: "vaults", label: "Vaults" },
   { id: "staking", label: "Staking" },
 ];

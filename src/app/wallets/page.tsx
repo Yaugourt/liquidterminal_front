@@ -9,6 +9,7 @@ import { WalletTabs } from "@/components/wallets";
 import { PortfolioStats, PerformanceChart } from "@/components/wallets/stats";
 import { AssetsSection } from "@/components/wallets/assets";
 import { WalletAssetsNavigation } from "@/components/wallets/WalletAssetsNavigation";
+import { WalletOrdersSection, WalletTwapSection } from "@/components/wallets/orders";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -82,9 +83,13 @@ export default function Wallets() {
               <WalletTabs />
             </div>
             <div className="mb-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 relative">
-                <PortfolioStats />
-                <PerformanceChart />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+                <div className="lg:col-span-5">
+                  <PortfolioStats />
+                </div>
+                <div className="lg:col-span-7">
+                  <PerformanceChart />
+                </div>
               </div>
             </div>
             <WalletAssetsNavigation 
@@ -94,19 +99,9 @@ export default function Wallets() {
             
             {activeAssetsTab === "holdings" && <AssetsSection />}
             
-            {activeAssetsTab === "orders" && (
-              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
-                <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
-                <p className="text-[#FFFFFF80] text-sm">Orders functionality coming soon...</p>
-              </div>
-            )}
+            {activeAssetsTab === "orders" && <WalletOrdersSection />}
             
-            {activeAssetsTab === "twap" && (
-              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
-                <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
-                <p className="text-[#FFFFFF80] text-sm">TWAP functionality coming soon...</p>
-              </div>
-            )}
+            {activeAssetsTab === "twap" && <WalletTwapSection />}
             
             {activeAssetsTab === "recent-fills" && (
               <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">

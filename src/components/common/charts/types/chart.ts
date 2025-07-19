@@ -1,5 +1,5 @@
 
-export type ChartPeriod = '24h' | '7d' | '30d' | '90d' | '1y';
+export type ChartPeriod = '24h' | '7d' | '30d' | '90d' | '1y' | 'allTime';
 
 export interface ChartDataPoint {
   timestamp: number;

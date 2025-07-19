@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, RefreshCw, Copy, Check } from "lucide-react";
+import { Loader2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -16,9 +16,8 @@ export function PortfolioStats() {
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
-  const { balances, isLoading, error, refresh } = useAddressBalance(activeWallet?.address || '');
+  const { balances, isLoading, error } = useAddressBalance(activeWallet?.address || '');
   const { perpPositions } = useWalletsBalances(activeWallet?.address || '');
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -86,21 +85,11 @@ export function PortfolioStats() {
     }
   }, [activeWallet?.address]);
 
-  // Fonction pour rafraîchir
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      await refresh();
-    } catch (error) {
-      console.error("Erreur lors du rafraîchissement:", error);
-    } finally {
-      setTimeout(() => setIsRefreshing(false), 1000);
-    }
-  }, [refresh]);
+
 
   if (!isMounted) {
     return (
-      <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 rounded-lg">
+      <Card className="h-full bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 rounded-lg">
         <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
           <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
         </div>
@@ -109,57 +98,36 @@ export function PortfolioStats() {
   }
 
   return (
-    <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 rounded-lg">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center">
-          <h3 className="text-[15px] text-white font-medium">Portfolio Statistics</h3>
-          {activeWallet && (
-            <div className="flex items-center ml-3">
-              <span className="text-[#83E9FF] text-xs">
-                {activeWallet.address}
-              </span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 p-0 ml-1 text-[#F9E370] hover:text-white hover:bg-[#1692ADB2]"
-                      onClick={copyToClipboard}
-                    >
-                      {copied ? <Check size={14} /> : <Copy size={14} />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{copied ? "Address copied!" : "Copy address"}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          )}
+    <div className="h-full space-y-4">
+      {/* Adresse du wallet - libre sans card */}
+      {activeWallet && (
+        <div className="flex items-center gap-3">
+          <span className="text-[#FFFFFF] text-xs">
+            {activeWallet.address}
+          </span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6 p-0 text-[#F9E370] hover:text-white hover:bg-[#1692ADB2]"
+                  onClick={copyToClipboard}
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{copied ? "Address copied!" : "Copy address"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={handleRefresh}
-                disabled={isRefreshing || isLoading}
-                className="text-[#F9E370] hover:text-white hover:bg-[#1692ADB2]"
-              >
-                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Refresh</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      
+      )}
+
+      {/* 3 cards pour les balances principales */}
       {isLoading ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
+        <div className="flex justify-center items-center h-32">
           <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
         </div>
       ) : error ? (
@@ -167,103 +135,92 @@ export function PortfolioStats() {
           Error loading portfolio data
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-6">
-          {/* Zone 1: Balances */}
-          <div className="space-y-4 border-r border-[#FFFFFF0A] pr-6">
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Total Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(balances.totalBalance)}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Spot Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(balances.spotBalance)}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Perp Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(balances.perpBalance)}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Vault Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(balances.vaultBalance)}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Staked Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(balances.stakedBalance)}</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p className="text-white text-xs">Withdrawable Balance:</p>
-              <p className="text-white text-sm font-medium">{formatCurrency(0)}</p>
-            </div>
-            <div className="pt-2">
-              <p className="text-white text-xs">
-                Last tx: <span className="text-[#F9E370]">1h ago</span>
-              </p>
-            </div>
+        <>
+          <div className="grid grid-cols-3 gap-4">
+            <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4 rounded-lg">
+              <div className="text-center">
+                <p className="text-white text-xs mb-1">Spot Balance</p>
+                <p className="text-white text-sm font-medium">{formatCurrency(balances.spotBalance)}</p>
+              </div>
+            </Card>
+            <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4 rounded-lg">
+              <div className="text-center">
+                <p className="text-white text-xs mb-1">Perp Balance</p>
+                <p className="text-white text-sm font-medium">{formatCurrency(balances.perpBalance)}</p>
+              </div>
+            </Card>
+            <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4 rounded-lg">
+              <div className="text-center">
+                <p className="text-white text-xs mb-1">Total Balance</p>
+                <p className="text-white text-sm font-medium">{formatCurrency(balances.totalBalance)}</p>
+              </div>
+            </Card>
           </div>
 
-          <div className="space-y-6">
-            {/* Zone 2: PNL */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                <div>
-                  <p className="text-white text-xs">All Time:</p>
-                  <p className="text-[#FFFFFF80] text-sm font-medium">-</p>
+          {/* Card pour le reste des informations */}
+          <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 rounded-lg">
+            <div className="space-y-6">
+              {/* Section 1: Long/Short Ratio */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#4ADE80] text-sm font-medium">
+                    Long: {formatAbbreviated(longShortData.longValue)}
+                  </span>
+                  <span className="text-[#FF5757] text-sm font-medium">
+                    Short: {formatAbbreviated(longShortData.shortValue)}
+                  </span>
                 </div>
-                <div>
-                  <p className="text-white text-xs">24H:</p>
-                  <p className="text-[#4ADE80] text-sm font-medium">+0.31%</p>
-                </div>
-                <div>
-                  <p className="text-white text-xs">7D:</p>
-                  <p className="text-[#4ADE80] text-sm font-medium">+14.80%</p>
-                </div>
-                <div>
-                  <p className="text-white text-xs">30D:</p>
-                  <p className="text-[#4ADE80] text-sm font-medium">+229.60%</p>
+                <div className="space-y-2">
+                  <div className="h-2 bg-[#FFFFFF0A] rounded-full overflow-hidden relative">
+                    {longShortData.totalValue > 0 && (
+                      <>
+                        {/* Barre pour les positions longues */}
+                        <div
+                          className="h-full bg-[#4ADE80] transition-all duration-500 absolute left-0"
+                          style={{
+                            width: `${longShortData.longPercentage}%`
+                          }}
+                        />
+                        {/* Barre pour les positions courtes */}
+                        <div
+                          className="h-full bg-[#FF5757] transition-all duration-500 absolute right-0"
+                          style={{
+                            width: `${100 - longShortData.longPercentage}%`
+                          }}
+                        />
+                      </>
+                    )}
+                  </div>
+                  <div className="flex justify-between text-xs text-[#FFFFFF80]">
+                    <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
+                    <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Zone 3: Long/Short Ratio */}
-            <div className="space-y-4 pt-3 border-t border-[#FFFFFF0A]">
-              <div className="flex justify-between items-center">
-                <span className="text-[#4ADE80] text-sm font-medium">
-                  Long: {formatAbbreviated(longShortData.longValue)}
-                </span>
-                <span className="text-[#FF5757] text-sm font-medium">
-                  Short: {formatAbbreviated(longShortData.shortValue)}
-                </span>
-              </div>
-              <div className="space-y-2">
-                <div className="h-2 bg-[#FFFFFF0A] rounded-full overflow-hidden relative">
-                  {longShortData.totalValue > 0 && (
-                    <>
-                      {/* Barre pour les positions longues */}
-                      <div
-                        className="h-full bg-[#4ADE80] transition-all duration-500 absolute left-0"
-                        style={{
-                          width: `${longShortData.longPercentage}%`
-                        }}
-                      />
-                      {/* Barre pour les positions courtes */}
-                      <div
-                        className="h-full bg-[#FF5757] transition-all duration-500 absolute right-0"
-                        style={{
-                          width: `${100 - longShortData.longPercentage}%`
-                        }}
-                      />
-                    </>
-                  )}
+              {/* Section 2: Other Balances */}
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#FFFFFF0A]">
+                <div className="flex justify-between items-center">
+                  <p className="text-white text-xs">Vault Balance:</p>
+                  <p className="text-white text-sm font-medium">{formatCurrency(balances.vaultBalance)}</p>
                 </div>
-                <div className="flex justify-between text-xs text-[#FFFFFF80]">
-                  <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
-                  <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
+                <div className="flex justify-between items-center">
+                  <p className="text-white text-xs">Withdrawable:</p>
+                  <p className="text-white text-sm font-medium">{formatCurrency(0)}</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-white text-xs">Staked Balance:</p>
+                  <p className="text-white text-sm font-medium">{formatCurrency(balances.stakedBalance)}</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-white text-xs">Last tx:</p>
+                  <p className="text-[#F9E370] text-xs">1h ago</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </Card>
+        </>
       )}
-    </Card>
+    </div>
   );
 }

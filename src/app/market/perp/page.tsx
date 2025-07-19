@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { GlobalStats, TrendingTokens, PerpTokensSection, AuctionCard } from "@/components/market";
+import { AuctionCard } from "@/components/market";
+import { TrendingTokensCard, GlobalStatsCard, TokensSection } from "@/components/market/common";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -39,11 +40,11 @@ export default function MarketPerp() {
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <GlobalStats />
-          <TrendingTokens />
+                      <GlobalStatsCard market="perp" />
+          <TrendingTokensCard market="perp" />
           <AuctionCard />
         </div>
-        <PerpTokensSection />
+                    <TokensSection market="perp" />
         </main>
       </div>
     </div>
