@@ -7,25 +7,13 @@ import {
   VaultSummary,
   VaultsParams,
   VaultsResponse,
-  VaultResponse
+  VaultResponse,
+  VaultDetailsRequest,
+  VaultDetailsResponse
 } from './types';
-import { PaginatedResponse } from '../common';
 
 /**
  * Adapts the vault response to match the PaginatedResponse format
- */
-const adaptVaultResponse = (response: VaultsResponse): PaginatedResponse<VaultSummary> => {
-  return {
-    data: response.data,
-    pagination: {
-      total: response.pagination.total,
-      page: response.pagination.page,
-      limit: response.data.length,
-      totalPages: Math.ceil(response.pagination.total / response.data.length),
-      totalVolume: response.pagination.totalTvl
-    }
-  };
-};
 
 /**
  * Fetches vaults with pagination and sorting
@@ -68,4 +56,18 @@ export const fetchVaultDeposits = async (
     const url = `${API_URLS.HYPERLIQUID_API}/info`;
     return await postExternal<VaultDepositsResponse>(url, params);
   }, 'fetching vault deposits');
+};
+
+/**
+ * Récupère les détails d'un vault spécifique pour la chart
+ * @param params Les paramètres de la requête avec l'adresse du vault
+ * @returns Les détails du vault avec l'historique des données
+ */
+export const fetchVaultDetails = async (
+  params: VaultDetailsRequest
+): Promise<VaultDetailsResponse> => {
+  return withErrorHandling(async () => {
+    const url = `${API_URLS.HYPERLIQUID_API}/info`;
+    return await postExternal<VaultDetailsResponse>(url, params);
+  }, 'fetching vault details');
 }; 

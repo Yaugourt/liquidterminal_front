@@ -116,4 +116,68 @@ export interface VaultResponse {
     totalTvl: number;
     vaultsNumber: number;
   };
+}
+
+// ==================== VAULT DETAILS CHART ====================
+
+/**
+ * Paramètres pour la requête de détails de vault
+ */
+export interface VaultDetailsRequest {
+  type: "vaultDetails";
+  vaultAddress: string;
+}
+
+/**
+ * Données d'historique pour un timeframe
+ */
+export interface VaultHistoryData {
+  accountValueHistory: [number, string][];
+  pnlHistory: [number, string][];
+  vlm: string;
+}
+
+/**
+ * Données de portfolio par timeframe
+ */
+export type VaultPortfolioData = [
+  ["day", VaultHistoryData],
+  ["week", VaultHistoryData], 
+  ["month", VaultHistoryData],
+  ["allTime", VaultHistoryData],
+  ["perpDay", VaultHistoryData]
+];
+
+/**
+ * Réponse de l'API pour les détails de vault
+ */
+export interface VaultDetailsResponse {
+  portfolio: VaultPortfolioData;
+  // Autres propriétés si nécessaires
+}
+
+/**
+ * Données formatées pour la chart
+ */
+export interface VaultChartData {
+  timestamp: number;
+  accountValue: number;
+  pnl: number;
+  date: string;
+}
+
+/**
+ * Timeframes disponibles pour la chart
+ */
+export type VaultChartTimeframe = 'day' | 'week' | 'month' | 'allTime' | 'perpDay';
+
+/**
+ * Résultat du hook pour les détails de vault
+ */
+export interface UseVaultDetailsResult {
+  chartData: VaultChartData[];
+  timeframe: VaultChartTimeframe;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
 } 

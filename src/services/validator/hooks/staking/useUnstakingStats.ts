@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { UnstakingStatsResponse, UseUnstakingStatsWithChartResult, UnstakingDailyStats, UnstakingTotalStats } from '../../types/staking';
+import { UnstakingStatsResponse, UseUnstakingStatsWithChartResult, UnstakingDailyStats, UnstakingTotalStats, UpcomingUnstakingStats } from '../../types/staking';
 import { fetchUnstakingStats } from '../../staking';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { ChartPeriod } from '@/components/common/charts/types/chart';
@@ -10,6 +10,7 @@ import { ChartPeriod } from '@/components/common/charts/types/chart';
 const useUnstakingStats = (): {
   dailyStats: UnstakingDailyStats[];
   totalStats: UnstakingTotalStats | null;
+  upcomingUnstaking: UpcomingUnstakingStats | null;
   lastUpdate: number | null;
   isLoading: boolean;
   error: Error | null;
@@ -23,6 +24,7 @@ const useUnstakingStats = (): {
   return {
     dailyStats: data?.data?.dailyStats || [],
     totalStats: data?.data?.totalStats || null,
+    upcomingUnstaking: data?.data?.upcomingUnstaking || null,
     lastUpdate: data?.data?.lastUpdate || null,
     isLoading,
     error,
@@ -172,6 +174,21 @@ export const useUnstakingStatsForChartWithDays = (days: number = 10): UseUnstaki
     ...baseResult,
     chartData
   };
+};
+
+/**
+ * Hook public pour récupérer les statistiques d'unstaking (incluant upcoming)
+ */
+export const useUnstakingStatsData = (): {
+  dailyStats: UnstakingDailyStats[];
+  totalStats: UnstakingTotalStats | null;
+  upcomingUnstaking: UpcomingUnstakingStats | null;
+  lastUpdate: number | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+} => {
+  return useUnstakingStats();
 };
 
 // Export des types pour l'utilisation externe

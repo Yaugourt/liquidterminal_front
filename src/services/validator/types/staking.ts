@@ -188,6 +188,24 @@ export interface UnstakingTotalStats {
 }
 
 /**
+ * Interface pour les stats d'unstaking à venir (1h, 24h, 7j)
+ */
+export interface UpcomingUnstakingPeriod {
+  totalTokens: number;
+  transactionCount: number;
+  uniqueUsers: number;
+}
+
+/**
+ * Interface pour toutes les stats d'unstaking à venir
+ */
+export interface UpcomingUnstakingStats {
+  nextHour: UpcomingUnstakingPeriod;
+  next24Hours: UpcomingUnstakingPeriod;
+  next7Days: UpcomingUnstakingPeriod;
+}
+
+/**
  * Réponse API pour les stats d'unstaking
  */
 export interface UnstakingStatsResponse {
@@ -195,6 +213,7 @@ export interface UnstakingStatsResponse {
   data: {
     dailyStats: UnstakingDailyStats[];
     totalStats: UnstakingTotalStats;
+    upcomingUnstaking: UpcomingUnstakingStats;
     lastUpdate: number;
   };
 }

@@ -2,10 +2,10 @@ import { memo, useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { TrendingUp, BarChart3 } from "lucide-react";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
-import { ValidatorChartTabs, ChartTabType } from "./chart/ValidatorChartTabs";
-import { HoldersDistributionChart } from "./chart/HoldersDistributionChart";
-import { UnstakingScheduleChart } from "./chart/UnstakingScheduleChart";
-import { StakingLineChart } from "./chart/StakingLineChart";
+import { ValidatorChartTabs, ChartTabType } from "./ValidatorChartTabs";
+import { HoldersDistributionChart } from "./HoldersDistributionChart";
+import { UnstakingScheduleChart } from "./UnstakingScheduleChart";
+import { StakingLineChart } from "./StakingLineChart";
 
 interface ValidatorChartSectionProps {
   chartHeight?: number;

@@ -9,7 +9,7 @@ import { useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { ValidatorStatsCard } from "@/components/validator/ValidatorStatsCard";
 import { ValidatorTable } from "@/components/validator/ValidatorTable";
-import { ValidatorChartSection } from "@/components/validator/ValidatorChartSection";
+import { ValidatorChartSection } from "@/components/validator/chart/ValidatorChartSection";
 import { ValidatorTabButtons } from "@/components/validator/ValidatorTabButtons";
 import { ValidatorSubTab } from "@/components/validator/types";
 
