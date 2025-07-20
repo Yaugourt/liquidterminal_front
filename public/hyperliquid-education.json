@@ -1,0 +1,34 @@
+{
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Introduction",
+      "description": "Hyperliquid is a cutting-edge decentralized exchange (DEX) built on its own Layer 1 blockchain, designed to optimize performance and scalability for decentralized finance (DeFi) applications. Founded in 2022 by Jeff Yan and Iliensinc, both Harvard alumni, it stands out for its advanced trading tools like perpetual derivatives and its unique self-funded model, ensuring independence from venture capital.\n\nThe platform leverages a custom consensus algorithm called HyperBFT, which enables rapid transaction finality and high security, supporting a fully on-chain order book for perpetual futures and spot trading with zero gas fees. Its architecture is split into two main components: HyperCore, which manages the on-chain order books, and HyperEVM, which provides a general-purpose smart contract platform, allowing for permissionless building and integration with its financial primitives."
+    },
+    {
+      "id": 2,
+      "title": "HyperBFT",
+      "description": "HyperBFT is a proprietary consensus algorithm developed by Hyperliquid, drawing inspiration from the Hotstuff consensus protocol and its successors. It is specifically designed to meet the high-performance requirements of Hyperliquid's Layer 1 blockchain, ensuring blocks are produced by validators in proportion to the native token staked, maintaining a decentralized and secure network.\n\nThis mechanism is optimized for end-to-end latency, with median times as low as 0.2 seconds for co-located clients, and supports processing up to 200,000 orders per second, providing one-block finality for transactions like orders, cancels, trades, and liquidations."
+    },
+    {
+      "id": 3,
+      "title": "HyperCore",
+      "description": "HyperCore is a critical component of Hyperliquid's state execution, encompassing fully on-chain perpetual futures and spot order books. It operates without relying on off-chain order books, ensuring full decentralization and a consistent transaction order through the HyperBFT consensus.\n\nEvery action, such as placing an order, canceling, trading, or liquidating, occurs transparently on the blockchain with one-block finality, inherited from HyperBFT. Currently, HyperCore supports up to 200,000 orders per second, with ongoing optimizations to enhance throughput, making it efficient and scalable for trading operations directly on the blockchain."
+    },
+    {
+      "id": 4,
+      "title": "HyperEVM",
+      "description": "HyperEVM is the general-purpose smart contract platform integrated into Hyperliquid's Layer 1 blockchain, mirroring the functionality of Ethereum's Virtual Machine (EVM). It enables developers to build and deploy smart contracts that can interact seamlessly with HyperCore's financial primitives, such as the on-chain order books for perpetual futures and spot trading.\n\nBy incorporating HyperEVM, Hyperliquid provides a familiar environment for developers accustomed to Ethereum's ecosystem, while offering the benefits of its high-performance blockchain. This integration allows for the creation of permissionless financial applications, leveraging the speed and efficiency of HyperCore, and expands the possibilities for decentralized finance on the Hyperliquid network."
+    },
+    {
+      "id": 5,
+      "title": "HyperCORE <> HyperEVM",
+      "description": "HyperCore and HyperEVM are tightly integrated components of Hyperliquid's Layer 1 blockchain, enabling seamless interaction between on-chain order books and smart contract applications. CoreWriter, a system contract at address 0x3333333333333333333333333333333333333333, allows HyperEVM smart contracts to send transactions to HyperCore, such as placing limit orders, managing vault transfers, or handling staking operations.\n\nThese actions are encoded with a version byte, action ID, and ABI-encoded data, and are delayed by a few seconds to prevent latency advantages, ensuring fairness while maintaining a smooth user experience. Read Precompiles, starting at address 0x0000000000000000000000000000000000000800, enable HyperEVM contracts to access HyperCore's state—such as oracle prices, perpetual positions, or spot balances—in real-time, supporting applications like lending protocols or trading bots. This bidirectional connectivity empowers developers to build sophisticated DeFi applications that leverage HyperCore's high-performance trading infrastructure directly within HyperEVM's familiar smart contract environment."
+    },
+    {
+      "id": 6,
+      "title": "$HYPE",
+      "description": "The HYPE token is the native cryptocurrency of Hyperliquid, powering essential functions within its decentralized exchange ecosystem. With a total supply of 1 billion tokens and approximately 333.9 million in circulation as of July 19, 2025, HYPE has a market cap of around $15.43 billion. Its primary utilities include:\n\nTransaction Fees: HYPE is used to pay fees for trading and other operations on Hyperliquid's Layer 1 blockchain, ensuring cost efficiency for users.\n\nGovernance: HYPE holders can vote on protocol upgrades and community proposals, giving them a direct role in shaping Hyperliquid's future.\n\nStaking: Users can stake HYPE to secure the network and earn rewards, contributing to the platform's decentralized operations.\n\nLaunched on November 29, 2024, HYPE's tokenomics include allocations for community incentives, core contributors, and the Hyper Foundation, with scheduled unlocks continuing through 2027. HYPE is integral to user participation, incentivizing engagement and supporting Hyperliquid's vision of a transparent, community-driven financial system."
+    }
+  ]
+} 

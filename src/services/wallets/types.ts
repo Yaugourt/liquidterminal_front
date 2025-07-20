@@ -21,16 +21,16 @@ export interface WalletResponse {
 }
 
 export interface AddWalletRequest {
-  privyUserId: string;
   address: string;
   name?: string;
+  // ❌ PAS de privyUserId !
 }
 
 export interface AddWalletResponse {
   success: boolean;
-  message?: string;
   wallet?: Wallet;
   userWallet?: UserWallet;
+  message?: string;
 }
 
 export interface InitializeParams {
@@ -48,7 +48,8 @@ export interface WalletsState {
   error: string | null;
   
   initialize: (params: InitializeParams) => Promise<void>;
-  addWallet: (address: string, name?: string, privyUserId?: string | number) => Promise<Wallet | void>;
+  reloadWallets: () => Promise<void>;
+  addWallet: (address: string, name?: string) => Promise<Wallet | void>;
   removeWallet: (id: number) => Promise<void>;
   setActiveWallet: (id: number) => void;
   getActiveWallet: () => Wallet | undefined;

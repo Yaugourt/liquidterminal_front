@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { ReadListContent } from "@/components/education/read-list/ReadListContent";
+import { ReadList } from "@/components/education/readList";
 
 export default function ReadListPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,7 +37,7 @@ export default function ReadListPage() {
         </div>
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-          <ReadListContent />
+          <ReadList />
         </main>
       </div>
     </div>

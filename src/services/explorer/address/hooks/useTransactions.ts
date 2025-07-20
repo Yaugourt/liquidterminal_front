@@ -2,13 +2,15 @@ import { FormattedUserTransaction, UseTransactionsResult } from '../types';
 import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { formatNumber } from '@/lib/formatting';
+import { formatHip2Display } from '../utils';
 
-const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
+export const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
 
-// Business logic functions moved from TransactionList component
+// Business logic functions for formatting
 export const formatAddress = (address: string) => {
   if (!address) return '-';
-  if (address === HIP2_ADDRESS) return 'HIP2';
+  const hip2Display = formatHip2Display(address);
+  if (hip2Display === 'HIP2') return 'HIP2';
   return address.length > 14 ? `${address.slice(0, 8)}...${address.slice(-6)}` : address;
 };
 
@@ -39,7 +41,7 @@ export const useTransactions = (address: string): UseTransactionsResult => {
   const { data, isLoading, error } = useDataFetching<FormattedUserTransaction[]>({
     fetchFn: () => getUserTransactions(address),
     dependencies: [address],
-    refreshInterval: 60000 // Rafraîchir toutes les 30 secondes
+    refreshInterval: 60000
   });
 
   return {

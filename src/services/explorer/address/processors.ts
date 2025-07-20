@@ -1,7 +1,5 @@
 import { UserTransaction, UserFill, NonFundingLedgerUpdate, FormattedUserTransaction } from './types';
-import { getTransactionAddresses, formatAge, mergeFillsByHash } from './utils';
-
-const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
+import { getTransactionAddresses, formatAge, mergeFillsByHash, getFillAddresses, getTwapOrderAddresses } from './utils';
 
 export function processFillTransactions(fills: UserFill[], address: string): FormattedUserTransaction[] {
     return mergeFillsByHash(fills).map(fill => {
@@ -23,15 +21,14 @@ export function processFillTransactions(fills: UserFill[], address: string): For
         // Le prix reste toujours positif, la logique de signe est sur le montant
         const displayPrice = fill.px;
         
-        const fromAddress = isSpot ? (isShort ? address : 'HIP2') : (isClosePosition ? HIP2_ADDRESS : address);
-        const toAddress = isSpot ? (isLong ? address : 'HIP2') : (isClosePosition ? address : HIP2_ADDRESS);
+        const addresses = getFillAddresses(fill, address, isSpot, isShort, isLong, isClosePosition);
         
         return {
             hash: fill.hash,
             method: fill.dir,
             age: formatAge(fill.time),
-            from: fromAddress,
-            to: toAddress,
+            from: addresses.from,
+            to: addresses.to,
             amount: fill.sz,
             token: fill.coin,
             price: displayPrice,
@@ -98,8 +95,9 @@ export function processUserTransactions(
             const addresses = getTransactionAddresses(tx, address);
             
             if (tx.action.type === 'twapOrder' && order) {
-                addresses.from = order.b ? HIP2_ADDRESS : address;
-                addresses.to = order.b ? address : HIP2_ADDRESS;
+                const twapAddresses = getTwapOrderAddresses(order, address);
+                addresses.from = twapAddresses.from;
+                addresses.to = twapAddresses.to;
             }
             
             // Récupérer le prix depuis userFills si disponible

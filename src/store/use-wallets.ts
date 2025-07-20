@@ -10,168 +10,213 @@ interface InitializeParams {
   privyToken: string;
 }
 
+// Utility functions
+const handleApiError = (error: unknown, defaultMessage: string): string => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'object' && error && 'response' in error) {
+    const response = (error as any).response;
+    switch (response?.status) {
+      case 409: return 'This wallet already exists in your account';
+      case 400: return 'Invalid wallet address or name';
+      case 404: return 'Wallet not found';
+      case 403: return 'Access denied';
+      default: return defaultMessage;
+    }
+  }
+  return defaultMessage;
+};
+
+const validateWalletAddress = (address: string): string => {
+  if (!address?.trim()) {
+    throw new Error("Address is required");
+  }
+  
+  const normalizedAddress = address.toLowerCase().trim();
+  if (!/^0x[a-fA-F0-9]{40}$/.test(normalizedAddress)) {
+    throw new Error("Invalid wallet address format");
+  }
+  
+  return normalizedAddress;
+};
+
+const validateWalletName = (name?: string): void => {
+  if (name && name.length > 255) {
+    throw new Error("Wallet name is too long");
+  }
+};
+
+const parseUserWallet = (uw: UserWallet): Wallet | null => {
+  // Si nous avons un objet wallet complet
+  if (uw.wallet && typeof uw.wallet === 'object') {
+    return {
+      id: uw.wallet.id,
+      address: uw.wallet.address || uw.address || '',
+      name: uw.wallet.name || uw.name || `Wallet ${uw.id}`,
+      addedAt: uw.wallet.addedAt || uw.addedAt || new Date()
+    };
+  }
+  
+  // Si nous n'avons que les informations de base
+  return {
+    id: uw.walletId,
+    address: uw.address || '',
+    name: uw.name || `Wallet ${uw.id}`,
+    addedAt: uw.addedAt || new Date()
+  };
+};
+
+const processWalletsResponse = (response: any): { wallets: Wallet[], userWallets: UserWallet[] } => {
+  if (!response?.data || !Array.isArray(response.data)) {
+    throw new Error("Invalid response format from server");
+  }
+  
+  const userWallets = response.data;
+  const wallets = userWallets
+    .map(parseUserWallet)
+    .filter((wallet: Wallet | null): wallet is Wallet => {
+      const isValid = wallet !== null && 
+        typeof wallet.id === 'number' &&
+        typeof wallet.name === 'string';
+      
+      return isValid;
+    });
+  
+  return { wallets, userWallets };
+};
+
+// Action creators for better state management
+const createActionCreators = (set: any, get: any) => ({
+  setLoading: (loading: boolean) => set({ loading, error: loading ? null : get().error }),
+  setError: (error: string | null) => set({ error, loading: false }),
+  updateWallets: (updater: (wallets: Wallet[]) => Wallet[]) => 
+    set((state: any) => ({ wallets: updater(state.wallets) })),
+  updateUserWallets: (updater: (userWallets: UserWallet[]) => UserWallet[]) => 
+    set((state: any) => ({ userWallets: updater(state.userWallets) })),
+  setActiveWallet: (id: number | null) => set({ activeWalletId: id })
+});
+
 export const useWallets = create<WalletsState>()(
   persist(
-    (set, get) => ({
-      wallets: [],
-      userWallets: [],
-      activeWalletId: null,
-      loading: false,
-      error: null,
+    (set, get) => {
+      const actions = createActionCreators(set, get);
       
-      initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
-        try {
-          set({ loading: true, error: null });
+      return {
+        wallets: [],
+        userWallets: [],
+        activeWalletId: null,
+        loading: false,
+        error: null,
+        
+        initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
+          try {
+            actions.setLoading(true);
       
-          
-          // Ensure user is initialized in our DB first
-          const authService = AuthService.getInstance();
-          const isInitialized = await authService.ensureUserInitialized(privyUserId, username, privyToken);
-          if (!isInitialized) {
-            throw new Error("Failed to initialize user in database");
-          }
-          
-          const response = await getWalletsByUser(String(privyUserId));
-    
-          
-          if (!response.data || !Array.isArray(response.data)) {
-            throw new Error("Invalid response format from server");
-          }
-          
-          const userWallets = response.data;
-    
-          
-          const wallets = userWallets
-            .map((uw: UserWallet) => {
-
-              
-              // Si nous avons un objet wallet complet
-              if (uw.wallet && typeof uw.wallet === 'object') {
-                return {
-                  id: uw.wallet.id,
-                  address: uw.wallet.address || uw.address || '',
-                  name: uw.wallet.name || uw.name || `Wallet ${uw.id}`,
-                  addedAt: uw.wallet.addedAt || uw.addedAt || new Date()
-                };
-              }
-              
-              // Si nous n'avons que les informations de base
-              return {
-                id: uw.walletId,
-                address: uw.address || '',
-                name: uw.name || `Wallet ${uw.id}`,
-                addedAt: uw.addedAt || new Date()
-              };
-            })
-            .filter((wallet): wallet is Wallet => {
-              const isValid = wallet !== undefined && 
-                typeof wallet.id === 'number' &&
-                typeof wallet.name === 'string';
-              
-              if (!isValid) {
-                console.warn("Filtered out invalid wallet:", wallet);
-              }
-              
-              return isValid;
-            });
-          
-
-          
-          // Ensure we have a valid active wallet
-          const currentActiveId = get().activeWalletId;
-          const hasValidActiveWallet = wallets.some(w => w.id === currentActiveId);
-          
-          set({
-            wallets,
-            userWallets: response.data,
-            activeWalletId: hasValidActiveWallet ? currentActiveId : (wallets.length > 0 ? wallets[0].id : null),
-            loading: false
-          });
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to initialize wallets';
-          set({ error: errorMessage, loading: false });
-          console.error('Error initializing wallets:', err);
-        }
-      },
-      
-      addWallet: async (address: string, name?: string, privyUserId?: string | number): Promise<Wallet | void> => {
-        try {
-          set({ loading: true, error: null });
-          
-          if (!address || !privyUserId) {
-            throw new Error("Address and user ID are required");
-          }
-          
-          const normalizedAddress = address.toLowerCase().trim();
-          if (!/^0x[a-fA-F0-9]{40}$/.test(normalizedAddress)) {
-            throw new Error("Invalid wallet address format");
-          }
-          
-          if (name && name.length > 255) {
-            throw new Error("Wallet name is too long");
-          }
-          
-          const walletName = name || `Wallet ${get().wallets.length + 1}`;
-          const response = await addWallet(normalizedAddress, walletName, String(privyUserId));
-          
-          if (response.wallet && response.userWallet) {
-            const newWallet = {
-              ...response.wallet,
-              name: response.wallet.name || walletName
-            };
-            const newUserWallet = response.userWallet;
+            const authService = AuthService.getInstance();
+            const isInitialized = await authService.ensureUserInitialized(privyUserId, username, privyToken);
+            if (!isInitialized) {
+              throw new Error("Failed to initialize user in database");
+            }
             
-            set(state => ({
-              wallets: [...state.wallets, newWallet],
-              userWallets: [...state.userWallets, newUserWallet],
-              activeWalletId: state.activeWalletId || newWallet.id,
+            const response = await getWalletsByUser();
+            const { wallets, userWallets } = processWalletsResponse(response);
+            
+            // Ensure we have a valid active wallet
+            const currentActiveId = get().activeWalletId;
+            const hasValidActiveWallet = wallets.some(w => w.id === currentActiveId);
+            
+            set({
+              wallets,
+              userWallets,
+              activeWalletId: hasValidActiveWallet ? currentActiveId : (wallets.length > 0 ? wallets[0].id : null),
               loading: false
-            }));
+            });
+          } catch (err) {
+            actions.setError(handleApiError(err, 'Failed to initialize wallets'));
+          }
+        },
+        
+        reloadWallets: async (): Promise<void> => {
+          try {
+            actions.setLoading(true);
             
-            return newWallet;
+            const response = await getWalletsByUser();
+            const { wallets, userWallets } = processWalletsResponse(response);
+            
+            // Ensure we have a valid active wallet
+            const currentActiveId = get().activeWalletId;
+            const hasValidActiveWallet = wallets.some(w => w.id === currentActiveId);
+            
+            set({
+              wallets,
+              userWallets,
+              activeWalletId: hasValidActiveWallet ? currentActiveId : (wallets.length > 0 ? wallets[0].id : null),
+              loading: false
+            });
+          } catch (err) {
+            actions.setError(handleApiError(err, 'Failed to reload wallets'));
           }
-          
-          throw new Error("Failed to add wallet");
-        } catch (error: any) {
-          let errorMessage = 'Failed to add wallet';
-          
-          if (error instanceof Error) {
-            errorMessage = error.message;
-          } else if (error.response) {
-            switch (error.response.status) {
-              case 409:
-                errorMessage = 'This wallet already exists in your account';
-                break;
-              case 400:
-                errorMessage = 'Invalid wallet address or name';
-                break;
+        },
+        
+        addWallet: async (address: string, name?: string): Promise<Wallet | void> => {
+          try {
+            actions.setLoading(true);
+            
+            const normalizedAddress = validateWalletAddress(address);
+            validateWalletName(name);
+            
+            const walletName = name || `Wallet ${get().wallets.length + 1}`;
+            const response = await addWallet(normalizedAddress, walletName);
+            
+            // Si la réponse indique un succès
+            if (response.success === true) {
+              // Si on a les objets wallet et userWallet
+              if (response.wallet && response.userWallet) {
+                const newWallet = {
+                  ...response.wallet,
+                  name: response.wallet.name || walletName
+                };
+                const newUserWallet = response.userWallet;
+                
+                actions.updateWallets(wallets => [...wallets, newWallet]);
+                actions.updateUserWallets(userWallets => [...userWallets, newUserWallet]);
+                if (!get().activeWalletId) {
+                  actions.setActiveWallet(newWallet.id);
+                }
+                actions.setLoading(false);
+                
+                return newWallet;
+              }
+              
+              // Si on a seulement un message de succès, recharger les wallets
+              await get().reloadWallets();
+              return;
             }
+            
+            throw new Error("Failed to add wallet");
+          } catch (error) {
+            actions.setError(handleApiError(error, 'Failed to add wallet'));
           }
-          
-          set({ error: errorMessage, loading: false });
-          console.error('Error adding wallet:', error);
-        }
-      },
-      
-      removeWallet: async (id: number): Promise<void> => {
-        try {
-          set({ loading: true, error: null });
-          
-          const userWallets = get().userWallets;
-          const userWallet = userWallets.find(uw => {
-            if (uw.wallet && typeof uw.wallet === 'object' && 'id' in uw.wallet) {
-              return uw.wallet.id === id;
+        },
+        
+        removeWallet: async (id: number): Promise<void> => {
+          try {
+            actions.setLoading(true);
+            
+            const userWallets = get().userWallets;
+            const userWallet = userWallets.find(uw => {
+              if (uw.wallet && typeof uw.wallet === 'object' && 'id' in uw.wallet) {
+                return uw.wallet.id === id;
+              }
+              return uw.walletId === id;
+            });
+            
+            if (!userWallet) {
+              throw new Error("Wallet not found in user's wallets");
             }
-            return uw.walletId === id;
-          });
-          
-          if (!userWallet) {
-            throw new Error("Wallet not found in user's wallets");
-          }
-          
-          await removeWalletFromUser(userWallet.userId, id);
-          
-          set(state => {
+            
+            await removeWalletFromUser(id);
+            
+            const state = get();
             const newWallets = state.wallets.filter(wallet => wallet.id !== id);
             const newUserWallets = state.userWallets.filter(userWallet => {
               if (userWallet.wallet && typeof userWallet.wallet === 'object' && 'id' in userWallet.wallet) {
@@ -185,32 +230,31 @@ export const useWallets = create<WalletsState>()(
               newActiveId = newWallets.length > 0 ? newWallets[0].id : null;
             }
             
-            return {
+            set({
               wallets: newWallets,
               userWallets: newUserWallets,
               activeWalletId: newActiveId,
               loading: false
-            };
-          });
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to remove wallet';
-          set({ error: errorMessage, loading: false });
-          throw new Error(errorMessage);
+            });
+          } catch (error) {
+            actions.setError(handleApiError(error, 'Failed to remove wallet'));
+            throw new Error(handleApiError(error, 'Failed to remove wallet'));
+          }
+        },
+        
+        setActiveWallet: (id: number) => {
+          const wallet = get().wallets.find(w => w.id === id);
+          if (wallet) {
+            actions.setActiveWallet(id);
+          }
+        },
+        
+        getActiveWallet: () => {
+          const { wallets, activeWalletId } = get();
+          return wallets.find(wallet => wallet.id === activeWalletId);
         }
-      },
-      
-      setActiveWallet: (id: number) => {
-        const wallet = get().wallets.find(w => w.id === id);
-        if (wallet) {
-          set({ activeWalletId: id });
-        }
-      },
-      
-      getActiveWallet: () => {
-        const { wallets, activeWalletId } = get();
-        return wallets.find(wallet => wallet.id === activeWalletId);
-      }
-    }),
+      };
+    },
     {
       name: "wallets-storage",
       storage: createJSONStorage(() => localStorage),

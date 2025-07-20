@@ -8,6 +8,7 @@ interface AuthContextType {
   login: (credentials?: LoginCredentials) => Promise<void>;
   logout: () => void;
   fetchUser: (privyUserId: string) => Promise<void>;
+  ensureUserInitialized: () => Promise<boolean>;
   isAuthenticated: boolean;
   isInitialized: boolean;
   // Propriétés de compatibilité avec l'ancien code

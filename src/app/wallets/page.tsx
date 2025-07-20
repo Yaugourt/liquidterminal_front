@@ -10,6 +10,7 @@ import { PortfolioStats, PerformanceChart } from "@/components/wallets/stats";
 import { AssetsSection } from "@/components/wallets/assets";
 import { WalletAssetsNavigation } from "@/components/wallets/WalletAssetsNavigation";
 import { WalletOrdersSection, WalletTwapSection } from "@/components/wallets/orders";
+import { WalletRecentFillsSection } from "@/components/wallets";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -103,12 +104,7 @@ export default function Wallets() {
             
             {activeAssetsTab === "twap" && <WalletTwapSection />}
             
-            {activeAssetsTab === "recent-fills" && (
-              <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
-                <h3 className="text-white text-lg font-medium mb-2">Recent Fills</h3>
-                <p className="text-[#FFFFFF80] text-sm">Recent fills functionality coming soon...</p>
-              </div>
-            )}
+            {activeAssetsTab === "recent-fills" && <WalletRecentFillsSection />}
           </div>
         </main>
       </div>

@@ -2,22 +2,19 @@
 
 import { ChevronDown, Check } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-
-interface Category {
-  id: number;
-  title: string;
-  count: number;
-}
+import { useEducationalCategories } from "@/services/education";
 
 interface CategoryFilterProps {
-  categories: Category[];
   selectedCategories: number[];
   onCategoryChange: (categories: number[]) => void;
 }
 
-export function CategoryFilter({ categories, selectedCategories, onCategoryChange }: CategoryFilterProps) {
+export function CategoryFilter({ selectedCategories, onCategoryChange }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch categories using the education service
+  const { categories, isLoading } = useEducationalCategories();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,11 +51,21 @@ export function CategoryFilter({ categories, selectedCategories, onCategoryChang
     } else {
       const selected = categories.filter(cat => selectedCategories.includes(cat.id));
       if (selectedCategories.length === 1) {
-        return selected[0].title;
+        return selected[0].name;
       }
       return `${selectedCategories.length} categories selected`;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="relative w-full md:w-96">
+        <div className="w-full px-4 py-3 bg-[#051728E5] border border-[#83E9FF4D] rounded-lg text-white">
+          <span className="text-sm text-gray-400">Loading categories...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full md:w-96" ref={dropdownRef}>
@@ -101,8 +108,10 @@ export function CategoryFilter({ categories, selectedCategories, onCategoryChang
                 className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#112941] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-white">{category.title}</span>
-                  <span className="text-xs text-gray-400">({category.count})</span>
+                  <span className="text-sm text-white">{category.name}</span>
+                  {category.description && (
+                    <span className="text-xs text-gray-400">({category.description})</span>
+                  )}
                 </div>
                 <div className={`w-4 h-4 rounded border ${
                   selectedCategories.includes(category.id) 

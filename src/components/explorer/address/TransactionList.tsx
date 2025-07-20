@@ -1,212 +1,38 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatting';
+import { formatAddress, formatHash, formatNumberValue, calculateValue, HIP2_ADDRESS, isHip2Address } from '@/services/explorer/address';
 import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";
-import { formatAddress, formatHash, formatNumberValue } from '@/services/explorer/address';
+import { 
+  getTokenPrice, 
+  getTokenName, 
+  calculateValueWithDirection,
+  formatAmountWithDirection,
+  getAmountColorClass 
+} from '@/services/explorer/address';
 import { useSpotTokens } from '@/services/market/spot/hooks/useSpotMarket';
 import { usePerpMarkets } from '@/services/market/perp/hooks/usePerpMarket';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
-  const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
   const { format } = useNumberFormat();
   
   // Récupération des données de marché pour les prix
   const { data: spotTokens, isLoading: spotLoading } = useSpotTokens({ limit: 100 });
   const { data: perpMarkets } = usePerpMarkets({ limit: 1000 });
   
-  // Fonction pour récupérer le prix d'un token
-  const getTokenPrice = (tokenSymbol: string): number => {
-    if (!tokenSymbol) return 0;
-    
-    // Stablecoins ont toujours un prix de $1
-    const stablecoins = ['usdc', 'usdt', 'dai', 'busd', 'tusd'];
-    if (stablecoins.includes(tokenSymbol.toLowerCase())) {
-      return 1;
-    }
-    
-    if (!spotTokens) return 0;
-    const token = spotTokens.find(t => 
-      t.name.toLowerCase() === tokenSymbol.toLowerCase()
-    );
-    return token ? token.price : 0;
+  // Configuration pour les formatters
+  const formatterConfig = {
+    spotTokens,
+    perpMarkets,
+    format,
+    currentAddress
   };
-  
-  // Fonction pour calculer la valeur
-  const calculateValue = (amount: string | undefined, tokenSymbol: string): string => {
-    if (!amount || !tokenSymbol) return '-';
-    
-    const price = getTokenPrice(tokenSymbol);
-    if (price === 0) return '-';
-    
-    const numericAmount = parseFloat(amount.replace(/,/g, ''));
-    if (isNaN(numericAmount)) return '-';
-    
-    const value = numericAmount * price;
-    return formatNumber(value, format, {
-      currency: '$',
-      showCurrency: true
-    });
-  };
-
-  // Fonction pour calculer la valeur avec direction (+ ou -)
-  const calculateValueWithDirection = (tx: any) => {
-    if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
-    
-    const tokenName = getTokenName(tx.token);
-    
-    let price: number;
-    if (tx.price) {
-      price = parseFloat(tx.price);
-    } else {
-      price = getTokenPrice(tokenName);
-    }
-    
-    if (isNaN(price) || price === 0) return '-';
-    
-    const numericAmount = parseFloat(tx.amount.replace(/,/g, ''));
-    if (isNaN(numericAmount)) return '-';
-    
-    const value = numericAmount * price;
-    const formattedValue = formatNumber(value, format, {
-      currency: '$',
-      showCurrency: true
-    });
-    
-    // Pour accountClassTransfer, pas de signe (transfert interne)
-    if (tx.method === 'accountClassTransfer') {
-      return formattedValue;
-    }
-    
-    // Pour spotTransfer, ajouter le signe selon la direction
-    if (tx.method === 'spotTransfer') {
-      const isOutgoing = currentAddress && tx.from.toLowerCase() === currentAddress.toLowerCase();
-      const isIncoming = currentAddress && tx.to.toLowerCase() === currentAddress.toLowerCase();
-      
-      if (isOutgoing) {
-        return `-${formattedValue}`;
-      } else if (isIncoming) {
-        return `+${formattedValue}`;
-      }
-    }
-    
-    return formattedValue;
-  };
-
-  // Fonction pour convertir le token (@107 -> HYPE)
-  const getTokenName = (token: string) => {
-    if (!token || token === 'unknown') return token;
-    
-    let isSpotPrefix = false;
-    let marketIndex: number;
-    
-    if (token.startsWith('@')) {
-      marketIndex = parseInt(token.substring(1));
-      isSpotPrefix = true;
-    } else {
-      marketIndex = parseInt(token);
-    }
-    
-    if (isNaN(marketIndex)) return token;
-    
-    if (marketIndex > 10000 || isSpotPrefix) {
-      const spotIndex = isSpotPrefix ? marketIndex : marketIndex - 10000;
-      const spotToken = spotTokens?.find(t => t.marketIndex === spotIndex);
-      return spotToken ? spotToken.name : token;
-    } else {
-      const perpMarket = perpMarkets?.find(t => t.index === marketIndex);
-      return perpMarket ? perpMarket.name : token;
-    }
-  };
-
-  // Fonction pour formater le montant avec couleur selon le sens du transfert
-  const formatAmountWithDirection = (tx: any) => {
-    if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
-    
-    const formattedAmount = formatNumberValue(tx.amount, format);
-    const tokenName = getTokenName(tx.token);
-    let tokenDisplay = `${formattedAmount} ${tokenName}`;
-    
-    // Pour les positions Short/Long, appliquer la logique de signe en tenant compte de open/close
-    if (tx.isShort) {
-      if (tx.isClose) {
-        return `+${tokenDisplay}`; // Close short: positif
-      } else {
-        return `-${tokenDisplay}`; // Open short: négatif
-      }
-    }
-    if (tx.isLong) {
-      if (tx.isClose) {
-        return `-${tokenDisplay}`; // Close long: négatif
-      } else {
-        return `+${tokenDisplay}`; // Open long: positif
-      }
-    }
-    
-    // Pour accountClassTransfer et cStakingTransfer, pas de signe (transfert interne)
-    if (tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer') {
-      return tokenDisplay;
-    }
-    
-    // Pour spotTransfer, déterminer la direction
-    if (tx.method === 'spotTransfer') {
-      const isOutgoing = currentAddress && tx.from.toLowerCase() === currentAddress.toLowerCase();
-      const isIncoming = currentAddress && tx.to.toLowerCase() === currentAddress.toLowerCase();
-      
-      if (isOutgoing) {
-        return `-${tokenDisplay}`;
-      } else if (isIncoming) {
-        return `+${tokenDisplay}`;
-      }
-    }
-    
-    return tokenDisplay;
-  };
-
-  // Fonction pour obtenir la classe CSS de couleur selon le sens du transfert
-  const getAmountColorClass = (tx: any) => {
-    // Pour les positions Short/Long, appliquer les couleurs en tenant compte de open/close
-    if (tx.isShort) {
-      if (tx.isClose) {
-        return 'text-[#4ADE80]'; // Close short: vert
-      } else {
-        return 'text-[#FF5757]'; // Open short: rouge
-      }
-    }
-    if (tx.isLong) {
-      if (tx.isClose) {
-        return 'text-[#FF5757]'; // Close long: rouge
-      } else {
-        return 'text-[#4ADE80]'; // Open long: vert
-      }
-    }
-    
-    // Pour accountClassTransfer et cStakingTransfer, toujours vert (transfert interne)
-    if (tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer') {
-      return 'text-[#4ADE80]'; // Vert pour transfert interne
-    }
-    
-    // Pour spotTransfer, déterminer la couleur selon la direction
-    if (tx.method === 'spotTransfer') {
-      const isOutgoing = currentAddress && tx.from.toLowerCase() === currentAddress.toLowerCase();
-      const isIncoming = currentAddress && tx.to.toLowerCase() === currentAddress.toLowerCase();
-      
-      if (isOutgoing) {
-        return 'text-[#FF5757]'; // Rouge pour sortant
-      } else if (isIncoming) {
-        return 'text-[#4ADE80]'; // Vert pour entrant
-      }
-    }
-    
-    return 'text-white'; // Blanc par défaut
-  };
-
-
   
   // Pagination state
   const [page, setPage] = useState(0);
@@ -278,11 +104,11 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
       );
     }
 
-    if (address === HIP2_ADDRESS) {
+    if (isHip2Address(address)) {
       return (
         <TableCell className="py-3 px-4 text-sm">
           <Link 
-            href={`/explorer/address/${HIP2_ADDRESS}`}
+            href={`/explorer/address/${address}`}
             className="text-[#83E9FF] hover:text-[#83E9FF]/80 truncate block"
           >
             HIP2
@@ -347,7 +173,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     );
   }
 
-    return (
+  return (
     <div className={containerClass}>
       <div className={tableContainerClass}>
         <Table className="w-full">
@@ -364,58 +190,65 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#051728]">
-            {paginatedTxs.map((tx, index) => (
-              <TableRow 
-                key={tx.hash} 
-                className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
-              >
-                <TableCell className="py-3 px-4 text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <Link 
-                      href={`/explorer/transaction/${tx.hash}`}
-                      className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors"
-                      title={tx.hash}
-                    >
-                      {formatHash(tx.hash)}
-                    </Link>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        copyHashToClipboard(tx.hash);
-                      }}
-                      className="group p-1 rounded transition-colors"
-                    >
-                      {copiedHash === tx.hash ? (
-                        <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">
-                  {tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer' ? 'Internal Transfer' : tx.method}
-                </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">{tx.age}</TableCell>
-                {renderAddressCell(tx.from)}
-                {renderAddressCell(tx.to)}
-                <TableCell className={`py-3 px-4 text-sm ${getAmountColorClass(tx)}`}>
-                  {formatAmountWithDirection(tx)}
-                </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white text-right">
-                  {tx.price ? formatNumber(parseFloat(tx.price), format, {
-                    currency: '$',
-                    showCurrency: true,
-                    minimumFractionDigits: 4
-                  }) : (tx.token && tx.token !== 'unknown' ? formatNumber(getTokenPrice(getTokenName(tx.token)), format, {
-                    currency: '$',
-                    showCurrency: true,
-                    minimumFractionDigits: 4
-                  }) : '-')}
-                </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white text-right">{calculateValueWithDirection(tx)}</TableCell>
-              </TableRow>
-            ))}
+            {paginatedTxs.map((tx, index) => {
+              const tokenName = getTokenName(tx.token, spotTokens, perpMarkets);
+              const tokenPrice = getTokenPrice(tokenName, spotTokens);
+              
+              return (
+                <TableRow 
+                  key={tx.hash} 
+                  className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+                >
+                  <TableCell className="py-3 px-4 text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <Link 
+                        href={`/explorer/transaction/${tx.hash}`}
+                        className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors"
+                        title={tx.hash}
+                      >
+                        {formatHash(tx.hash)}
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          copyHashToClipboard(tx.hash);
+                        }}
+                        className="group p-1 rounded transition-colors"
+                      >
+                        {copiedHash === tx.hash ? (
+                          <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                        )}
+                      </button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-white">
+                    {tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer' ? 'Internal Transfer' : tx.method}
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-white">{tx.age}</TableCell>
+                  {renderAddressCell(tx.from)}
+                  {renderAddressCell(tx.to)}
+                  <TableCell className={`py-3 px-4 text-sm ${getAmountColorClass(tx, formatterConfig)}`}>
+                    {formatAmountWithDirection(tx, formatterConfig)}
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-white text-right">
+                    {tx.price ? formatNumber(parseFloat(tx.price), format, {
+                      currency: '$',
+                      showCurrency: true,
+                      minimumFractionDigits: 4
+                    }) : (tokenPrice > 0 ? formatNumber(tokenPrice, format, {
+                      currency: '$',
+                      showCurrency: true,
+                      minimumFractionDigits: 4
+                    }) : '-')}
+                  </TableCell>
+                  <TableCell className="py-3 px-4 text-sm text-white text-right">
+                    {calculateValueWithDirection(tx, formatterConfig)}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

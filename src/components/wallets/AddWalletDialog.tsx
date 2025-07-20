@@ -24,7 +24,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
   const { privyUser } = useAuthContext();
   
   const handleAddWallet = async () => {
-    if (!address || !privyUser?.id) {
+    if (!address) {
       setError("Please enter a wallet address");
       return;
     }
@@ -36,12 +36,8 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       // Ensure name is not undefined
       const walletName = name.trim() || undefined;
       
-      // Ajouter le wallet
-      const result = await addWallet(address, walletName, privyUser.id);
-      
-      if (!result) {
-        throw new Error("Failed to add wallet");
-      }
+      // NOUVEAU: pas besoin de privyUserId
+      await addWallet(address, walletName);
       
       // Clear form and close dialog
       setAddress("");

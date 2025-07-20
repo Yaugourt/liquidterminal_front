@@ -3,7 +3,9 @@
 import { ResourceCard } from "./ResourceCard";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useEducationalCategories, useEducationalResourcesPaginated } from "@/services/education";
+import type { EducationalCategory } from "@/services/education/types";
 
 interface Resource {
   id: string;
@@ -21,12 +23,23 @@ interface Category {
 }
 
 interface ResourcesSectionProps {
-  categories: Category[];
+  selectedCategoryIds: number[];
   sectionColor: string;
 }
 
-export function ResourcesSection({ categories, sectionColor }: ResourcesSectionProps) {
+export function ResourcesSection({ selectedCategoryIds, sectionColor }: ResourcesSectionProps) {
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
+  
+  // Fetch categories and resources using the education service
+  const { categories: allCategories, isLoading: categoriesLoading } = useEducationalCategories();
+  const { resources, isLoading: resourcesLoading, updateParams } = useEducationalResourcesPaginated({
+    defaultParams: { categoryIds: selectedCategoryIds, limit: 50 }
+  });
+
+  // Update resources when selected categories change
+  useEffect(() => {
+    updateParams({ categoryIds: selectedCategoryIds });
+  }, [selectedCategoryIds, updateParams]);
 
   const handleShowMore = (categoryId: number) => {
     setExpandedCategories(prev => ({
@@ -42,7 +55,38 @@ export function ResourcesSection({ categories, sectionColor }: ResourcesSectionP
     }));
   };
 
-  if (categories.length === 0) {
+  // Group resources by category
+  const categoriesWithResources = allCategories
+    .filter(cat => selectedCategoryIds.length === 0 || selectedCategoryIds.includes(cat.id))
+    .map(category => {
+      const categoryResources = resources
+        .filter(resource => resource.categories.some(resCat => resCat.category.id === category.id))
+        .map(resource => ({
+          id: resource.id.toString(),
+          title: resource.url,
+          description: resource.categories.map(cat => cat.category.name).join(', '),
+          url: resource.url,
+          image: '/api/placeholder/400/200' // Default image since API doesn't provide images
+        }));
+      
+      return {
+        id: category.id,
+        title: category.name,
+        count: categoryResources.length,
+        resources: categoryResources
+      };
+    })
+    .filter(cat => cat.resources.length > 0);
+
+  if (categoriesLoading || resourcesLoading) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-400">Loading resources...</p>
+      </div>
+    );
+  }
+
+  if (categoriesWithResources.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-400">No resources found for the selected categories.</p>
@@ -52,7 +96,7 @@ export function ResourcesSection({ categories, sectionColor }: ResourcesSectionP
 
   return (
     <div className="space-y-12">
-      {categories.map((category) => {
+      {categoriesWithResources.map((category) => {
         const displayCount = expandedCategories[category.id] || 4;
         const displayedResources = category.resources.slice(0, displayCount);
         const hasMore = displayCount < category.resources.length;

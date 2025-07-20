@@ -46,18 +46,19 @@ export function EducationContent({ chapters }: EducationContentProps) {
             </div>
           </div>
 
-          {chapters.map((chapter) => (
-            activeTab === chapter.title && (
-              <div key={chapter.id} className="space-y-4">
-                <h2 className="text-lg md:text-xl font-semibold text-white">
-                  {chapter.title}
-                </h2>
-                <div className="text-sm text-gray-300">
-                  {formatDescription(chapter.description)}
-                </div>
-              </div>
-            )
-          ))}
+          <div className="flex justify-start">
+            <div className="w-full max-w-4xl">
+              {chapters.map((chapter) => (
+                activeTab === chapter.title && (
+                  <div key={chapter.id} className="space-y-4">
+                    <div className="text-sm text-gray-300">
+                      {formatDescription(chapter.description)}
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

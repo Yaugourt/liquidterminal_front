@@ -13,22 +13,20 @@ import {
 export { fetchHyperliquidBalances, fetchHyperliquidPerpPositions };
 
 /**
- * Adds a new wallet to the user's account
+ * Adds a new wallet to the user's account - NOUVEAU: utiliser JWT
  * @param address The wallet address
  * @param name Optional name for the wallet
- * @param privyUserId The user's Privy ID
  * @returns The wallet response
  */
 export const addWallet = async (
   address: string,
-  name?: string,
-  privyUserId?: string
+  name?: string
 ): Promise<AddWalletResponse> => {
   return withErrorHandling(async () => {
     const response = await post<any>('/wallet', {
       address,
-      name,
-      privyUserId
+      name
+      // ❌ PAS de privyUserId !
     });
     
     // Vérifier si la réponse indique un succès
@@ -77,15 +75,13 @@ export const addWallet = async (
 };
 
 /**
- * Gets all wallets for a user
- * @param privyUserId The user's Privy ID
+ * Gets all wallets for the current user - NOUVEAU: utiliser JWT
  * @returns Array of user wallets
  */
-export const getWalletsByUser = async (
-  privyUserId: string
-): Promise<WalletResponse> => {
+export const getWalletsByUser = async (): Promise<WalletResponse> => {
   return withErrorHandling(async () => {
-    const response = await get<any>(`/wallet/user/${privyUserId}`);
+    // NOUVEAU: utiliser /my-wallets au lieu de /user/:privyUserId
+    const response = await get<any>('/wallet/my-wallets');
     
     // Vérifier que la réponse contient les données attendues
     if (!response) {
@@ -117,24 +113,25 @@ export const getWalletsByUser = async (
 };
 
 /**
- * Deletes a wallet from the user's account
+ * Deletes a wallet from the user's account - NOUVEAU: utiliser JWT
  * @param walletId The ID of the wallet to delete
  * @returns Promise that resolves when the wallet is deleted
  */
 export const deleteWallet = async (walletId: string): Promise<void> => {
   return withErrorHandling(async () => {
+    // NOUVEAU: utiliser /:id au lieu de /user/:userId/wallet/:walletId
     await del(`/wallet/${walletId}`);
   }, 'deleting wallet');
 };
 
 /**
- * Removes a wallet association from a user
- * @param privyUserId The user's Privy ID
+ * Removes a wallet association from a user - NOUVEAU: utiliser JWT
  * @param walletId The ID of the wallet to remove from the user
  * @returns Promise that resolves when the wallet is removed from the user
  */
-export const removeWalletFromUser = async (privyUserId: number, walletId: number): Promise<void> => {
+export const removeWalletFromUser = async (walletId: number): Promise<void> => {
   return withErrorHandling(async () => {
-    await del(`/wallet/user/${privyUserId}/wallet/${walletId}`);
+    // NOUVEAU: utiliser /:id au lieu de /user/:userId/wallet/:walletId
+    await del(`/wallet/${walletId}`);
   }, 'removing wallet from user');
 }; 

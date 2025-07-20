@@ -1,0 +1,24 @@
+{
+  "title": "HyperLiquid",
+  "description": "A high-performance L1 blockchain built for decentralized finance",
+  "colors": [
+    "#dbfbf6",
+    "#072723",
+    "#97fce4",
+    "#50d2c1"
+  ],
+  "consensus": "HyperBFT",
+  "executionLayer": "HyperCore & HyperEVM",
+  "foundationCreation": "2022",
+  "mainnetLaunch": "February 2023",
+  "links": {
+    "website": "https://hyperfoundation.org/",
+    "app": "https://app.hyperliquid.xyz/trade",
+    "documentation": "https://hyperliquid.gitbook.io/hyperliquid-docs",
+    "twitter": "https://x.com/HyperliquidX",
+    "twitterFoundation": "https://x.com/HyperFND",
+    "discord": "https://discord.com/invite/hyperliquid",
+    "telegram": "https://t.me/hyperliquid_announcements",
+    "github": "https://github.com/hyperliquid-dex"
+  }
+} 

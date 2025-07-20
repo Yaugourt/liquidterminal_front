@@ -1,6 +1,5 @@
 import { UserTransaction, UserFill, NonFundingLedgerUpdate, FormattedUserTransaction } from './types';
-
-const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
+import { HIP2_ADDRESS } from './hooks/useTransactions';
 
 // Helper function pour déterminer from/to selon le type de transaction
 export function getTransactionAddresses(tx: UserTransaction, address: string, ledgerUpdate?: any) {
@@ -74,6 +73,28 @@ export function formatAge(timestamp: number): string {
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
     return `${seconds}s ago`;
+}
+
+// HIP2 business logic functions
+export function getFillAddresses(fill: any, address: string, isSpot: boolean, isShort: boolean, isLong: boolean, isClosePosition: boolean) {
+    const fromAddress = isSpot ? (isShort ? address : 'HIP2') : (isClosePosition ? HIP2_ADDRESS : address);
+    const toAddress = isSpot ? (isLong ? address : 'HIP2') : (isClosePosition ? address : HIP2_ADDRESS);
+    return { from: fromAddress, to: toAddress };
+}
+
+export function getTwapOrderAddresses(order: any, address: string) {
+    return {
+        from: order.b ? HIP2_ADDRESS : address,
+        to: order.b ? address : HIP2_ADDRESS
+    };
+}
+
+export function isHip2Address(address: string): boolean {
+    return address === HIP2_ADDRESS;
+}
+
+export function formatHip2Display(address: string): string {
+    return address === HIP2_ADDRESS ? 'HIP2' : address;
 }
 
 export function mergeFillsByHash(fills: UserFill[]): UserFill[] {

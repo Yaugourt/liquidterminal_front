@@ -7,7 +7,8 @@ import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse, AuctionTimin
  */
 export const fetchAuctionTiming = async (): Promise<AuctionTiming> => {
   return withErrorHandling(async () => {
-    return await get<AuctionTiming>('/market/auction/timing');
+    const response = await get<{ success: boolean; data: AuctionTiming }>('/market/auction/timing');
+    return response.data;
   }, 'fetching auction timing');
 };
 
