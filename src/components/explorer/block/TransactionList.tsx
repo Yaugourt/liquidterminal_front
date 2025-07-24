@@ -9,8 +9,8 @@ import { Pagination } from "@/components/common/pagination";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
 import { useDateFormat } from "@/store/date-format.store";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatDateTime } from "@/lib/date-formatting";
-import { formatNumber } from "@/lib/formatting";
+import { formatDateTime } from "@/lib/dateFormatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 // DataTable component similar to ValidatorsVaults

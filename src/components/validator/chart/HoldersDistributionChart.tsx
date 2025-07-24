@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useHoldersStats } from "@/services/validator/hooks/useHoldersStats";
 import { HoldersDistributionRange } from "@/services/validator/types/holders";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatLargeNumber, formatNumber } from "@/lib/formatting";
+import { formatLargeNumber, formatNumber } from "@/lib/numberFormatting";
 
 interface HoldersDistributionChartProps {
   height?: number;

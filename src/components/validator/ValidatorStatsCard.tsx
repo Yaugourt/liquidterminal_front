@@ -5,7 +5,7 @@ import { useValidators } from "@/services/validator";
 import { useHoldersStats } from "@/services/validator/hooks/useHoldersStats";
 import { useUnstakingStatsData } from "@/services/validator/hooks/staking";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import Link from "next/link";
 

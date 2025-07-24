@@ -1,7 +1,7 @@
 import { StatsCard } from "./StatsCard";
 import { useEffect, useState } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { ExplorerStat, ExplorerStatsCardProps } from "@/components/types/explorer.types";
 import { useDashboardStats } from "@/services/dashboard";
 import { useExplorerStore } from "@/services/explorer";

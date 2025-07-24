@@ -8,8 +8,8 @@ import { BlockHeaderProps } from "@/components/types/explorer.types";
 import Link from "next/link";
 import { useDateFormat } from "@/store/date-format.store";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatDateTime } from "@/lib/date-formatting";
-import { formatNumber } from "@/lib/formatting";
+import { formatDateTime } from "@/lib/dateFormatting";
+import { formatNumber } from "@/lib/numberFormatting";
 
 export function BlockHeader({ blockDetails }: BlockHeaderProps) {
   const [copiedValues, setCopiedValues] = useState<Record<string, boolean>>({});

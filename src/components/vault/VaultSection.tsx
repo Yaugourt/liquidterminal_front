@@ -6,7 +6,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { useState, useCallback } from "react";
 import { Pagination } from "@/components/common/pagination";
 import { VaultTableContent } from ".";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 
 export function VaultSection() {
   const [currentPage, setCurrentPage] = useState(0);

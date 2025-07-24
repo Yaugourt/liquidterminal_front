@@ -4,7 +4,7 @@ import { Gavel, Clock, ExternalLink, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuctionTiming } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 
 /**
  * Carte affichant les informations d'enchères en temps réel

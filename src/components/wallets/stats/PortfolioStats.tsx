@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useAddressBalance } from "@/services/explorer/address";
 import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/formatting';
+import { formatAssetValue } from '@/lib/numberFormatting';
 
 export function PortfolioStats() {
   const [isMounted, setIsMounted] = useState(false);

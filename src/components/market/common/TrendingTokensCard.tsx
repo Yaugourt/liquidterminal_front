@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { Loader2, Database, ArrowUpDown } from "lucide-react";
-import { formatNumber, formatLargeNumber } from "@/lib/formatting";
+import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
 import { formatPriceChange, TokenIcon } from "@/components/common";
 import {
   Table,

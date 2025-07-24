@@ -15,10 +15,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { formatLargeNumber } from '@/lib/formatting';
+import { formatLargeNumber } from '@/lib/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDate } from '@/lib/date-formatting';
+import { formatDate } from '@/lib/dateFormatting';
 
 interface VaultChartProps {
   vaultAddress: string;

@@ -3,8 +3,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useUnstakingStatsForChartWithDays } from "@/services/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatNumber, formatLargeNumber } from "@/lib/formatting";
-import { formatDate } from "@/lib/date-formatting";
+import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
+import { formatDate } from "@/lib/dateFormatting";
 
 interface UnstakingScheduleChartProps {
   height?: number;

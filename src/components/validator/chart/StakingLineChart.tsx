@@ -3,8 +3,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useUnstakingStatsForChartWithPeriod } from "@/services/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatNumber, formatLargeNumber } from "@/lib/formatting";
-import { formatDate } from "@/lib/date-formatting";
+import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
+import { formatDate } from "@/lib/dateFormatting";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
 
 interface StakingLineChartProps {

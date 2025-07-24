@@ -5,7 +5,7 @@ import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances"
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/formatting';
+import { formatAssetValue } from '@/lib/numberFormatting';
 
 // Couleurs pour le camembert
 const COLORS = [

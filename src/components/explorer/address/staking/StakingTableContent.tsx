@@ -1,8 +1,8 @@
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { DataTable } from "../../vaultValidatorSum/DataTable";
 import { Copy, Check } from "lucide-react";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatDateTime } from "@/lib/date-formatting";
+import { formatDateTime } from "@/lib/dateFormatting";
 import { useState } from "react";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 

@@ -1,11 +1,11 @@
 "use client";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { DataTable } from "@/components/explorer/vaultValidatorSum/DataTable";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Copy, Check } from "lucide-react";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatDate } from "@/lib/date-formatting";
+import { formatDate } from "@/lib/dateFormatting";
 import { VaultSummary } from "@/services/vault/types";
 import { NumberFormatType } from "@/store/number-format.store";
 import Link from "next/link";

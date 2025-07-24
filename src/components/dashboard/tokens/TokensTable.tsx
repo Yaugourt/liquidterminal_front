@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
 import { 

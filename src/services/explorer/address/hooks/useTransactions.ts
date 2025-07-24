@@ -1,7 +1,7 @@
 import { FormattedUserTransaction, UseTransactionsResult } from '../types';
 import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { formatNumber } from '@/lib/formatting';
+import { formatNumber } from '@/lib/numberFormatting';
 import { formatHip2Display } from '../utils';
 
 export const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";

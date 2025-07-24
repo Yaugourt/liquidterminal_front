@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useParams, useRouter } from "next/navigation";
 import { SpotToken } from "@/services/market/spot/types";
 import { getToken } from "@/services/market/spot/api";
-import { formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/digitFormat";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

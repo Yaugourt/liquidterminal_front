@@ -4,7 +4,9 @@ import { useDataFetching } from '../../../hooks/useDataFetching';
 export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashboardStatsResult => {
   const { data, isLoading, error, refetch } = useDataFetching<DashboardGlobalStats>({
     fetchFn: fetchDashboardGlobalStats,
-    initialData
+    initialData,
+    refreshInterval: 60000, 
+    maxRetries: 3
   });
 
   return {

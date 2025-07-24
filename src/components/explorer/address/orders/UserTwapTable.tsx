@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import { Loader2, Database, Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import {
   Table,
   TableBody,

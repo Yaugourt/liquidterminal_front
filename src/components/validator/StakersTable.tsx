@@ -3,7 +3,7 @@ import { Copy, ExternalLink, Database, Loader2, Check } from "lucide-react";
 import { useStakingHoldersPaginated } from "@/services/validator";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
-import { formatNumber } from "@/lib/formatting";
+import { formatNumber } from "@/lib/numberFormatting";
 import { Button } from "@/components/ui/button";
 import {
   Table,

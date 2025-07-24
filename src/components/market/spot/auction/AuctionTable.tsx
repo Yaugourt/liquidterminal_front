@@ -14,7 +14,7 @@ import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDateTime } from '@/lib/date-formatting';
+import { formatDateTime } from '@/lib/dateFormatting';
 
 // TableHeaderCell strictement identique à SpotTokenTable
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: string; onClick?: () => void; className?: string; isActive?: boolean }) => (

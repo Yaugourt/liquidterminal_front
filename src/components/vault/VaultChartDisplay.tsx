@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { VaultChartData, VaultChartTimeframe } from "@/services/vault/types";
 import { Chart } from '@/components/common/charts';
-import { formatLargeNumber } from '@/lib/formatting';
+import { formatLargeNumber } from '@/lib/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDate } from '@/lib/date-formatting';
+import { formatDate } from '@/lib/dateFormatting';
 import { useState, useRef, useEffect } from 'react';
 
 type VaultChartType = "accountValue" | "pnl";

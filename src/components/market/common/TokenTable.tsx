@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
-import { formatNumber, formatMetricValue, formatPrice } from "@/lib/formatting";
+import { formatNumber, formatMetricValue, formatPrice } from "@/lib/numberFormatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
