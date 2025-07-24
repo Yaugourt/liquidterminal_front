@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
+import { useLinkPreview } from "@/services/education/linkPreview/hooks/hooks";
 
 interface Resource {
   id: string;
@@ -27,6 +28,11 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
   const [showReadLists, setShowReadLists] = useState(false);
   const { readLists, addItemToReadList } = useReadLists();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Load link preview
+  const { data: preview, isLoading: previewLoading, error: previewError } = useLinkPreview(
+    resource.url && resource.url.startsWith('http') ? resource.url : ''
+  );
 
   // Fermer le dropdown quand on clique ailleurs
   useEffect(() => {
@@ -47,14 +53,14 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
 
   const handleAddToReadList = async (readListId: number) => {
     try {
-      console.log('Adding to read list:', readListId, 'Resource:', resource);
+
       setIsAddingToList(true);
       await addItemToReadList(readListId, {
         resourceId: parseInt(resource.id),
         notes: `Added from ${resource.title}`
       });
       setShowReadLists(false);
-      console.log('Successfully added to read list');
+      
     } catch (error) {
       console.error('Error adding to read list:', error);
     } finally {
@@ -62,9 +68,7 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
     }
   };
 
-  // Debug: afficher les read lists disponibles
-  console.log('Available read lists:', readLists);
-  console.log('Show read lists dropdown:', showReadLists);
+
 
   return (
     <Card className="bg-[#051728E5] border border-[#83E9FF4D] hover:border-[#83E9FF80] transition-all shadow-sm hover:shadow-lg group overflow-hidden rounded-lg relative">
@@ -76,8 +80,15 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
           className="block"
         >
           {/* Image section */}
-          <div className="relative h-48 w-full overflow-hidden bg-[#112941]">
-            {!imageError ? (
+          <div className="relative w-full overflow-hidden bg-[#112941]">
+            {resource.url && resource.url.startsWith('http') && preview?.image ? (
+              <img
+                src={preview.image}
+                alt={preview.title || resource.title}
+                className="w-full h-auto max-h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={() => setImageError(true)}
+              />
+            ) : !imageError ? (
               <Image
                 src={resource.image}
                 alt={resource.title}
@@ -98,33 +109,36 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-[#F9E370] transition-colors">
-                {resource.title}
+                {preview?.title || resource.title}
               </h3>
               <ExternalLink size={14} className="text-[#F9E370] mt-0.5 flex-shrink-0" />
             </div>
 
             <p className="text-xs text-gray-400 line-clamp-2">
-              {resource.description}
+              {preview?.description || resource.description}
             </p>
 
             <div className="flex items-center justify-between pt-2">
-              <Badge 
-                variant="secondary" 
-                className="bg-[#112941] text-gray-300 border-none text-xs"
-              >
-                Article
-              </Badge>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">2 min read</span>
+                             <Badge 
+                 variant="secondary" 
+                 className="bg-[#112941] text-gray-300 border-none text-xs"
+               >
+                 {preview?.siteName || 'Article'}
+               </Badge>
+               <div className="flex items-center gap-2">
+                 {previewLoading && (
+                   <span className="text-xs text-[#FFFFFF60]">Loading preview...</span>
+                 )}
+                 {!previewLoading && (
+                   <span className="text-xs text-gray-500">2 min read</span>
+                 )}
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Plus button clicked! Current state:', showReadLists);
                     setShowReadLists(!showReadLists);
-                    console.log('New state will be:', !showReadLists);
                   }}
                   className="p-1 h-auto text-[#83E9FF] hover:text-[#F9E370] hover:bg-[#83E9FF1A]"
                   title="Add to read list"
@@ -157,11 +171,11 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
                 <div className="space-y-3">
                   {readLists.map((readList) => (
                     <button
-                      key={readList.id}
+                      key={`readlist-${readList.id}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Clicking on read list:', readList.id);
+
                         handleAddToReadList(readList.id);
                       }}
                       disabled={isAddingToList}

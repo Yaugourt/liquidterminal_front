@@ -13,7 +13,7 @@ export function useEducationalResourcesByCategories(
     fetchFn: () => categoryIds.length > 0 ? fetchResourcesByCategories(categoryIds) : Promise.resolve([]),
     initialData,
     dependencies: [categoryIds],
-    refreshInterval: 30000
+    refreshInterval: 60000
   });
 
   return {

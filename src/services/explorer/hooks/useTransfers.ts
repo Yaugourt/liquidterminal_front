@@ -56,7 +56,7 @@ export const useTransfers = (): UseTransfersResult => {
       });
     },
     dependencies: [],
-    refreshInterval: 30000 // Rafraîchir toutes les 30 secondes
+    refreshInterval: 15000 // Rafraîchir toutes les 15 secondes
   });
 
   return {

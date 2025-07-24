@@ -11,7 +11,7 @@ interface UsePerpGlobalStatsResult {
 
 export const usePerpGlobalStats = (): UsePerpGlobalStatsResult => {
   const { data, isLoading, error, refetch } = useDataFetching<PerpGlobalStats>({
-    fetchFn: fetchPerpGlobalStats
+    fetchFn: fetchPerpGlobalStats,
   });
 
   return {

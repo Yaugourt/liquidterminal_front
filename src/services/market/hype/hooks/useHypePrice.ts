@@ -12,7 +12,6 @@ export function useHypePrice(): UseHypePriceResult {
     isConnected, 
     error, 
     connect, 
-    disconnect 
   } = useHypePriceStore();
 
   // Connect to WebSocket when component mounts

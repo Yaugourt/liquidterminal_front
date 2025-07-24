@@ -24,7 +24,7 @@ export const useEducationalResources = (
       }
     } : undefined,
     dependencies: [JSON.stringify(filters)],
-    refreshInterval: options.refreshInterval || 30000 // 30 secondes par défaut
+    refreshInterval: options.refreshInterval || 60000 // 60 secondes par défaut
   });
 
   return {

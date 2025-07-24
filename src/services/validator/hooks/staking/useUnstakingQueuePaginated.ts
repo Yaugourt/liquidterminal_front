@@ -35,7 +35,7 @@ export const useUnstakingQueuePaginated = ({
     refetch
   } = useDataFetching<UnstakingQueuePaginatedResponse>({
     fetchFn: async () => {
-      console.log('Fetching unstaking queue with params:', params);
+  
       const response = await fetchUnstakingQueuePaginated(params);
       return response;
     },
@@ -57,10 +57,10 @@ export const useUnstakingQueuePaginated = ({
   });
 
   const updateParams = useCallback((newParams: Partial<UnstakingQueueParams>) => {
-    console.log('Updating unstaking params:', newParams);
+
     setParams(prev => {
       const updated = { ...prev, ...newParams };
-      console.log('Updated unstaking params:', updated);
+  
       return updated;
     });
   }, []);

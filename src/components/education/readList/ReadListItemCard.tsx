@@ -7,14 +7,16 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Image from "next/image";
 import type { ReadListItem } from "@/services/education";
+import type { LinkPreview } from "@/services/education/linkPreview";
 
 interface ReadListItemCardProps {
   item: ReadListItem;
+  preview?: LinkPreview | null;
   onRemoveItem: (itemId: number) => void;
   onToggleRead: (itemId: number, isRead: boolean) => void;
 }
 
-export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListItemCardProps) {
+export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: ReadListItemCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const handleRemoveItem = (e: React.MouseEvent) => {
@@ -44,8 +46,15 @@ export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListI
     >
       <CardContent className="p-0 flex flex-col h-full">
         {/* Image section */}
-        <div className="relative h-32 w-full overflow-hidden bg-[#112941] flex-shrink-0">
-          {!imageError ? (
+        <div className="relative w-full overflow-hidden bg-[#112941] flex-shrink-0">
+          {item.resource?.url && item.resource.url.startsWith('http') && preview?.image ? (
+            <img
+              src={preview.image}
+              alt={preview.title || 'Preview'}
+              className="w-full h-auto max-h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={() => setImageError(true)}
+            />
+          ) : !imageError ? (
             <Image
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTEyOTQxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzgzRTlGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg=="
               alt={item.resource?.url || 'Resource'}
@@ -79,7 +88,7 @@ export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListI
               className={`p-1 h-auto ${
                 item.isRead 
                   ? 'text-green-400 hover:text-green-300 hover:bg-green-400/10' 
-                  : 'text-[#FFFFFF80] hover:text-green-400 hover:bg-green-400/10'
+                  : 'text-[#f9e370] hover:text-green-400 hover:bg-green-400/10'
               }`}
               title={item.isRead ? "Mark as unread" : "Mark as read"}
             >
@@ -112,7 +121,17 @@ export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListI
           <h3 className={`font-semibold text-sm mb-2 line-clamp-2 group-hover:text-[#F9E370] transition-colors flex-1 ${
             item.isRead ? 'text-[#FFFFFF80]' : 'text-white'
           }`}>
-            {item.resource?.url ? (
+            {preview?.title ? (
+              <a 
+                href={item.resource?.url || '#'} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-[#F9E370] transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {preview.title.length > 53 ? `${preview.title.substring(0, 53)}...` : preview.title}
+              </a>
+            ) : item.resource?.url ? (
               <a 
                 href={item.resource.url} 
                 target="_blank" 
@@ -120,14 +139,18 @@ export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListI
                 className="hover:text-[#83E9FF] transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
-                {item.resource.url}
+                {item.resource.url.length > 53 ? `${item.resource.url.substring(0, 53)}...` : item.resource.url}
               </a>
             ) : (
               'No URL'
             )}
           </h3>
 
-          {item.notes && (
+          <p className="text-xs text-[#FFFFFF80] line-clamp-2 mb-2">
+            {preview?.description || 'No description available'}
+          </p>
+
+          {item.notes && !item.notes.startsWith('Added from') && (
             <p className="text-xs text-[#FFFFFF80] line-clamp-2 mb-2">
               {item.notes}
             </p>
@@ -136,11 +159,9 @@ export function ReadListItemCard({ item, onRemoveItem, onToggleRead }: ReadListI
           <div className="flex items-center justify-between pt-2 mt-auto">
             <div className="text-xs text-[#FFFFFF60] space-y-0.5">
               <div>Added {new Date(item.addedAt).toLocaleDateString()}</div>
-              {item.order !== null && (
-                <div>Order: {item.order}</div>
-              )}
+           
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-[#f9e370]">
               {item.isRead ? 'Read' : 'Unread'}
             </div>
           </div>

@@ -67,7 +67,7 @@ export function ValidatorsTable() {
   // Sync hooks pagination when switching to transactions tab
   useEffect(() => {
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-      console.log('Syncing staking validations pagination on tab switch');
+  
       updateStakingParams({ 
         page: currentPage + 1,
         limit: rowsPerPage 
@@ -78,7 +78,7 @@ export function ValidatorsTable() {
   // Sync hooks pagination when switching to unstaking tab
   useEffect(() => {
     if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-      console.log('Syncing unstaking queue pagination on tab switch');
+  
       updateUnstakingParams({ 
         page: currentPage + 1,
         limit: rowsPerPage 
@@ -88,14 +88,14 @@ export function ValidatorsTable() {
 
   // Handle page changes from Pagination component (receives 0-based page)
   const handlePageChange = useCallback((newPage: number) => {
-    console.log('handlePageChange called with newPage:', newPage, 'activeTab:', activeTab, 'validatorSubTab:', validatorSubTab);
+
     setCurrentPage(newPage);
     
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-      console.log('Updating staking validations page to:', newPage + 1);
+      
       updateStakingParams({ page: newPage + 1 }); // Convert to 1-based for API
     } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-      console.log('Updating unstaking queue page to:', newPage + 1);
+      
       updateUnstakingParams({ page: newPage + 1 }); // Convert to 1-based for API
     } else if (activeTab === 'vaults') {
       updateVaultsParams({ page: newPage + 1 }); // Convert to 1-based for API
@@ -104,18 +104,18 @@ export function ValidatorsTable() {
 
   // Handle rows per page changes from Pagination component
   const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
-    console.log('handleRowsPerPageChange called with newRowsPerPage:', newRowsPerPage);
+
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(0); // Reset to first page
     
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-      console.log('Updating staking validations limit to:', newRowsPerPage);
+      
       updateStakingParams({ 
         page: 1, // Reset to first page (1-based for API)
         limit: newRowsPerPage 
       });
     } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-      console.log('Updating unstaking queue limit to:', newRowsPerPage);
+      
       updateUnstakingParams({ 
         page: 1, // Reset to first page (1-based for API)
         limit: newRowsPerPage 

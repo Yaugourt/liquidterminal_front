@@ -12,7 +12,7 @@ export function useEducationalResourcesPaginated({
   limit = 50,
   defaultParams = {},
   initialData,
-  refreshInterval = 30000
+  refreshInterval = 60000
 }: UseEducationalResourcesOptions = {}): UseEducationalResourcesPaginatedResult {
   const [params, setParams] = useState<ResourceFilters>(() => ({
     limit,

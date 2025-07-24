@@ -12,8 +12,6 @@ import { ResourcesSection } from "@/components/education/ResourcesSection";
 import { CategoryFilter } from "@/components/education/CategoryFilter";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
-import { useReadLists } from "@/store/use-readlists";
-import { useAuthContext } from "@/contexts/auth.context";
 
 // Using education service hooks instead of mock data
 
@@ -22,25 +20,6 @@ export default function EducationPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();
-  
-  // Initialize read lists store
-  const { initialize } = useReadLists();
-  const { privyUser, authenticated } = useAuthContext();
-  
-  useEffect(() => {
-    if (authenticated && privyUser) {
-      // Attendre un peu pour que l'authentification soit complète
-      const timer = setTimeout(() => {
-        initialize({
-          privyUserId: privyUser.id,
-          username: privyUser.email?.address || privyUser.wallet?.address || 'Unknown',
-          privyToken: 'jwt-token-will-be-handled-by-axios-interceptor'
-        });
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [authenticated, privyUser, initialize]);
 
   // Categories are now handled directly in the ResourcesSection component
 

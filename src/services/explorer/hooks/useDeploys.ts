@@ -91,7 +91,7 @@ export const useDeploys = (): UseDeploysResult => {
         .map(deploy => formatDeploy(deploy, stableAuctions));
     },
     dependencies: [stableAuctions], // Utiliser la version stable
-    refreshInterval: 30000 // Rafraîchir toutes les 30 secondes
+    refreshInterval: 15000 // Rafraîchir toutes les 15 secondes
   });
 
   return {

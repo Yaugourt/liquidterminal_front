@@ -52,6 +52,7 @@ export interface WalletsState {
   addWallet: (address: string, name?: string) => Promise<Wallet | void>;
   removeWallet: (id: number) => Promise<void>;
   setActiveWallet: (id: number) => void;
+  reorderWallets: (newOrder: number[]) => void;
   getActiveWallet: () => Wallet | undefined;
 }
 

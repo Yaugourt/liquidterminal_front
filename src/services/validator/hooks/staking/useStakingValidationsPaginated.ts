@@ -35,7 +35,7 @@ export const useStakingValidationsPaginated = ({
     refetch
   } = useDataFetching<StakingValidationsPaginatedResponse>({
     fetchFn: async () => {
-      console.log('Fetching staking validations with params:', params);
+  
       const response = await fetchStakingValidationsPaginated(params);
       return response;
     },
@@ -57,10 +57,10 @@ export const useStakingValidationsPaginated = ({
   });
 
   const updateParams = useCallback((newParams: Partial<StakingValidationsParams>) => {
-    console.log('Updating staking params:', newParams);
+
     setParams(prev => {
       const updated = { ...prev, ...newParams };
-      console.log('Updated staking params:', updated);
+  
       return updated;
     });
   }, []);

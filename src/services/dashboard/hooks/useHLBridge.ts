@@ -9,7 +9,7 @@ export function useHLBridge(): UseHLBridgeResult {
     refetch
   } = useDataFetching<BridgeData>({
     fetchFn: fetchHLBridge,
-    refreshInterval: 60000, // Refresh every 10 seconds
+    refreshInterval: 60000, 
     maxRetries: 3
   });
 

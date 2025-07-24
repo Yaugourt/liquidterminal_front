@@ -2,8 +2,9 @@ import { Plus, BookOpen, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ReadList, ReadListItem } from "@/services/education";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ReadListItemCard } from "./ReadListItemCard";
+import { useLinkPreviewsBatch } from "@/services/education/linkPreview/hooks/hooks";
 
 interface ReadListContentProps {
   activeList?: ReadList;
@@ -12,7 +13,28 @@ interface ReadListContentProps {
   onRemoveItem: (itemId: number) => void;
   onToggleRead: (itemId: number, isRead: boolean) => void;
   onCreateList: () => void;
+  isMounted?: boolean;
 }
+
+// Skeleton component for loading state
+const ReadListItemSkeleton = () => (
+  <div className="bg-[#051728E5] border border-[#83E9FF4D] rounded-lg p-0 overflow-hidden h-full animate-pulse">
+    <div className="w-full h-40 bg-[#112941] flex-shrink-0"></div>
+    <div className="p-3 space-y-2">
+      <div className="flex items-start justify-between gap-2">
+        <div className="h-5 bg-[#112941] rounded w-20"></div>
+        <div className="w-3 h-3 bg-[#112941] rounded"></div>
+      </div>
+      <div className="h-4 bg-[#112941] rounded w-full"></div>
+      <div className="h-3 bg-[#112941] rounded w-3/4"></div>
+      <div className="h-3 bg-[#112941] rounded w-1/2"></div>
+      <div className="flex items-center justify-between pt-2">
+        <div className="h-3 bg-[#112941] rounded w-24"></div>
+        <div className="h-3 bg-[#112941] rounded w-16"></div>
+      </div>
+    </div>
+  </div>
+);
 
 export function ReadListContent({
   activeList,
@@ -21,37 +43,29 @@ export function ReadListContent({
   onRemoveItem,
   onToggleRead,
   onCreateList,
+  isMounted = false,
 }: ReadListContentProps) {
   const [enrichedItems, setEnrichedItems] = useState<ReadListItem[]>([]);
   const [activeTab, setActiveTab] = useState<"all" | "read" | "unread">("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Enrichir les items avec les détails des ressources manquantes
+  // Extract URLs for batch preview loading
+  const urls = useMemo(() => {
+    if (!items || !Array.isArray(items)) return [];
+    return items
+      .map(item => item.resource?.url)
+      .filter((url): url is string => !!url && url.startsWith('http'));
+  }, [items]);
+
+  // Load link previews in batch
+  const { isLoading: previewsLoading, getPreview } = useLinkPreviewsBatch(urls);
+  
+
+
+  // Utiliser directement les items avec leurs ressources
   useEffect(() => {
     if (items && Array.isArray(items)) {
-      const itemsWithResources = items.map(item => {
-        // Si l'item a déjà les détails de la ressource, on le garde
-        if (item.resource && item.resource.url) {
-          return item;
-        }
-        
-        // Sinon, on crée un objet ressource basique avec l'URL
-        return {
-          ...item,
-          resource: {
-            id: item.resourceId,
-            url: `https://example.com/resource/${item.resourceId}`, // URL temporaire
-            createdAt: new Date(),
-            creator: {
-              id: 0,
-              name: null,
-              email: null
-            }
-          }
-        };
-      });
-      
-      setEnrichedItems(itemsWithResources);
+      setEnrichedItems(items);
     } else {
       setEnrichedItems([]);
     }
@@ -92,6 +106,11 @@ export function ReadListContent({
   const readItems = enrichedItems.filter(item => item.isRead).length;
   const unreadItems = totalItems - readItems;
 
+  // Adopter l'approche wallet : pas de rendu si pas monté
+  if (!isMounted) {
+    return null;
+  }
+
   if (!activeList) {
     return (
       <div className="text-center py-16">
@@ -108,13 +127,6 @@ export function ReadListContent({
       </div>
     );
   }
-
-  // Debug: afficher les items (à supprimer plus tard)
-  // console.log('ReadListContent - Items:', items);
-  // console.log('ReadListContent - Enriched items:', enrichedItems);
-  
-  // Utiliser les items enrichis directement (sans filtrage)
-  // const filteredItems = enrichedItems;
 
   return (
     <div className="h-full flex flex-col">
@@ -181,13 +193,18 @@ export function ReadListContent({
       {/* Items Grid */}
       <div className="flex-1 overflow-auto p-8">
         {itemsLoading ? (
-          <div className="text-center text-[#FFFFFF80] py-16 text-lg">Loading items...</div>
+          <div className="grid grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ReadListItemSkeleton key={index} />
+            ))}
+          </div>
         ) : filteredItems.length > 0 ? (
           <div className="grid grid-cols-3 gap-6">
             {filteredItems.map((item) => (
               <ReadListItemCard
                 key={item.id}
                 item={item}
+                preview={getPreview(item.resource?.url || '')}
                 onRemoveItem={onRemoveItem}
                 onToggleRead={onToggleRead}
               />
@@ -198,7 +215,10 @@ export function ReadListContent({
             <BookOpen className="w-20 h-20 text-[#FFFFFF40] mx-auto mb-6" />
             <h3 className="text-white text-xl font-semibold mb-3">No items found</h3>
             <p className="text-[#FFFFFF80] text-lg mb-6">
-              Add resources to your read list to get started
+              {items && items.length > 0 
+                ? "No items match your current filters" 
+                : "Add resources to your read list to get started"
+              }
             </p>
           </div>
         )}

@@ -32,6 +32,7 @@ interface ReadListsState {
   deleteReadList: (id: number) => Promise<void>;
   setActiveReadList: (id: number) => void;
   getActiveReadList: () => ReadList | undefined;
+  reorderReadLists: (newOrder: number[]) => void;
   
   // Items management
   loadReadListItems: (listId: number) => Promise<void>;
@@ -66,12 +67,7 @@ const validateReadListName = (name: string): void => {
   }
 };
 
-const parseApiResponse = (response: any): any[] => {
-  if (Array.isArray(response)) return response;
-  if (response?.data && Array.isArray(response.data)) return response.data;
-  if (response?.readLists && Array.isArray(response.readLists)) return response.readLists;
-  return [];
-};
+
 
 // Action creators for better state management
 const createActionCreators = (set: any, get: any) => ({
@@ -106,24 +102,42 @@ export const useReadLists = create<ReadListsState>()(
               throw new Error("Failed to initialize user in database");
             }
             
-            const response = await getMyReadLists();
-            const readLists = parseApiResponse(response);
+            const readLists = await getMyReadLists();
+            
+            // Restaurer l'ordre sauvegardé si disponible
+            let orderedReadLists = readLists;
+            try {
+              const savedOrder = localStorage.getItem('readlists-order');
+              if (savedOrder) {
+                const orderIds = JSON.parse(savedOrder) as number[];
+                const savedLists = orderIds
+                  .map(id => readLists.find(list => list.id === id))
+                  .filter((list): list is ReadList => list !== undefined);
+                
+                // Ajouter les nouvelles listes qui ne sont pas dans l'ordre sauvegardé
+                const newLists = readLists.filter(list => !orderIds.includes(list.id));
+                orderedReadLists = [...savedLists, ...newLists];
+              }
+            } catch (error) {
+              console.warn('Failed to restore read lists order from localStorage:', error);
+            }
             
             // Ensure we have a valid active read list
             const currentActiveId = get().activeReadListId;
-            const hasValidActiveReadList = readLists.some(r => r.id === currentActiveId);
-            const newActiveId = hasValidActiveReadList ? currentActiveId : (readLists.length > 0 ? readLists[0].id : null);
+            const hasValidActiveReadList = orderedReadLists.some(r => r.id === currentActiveId);
+            const newActiveId = hasValidActiveReadList ? currentActiveId : (orderedReadLists.length > 0 ? orderedReadLists[0].id : null);
             
             set({
-              readLists,
+              readLists: orderedReadLists,
               activeReadListId: newActiveId,
               activeReadListItems: [],
               loading: false
             });
             
-            // Load items for the new active read list if it exists
+            // Load items for the new active read list if it exists (non-blocking)
             if (newActiveId) {
-              get().loadReadListItems(newActiveId);
+              // Don't await - let it load in background
+              get().loadReadListItems(newActiveId).catch(console.error);
             }
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to initialize read lists'));
@@ -138,16 +152,23 @@ export const useReadLists = create<ReadListsState>()(
             const response = await apiCreateReadList(data);
             
             if (response) {
-              actions.updateReadLists(lists => [...lists, response]);
+              const currentState = get();
+              
+              // Mise à jour directe du state
+              set({
+                readLists: [...currentState.readLists, response],
+                loading: false
+              });
+              
               if (!get().activeReadListId) {
                 actions.setActiveList(response.id);
               }
-              actions.setLoading(false);
               return response;
             }
             
             throw new Error("Failed to create read list");
           } catch (error) {
+            console.error('Error creating read list:', error);
             actions.setError(handleApiError(error, 'Failed to create read list'));
           }
         },
@@ -221,10 +242,15 @@ export const useReadLists = create<ReadListsState>()(
               return;
             }
             
+            // Don't set loading if we're already loading items for this list
+            const currentState = get();
+            if (currentState.loading && currentState.activeReadListId === listId) {
+              return;
+            }
+            
             actions.setLoading(true);
             
-            const response = await getReadListItems(listId);
-            const itemsArray = parseApiResponse(response);
+            const itemsArray = await getReadListItems(listId);
             
             set({
               activeReadListItems: itemsArray,
@@ -302,6 +328,22 @@ export const useReadLists = create<ReadListsState>()(
             }
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to toggle read status'));
+          }
+        },
+        
+        reorderReadLists: (newOrder: number[]) => {
+          const currentLists = get().readLists;
+          const reorderedLists = newOrder
+            .map(id => currentLists.find(list => list.id === id))
+            .filter((list): list is ReadList => list !== undefined);
+          
+          set({ readLists: reorderedLists });
+          
+          // Sauvegarder l'ordre dans localStorage pour persister les préférences
+          try {
+            localStorage.setItem('readlists-order', JSON.stringify(newOrder));
+          } catch (error) {
+            console.warn('Failed to save read lists order to localStorage:', error);
           }
         }
       };

@@ -17,7 +17,17 @@ export const getMyReadLists = async (): Promise<ReadList[]> => {
   }, 'fetching my read lists');
 };
 
-// Get all public read lists
+
+
+// Create a new read list - NOUVEAU: utiliser JWT
+export const createReadList = async (data: ReadListCreateInput): Promise<ReadList> => {
+  return withErrorHandling(async () => {
+    const response = await post<{success: boolean, data: ReadList, message: string}>('/readlists', data);
+    if (!response || !response.data) throw new Error('Failed to create read list');
+    return response.data;
+  }, 'creating read list');
+};
+
 export const getPublicReadLists = async (): Promise<ReadList[]> => {
   return withErrorHandling(async () => {
     const response = await get<ReadList[]>('/readlists');
@@ -34,14 +44,6 @@ export const getReadList = async (id: number): Promise<ReadList> => {
   }, 'fetching read list');
 };
 
-// Create a new read list - NOUVEAU: utiliser JWT
-export const createReadList = async (data: ReadListCreateInput): Promise<ReadList> => {
-  return withErrorHandling(async () => {
-    const response = await post<ReadList>('/readlists', data);
-    if (!response) throw new Error('Failed to create read list');
-    return response;
-  }, 'creating read list');
-};
 
 // Update a read list - NOUVEAU: utiliser JWT
 export const updateReadList = async (

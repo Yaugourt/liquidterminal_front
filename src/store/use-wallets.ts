@@ -120,14 +120,32 @@ export const useWallets = create<WalletsState>()(
             const response = await getWalletsByUser();
             const { wallets, userWallets } = processWalletsResponse(response);
             
+            // Restaurer l'ordre sauvegardé si disponible
+            let orderedWallets = wallets;
+            try {
+              const savedOrder = localStorage.getItem('wallets-order');
+              if (savedOrder) {
+                const orderIds = JSON.parse(savedOrder) as number[];
+                const savedWallets = orderIds
+                  .map(id => wallets.find(wallet => wallet.id === id))
+                  .filter((wallet): wallet is Wallet => wallet !== undefined);
+                
+                // Ajouter les nouveaux wallets qui ne sont pas dans l'ordre sauvegardé
+                const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
+                orderedWallets = [...savedWallets, ...newWallets];
+              }
+            } catch (error) {
+              console.warn('Failed to restore wallets order from localStorage:', error);
+            }
+            
             // Ensure we have a valid active wallet
             const currentActiveId = get().activeWalletId;
-            const hasValidActiveWallet = wallets.some(w => w.id === currentActiveId);
+            const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
             
             set({
-              wallets,
+              wallets: orderedWallets,
               userWallets,
-              activeWalletId: hasValidActiveWallet ? currentActiveId : (wallets.length > 0 ? wallets[0].id : null),
+              activeWalletId: hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null),
               loading: false
             });
           } catch (err) {
@@ -142,14 +160,32 @@ export const useWallets = create<WalletsState>()(
             const response = await getWalletsByUser();
             const { wallets, userWallets } = processWalletsResponse(response);
             
+            // Restaurer l'ordre sauvegardé si disponible
+            let orderedWallets = wallets;
+            try {
+              const savedOrder = localStorage.getItem('wallets-order');
+              if (savedOrder) {
+                const orderIds = JSON.parse(savedOrder) as number[];
+                const savedWallets = orderIds
+                  .map(id => wallets.find(wallet => wallet.id === id))
+                  .filter((wallet): wallet is Wallet => wallet !== undefined);
+                
+                // Ajouter les nouveaux wallets qui ne sont pas dans l'ordre sauvegardé
+                const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
+                orderedWallets = [...savedWallets, ...newWallets];
+              }
+            } catch (error) {
+              console.warn('Failed to restore wallets order from localStorage:', error);
+            }
+            
             // Ensure we have a valid active wallet
             const currentActiveId = get().activeWalletId;
-            const hasValidActiveWallet = wallets.some(w => w.id === currentActiveId);
+            const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
             
             set({
-              wallets,
+              wallets: orderedWallets,
               userWallets,
-              activeWalletId: hasValidActiveWallet ? currentActiveId : (wallets.length > 0 ? wallets[0].id : null),
+              activeWalletId: hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null),
               loading: false
             });
           } catch (err) {
@@ -177,7 +213,28 @@ export const useWallets = create<WalletsState>()(
                 };
                 const newUserWallet = response.userWallet;
                 
-                actions.updateWallets(wallets => [...wallets, newWallet]);
+                // Ajouter le nouveau wallet en respectant l'ordre sauvegardé
+                const currentWallets = get().wallets;
+                let newWallets = [...currentWallets, newWallet];
+                
+                // Vérifier s'il y a un ordre sauvegardé
+                try {
+                  const savedOrder = localStorage.getItem('wallets-order');
+                  if (savedOrder) {
+                    const orderIds = JSON.parse(savedOrder) as number[];
+                    // Ajouter le nouveau wallet à la fin de l'ordre sauvegardé
+                    const newOrderIds = [...orderIds, newWallet.id];
+                    localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
+                  } else {
+                    // Créer un nouvel ordre avec le nouveau wallet
+                    const newOrderIds = currentWallets.map(w => w.id).concat(newWallet.id);
+                    localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
+                  }
+                } catch (error) {
+                  console.warn('Failed to update wallets order in localStorage:', error);
+                }
+                
+                actions.updateWallets(() => newWallets);
                 actions.updateUserWallets(userWallets => [...userWallets, newUserWallet]);
                 if (!get().activeWalletId) {
                   actions.setActiveWallet(newWallet.id);
@@ -230,6 +287,18 @@ export const useWallets = create<WalletsState>()(
               newActiveId = newWallets.length > 0 ? newWallets[0].id : null;
             }
             
+            // Mettre à jour l'ordre sauvegardé en supprimant le wallet
+            try {
+              const savedOrder = localStorage.getItem('wallets-order');
+              if (savedOrder) {
+                const orderIds = JSON.parse(savedOrder) as number[];
+                const newOrderIds = orderIds.filter(walletId => walletId !== id);
+                localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
+              }
+            } catch (error) {
+              console.warn('Failed to update wallets order in localStorage:', error);
+            }
+            
             set({
               wallets: newWallets,
               userWallets: newUserWallets,
@@ -246,6 +315,22 @@ export const useWallets = create<WalletsState>()(
           const wallet = get().wallets.find(w => w.id === id);
           if (wallet) {
             actions.setActiveWallet(id);
+          }
+        },
+        
+        reorderWallets: (newOrder: number[]) => {
+          const currentWallets = get().wallets;
+          const reorderedWallets = newOrder
+            .map(id => currentWallets.find(wallet => wallet.id === id))
+            .filter((wallet): wallet is Wallet => wallet !== undefined);
+          
+          set({ wallets: reorderedWallets });
+          
+          // Sauvegarder l'ordre dans localStorage pour persister les préférences
+          try {
+            localStorage.setItem('wallets-order', JSON.stringify(newOrder));
+          } catch (error) {
+            console.warn('Failed to save wallets order to localStorage:', error);
           }
         },
         

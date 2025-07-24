@@ -2,13 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2 } from "lucide-react";
+import { Trash2, GripVertical } from "lucide-react";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
@@ -24,9 +43,21 @@ export function WalletTabs() {
     error: storeError,
     initialize, 
     setActiveWallet,
+    reorderWallets,
   } = useWallets();
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Fetch wallets when privyUser changes
   useEffect(() => {
@@ -83,17 +114,23 @@ export function WalletTabs() {
   };
 
   const handleWalletActionSuccess = async () => {
-    // Reload wallets after successful add/delete
-    if (privyUser?.id) {
-      const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
-      const token = await getAccessToken();
+    // Les fonctions addWallet et removeWallet du store mettent déjà à jour le state local
+    // Pas besoin de recharger complètement, cela peut causer des problèmes de timing
+    // et de persistance de l'ordre des wallets
+    
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = wallets.findIndex(wallet => wallet.id === active.id);
+      const newIndex = wallets.findIndex(wallet => wallet.id === over?.id);
       
-      if (username && token) {
-        await initialize({
-          privyUserId: privyUser.id,
-          username,
-          privyToken: token
-        });
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newOrder = arrayMove(wallets, oldIndex, newIndex);
+        const newOrderIds = newOrder.map(wallet => wallet.id);
+        reorderWallets(newOrderIds);
       }
     }
   };
@@ -106,50 +143,106 @@ export function WalletTabs() {
     setActiveWallet(parseInt(value, 10));
   };
 
+  // Sortable wallet tab component
+  function SortableWalletTab({ wallet }: { wallet: any }) {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: wallet.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+      <TabsTrigger 
+        ref={setNodeRef}
+        style={style}
+        value={wallet.id.toString()}
+        className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
+      >
+        <div className="flex items-center gap-2">
+          {/* Drag handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-1 hover:bg-[#FFFFFF0A] rounded"
+          >
+            <GripVertical className="w-3 h-3 text-[#FFFFFF80]" />
+          </div>
+          
+          <div className="flex flex-col items-start">
+            <span className="font-medium text-white">{wallet.name || 'Unnamed Wallet'}</span>
+            <span className="text-xs text-white">
+              Added: {new Date(wallet.addedAt).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                onClick={(e) => handleDeleteClick(wallet.id, wallet.name, e)}
+                className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Supprimer ce wallet</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TabsTrigger>
+    );
+  }
+
   return (
     <>
       <div className="flex gap-2 items-center">
-        <Tabs 
-          value={activeTabValue} 
-          onValueChange={handleTabChange}
-          className="w-auto"
-        >
-          <TabsList className="gap-3">
-            {wallets.length > 0 ? (
-              wallets.map((wallet) => (
-                <TabsTrigger 
-                  key={wallet.id} 
-                  value={wallet.id.toString()}
-                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
+        <div className="flex items-center gap-2">
+          <Tabs 
+            value={activeTabValue} 
+            onValueChange={handleTabChange}
+            className="w-auto"
+          >
+            <TabsList className="gap-3">
+              {wallets.length > 0 ? (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium text-white">{wallet.name || 'Unnamed Wallet'}</span>
-                    <span className="text-xs text-white">
-                      Added: {new Date(wallet.addedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          onClick={(e) => handleDeleteClick(wallet.id, wallet.name, e)}
-                          className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Supprimer ce wallet</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TabsTrigger>
-              ))
-            ) : (
-              <div className="text-gray-400 px-4">Aucun wallet ajouté</div>
-            )}
-          </TabsList>
-        </Tabs>
+                  <SortableContext
+                    items={wallets.map(wallet => wallet.id)}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    {wallets.map((wallet) => (
+                      <SortableWalletTab key={wallet.id} wallet={wallet} />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                <div className="text-gray-400 px-4">Aucun wallet ajouté</div>
+              )}
+            </TabsList>
+          </Tabs>
+          
+          {wallets.length > 1 && (
+            <div className="flex items-center gap-1 text-xs text-[#FFFFFF60]">
+              <GripVertical className="w-3 h-3" />
+              <span>Drag to reorder</span>
+            </div>
+          )}
+        </div>
+        
         <AddWalletButton onClick={() => setIsAddWalletOpen(true)} />
       </div>
 

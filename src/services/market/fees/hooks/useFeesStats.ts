@@ -10,10 +10,11 @@ export function useFeesStats(): UseFeesStatsResult {
     data: feesStats,
     isLoading,
     error,
-    refetch
+    refetch,
+   
   } = useDataFetching<FeesStats>({
     fetchFn: fetchFeesStats,
-    // Consider adding a pollInterval if fees should update periodically, e.g., pollInterval: 60000 (for 1 minute)
+    refreshInterval: 60000,
   });
 
   return {
