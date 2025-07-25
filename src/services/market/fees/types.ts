@@ -10,4 +10,17 @@ export interface UseFeesStatsResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+}
+
+export interface FeesHistoryEntry {
+  time: string;
+  total_fees: number;
+  total_spot_fees: number;
+}
+
+export interface UseFeesHistoryResult {
+  feesHistory: FeesHistoryEntry[] | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
 } 

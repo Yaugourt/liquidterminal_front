@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/numberFormatting";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
-import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
+import { useFeesStats } from "@/services/market/fees/hooks/useFees";
 import { Loader2, BarChart2, Clock, CalendarDays, Scale, Wallet } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 

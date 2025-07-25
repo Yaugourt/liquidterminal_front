@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { useAuthContext } from "@/contexts/auth.context";
+import { walletAddMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
 
 interface AddWalletDialogProps {
   isOpen: boolean;
@@ -18,18 +19,17 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
   const { addWallet } = useWallets();
   const { privyUser } = useAuthContext();
+
   
   const handleAddWallet = async () => {
     if (!address) {
-      setError("Please enter a wallet address");
+      walletAddMessages.validation.emptyAddress();
       return;
     }
     
-    setError(null);
     setIsLoading(true);
     
     try {
@@ -44,6 +44,9 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       setName("");
       onOpenChange(false);
       
+      // Show success toast
+      walletAddMessages.success(walletName || 'Nouveau wallet');
+      
       // Notify parent component of success
       if (onSuccess) {
         onSuccess();
@@ -51,21 +54,25 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
     } catch (err: any) {
       console.error("Error adding wallet:", err);
       
-      // Handle specific error cases
+      // Handle specific error cases with toast
+      let errorMessage = "Une erreur est survenue lors de l'ajout du wallet.";
+      
       if (err.response) {
         switch (err.response.status) {
           case 409:
-            setError("Ce wallet est déjà associé à votre compte.");
+            errorMessage = "Ce wallet est déjà associé à votre compte.";
             break;
           case 400:
-            setError("Adresse de wallet invalide.");
+            errorMessage = "Adresse de wallet invalide.";
             break;
           default:
-            setError(err.message || "Une erreur est survenue lors de l'ajout du wallet.");
+            errorMessage = err.message || errorMessage;
         }
       } else {
-        setError(err.message || "Une erreur est survenue lors de l'ajout du wallet.");
+        errorMessage = err.message || errorMessage;
       }
+      
+      handleWalletApiError(err, 'add');
     } finally {
       setIsLoading(false);
     }
@@ -105,12 +112,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
               className="bg-[#0C2237] border-[#83E9FF4D]"
             />
           </div>
-          {error && (
-            <div className="text-red-500 text-sm flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              <p>{error}</p>
-            </div>
-          )}
+
         </div>
         <DialogFooter>
           <Button 

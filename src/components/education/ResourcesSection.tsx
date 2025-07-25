@@ -1,26 +1,10 @@
 "use client";
 
 import { ResourceCard } from "./ResourceCard";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { useEducationalCategories, useEducationalResourcesPaginated } from "@/services/education";
-import type { EducationalCategory } from "@/services/education/types";
-
-interface Resource {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  image: string;
-}
-
-interface Category {
-  id: number;
-  title: string;
-  count: number;
-  resources: Resource[];
-}
+import { useState } from "react";
+import { useEducationalCategories } from "@/services/education";
+import { useEducationalResourcesByCategories } from "@/services/education/hooks/useEducationalResourcesByCategories";
 
 interface ResourcesSectionProps {
   selectedCategoryIds: number[];
@@ -32,14 +16,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
   
   // Fetch categories and resources using the education service
   const { categories: allCategories, isLoading: categoriesLoading } = useEducationalCategories();
-  const { resources, isLoading: resourcesLoading, updateParams } = useEducationalResourcesPaginated({
-    defaultParams: { categoryIds: selectedCategoryIds, limit: 50 }
-  });
-
-  // Update resources when selected categories change
-  useEffect(() => {
-    updateParams({ categoryIds: selectedCategoryIds });
-  }, [selectedCategoryIds, updateParams]);
+  const { resources, isLoading: resourcesLoading } = useEducationalResourcesByCategories(selectedCategoryIds);
 
   const handleShowMore = (categoryId: number) => {
     setExpandedCategories(prev => ({
@@ -60,11 +37,11 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
     .filter(cat => selectedCategoryIds.length === 0 || selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = resources
-        .filter(resource => resource.categories.some(resCat => resCat.category.id === category.id))
-        .map(resource => ({
+        .filter(resource => resource.categories.some((resCat: any) => resCat.category.id === category.id))
+        .map((resource: any) => ({
           id: resource.id.toString(),
           title: resource.url,
-          description: resource.categories.map(cat => cat.category.name).join(', '),
+          description: resource.categories.map((cat: any) => cat.category.name).join(', '),
           url: resource.url,
           image: '/api/placeholder/400/200' // Default image since API doesn't provide images
         }));
@@ -112,14 +89,6 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
                   {category.resources.length} resources
                 </span>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-[#83E9FF4D] hover:border-[#83E9FF80] text-white hover:bg-[#83E9FF20] transition-all"
-              >
-                <Plus size={16} className="mr-2 text-[#F9E370]" />
-                Add resource
-              </Button>
             </div>
 
             {/* Resources grid */}

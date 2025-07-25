@@ -23,6 +23,8 @@ interface Props extends ChartDisplayProps {
   onCurrencyChange?: (currency: "HYPE" | "USDC") => void;
   onPeriodChange: (period: ChartPeriod) => void;
   availablePeriods: ChartPeriod[];
+  selectedFeeType?: "all" | "spot";
+  onFeeTypeChange?: (feeType: "all" | "spot") => void;
 }
 
 const AnimatedPeriodSelector = ({ 
@@ -90,7 +92,9 @@ export const ChartDisplay = ({
   onPeriodChange,
   availablePeriods,
   isAuctionTabActive = false,
-  isPastAuctionTabActive = false
+  isPastAuctionTabActive = false,
+  selectedFeeType = "all",
+  onFeeTypeChange
 }: Props) => {
   const { format } = useNumberFormat();
   const { formatValue } = useChartFormat();
@@ -111,6 +115,8 @@ export const ChartDisplay = ({
         return "Bridge TVL Evolution";
       case "strict":
          return "Fees Evolution";
+      case "fees":
+        return "Total Fees Evolution";
       default:
         return `Auction price evolution (${selectedCurrency})`;
     }
@@ -130,6 +136,9 @@ export const ChartDisplay = ({
     if (selectedFilter === 'gas' && selectedCurrency === 'USDC') {
       return formatLargeNumber(value, { prefix: '$', decimals: 2 });
     }
+    if (selectedFilter === 'fees') {
+      return formatLargeNumber(value, { prefix: '$', decimals: 2 });
+    }
     return formatNumber(value, format);
   };
 
@@ -138,6 +147,8 @@ export const ChartDisplay = ({
       case "bridge":
         return "";
       case "strict":
+        return " Fees";
+      case "fees":
         return " Fees";
       case "gas":
         return "";
@@ -153,6 +164,8 @@ export const ChartDisplay = ({
       if (selectedFilter === 'bridge') {
         formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });
       } else if (selectedFilter === 'gas' && selectedCurrency === 'USDC') {
+        formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });
+      } else if (selectedFilter === 'fees') {
         formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });
       } else if (selectedFilter === 'gas') {
         formattedValue = formatNumber(value, format);
@@ -181,7 +194,7 @@ export const ChartDisplay = ({
             <h2 className="text-sm text-white font-medium">
               {getTitle()}
             </h2>
-            {selectedFilter !== "bridge" && onCurrencyChange && (
+            {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
               <div className="flex items-center bg-[#051728] rounded-md p-0.5">
                 <Button
                   variant={selectedCurrency === "USDC" ? "default" : "ghost"}
@@ -206,6 +219,35 @@ export const ChartDisplay = ({
                   }`}
                 >
                   HYPE
+                </Button>
+              </div>
+            )}
+            
+            {selectedFilter === "fees" && onFeeTypeChange && (
+              <div className="flex items-center bg-[#051728] rounded-md p-0.5">
+                <Button
+                  variant={selectedFeeType === "all" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onFeeTypeChange("all")}
+                  className={`text-[10px] h-5 px-2 transition-colors ${
+                    selectedFeeType === "all"
+                      ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
+                      : "text-[#f9e370] hover:text-white"
+                  }`}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={selectedFeeType === "spot" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => onFeeTypeChange("spot")}
+                  className={`text-[10px] h-5 px-2 transition-colors ${
+                    selectedFeeType === "spot"
+                      ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
+                      : "text-[#f9e370] hover:text-white"
+                  }`}
+                >
+                  Spot
                 </Button>
               </div>
             )}

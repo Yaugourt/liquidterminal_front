@@ -66,7 +66,7 @@ export interface TokensHeaderProps {
  */
 import { ChartPeriod } from '@/components/common/charts';
 
-export type FilterType = "bridge" | "strict" | "gas";
+export type FilterType = "bridge" | "strict" | "gas" | "fees";
 
 export interface DashboardData {
   time: number;

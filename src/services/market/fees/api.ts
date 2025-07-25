@@ -1,4 +1,4 @@
-import { FeesStats } from './types';
+import { FeesStats, FeesHistoryEntry } from './types';
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 
@@ -40,4 +40,35 @@ export const fetchFeesStats = async (): Promise<FeesStats> => {
       dailySpotFees: 0
     };
   }, 'fetching fees stats');
+};
+
+/**
+ * Fetches the fees history from the raw endpoint.
+ */
+export const fetchFeesHistory = async (): Promise<FeesHistoryEntry[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<any>('/market/fees/raw');
+    
+    // Cas 1: Les données sont dans response.data
+    if (response && response.data && Array.isArray(response.data)) {
+      return response.data.map((entry: any) => ({
+        time: entry.time,
+        total_fees: Number(entry.total_fees || 0),
+        total_spot_fees: Number(entry.total_spot_fees || 0)
+      }));
+    }
+    
+    // Cas 2: Les données sont directement dans la réponse
+    if (response && Array.isArray(response)) {
+      return response.map((entry: any) => ({
+        time: entry.time,
+        total_fees: Number(entry.total_fees || 0),
+        total_spot_fees: Number(entry.total_spot_fees || 0)
+      }));
+    }
+    
+    // Cas par défaut: retourner un tableau vide
+    console.error('Unexpected API response structure for fees history:', response);
+    return [];
+  }, 'fetching fees history');
 }; 

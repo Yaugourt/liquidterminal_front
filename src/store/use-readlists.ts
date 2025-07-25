@@ -104,6 +104,18 @@ export const useReadLists = create<ReadListsState>()(
             
             const readLists = await getMyReadLists();
             
+            // Ensure readLists is an array
+            if (!Array.isArray(readLists)) {
+              console.warn('getMyReadLists returned non-array:', readLists);
+              set({
+                readLists: [],
+                activeReadListId: null,
+                activeReadListItems: [],
+                loading: false
+              });
+              return;
+            }
+            
             // Restaurer l'ordre sauvegardé si disponible
             let orderedReadLists = readLists;
             try {

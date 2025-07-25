@@ -1,6 +1,6 @@
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
-import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
+import { useFeesStats } from "@/services/market/fees/hooks/useFees";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { TrendingTokensProps, SortableFields, SortOrder } from "@/components/types/dashboard.types";
 import { PerpSortableFields } from "@/services/market/perp/types";

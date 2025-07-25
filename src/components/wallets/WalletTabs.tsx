@@ -9,6 +9,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
+import { walletLoadMessages, walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
 import {
   DndContext,
   closestCenter,
@@ -84,7 +85,7 @@ export function WalletTabs() {
           });
         } catch (err) {
           console.error("Error fetching wallets:", err);
-          setError(err instanceof Error ? err.message : "Failed to fetch wallets. Please try again later.");
+          handleWalletApiError(err, 'load');
         } finally {
           setIsLoading(false);
         }
@@ -96,7 +97,10 @@ export function WalletTabs() {
 
   // Log when wallets change
   useEffect(() => {
-    // Wallets updated
+    // Show empty state message if no wallets
+    if (wallets.length === 0) {
+      walletEmptyMessages.noWallets();
+    }
   }, [wallets]);
 
   // Log when global error changes
@@ -128,9 +132,14 @@ export function WalletTabs() {
       const newIndex = wallets.findIndex(wallet => wallet.id === over?.id);
       
       if (oldIndex !== -1 && newIndex !== -1) {
-        const newOrder = arrayMove(wallets, oldIndex, newIndex);
-        const newOrderIds = newOrder.map(wallet => wallet.id);
-        reorderWallets(newOrderIds);
+        try {
+          const newOrder = arrayMove(wallets, oldIndex, newIndex);
+          const newOrderIds = newOrder.map(wallet => wallet.id);
+          reorderWallets(newOrderIds);
+          walletReorderMessages.success();
+        } catch (error) {
+          walletReorderMessages.error();
+        }
       }
     }
   };
@@ -140,7 +149,16 @@ export function WalletTabs() {
   
   // Gérer le changement d'onglet en convertissant la chaîne en nombre
   const handleTabChange = (value: string) => {
-    setActiveWallet(parseInt(value, 10));
+    try {
+      const walletId = parseInt(value, 10);
+      setActiveWallet(walletId);
+      const wallet = wallets.find(w => w.id === walletId);
+      if (wallet) {
+        walletActiveMessages.success(wallet.name || 'Unnamed Wallet');
+      }
+    } catch (error) {
+      walletActiveMessages.error();
+    }
   };
 
   // Sortable wallet tab component
@@ -230,7 +248,9 @@ export function WalletTabs() {
                   </SortableContext>
                 </DndContext>
               ) : (
-                <div className="text-gray-400 px-4">Aucun wallet ajouté</div>
+                <div className="text-gray-400 px-4">
+                  No wallets added
+                </div>
               )}
             </TabsList>
           </Tabs>

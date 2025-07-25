@@ -7,19 +7,11 @@ import {
   CategoriesResponse, 
   ProjectQueryParams 
 } from './types';
-import { getMockProjectsResponse, getMockCategoriesResponse, MOCK_PROJECTS } from './mock';
-
-// TODO: Remove mock data when API is ready
-const USE_MOCK_DATA = true;
 
 /**
  * Récupère tous les projets avec pagination et filtres
  */
 export const fetchProjects = async (params?: ProjectQueryParams): Promise<ProjectsResponse> => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve(getMockProjectsResponse(params));
-  }
-
   return withErrorHandling(async () => {
     const queryParams = new URLSearchParams();
     
@@ -31,7 +23,7 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
       });
     }
     
-    const endpoint = `/api/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const endpoint = `/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     return await get<ProjectsResponse>(endpoint);
   }, 'fetching projects');
 };
@@ -40,16 +32,8 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
  * Récupère un projet par ID
  */
 export const fetchProject = async (id: number): Promise<{ success: boolean; data: Project }> => {
-  if (USE_MOCK_DATA) {
-    const project = MOCK_PROJECTS.find(p => p.id === id);
-    return Promise.resolve({
-      success: !!project,
-      data: project!
-    });
-  }
-
   return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: Project }>(`/api/project/${id}`);
+    return await get<{ success: boolean; data: Project }>(`/project/${id}`);
   }, 'fetching project');
 };
 
@@ -57,12 +41,8 @@ export const fetchProject = async (id: number): Promise<{ success: boolean; data
  * Récupère toutes les catégories
  */
 export const fetchCategories = async (): Promise<CategoriesResponse> => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve(getMockCategoriesResponse());
-  }
-
   return withErrorHandling(async () => {
-    return await get<CategoriesResponse>('/api/category');
+    return await get<CategoriesResponse>('/category');
   }, 'fetching categories');
 };
 
@@ -70,17 +50,8 @@ export const fetchCategories = async (): Promise<CategoriesResponse> => {
  * Récupère une catégorie par ID
  */
 export const fetchCategory = async (id: number): Promise<{ success: boolean; data: Category }> => {
-  if (USE_MOCK_DATA) {
-    const categories = getMockCategoriesResponse().data;
-    const category = categories.find(c => c.id === id);
-    return Promise.resolve({
-      success: !!category,
-      data: category!
-    });
-  }
-
   return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: Category }>(`/api/category/${id}`);
+    return await get<{ success: boolean; data: Category }>(`/category/${id}`);
   }, 'fetching category');
 };
 
@@ -88,13 +59,9 @@ export const fetchCategory = async (id: number): Promise<{ success: boolean; dat
  * Récupère les projets d'une catégorie
  */
 export const fetchProjectsByCategory = async (categoryId: number): Promise<Project[]> => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve(MOCK_PROJECTS.filter(p => p.categoryId === categoryId));
-  }
-
   return withErrorHandling(async () => {
     const response = await get<{ success: boolean; data: Project[] }>(
-      `/api/project/category/${categoryId}`
+      `/project/category/${categoryId}`
     );
     return response.data;
   }, 'fetching projects by category');

@@ -1,8 +1,7 @@
-import { get, post, put, del } from '../api/axios-config';
+import { get } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { 
-  EducationalCategory,
-  EducationalResource,
+ EducationalResource,
   CategoriesResponse,
   ResourcesResponse,
   ResourceFilters,
@@ -61,57 +60,3 @@ export const fetchResourcesByCategories = async (categoryIds: number[]): Promise
     return Array.from(resourceMap.values());
   }, 'fetching resources by multiple categories');
 };
-
-/**
- * Crée une nouvelle catégorie éducative
- */
-export const createEducationalCategory = async (data: Partial<EducationalCategory>): Promise<EducationalCategory> => {
-  return withErrorHandling(async () => {
-    return await post<EducationalCategory>('/educational/categories', data);
-  }, 'creating educational category');
-};
-
-/**
- * Crée une nouvelle ressource éducative
- */
-export const createEducationalResource = async (data: Partial<EducationalResource>): Promise<EducationalResource> => {
-  return withErrorHandling(async () => {
-    return await post<EducationalResource>('/educational/resources', data);
-  }, 'creating educational resource');
-};
-
-/**
- * Met à jour une catégorie éducative
- */
-export const updateEducationalCategory = async (id: number, data: Partial<EducationalCategory>): Promise<EducationalCategory> => {
-  return withErrorHandling(async () => {
-    return await put<EducationalCategory>(`/educational/categories/${id}`, data);
-  }, 'updating educational category');
-};
-
-/**
- * Met à jour une ressource éducative
- */
-export const updateEducationalResource = async (id: number, data: Partial<EducationalResource>): Promise<EducationalResource> => {
-  return withErrorHandling(async () => {
-    return await put<EducationalResource>(`/educational/resources/${id}`, data);
-  }, 'updating educational resource');
-};
-
-/**
- * Supprime une catégorie éducative
- */
-export const deleteEducationalCategory = async (id: number): Promise<void> => {
-  return withErrorHandling(async () => {
-    await del(`/educational/categories/${id}`);
-  }, 'deleting educational category');
-};
-
-/**
- * Supprime une ressource éducative
- */
-export const deleteEducationalResource = async (id: number): Promise<void> => {
-  return withErrorHandling(async () => {
-    await del(`/educational/resources/${id}`);
-  }, 'deleting educational resource');
-}; 

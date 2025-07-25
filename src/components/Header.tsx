@@ -2,7 +2,7 @@
 
 import { SearchBar } from "@/components/SearchBar"
 import { usePageTitle } from "@/store/use-page-title"
-import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
+import { useFeesStats } from "@/services/market/fees/hooks/useFees"
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice"
 import { useHypeBuyPressure } from "@/services/market/order/hooks/useHypeBuyPressure"
 import { Clock, CalendarDays, TrendingUp } from "lucide-react"

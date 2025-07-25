@@ -1,12 +1,14 @@
 "use client";
 
-import { FilterButtonsProps } from "@/components/types/dashboard.types";
+interface FeesTabsButtonProps {
+  selectedFeeType: "all" | "spot";
+  onFeeTypeChange: (feeType: "all" | "spot") => void;
+}
 
-export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsProps) => {
-  const tabs: { key: "bridge" | "gas" | "fees"; label: string }[] = [
-    { key: 'bridge', label: 'Bridge TVL' },
-    { key: 'gas', label: 'Auction' },
-    { key: 'fees', label: 'Total fees' }
+export const FeesTabsButton = ({ selectedFeeType, onFeeTypeChange }: FeesTabsButtonProps) => {
+  const tabs: { key: "all" | "spot"; label: string }[] = [
+    { key: 'all', label: 'total_fees' },
+    { key: 'spot', label: 'total_spot_fees' }
   ];
 
   return (
@@ -15,9 +17,9 @@ export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsP
         {tabs.map(tab => (
           <button
             key={tab.key}
-            onClick={() => onFilterChange(tab.key)}
+            onClick={() => onFeeTypeChange(tab.key)}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              selectedFilter === tab.key
+              selectedFeeType === tab.key
                 ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
                 : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
             }`}

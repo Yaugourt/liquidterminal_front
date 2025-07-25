@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
+import { Toaster } from "@/components/ui/sonner";
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -28,10 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <AuthProvider>
-       
-          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-          {children}
-    
+        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+        {children}
+        <Toaster />
       </AuthProvider>
     </PrivyProvider>
   );
