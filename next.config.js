@@ -28,6 +28,18 @@ const nextConfig = {
             "cdn.prod.website-files.com",
             "images.website-files.com",
             "assets.website-files.com",
+            // Placeholder images
+            "via.placeholder.com",
+            "placehold.co",
+            "placehold.it",
+            "picsum.photos",
+            "loremflickr.com",
+            "dummyimage.com",
+            "placekitten.com",
+            "placeimg.com",
+            // Local uploads
+            "localhost",
+            "127.0.0.1",
         ],
     },
 };

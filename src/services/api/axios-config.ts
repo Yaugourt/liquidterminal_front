@@ -174,6 +174,11 @@ apiClient.interceptors.request.use(
       } else if (!token && config.headers.Authorization) {
         delete config.headers.Authorization;
       }
+      
+      // Supprimer Content-Type pour FormData (upload de fichiers)
+      if (config.data instanceof FormData) {
+        delete config.headers['Content-Type'];
+      }
     } catch {
       // Silent fail - continue without auth
     }

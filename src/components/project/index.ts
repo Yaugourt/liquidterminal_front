@@ -1,2 +1,4 @@
 export { ProjectCard } from './ProjectCard';
-export { ProjectsGrid } from './ProjectsGrid'; 
+export { ProjectBulkActions } from './ProjectBulkActions';
+export { ProjectsGrid } from './ProjectsGrid';
+export { ProjectModal } from './ProjectModal'; 

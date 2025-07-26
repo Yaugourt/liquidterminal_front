@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
 import { Menu } from "lucide-react"
-import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiChartLine, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight } from "react-icons/pi";
-import { AiOutlineHome } from "react-icons/ai";
+import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight } from "react-icons/pi";
+import { AiOutlineHome, AiOutlineSearch  } from "react-icons/ai";
 import { MdOutlineCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -40,7 +40,8 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
             {
                 name: 'Dashboard',
                 href: '/explorer',
-                icon: '/sidebar/Search.svg'
+                icon: null,
+                IconComponent: AiOutlineSearch
             },
             {
                 name: 'Validator',

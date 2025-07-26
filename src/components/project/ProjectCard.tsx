@@ -2,14 +2,32 @@ import { memo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { PiTwitterLogo, PiDiscordLogo, PiTelegramLogo, PiGlobeBold } from "react-icons/pi";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Project } from "@/services/project/types";
+import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { useAuthContext } from "@/contexts/auth.context";
 
 interface ProjectCardProps {
   project: Project;
+  onDelete?: (projectId: number) => void;
+  isDeleting?: boolean;
+  isSelected?: boolean;
+  onSelectionChange?: (projectId: number, selected: boolean) => void;
+  showSelection?: boolean;
 }
 
-export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardProps) {
+export const ProjectCard = memo(function ProjectCard({ 
+  project, 
+  onDelete,
+  isDeleting = false,
+  isSelected = false,
+  onSelectionChange,
+  showSelection = false
+}: ProjectCardProps) {
   const [imageError, setImageError] = useState(false);
+  const { user } = useAuthContext();
 
   const socialLinks = [
     { url: project.website, icon: PiGlobeBold, label: "Website" },
@@ -18,8 +36,54 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
     { url: project.telegram, icon: PiTelegramLogo, label: "Telegram" }
   ].filter(link => link.url);
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(project.id);
+    }
+  };
+
+  const handleSelectionChange = (checked: boolean) => {
+    if (onSelectionChange) {
+      onSelectionChange(project.id, checked);
+    }
+  };
+
   return (
-    <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group">
+    <Card className={`bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group relative ${
+      isSelected ? 'border-[#F9E370] bg-[#F9E37010]' : ''
+    }`}>
+      {/* Selection checkbox for admins */}
+      {showSelection && (
+        <ProtectedAction requiredRole="ADMIN" user={user}>
+          <div className="absolute top-2 left-2 z-10">
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={handleSelectionChange}
+              disabled={isDeleting}
+              className="bg-[#0A1F32] border-[#F9E370] data-[state=checked]:bg-[#F9E370] data-[state=checked]:border-[#F9E370]"
+            />
+          </div>
+        </ProtectedAction>
+      )}
+
+      {/* Delete button for admins */}
+      <ProtectedAction requiredRole="ADMIN" user={user}>
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <Button
+            onClick={handleDelete}
+            size="sm"
+            variant="ghost"
+            disabled={isDeleting}
+            className="p-1 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
+            title="Delete project"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+      </ProtectedAction>
+
       <div className="flex items-start gap-4">
         <div className="relative w-12 h-12 flex-shrink-0">
           {!imageError ? (

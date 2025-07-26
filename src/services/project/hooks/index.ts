@@ -1,3 +1,7 @@
 export { useProjects } from './useProjects';
-export { useProject } from './useProject';
-export { useCategories } from './useCategories'; 
+export { useCategories } from './useCategories';
+export { useCreateProject } from './useCreateProject';
+export { useCreateCategory } from './useCreateCategory';
+export { useUpdateProject } from './useUpdateProject';
+export { useDeleteProject } from './useDeleteProject';
+export { useBulkDeleteProjects } from './useBulkDeleteProjects'; 

@@ -5,4 +5,15 @@ export * from './types';
 export * from './api';
 
 // Hooks
-export * from './hooks'; 
+export * from './hooks';
+
+// Re-export commonly used types for convenience
+export type { 
+  Project, 
+  Category, 
+  CreateProjectInput, 
+  CreateProjectWithUploadInput,
+  CreateCategoryInput,
+  UpdateProjectInput,
+  UpdateCategoryInput 
+} from './types'; 

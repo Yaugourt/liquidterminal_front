@@ -2,6 +2,9 @@ export interface User {
   id: string;
   privyUserId: string;
   name: string;
+  email?: string;
+  role: 'USER' | 'MODERATOR' | 'ADMIN';
+  verified: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

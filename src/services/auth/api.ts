@@ -1,4 +1,4 @@
-import { apiClient, axiosWithConfig } from '../api/axios-config';
+import { apiClient, axiosWithConfig, get } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { AuthResponse, LoginCredentials } from './types';
 
@@ -44,5 +44,11 @@ export const authService = {
         skipAuth: true // Skip auto auth token since we're providing custom auth
       });
     }, 'fetching user');
+  },
+
+  getCurrentUser: async (): Promise<AuthResponse> => {
+    return withErrorHandling(async () => {
+      return await get<AuthResponse>('/auth/me');
+    }, 'fetching current user');
   },
 }; 

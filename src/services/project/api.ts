@@ -1,11 +1,18 @@
-import { get } from '../api/axios-config';
+import { get, post, put, del, apiClient } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { 
   Project, 
   Category, 
   ProjectsResponse, 
   CategoriesResponse, 
-  ProjectQueryParams 
+  ProjectQueryParams,
+  CreateProjectInput,
+  CreateProjectWithUploadInput,
+  CreateCategoryInput,
+  UpdateProjectInput,
+  UpdateCategoryInput,
+  ProjectResponse,
+  CategoryResponse
 } from './types';
 
 /**
@@ -65,4 +72,86 @@ export const fetchProjectsByCategory = async (categoryId: number): Promise<Proje
     );
     return response.data;
   }, 'fetching projects by category');
+};
+
+/**
+ * Crée un nouveau projet
+ */
+export const createProject = async (data: CreateProjectInput): Promise<ProjectResponse> => {
+  return withErrorHandling(async () => {
+    return await post<ProjectResponse>('/project', data);
+  }, 'creating project');
+};
+
+/**
+ * Crée un nouveau projet avec upload de fichier
+ */
+export const createProjectWithUpload = async (data: CreateProjectWithUploadInput): Promise<ProjectResponse> => {
+  return withErrorHandling(async () => {
+    const formData = new FormData();
+    
+    // Ajouter les champs texte
+    formData.append('title', data.title);
+    formData.append('desc', data.desc);
+    if (data.twitter) formData.append('twitter', data.twitter);
+    if (data.discord) formData.append('discord', data.discord);
+    if (data.telegram) formData.append('telegram', data.telegram);
+    if (data.website) formData.append('website', data.website);
+    if (data.categoryId) formData.append('categoryId', data.categoryId.toString());
+    
+    // Ajouter le fichier si présent
+    if (data.logo) {
+      formData.append('logo', data.logo);
+    }
+
+    // Utiliser axios avec FormData - l'intercepteur gère l'auth automatiquement
+    const response = await apiClient.post<ProjectResponse>('/project/with-upload', formData);
+    
+    return response.data;
+  }, 'creating project with upload');
+};
+
+/**
+ * Met à jour un projet existant
+ */
+export const updateProject = async (id: number, data: UpdateProjectInput): Promise<ProjectResponse> => {
+  return withErrorHandling(async () => {
+    return await put<ProjectResponse>(`/project/${id}`, data);
+  }, 'updating project');
+};
+
+/**
+ * Supprime un projet
+ */
+export const deleteProject = async (id: number): Promise<{ success: boolean; message?: string }> => {
+  return withErrorHandling(async () => {
+    return await del<{ success: boolean; message?: string }>(`/project/${id}`);
+  }, 'deleting project');
+};
+
+/**
+ * Crée une nouvelle catégorie
+ */
+export const createCategory = async (data: CreateCategoryInput): Promise<CategoryResponse> => {
+  return withErrorHandling(async () => {
+    return await post<CategoryResponse>('/category', data);
+  }, 'creating category');
+};
+
+/**
+ * Met à jour une catégorie existante
+ */
+export const updateCategory = async (id: number, data: UpdateCategoryInput): Promise<CategoryResponse> => {
+  return withErrorHandling(async () => {
+    return await put<CategoryResponse>(`/category/${id}`, data);
+  }, 'updating category');
+};
+
+/**
+ * Supprime une catégorie
+ */
+export const deleteCategory = async (id: number): Promise<{ success: boolean; message?: string }> => {
+  return withErrorHandling(async () => {
+    return await del<{ success: boolean; message?: string }>(`/category/${id}`);
+  }, 'deleting category');
 }; 

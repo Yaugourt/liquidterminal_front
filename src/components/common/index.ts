@@ -3,4 +3,5 @@ export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChan
 export { Pagination } from './pagination';
 
 // Re-export all from charts
-export * from './charts'; 
+export * from './charts';
+export { ProtectedAction } from './ProtectedAction'; 
