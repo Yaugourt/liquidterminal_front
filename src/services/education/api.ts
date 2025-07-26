@@ -1,11 +1,15 @@
-import { get } from '../api/axios-config';
+import { get, post, del } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { 
- EducationalResource,
+  EducationalResource,
   CategoriesResponse,
   ResourcesResponse,
   ResourceFilters,
-  CategoryParams
+  CategoryParams,
+  CreateCategoryInput,
+  CreateResourceInput,
+  CategoryResponse,
+  ResourceResponse
 } from './types';
 
 /**
@@ -17,6 +21,34 @@ export const fetchEducationalCategories = async (params?: CategoryParams): Promi
     const endpoint = `/educational/categories`;
     return await get<CategoriesResponse>(endpoint);
   }, 'fetching educational categories');
+};
+
+/**
+ * Crée une nouvelle catégorie éducative
+ */
+export const createEducationalCategory = async (data: CreateCategoryInput): Promise<CategoryResponse> => {
+  return withErrorHandling(async () => {
+    const response = await post<CategoryResponse>('/educational/categories', data);
+    return response;
+  }, 'creating educational category');
+};
+
+/**
+ * Crée une nouvelle ressource éducative
+ */
+export const createEducationalResource = async (data: CreateResourceInput): Promise<ResourceResponse> => {
+  return withErrorHandling(async () => {
+    return await post<ResourceResponse>('/educational/resources', data);
+  }, 'creating educational resource');
+};
+
+/**
+ * Supprime une ressource éducative
+ */
+export const deleteEducationalResource = async (id: number): Promise<{ success: boolean; message: string }> => {
+  return withErrorHandling(async () => {
+    return await del<{ success: boolean; message: string }>(`/educational/resources/${id}`);
+  }, 'deleting educational resource');
 };
 
 /**

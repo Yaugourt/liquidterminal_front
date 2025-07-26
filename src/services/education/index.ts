@@ -1,13 +1,40 @@
-// API exports
-export * from './api';
+// API functions
+export { 
+  fetchEducationalCategories, 
+  fetchEducationalResources, 
+  fetchResourcesByCategory, 
+  fetchResourcesByCategories,
+  createEducationalCategory,
+  createEducationalResource,
+  deleteEducationalResource
+} from './api';
 
-// Types exports
-export * from './types';
-
-// Hooks exports
+// Hooks
 export { useEducationalCategories } from './hooks/useEducationalCategories';
-export { useEducationalResources } from './hooks/useEducationalResources';
 export { useEducationalResourcesByCategories } from './hooks/useEducationalResourcesByCategories';
+export { useCreateEducationalCategory } from './hooks/useCreateEducationalCategory';
+export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
+export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
+
+// Types
+export type {
+  EducationalCategory,
+  EducationalResource,
+  EducationalResourceCategory,
+  CreateCategoryInput,
+  CreateResourceInput,
+  CategoryResponse,
+  ResourceResponse,
+  CategoriesResponse,
+  ResourcesResponse,
+  ResourceFilters,
+  CategoryParams,
+  UseEducationalCategoriesResult,
+  UseEducationalResourcesResult,
+  UseEducationalResourcesPaginatedResult,
+  UseEducationalResourcesOptions,
+  UseEducationalCategoriesOptions
+} from './types';
 
 // ReadList exports
 export * from './readList'; 

@@ -37,6 +37,29 @@ export interface EducationalResourceCategory {
   } | null;
 }
 
+// ==================== TYPES POUR CRÉATION ====================
+export interface CreateCategoryInput {
+  name: string;
+  description?: string;
+}
+
+export interface CreateResourceInput {
+  url: string;
+  categoryIds: number[];
+}
+
+export interface CategoryResponse {
+  success: boolean;
+  data: EducationalCategory;
+  message?: string;
+}
+
+export interface ResourceResponse {
+  success: boolean;
+  data: EducationalResource;
+  message?: string;
+}
+
 // ==================== PARAMÈTRES DE REQUÊTE ====================
 export interface ResourceFilters {
   categoryIds?: number[];

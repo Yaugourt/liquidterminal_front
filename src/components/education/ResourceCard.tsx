@@ -1,13 +1,15 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink, Plus, BookOpen } from "lucide-react";
+import { ExternalLink, Plus, BookOpen, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
 import { useLinkPreview } from "@/services/education/linkPreview/hooks/hooks";
+import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { useAuthContext } from "@/contexts/auth.context";
 
 interface Resource {
   id: string;
@@ -20,14 +22,17 @@ interface Resource {
 interface ResourceCardProps {
   resource: Resource;
   categoryColor: string;
+  onDelete?: (resourceId: number) => void;
+  isDeleting?: boolean;
 }
 
-export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
+export function ResourceCard({ resource, categoryColor, onDelete, isDeleting = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);
   const { readLists, addItemToReadList } = useReadLists();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuthContext();
   
   // Load link preview
   const { data: preview, isLoading: previewLoading, error: previewError } = useLinkPreview(
@@ -53,14 +58,12 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
 
   const handleAddToReadList = async (readListId: number) => {
     try {
-
       setIsAddingToList(true);
       await addItemToReadList(readListId, {
         resourceId: parseInt(resource.id),
         notes: `Added from ${resource.title}`
       });
       setShowReadLists(false);
-      
     } catch (error) {
       console.error('Error adding to read list:', error);
     } finally {
@@ -68,10 +71,32 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
     }
   };
 
-
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(parseInt(resource.id));
+    }
+  };
 
   return (
     <Card className="bg-[#051728E5] border border-[#83E9FF4D] hover:border-[#83E9FF80] transition-all shadow-sm hover:shadow-lg group overflow-hidden rounded-lg relative">
+      {/* Delete button for admins */}
+      <ProtectedAction requiredRole="ADMIN" user={user}>
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <Button
+            onClick={handleDelete}
+            size="sm"
+            variant="ghost"
+            disabled={isDeleting}
+            className="p-1 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
+            title="Delete resource"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+      </ProtectedAction>
+      
       <CardContent className="p-0">
         <a 
           href={resource.url} 
@@ -119,19 +144,17 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
             </p>
 
             <div className="flex items-center justify-between pt-2">
-                             <Badge 
-                 variant="secondary" 
-                 className="bg-[#112941] text-gray-300 border-none text-xs"
-               >
-                 {preview?.siteName || 'Article'}
-               </Badge>
-               <div className="flex items-center gap-2">
-                 {previewLoading && (
-                   <span className="text-xs text-[#FFFFFF60]">Loading preview...</span>
-                 )}
-                 {!previewLoading && (
-                   <span className="text-xs text-gray-500">2 min read</span>
-                 )}
+              <Badge 
+                variant="secondary" 
+                className="bg-[#112941] text-gray-300 border-none text-xs"
+              >
+                {preview?.siteName || 'Article'}
+              </Badge>
+              <div className="flex items-center gap-2">
+                {previewLoading && (
+                  <span className="text-xs text-[#FFFFFF60]">Loading preview...</span>
+                )}
+             
                 <Button
                   size="sm"
                   variant="ghost"
@@ -175,7 +198,6 @@ export function ResourceCard({ resource, categoryColor }: ResourceCardProps) {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-
                         handleAddToReadList(readList.id);
                       }}
                       disabled={isAddingToList}

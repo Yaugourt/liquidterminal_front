@@ -1,10 +1,14 @@
 "use client";
 
 import { ResourceCard } from "./ResourceCard";
+import { EducationModal } from "./EducationModal";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useEducationalCategories } from "@/services/education";
 import { useEducationalResourcesByCategories } from "@/services/education/hooks/useEducationalResourcesByCategories";
+import { useDeleteEducationalResource } from "@/services/education";
+import { EducationalCategory, EducationalResource } from "@/services/education/types";
+import { toast } from "sonner";
 
 interface ResourcesSectionProps {
   selectedCategoryIds: number[];
@@ -15,8 +19,28 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
   
   // Fetch categories and resources using the education service
-  const { categories: allCategories, isLoading: categoriesLoading } = useEducationalCategories();
-  const { resources, isLoading: resourcesLoading } = useEducationalResourcesByCategories(selectedCategoryIds);
+  const { categories: serverCategories, isLoading: categoriesLoading, refetch: refetchCategories } = useEducationalCategories();
+  const { resources: serverResources, isLoading: resourcesLoading, refetch: refetchResources } = useEducationalResourcesByCategories(selectedCategoryIds);
+  
+  // Local state for optimistic updates
+  const [localCategories, setLocalCategories] = useState<EducationalCategory[]>([]);
+  const [localResources, setLocalResources] = useState<EducationalResource[]>([]);
+  
+  // Delete resource hook
+  const { deleteResource, isLoading: isDeleting } = useDeleteEducationalResource();
+
+  // Synchronize local state with server data
+  useEffect(() => {
+    if (serverCategories.length > 0 || localCategories.length === 0) {
+      setLocalCategories(serverCategories);
+    }
+  }, [serverCategories, localCategories.length]);
+
+  useEffect(() => {
+    if (serverResources.length > 0 || localResources.length === 0) {
+      setLocalResources(serverResources);
+    }
+  }, [serverResources, localResources.length]);
 
   const handleShowMore = (categoryId: number) => {
     setExpandedCategories(prev => ({
@@ -32,11 +56,51 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
     }));
   };
 
-  // Group resources by category
-  const categoriesWithResources = allCategories
+  // Handle resource deletion with optimistic update
+  const handleDeleteResource = useCallback(async (resourceId: number) => {
+    // Optimistic update - remove from local state immediately
+    setLocalResources(prev => prev.filter(resource => resource.id !== resourceId));
+    
+    try {
+      const success = await deleteResource(resourceId);
+      if (success) {
+        // Refresh the resources list in background
+        refetchResources();
+      } else {
+        // If deletion failed, revert the optimistic update
+        setLocalResources(prev => [...prev, serverResources.find(r => r.id === resourceId)!].filter(Boolean));
+        toast.error('Failed to delete resource');
+      }
+    } catch (error) {
+      // If deletion failed, revert the optimistic update
+      setLocalResources(prev => [...prev, serverResources.find(r => r.id === resourceId)!].filter(Boolean));
+      console.error('Failed to delete resource:', error);
+      toast.error('Failed to delete resource');
+    }
+  }, [deleteResource, refetchResources, serverResources]);
+
+  // Handle modal success with optimistic updates
+  const handleModalSuccess = useCallback((item?: EducationalCategory | EducationalResource) => {
+    if (item) {
+      if ('categories' in item) {
+        // It's a resource - add to local resources
+        setLocalResources(prev => [...prev, item as EducationalResource]);
+      } else {
+        // It's a category - add to local categories
+        setLocalCategories(prev => [...prev, item as EducationalCategory]);
+      }
+      
+      // Refresh both categories and resources in background
+      refetchCategories();
+      refetchResources();
+    }
+  }, [refetchCategories, refetchResources]);
+
+  // Group resources by category using local state
+  const categoriesWithResources = localCategories
     .filter(cat => selectedCategoryIds.length === 0 || selectedCategoryIds.includes(cat.id))
     .map(category => {
-      const categoryResources = resources
+      const categoryResources = localResources
         .filter(resource => resource.categories.some((resCat: any) => resCat.category.id === category.id))
         .map((resource: any) => ({
           id: resource.id.toString(),
@@ -73,6 +137,11 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
 
   return (
     <div className="space-y-12">
+      {/* Add Button */}
+      <div className="flex justify-start">
+        <EducationModal onSuccess={handleModalSuccess} />
+      </div>
+      
       {categoriesWithResources.map((category) => {
         const displayCount = expandedCategories[category.id] || 4;
         const displayedResources = category.resources.slice(0, displayCount);
@@ -98,6 +167,8 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
                   key={resource.id} 
                   resource={resource} 
                   categoryColor={sectionColor}
+                  onDelete={handleDeleteResource}
+                  isDeleting={isDeleting}
                 />
               ))}
             </div>
@@ -129,4 +200,4 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
       })}
     </div>
   );
-} 
+}
