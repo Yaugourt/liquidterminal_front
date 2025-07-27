@@ -10,10 +10,10 @@ import {
 } from './types';
 
 // Get all user's read lists (private and public) - NOUVEAU: utiliser JWT
-export const getMyReadLists = async (): Promise<ReadList[]> => {
+export const getMyReadLists = async (): Promise<{success: boolean, data: ReadList[], message?: string}> => {
   return withErrorHandling(async () => {
-    const response = await get<ReadList[]>('/readlists/my-lists');
-    return response || [];
+    const response = await get<{success: boolean, data: ReadList[], message?: string}>('/readlists/my-lists');
+    return response || {success: true, data: []};
   }, 'fetching my read lists');
 };
 
@@ -65,10 +65,10 @@ export const deleteReadList = async (id: number): Promise<void> => {
 };
 
 // Get items from a read list
-export const getReadListItems = async (listId: number): Promise<ReadListItem[]> => {
+export const getReadListItems = async (listId: number): Promise<{success: boolean, data: ReadListItem[], message?: string}> => {
   return withErrorHandling(async () => {
-    const response = await get<ReadListItem[]>(`/readlists/${listId}/items`);
-    return response || [];
+    const response = await get<{success: boolean, data: ReadListItem[], message?: string}>(`/readlists/${listId}/items`);
+    return response || {success: true, data: []};
   }, 'fetching read list items');
 };
 

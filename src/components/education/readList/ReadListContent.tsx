@@ -195,14 +195,14 @@ export function ReadListContent({
         {itemsLoading ? (
           <div className="grid grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, index) => (
-              <ReadListItemSkeleton key={index} />
+              <ReadListItemSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         ) : filteredItems.length > 0 ? (
           <div className="grid grid-cols-3 gap-6">
             {filteredItems.map((item) => (
               <ReadListItemCard
-                key={item.id}
+                key={`item-${item.id}`}
                 item={item}
                 preview={getPreview(item.resource?.url || '')}
                 onRemoveItem={onRemoveItem}

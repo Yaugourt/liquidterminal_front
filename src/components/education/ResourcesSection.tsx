@@ -31,16 +31,16 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
 
   // Synchronize local state with server data
   useEffect(() => {
-    if (serverCategories.length > 0 || localCategories.length === 0) {
+    if (serverCategories.length > 0) {
       setLocalCategories(serverCategories);
     }
-  }, [serverCategories, localCategories.length]);
+  }, [serverCategories]);
 
   useEffect(() => {
-    if (serverResources.length > 0 || localResources.length === 0) {
+    if (serverResources.length > 0) {
       setLocalResources(serverResources);
     }
-  }, [serverResources, localResources.length]);
+  }, [serverResources]);
 
   const handleShowMore = (categoryId: number) => {
     setExpandedCategories(prev => ({

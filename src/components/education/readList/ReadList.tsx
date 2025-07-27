@@ -22,19 +22,26 @@ const useReadListInitialization = () => {
 
   useEffect(() => {
     const init = async () => {
-      if (!privyUser?.id || !isMounted) return;
+      if (!privyUser?.id || !isMounted) {
+        return;
+      }
+      
       try {
         setIsInitializing(true);
         const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
+        
         if (!username) {
           setInitError("No username available");
           return;
         }
+        
         const token = await getAccessToken();
+        
         if (!token) {
           setInitError("No access token available");
           return;
         }
+        
         await initialize({ privyUserId: privyUser.id, username, privyToken: token });
       } catch (err: any) {
         setInitError(err?.message || "Failed to initialize read lists");

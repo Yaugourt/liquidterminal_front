@@ -26,7 +26,7 @@ interface ResourceCardProps {
   isDeleting?: boolean;
 }
 
-export function ResourceCard({ resource, categoryColor, onDelete, isDeleting = false }: ResourceCardProps) {
+export function ResourceCard({ resource,  onDelete, isDeleting = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);

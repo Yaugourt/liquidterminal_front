@@ -80,28 +80,28 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
           )}
           
           {/* Action buttons overlay */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-2 right-2 flex items-center gap-2 bg-[#051728CC] rounded p-1 z-10">
             <Button
               onClick={handleToggleRead}
               size="sm"
               variant="ghost"
-              className={`p-1 h-auto ${
+              className={`p-2 h-auto ${
                 item.isRead 
                   ? 'text-green-400 hover:text-green-300 hover:bg-green-400/10' 
                   : 'text-[#f9e370] hover:text-green-400 hover:bg-green-400/10'
               }`}
               title={item.isRead ? "Mark as unread" : "Mark as read"}
             >
-              {item.isRead ? <Check className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+              {item.isRead ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
             </Button>
             <Button
               onClick={handleRemoveItem}
               size="sm"
               variant="ghost"
-              className="p-1 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
+              className="p-2 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
               title="Remove from read list"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>

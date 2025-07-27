@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useCallback, useEffect } from "react";
+import { memo, useState, useCallback, useEffect, useRef } from "react";
 import { ProjectCard } from "./ProjectCard";
 import { ProjectModal } from "./ProjectModal";
 import { ProjectBulkActions } from "./ProjectBulkActions";
@@ -12,6 +12,7 @@ import { canCreateProject, canDeleteProject } from "@/utils/roleHelpers";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Project } from "@/services/project/types";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const ProjectsGrid = memo(function ProjectsGrid() {
   const [activeTab, setActiveTab] = useState<'all' | number>('all');
@@ -35,6 +36,65 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
   // Vérification des rôles
   const userCanCreateProject = canCreateProject(user);
   const userCanDeleteProject = canDeleteProject(user);
+
+  // Logique de scroll pour les tabs
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Vérifier si le défilement est possible
+  const checkScrollability = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      setCanScrollLeft(container.scrollLeft > 0);
+      setCanScrollRight(
+        container.scrollLeft < container.scrollWidth - container.clientWidth
+      );
+    }
+  };
+
+  useEffect(() => {
+    checkScrollability();
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkScrollability);
+      
+      // Ajouter le support de la molette horizontale
+      const handleWheel = (e: WheelEvent) => {
+        if (e.deltaX !== 0) {
+          // Si c'est déjà un scroll horizontal, le laisser passer
+          return;
+        }
+        if (e.deltaY !== 0) {
+          // Convertir le scroll vertical en horizontal
+          e.preventDefault();
+          container.scrollBy({ left: e.deltaY > 0 ? 60 : -60, behavior: 'smooth' });
+        }
+      };
+      
+      container.addEventListener('wheel', handleWheel);
+      
+      return () => {
+        container.removeEventListener('scroll', checkScrollability);
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [categories]);
+
+  // Fonctions de défilement
+  const scrollLeft = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: -150, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: 150, behavior: 'smooth' });
+    }
+  };
 
   // Synchroniser les projets locaux avec les données du serveur
   useEffect(() => {
@@ -147,39 +207,76 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
       )}
       
       {/* Tabs Navigation */}
-      <div className="border-b border-[#F9E37020]">
-        <nav className="flex gap-6 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF33] scrollbar-track-transparent">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
-              activeTab === 'all'
-                ? 'border-[#83E9FF] text-[#83E9FF]'
-                : 'border-transparent text-white hover:text-[#F9E370] hover:border-gray-600'
-            }`}
-          >
-            All Projects
-          </button>
+      <div className="flex items-center mb-4 w-full max-w-full overflow-hidden">
+        {/* Section tabs avec défilement - prend maximum d'espace disponible */}
+        <div className="flex items-center gap-1 flex-1 min-w-0 mr-4">
+          {/* Bouton scroll gauche */}
+          {canScrollLeft && (
+            <button
+              onClick={scrollLeft}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+              title="Défiler vers la gauche"
+            >
+              <ChevronLeft size={16} />
+            </button>
+          )}
           
-          {categoriesError ? (
-            <div className="text-red-400 text-sm py-2">
-              Failed to load categories
-            </div>
-          ) : (
-            categories.map((category) => (
+          {/* Container des tabs avec défilement */}
+          <div className="flex-1 min-w-0">
+            <div
+              ref={scrollContainerRef}
+              className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 w-fit"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            >
               <button
-                key={category.id}
-                onClick={() => setActiveTab(category.id)}
-                className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
-                  activeTab === category.id
-                    ? 'border-[#83E9FF] text-[#83E9FF]'
-                    : 'border-transparent text-white hover:text-[#F9E370] hover:border-gray-600'
+                onClick={() => setActiveTab('all')}
+                className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  activeTab === 'all'
+                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
                 }`}
               >
-                {category.name}
+                All Projects
               </button>
-            ))
+              
+              {categoriesError ? (
+                <div className="text-red-400 text-sm py-2 px-3">
+                  Failed to load categories
+                </div>
+              ) : (
+                categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveTab(category.id)}
+                    className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                      activeTab === category.id
+                        ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                        : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Bouton scroll droite */}
+          {canScrollRight && (
+            <button
+              onClick={scrollRight}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+              title="Défiler vers la droite"
+            >
+              <ChevronRight size={16} />
+            </button>
           )}
-        </nav>
+        </div>
+        
+      
       </div>
 
       {/* Projects Grid */}

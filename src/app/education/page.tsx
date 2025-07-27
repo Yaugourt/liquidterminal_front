@@ -12,6 +12,7 @@ import { ResourcesSection } from "@/components/education/ResourcesSection";
 import { CategoryFilter } from "@/components/education/CategoryFilter";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
+import { useEducationalCategories } from "@/services/education";
 
 // Using education service hooks instead of mock data
 
@@ -20,8 +21,16 @@ export default function EducationPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();
+  
+  // Fetch categories to set default selection
+  const { categories } = useEducationalCategories();
 
-  // Categories are now handled directly in the ResourcesSection component
+  // Set all categories as selected by default when categories are loaded
+  useEffect(() => {
+    if (categories.length > 0 && selectedCategories.length === 0) {
+      setSelectedCategories(categories.map(cat => cat.id));
+    }
+  }, [categories, selectedCategories.length]);
 
   // Transform data for the sidebar
   const sidebarInfo = hyperliquidInfo ? {
