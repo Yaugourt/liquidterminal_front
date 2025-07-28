@@ -1,14 +1,14 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchAdminUsers } from '../api';
+import { _fetchAdminUsers } from '../api';
 import { UseAdminUsersResult, AdminUsersQueryParams } from '../types';
 import { useMemo } from 'react';
 
 export function useAdminUsers(params?: AdminUsersQueryParams): UseAdminUsersResult {
   // Memoize les paramètres pour éviter les re-renders infinis
-  const _memoizedParams = useMemo(_() => {
+  const memoizedParams = useMemo(() => {
     if (!params) return undefined;
-     // eslint-disable-line @typescript-eslint/no-unused-vars
-    const cleanParams: unknown = {};
+    
+    const cleanParams: Record<string, any> = {};
     
     if (params.search && params.search.trim()) {
       cleanParams.search = params.search.trim();
@@ -35,7 +35,7 @@ export function useAdminUsers(params?: AdminUsersQueryParams): UseAdminUsersResu
   ]);
 
   const { data, isLoading, error, refetch } = useDataFetching({
-    fetchFn: () => fetchAdminUsers(memoizedParams),
+    fetchFn: () => _fetchAdminUsers(memoizedParams),
     dependencies: [
       memoizedParams?.search,
       memoizedParams?.role,

@@ -65,7 +65,7 @@ export function UserEditModal({
             <Label htmlFor="role" className="text-white font-inter text-sm">Role</Label>
             <Select
               value={editForm.role || 'USER'}
-              onValueChange={(value) => onFormChange({ ...editForm, role: value as unknown})}
+              onValueChange={(value) => onFormChange({ ...editForm, role: value as "USER" | "MODERATOR" | "ADMIN"})}
             >
               <SelectTrigger className="bg-[#051728] border-[#83E9FF4D] text-white font-inter text-sm h-8">
                 <SelectValue />

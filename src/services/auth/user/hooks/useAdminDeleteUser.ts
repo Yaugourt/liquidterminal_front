@@ -1,24 +1,24 @@
 import { useState, useCallback } from 'react';
-import { deleteAdminUser } from '../api';
+import { _deleteAdminUser } from '../api';
 import { UseAdminDeleteUserResult } from '../types';
 
 export function useAdminDeleteUser(): UseAdminDeleteUserResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const _deleteUser = useCallback(async (userId: number): Promise<boolean> => {
+  const deleteUser = useCallback(async (userId: number): Promise<boolean> => {
     try {
-      setIsLoading(true); // eslint-disable-line @typescript-eslint/no-unused-vars
+      setIsLoading(true);
       setError(null);
-      const _response = await deleteAdminUser(userId);
-       // eslint-disable-line @typescript-eslint/no-unused-vars
+      const response = await _deleteAdminUser(userId);
+      
       if (response.success) {
         return true;
       } else {
         throw new Error(response.message || 'Failed to delete user');
       }
     } catch (err) {
-      const _error = err instanceof Error ? err : new Error('Unknown error'); // eslint-disable-line @typescript-eslint/no-unused-vars
+      const error = err instanceof Error ? err : new Error('Unknown error');
       setError(error);
       throw error;
     } finally {

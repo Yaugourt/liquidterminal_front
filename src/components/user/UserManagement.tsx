@@ -21,20 +21,26 @@ export function UserManagement() {
   const [editForm, setEditForm] = useState<AdminUpdateUserInput>({});
 
   // Get all users without filters
-  const { users: allUsers, isLoading, _error, // eslint-disable-line @typescript-eslint/no-unused-vars refetch, pagination } = useAdminUsers();
+  const { users: allUsers, isLoading, error, refetch, pagination } = useAdminUsers() as {
+    users: User[];
+    isLoading: boolean;
+    error: Error | null;
+    refetch: () => Promise<void>;
+    pagination: any;
+  };
   const { updateUser, isLoading: isUpdating } = useAdminUpdateUser();
   const { deleteUser, isLoading: isDeleting } = useAdminDeleteUser();
 
   // Client-side filtering
-  const _filteredUsers = useMemo(_() => {
+  const filteredUsers = useMemo(() => {
     if (!allUsers) return [];
-     // eslint-disable-line @typescript-eslint/no-unused-vars
+    
     let filtered = allUsers;
     
     // Filter by search
     if (searchTerm.trim()) {
-      const _search = searchTerm.trim().toLowerCase(); // eslint-disable-line @typescript-eslint/no-unused-vars
-      filtered = filtered.filter(user => 
+      const search = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter((user: User) => 
         user.name?.toLowerCase().includes(search) ||
         user.email?.toLowerCase().includes(search)
       );
@@ -42,16 +48,16 @@ export function UserManagement() {
     
     // Filter by role
     if (selectedRole !== 'all') {
-      filtered = filtered.filter(user => user.role === selectedRole);
+      filtered = filtered.filter((user: User) => user.role === selectedRole);
     }
     
     return filtered;
   }, [allUsers, searchTerm, selectedRole]);
 
   // Handle user update
-  const _handleUpdateUser = async (userId: string, data: AdminUpdateUserInput) => {
+  const handleUpdateUser = async (userId: string, data: AdminUpdateUserInput) => {
     try {
-      await updateUser(parseInt(userId), data); // eslint-disable-line @typescript-eslint/no-unused-vars
+      await updateUser(parseInt(userId), data);
       toast.success('User updated successfully');
       await refetch();
       setEditingUser(null);
@@ -62,9 +68,9 @@ export function UserManagement() {
   };
 
   // Handle user deletion
-  const _handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = async (userId: string) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
-     // eslint-disable-line @typescript-eslint/no-unused-vars
+    
     try {
       await deleteUser(parseInt(userId));
       toast.success('User deleted successfully');
@@ -75,13 +81,13 @@ export function UserManagement() {
   };
 
   // Handle verified status change
-  const _handleVerifiedChange = async (userId: string, verified: boolean) => {
-    await handleUpdateUser(userId, { verified }); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const handleVerifiedChange = async (userId: string, verified: boolean) => {
+    await handleUpdateUser(userId, { verified });
   };
 
   // Handle user editing
-  const _handleEditUser = (user: User) => {
-    setEditingUser(user); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
     setEditForm({
       name: user.name,
       email: user.email,
@@ -91,22 +97,22 @@ export function UserManagement() {
   };
 
   // Handle save edit
-  const _handleSaveEdit = () => {
+  const handleSaveEdit = () => {
     if (editingUser) {
-      handleUpdateUser(editingUser.id, editForm); // eslint-disable-line @typescript-eslint/no-unused-vars
+      handleUpdateUser(editingUser.id, editForm);
     }
   };
 
   // Handle cancel edit
-  const _handleCancelEdit = () => {
-    setEditingUser(null); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const handleCancelEdit = () => {
+    setEditingUser(null);
     setEditForm({});
   };
 
   // Handle refresh
-  const _handleRefresh = async () => {
+  const handleRefresh = async () => {
     try {
-      await refetch(); // eslint-disable-line @typescript-eslint/no-unused-vars
+      await refetch();
       toast.success('Data refreshed');
     } catch (error) {
       toast.error('Error refreshing data');

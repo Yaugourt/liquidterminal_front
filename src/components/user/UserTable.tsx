@@ -27,10 +27,10 @@ export function UserTable({
   onVerifiedChange 
 }: UserTableProps) {
   // Function to get role icon
-  const _getRoleIcon = (role: string) => {
+  const getRoleIcon = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return <Shield className="w-3 h-3 text-red-400" />; // eslint-disable-line @typescript-eslint/no-unused-vars
+        return <Shield className="w-3 h-3 text-red-400" />;
       case 'MODERATOR':
         return <ShieldCheck className="w-3 h-3 text-yellow-400" />;
       default:
@@ -39,10 +39,10 @@ export function UserTable({
   };
 
   // Function to get role color
-  const _getRoleColor = (role: string) => {
+  const getRoleColor = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'text-red-400'; // eslint-disable-line @typescript-eslint/no-unused-vars
+        return 'text-red-400';
       case 'MODERATOR':
         return 'text-yellow-400';
       default:
