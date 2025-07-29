@@ -1,4 +1,4 @@
-import { UserTransaction, UserFill, NonFundingLedgerUpdate, FormattedUserTransaction } from './types';
+import { UserTransaction, UserFill } from './types';
 import { HIP2_ADDRESS } from './hooks/useTransactions';
 
 // Helper function pour déterminer from/to selon le type de transaction

@@ -14,6 +14,14 @@ import { Button } from "@/components/ui/button";
 import { TwapTableData } from "@/services/explorer/address/types";
 import Link from "next/link";
 
+// Type pour les données en temps réel
+interface RealTimeData {
+  progression: number;
+  remainingValue: number;
+  remainingAmount: number;
+  isCompleted: boolean;
+}
+
 // Composant pour les headers de tableau
 const TableHeaderButton = memo(({ header, align }: { header: string; align?: string }) => (
   <Button
@@ -52,7 +60,7 @@ const calculateRealTimeProgression = (twap: TwapTableData) => {
 };
 
 // Composant mémorisé pour la cellule Value (dynamique)
-const ValueCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, any>, format: NumberFormatType }) => {
+const ValueCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
   
@@ -64,7 +72,7 @@ const ValueCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, r
 });
 
 // Composant mémorisé pour la cellule Token (dynamique)
-const TokenCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, any>, format: NumberFormatType }) => {
+const TokenCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
   
@@ -113,7 +121,7 @@ const HashCell = memo(({ twap, copiedHash, copyToClipboard }: {
 });
 
 // Composant mémorisé pour la cellule Progression (dynamique)
-const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, any> }) => {
+const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData> }) => {
   const realTime = realTimeData.get(twap.id);
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
@@ -194,7 +202,7 @@ interface UserTwapTableProps {
 export const UserTwapTable = memo(({ twaps, isLoading, error }: UserTwapTableProps) => {
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const { format } = useNumberFormat();
-  const [realTimeData, setRealTimeData] = useState<Map<string, any>>(new Map());
+  const [realTimeData, setRealTimeData] = useState<Map<string, RealTimeData>>(new Map());
 
   // Real-time update effect
   useEffect(() => {

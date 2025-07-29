@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useVaultDetails } from "@/services/vault/hooks/useVaultDetails";
 import { VaultChartTimeframe } from "@/services/vault/types";
-import { useChartPeriod, useChartData } from '@/components/common/charts';
+
 import {
   LineChart,
   Line,

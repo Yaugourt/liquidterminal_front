@@ -131,7 +131,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       setLogoPreview("");
       setOpen(false);
       onSuccess?.(newProject || undefined);
-    } catch (error) {
+    } catch {
       toast.error("Failed to create project");
     }
   };
@@ -145,7 +145,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       setCategoryForm({ name: "", description: "" });
       setActiveTab("project"); // Switch back to project tab
       onSuccess?.();
-    } catch (error) {
+    } catch {
       toast.error("Failed to create category");
     }
   };

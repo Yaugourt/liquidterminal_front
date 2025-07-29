@@ -36,7 +36,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
   const maxBarSize = getBarSize(barCount);
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       const date = new Date(data.date);

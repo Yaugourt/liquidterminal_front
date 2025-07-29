@@ -60,7 +60,6 @@ export const getTokenName = (
   }
 };
 
-// Note: calculateValue basique existe déjà dans hooks/useTransactions.ts
 // Cette version est plus avancée avec support des tokens et config
 
 /**
@@ -123,7 +122,7 @@ export const formatAmountWithDirection = (
   
   const formattedAmount = formatNumber(parseFloat(tx.amount), config.format);
   const tokenName = getTokenName(tx.token, config.spotTokens, config.perpMarkets);
-  let tokenDisplay = `${formattedAmount} ${tokenName}`;
+  const tokenDisplay = `${formattedAmount} ${tokenName}`;
   
   // Pour les positions Short/Long, appliquer la logique de signe en tenant compte de open/close
   if (tx.isShort) {
@@ -202,4 +201,4 @@ export const getAmountColorClass = (tx: any, config: TransactionFormatterConfig)
   return 'text-white'; // Blanc par défaut
 };
 
-// Note: formatAddress, formatHash et formatNumberValue sont déjà définis dans hooks/useTransactions.ts 
+// Note: formatAddress et formatHash sont déjà définis dans hooks/useTransactions.ts 

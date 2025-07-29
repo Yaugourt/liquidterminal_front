@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PlusCircle, AlertCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
   const [isLoading, setIsLoading] = useState(false);
   
   const { addWallet } = useWallets();
-  const { privyUser } = useAuthContext();
 
   
   const handleAddWallet = async () => {
@@ -55,7 +54,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       console.error("Error adding wallet:", err);
       
       // Handle specific error cases with toast
-      let errorMessage = "Une erreur est survenue lors de l'ajout du wallet.";
+
       
       if (err.response) {
         switch (err.response.status) {

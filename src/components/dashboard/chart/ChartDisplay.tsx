@@ -18,6 +18,18 @@ import { formatLargeNumber, formatNumber } from '@/lib/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useState, useRef, useEffect } from 'react';
 
+// Types for chart data
+import { DashboardData } from "@/components/types/dashboard.types";
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    payload: DashboardData;
+  }>;
+  label?: string | number;
+}
+
 interface Props extends ChartDisplayProps {
   selectedCurrency?: "HYPE" | "USDC";
   onCurrencyChange?: (currency: "HYPE" | "USDC") => void;
@@ -91,8 +103,6 @@ export const ChartDisplay = ({
   onCurrencyChange,
   onPeriodChange,
   availablePeriods,
-  isAuctionTabActive = false,
-  isPastAuctionTabActive = false,
   selectedFeeType = "all",
   onFeeTypeChange
 }: Props) => {
@@ -104,9 +114,8 @@ export const ChartDisplay = ({
   
   const chartData = useChartData({
     data,
-    period: selectedPeriod,
-    getValue: (item: any) => item.value,
-    getTimestamp: (item: any) => item.time
+    getValue: (item: DashboardData) => item.value,
+    getTimestamp: (item: DashboardData) => item.time
   });
 
   const getTitle = () => {
@@ -157,9 +166,9 @@ export const ChartDisplay = ({
     }
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
-      let value = payload[0].value;
+      const value = payload[0].value;
       let formattedValue;
       if (selectedFilter === 'bridge') {
         formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });

@@ -47,7 +47,7 @@ export const TwapSection = memo(() => {
 
   // Filtrer les données selon le tab actif et trier par valeur décroissante
   const filteredTwaps = useMemo(() => {
-    let filtered = activeTab === "ALL" 
+    const filtered = activeTab === "ALL" 
       ? twapTableData 
       : twapTableData.filter((twap: TwapTableData) => twap.token === activeTab);
     

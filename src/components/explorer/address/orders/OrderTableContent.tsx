@@ -1,6 +1,6 @@
 import { OpenOrdersList } from "./OpenOrdersList";
 import { UserTwapTable } from "./UserTwapTable";
-import { TwapTableData } from "@/services/explorer/address/types";
+import { TwapTableData, OpenOrder } from "@/services/explorer/address/types";
 import { NumberFormatType } from "@/store/number-format.store";
 
 type OrderSubTab = 'open' | 'twap';
@@ -9,7 +9,7 @@ interface OrderTableContentProps {
   activeSubTab: OrderSubTab;
   address: string;
   openOrdersData: {
-    orders: any[];
+    orders: OpenOrder[];
     loading: boolean;
     error: Error | null;
   };
@@ -23,10 +23,8 @@ interface OrderTableContentProps {
 
 export function OrderTableContent({ 
   activeSubTab, 
-  address, 
   openOrdersData,
-  twapOrdersData,
-  format 
+  twapOrdersData
 }: OrderTableContentProps) {
   if (activeSubTab === 'open') {
     return (

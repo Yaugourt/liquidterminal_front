@@ -14,13 +14,14 @@ import { usePathname } from 'next/navigation'
 import { Gavel, Shield } from "lucide-react"
 import { useAuth } from "@/services/auth/hooks/use-auth"
 import { hasRole } from "@/utils/roleHelpers"
+import { ComponentType } from "react"
 
 // Define navigation groups
 interface NavigationItem {
     name: string;
     href: string;
     icon?: string | null;
-    IconComponent?: any;
+    IconComponent?: ComponentType<{ className?: string }>;
     children?: NavigationItem[];
 }
 

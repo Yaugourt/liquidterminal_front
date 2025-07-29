@@ -65,8 +65,6 @@ export function AuctionTable() {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  // Récupère la locale depuis le format utilisateur
-  const locale = format === 'FR' ? 'fr-FR' : format === 'EU' ? 'de-DE' : 'en-US';
 
   const handleCopy = async (address: string) => {
     try {
@@ -161,8 +159,8 @@ export function AuctionTable() {
             {sortedAuctions.length === 0 ? (
               <EmptyState />
             ) : (
-              sortedAuctions.map((auction, idx) => (
-                <TableRow key={idx} className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer">
+              sortedAuctions.map((auction) => (
+                <TableRow key={auction.tokenId} className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer">
                   <TableCell className="py-2 pl-4 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">{auction.name}</TableCell>
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">

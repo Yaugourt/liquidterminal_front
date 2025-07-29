@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+
 
 type TabType = 'validators' | 'vaults';
 

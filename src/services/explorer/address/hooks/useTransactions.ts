@@ -26,17 +26,6 @@ export const formatNumberValue = (value: string | number | null | undefined, for
   return formatNumber(num, format);
 };
 
-export const calculateValue = (amount: string | undefined, price: string | undefined, format: any) => {
-  if (!amount || !price) return '-';
-  const amountNum = parseFloat(amount);
-  const priceNum = parseFloat(price);
-  if (isNaN(amountNum) || isNaN(priceNum)) return '-';
-  return formatNumber(amountNum * priceNum, format, {
-    currency: '$',
-    showCurrency: true
-  });
-};
-
 export const useTransactions = (address: string): UseTransactionsResult => {
   const { data, isLoading, error } = useDataFetching<FormattedUserTransaction[]>({
     fetchFn: () => getUserTransactions(address),

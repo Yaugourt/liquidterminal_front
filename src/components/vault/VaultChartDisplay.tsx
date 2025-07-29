@@ -89,7 +89,6 @@ export const VaultChartDisplay = ({
   availableTimeframes,
   chartHeight
 }: VaultChartDisplayProps) => {
-  const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
   
   // Transform data for the selected chart type
@@ -123,7 +122,7 @@ export const VaultChartDisplay = ({
     return `$${value.toFixed(0)}`;
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const value = payload[0].value;

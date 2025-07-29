@@ -16,7 +16,7 @@ const StatItem = memo(({ label, value }: StatItemProps) => (
 
 StatItem.displayName = 'StatItem';
 
-export const TokensHeader = memo(({ type, title, totalVolume, dailyFees, openInterest }: TokensHeaderProps) => {
+export const TokensHeader = memo(({ type, totalVolume, dailyFees, openInterest }: TokensHeaderProps) => {
     const secondaryMetric = type === "spot" 
         ? { label: "Daily Fees", value: dailyFees || 0 }
         : { label: "Open Interest", value: openInterest || 0 };

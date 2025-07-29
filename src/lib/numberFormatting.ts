@@ -174,8 +174,8 @@ export function formatFullNumber(value: number | undefined | null, options: { pr
   return `${prefixWithSpace}${parts.join('.')}`;
 }
 
-export function formatFullNumberWithCurrency(value: number | undefined | null, options: { prefix?: string, currency?: string } = {}): string {
-  const { prefix = '', currency = '$' } = options;
+export function formatFullNumberWithCurrency(value: number | undefined | null, options: { currency?: string } = {}): string {
+  const { currency = '$' } = options;
   
   // Gérer les cas où value est undefined ou null
   if (value === undefined || value === null) {
@@ -214,15 +214,11 @@ export function formatNumber(
   } = options;
 
   const formatConfig = NUMBER_FORMATS[format];
-  // PATCH: Utilise la locale du format pour le formatage natif si besoin
-  const locale = formatConfig.locale || 'en-US';
   
   // Règle: Si le nombre dépasse 1 million, enlever toutes les décimales
   const finalMaximumFractionDigits = Math.abs(value) >= 1_000_000 ? 0 : maximumFractionDigits;
-  const finalMinimumFractionDigits = Math.abs(value) >= 1_000_000 ? 0 : minimumFractionDigits;
-  
-  // Formatter le nombre en chaîne avec les décimales appropriées
-  let parts = Math.abs(value).toFixed(finalMaximumFractionDigits).split('.');
+  // Formatter le nombre complet avec séparateur de milliers
+  const parts = Math.abs(value).toFixed(finalMaximumFractionDigits).split('.');
   
   // Ajouter les séparateurs de milliers
   if (formatConfig.thousandsSeparator) {
@@ -305,12 +301,11 @@ export function formatPrice(
   price: number,
   format: NumberFormatType,
   options: {
-    prefix?: string;
     showCurrency?: boolean;
     currency?: string;
   } = {}
 ): string {
-  const { prefix = '$', showCurrency = true, currency = '$' } = options;
+  const { showCurrency = true, currency = '$' } = options;
   
   if (isNaN(price) || price === 0) {
     return showCurrency ? `${currency}0.00` : '0.00';

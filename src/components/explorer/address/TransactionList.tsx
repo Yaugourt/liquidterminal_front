@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/numberFormatting';
-import { formatAddress, formatHash, formatNumberValue, calculateValue, HIP2_ADDRESS, isHip2Address } from '@/services/explorer/address';
+import { formatAddress, formatHash, isHip2Address } from '@/services/explorer/address';
 import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";
 import { 
@@ -23,7 +23,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
   const { format } = useNumberFormat();
   
   // Récupération des données de marché pour les prix
-  const { data: spotTokens, isLoading: spotLoading } = useSpotTokens({ limit: 100 });
+  const { data: spotTokens } = useSpotTokens({ limit: 100 });
   const { data: perpMarkets } = usePerpMarkets({ limit: 1000 });
   
   // Configuration pour les formatters
@@ -190,7 +190,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#051728]">
-            {paginatedTxs.map((tx, index) => {
+            {paginatedTxs.map((tx) => {
               const tokenName = getTokenName(tx.token, spotTokens, perpMarkets);
               const tokenPrice = getTokenPrice(tokenName, spotTokens);
               

@@ -4,7 +4,7 @@ export type ChartPeriod = '24h' | '7d' | '30d' | '90d' | '1y' | 'allTime';
 export interface ChartDataPoint {
   timestamp: number;
   value: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ChartProps {
@@ -24,10 +24,33 @@ export interface ChartProps {
 export interface TooltipProps {
   active?: boolean;
   payload?: Array<{
-    value: any;
+    value: number;
     payload: ChartDataPoint;
   }>;
   label?: string | number;
+}
+
+// Types for Recharts props
+interface XAxisProps {
+  dataKey?: string;
+  tickFormatter?: (value: unknown) => string;
+  [key: string]: unknown;
+}
+
+interface YAxisProps {
+  tickFormatter?: (value: number) => string;
+  [key: string]: unknown;
+}
+
+interface GridProps {
+  strokeDasharray?: string;
+  [key: string]: unknown;
+}
+
+interface LineProps {
+  type?: "monotone" | "linear" | "step" | "stepBefore" | "stepAfter" | "basis" | "basisOpen" | "basisClosed" | "natural" | "monotoneX" | "monotoneY" | "monotoneX" | "monotoneY";
+  dataKey?: string;
+  [key: string]: unknown;
 }
 
 export interface BaseChartProps {
@@ -38,10 +61,10 @@ export interface BaseChartProps {
   width?: string | number;
   formatValue?: (value: number) => string;
   formatTime?: (time: string | number) => string;
-  xAxisProps?: any;
-  yAxisProps?: any;
-  gridProps?: any;
-  lineProps?: any;
+  xAxisProps?: XAxisProps;
+  yAxisProps?: YAxisProps;
+  gridProps?: GridProps;
+  lineProps?: LineProps;
   children?: {
     loading?: React.ReactNode;
     empty?: React.ReactNode;
@@ -54,7 +77,7 @@ export interface BaseTooltipProps {
   active?: boolean;
   payload?: Array<{
     value: number;
-    [key: string]: any;
+    [key: string]: unknown;
   }>;
   label?: string | number;
   formatValue?: (value: number) => string;

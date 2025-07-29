@@ -128,29 +128,9 @@ export function ValidatorsTable() {
     }
   }, [activeTab, validatorSubTab, updateStakingParams, updateUnstakingParams, updateVaultsParams]);
 
-  // Get current data based on active tab
-  const isLoading = activeTab === 'validators' ? validatorsLoading : vaultsLoading;
-  const error = activeTab === 'validators' ? validatorsError : vaultsError;
-
   // Calculate pagination for validators (client-side) - only for 'all' tab
   const startIndex = currentPage * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-
-  const getHeaderInfo = () => {
-    if (activeTab === 'validators') {
-      return {
-        title: 'Validators',
-        subtitle: `${stats.active} active of ${stats.total} validators`
-      };
-    } else {
-      return {
-        title: 'Vaults',
-        subtitle: `${vaultsTotalCount} open vaults`
-      };
-    }
-  };
-
-  const headerInfo = getHeaderInfo();
   
   // Calculate total items based on active tab and validator sub-tab
   const getTotalItems = () => {

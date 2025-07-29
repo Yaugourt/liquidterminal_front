@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Copy, Check, Database } from "lucide-react";
 import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
@@ -14,7 +14,7 @@ interface VaultDepositListProps {
 
 export function VaultDepositList({ address }: VaultDepositListProps) {
   const { enrichedDeposits: rows, isLoading, error } = useVaultDeposits(address);
-  const { vaults, isLoading: vaultsLoading } = useVaults();
+  const { isLoading: vaultsLoading } = useVaults();
   const { format } = useNumberFormat();
 
   // Pagination state

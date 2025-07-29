@@ -1,17 +1,15 @@
 import { useMemo } from 'react';
-import { ChartPeriod, ChartDataPoint } from '../types/chart';
+import {  ChartDataPoint } from '../types/chart';
 
 interface ChartDataConfig<T> {
   data: T[];
-  period: ChartPeriod;
   getValue: (item: T) => number;
   getTimestamp: (item: T) => number | string;
-  additionalData?: (item: T) => Record<string, any>;
+  additionalData?: (item: T) => Record<string, unknown>;
 }
 
 export function useChartData<T>({
   data,
-  period,
   getValue,
   getTimestamp,
   additionalData

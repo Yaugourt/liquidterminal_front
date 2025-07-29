@@ -7,6 +7,15 @@ import Link from "next/link";
 import { PriceChange } from '@/components/common';
 import { Copy, Check } from "lucide-react";
 
+// Extended validator type for the component
+interface ExtendedValidator {
+  name: string;
+  apr: number;
+  stake: number;
+  validator?: string;
+  address?: string;
+}
+
 interface PaginationProps {
   total?: number;
   page?: number;
@@ -83,7 +92,7 @@ export const AuctionsTable = memo(({
     },
     {
       header: "Price",
-      accessor: (item: any) => {
+      accessor: (item: AuctionsTableProps["auctions"][0]) => {
         const amount = parseFloat(item.deployGasAbs);
         return (
           <span>{amount.toFixed(2)} {item.currency}</span>
@@ -128,34 +137,37 @@ export const ValidatorsTable = memo(({
     }
   };
 
-  const ValidatorNameWithCopy = ({ validator }: { validator: any }) => (
-    <div className="flex items-center gap-1.5">
-      <Link 
-        href={`/explorer/address/${validator.validator || validator.address}`}
-        className="text-white font-inter hover:text-[#83E9FF] transition-colors"
-      >
-        {validator.name}
-      </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          copyValidatorToClipboard(validator.validator || validator.address);
-        }}
-        className="group p-1 rounded transition-colors"
-      >
-        {copiedValidatorAddress === (validator.validator || validator.address) ? (
-          <Check className="h-3.5 w-3.5 text-green-500" />
-        ) : (
-          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
-        )}
-      </button>
-    </div>
-  );
+  const ValidatorNameWithCopy = ({ validator }: { validator: ExtendedValidator }) => {
+    const address = validator.validator || validator.address || validator.name;
+    return (
+      <div className="flex items-center gap-1.5">
+        <Link 
+          href={`/explorer/address/${address}`}
+          className="text-white font-inter hover:text-[#83E9FF] transition-colors"
+        >
+          {validator.name}
+        </Link>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            copyValidatorToClipboard(address);
+          }}
+          className="group p-1 rounded transition-colors"
+        >
+          {copiedValidatorAddress === address ? (
+            <Check className="h-3.5 w-3.5 text-green-500" />
+          ) : (
+            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+          )}
+        </button>
+      </div>
+    );
+  };
 
   const columns = useMemo(() => [
     {
       header: "Name",
-      accessor: (item: any) => (
+      accessor: (item: ExtendedValidator) => (
         <ValidatorNameWithCopy validator={item} />
       ),
       align: "left",
@@ -175,7 +187,7 @@ export const ValidatorsTable = memo(({
       align: "right",
       className: "w-[120px] px-4 pr-6 text-right"
     },
-  ] as Column<any>[], [format, copiedValidatorAddress, copyValidatorToClipboard]);
+  ] as Column<ExtendedValidator>[], [format, copiedValidatorAddress, copyValidatorToClipboard]);
 
   return (
     <DataTable

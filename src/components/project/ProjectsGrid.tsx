@@ -122,7 +122,7 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
         toast.error("Failed to delete project");
         refetch();
       }
-    } catch (error) {
+    } catch {
       // Rollback si erreur
       toast.error("Failed to delete project");
       refetch();
@@ -144,7 +144,7 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
         toast.error("Failed to delete projects");
         refetch();
       }
-    } catch (error) {
+    } catch {
       // Rollback si erreur
       toast.error("Failed to delete projects");
       refetch();

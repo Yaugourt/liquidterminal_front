@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Copy, Check, Clock, Hash, User, FileText } from "lucide-react";
-import { format } from "date-fns";
+
 import { BlockHeaderProps } from "@/components/types/explorer.types";
 import Link from "next/link";
 import { useDateFormat } from "@/store/date-format.store";

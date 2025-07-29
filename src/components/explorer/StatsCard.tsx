@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, Timer, Zap, Activity, Coins, Wallet } from "lucide-react";
+import { Users, Timer, Zap, Activity, Wallet } from "lucide-react";
 import { ExplorerStatsCardProps } from "@/components/types/explorer.types";
 import Image from "next/image";
 

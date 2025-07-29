@@ -36,7 +36,6 @@ export {
   formatAddress,
   formatHash,
   formatNumberValue,
-  calculateValue,
   HIP2_ADDRESS,
 } from './hooks';
 

@@ -180,7 +180,7 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
           </TableHeader>
           <TableBody className="bg-[#051728]">
             {trendingTokens && trendingTokens.length > 0 ? (
-              trendingTokens.map((token, index) => (
+              trendingTokens.map((token) => (
                 <TableRow
                   key={token.name}
                   className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors h-[1fr]"

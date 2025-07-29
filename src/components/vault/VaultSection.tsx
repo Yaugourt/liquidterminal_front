@@ -6,13 +6,13 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { useState, useCallback } from "react";
 import { Pagination } from "@/components/common/pagination";
 import { VaultTableContent } from ".";
-import { formatNumber } from "@/lib/numberFormatting";
+
 
 export function VaultSection() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   
-  const { vaults, totalTvl, totalCount, isLoading, error, updateParams } = useVaults({ 
+  const { vaults, totalCount, isLoading, error, updateParams } = useVaults({ 
     page: currentPage + 1,
     limit: rowsPerPage,
     sortBy: 'tvl'

@@ -97,8 +97,7 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
       return isActive;
     });
 
-    // Log excluded orders for debugging
-    const excludedOrders = allHypeOrders.filter(order => order.ended || order.error);
+
 
     let totalBuyValue = 0;
     let totalSellValue = 0;

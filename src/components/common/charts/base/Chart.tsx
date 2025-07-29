@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  TooltipProps,
 } from 'recharts';
 
 export function Chart({
@@ -43,11 +44,11 @@ export function Chart({
           {...yAxisProps}
         />
         <Tooltip 
-          content={(props: any) => {
+          content={(props: TooltipProps<number, string>) => {
             if (children?.tooltip && props.payload) {
               return children.tooltip({
                 active: props.active,
-                payload: props.payload.map((item: any) => ({
+                payload: props.payload.map((item) => ({
                   value: item.value ?? item.payload.value,
                   payload: item.payload
                 })),

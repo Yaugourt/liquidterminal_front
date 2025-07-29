@@ -164,7 +164,7 @@ export function DistributionSection() {
         <div className="flex-1 pl-4">
           <div className="h-full flex flex-col justify-center">
             <div className="grid grid-cols-2 gap-2 max-h-full">
-              {distributionData.map((asset, index) => (
+              {distributionData.map((asset) => (
                 <div key={asset.name} className="flex items-center gap-2 p-1.5 rounded-md hover:bg-[#FFFFFF0A] transition-colors">
                   <div 
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"

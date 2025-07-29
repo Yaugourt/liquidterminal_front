@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 
 import { Copy, Check, Loader2, Database } from "lucide-react";
-import { format } from "date-fns";
+
 import { Pagination } from "@/components/common/pagination";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
 import { useDateFormat } from "@/store/date-format.store";
@@ -14,7 +14,14 @@ import { formatNumber } from "@/lib/numberFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 // DataTable component similar to ValidatorsVaults
-function DataTable({ isLoading, error, emptyMessage, children }: any) {
+interface DataTableProps {
+  isLoading: boolean;
+  error: Error | null;
+  emptyMessage: string;
+  children: React.ReactNode;
+}
+
+function DataTable({ isLoading, error, emptyMessage, children }: DataTableProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[300px]">

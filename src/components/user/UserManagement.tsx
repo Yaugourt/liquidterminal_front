@@ -29,7 +29,7 @@ export function UserManagement() {
     pagination: any;
   };
   const { updateUser, isLoading: isUpdating } = useAdminUpdateUser();
-  const { deleteUser, isLoading: isDeleting } = useAdminDeleteUser();
+  const { deleteUser } = useAdminDeleteUser();
 
   // Client-side filtering
   const filteredUsers = useMemo(() => {
@@ -62,7 +62,7 @@ export function UserManagement() {
       await refetch();
       setEditingUser(null);
       setEditForm({});
-    } catch (error) {
+    } catch {
       toast.error('Error updating user');
     }
   };
@@ -75,7 +75,7 @@ export function UserManagement() {
       await deleteUser(parseInt(userId));
       toast.success('User deleted successfully');
       await refetch();
-    } catch (error) {
+    } catch {
       toast.error('Error deleting user');
     }
   };
@@ -114,7 +114,7 @@ export function UserManagement() {
     try {
       await refetch();
       toast.success('Data refreshed');
-    } catch (error) {
+    } catch {
       toast.error('Error refreshing data');
     }
   };

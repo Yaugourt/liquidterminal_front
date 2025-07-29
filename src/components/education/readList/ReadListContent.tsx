@@ -1,4 +1,4 @@
-import { Plus, BookOpen, Search, Filter } from "lucide-react";
+import { Plus, BookOpen, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ReadList, ReadListItem } from "@/services/education";
@@ -58,7 +58,7 @@ export function ReadListContent({
   }, [items]);
 
   // Load link previews in batch
-  const { isLoading: previewsLoading, getPreview } = useLinkPreviewsBatch(urls);
+  const { getPreview } = useLinkPreviewsBatch(urls);
   
 
 

@@ -35,7 +35,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
   const { user } = useAuthContext();
   
   // Load link preview
-  const { data: preview, isLoading: previewLoading, error: previewError } = useLinkPreview(
+  const { data: preview, isLoading: previewLoading } = useLinkPreview(
     resource.url && resource.url.startsWith('http') ? resource.url : ''
   );
 

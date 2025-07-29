@@ -215,7 +215,7 @@ export const useWallets = create<WalletsState>()(
                 
                 // Ajouter le nouveau wallet en respectant l'ordre sauvegardé
                 const currentWallets = get().wallets;
-                let newWallets = [...currentWallets, newWallet];
+                const newWallets = [...currentWallets, newWallet];
                 
                 // Vérifier s'il y a un ordre sauvegardé
                 try {

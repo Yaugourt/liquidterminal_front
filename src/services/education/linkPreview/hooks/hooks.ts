@@ -57,7 +57,7 @@ export const useLinkPreviewsBatch = (urls: string[]): UseLinkPreviewBatchResult 
                 } else {
                   individualErrors.set(url, response.error || 'Failed to load preview');
                 }
-              } catch (err) {
+              } catch {
                 individualErrors.set(url, 'Network error');
               }
             })
@@ -73,7 +73,7 @@ export const useLinkPreviewsBatch = (urls: string[]): UseLinkPreviewBatchResult 
 
           return { success: true, results };
         }
-      } catch (err) {
+      } catch {
         // If everything fails, return error for all URLs
         const results = urls.map(url => ({
           url,

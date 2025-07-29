@@ -26,8 +26,7 @@ export function WalletRecentFillsSection() {
   const { 
     data: allFills,
     isLoading,
-    error,
-    refetch
+    error
   } = useUserFills(activeWallet?.address, {
     pageSize: 1000, // Récupérer beaucoup de fills pour la pagination côté client
     refreshInterval: 30000

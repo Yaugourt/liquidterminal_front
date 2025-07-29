@@ -9,7 +9,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
-import { walletLoadMessages, walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
+import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
 import {
   DndContext,
   closestCenter,
@@ -137,7 +137,7 @@ export function WalletTabs() {
           const newOrderIds = newOrder.map(wallet => wallet.id);
           reorderWallets(newOrderIds);
           walletReorderMessages.success();
-        } catch (error) {
+        } catch {
           walletReorderMessages.error();
         }
       }
@@ -156,7 +156,7 @@ export function WalletTabs() {
       if (wallet) {
         walletActiveMessages.success(wallet.name || 'Unnamed Wallet');
       }
-    } catch (error) {
+    } catch {
       walletActiveMessages.error();
     }
   };

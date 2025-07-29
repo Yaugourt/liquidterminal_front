@@ -5,6 +5,9 @@ import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/dateFormatting";
 import { useState } from "react";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { NumberFormatType } from "@/store/number-format.store";
+import { ValidatorDelegation } from "@/services/validator/types/validators";
+import { FormattedDelegatorHistoryItem, FormattedDelegatorRewardItem } from "@/services/validator/types/delegator";
 
 type StakingSubTab = 'delegations' | 'history' | 'rewards';
 
@@ -41,21 +44,21 @@ const CopyButton = ({ text }: { text: string }) => {
 interface StakingTableContentProps {
   activeSubTab: StakingSubTab;
   delegationsData: {
-    delegations: any[];
+    delegations: ValidatorDelegation[];
     loading: boolean;
     error: Error | null;
   };
   historyData: {
-    history: any[];
+    history: FormattedDelegatorHistoryItem[];
     loading: boolean;
     error: Error | null;
   };
   rewardsData: {
-    rewards: any[];
+    rewards: FormattedDelegatorRewardItem[];
     loading: boolean;
     error: Error | null;
   };
-  format: any;
+  format: NumberFormatType;
   hypePrice: number | null;
 }
 
@@ -85,7 +88,7 @@ export function StakingTableContent({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {delegationsData.delegations.map((delegation: any, index: number) => (
+          {delegationsData.delegations.map((delegation: ValidatorDelegation, index: number) => (
             <TableRow key={`${delegation.validator}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
               <TableCell className="py-3 px-4">
                 <div className="flex items-center gap-2">
@@ -151,7 +154,7 @@ export function StakingTableContent({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {historyData.history.map((tx: any) => (
+          {historyData.history.map((tx: FormattedDelegatorHistoryItem) => (
             <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
               <TableCell className="py-3 px-4">
                 <div className="flex items-center gap-2">
@@ -229,7 +232,7 @@ export function StakingTableContent({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rewardsData.rewards.map((reward: any, index: number) => (
+          {rewardsData.rewards.map((reward: FormattedDelegatorRewardItem, index: number) => (
             <TableRow key={`${reward.source}-${reward.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
               <TableCell className="py-3 px-4">
                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${

@@ -4,7 +4,6 @@ import { ENDPOINTS, API_URLS } from '../api/constants';
 import { 
   VaultDepositsRequest, 
   VaultDepositsResponse,
-  VaultSummary,
   VaultsParams,
   VaultsResponse,
   VaultResponse,

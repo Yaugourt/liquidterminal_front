@@ -47,7 +47,7 @@ export function useSpotTokens({
           sortBy,
           sortOrder
         });
-        let filteredData = response.data.filter(token => strictList.includes(token.name.trim()));
+        const filteredData = response.data.filter(token => strictList.includes(token.name.trim()));
         const start = (page - 1) * limit;
         const end = start + limit;
         const paginated = filteredData.slice(start, end);

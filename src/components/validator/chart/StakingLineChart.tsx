@@ -14,7 +14,6 @@ interface StakingLineChartProps {
 
 
 export const StakingLineChart = memo(function StakingLineChart({ 
-  height = 200,
   period = '7d'
 }: StakingLineChartProps) {
   const { format } = useNumberFormat();
@@ -24,7 +23,7 @@ export const StakingLineChart = memo(function StakingLineChart({
   const { chartData: filteredData, isLoading, error } = useUnstakingStatsForChartWithPeriod(period);
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const date = new Date(data.date);

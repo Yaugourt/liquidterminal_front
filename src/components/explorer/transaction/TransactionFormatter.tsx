@@ -1,5 +1,4 @@
-import { ExtendedTransactionDetails, FormattedTransactionData, FormattedTransactionSection, FormattedTransactionField } from '@/services/explorer/types';
-import { format } from 'date-fns';
+import { ExtendedTransactionDetails, FormattedTransactionData, FormattedTransactionSection, TransactionAction } from '@/services/explorer/types';
 
 export class TransactionFormatter {
   static formatTransaction(transaction: ExtendedTransactionDetails): FormattedTransactionData {
@@ -69,10 +68,11 @@ export class TransactionFormatter {
     };
   }
   
-  private static formatOrderAction(action: any, section: FormattedTransactionSection) {
+  private static formatOrderAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.orders && action.orders.length > 0) {
-      action.orders.forEach((order: any, index: number) => {
-        const orderPrefix = action.orders.length > 1 ? `Order ${index + 1} - ` : '';
+      const orders = action.orders;
+      orders.forEach((order, index: number) => {
+        const orderPrefix = orders.length > 1 ? `Order ${index + 1} - ` : '';
         
         section.fields.push(
           {
@@ -135,7 +135,7 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatTwapOrderAction(action: any, section: FormattedTransactionSection) {
+  private static formatTwapOrderAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.twap) {
       const twap = action.twap;
       section.fields.push(
@@ -173,10 +173,11 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatCancelAction(action: any, section: FormattedTransactionSection) {
+  private static formatCancelAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.cancels && action.cancels.length > 0) {
-      action.cancels.forEach((cancel: any, index: number) => {
-        const cancelPrefix = action.cancels.length > 1 ? `Cancel ${index + 1} - ` : '';
+      const cancels = action.cancels;
+      cancels.forEach((cancel, index: number) => {
+        const cancelPrefix = cancels.length > 1 ? `Cancel ${index + 1} - ` : '';
         section.fields.push(
           {
             label: `${cancelPrefix}Asset`,
@@ -193,7 +194,7 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatTransferAction(action: any, section: FormattedTransactionSection) {
+  private static formatTransferAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.amount) {
       section.fields.push({
         label: "Amount",
@@ -227,7 +228,7 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatSpotTransferAction(action: any, section: FormattedTransactionSection) {
+  private static formatSpotTransferAction(action: TransactionAction, section: FormattedTransactionSection) {
     this.formatTransferAction(action, section);
     
     if (action.signatureChainId) {
@@ -247,7 +248,7 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatSpotDeployAction(action: any, section: FormattedTransactionSection) {
+  private static formatSpotDeployAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.registerToken2) {
       const register = action.registerToken2;
       
@@ -328,11 +329,11 @@ export class TransactionFormatter {
     }
   }
   
-  private static formatAccountClassTransferAction(action: any, section: FormattedTransactionSection) {
+  private static formatAccountClassTransferAction(action: TransactionAction, section: FormattedTransactionSection) {
     this.formatTransferAction(action, section);
   }
   
-  private static formatStakingAction(action: any, section: FormattedTransactionSection) {
+  private static formatStakingAction(action: TransactionAction, section: FormattedTransactionSection) {
     if (action.validator) {
       section.fields.push({
         label: "Validator",
@@ -344,7 +345,7 @@ export class TransactionFormatter {
     this.formatTransferAction(action, section);
   }
   
-  private static formatGenericAction(action: any, section: FormattedTransactionSection) {
+  private static formatGenericAction(action: TransactionAction, section: FormattedTransactionSection) {
     // Afficher toutes les propriétés de l'action sauf 'type'
     Object.keys(action).forEach(key => {
       if (key !== 'type') {

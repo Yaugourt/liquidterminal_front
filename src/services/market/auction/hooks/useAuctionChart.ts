@@ -2,10 +2,7 @@ import { useMemo } from 'react';
 import { ChartPeriod } from '@/components/common/charts';
 import { useAuctions } from '../hooks/useAuctions';
 
-interface AuctionChartData {
-  time: number;
-  value: number;
-}
+
 
 export const useAuctionChart = (period: ChartPeriod, currency: "HYPE" | "USDC") => {
   // Utiliser le même hook que le dashboard

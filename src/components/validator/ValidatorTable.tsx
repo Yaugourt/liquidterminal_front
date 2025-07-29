@@ -14,7 +14,7 @@ interface ValidatorTableProps {
 
 export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   const validatorSubTab = activeTab;
-  const { validators, stats, isLoading: validatorsLoading, error: validatorsError } = useValidators();
+  const { validators, isLoading: validatorsLoading, error: validatorsError } = useValidators();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10); 
   

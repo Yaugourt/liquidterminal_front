@@ -48,9 +48,7 @@ export function StakingTable({ address }: StakingTableProps) {
 
   // Hook pour le résumé des délégations de l'utilisateur
   const { 
-    summary: delegatorSummary, 
-    isLoading: delegatorSummaryLoading, 
-    error: delegatorSummaryError 
+    summary: delegatorSummary
   } = useDelegatorSummary(address);
 
   // Hook pour le prix HYPE en temps réel
@@ -59,7 +57,6 @@ export function StakingTable({ address }: StakingTableProps) {
   // Hook pour l'historique des transactions de staking avec pagination (backup)
   const { 
     validations: allStakingHistory, 
-    total: historyTotal,
     isLoading: historyLoading, 
     error: historyError,
     updateParams: updateHistoryParams

@@ -26,7 +26,6 @@ export function Header({
     showFees = false
 }: HeaderProps) {
     const { title } = usePageTitle();
-    const displayTitle = customTitle || title;
     const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
     const { price: hypePrice, lastSide, isLoading: hypePriceLoading } = useHypePrice();
     const { buyPressure, isLoading: buyPressureLoading } = useHypeBuyPressure();

@@ -5,21 +5,6 @@ import { OverviewCardProps } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES } from "./constants";
 
 export const OverviewCard = memo(({ balances, isLoading, formatCurrency }: OverviewCardProps) => {
-    // Fonction pour obtenir l'icône selon le type
-    const getIcon = (type: string) => {
-        switch (type) {
-            case "spot":
-                return <Coins size={16} className="text-[#f9e370]" />;
-            case "vault":
-                return <Vault size={16} className="text-[#f9e370]" />;
-            case "perps":
-                return <TrendingUp size={16} className="text-[#f9e370]" />;
-            case "staked":
-                return <DollarSign size={16} className="text-[#f9e370]" />;
-            default:
-                return <Wallet size={16} className="text-[#f9e370]" />;
-        }
-    };
 
     const balanceItems = [
         { type: "spot", label: "Spot", value: balances.spotBalance },

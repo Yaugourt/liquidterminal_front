@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, AuctionTiming } from '../types';

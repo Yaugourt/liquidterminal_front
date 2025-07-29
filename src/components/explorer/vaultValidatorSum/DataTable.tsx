@@ -1,7 +1,14 @@
 import { Loader2, Database } from "lucide-react";
 import { Table } from "@/components/ui/table";
 
-export function DataTable({ isLoading, error, emptyMessage, children }: any) {
+interface DataTableProps {
+  isLoading: boolean;
+  error: Error | null;
+  emptyMessage: string;
+  children: React.ReactNode;
+}
+
+export function DataTable({ isLoading, error, emptyMessage, children }: DataTableProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[300px]">

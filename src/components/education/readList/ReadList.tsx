@@ -43,8 +43,8 @@ const useReadListInitialization = () => {
         }
         
         await initialize({ privyUserId: privyUser.id, username, privyToken: token });
-      } catch (err: any) {
-        setInitError(err?.message || "Failed to initialize read lists");
+      } catch (err: unknown) {
+        setInitError("Failed to initialize read lists");
       } finally {
         setIsInitializing(false);
       }

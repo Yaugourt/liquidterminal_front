@@ -93,7 +93,6 @@ export const AuctionChart = ({
   chartHeight
 }: AuctionChartProps) => {
   const { format } = useNumberFormat();
-  const { formatValue } = useChartFormat();
   
   const chartData = useChartData({
     data,
@@ -102,12 +101,7 @@ export const AuctionChart = ({
     getTimestamp: (item: any) => item.time
   });
 
-  const formatOptions = {
-    currency: 'USD',
-    showCurrency: selectedCurrency === 'USDC',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: selectedCurrency === 'USDC' ? 2 : 0
-  };
+
 
   const formatYAxisValue = (value: number) => {
     if (selectedCurrency === 'USDC') {
@@ -118,7 +112,7 @@ export const AuctionChart = ({
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      let value = payload[0].value;
+      const value = payload[0].value;
       let formattedValue;
       if (selectedCurrency === 'USDC') {
         formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });

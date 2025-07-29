@@ -7,7 +7,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useEducationalCategories } from "@/services/education";
 import { useEducationalResourcesByCategories } from "@/services/education/hooks/useEducationalResourcesByCategories";
 import { useDeleteEducationalResource } from "@/services/education";
-import { EducationalCategory, EducationalResource } from "@/services/education/types";
+import { EducationalCategory, EducationalResource, EducationalResourceCategory } from "@/services/education/types";
 import { toast } from "sonner";
 
 interface ResourcesSectionProps {
@@ -101,11 +101,11 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
     .filter(cat => selectedCategoryIds.length === 0 || selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = localResources
-        .filter(resource => resource.categories.some((resCat: any) => resCat.category.id === category.id))
-        .map((resource: any) => ({
+        .filter(resource => resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id))
+        .map((resource: EducationalResource) => ({
           id: resource.id.toString(),
           title: resource.url,
-          description: resource.categories.map((cat: any) => cat.category.name).join(', '),
+          description: resource.categories.map((cat: EducationalResourceCategory) => cat.category.name).join(', '),
           url: resource.url,
           image: '/api/placeholder/400/200' // Default image since API doesn't provide images
         }));

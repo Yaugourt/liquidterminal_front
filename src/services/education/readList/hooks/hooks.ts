@@ -74,36 +74,7 @@ const createFetchHook = <T>(
   });
 };
 
-// Factory for complex mutation hooks
-const createComplexMutationHook = <TInput, TOutput>(
-  mutationFn: (input: TInput) => Promise<TOutput>,
-  defaultErrorMessage: string,
-  validationFn?: (input: TInput) => string[]
-) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const mutate = useCallback(async (input: TInput): Promise<TOutput> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      if (validationFn) {
-        const validationErrors = validationFn(input);
-        if (validationErrors.length > 0) throw new Error(validationErrors.join(', '));
-      }
-      const result = await mutationFn(input);
-      return result;
-    } catch (error) {
-      const message = handleApiError(error, defaultErrorMessage);
-      setError(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [mutationFn, validationFn, defaultErrorMessage]);
-
-  return { mutate, isLoading, error };
-};
 
 // ============================================
 // HOOKS POUR LES READ LISTS

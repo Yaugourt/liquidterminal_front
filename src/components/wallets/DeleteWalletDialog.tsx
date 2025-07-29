@@ -24,7 +24,6 @@ export function DeleteWalletDialog({
   const [isLoading, setIsLoading] = useState(false);
   
   const { removeWallet } = useWallets();
-  const { privyUser } = useAuthContext();
 
   const handleConfirmDelete = async () => {
     if (walletToDelete) {

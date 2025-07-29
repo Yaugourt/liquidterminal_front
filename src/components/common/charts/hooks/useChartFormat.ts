@@ -3,7 +3,6 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '../types/chart';
 
 interface FormatOptions {
-  currency?: string;
   showCurrency?: boolean;
   minimumFractionDigits?: number;
   maximumFractionDigits?: number;
@@ -14,7 +13,6 @@ export function useChartFormat() {
 
   const formatValue = useCallback((value: number, options: FormatOptions = {}) => {
     const {
-      currency = 'USD',
       showCurrency = true,
       minimumFractionDigits = 2,
       maximumFractionDigits = 2

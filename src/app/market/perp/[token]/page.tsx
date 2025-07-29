@@ -35,7 +35,6 @@ const mockPerpToken: PerpToken = {
 };
 
 export default function PerpTokenPage() {
-  const params = useParams();
   const router = useRouter();
   const [token, setToken] = useState<PerpToken | null>(null);
   const [loading, setLoading] = useState(true);
