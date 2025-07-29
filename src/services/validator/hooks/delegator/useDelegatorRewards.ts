@@ -48,9 +48,10 @@ export const useDelegatorRewards = (address: string): UseDelegatorRewardsResult 
             amount: parseFloat(item.totalAmount)
           }))
           .sort((a, b) => b.timestamp - a.timestamp); // Trier par timestamp décroissant
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching delegator rewards:', err);
-        throw new Error(err.message || 'Failed to fetch delegator rewards');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator rewards';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 30000, // Rafraîchir toutes les 30 secondes

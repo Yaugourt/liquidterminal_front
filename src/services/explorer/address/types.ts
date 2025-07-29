@@ -145,7 +145,7 @@ export interface OpenOrder {
     limitPx: string;
     sz: string;
     oid: number;
-    children: any[];
+    children: unknown[];
     cloid: string | null;
     isPositionTpsl: boolean;
     isTrigger: boolean;

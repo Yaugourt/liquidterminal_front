@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import {  HypePriceStore, HypeTradeResponse } from './types';
+import {  HypePriceStore, HypeTradeResponse, HypeWebSocketWindow } from './types';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const HYPE_COIN_ID = '@107';
@@ -71,14 +71,14 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
           
           // Try to reconnect after 5 seconds
           setTimeout(() => {
-            if ((window as any).hypePriceWs === ws) {
+            if ((window as HypeWebSocketWindow).hypePriceWs === ws) {
               useHypePriceStore.getState().connect();
             }
           }, 5000);
         };
 
         // Store WebSocket instance
-        (window as any).hypePriceWs = ws;
+        (window as HypeWebSocketWindow).hypePriceWs = ws;
       } catch (error) {
         console.error('Failed to create HYPE WebSocket:', error);
         set({ error: 'Failed to connect to HYPE WebSocket', isConnected: false });
@@ -86,10 +86,10 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
     },
 
     disconnect: () => {
-      const ws = (window as any).hypePriceWs;
+      const ws = (window as HypeWebSocketWindow).hypePriceWs;
       if (ws) {
         ws.close();
-        (window as any).hypePriceWs = null;
+        (window as HypeWebSocketWindow).hypePriceWs = undefined;
         set({ isConnected: false });
       }
       // Clear any existing timeout

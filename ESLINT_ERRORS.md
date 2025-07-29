@@ -163,37 +163,37 @@
 - ✅ `src/components/user/UserManagement.tsx:29` - `any` - **CORRIGÉ**
 
 ### 2. Types `any` dans les services
-- `src/hooks/useDataFetching.ts:6` - `any`
-- `src/services/api/axios-config.ts:291,294,297,304,307` - `any`
-- `src/services/api/error-handler.ts:10,17,41,110` - `any`
-- `src/services/api/types.ts:9` - `any`
-- `src/services/auth/user/hooks/useAdminUsers.ts:11` - `any`
-- `src/services/dashboard/types.ts:26,35` - `any`
-- `src/services/education/readList/hooks/hooks.ts:15,62` - `any`
-- `src/services/explorer/address/api.ts:101` - `any`
-- `src/services/explorer/address/formatters.ts:8,70,119,167` - `any`
-- `src/services/explorer/address/hooks/useTransactions.ts:22` - `any`
-- `src/services/explorer/address/types.ts:148` - `any`
-- `src/services/explorer/address/utils.ts:5,79,85` - `any`
-- `src/services/explorer/hooks/useDeploys.ts:9,32` - `any`
-- `src/services/explorer/types.ts:139` - `any`
-- `src/services/explorer/websocket.service.ts:17,63,71,74,82,128,136,139` - `any`
-- `src/services/market/fees/api.ts:11,50,54,63` - `any`
-- `src/services/market/hype/websocket.service.ts:74,81,89,92` - `any`
-- `src/services/market/order/hooks/useHypeBuyPressure.ts:15,50` - `any`
-- `src/services/validator/hooks/delegator/useDelegatorHistory.ts:57` - `any`
-- `src/services/validator/hooks/delegator/useDelegatorRewards.ts:51` - `any`
-- `src/services/validator/hooks/delegator/useDelegatorSummary.ts:36` - `any`
-- `src/services/validator/hooks/validator/useValidatorDelegations.ts:32` - `any`
-- `src/services/validator/utils.ts:10,29` - `any`
-- `src/services/vault/hooks/useVaultDeposits.ts:12,30` - `any`
-- `src/services/vault/types.ts:81` - `any`
-- `src/services/wallets/api.ts:26,84` - `any`
-- `src/services/wallets/hooks/useWalletsBalances.ts:67` - `any`
-- `src/store/use-readlists.ts:51,75,79,81` - `any`
-- `src/store/use-wallets.ts:17,68,88,92,94` - `any`
-- `src/lib/wallet-toast-messages.ts:111` - `any`
-- `src/components/types/dashboard.types.ts:14,15` - `any`
+- ✅ `src/hooks/useDataFetching.ts:6` - `any` - **CORRIGÉ**
+- ✅ `src/services/api/axios-config.ts:291,294,297,304,307` - `any` - **CORRIGÉ**
+- ✅ `src/services/api/error-handler.ts:10,17,41,110` - `any` - **CORRIGÉ**
+- ✅ `src/services/api/types.ts:9` - `any` - **CORRIGÉ**
+- ✅ `src/services/auth/user/hooks/useAdminUsers.ts:11` - `any` - **CORRIGÉ**
+- ✅ `src/services/dashboard/types.ts:26,35` - `any` - **CORRIGÉ**
+- ✅ `src/services/education/readList/hooks/hooks.ts:15,62` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/address/api.ts:101` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/address/formatters.ts:8,70,119,167` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/address/hooks/useTransactions.ts:22` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/address/types.ts:148` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/address/utils.ts:5,79,85` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/hooks/useDeploys.ts:9,32` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/types.ts:139` - `any` - **CORRIGÉ**
+- ✅ `src/services/explorer/websocket.service.ts:17,63,71,74,82,128,136,139` - `any` - **CORRIGÉ**
+- ✅ `src/services/market/fees/api.ts:11,50,54,63` - `any` - **CORRIGÉ**
+- ✅ `src/services/market/hype/websocket.service.ts:74,81,89,92` - `any` - **CORRIGÉ**
+- ✅ `src/services/market/order/hooks/useHypeBuyPressure.ts:15,50` - `any` - **CORRIGÉ**
+- ✅ `src/services/validator/hooks/delegator/useDelegatorHistory.ts:57` - `any` - **CORRIGÉ**
+- ✅ `src/services/validator/hooks/delegator/useDelegatorRewards.ts:51` - `any` - **CORRIGÉ**
+- ✅ `src/services/validator/hooks/delegator/useDelegatorSummary.ts:36` - `any` - **CORRIGÉ**
+- ✅ `src/services/validator/hooks/validator/useValidatorDelegations.ts:32` - `any` - **CORRIGÉ**
+- ✅ `src/services/validator/utils.ts:10,29` - `any` - **CORRIGÉ**
+- ✅ `src/services/vault/hooks/useVaultDeposits.ts:12,30` - `any` - **CORRIGÉ**
+- ✅ `src/services/vault/types.ts:81` - `any` - **CORRIGÉ**
+- ✅ `src/services/wallets/api.ts:26,84` - `any` - **CORRIGÉ**
+- ✅ `src/services/wallets/hooks/useWalletsBalances.ts:67` - `any` - **CORRIGÉ**
+- ✅ `src/store/use-readlists.ts:51,75,79,81` - `any` - **CORRIGÉ**
+- ✅ `src/store/use-wallets.ts:17,68,88,92,94` - `any` - **CORRIGÉ**
+- ✅ `src/lib/wallet-toast-messages.ts:111` - `any` - **CORRIGÉ**
+- ✅ `src/components/types/dashboard.types.ts:14,15` - `any` - **CORRIGÉ**
 
 ---
 
@@ -240,7 +240,7 @@
 - `src/components/dashboard/twap/TwapSection.tsx:50`
 - `src/components/market/spot/auction/AuctionChart.tsx:121`
 - `src/lib/numberFormatting.ts:225`
-- `src/store/use-wallets.ts:218`
+- ✅ `src/store/use-wallets.ts:218` - **CORRIGÉ**
 
 ### 2. Commentaires TypeScript
 - `src/services/api/axios-config.ts:45` - Utiliser `@ts-expect-error` au lieu de `@ts-ignore`

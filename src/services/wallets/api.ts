@@ -23,7 +23,7 @@ export const addWallet = async (
   name?: string
 ): Promise<AddWalletResponse> => {
   return withErrorHandling(async () => {
-    const response = await post<any>('/wallet', {
+    const response = await post<AddWalletResponse>('/wallet', {
       address,
       name
       // ❌ PAS de privyUserId !
@@ -81,7 +81,7 @@ export const addWallet = async (
 export const getWalletsByUser = async (): Promise<WalletResponse> => {
   return withErrorHandling(async () => {
     // NOUVEAU: utiliser /my-wallets au lieu de /user/:privyUserId
-    const response = await get<any>('/wallet/my-wallets');
+    const response = await get<WalletResponse>('/wallet/my-wallets');
     
     // Vérifier que la réponse contient les données attendues
     if (!response) {

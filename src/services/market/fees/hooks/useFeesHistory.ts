@@ -1,5 +1,5 @@
 import { FeesHistoryEntry, UseFeesHistoryResult } from '../types';
-import { fetchFeesHistory } from '../api';
+import { getFeesHistory } from '../api';
 import { useDataFetching } from '../../../../hooks/useDataFetching';
 
 /**
@@ -12,7 +12,7 @@ export function useFeesHistory(): UseFeesHistoryResult {
     error,
     refetch,
   } = useDataFetching<FeesHistoryEntry[]>({
-    fetchFn: fetchFeesHistory,
+    fetchFn: getFeesHistory,
     refreshInterval: 300000, // 5 minutes - historique moins fréquent que les stats
     maxRetries: 3,
   });

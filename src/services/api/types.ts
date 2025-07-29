@@ -6,7 +6,7 @@ export interface RequestOptions {
   skipAuth?: boolean;
 }
 
-export interface CacheEntry<T = any> {
+export interface CacheEntry<T = unknown> {
   data: T;
   timestamp: number;
 }
@@ -26,4 +26,15 @@ export interface JWTPayload {
 
 export interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
+}
+
+// Interface pour les erreurs standardisées
+export interface StandardError {
+  success: false;
+  message: string;
+  code: string;
+  response?: {
+    status: number;
+    data: unknown;
+  };
 } 

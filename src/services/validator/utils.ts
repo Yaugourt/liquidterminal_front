@@ -7,15 +7,16 @@ import { StakingValidation, FormattedStakingValidation, UnstakingQueueItem, Form
  * Gère les erreurs de façon standardisée (legacy - deprecated)
  * @deprecated Use withErrorHandling from error-handler instead
  */
-export const handleApiError = (error: any, context: string) => {
+export const handleApiError = (error: unknown, context: string) => {
   console.error(`Error ${context}:`, error);
   
-  if (error.response) {
+  if (error && typeof error === 'object' && 'response' in error && error.response) {
+    const response = error.response as { status: number; data: { message?: string } };
     throw {
-      message: error.response.data.message || `Failed to ${context}`,
+      message: response.data.message || `Failed to ${context}`,
       response: {
-        status: error.response.status,
-        data: error.response.data
+        status: response.status,
+        data: response.data
       }
     };
   }
@@ -26,7 +27,7 @@ export const handleApiError = (error: any, context: string) => {
 /**
  * Effectue un appel POST vers l'API Hyperliquid
  */
-export const callHyperliquidApi = async <T>(params: any, context: string): Promise<T> => {
+export const callHyperliquidApi = async <T>(params: Record<string, unknown>, context: string): Promise<T> => {
   return withErrorHandling(async () => {
     const url = `${API_URLS.HYPERLIQUID_API}/info`;
     return await postExternal<T>(url, params);

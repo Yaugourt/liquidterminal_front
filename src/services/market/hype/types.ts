@@ -32,4 +32,9 @@ export interface UseHypePriceResult {
   lastSide: "A" | "B" | null;
   isLoading: boolean;
   error: string | null;
+}
+
+// Interface pour étendre Window avec les propriétés WebSocket
+export interface HypeWebSocketWindow extends Window {
+  hypePriceWs?: WebSocket;
 } 

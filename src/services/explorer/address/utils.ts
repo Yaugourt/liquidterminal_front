@@ -1,8 +1,19 @@
-import { UserTransaction, UserFill } from './types';
+import { UserTransaction, UserFill, NonFundingLedgerUpdate } from './types';
 import { HIP2_ADDRESS } from './hooks/useTransactions';
 
+// Types pour les paramètres
+interface FillData {
+  b?: boolean;
+  [key: string]: unknown;
+}
+
+interface TwapOrderData {
+  b?: boolean;
+  [key: string]: unknown;
+}
+
 // Helper function pour déterminer from/to selon le type de transaction
-export function getTransactionAddresses(tx: UserTransaction, address: string, ledgerUpdate?: any) {
+export function getTransactionAddresses(tx: UserTransaction, address: string, ledgerUpdate?: NonFundingLedgerUpdate) {
     const method = tx.action.type;
     
     switch (method) {
@@ -76,13 +87,13 @@ export function formatAge(timestamp: number): string {
 }
 
 // HIP2 business logic functions
-export function getFillAddresses(fill: any, address: string, isSpot: boolean, isShort: boolean, isLong: boolean, isClosePosition: boolean) {
+export function getFillAddresses(fill: FillData, address: string, isSpot: boolean, isShort: boolean, isLong: boolean, isClosePosition: boolean) {
     const fromAddress = isSpot ? (isShort ? address : 'HIP2') : (isClosePosition ? HIP2_ADDRESS : address);
     const toAddress = isSpot ? (isLong ? address : 'HIP2') : (isClosePosition ? address : HIP2_ADDRESS);
     return { from: fromAddress, to: toAddress };
 }
 
-export function getTwapOrderAddresses(order: any, address: string) {
+export function getTwapOrderAddresses(order: TwapOrderData, address: string) {
     return {
         from: order.b ? HIP2_ADDRESS : address,
         to: order.b ? address : HIP2_ADDRESS

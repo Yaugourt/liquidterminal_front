@@ -8,7 +8,7 @@ export function useAdminUsers(params?: AdminUsersQueryParams): UseAdminUsersResu
   const memoizedParams = useMemo(() => {
     if (!params) return undefined;
     
-    const cleanParams: Record<string, any> = {};
+    const cleanParams: Record<string, string | number> = {};
     
     if (params.search && params.search.trim()) {
       cleanParams.search = params.search.trim();

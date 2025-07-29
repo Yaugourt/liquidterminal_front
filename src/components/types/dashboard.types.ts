@@ -10,9 +10,9 @@ export interface TableHeaderButtonProps {
   align?: string;
 }
 
-export interface TableRowCellProps {
-  column: Column<any>;
-  item: any;
+export interface TableRowCellProps<T = Record<string, unknown>> {
+  column: Column<T>;
+  item: T;
 }
 
 /**

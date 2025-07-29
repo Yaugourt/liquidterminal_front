@@ -23,7 +23,7 @@ export interface UseTopPerpTokensResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
-  updateParams: (params: any) => void;
+  updateParams: (params: { sortBy?: string; limit?: number }) => void;
   totalVolume?: number;
 }
 
@@ -32,7 +32,7 @@ export interface UseTopTokensResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
-  updateParams: (params: any) => void;
+  updateParams: (params: { sortBy?: string; limit?: number }) => void;
   totalVolume?: number;
 }
 

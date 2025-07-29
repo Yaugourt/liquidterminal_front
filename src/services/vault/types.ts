@@ -78,7 +78,7 @@ export interface VaultsParams {
   page?: number;
   limit?: number;
   sortBy?: 'apr' | 'tvl';
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

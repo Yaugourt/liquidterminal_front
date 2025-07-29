@@ -48,7 +48,7 @@ interface ReadListsState {
 const handleApiError = (error: unknown, defaultMessage: string): string => {
   if (error instanceof Error) return error.message;
   if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as any).response;
+    const response = (error as { response?: { status?: number } }).response;
     switch (response?.status) {
       case 409: return 'A read list with this name already exists';
       case 400: return 'Invalid data provided';
@@ -72,14 +72,14 @@ const validateReadListName = (name: string): void => {
 
 
 // Action creators for better state management
-const createActionCreators = (set: any, get: any) => ({
-  setLoading: (loading: boolean) => set({ loading, error: loading ? null : get().error }),
-  setError: (error: string | null) => set({ error, loading: false }),
+const createActionCreators = (set: (fn: (state: ReadListsState) => Partial<ReadListsState>) => void, get: () => ReadListsState) => ({
+  setLoading: (loading: boolean) => set((state) => ({ loading, error: loading ? null : state.error })),
+  setError: (error: string | null) => set((state) => ({ error, loading: false })),
   updateReadLists: (updater: (lists: ReadList[]) => ReadList[]) => 
-    set((state: any) => ({ readLists: updater(state.readLists) })),
+    set((state: ReadListsState) => ({ readLists: updater(state.readLists) })),
   updateActiveItems: (updater: (items: ReadListItem[]) => ReadListItem[]) => 
-    set((state: any) => ({ activeReadListItems: updater(state.activeReadListItems) })),
-  setActiveList: (id: number | null) => set({ activeReadListId: id, activeReadListItems: [] })
+    set((state: ReadListsState) => ({ activeReadListItems: updater(state.activeReadListItems) })),
+  setActiveList: (id: number | null) => set((state) => ({ activeReadListId: id, activeReadListItems: [] }))
 });
 
 export const useReadLists = create<ReadListsState>()(

@@ -12,7 +12,7 @@ import type { ReadList, ReadListItem, ReadListCreateInput, ReadListUpdateInput, 
 const handleApiError = (error: unknown, defaultMessage: string): string => {
   if (error instanceof Error) return error.message;
   if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as any).response;
+    const response = (error as { response?: { status?: number } }).response;
     switch (response?.status) {
       case 409: return 'A read list with this name already exists';
       case 400: return 'Invalid data provided';
@@ -59,7 +59,7 @@ const createMutationHook = <TInput, TOutput>(
 const createFetchHook = <T>(
   fetchFn: () => Promise<T>,
   initialData: T,
-  options: { dependencies?: any[], refreshInterval?: number } = {}
+  options: { dependencies?: unknown[], refreshInterval?: number } = {}
 ) => {
   return useDataFetching<T>({
     fetchFn: async () => {
@@ -80,7 +80,7 @@ const createFetchHook = <T>(
 // HOOKS POUR LES READ LISTS
 // ============================================
 
-export const useReadLists = () => createFetchHook(getMyReadLists, []);
+export const useReadLists = () => createFetchHook(getMyReadLists, { success: true, data: [] });
 export const usePublicReadLists = () => createFetchHook(getPublicReadLists, [], { refreshInterval: 30000 });
 export const useReadList = (id: number | null) => createFetchHook(
   () => getReadList(id!),
@@ -123,7 +123,7 @@ export const useUpdateReadList = () => {
 
 export const useReadListItems = (listId: number | null) => createFetchHook(
   () => getReadListItems(listId!),
-  [],
+  { success: true, data: [] },
   { dependencies: [listId], refreshInterval: 30000 }
 );
 

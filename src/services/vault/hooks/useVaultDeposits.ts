@@ -9,7 +9,7 @@ import { useMemo } from 'react';
  * @param address L'adresse de l'utilisateur
  * @returns Les dépôts, le total des dépôts, l'état de chargement, les erreurs et une fonction de rafraîchissement
  */
-export const useVaultDeposits = (address: string): UseVaultDepositsResult & { enrichedDeposits: any[] } => {
+export const useVaultDeposits = (address: string): UseVaultDepositsResult & { enrichedDeposits: (VaultDeposit & { name: string; apr: number | null; tvl: number | null })[] } => {
   const { 
     data: deposits,
     isLoading,
@@ -27,9 +27,10 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult & { en
           user: address
         });
         return response;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching vault deposits:', err);
-        throw new Error(err.message || 'Failed to fetch vault deposits');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch vault deposits';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 60000, // Rafraîchir toutes les 60 secondes

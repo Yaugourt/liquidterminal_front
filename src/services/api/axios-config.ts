@@ -255,7 +255,7 @@ export async function axiosWithConfig<T>(
   if (useCache && config.method?.toLowerCase() === 'get') {
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      return cached.data;
+      return cached.data as T;
     }
   }
 
@@ -288,21 +288,21 @@ export async function axiosWithConfig<T>(
 }
 
 // HTTP method helpers
-export const get = <T>(url: string, params?: Record<string, any>, options?: RequestOptions): Promise<T> =>
+export const get = <T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'GET', url, params }, options);
 
-export const post = <T>(url: string, data?: any, options?: RequestOptions): Promise<T> =>
+export const post = <T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'POST', url, data }, options);
 
-export const put = <T>(url: string, data?: any, options?: RequestOptions): Promise<T> =>
+export const put = <T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'PUT', url, data }, options);
 
 export const del = <T>(url: string, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'DELETE', url }, options);
 
 // External API helpers
-export const getExternal = <T>(url: string, params?: Record<string, any>, options?: RequestOptions): Promise<T> =>
+export const getExternal = <T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(externalApiClient, { method: 'GET', url, params }, options);
 
-export const postExternal = <T>(url: string, data?: any, options?: RequestOptions): Promise<T> =>
+export const postExternal = <T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(externalApiClient, { method: 'POST', url, data }, options); 

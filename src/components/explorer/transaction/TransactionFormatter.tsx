@@ -354,7 +354,7 @@ export class TransactionFormatter {
         if (value !== null && value !== undefined) {
           section.fields.push({
             label: key.charAt(0).toUpperCase() + key.slice(1),
-            value: typeof value === 'object' ? JSON.stringify(value, null, 2) : value,
+            value: typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value),
             type: typeof value === 'object' ? 'json' : 'text'
           });
         }

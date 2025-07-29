@@ -33,9 +33,10 @@ export const useDelegatorSummary = (address: string): UseDelegatorSummaryResult 
         }
 
         return response;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching delegator summary:', err);
-        throw new Error(err.message || 'Failed to fetch delegator summary');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator summary';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 30000, // Rafraîchir toutes les 30 secondes

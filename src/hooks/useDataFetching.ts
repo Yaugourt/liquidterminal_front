@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 interface UseDataFetchingOptions<T> {
   fetchFn: () => Promise<T>;
   refreshInterval?: number;
-  dependencies?: any[];
+  dependencies?: unknown[];
   maxRetries?: number;
   retryDelay?: number;
   initialData?: T | null;

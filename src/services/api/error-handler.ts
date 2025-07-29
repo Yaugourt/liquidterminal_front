@@ -1,24 +1,14 @@
 import { AxiosError } from 'axios';
-
-// Interface pour les erreurs standardisées
-export interface StandardError {
-  success: false;
-  message: string;
-  code: string;
-  response?: {
-    status: number;
-    data: any;
-  };
-}
+import { StandardError } from './types';
 
 /**
  * Gère les erreurs axios de façon standardisée
  */
-export const handleAxiosError = (error: any, context: string): StandardError => {
+export const handleAxiosError = (error: unknown, context: string): StandardError => {
   console.error(`Error ${context}:`, error);
   
   // Erreur axios
-  if (error.isAxiosError || error.response) {
+  if (error && typeof error === 'object' && ('isAxiosError' in error || 'response' in error)) {
     const axiosError = error as AxiosError;
     
     // Erreur 401 - Non autorisé
@@ -38,7 +28,7 @@ export const handleAxiosError = (error: any, context: string): StandardError => 
     if (axiosError.response?.status === 400) {
       return {
         success: false,
-        message: (axiosError.response.data as any)?.message || 'Bad request',
+        message: (axiosError.response.data as { message?: string })?.message || 'Bad request',
         code: 'BAD_REQUEST',
         response: {
           status: axiosError.response.status,

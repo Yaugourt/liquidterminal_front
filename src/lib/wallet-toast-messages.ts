@@ -108,11 +108,12 @@ export const walletEmptyMessages = {
 };
 
 // Fonction utilitaire pour gérer les erreurs d'API
-export const handleWalletApiError = (error: any, context: 'add' | 'delete' | 'load' | 'reorder' | 'active') => {
+export const handleWalletApiError = (error: unknown, context: 'add' | 'delete' | 'load' | 'reorder' | 'active') => {
   console.error(`Wallet ${context} error:`, error);
   
-  if (error.response) {
-    switch (error.response.status) {
+  if (error && typeof error === 'object' && 'response' in error && error.response) {
+    const response = error.response as { status?: number };
+    switch (response.status) {
       case 400:
         return walletAddMessages.error.invalidAddress();
       case 401:
@@ -126,13 +127,22 @@ export const handleWalletApiError = (error: any, context: 'add' | 'delete' | 'lo
       case 500:
         return walletAddMessages.error.serverError();
       default:
-        return walletAddMessages.error.generic(error.message);
+        const errorMessage = error && typeof error === 'object' && 'message' in error 
+          ? (error.message as string) 
+          : 'Unknown error';
+        return walletAddMessages.error.generic(errorMessage);
     }
   }
   
-  if (error.code === 'NETWORK_ERROR' || error.code === 'ERR_NETWORK') {
-    return walletAddMessages.error.networkError();
+  if (error && typeof error === 'object' && 'code' in error) {
+    const code = error.code as string;
+    if (code === 'NETWORK_ERROR' || code === 'ERR_NETWORK') {
+      return walletAddMessages.error.networkError();
+    }
   }
   
-  return walletAddMessages.error.generic(error.message);
+  const errorMessage = error && typeof error === 'object' && 'message' in error 
+    ? (error.message as string) 
+    : 'Unknown error';
+  return walletAddMessages.error.generic(errorMessage);
 };

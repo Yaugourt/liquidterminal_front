@@ -14,7 +14,7 @@ interface InitializeParams {
 const handleApiError = (error: unknown, defaultMessage: string): string => {
   if (error instanceof Error) return error.message;
   if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as any).response;
+    const response = (error as { response?: { status?: number } }).response;
     switch (response?.status) {
       case 409: return 'This wallet already exists in your account';
       case 400: return 'Invalid wallet address or name';
@@ -65,7 +65,7 @@ const parseUserWallet = (uw: UserWallet): Wallet | null => {
   };
 };
 
-const processWalletsResponse = (response: any): { wallets: Wallet[], userWallets: UserWallet[] } => {
+const processWalletsResponse = (response: { data?: UserWallet[] }): { wallets: Wallet[], userWallets: UserWallet[] } => {
   if (!response?.data || !Array.isArray(response.data)) {
     throw new Error("Invalid response format from server");
   }
@@ -85,14 +85,14 @@ const processWalletsResponse = (response: any): { wallets: Wallet[], userWallets
 };
 
 // Action creators for better state management
-const createActionCreators = (set: any, get: any) => ({
-  setLoading: (loading: boolean) => set({ loading, error: loading ? null : get().error }),
-  setError: (error: string | null) => set({ error, loading: false }),
+const createActionCreators = (set: (fn: (state: WalletsState) => Partial<WalletsState>) => void, get: () => WalletsState) => ({
+  setLoading: (loading: boolean) => set((state) => ({ loading, error: loading ? null : state.error })),
+  setError: (error: string | null) => set((state) => ({ error, loading: false })),
   updateWallets: (updater: (wallets: Wallet[]) => Wallet[]) => 
-    set((state: any) => ({ wallets: updater(state.wallets) })),
+    set((state: WalletsState) => ({ wallets: updater(state.wallets) })),
   updateUserWallets: (updater: (userWallets: UserWallet[]) => UserWallet[]) => 
-    set((state: any) => ({ userWallets: updater(state.userWallets) })),
-  setActiveWallet: (id: number | null) => set({ activeWalletId: id })
+    set((state: WalletsState) => ({ userWallets: updater(state.userWallets) })),
+  setActiveWallet: (id: number | null) => set((state) => ({ activeWalletId: id }))
 });
 
 export const useWallets = create<WalletsState>()(
@@ -282,10 +282,9 @@ export const useWallets = create<WalletsState>()(
               return userWallet.walletId !== id;
             });
             
-            let newActiveId = state.activeWalletId;
-            if (state.activeWalletId === id) {
-              newActiveId = newWallets.length > 0 ? newWallets[0].id : null;
-            }
+            const newActiveId = state.activeWalletId === id 
+              ? (newWallets.length > 0 ? newWallets[0].id : null)
+              : state.activeWalletId;
             
             // Mettre à jour l'ordre sauvegardé en supprimant le wallet
             try {

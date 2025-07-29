@@ -3,10 +3,37 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
 import { useMemo } from 'react';
 
+// Types pour les auctions
+interface AuctionData {
+  index: number;
+  name: string;
+}
+
+// Types pour les actions de déploiement
+interface SpotDeployAction {
+  userGenesis?: {
+    userAndWei?: unknown;
+    token: number;
+  };
+  genesis?: {
+    maxSupply?: unknown;
+    token: number;
+  };
+  registerSpot?: {
+    tokens: number[];
+  };
+  registerToken2?: {
+    spec: {
+      name?: string;
+    };
+  };
+  type: string;
+}
+
 /**
  * Formate un objet de déploiement pour l'affichage
  */
-const formatDeploy = (deploy: DeployData, auctionsData: any[]): FormattedDeploy => {
+const formatDeploy = (deploy: DeployData, auctionsData: AuctionData[]): FormattedDeploy => {
   // Format de la date: "May 14, 07:04 PM"
   const date = new Date(deploy.time);
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -29,7 +56,7 @@ const formatDeploy = (deploy: DeployData, auctionsData: any[]): FormattedDeploy 
   
   if (deploy.action.type === 'spotDeploy') {
     // Utiliser une approche plus robuste pour accéder aux propriétés
-    const actionAny = deploy.action as any;
+    const actionAny = deploy.action as SpotDeployAction;
     
     // Condition 1: UserGenesis avec userAndWei
     if (actionAny.userGenesis?.userAndWei) {

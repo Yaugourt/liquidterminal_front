@@ -64,9 +64,10 @@ export const useWalletsBalances = (address?: string) => {
           spotBalances: spotResponse,
           perpPositions: perpResponse
         };
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching balances:', err);
-        throw new Error(err.message || 'Failed to fetch balances');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch balances';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 30000, // Rafraîchir toutes les 20 secondes

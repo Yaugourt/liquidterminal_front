@@ -1,5 +1,6 @@
     import { useMemo, useState, useEffect } from 'react';
 import { useTwapOrders } from './useTwapOrders';
+import { EnrichedTwapOrder } from '../types';
 
 const HYPE_MARKET_INDEX = 10107; // 10000 + 107 for HYPE token
 
@@ -12,7 +13,7 @@ export interface HypeBuyPressureResult {
 }
 
 // Helper function to calculate real-time progression (EXACTLY same logic as TwapTable)
-const calculateRealTimeProgression = (order: any) => {
+const calculateRealTimeProgression = (order: EnrichedTwapOrder) => {
   const startTime = order.time;
   const durationMs = order.action.twap.m * 60 * 1000; // minutes to ms
   const currentTime = Date.now();
@@ -47,7 +48,7 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
     status: "active" // Only active orders
   });
 
-  const [realTimeData, setRealTimeData] = useState<Map<string, any>>(new Map());
+  const [realTimeData, setRealTimeData] = useState<Map<string, { progression: number; remainingValue: number; isCompleted: boolean }>>(new Map());
 
   // Real-time progression calculation (independent from API refresh)
   // Note: API 30s refresh only adds/removes orders, progression calculated here

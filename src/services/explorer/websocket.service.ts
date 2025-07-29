@@ -4,6 +4,12 @@ import { Block, Transaction, ExplorerStore } from './types';
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
 
+// Types pour les WebSockets
+interface WebSocketWindow extends Window {
+  explorerBlocksWs?: WebSocket;
+  explorerTransactionsWs?: WebSocket;
+}
+
 export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   blocks: [],
   transactions: [],
@@ -14,7 +20,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   connectBlocks: () => {
     try {
       // Disconnect existing blocks connection if any
-      const existingWs = (window as any).explorerBlocksWs;
+      const existingWs = (window as WebSocketWindow).explorerBlocksWs;
       if (existingWs) {
         existingWs.close();
       }
@@ -60,7 +66,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       };
 
       // Store WebSocket instance
-      (window as any).explorerBlocksWs = ws;
+      (window as WebSocketWindow).explorerBlocksWs = ws;
     } catch (error) {
       console.error('Failed to create Blocks WebSocket:', error);
       set({ error: 'Failed to connect to Blocks WebSocket', isBlocksConnected: false });
@@ -68,10 +74,10 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   disconnectBlocks: () => {
-    const ws = (window as any).explorerBlocksWs;
+    const ws = (window as WebSocketWindow).explorerBlocksWs;
     if (ws) {
       ws.close();
-      (window as any).explorerBlocksWs = null;
+      (window as WebSocketWindow).explorerBlocksWs = undefined;
       set({ isBlocksConnected: false });
     }
   },
@@ -79,7 +85,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   connectTransactions: () => {
     try {
       // Disconnect existing transactions connection if any
-      const existingWs = (window as any).explorerTransactionsWs;
+      const existingWs = (window as WebSocketWindow).explorerTransactionsWs;
       if (existingWs) {
         existingWs.close();
       }
@@ -125,7 +131,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       };
 
       // Store WebSocket instance
-      (window as any).explorerTransactionsWs = ws;
+      (window as WebSocketWindow).explorerTransactionsWs = ws;
     } catch (error) {
       console.error('Failed to create Transactions WebSocket:', error);
       set({ error: 'Failed to connect to Transactions WebSocket', isTransactionsConnected: false });
@@ -133,10 +139,10 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   disconnectTransactions: () => {
-    const ws = (window as any).explorerTransactionsWs;
+    const ws = (window as WebSocketWindow).explorerTransactionsWs;
     if (ws) {
       ws.close();
-      (window as any).explorerTransactionsWs = null;
+      (window as WebSocketWindow).explorerTransactionsWs = undefined;
       set({ isTransactionsConnected: false });
     }
   },

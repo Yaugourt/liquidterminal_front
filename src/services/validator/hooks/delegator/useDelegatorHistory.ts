@@ -54,9 +54,10 @@ export const useDelegatorHistory = (address: string): UseDelegatorHistoryResult 
             validator: item.delta.delegate.validator
           }))
           .sort((a, b) => b.timestamp - a.timestamp); // Trier par timestamp décroissant
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching delegator history:', err);
-        throw new Error(err.message || 'Failed to fetch delegator history');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator history';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 30000, // Rafraîchir toutes les 30 secondes

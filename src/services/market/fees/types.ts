@@ -23,4 +23,23 @@ export interface UseFeesHistoryResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+}
+
+// Types pour les réponses API
+export interface FeesStatsResponse {
+  hourlyFees?: number | string;
+  dailyFees?: number | string;
+  hourlySpotFees?: number | string;
+  dailySpotFees?: number | string;
+  data?: FeesStatsResponse;
+}
+
+export interface FeesHistoryEntryResponse {
+  time: number;
+  total_fees?: number | string;
+  total_spot_fees?: number | string;
+}
+
+export interface FeesHistoryResponse {
+  data?: FeesHistoryEntryResponse[];
 } 

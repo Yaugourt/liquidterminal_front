@@ -1,5 +1,5 @@
 import { FeesStats, UseFeesStatsResult } from '../types';
-import { fetchFeesStats } from '../api';
+import { getFeesStats } from '../api';
 import { useDataFetching } from '../../../../hooks/useDataFetching'; // Assuming generic data fetching hook
 
 /**
@@ -13,7 +13,7 @@ export function useFeesStats(): UseFeesStatsResult {
     refetch,
    
   } = useDataFetching<FeesStats>({
-    fetchFn: fetchFeesStats,
+    fetchFn: getFeesStats,
     refreshInterval: 60000,
   });
 

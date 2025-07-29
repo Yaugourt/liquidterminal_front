@@ -29,9 +29,10 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
         });
 
         return response;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching validator delegations:', err);
-        throw new Error(err.message || 'Failed to fetch validator delegations');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch validator delegations';
+        throw new Error(errorMessage);
       }
     },
     refreshInterval: 30000, // Rafraîchir toutes les 30 secondes

@@ -136,7 +136,7 @@ export interface TransactionAction {
   vote?: boolean;
   
   // Propriétés génériques
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ExtendedTransactionDetails {

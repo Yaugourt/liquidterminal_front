@@ -3,6 +3,7 @@ import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { formatNumber } from '@/lib/numberFormatting';
 import { formatHip2Display } from '../utils';
+import { NumberFormatType } from '@/store/number-format.store';
 
 export const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
 
@@ -19,7 +20,7 @@ export const formatHash = (hash: string) => {
   return hash.length > 10 ? `${hash.slice(0, 5)}...${hash.slice(-3)}` : hash;
 };
 
-export const formatNumberValue = (value: string | number | null | undefined, format: any) => {
+export const formatNumberValue = (value: string | number | null | undefined, format: NumberFormatType) => {
   if (!value) return '-';
   const num = typeof value === 'string' ? parseFloat(value) : value;
   if (isNaN(num)) return '-';

@@ -98,7 +98,7 @@ export async function getUserOpenOrders(address: string): Promise<OpenOrdersResp
 /**
  * Récupère les TWAP orders d'un utilisateur
  */
-export const getUserTwapOrders = async (address: string): Promise<any[]> => {
+export const getUserTwapOrders = async (address: string): Promise<unknown[]> => {
   try {
     const response = await fetch(`https://api.hypurrscan.io/twap/${address}`);
     

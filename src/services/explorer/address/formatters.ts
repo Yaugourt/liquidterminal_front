@@ -1,11 +1,23 @@
 import { formatNumber } from '@/lib/numberFormatting';
 import { SpotToken } from '@/services/market/spot/types';
 import { PerpMarketData } from '@/services/market/perp/types';
+import { NumberFormatType } from '@/store/number-format.store';
+
+// Types pour les transactions
+interface TransactionData {
+  amount?: string;
+  token?: string;
+  price?: string;
+  method?: string;
+  from?: string;
+  to?: string;
+  [key: string]: unknown;
+}
 
 export interface TransactionFormatterConfig {
   spotTokens?: SpotToken[];
   perpMarkets?: PerpMarketData[];
-  format: any;
+  format: NumberFormatType;
   currentAddress?: string;
 }
 
@@ -66,7 +78,7 @@ export const getTokenName = (
  * Calcule la valeur avec direction (+ ou -)
  */
 export const calculateValueWithDirection = (
-  tx: any,
+  tx: TransactionData,
   config: TransactionFormatterConfig
 ): string => {
   if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
@@ -98,8 +110,8 @@ export const calculateValueWithDirection = (
   
   // Pour spotTransfer, ajouter le signe selon la direction
   if (tx.method === 'spotTransfer') {
-    const isOutgoing = config.currentAddress && tx.from.toLowerCase() === config.currentAddress.toLowerCase();
-    const isIncoming = config.currentAddress && tx.to.toLowerCase() === config.currentAddress.toLowerCase();
+    const isOutgoing = config.currentAddress && tx.from && tx.from.toLowerCase() === config.currentAddress.toLowerCase();
+    const isIncoming = config.currentAddress && tx.to && tx.to.toLowerCase() === config.currentAddress.toLowerCase();
     
     if (isOutgoing) {
       return `-${formattedValue}`;
@@ -115,7 +127,7 @@ export const calculateValueWithDirection = (
  * Formate le montant avec direction selon le sens du transfert
  */
 export const formatAmountWithDirection = (
-  tx: any,
+  tx: TransactionData,
   config: TransactionFormatterConfig
 ): string => {
   if (!tx.amount || !tx.token || tx.token === 'unknown') return '-';
@@ -147,8 +159,8 @@ export const formatAmountWithDirection = (
   
   // Pour spotTransfer, déterminer la direction
   if (tx.method === 'spotTransfer') {
-    const isOutgoing = config.currentAddress && tx.from.toLowerCase() === config.currentAddress.toLowerCase();
-    const isIncoming = config.currentAddress && tx.to.toLowerCase() === config.currentAddress.toLowerCase();
+    const isOutgoing = config.currentAddress && tx.from && tx.from.toLowerCase() === config.currentAddress.toLowerCase();
+    const isIncoming = config.currentAddress && tx.to && tx.to.toLowerCase() === config.currentAddress.toLowerCase();
     
     if (isOutgoing) {
       return `-${tokenDisplay}`;
@@ -163,7 +175,7 @@ export const formatAmountWithDirection = (
 /**
  * Obtient la classe CSS de couleur selon le sens du transfert
  */
-export const getAmountColorClass = (tx: any, config: TransactionFormatterConfig): string => {
+export const getAmountColorClass = (tx: TransactionData, config: TransactionFormatterConfig): string => {
   const currentAddress = config.currentAddress;
   // Pour les positions Short/Long, appliquer les couleurs en tenant compte de open/close
   if (tx.isShort) {
@@ -188,8 +200,8 @@ export const getAmountColorClass = (tx: any, config: TransactionFormatterConfig)
   
   // Pour spotTransfer, déterminer la couleur selon la direction
   if (tx.method === 'spotTransfer') {
-    const isOutgoing = currentAddress && tx.from.toLowerCase() === currentAddress.toLowerCase();
-    const isIncoming = currentAddress && tx.to.toLowerCase() === currentAddress.toLowerCase();
+    const isOutgoing = currentAddress && tx.from && tx.from.toLowerCase() === currentAddress.toLowerCase();
+    const isIncoming = currentAddress && tx.to && tx.to.toLowerCase() === currentAddress.toLowerCase();
     
     if (isOutgoing) {
       return 'text-[#FF5757]'; // Rouge pour sortant
