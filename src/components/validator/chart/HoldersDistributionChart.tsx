@@ -5,6 +5,19 @@ import { HoldersDistributionRange } from "@/services/validator/types/holders";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatLargeNumber, formatNumber } from "@/lib/numberFormatting";
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      holders: number;
+      staked: number;
+      percentage: number;
+    };
+  }>;
+  label?: string;
+}
+
 interface HoldersDistributionChartProps {
   height?: number;
 }
@@ -32,7 +45,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
   }, [stats]);
 
   // Custom tooltip - only show when hovering over a bar
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       return (

@@ -1,6 +1,10 @@
 import { formatNumber } from "@/lib/numberFormatting";
 import { DataTable } from "./DataTable";
 import { Copy, Check } from "lucide-react";
+import { NumberFormatType } from "@/store/number-format.store";
+import { Validator } from "@/services/validator/types/validators";
+import { FormattedStakingValidation, FormattedUnstakingQueueItem } from "@/services/validator/types/staking";
+import { VaultSummary } from "@/services/vault/types";
 
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/dateFormatting";
@@ -38,6 +42,34 @@ const CopyButton = ({ text }: { text: string }) => {
   );
 };
 
+interface TableContentProps {
+  activeTab: string;
+  validatorSubTab: string;
+  validatorsData: {
+    validators: Validator[];
+    loading: boolean;
+    error: Error | null;
+  };
+  vaultsData: {
+    vaults: VaultSummary[];
+    loading: boolean;
+    error: Error | null;
+  };
+  stakingData: {
+    validations: FormattedStakingValidation[];
+    loading: boolean;
+    error: Error | null;
+  };
+  unstakingData: {
+    unstakingQueue: FormattedUnstakingQueueItem[];
+    loading: boolean;
+    error: Error | null;
+  };
+  format: NumberFormatType;
+  startIndex: number;
+  endIndex: number;
+}
+
 export function TableContent({ 
   activeTab, 
   validatorSubTab,
@@ -48,7 +80,7 @@ export function TableContent({
   format, 
   startIndex, 
   endIndex 
-}: any) {
+}: TableContentProps) {
   const { validators, loading: validatorsLoading, error: validatorsError } = validatorsData;
   const { vaults, loading: vaultsLoading, error: vaultsError } = vaultsData;
   const { validations: stakingValidations, loading: stakingLoading, error: stakingError } = stakingData;
@@ -57,7 +89,7 @@ export function TableContent({
 
   // Fonction pour trouver le nom du validator par son adresse
   const getValidatorName = (validatorAddress: string) => {
-    const validator = validators.find((v: any) => v.address === validatorAddress || v.validator === validatorAddress);
+    const validator = validators.find((v: Validator) => v.address === validatorAddress || v.validator === validatorAddress);
     return validator ? validator.name : `${validatorAddress.slice(0, 6)}...${validatorAddress.slice(-4)}`;
   };
 
@@ -83,7 +115,7 @@ export function TableContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {validators.slice(startIndex, endIndex).map((validator: any) => (
+              {validators.slice(startIndex, endIndex).map((validator: Validator) => (
                 <TableRow key={validator.name} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <TableCell className="py-3 px-4 text-[#83E9FF] font-medium">{validator.name}</TableCell>
                   <TableCell className="py-3 px-4">
@@ -133,7 +165,7 @@ export function TableContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {stakingValidations?.map((tx: any) => (
+              {stakingValidations?.map((tx: FormattedStakingValidation) => (
                 <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <TableCell className="py-3 px-4 text-white">
                     {formatDateTime(tx.timestamp, dateFormat)}
@@ -199,7 +231,7 @@ export function TableContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {unstakingQueue?.map((item: any, index: number) => (
+              {unstakingQueue?.map((item: FormattedUnstakingQueueItem, index: number) => (
                 <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                   <TableCell className="py-3 px-4 text-white">
                     {formatDateTime(item.timestamp, dateFormat)}
@@ -246,7 +278,7 @@ export function TableContent({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {vaults.map((vault: any) => (
+        {vaults.map((vault: VaultSummary) => (
           <TableRow key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
             <TableCell className="py-3 px-6 text-white font-medium">{vault.summary.name}</TableCell>
             <TableCell className="py-3 px-6">

@@ -7,6 +7,14 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/numberFormatting';
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: AssetDistribution;
+  }>;
+}
+
 // Couleurs pour le camembert
 const COLORS = [
   '#83E9FF', // Bleu principal
@@ -111,7 +119,7 @@ export function DistributionSection() {
     );
   }
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (

@@ -50,13 +50,13 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       if (onSuccess) {
         onSuccess();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error adding wallet:", err);
       
       // Handle specific error cases with toast
-
+      let errorMessage = "Une erreur est survenue lors de l'ajout du wallet.";
       
-      if (err.response) {
+      if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'status' in err.response) {
         switch (err.response.status) {
           case 409:
             errorMessage = "Ce wallet est déjà associé à votre compte.";
@@ -65,13 +65,13 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
             errorMessage = "Adresse de wallet invalide.";
             break;
           default:
-            errorMessage = err.message || errorMessage;
+            errorMessage = err instanceof Error ? err.message : errorMessage;
         }
       } else {
-        errorMessage = err.message || errorMessage;
+        errorMessage = err instanceof Error ? err.message : errorMessage;
       }
       
-      handleWalletApiError(err, 'add');
+      handleWalletApiError(err instanceof Error ? err : new Error(String(err)), 'add');
     } finally {
       setIsLoading(false);
     }

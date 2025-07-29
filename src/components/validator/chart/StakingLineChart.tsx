@@ -7,6 +7,19 @@ import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
 import { formatDate } from "@/lib/dateFormatting";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      date: string;
+      totalTokens: number;
+      transactionCount: number;
+      uniqueUsers: number;
+    };
+  }>;
+}
+
 interface StakingLineChartProps {
   height?: number;
   period?: ChartPeriod;
@@ -23,7 +36,7 @@ export const StakingLineChart = memo(function StakingLineChart({
   const { chartData: filteredData, isLoading, error } = useUnstakingStatsForChartWithPeriod(period);
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const date = new Date(data.date);

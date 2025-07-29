@@ -6,6 +6,27 @@ import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
 import { formatDate } from "@/lib/dateFormatting";
 
+// Types pour le tooltip et les données
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      date: string;
+      totalTokens: number;
+      transactionCount: number;
+      uniqueUsers: number;
+    };
+  }>;
+}
+
+interface ChartDataPoint {
+  day: string;
+  date: string;
+  totalTokens: number;
+  transactionCount: number;
+  uniqueUsers: number;
+}
+
 interface UnstakingScheduleChartProps {
   height?: number;
   barCount?: number;
@@ -36,7 +57,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
   const maxBarSize = getBarSize(barCount);
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       const date = new Date(data.date);
@@ -132,7 +153,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
             opacity={0.8}
             maxBarSize={maxBarSize}
           >
-            {chartData.map((entry: any, index: number) => (
+            {chartData.map((entry: ChartDataPoint, index: number) => (
               <Cell 
                 key={`cell-${index}`} 
                 fill={hoveredIndex === index ? "#a3f3ff" : "#83E9FF"}

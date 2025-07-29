@@ -20,6 +20,18 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDate } from '@/lib/dateFormatting';
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      timestamp: number;
+    };
+    value: number;
+  }>;
+  label?: string;
+}
+
 interface VaultChartProps {
   vaultAddress: string;
   className?: string;
@@ -80,7 +92,7 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
     return formatLargeNumber(value, { prefix: '$', decimals: 2 });
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const value = payload[0].value;

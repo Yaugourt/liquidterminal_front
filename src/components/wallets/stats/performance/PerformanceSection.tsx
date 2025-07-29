@@ -13,6 +13,15 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+  }>;
+  label?: string | number;
+}
+
 type ApiPeriod = 'day' | 'week' | 'month' | 'allTime';
 
 const chartPeriodToApiPeriod: Record<ChartPeriod, ApiPeriod> = {
@@ -68,7 +77,6 @@ export function PerformanceSection() {
 
   const chartData = useChartData({
     data: rawData,
-    period: selectedPeriod,
     getValue: (item) => item.value,
     getTimestamp: (item) => item.timestamp
   });
@@ -93,7 +101,7 @@ export function PerformanceSection() {
     maximumFractionDigits: 2
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const value = payload[0].value;
       const formattedValue = formatValue(value, formatOptions);

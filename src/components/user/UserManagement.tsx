@@ -26,7 +26,12 @@ export function UserManagement() {
     isLoading: boolean;
     error: Error | null;
     refetch: () => Promise<void>;
-    pagination: any;
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
   };
   const { updateUser, isLoading: isUpdating } = useAdminUpdateUser();
   const { deleteUser } = useAdminDeleteUser();

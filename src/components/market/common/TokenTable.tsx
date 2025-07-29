@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
+import { NumberFormatType } from "@/store/number-format.store";
 import { Pagination, TokenIcon, formatPriceChange } from "@/components/common";
 import { 
   SpotToken, 
@@ -70,7 +71,7 @@ const EmptyState = memo(() => (
 EmptyState.displayName = 'EmptyState';
 
 // Composant pour une ligne de token spot
-const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onClick: () => void; format: any }) => (
+const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onClick: () => void; format: NumberFormatType }) => (
   <TableRow
     className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
     onClick={onClick}
@@ -112,7 +113,7 @@ const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onCli
 SpotTokenRow.displayName = 'SpotTokenRow';
 
 // Composant pour une ligne de token perp
-const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onClick: () => void; format: any }) => {
+const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onClick: () => void; format: NumberFormatType }) => {
   const formatFunding = (funding: number) => {
     const percentage = funding * 100;
     return `${percentage > 0 ? '+' : ''}${percentage.toFixed(4)}%`;

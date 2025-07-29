@@ -16,6 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { SpotSortableFields } from "@/components/market";
 import { useNumberFormat } from "@/store/number-format.store";
+import { SpotToken } from "@/services/market/spot/types";
+import { PerpMarketData } from "@/services/market/perp/types";
 
 interface TrendingTokensCardProps {
   market: 'spot' | 'perp';
@@ -53,13 +55,13 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
       const newOrder = sortOrder === "asc" ? "desc" : "asc";
       setSortOrder(newOrder);
       if (market === 'perp' && perpResult.updateParams) {
-        perpResult.updateParams({ sortBy: field as any, sortOrder: newOrder });
+        perpResult.updateParams({ sortBy: field as 'change24h' | 'openInterest', sortOrder: newOrder });
       }
     } else {
       setSortField(field);
       setSortOrder("desc");
       if (market === 'perp' && perpResult.updateParams) {
-        perpResult.updateParams({ sortBy: field as any, sortOrder: "desc" });
+        perpResult.updateParams({ sortBy: field as 'change24h' | 'openInterest', sortOrder: "desc" });
       }
     }
   };
@@ -218,7 +220,7 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
                     </TableCell>
                   ) : (
                     <TableCell className="text-left text-white text-xs py-1.5 pl-4 pr-4">
-                      {'$' + formatNumber((token as any).openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                      {'$' + formatNumber((token as PerpMarketData).openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </TableCell>
                   )}
                 </TableRow>

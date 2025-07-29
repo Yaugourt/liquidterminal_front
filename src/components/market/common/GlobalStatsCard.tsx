@@ -6,6 +6,19 @@ import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalSt
 import { useFeesStats } from "@/services/market/fees/hooks/useFees";
 import { Loader2, BarChart2, Clock, CalendarDays, Scale, Wallet } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
+import { SpotGlobalStats } from "@/services/market/spot/types";
+import { PerpGlobalStats } from "@/services/market/perp/types";
+
+type GlobalStats = SpotGlobalStats | PerpGlobalStats;
+
+// Type guards
+function isSpotStats(stats: GlobalStats): stats is SpotGlobalStats {
+  return 'totalSpotUSDC' in stats;
+}
+
+function isPerpStats(stats: GlobalStats): stats is PerpGlobalStats {
+  return 'hlpTvl' in stats;
+}
 
 interface GlobalStatsCardProps {
   market: 'spot' | 'perp';
@@ -80,7 +93,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
                 Open Interest
               </div>
               <div className="text-white font-medium text-xs pl-5">
-                {stats ? formatNumber((stats as any).totalOpenInterest, format, {
+                {stats && isPerpStats(stats) ? formatNumber(stats.totalOpenInterest, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
                   currency: '$',
@@ -113,7 +126,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
                 24h Volume
               </div>
               <div className="text-white font-medium text-xs pl-5">
-                {stats ? formatNumber((stats as any).totalVolume24h, format, {
+                {stats ? formatNumber((stats as GlobalStats).totalVolume24h, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
                   currency: '$',
@@ -131,7 +144,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
                 Total USDC
               </div>
               <div className="text-white font-medium text-xs pl-5">
-                {stats ? formatNumber((stats as any).totalSpotUSDC, format, {
+                {stats && isSpotStats(stats) ? formatNumber(stats.totalSpotUSDC, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
                   currency: '$',
@@ -164,7 +177,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
                 24h Volume
               </div>
               <div className="text-white font-medium text-xs pl-5">
-                {stats ? formatNumber((stats as any).totalVolume24h, format, {
+                {stats ? formatNumber((stats as GlobalStats).totalVolume24h, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
                   currency: '$',
@@ -179,7 +192,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
                 HLP TVL
               </div>
               <div className="text-white font-medium text-xs pl-5">
-                {stats ? formatNumber((stats as any).hlpTvl, format, {
+                {stats && isPerpStats(stats) ? formatNumber(stats.hlpTvl, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
                   currency: '$',

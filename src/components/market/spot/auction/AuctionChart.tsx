@@ -17,8 +17,23 @@ import { formatLargeNumber, formatNumber } from '@/lib/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useState, useRef, useEffect } from 'react';
 
+// Types pour les données d'enchère
+interface AuctionDataPoint {
+  time: number;
+  value: number;
+}
+
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+  }>;
+  label?: number;
+}
+
 interface AuctionChartProps {
-  data: any[];
+  data: AuctionDataPoint[];
   isLoading: boolean;
   selectedCurrency: "HYPE" | "USDC";
   onCurrencyChange: (currency: "HYPE" | "USDC") => void;
@@ -96,9 +111,8 @@ export const AuctionChart = ({
   
   const chartData = useChartData({
     data,
-    period: selectedPeriod,
-    getValue: (item: any) => item.value,
-    getTimestamp: (item: any) => item.time
+    getValue: (item: AuctionDataPoint) => item.value,
+    getTimestamp: (item: AuctionDataPoint) => item.time
   });
 
 
@@ -110,7 +124,7 @@ export const AuctionChart = ({
     return formatNumber(value, format);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const value = payload[0].value;
       let formattedValue;

@@ -77,7 +77,7 @@ export function AuctionTable() {
   // Tri local
   const sortedAuctions = useMemo(() => {
     return [...auctions].sort((a, b) => {
-      let aValue: any, bValue: any;
+      let aValue: number | string, bValue: number | string;
       switch (sortField) {
         case 'time':
           aValue = a.time;
@@ -92,8 +92,8 @@ export function AuctionTable() {
           bValue = b.currency === 'USDC' ? parseFloat(b.deployGas) : 0;
           break;
         default:
-          aValue = (a as any)[sortField];
-          bValue = (b as any)[sortField];
+          aValue = (a as any)[sortField] || 0;
+          bValue = (b as any)[sortField] || 0;
       }
       if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;

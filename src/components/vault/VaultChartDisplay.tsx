@@ -10,6 +10,17 @@ import { useDateFormat } from '@/store/date-format.store';
 import { formatDate } from '@/lib/dateFormatting';
 import { useState, useRef, useEffect } from 'react';
 
+// Types pour le tooltip
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      timestamp: number;
+    };
+    value: number;
+  }>;
+}
+
 type VaultChartType = "accountValue" | "pnl";
 
 interface VaultChartDisplayProps {
@@ -122,7 +133,7 @@ export const VaultChartDisplay = ({
     return `$${value.toFixed(0)}`;
   };
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const value = payload[0].value;

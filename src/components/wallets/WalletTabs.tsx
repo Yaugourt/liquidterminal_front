@@ -162,7 +162,7 @@ export function WalletTabs() {
   };
 
   // Sortable wallet tab component
-  function SortableWalletTab({ wallet }: { wallet: any }) {
+  function SortableWalletTab({ wallet }: { wallet: { id: number; name?: string; addedAt: Date } }) {
     const {
       attributes,
       listeners,

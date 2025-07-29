@@ -39,9 +39,9 @@ export function DeleteWalletDialog({
         if (onSuccess) {
           onSuccess();
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error deleting wallet:", err);
-        handleWalletApiError(err, 'delete');
+        handleWalletApiError(err instanceof Error ? err : new Error(String(err)), 'delete');
       } finally {
         setIsLoading(false);
       }

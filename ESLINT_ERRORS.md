@@ -144,23 +144,23 @@
 - ✅ `src/components/explorer/block/TransactionList.tsx:17` - `any` - **CORRIGÉ**
 - ✅ `src/components/explorer/transaction/TransactionFormatter.tsx:72,74,138,176,178,196,230,250,331,335,347` - `any` - **CORRIGÉ**
 - ✅ `src/components/explorer/vaultValidatorSum/DataTable.tsx:4` - `any` - **CORRIGÉ**
-- `src/components/explorer/vaultValidatorSum/TableContent.tsx:51,60,86,136,202,249` - `any`
-- `src/components/market/common/GlobalStatsCard.tsx:83,116,134,167,182` - `any`
-- `src/components/market/common/TokenTable.tsx:73,115,163` - `any`
-- `src/components/market/common/TrendingTokensCard.tsx:56,62,183,221` - `any`
-- `src/components/market/spot/auction/AuctionChart.tsx:21,101,102,119` - `any`
-- `src/components/market/spot/auction/AuctionTable.tsx:82,97,98` - `any`
-- `src/components/validator/chart/HoldersDistributionChart.tsx:35` - `any`
-- `src/components/validator/chart/StakingLineChart.tsx:27` - `any`
-- `src/components/validator/chart/UnstakingScheduleChart.tsx:39,135` - `any`
-- `src/components/vault/VaultChart.tsx:83` - `any`
-- `src/components/vault/VaultChartDisplay.tsx:126` - `any`
-- `src/components/wallets/AddWalletDialog.tsx:54` - `any`
-- `src/components/wallets/DeleteWalletDialog.tsx:43` - `any`
-- `src/components/wallets/WalletTabs.tsx:165` - `any`
-- `src/components/wallets/stats/performance/DistributionSection.tsx:114` - `any`
-- `src/components/wallets/stats/performance/PerformanceSection.tsx:96` - `any`
-- `src/components/user/UserManagement.tsx:29` - `any`
+- ✅ `src/components/explorer/vaultValidatorSum/TableContent.tsx:51,60,86,136,202,249` - `any` - **CORRIGÉ**
+- ✅ `src/components/market/common/GlobalStatsCard.tsx:83,116,134,167,182` - `any` - **CORRIGÉ**
+- ✅ `src/components/market/common/TokenTable.tsx:73,115,163` - `any` - **CORRIGÉ**
+- ✅ `src/components/market/common/TrendingTokensCard.tsx:56,62,183,221` - `any` - **CORRIGÉ**
+- ✅ `src/components/market/spot/auction/AuctionChart.tsx:21,101,102,119` - `any` - **CORRIGÉ**
+- ✅ `src/components/market/spot/auction/AuctionTable.tsx:82,97,98` - `any` - **CORRIGÉ**
+- ✅ `src/components/validator/chart/HoldersDistributionChart.tsx:35` - `any` - **CORRIGÉ**
+- ✅ `src/components/validator/chart/StakingLineChart.tsx:27` - `any` - **CORRIGÉ**
+- ✅ `src/components/validator/chart/UnstakingScheduleChart.tsx:39,135` - `any` - **CORRIGÉ**
+- ✅ `src/components/vault/VaultChart.tsx:83` - `any` - **CORRIGÉ**
+- ✅ `src/components/vault/VaultChartDisplay.tsx:126` - `any` - **CORRIGÉ**
+- ✅ `src/components/wallets/AddWalletDialog.tsx:54` - `any` - **CORRIGÉ**
+- ✅ `src/components/wallets/DeleteWalletDialog.tsx:43` - `any` - **CORRIGÉ**
+- ✅ `src/components/wallets/WalletTabs.tsx:165` - `any` - **CORRIGÉ**
+- ✅ `src/components/wallets/stats/performance/DistributionSection.tsx:114` - `any` - **CORRIGÉ**
+- ✅ `src/components/wallets/stats/performance/PerformanceSection.tsx:96` - `any` - **CORRIGÉ**
+- ✅ `src/components/user/UserManagement.tsx:29` - `any` - **CORRIGÉ**
 
 ### 2. Types `any` dans les services
 - `src/hooks/useDataFetching.ts:6` - `any`
