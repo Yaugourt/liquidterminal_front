@@ -11,7 +11,9 @@ import { useState } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
-import { Gavel } from "lucide-react"
+import { Gavel, Shield } from "lucide-react"
+import { useAuth } from "@/services/auth/hooks/use-auth"
+import { hasRole } from "@/utils/roleHelpers"
 
 // Define navigation groups
 interface NavigationItem {
@@ -137,11 +139,15 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const { authenticated, login, logout, privyUser } = useAuthContext();
+    const { user } = useAuth();
     const pathname = usePathname();
 
     const toggleSubmenu = (name: string) => {
         setOpenSubmenu(prev => prev === name ? null : name);
     };
+
+    // Check if user is admin
+    const isAdmin = hasRole(user, 'ADMIN');
 
     return (
         <>
@@ -311,6 +317,40 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 </ul>
                             </li>
                         ))}
+                        
+                        {/* Admin Section - Only visible to admins */}
+                        {isAdmin && (
+                            <li className="space-y-1">
+                                <div className="px-3 text-[11px] font-medium text-[#f9e37099] uppercase tracking-wider">
+                                    Administration
+                                </div>
+                                <ul className="space-y-[2px]">
+                                    <li className="relative">
+                                        {pathname === '/user' && (
+                                            <div className="absolute left-0 top-1/2 h-5 bg-[#f9e370] rounded-r shadow-[0_0_8px_0_rgba(249,227,112,0.3)]" />
+                                        )}
+                                        <Link
+                                            href="/user"
+                                            className={cn(
+                                                "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
+                                                pathname === '/user'
+                                                    ? "bg-[#f9e3700A] text-[#f9e370]" 
+                                                    : "text-[#FFFFFFCC] hover:bg-[#f9e3700A] hover:text-[#f9e370]"
+                                            )}
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <div className={cn(
+                                                "transition-transform",
+                                                pathname === '/user' ? "scale-110" : "group-hover:scale-105"
+                                            )}>
+                                                <Shield className="w-5 h-5" />
+                                            </div>
+                                            <span className="text-sm">User Management</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                        )}
                     </ul>
                 </nav>
 
