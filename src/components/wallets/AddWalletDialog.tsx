@@ -54,8 +54,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       console.error("Error adding wallet:", err);
       
       // Handle specific error cases with toast
-      
-      handleWalletApiError(err instanceof Error ? err : new Error(String(err)), 'add');
+      handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setIsLoading(false);
     }
