@@ -185,9 +185,9 @@ function HomePageContent() {
             
             {/* Affichage du parrain détecté */}
             {searchParams.get('ref') && (
-              <div className="mb-6 p-4 bg-[#83E9FF1A] rounded-lg border border-[#83E9FF33]">
+              <div className="mb-6">
                 <p className="text-[#83E9FF] font-inter font-normal">
-                  Vous rejoignez <strong className="text-white">{searchParams.get('ref')}</strong> sur Liquid Terminal
+                  You&apos;re joining <strong className="text-white">{searchParams.get('ref')}</strong> on Liquid Terminal
                 </p>
               </div>
             )}
@@ -311,6 +311,17 @@ function HomePageContent() {
                     <Icon icon="mdi:content-copy" className="h-4 w-4" />
                   )}
                 </button>
+                <button 
+                  onClick={() => {
+                    const link = generateReferralLink(privyUser?.twitter?.username || privyUser?.farcaster?.username || privyUser?.github?.username || 'user');
+                    const tweetText = `@HyperliquidX is the house of all the finance, @liquidterminal is the house of all HyperLiquid.\n\nCome to the house of HyperLiquid: ${link}`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                    window.open(twitterUrl, '_blank');
+                  }}
+                  className="p-2 text-[#83E9FF] hover:text-white hover:bg-[#83E9FF1A] rounded transition-colors relative"
+                >
+                  <Icon icon="simple-icons:x" className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>
@@ -321,16 +332,16 @@ function HomePageContent() {
 
             {/* Affichage des stats de referral */}
             {(user.referralCount > 0 || user.referredBy) && (
-              <div className="mb-6 p-4 bg-[#83E9FF1A] rounded-lg border border-[#83E9FF33]">
-                <h4 className="text-[#83E9FF] font-inter font-normal mb-2">Referral Stats</h4>
+              <div className="mb-6">
+                <h4 className="text-[#83E9FF] font-inter font-normal mb-2">Referral</h4>
                 {user.referredBy && (
                   <p className="text-white font-inter font-normal text-sm mb-1">
-                    Rejoint via: <strong className="text-[#83E9FF]">{user.referredBy}</strong>
+                    Joined via: <strong className="text-[#83E9FF]">{user.referredBy}</strong>
                   </p>
                 )}
                 {user.referralCount > 0 && (
                   <p className="text-white font-inter font-normal text-sm">
-                    Parrainages: <strong className="text-[#83E9FF]">{user.referralCount}</strong> utilisateur(s)
+                    Referrals: <strong className="text-[#83E9FF]">{user.referralCount}</strong> user(s)
                   </p>
                 )}
               </div>
@@ -384,6 +395,17 @@ function HomePageContent() {
                   ) : (
                     <Icon icon="mdi:content-copy" className="h-4 w-4" />
                   )}
+                </button>
+                <button 
+                  onClick={() => {
+                    const link = generateReferralLink(user.name);
+                    const tweetText = `@HyperliquidX is the house of all the finance, @liquidterminal is the house of all HyperLiquid.\n\nCome to the house of HyperLiquid: ${link}`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                    window.open(twitterUrl, '_blank');
+                  }}
+                  className="p-2 text-[#83E9FF] hover:text-white hover:bg-[#83E9FF1A] rounded transition-colors relative"
+                >
+                  <Icon icon="simple-icons:x" className="h-4 w-4" />
                 </button>
               </div>
             </div>
