@@ -79,7 +79,7 @@ export function WalletTabs() {
           });
         } catch (err) {
           console.error("Error fetching wallets:", err);
-          handleWalletApiError(err, 'load');
+          handleWalletApiError(err);
         }
       }
     };
