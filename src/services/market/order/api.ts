@@ -63,9 +63,15 @@ export const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<Enriche
         // Progression basée sur les sous-ordres envoyés (plus précis que le temps)
         const progressionPercent = Math.min(100, Math.max(0, (subOrdersSent / totalSubOrders) * 100));
         
+        // Transformer le nom du token si nécessaire
+        let tokenSymbol = token?.name || `Token ${marketIndex}`;
+        if (tokenSymbol === 'USDT_USDC') {
+          tokenSymbol = 'USDT0';
+        }
+
         return {
           ...order,
-          tokenSymbol: token?.name || `Token ${marketIndex}`,
+          tokenSymbol,
           tokenPrice,
           totalValueUSD,
           progressionPercent,

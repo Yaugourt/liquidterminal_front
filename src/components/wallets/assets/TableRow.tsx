@@ -16,6 +16,7 @@ interface PerpRowProps {
   holding: PerpHoldingDisplay;
   formatCurrency: (value: number | string) => string;
   formatTokenAmount: (value: number | string) => string;
+  formatPercent: (value: number) => string;
 }
 
 export const SpotTableRow = memo(function SpotTableRow({

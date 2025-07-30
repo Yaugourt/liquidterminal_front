@@ -40,6 +40,7 @@ interface TableHeaderComponentProps {
   onSort: (key: SortKey) => void;
   type: 'spot' | 'perp';
   activeSortKey?: SortKey;
+  sortDirection?: 'asc' | 'desc';
 }
 
 export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeaderComponentProps) {

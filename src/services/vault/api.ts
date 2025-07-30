@@ -22,7 +22,7 @@ export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse>
     const queryParams = new URLSearchParams();
     
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
+      if (value !== undefined && value !== null) {
         queryParams.append(key, value.toString());
       }
     });

@@ -120,6 +120,7 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
               <TableContent
                 activeTab="validators"
                 validatorSubTab={validatorSubTab}
+                onValidatorSubTabChange={() => {}} // No-op function since this component doesn't handle sub-tab changes
                 validatorsData={{
                   validators,
                   loading: validatorsLoading,

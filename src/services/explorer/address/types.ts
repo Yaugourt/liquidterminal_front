@@ -80,6 +80,7 @@ export interface UserFill {
     hash: string;
     oid: number;         // order id
     tid: number;         // trade id
+    [key: string]: unknown; // Add index signature for compatibility with FillData
 }
 
 // Response de l'API pour les fills

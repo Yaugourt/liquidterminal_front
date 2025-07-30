@@ -27,7 +27,7 @@ export function useEducationalResourcesPaginated({
     refetch
   } = useDataFetching<ResourcesPaginatedResponse>({
     fetchFn: async () => {
-      const apiResponse = await fetchEducationalResources(params);
+      const apiResponse = await fetchEducationalResources();
       return {
         data: apiResponse.data,
         pagination: apiResponse.pagination,

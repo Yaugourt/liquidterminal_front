@@ -24,6 +24,7 @@ export interface DelegatorHistoryItem {
 export interface DelegatorHistoryRequest {
   type: "delegatorHistory";
   user: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -69,6 +70,7 @@ export interface DelegatorRewardItem {
 export interface DelegatorRewardsRequest {
   type: "delegatorRewards";
   user: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -112,6 +114,7 @@ export interface DelegatorSummaryData {
 export interface DelegatorSummaryRequest {
   type: "delegatorSummary";
   user: string;
+  [key: string]: unknown;
 }
 
 /**

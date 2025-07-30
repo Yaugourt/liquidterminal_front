@@ -12,7 +12,7 @@ export const useEducationalCategories = (
   options: UseEducationalCategoriesOptions = {}
 ): UseEducationalCategoriesResult => {
   const { data, isLoading, error, refetch } = useDataFetching<CategoriesResponse>({
-    fetchFn: () => fetchEducationalCategories(params),
+    fetchFn: () => fetchEducationalCategories(),
     initialData: options.initialData ? {
       success: true,
       data: options.initialData

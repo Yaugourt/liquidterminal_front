@@ -14,6 +14,7 @@ export interface ValidatorDelegation {
 export interface ValidatorDelegationsRequest {
   type: "delegations";
   user: string;
+  [key: string]: unknown;
 }
 
 /**

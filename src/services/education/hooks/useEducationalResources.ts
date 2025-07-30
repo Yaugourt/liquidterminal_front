@@ -12,7 +12,7 @@ export const useEducationalResources = (
   options: UseEducationalResourcesOptions = {}
 ): UseEducationalResourcesResult => {
   const { data, isLoading, error, refetch } = useDataFetching<ResourcesResponse>({
-    fetchFn: () => fetchEducationalResources(filters),
+    fetchFn: () => fetchEducationalResources(),
     initialData: options.initialData ? {
       success: true,
       data: options.initialData,

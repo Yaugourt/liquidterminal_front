@@ -31,7 +31,7 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
         items: [
             {
                 name: 'Home',
-                href: '/',
+                href: '/dashboard',
                 icon: null,
                 IconComponent: AiOutlineHome
             },

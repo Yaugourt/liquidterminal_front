@@ -68,14 +68,27 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
   };
 };
 
-// Composant mémorisé pour la cellule Value (dynamique)
+// Composant mémorisé pour la cellule Value unifiée (Type + Value)
 const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
   
   return (
-    <TableCell className="py-3 px-4 text-sm text-white font-medium w-[150px]">
-      ${formatNumber(value, format)}
+    <TableCell className="py-3 px-3 text-sm text-white font-medium w-[200px]">
+      <div className="flex items-center gap-2">
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            twap.type === 'Buy'
+              ? 'bg-green-500/20 text-green-400'
+              : 'bg-red-500/20 text-red-400'
+          }`}
+        >
+          {twap.type}
+        </span>
+        <span className="text-white">
+          ${formatNumber(value, format)}
+        </span>
+      </div>
     </TableCell>
   );
 };
@@ -133,7 +146,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
   };
   
   return (
-    <TableCell className="py-3 px-4 text-sm text-white w-[170px]">
+    <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-[120px]">
           <span className="text-xs text-[#FFFFFF80]  font-inter">
@@ -157,21 +170,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
 });
 ProgressionCell.displayName = 'ProgressionCell';
 
-// Composant mémorisé pour la cellule Type (statique)
-const TypeCell = memo(({ twap }: { twap: TwapTableData }) => (
-  <TableCell className="py-3 px-4 text-sm text-white w-[80px]">
-    <span
-      className={`px-2 py-1 rounded text-xs font-medium ${
-        twap.type === 'Buy'
-          ? 'bg-green-500/20 text-green-400'
-          : 'bg-red-500/20 text-red-400'
-      }`}
-    >
-      {twap.type}
-    </span>
-  </TableCell>
-));
-TypeCell.displayName = 'TypeCell';
+
 
 // Composant mémorisé pour la cellule User (statique)
 const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: { 
@@ -179,7 +178,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
   copiedAddress: string | null, 
   copyToClipboard: (text: string) => void 
 }) => (
-  <TableCell className="py-3 px-4 text-sm w-[180px]">
+  <TableCell className="py-3 px-3 text-sm w-[170px]">
     <div className="flex items-center gap-1.5">
       <Link 
         href={`/explorer/address/${twap.user}`}
@@ -280,19 +279,16 @@ export const TwapTable = memo(({
             <Table className="table-fixed w-full">
               <TableHeader>
                 <TableRow className="border-none bg-[#051728]">
-                  <TableHead className="py-3 px-4 w-[80px]">
-                    <TableHeaderButton header="Type" align="left" />
-                  </TableHead>
-                  <TableHead className="py-3 px-4 w-[150px]">
+                  <TableHead className="py-3 px-3 w-[200px]">
                     <TableHeaderButton header="Value" align="left" />
                   </TableHead>
                   <TableHead className="py-3 px-4 w-[180px]">
                     <TableHeaderButton header="Token" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4 w-[180px]">
+                  <TableHead className="py-3 px-3 w-[170px]">
                     <TableHeaderButton header="User" align="left" />
                   </TableHead>
-                  <TableHead className="py-3 px-4 w-[170px]">
+                  <TableHead className="py-3 px-3 w-[160px]">
                     <TableHeaderButton header="Progression" align="left" />
                   </TableHead>
                 </TableRow>
@@ -304,7 +300,6 @@ export const TwapTable = memo(({
                       key={twap.id}
                       className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
                     >
-                      <TypeCell twap={twap} />
                       <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
                       <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
                       <UserCell twap={twap} copiedAddress={copiedAddress} copyToClipboard={copyToClipboard} />
@@ -314,7 +309,7 @@ export const TwapTable = memo(({
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={4}
                       className="py-8"
                     >
                       <div className="flex flex-col items-center justify-center text-center">

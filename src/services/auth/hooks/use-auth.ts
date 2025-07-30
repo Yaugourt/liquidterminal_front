@@ -32,6 +32,16 @@ export function useAuth() {
 
       const response = await authService.login(credentials);
       if (response.success && response.user) {
+        // Vérifier le statut de vérification pour la closed beta
+        if (!response.user.verified) {
+          setError({
+            success: false,
+            message: 'Access denied. Your account is not verified for the closed beta.',
+            code: 'ACCESS_DENIED'
+          });
+          return false;
+        }
+        
         setUser(response.user);
         setUserProcessed(true);
         return true;
