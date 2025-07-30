@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import Image from "next/image";
 import { CheckCircle, Clock } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-export default function HomePage() {
+function HomePageContent() {
   const { login, logout, user, loading, authenticated, privyUser } = useAuthContext();
   const searchParams = useSearchParams();
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -444,5 +444,13 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageContent />
+    </Suspense>
   );
 }
