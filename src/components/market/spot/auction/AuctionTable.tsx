@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
-import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/dateFormatting';
 
@@ -63,7 +62,7 @@ export function AuctionTable() {
   const [sortField, setSortField] = useState('time');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-  const { format } = useNumberFormat();
+
   const { format: dateFormat } = useDateFormat();
 
   const handleCopy = async (address: string) => {
@@ -92,7 +91,9 @@ export function AuctionTable() {
           bValue = b.currency === 'USDC' ? parseFloat(b.deployGas) : 0;
           break;
         default:
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           aValue = (a as any)[sortField] || 0;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           bValue = (b as any)[sortField] || 0;
       }
       if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;

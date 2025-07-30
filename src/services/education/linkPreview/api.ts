@@ -1,7 +1,6 @@
-import { get, post, put, del } from '../../api/axios-config';
+import { get, post } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { 
-  LinkPreview,
   LinkPreviewResponse,
   LinkPreviewBatchResponse,
   LinkPreviewListResponse,

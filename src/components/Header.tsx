@@ -1,8 +1,7 @@
 "use client"
 
 import { SearchBar } from "@/components/SearchBar"
-import { usePageTitle } from "@/store/use-page-title"
-import { useFeesStats } from "@/services/market/fees/hooks/useFees"
+import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice"
 import { useHypeBuyPressure } from "@/services/market/order/hooks/useHypeBuyPressure"
 import { Clock, CalendarDays, TrendingUp } from "lucide-react"
@@ -22,10 +21,8 @@ interface HeaderProps {
 export function Header({ 
     searchPlaceholder = "Search token, address, tx or block...",
     searchWidth = "w-[300px]",
-    customTitle,
     showFees = false
 }: HeaderProps) {
-    const { title } = usePageTitle();
     const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
     const { price: hypePrice, lastSide, isLoading: hypePriceLoading } = useHypePrice();
     const { buyPressure, isLoading: buyPressureLoading } = useHypeBuyPressure();

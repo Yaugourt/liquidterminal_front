@@ -161,7 +161,7 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
 
 PerpTokenRow.displayName = 'PerpTokenRow';
 
-export function TokenTable({ market, loading: initialLoading = false, strict = false }: TokenTableProps) {
+export function TokenTable({ market, strict = false }: TokenTableProps) {
   const router = useRouter();
   const [sortField, setSortField] = useState<SpotSortableFields | PerpSortableFields>(
     market === 'spot' ? "volume" : "volume"
@@ -171,22 +171,22 @@ export function TokenTable({ market, loading: initialLoading = false, strict = f
   const [page, setPage] = useState(1);
   const { format } = useNumberFormat();
 
-  // Hooks conditionnels selon le marché
-  const spotResult = market === 'spot' ? useSpotTokens({
+  // Toujours appeler les hooks, mais ignorer les résultats non pertinents
+  const spotResult = useSpotTokens({
     limit: pageSize,
     page,
     sortBy: sortField as SpotSortableFields,
     sortOrder,
     strict
-  }) : { data: [], total: 0, isLoading: false };
+  });
 
-  const perpResult = market === 'perp' ? usePerpMarkets({
+  const perpResult = usePerpMarkets({
     limit: pageSize,
     defaultParams: {
       sortBy: sortField as PerpSortableFields,
       sortOrder: sortOrder,
     }
-  }) : { data: [], page: 1, total: 0, updateParams: () => {}, isLoading: false };
+  });
 
   // Sélectionner les bonnes données selon le marché
   const tokens = market === 'spot' ? spotResult.data : perpResult.data;

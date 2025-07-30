@@ -1,4 +1,4 @@
-import { FeesStats, FeesHistoryEntry, FeesStatsResponse, FeesHistoryEntryResponse, FeesHistoryResponse } from './types';
+import { FeesStats, FeesHistoryEntry, FeesStatsApiResponse, FeesHistoryEntryApiResponse } from './types';
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 
@@ -8,22 +8,38 @@ import { withErrorHandling } from '../../api/error-handler';
 export const getFeesStats = async (): Promise<FeesStats> => {
   return withErrorHandling(async () => {
     // Récupérer la réponse brute de l'API
-    const response = await get<FeesStatsResponse>('/market/fees');
+    const response = await get<FeesStatsApiResponse>('/market/fees');
     
     // Adaptation de la réponse à notre interface FeesStats
+    // Cas 1: Les données sont dans response.data
+    if (response && response.data && typeof response.data === 'object') {
+      return {
+        hourlyFees: Number(response.data.hourlyFees || 0),
+        dailyFees: Number(response.data.dailyFees || 0),
+        hourlySpotFees: Number(response.data.hourlySpotFees || 0),
+        dailySpotFees: Number(response.data.dailySpotFees || 0)
+      };
+    }
+    
+    // Cas 2: Les données sont directement dans la réponse
+    if (response && typeof response === 'object') {
+      return {
+        hourlyFees: Number(response.hourlyFees || 0),
+        dailyFees: Number(response.dailyFees || 0),
+        hourlySpotFees: Number(response.hourlySpotFees || 0),
+        dailySpotFees: Number(response.dailySpotFees || 0)
+      };
+    }
+    
+    // Cas par défaut: retourner des valeurs par défaut
+    console.error('Unexpected API response structure:', response);
     return {
-      data: {
-        hourlyFees: Number(response.data?.hourlyFees || 0),
-        dailyFees: Number(response.data?.dailyFees || 0),
-        hourlySpotFees: Number(response.data?.hourlySpotFees || 0),
-        dailySpotFees: Number(response.data?.dailySpotFees || 0)
-      },
-      hourlyFees: Number(response.hourlyFees || 0),
-      dailyFees: Number(response.dailyFees || 0),
-      hourlySpotFees: Number(response.hourlySpotFees || 0),
-      dailySpotFees: Number(response.dailySpotFees || 0)
+      hourlyFees: 0,
+      dailyFees: 0,
+      hourlySpotFees: 0,
+      dailySpotFees: 0
     };
-  }, 'getFeesStats');
+  }, 'fetching fees stats');
 };
 
 /**
@@ -31,11 +47,11 @@ export const getFeesStats = async (): Promise<FeesStats> => {
  */
 export const getFeesHistory = async (): Promise<FeesHistoryEntry[]> => {
   return withErrorHandling(async () => {
-    const response = await get<unknown>('/market/fees/raw');
+    const response = await get<FeesHistoryEntryApiResponse[] | { data: FeesHistoryEntryApiResponse[] }>('/market/fees/raw');
     
     // Cas 1: Les données sont dans response.data
-    if (response && typeof response === 'object' && response !== null && 'data' in response && Array.isArray((response as { data: unknown }).data)) {
-      return (response as { data: FeesHistoryEntryResponse[] }).data.map((entry) => ({
+    if (response && typeof response === 'object' && 'data' in response && Array.isArray(response.data)) {
+      return response.data.map((entry: FeesHistoryEntryApiResponse) => ({
         time: String(entry.time),
         total_fees: Number(entry.total_fees || 0),
         total_spot_fees: Number(entry.total_spot_fees || 0)
@@ -44,13 +60,15 @@ export const getFeesHistory = async (): Promise<FeesHistoryEntry[]> => {
     
     // Cas 2: Les données sont directement dans la réponse
     if (response && Array.isArray(response)) {
-      return response.map((entry: FeesHistoryEntryResponse) => ({
+      return response.map((entry: FeesHistoryEntryApiResponse) => ({
         time: String(entry.time),
         total_fees: Number(entry.total_fees || 0),
         total_spot_fees: Number(entry.total_spot_fees || 0)
       }));
     }
     
+    // Cas par défaut: retourner un tableau vide
+    console.error('Unexpected API response structure for fees history:', response);
     return [];
-  }, 'getFeesHistory');
+  }, 'fetching fees history');
 }; 

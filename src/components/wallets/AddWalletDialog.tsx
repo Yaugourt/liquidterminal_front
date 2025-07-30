@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
-import { useAuthContext } from "@/contexts/auth.context";
+
 import { walletAddMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
 
 interface AddWalletDialogProps {
@@ -54,22 +54,6 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       console.error("Error adding wallet:", err);
       
       // Handle specific error cases with toast
-      let errorMessage = "Une erreur est survenue lors de l'ajout du wallet.";
-      
-      if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'status' in err.response) {
-        switch (err.response.status) {
-          case 409:
-            errorMessage = "Ce wallet est déjà associé à votre compte.";
-            break;
-          case 400:
-            errorMessage = "Adresse de wallet invalide.";
-            break;
-          default:
-            errorMessage = err instanceof Error ? err.message : errorMessage;
-        }
-      } else {
-        errorMessage = err instanceof Error ? err.message : errorMessage;
-      }
       
       handleWalletApiError(err instanceof Error ? err : new Error(String(err)), 'add');
     } finally {
@@ -83,7 +67,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
         <DialogHeader>
           <DialogTitle>Ajouter un nouveau wallet</DialogTitle>
           <DialogDescription className="text-white">
-            Entrez l'adresse de votre wallet Ethereum et un nom optionnel.
+            Entrez l&apos;adresse de votre wallet Ethereum et un nom optionnel.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

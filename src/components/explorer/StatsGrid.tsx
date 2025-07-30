@@ -1,5 +1,5 @@
 import { StatsCard } from "./StatsCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/numberFormatting";
 import { ExplorerStat } from "@/components/types/explorer.types";
@@ -20,7 +20,7 @@ export function StatsGrid() {
   }, [connectBlocks, disconnectBlocks]);
 
   // Fonction pour formater les nombres selon le format sélectionné
-  const formatValue = (value: number, type: string) => {
+  const formatValue = useCallback((value: number, type: string) => {
     if (type === "users") {
       return formatNumber(value, format, {
         minimumFractionDigits: 0,
@@ -45,7 +45,7 @@ export function StatsGrid() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
-  };
+  }, [format]);
 
   useEffect(() => {
     if (!isDashboardLoading && blocks.length > 0) {
@@ -84,7 +84,7 @@ export function StatsGrid() {
       ]);
       setIsLoading(false);
     }
-  }, [blocks, dashboardStats, format, isDashboardLoading]);
+  }, [blocks, dashboardStats, format, isDashboardLoading, formatValue]);
 
   // Afficher un état de chargement
   if (isLoading) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import Image from "next/image";
 import { TableRow as UITableRow, TableCell } from "@/components/ui/table";
 import { HoldingDisplay, PerpHoldingDisplay } from "@/components/types/wallet.types";
 
@@ -28,7 +29,7 @@ export const SpotTableRow = memo(function SpotTableRow({
       <TableCell className="py-2 pl-4 w-[160px]">
         <div className="flex items-center gap-2">
           {holding.logo ? (
-            <img src={holding.logo} alt={holding.coin} className="w-5 h-5 rounded mr-2 object-contain" />
+            <Image src={holding.logo} alt={holding.coin} width={20} height={20} className="w-5 h-5 rounded mr-2 object-contain" />
           ) : (
             <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
           )}
@@ -89,7 +90,7 @@ export const PerpTableRow = memo(function PerpTableRow({
       <TableCell className="py-2 pl-4 w-[140px]">
         <div className="flex items-center gap-2">
           {holding.logo ? (
-            <img src={holding.logo} alt={holding.coin} className="w-5 h-5 rounded mr-2 object-contain" />
+            <Image src={holding.logo} alt={holding.coin} width={20} height={20} className="w-5 h-5 rounded mr-2 object-contain" />
           ) : (
             <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
           )}

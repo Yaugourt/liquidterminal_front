@@ -42,11 +42,6 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   
   const { format } = useNumberFormat();
 
-  const handleValidatorSubTabChange = useCallback((subTab: ValidatorSubTab) => {
-    // Cette fonction n'est plus utilisée car les tabs sont maintenant externes
-    setCurrentPage(0);
-  }, []);
-
   // Sync hooks pagination when switching to transactions tab
   useEffect(() => {
     if (validatorSubTab === 'transactions') {
@@ -125,7 +120,6 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
               <TableContent
                 activeTab="validators"
                 validatorSubTab={validatorSubTab}
-                onValidatorSubTabChange={handleValidatorSubTabChange}
                 validatorsData={{
                   validators,
                   loading: validatorsLoading,

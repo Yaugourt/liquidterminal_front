@@ -100,6 +100,7 @@ export interface FormattedUserTransaction {
     isShort?: boolean;
     isLong?: boolean;
     isClose?: boolean;
+    [key: string]: unknown; // Add index signature for compatibility
 }
 
 // Response finale avec les transactions formatées
@@ -136,6 +137,7 @@ export interface TransactionType {
   time: number;
   isShort?: boolean;
   isLong?: boolean;
+  [key: string]: unknown; // Add index signature for compatibility with TransactionData
 } 
 
 // Types pour les ordres ouverts

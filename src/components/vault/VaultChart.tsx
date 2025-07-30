@@ -16,7 +16,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { formatLargeNumber } from '@/lib/numberFormatting';
-import { useNumberFormat } from '@/store/number-format.store';
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDate } from '@/lib/dateFormatting';
 
@@ -43,7 +42,7 @@ type ChartType = 'accountValue' | 'pnl';
  * Composant de chart pour afficher l'historique d'un vault avec tabs
  */
 export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) => {
-  const { format } = useNumberFormat();
+
   const { format: dateFormat } = useDateFormat();
   const [selectedChart, setSelectedChart] = useState<ChartType>('accountValue');
   const [selectedTimeframe, setSelectedTimeframe] = useState<VaultChartTimeframe>('day');
@@ -92,7 +91,7 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
     return formatLargeNumber(value, { prefix: '$', decimals: 2 });
   };
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const value = payload[0].value;

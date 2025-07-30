@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SpotSortableFields } from "@/components/market";
 import { useNumberFormat } from "@/store/number-format.store";
-import { SpotToken } from "@/services/market/spot/types";
+
 import { PerpMarketData } from "@/services/market/perp/types";
 
 interface TrendingTokensCardProps {
@@ -34,18 +34,18 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const { format } = useNumberFormat();
   
-  // Hooks différents selon le marché
-  const spotResult = market === 'spot' ? useTrendingSpotTokens(
+  // Toujours appeler les hooks, mais ignorer les résultats non pertinents
+  const spotResult = useTrendingSpotTokens(
     5, 
     sortField as SpotSortableFields, 
     sortOrder
-  ) : { data: [], isLoading: false, error: null };
+  );
   
-  const perpResult = market === 'perp' ? useTrendingPerpMarkets(
+  const perpResult = useTrendingPerpMarkets(
     5, 
     sortField as 'change24h' | 'openInterest', 
     sortOrder
-  ) : { data: [], isLoading: false, error: null, updateParams: undefined };
+  );
 
   // Sélectionner les bonnes données selon le marché
   const { data: trendingTokens, isLoading, error } = market === 'spot' ? spotResult : perpResult;

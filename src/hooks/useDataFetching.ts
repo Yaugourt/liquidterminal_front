@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 
 interface UseDataFetchingOptions<T> {
   fetchFn: () => Promise<T>;
@@ -46,7 +46,7 @@ export function useDataFetching<T>({
   }, []);
 
   // Main fetch function with retry logic
-  const fetchData = async (isRetry = false, isPolling = false) => {
+  const fetchData = useCallback(async (isRetry = false, isPolling = false) => {
     if (!mountedRef.current) return;
 
     try {
@@ -106,10 +106,10 @@ export function useDataFetching<T>({
         setIsRefreshing(false);
       }
     }
-  };
+  }, [fetchFn, retryCount, maxRetries, retryDelay]);
 
   // Stabilize dependencies to prevent infinite loops
-  const stableDependencies = useMemo(() => dependencies, [JSON.stringify(dependencies)]);
+  const stableDependencies = useMemo(() => dependencies, [dependencies]);
 
   // Combined effect for both initial fetch and dependencies changes
   useEffect(() => {

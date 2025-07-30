@@ -17,7 +17,6 @@ interface SortableColumnHeaderProps {
   onSort: (key: SortKey) => void;
   className?: string;
   isActive?: boolean;
-  sortDirection?: 'asc' | 'desc';
 }
 
 const SortableColumnHeader = ({ 
@@ -25,8 +24,7 @@ const SortableColumnHeader = ({
   sortKey, 
   onSort, 
   className = "",
-  isActive = false,
-  sortDirection
+  isActive = false
 }: SortableColumnHeaderProps) => (
   <Button
     variant="ghost"
@@ -42,10 +40,9 @@ interface TableHeaderComponentProps {
   onSort: (key: SortKey) => void;
   type: 'spot' | 'perp';
   activeSortKey?: SortKey;
-  sortDirection?: 'asc' | 'desc';
 }
 
-export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirection }: TableHeaderComponentProps) {
+export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeaderComponentProps) {
   if (type === 'perp') {
     return (
       <TableHeader>
@@ -56,7 +53,6 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="coin" 
               onSort={onSort}
               isActive={activeSortKey === 'coin'}
-              sortDirection={sortDirection}
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[100px]">
@@ -65,7 +61,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="type" 
               onSort={onSort}
               isActive={activeSortKey === 'type'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[120px]">
@@ -74,7 +70,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="entryPriceNum" 
               onSort={onSort}
               isActive={activeSortKey === 'entryPriceNum'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[120px]">
@@ -83,7 +79,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="liquidationNum" 
               onSort={onSort}
               isActive={activeSortKey === 'liquidationNum'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[100px]">
@@ -92,7 +88,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="price" 
               onSort={onSort}
               isActive={activeSortKey === 'price'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
@@ -101,7 +97,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="positionValueNum" 
               onSort={onSort}
               isActive={activeSortKey === 'positionValueNum'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] w-[140px]">
@@ -110,7 +106,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="unrealizedPnl" 
               onSort={onSort}
               isActive={activeSortKey === 'unrealizedPnl'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
           <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4 w-[120px]">
@@ -119,7 +115,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
               sortKey="funding" 
               onSort={onSort}
               isActive={activeSortKey === 'funding'}
-              sortDirection={sortDirection}
+              
             />
           </TableHead>
         </TableRow>
@@ -136,7 +132,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortKey="coin" 
             onSort={onSort}
             isActive={activeSortKey === 'coin'}
-            sortDirection={sortDirection}
+            
           />
         </TableHead>
         <TableHead className="text-white font-normal py-1 bg-[#051728]">
@@ -145,7 +141,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortKey="total" 
             onSort={onSort}
             isActive={activeSortKey === 'total'}
-            sortDirection={sortDirection}
+            
           />
         </TableHead>
         <TableHead className="text-white font-normal py-1 bg-[#051728]">
@@ -154,7 +150,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortKey="price" 
             onSort={onSort}
             isActive={activeSortKey === 'price'}
-            sortDirection={sortDirection}
+            
           />
         </TableHead>
         <TableHead className="text-white font-normal py-1 bg-[#051728]">
@@ -163,7 +159,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortKey="pnlPercentage" 
             onSort={onSort}
             isActive={activeSortKey === 'pnlPercentage'}
-            sortDirection={sortDirection}
+            
           />
         </TableHead>
         <TableHead className="text-white font-normal py-1 bg-[#051728] pr-4">
@@ -172,7 +168,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey, sortDirectio
             sortKey="totalValue" 
             onSort={onSort}
             isActive={activeSortKey === 'totalValue'}
-            sortDirection={sortDirection}
+            
           />
         </TableHead>
       </TableRow>

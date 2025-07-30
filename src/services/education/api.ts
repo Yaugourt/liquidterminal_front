@@ -4,8 +4,6 @@ import {
   EducationalResource,
   CategoriesResponse,
   ResourcesResponse,
-  ResourceFilters,
-  CategoryParams,
   CreateCategoryInput,
   CreateResourceInput,
   CategoryResponse,
@@ -15,7 +13,7 @@ import {
 /**
  * Récupère toutes les catégories éducatives
  */
-export const fetchEducationalCategories = async (params?: CategoryParams): Promise<CategoriesResponse> => {
+export const fetchEducationalCategories = async (): Promise<CategoriesResponse> => {
   return withErrorHandling(async () => {
     // GET simple sans paramètres - le backend accepte tout maintenant
     const endpoint = `/educational/categories`;
@@ -54,7 +52,7 @@ export const deleteEducationalResource = async (id: number): Promise<{ success: 
 /**
  * Récupère les ressources éducatives avec filtres
  */
-export const fetchEducationalResources = async (filters: ResourceFilters = {}): Promise<ResourcesResponse> => {
+export const fetchEducationalResources = async (): Promise<ResourcesResponse> => {
   return withErrorHandling(async () => {
     // GET simple sans paramètres - le backend accepte tout maintenant
     const endpoint = `/educational/resources`;

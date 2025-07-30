@@ -11,7 +11,7 @@ interface InfoCardPropsWithTransactions extends InfoCardProps {
     isLoadingTransactions?: boolean;
 }
 
-export const InfoCard = memo(({ onAddClick, transactions, isLoadingTransactions }: InfoCardPropsWithTransactions) => {
+const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: InfoCardPropsWithTransactions) => {
     const formatTransactionDate = (timestamp: number) => {
         return new Date(timestamp).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -74,4 +74,7 @@ export const InfoCard = memo(({ onAddClick, transactions, isLoadingTransactions 
             </div>
         </Card>
     );
-}); 
+};
+
+export const InfoCard = memo(InfoCardComponent);
+InfoCard.displayName = 'InfoCard';

@@ -85,20 +85,21 @@ const processWalletsResponse = (response: { data?: UserWallet[] }): { wallets: W
 };
 
 // Action creators for better state management
-const createActionCreators = (set: (fn: (state: WalletsState) => Partial<WalletsState>) => void, get: () => WalletsState) => ({
+const createActionCreators = (set: (fn: (state: WalletsState) => Partial<WalletsState>) => void) => ({
   setLoading: (loading: boolean) => set((state) => ({ loading, error: loading ? null : state.error })),
-  setError: (error: string | null) => set((state) => ({ error, loading: false })),
+  setError: (error: string | null) => set(() => ({ error, loading: false })),
   updateWallets: (updater: (wallets: Wallet[]) => Wallet[]) => 
     set((state: WalletsState) => ({ wallets: updater(state.wallets) })),
   updateUserWallets: (updater: (userWallets: UserWallet[]) => UserWallet[]) => 
     set((state: WalletsState) => ({ userWallets: updater(state.userWallets) })),
-  setActiveWallet: (id: number | null) => set((state) => ({ activeWalletId: id }))
+  setActiveWallet: (id: number | null) => 
+    set(() => ({ activeWalletId: id }))
 });
 
 export const useWallets = create<WalletsState>()(
   persist(
     (set, get) => {
-      const actions = createActionCreators(set, get);
+      const actions = createActionCreators(set);
       
       return {
         wallets: [],
@@ -134,8 +135,8 @@ export const useWallets = create<WalletsState>()(
                 const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
                 orderedWallets = [...savedWallets, ...newWallets];
               }
-            } catch (error) {
-              console.warn('Failed to restore wallets order from localStorage:', error);
+            } catch {
+              console.warn('Failed to restore wallets order from localStorage');
             }
             
             // Ensure we have a valid active wallet
@@ -174,8 +175,8 @@ export const useWallets = create<WalletsState>()(
                 const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
                 orderedWallets = [...savedWallets, ...newWallets];
               }
-            } catch (error) {
-              console.warn('Failed to restore wallets order from localStorage:', error);
+            } catch {
+              console.warn('Failed to restore wallets order from localStorage');
             }
             
             // Ensure we have a valid active wallet

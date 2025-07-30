@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, AuctionTiming } from '../types';
@@ -77,8 +77,7 @@ const calculateProgress = (timing: AuctionTiming): number => {
 /**
  * Hook pour gérer l'état de l'auction en temps réel
  */
-export const useAuctionTiming = (refreshInterval: number = 1000): UseAuctionTimingResult => {
-  const [realTimeUpdate, setRealTimeUpdate] = useState(0);
+export const useAuctionTiming = (): UseAuctionTimingResult => {
 
   // Récupérer les données d'auction timing
   const { data: timingData, isLoading: timingLoading, error: timingError, refetch } = useDataFetching<AuctionTiming>({
@@ -151,18 +150,7 @@ export const useAuctionTiming = (refreshInterval: number = 1000): UseAuctionTimi
       lastAuctionName,
       nextAuctionStart
     };
-  }, [timingData, latestAuctions, hypePrice, realTimeUpdate]); // Include hypePrice and realTimeUpdate
-
-  // Update real-time state every second
-  useEffect(() => {
-    if (!timingData) return;
-
-    const interval = setInterval(() => {
-      setRealTimeUpdate(prev => prev + 1);
-    }, refreshInterval);
-    
-    return () => clearInterval(interval);
-  }, [timingData, refreshInterval]);
+  }, [timingData, latestAuctions, hypePrice]); // Include hypePrice
 
   return {
     auctionState,

@@ -25,21 +25,19 @@ export interface UseFeesHistoryResult {
   refetch: () => Promise<void>;
 }
 
-// Types pour les réponses API
-export interface FeesStatsResponse {
+// Types pour les réponses API (pour éviter les 'any')
+export interface FeesStatsApiResponse {
   hourlyFees?: number | string;
   dailyFees?: number | string;
   hourlySpotFees?: number | string;
   dailySpotFees?: number | string;
-  data?: FeesStatsResponse;
+  data?: FeesStatsApiResponse;
 }
 
-export interface FeesHistoryEntryResponse {
-  time: number;
+export interface FeesHistoryEntryApiResponse {
+  time: string | number;
   total_fees?: number | string;
   total_spot_fees?: number | string;
 }
 
-export interface FeesHistoryResponse {
-  data?: FeesHistoryEntryResponse[];
-} 
+ 

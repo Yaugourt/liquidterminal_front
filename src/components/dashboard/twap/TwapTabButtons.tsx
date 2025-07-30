@@ -1,16 +1,16 @@
-import { memo, useRef, useState, useEffect } from "react";
+import { memo, useRef, useState, useEffect, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TwapTabButtonsProps } from "./types";
 
-export const TwapTabButtons = memo(({ 
+const TwapTabButtonsComponent = ({ 
   activeTab, 
   setActiveTab, 
   availableTokens 
 }: TwapTabButtonsProps) => {
-  const tabs = [
+  const tabs = useMemo(() => [
     { key: 'ALL', label: 'All' },
     ...availableTokens.map(token => ({ key: token, label: token }))
-  ];
+  ], [availableTokens]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -129,4 +129,7 @@ export const TwapTabButtons = memo(({
       </div>
     </div>
   );
-}); 
+};
+
+export const TwapTabButtons = memo(TwapTabButtonsComponent);
+TwapTabButtons.displayName = 'TwapTabButtons';

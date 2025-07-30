@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -255,9 +256,11 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
                   {/* Preview */}
                   {logoPreview && (
                     <div className="relative w-20 h-20 border border-[#1E3851] rounded-lg overflow-hidden">
-                      <img
+                      <Image
                         src={logoPreview}
                         alt="Logo preview"
+                        width={80}
+                        height={80}
                         className="w-full h-full object-cover"
                       />
                     </div>

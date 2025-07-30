@@ -43,14 +43,14 @@ const useReadListInitialization = () => {
         }
         
         await initialize({ privyUserId: privyUser.id, username, privyToken: token });
-      } catch (err: unknown) {
+      } catch {
         setInitError("Failed to initialize read lists");
       } finally {
         setIsInitializing(false);
       }
     };
     init();
-  }, [privyUser?.id, initialize, getAccessToken, isMounted]);
+  }, [privyUser?.id, privyUser?.twitter?.username, privyUser?.farcaster?.username, privyUser?.github?.username, initialize, getAccessToken, isMounted]);
 
   return { isInitializing, initError, isMounted };
 };
@@ -95,7 +95,7 @@ export function ReadList() {
         setActiveReadList(newList.id);
         setIsCreateModalOpen(false);
       }
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   }, [createReadList, setActiveReadList]);
@@ -103,7 +103,7 @@ export function ReadList() {
   const handleDeleteList = useCallback(async (id: number) => {
     try {
       await deleteReadList(id);
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   }, [deleteReadList]);
@@ -111,7 +111,7 @@ export function ReadList() {
   const handleRemoveItem = useCallback(async (itemId: number) => {
     try {
       await deleteReadListItem(itemId);
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   }, [deleteReadListItem]);
@@ -119,7 +119,7 @@ export function ReadList() {
   const handleToggleRead = useCallback(async (itemId: number, isRead: boolean) => {
     try {
       await toggleReadStatus(itemId, isRead);
-    } catch (error) {
+    } catch {
       // Error handled by store
     }
   }, [toggleReadStatus]);

@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { useChartFormat, useChartData, ChartPeriod } from '@/components/common/charts';
+import { useChartData, ChartPeriod } from '@/components/common/charts';
 import {
   LineChart,
   Line,
@@ -127,12 +127,9 @@ export const AuctionChart = ({
   const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const value = payload[0].value;
-      let formattedValue;
-      if (selectedCurrency === 'USDC') {
-        formattedValue = formatLargeNumber(value, { prefix: '$', decimals: 2 });
-      } else {
-        formattedValue = formatNumber(value, format);
-      }
+      const formattedValue = selectedCurrency === 'USDC' 
+        ? formatLargeNumber(value, { prefix: '$', decimals: 2 })
+        : formatNumber(value, format);
       return (
         <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
           <p className="text-white text-xs">

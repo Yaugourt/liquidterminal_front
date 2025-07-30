@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, Wallet, Vault, TrendingUp, DollarSign, Coins } from "lucide-react";
+import { Loader2, Wallet } from "lucide-react";
 import { OverviewCardProps } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES } from "./constants";
 
-export const OverviewCard = memo(({ balances, isLoading, formatCurrency }: OverviewCardProps) => {
+const OverviewCardComponent = ({ balances, isLoading, formatCurrency }: OverviewCardProps) => {
 
     const balanceItems = [
         { type: "spot", label: "Spot", value: balances.spotBalance },
@@ -49,4 +49,7 @@ export const OverviewCard = memo(({ balances, isLoading, formatCurrency }: Overv
             </div>
         </Card>
     );
-});
+};
+
+export const OverviewCard = memo(OverviewCardComponent);
+OverviewCard.displayName = 'OverviewCard';

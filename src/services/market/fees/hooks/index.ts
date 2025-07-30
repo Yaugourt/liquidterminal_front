@@ -1,2 +1,2 @@
-export { useFeesStats } from './useFees';
+export { useFeesStats } from './useFeesStats';
 export { useFeesHistory } from './useFeesHistory'; 

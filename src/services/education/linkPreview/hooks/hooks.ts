@@ -6,7 +6,6 @@ import {
 } from '../api';
 import type { 
   LinkPreview, 
-  LinkPreviewResponse, 
   LinkPreviewBatchResponse,
   UseLinkPreviewResult,
   UseLinkPreviewBatchResult

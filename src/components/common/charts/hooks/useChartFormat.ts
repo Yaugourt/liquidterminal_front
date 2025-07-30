@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '../types/chart';
 
 interface FormatOptions {
@@ -9,7 +8,6 @@ interface FormatOptions {
 }
 
 export function useChartFormat() {
-  const { format } = useNumberFormat();
 
   const formatValue = useCallback((value: number, options: FormatOptions = {}) => {
     const {
@@ -31,7 +29,7 @@ export function useChartFormat() {
       minimumFractionDigits,
       maximumFractionDigits
     }).format(value);
-  }, [format]);
+  }, []);
 
   const formatTime = useCallback((timestamp: number | string, period?: ChartPeriod) => {
     const date = new Date(timestamp);

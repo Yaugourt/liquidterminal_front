@@ -27,20 +27,15 @@ export function useAdminUsers(params?: AdminUsersQueryParams): UseAdminUsersResu
     }
     
     return Object.keys(cleanParams).length > 0 ? cleanParams : undefined;
-  }, [
-    params?.search,
-    params?.role,
-    params?.page,
-    params?.limit
-  ]);
+  }, [params]);
 
   const { data, isLoading, error, refetch } = useDataFetching({
     fetchFn: () => _fetchAdminUsers(memoizedParams),
     dependencies: [
-      memoizedParams?.search,
-      memoizedParams?.role,
-      memoizedParams?.page,
-      memoizedParams?.limit
+      params?.search,
+      params?.role,
+      params?.page,
+      params?.limit
     ],
     refreshInterval: 0,
     maxRetries: 3,

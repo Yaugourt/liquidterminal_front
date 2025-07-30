@@ -107,9 +107,11 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           {/* Image section */}
           <div className="relative w-full overflow-hidden bg-[#112941]">
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
-              <img
+              <Image
                 src={preview.image}
                 alt={preview.title || resource.title}
+                width={400}
+                height={192}
                 className="w-full h-auto max-h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
               />

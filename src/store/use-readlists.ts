@@ -72,20 +72,21 @@ const validateReadListName = (name: string): void => {
 
 
 // Action creators for better state management
-const createActionCreators = (set: (fn: (state: ReadListsState) => Partial<ReadListsState>) => void, get: () => ReadListsState) => ({
+const createActionCreators = (set: (fn: (state: ReadListsState) => Partial<ReadListsState>) => void) => ({
   setLoading: (loading: boolean) => set((state) => ({ loading, error: loading ? null : state.error })),
-  setError: (error: string | null) => set((state) => ({ error, loading: false })),
+  setError: (error: string | null) => set(() => ({ error, loading: false })),
   updateReadLists: (updater: (lists: ReadList[]) => ReadList[]) => 
     set((state: ReadListsState) => ({ readLists: updater(state.readLists) })),
   updateActiveItems: (updater: (items: ReadListItem[]) => ReadListItem[]) => 
     set((state: ReadListsState) => ({ activeReadListItems: updater(state.activeReadListItems) })),
-  setActiveList: (id: number | null) => set((state) => ({ activeReadListId: id, activeReadListItems: [] }))
+  setActiveList: (id: number | null) => 
+    set(() => ({ activeReadListId: id, activeReadListItems: [] }))
 });
 
 export const useReadLists = create<ReadListsState>()(
   persist(
     (set, get) => {
-      const actions = createActionCreators(set, get);
+      const actions = createActionCreators(set);
       
       return {
         readLists: [],
@@ -136,8 +137,8 @@ export const useReadLists = create<ReadListsState>()(
                 const newLists = readLists.filter(list => !orderIds.includes(list.id));
                 orderedReadLists = [...savedLists, ...newLists];
               }
-            } catch (error) {
-              console.warn('Failed to restore read lists order from localStorage:', error);
+            } catch {
+              console.warn('Failed to restore read lists order from localStorage');
             }
             
             // Ensure we have a valid active read list
@@ -261,8 +262,6 @@ export const useReadLists = create<ReadListsState>()(
               return;
             }
             
-            const currentState = get();
-            
             // Toujours recharger depuis l'API pour avoir les données fraîches
             actions.setLoading(true);
             
@@ -313,8 +312,7 @@ export const useReadLists = create<ReadListsState>()(
               await get().refreshReadLists();
               
               // Si c'est la readlist active, recharger les items
-              const currentState = get();
-              if (currentState.activeReadListId === listId) {
+              if (get().activeReadListId === listId) {
                 await get().loadReadListItems(listId);
               }
               
@@ -355,8 +353,7 @@ export const useReadLists = create<ReadListsState>()(
             await apiDeleteReadListItem(itemId);
             
             // Si l'API réussit, mettre à jour l'état local
-            const currentState = get();
-            const updatedItems = currentState.activeReadListItems.filter(item => item.id !== itemId);
+            const updatedItems = get().activeReadListItems.filter(item => item.id !== itemId);
             
             set({ 
               activeReadListItems: updatedItems,

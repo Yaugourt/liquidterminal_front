@@ -48,9 +48,11 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
         {/* Image section */}
         <div className="relative w-full overflow-hidden bg-[#112941] flex-shrink-0">
           {item.resource?.url && item.resource.url.startsWith('http') && preview?.image ? (
-            <img
+            <Image
               src={preview.image}
               alt={preview.title || 'Preview'}
+              width={400}
+              height={160}
               className="w-full h-auto max-h-40 object-cover group-hover:scale-105 transition-transform duration-300"
               onError={() => setImageError(true)}
             />

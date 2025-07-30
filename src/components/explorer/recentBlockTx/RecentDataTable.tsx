@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { useExplorerStore } from "@/services/explorer";
 import { Button } from "@/components/ui/button";
@@ -23,29 +23,33 @@ export function RecentDataTable() {
   const [transactionsPage, setTransactionsPage] = useState(0);
   const [transactionsRowsPerPage, setTransactionsRowsPerPage] = useState(5);
 
+  // Mémoriser les méthodes du store pour éviter les boucles infinies
+  const storeRef = useRef(store);
+  storeRef.current = store;
+
   // Gestion des connexions WebSocket avec délai pour éviter les erreurs au chargement
   useEffect(() => {
     // Délai pour s'assurer que la page est complètement chargée
     const timer = setTimeout(() => {
       if ((activeTab === 'blocks' && isBlocksPaused) || (activeTab === 'transactions' && isTransactionsPaused)) {
-        store.disconnectBlocks();
-        store.disconnectTransactions();
+        storeRef.current.disconnectBlocks();
+        storeRef.current.disconnectTransactions();
         return;
       }
 
       if (activeTab === 'blocks') {
-        store.connectBlocks();
-        store.disconnectTransactions();
+        storeRef.current.connectBlocks();
+        storeRef.current.disconnectTransactions();
       } else {
-        store.connectTransactions();
-        store.disconnectBlocks();
+        storeRef.current.connectTransactions();
+        storeRef.current.disconnectBlocks();
       }
     }, 1000); // Attendre 1 seconde après le montage
 
     return () => {
       clearTimeout(timer);
-      store.disconnectBlocks();
-      store.disconnectTransactions();
+      storeRef.current.disconnectBlocks();
+      storeRef.current.disconnectTransactions();
     };
   }, [activeTab, isBlocksPaused, isTransactionsPaused]);
 

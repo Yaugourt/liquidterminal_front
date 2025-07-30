@@ -6,7 +6,7 @@ import {
   getReadListItems, addItemToReadList, updateReadListItem as apiUpdateReadListItem, deleteReadListItem as apiDeleteReadListItem
 } from '../api';
 import { validateReadList, validateReadListItem } from '../validation';
-import type { ReadList, ReadListItem, ReadListCreateInput, ReadListUpdateInput, ReadListItemCreateInput, ReadListItemUpdateInput } from '../types';
+import type { ReadList, ReadListItem, ReadListUpdateInput, ReadListItemCreateInput, ReadListItemUpdateInput } from '../types';
 
 // Utility functions
 const handleApiError = (error: unknown, defaultMessage: string): string => {
@@ -24,71 +24,95 @@ const handleApiError = (error: unknown, defaultMessage: string): string => {
   return defaultMessage;
 };
 
-// Factory for mutation hooks
-const createMutationHook = <TInput, TOutput>(
-  mutationFn: (input: TInput) => Promise<TOutput>,
-  defaultErrorMessage: string,
-  validationFn?: (input: TInput) => string[]
-) => {
+// ============================================
+// HOOKS POUR LES READ LISTS
+// ============================================
+
+export const useReadLists = () => {
+  return useDataFetching({
+    fetchFn: async () => {
+      try {
+        return await getMyReadLists();
+      } catch {
+        return { success: true, data: [] };
+      }
+    },
+    initialData: { success: true, data: [] }
+  });
+};
+
+export const usePublicReadLists = () => {
+  return useDataFetching({
+    fetchFn: async () => {
+      try {
+        return await getPublicReadLists();
+      } catch {
+        return [];
+      }
+    },
+    initialData: [],
+    refreshInterval: 30000
+  });
+};
+
+export const useReadList = (id: number | null) => {
+  return useDataFetching({
+    fetchFn: async () => {
+      try {
+        return await getReadList(id!);
+      } catch {
+        return null;
+      }
+    },
+    initialData: null,
+    dependencies: [id]
+  });
+};
+
+export const useCreateReadList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mutate = useCallback(async (input: TInput): Promise<TOutput> => {
+  const mutate = useCallback(async (input: { name: string; description?: string; isPublic?: boolean }): Promise<ReadList> => {
     setIsLoading(true);
     setError(null);
     try {
-      if (validationFn) {
-        const validationErrors = validationFn(input);
-        if (validationErrors.length > 0) throw new Error(validationErrors.join(', '));
-      }
-      const result = await mutationFn(input);
+      const validationErrors = validateReadList(input);
+      if (validationErrors.length > 0) throw new Error(validationErrors.join(', '));
+      const result = await apiCreateReadList(input);
       return result;
     } catch (error) {
-      const message = handleApiError(error, defaultErrorMessage);
+      const message = handleApiError(error, 'Failed to create read list');
       setError(message);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, [mutationFn, validationFn, defaultErrorMessage]);
+  }, []);
 
   return { mutate, isLoading, error };
 };
 
-// Factory for data fetching hooks
-const createFetchHook = <T>(
-  fetchFn: () => Promise<T>,
-  initialData: T,
-  options: { dependencies?: unknown[], refreshInterval?: number } = {}
-) => {
-  return useDataFetching<T>({
-    fetchFn: async () => {
-      try {
-        return await fetchFn();
-      } catch (error) {
-        return initialData;
-      }
-    },
-    initialData,
-    ...options
-  });
+export const useDeleteReadList = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const mutate = useCallback(async (id: number): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await apiDeleteReadList(id);
+    } catch (error) {
+      const message = handleApiError(error, 'Failed to delete read list');
+      setError(message);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { mutate, isLoading, error };
 };
-
-
-
-// ============================================
-// HOOKS POUR LES READ LISTS
-// ============================================
-
-export const useReadLists = () => createFetchHook(getMyReadLists, { success: true, data: [] });
-export const usePublicReadLists = () => createFetchHook(getPublicReadLists, [], { refreshInterval: 30000 });
-export const useReadList = (id: number | null) => createFetchHook(
-  () => getReadList(id!),
-  null,
-  { dependencies: [id] }
-);
-export const useCreateReadList = () => createMutationHook(apiCreateReadList, 'Failed to create read list', validateReadList);
-export const useDeleteReadList = () => createMutationHook(apiDeleteReadList, 'Failed to delete read list');
 
 export const useUpdateReadList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -121,11 +145,20 @@ export const useUpdateReadList = () => {
 // HOOKS POUR LES ITEMS
 // ============================================
 
-export const useReadListItems = (listId: number | null) => createFetchHook(
-  () => getReadListItems(listId!),
-  { success: true, data: [] },
-  { dependencies: [listId], refreshInterval: 30000 }
-);
+export const useReadListItems = (listId: number | null) => {
+  return useDataFetching({
+    fetchFn: async () => {
+      try {
+        return await getReadListItems(listId!);
+      } catch {
+        return { success: true, data: [] };
+      }
+    },
+    initialData: { success: true, data: [] },
+    dependencies: [listId],
+    refreshInterval: 30000
+  });
+};
 
 export const useAddItemToReadList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -172,7 +205,26 @@ export const useUpdateReadListItem = () => {
 
   return { mutate, isLoading, error };
 };
-export const useDeleteReadListItem = () => createMutationHook(apiDeleteReadListItem, 'Failed to delete read list item');
+export const useDeleteReadListItem = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const mutate = useCallback(async (itemId: number): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await apiDeleteReadListItem(itemId);
+    } catch (error) {
+      const message = handleApiError(error, 'Failed to delete read list item');
+      setError(message);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { mutate, isLoading, error };
+};
 
 export const useToggleReadStatus = () => {
   const [isLoading, setIsLoading] = useState(false);

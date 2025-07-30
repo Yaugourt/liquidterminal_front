@@ -16,7 +16,7 @@ interface AddressCardsPropsWithTransactions extends AddressCardsProps {
     isLoadingTransactions?: boolean;
 }
 
-export const AddressCards = memo(({ 
+const AddressCardsComponent = ({ 
     portfolio, 
     loadingPortfolio, 
     onAddClick, 
@@ -68,4 +68,7 @@ export const AddressCards = memo(({
             <InfoCard {...infoProps} />
         </div>
     );
-}); 
+};
+
+export const AddressCards = memo(AddressCardsComponent);
+AddressCards.displayName = 'AddressCards';

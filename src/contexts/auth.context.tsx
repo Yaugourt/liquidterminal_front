@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from 'react';
-import { useAuth, User, LoginCredentials, AuthError } from '../services/auth';
+import { useAuth, LoginCredentials, AuthError } from '../services/auth';
 
 interface AuthContextType {
-  user: User | null;
+  user: ReturnType<typeof useAuth>['user'];
   loading: boolean;
   error: AuthError | null;
   login: (credentials?: LoginCredentials) => Promise<void>;
@@ -13,7 +13,7 @@ interface AuthContextType {
   isInitialized: boolean;
   // Propriétés de compatibilité avec l'ancien code
   authenticated: boolean;
-  privyUser: any;
+  privyUser: ReturnType<typeof useAuth>['privyUser'];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

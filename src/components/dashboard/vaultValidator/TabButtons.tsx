@@ -3,7 +3,7 @@ import { TabButtonsProps } from "@/components/types/dashboard.types";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
-export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) => {
+const TabButtonsComponent = ({ activeTab, setActiveTab }: TabButtonsProps) => {
   const tabs: { key: string; label: string }[] = [
     { key: 'vault', label: 'Vault' },
     { key: 'stacking', label: 'Validators' }
@@ -51,4 +51,7 @@ export const TabButtons = memo(({ activeTab, setActiveTab }: TabButtonsProps) =>
       )}
     </div>
   );
-}); 
+};
+
+export const TabButtons = memo(TabButtonsComponent);
+TabButtons.displayName = 'TabButtons';

@@ -42,7 +42,7 @@ const refreshTokenWithBackoff = async (retryCount = 0): Promise<string | null> =
   
   try {
     if (typeof window !== 'undefined') {
-      // @ts-ignore - Privy is injected globally
+      // @ts-expect-error - Privy is injected globally
       const privy = window.privy;
       if (privy?.getAccessToken) {
         const newToken = await privy.getAccessToken();

@@ -207,7 +207,6 @@ export function formatNumber(
   } = {}
 ): string {
   const {
-    minimumFractionDigits = 0,
     maximumFractionDigits = 2,
     currency,
     showCurrency = false

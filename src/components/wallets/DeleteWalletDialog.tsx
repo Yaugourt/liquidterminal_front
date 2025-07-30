@@ -5,7 +5,7 @@ import { AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
-import { useAuthContext } from "@/contexts/auth.context";
+
 import { walletDeleteMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
 
 interface DeleteWalletDialogProps {

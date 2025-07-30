@@ -34,13 +34,10 @@ export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
   const { 
     wallets,
     activeWalletId, 
-    loading: storeLoading,
     error: storeError,
     initialize, 
     setActiveWallet,
@@ -65,9 +62,6 @@ export function WalletTabs() {
     const fetchWallets = async () => {
       if (privyUser?.id) {
         try {
-          setIsLoading(true);
-          setError(null);
-
           const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
           if (!username) {
             throw new Error("No username available");
@@ -86,14 +80,12 @@ export function WalletTabs() {
         } catch (err) {
           console.error("Error fetching wallets:", err);
           handleWalletApiError(err, 'load');
-        } finally {
-          setIsLoading(false);
         }
       }
     };
 
     fetchWallets();
-  }, [privyUser?.id, initialize, getAccessToken]);
+  }, [privyUser?.id, privyUser?.twitter?.username, privyUser?.farcaster?.username, privyUser?.github?.username, initialize, getAccessToken]);
 
   // Log when wallets change
   useEffect(() => {
@@ -101,13 +93,12 @@ export function WalletTabs() {
     if (wallets.length === 0) {
       walletEmptyMessages.noWallets();
     }
-  }, [wallets]);
+  }, [wallets]); // walletEmptyMessages is stable, no need to include it
 
   // Log when global error changes
   useEffect(() => {
     if (storeError) {
       console.error("Error in wallet store:", storeError);
-      setError(storeError);
     }
   }, [storeError]);
 

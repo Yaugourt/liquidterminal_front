@@ -45,6 +45,7 @@ const CopyButton = ({ text }: { text: string }) => {
 interface TableContentProps {
   activeTab: string;
   validatorSubTab: string;
+  onValidatorSubTabChange: (subTab: string) => void;
   validatorsData: {
     validators: Validator[];
     loading: boolean;

@@ -97,7 +97,7 @@ export const handleAxiosError = (error: unknown, context: string): StandardError
     if (axiosError.response) {
       return {
         success: false,
-        message: (axiosError.response.data as any)?.message || `Failed to ${context}`,
+        message: (axiosError.response.data as unknown as { message?: string })?.message || `Failed to ${context}`,
         code: 'API_ERROR',
         response: {
           status: axiosError.response.status,

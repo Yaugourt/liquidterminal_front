@@ -43,7 +43,7 @@ const getVariation = (
     }
 };
 
-export const PnLCard = memo(({ portfolio, isLoading, format }: PnLCardProps) => {
+const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
     const [pnlMode, setPnlMode] = useState<'percent' | 'dollar'>('percent');
 
     const handlePnLModeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -102,4 +102,7 @@ export const PnLCard = memo(({ portfolio, isLoading, format }: PnLCardProps) => 
             </div>
         </Card>
     );
-}); 
+};
+
+export const PnLCard = memo(PnLCardComponent);
+PnLCard.displayName = 'PnLCard';

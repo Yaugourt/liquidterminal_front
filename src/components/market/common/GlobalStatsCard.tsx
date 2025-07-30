@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/numberFormatting";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
-import { useFeesStats } from "@/services/market/fees/hooks/useFees";
+import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
 import { Loader2, BarChart2, Clock, CalendarDays, Scale, Wallet } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { SpotGlobalStats } from "@/services/market/spot/types";
@@ -28,13 +28,9 @@ interface GlobalStatsCardProps {
  * Carte affichant les statistiques globales du marché (spot ou perp)
  */
 export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalStatsCardProps) {
-  const { stats: spotStats, isLoading: spotLoading, error: spotError } = market === 'spot' 
-    ? useSpotGlobalStats() 
-    : { stats: null, isLoading: false, error: null };
-    
-  const { stats: perpStats, isLoading: perpLoading, error: perpError } = market === 'perp' 
-    ? usePerpGlobalStats() 
-    : { stats: null, isLoading: false, error: null };
+  // Toujours appeler les hooks, mais ignorer les résultats non pertinents
+  const { stats: spotStats, isLoading: spotLoading, error: spotError } = useSpotGlobalStats();
+  const { stats: perpStats, isLoading: perpLoading, error: perpError } = usePerpGlobalStats();
     
   const { feesStats, isLoading: feesLoading } = useFeesStats();
   const { format } = useNumberFormat();

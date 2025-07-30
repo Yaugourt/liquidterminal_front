@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { SortKey } from '@/components/wallets/assets';
 import { SortableHolding } from '@/components/types/wallet.types';
 
@@ -16,11 +16,6 @@ export function useSortableData<T extends SortableHolding>(
   config: SortConfig = { key: null, direction: 'desc' }
 ) {
   const [sortConfig, setSortConfig] = useState<SortConfig>(config);
-
-  // Mettre à jour la configuration de tri quand config change
-  useEffect(() => {
-    setSortConfig(config);
-  }, [config.key]);
 
   const sortedItems = useMemo(() => {
     if (!sortConfig.key || !items) return items;

@@ -34,14 +34,17 @@ interface DataTableWithPaginationProps<T> extends DataTableProps<T> {
 }
 
 // Optimisation des composants répétés
-const TableHeaderButton = memo(({ header, align }: TableHeaderButtonProps & { align?: string }) => (
+const TableHeaderButtonComponent = ({ header, align }: TableHeaderButtonProps & { align?: string }) => (
   <Button
     variant="ghost"
     className={`text-white hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>
-));
+);
+
+const TableHeaderButton = memo(TableHeaderButtonComponent);
+TableHeaderButton.displayName = 'TableHeaderButton';
 
 export function DataTable<T>({
   data,

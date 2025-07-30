@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2, X } from "lucide-react";
@@ -25,7 +24,6 @@ export function ProjectBulkActions({
   isDeleting
 }: ProjectBulkActionsProps) {
   const { user } = useAuthContext();
-  const [showBulkActions, setShowBulkActions] = useState(false);
 
   const selectedCount = selectedProjects.length;
   const totalCount = projects.length;
@@ -44,16 +42,14 @@ export function ProjectBulkActions({
     try {
       await onBulkDelete(selectedProjects);
       onSelectionChange([]);
-      setShowBulkActions(false);
       toast.success(`${selectedCount} project${selectedCount > 1 ? 's' : ''} deleted successfully`);
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete projects");
     }
   };
 
   const handleCancelSelection = () => {
     onSelectionChange([]);
-    setShowBulkActions(false);
   };
 
   // Show bulk actions only if admin and there are projects

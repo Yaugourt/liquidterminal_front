@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, useCallback } from "react";
 import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/numberFormatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
 import { DataTable, Column } from "./DataTable";
@@ -25,7 +25,7 @@ interface PaginationProps {
   showPagination?: boolean;
 }
 
-export const AuctionsTable = memo(({ 
+const AuctionsTableComponent = ({ 
   auctions, 
   isLoading, 
   error, 
@@ -33,10 +33,9 @@ export const AuctionsTable = memo(({
   hidePageNavigation = false,
   ...paginationProps 
 }: AuctionsTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
-  const { format } = useNumberFormat();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
@@ -44,9 +43,9 @@ export const AuctionsTable = memo(({
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
-  };
+  }, []);
 
-  const AddressLink = ({ address }: { address: string }) => (
+  const AddressLink = memo(({ address }: { address: string }) => (
     <div className="  flex items-center gap-1.5">
       <Link 
         href={`/explorer/address/${address}`}
@@ -68,7 +67,8 @@ export const AuctionsTable = memo(({
         )}
       </button>
     </div>
-  );
+  ));
+  AddressLink.displayName = 'AddressLink';
 
   const sortedAuctions = useMemo(() => {
     return [...auctions]
@@ -101,7 +101,7 @@ export const AuctionsTable = memo(({
       align: "left",
       className: "w-[180px] px-4 text-left"
     },
-  ] as Column<typeof auctions[0]>[], [format, copiedAddress, copyToClipboard]);
+  ] as Column<typeof auctions[0]>[], [AddressLink]);
 
   return (
     <DataTable
@@ -114,9 +114,12 @@ export const AuctionsTable = memo(({
       {...paginationProps}
     />
   );
-});
+};
 
-export const ValidatorsTable = memo(({ 
+export const AuctionsTable = memo(AuctionsTableComponent);
+AuctionsTable.displayName = 'AuctionsTable';
+
+const ValidatorsTableComponent = ({ 
   validators, 
   isLoading, 
   error, 
@@ -127,7 +130,7 @@ export const ValidatorsTable = memo(({
   const { format } = useNumberFormat();
   const [copiedValidatorAddress, setCopiedValidatorAddress] = useState<string | null>(null);
 
-  const copyValidatorToClipboard = async (address: string) => {
+  const copyValidatorToClipboard = useCallback(async (address: string) => {
     try {
       await navigator.clipboard.writeText(address);
       setCopiedValidatorAddress(address);
@@ -135,9 +138,9 @@ export const ValidatorsTable = memo(({
     } catch (err) {
       console.error('Failed to copy validator address: ', err);
     }
-  };
+  }, []);
 
-  const ValidatorNameWithCopy = ({ validator }: { validator: ExtendedValidator }) => {
+  const ValidatorNameWithCopy = memo(({ validator }: { validator: ExtendedValidator }) => {
     const address = validator.validator || validator.address || validator.name;
     return (
       <div className="flex items-center gap-1.5">
@@ -162,7 +165,8 @@ export const ValidatorsTable = memo(({
         </button>
       </div>
     );
-  };
+  });
+  ValidatorNameWithCopy.displayName = 'ValidatorNameWithCopy';
 
   const columns = useMemo(() => [
     {
@@ -187,7 +191,7 @@ export const ValidatorsTable = memo(({
       align: "right",
       className: "w-[120px] px-4 pr-6 text-right"
     },
-  ] as Column<ExtendedValidator>[], [format, copiedValidatorAddress, copyValidatorToClipboard]);
+  ] as Column<ExtendedValidator>[], [format, ValidatorNameWithCopy]);
 
   return (
     <DataTable
@@ -200,9 +204,12 @@ export const ValidatorsTable = memo(({
       {...paginationProps}
     />
   );
-});
+};
 
-export const VaultTable = memo(({ 
+export const ValidatorsTable = memo(ValidatorsTableComponent);
+ValidatorsTable.displayName = 'ValidatorsTable';
+
+const VaultTableComponent = ({ 
   vaults, 
   isLoading, 
   error, 
@@ -213,7 +220,7 @@ export const VaultTable = memo(({
   const { format } = useNumberFormat();
   const [copiedVaultAddress, setCopiedVaultAddress] = useState<string | null>(null);
 
-  const copyVaultToClipboard = async (address: string) => {
+  const copyVaultToClipboard = useCallback(async (address: string) => {
     try {
       await navigator.clipboard.writeText(address);
       setCopiedVaultAddress(address);
@@ -221,7 +228,7 @@ export const VaultTable = memo(({
     } catch (err) {
       console.error('Failed to copy vault address: ', err);
     }
-  };
+  }, []);
 
   const columns = useMemo(() => [
     {
@@ -279,4 +286,7 @@ export const VaultTable = memo(({
       {...paginationProps}
     />
   );
-}); 
+};
+
+export const VaultTable = memo(VaultTableComponent);
+VaultTable.displayName = 'VaultTable';

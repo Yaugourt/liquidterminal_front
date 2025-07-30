@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { formatNumber } from "@/lib/digitFormat";
 import { Button } from "@/components/ui/button";
 

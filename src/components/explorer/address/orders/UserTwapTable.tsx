@@ -23,14 +23,17 @@ interface RealTimeData {
 }
 
 // Composant pour les headers de tableau
-const TableHeaderButton = memo(({ header, align }: { header: string; align?: string }) => (
+const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
   <Button
     variant="ghost"
     className={`text-white hover:text-white text-xs font-medium tracking-wide p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>
-));
+);
+
+const TableHeaderButton = memo(TableHeaderButtonComponent);
+TableHeaderButton.displayName = 'TableHeaderButton';
 
 // Utility function to calculate real-time TWAP progression
 const calculateRealTimeProgression = (twap: TwapTableData) => {
@@ -60,7 +63,7 @@ const calculateRealTimeProgression = (twap: TwapTableData) => {
 };
 
 // Composant mémorisé pour la cellule Value (dynamique)
-const ValueCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
+const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
   
@@ -69,10 +72,13 @@ const ValueCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, r
       ${formatNumber(value, format)}
     </TableCell>
   );
-});
+};
+
+const ValueCell = memo(ValueCellComponent);
+ValueCell.displayName = 'ValueCell';
 
 // Composant mémorisé pour la cellule Token (dynamique)
-const TokenCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
+const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
   
@@ -81,10 +87,13 @@ const TokenCell = memo(({ twap, realTimeData, format }: { twap: TwapTableData, r
       {formatNumber(displayAmount, format)} {twap.token}
     </TableCell>
   );
-});
+};
+
+const TokenCell = memo(TokenCellComponent);
+TokenCell.displayName = 'TokenCell';
 
 // Composant mémorisé pour la cellule Hash (statique)
-const HashCell = memo(({ twap, copiedHash, copyToClipboard }: { 
+const HashCellComponent = ({ twap, copiedHash, copyToClipboard }: { 
   twap: TwapTableData, 
   copiedHash: string | null, 
   copyToClipboard: (text: string) => void 
@@ -118,10 +127,13 @@ const HashCell = memo(({ twap, copiedHash, copyToClipboard }: {
       </div>
     </TableCell>
   );
-});
+};
+
+const HashCell = memo(HashCellComponent);
+HashCell.displayName = 'HashCell';
 
 // Composant mémorisé pour la cellule Progression (dynamique)
-const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData> }) => {
+const ProgressionCellComponent = ({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData> }) => {
   const realTime = realTimeData.get(twap.id);
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
@@ -176,10 +188,13 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
       </div>
     </TableCell>
   );
-});
+};
+
+const ProgressionCell = memo(ProgressionCellComponent);
+ProgressionCell.displayName = 'ProgressionCell';
 
 // Composant mémorisé pour la cellule Type (statique)
-const TypeCell = memo(({ twap }: { twap: TwapTableData }) => (
+const TypeCellComponent = ({ twap }: { twap: TwapTableData }) => (
   <TableCell className="py-3 px-4 text-sm text-white w-[80px]">
     <span
       className={`px-2 py-1 rounded text-xs font-medium ${
@@ -191,7 +206,10 @@ const TypeCell = memo(({ twap }: { twap: TwapTableData }) => (
       {twap.type}
     </span>
   </TableCell>
-));
+);
+
+const TypeCell = memo(TypeCellComponent);
+TypeCell.displayName = 'TypeCell';
 
 interface UserTwapTableProps {
   twaps: TwapTableData[];
@@ -199,7 +217,7 @@ interface UserTwapTableProps {
   error: Error | null;
 }
 
-export const UserTwapTable = memo(({ twaps, isLoading, error }: UserTwapTableProps) => {
+const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps) => {
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const { format } = useNumberFormat();
   const [realTimeData, setRealTimeData] = useState<Map<string, RealTimeData>>(new Map());
@@ -320,6 +338,7 @@ export const UserTwapTable = memo(({ twaps, isLoading, error }: UserTwapTablePro
       </div>
     </div>
   );
-});
+};
 
-UserTwapTable.displayName = 'UserTwapTable'; 
+export const UserTwapTable = memo(UserTwapTableComponent);
+UserTwapTable.displayName = 'UserTwapTable';
