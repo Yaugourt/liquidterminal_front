@@ -21,6 +21,7 @@ function HomePageContent() {
   const [versionText, setVersionText] = useState("");
   const [versionIndex, setVersionIndex] = useState(0);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [animationsStarted, setAnimationsStarted] = useState(false);
 
   const fullText = "The Terminal to house all Hyper";
   const liquidText = "Liquid";
@@ -35,16 +36,25 @@ function HomePageContent() {
     return `${window.location.origin}/?ref=${username}`;
   };
 
-  // Détecter le referrer depuis l'URL et le stocker
+  // Détecter le referrer depuis l'URL et le stocker (une seule fois)
   useEffect(() => {
     const refParam = searchParams.get('ref');
-    if (refParam) {
-      // Stocker le referrer dans localStorage pour qu'il persiste
+    if (refParam && !localStorage.getItem('referrer')) {
       localStorage.setItem('referrer', refParam);
     }
   }, [searchParams]);
 
+  // Lancer les animations une seule fois
   useEffect(() => {
+    if (!animationsStarted) {
+      setAnimationsStarted(true);
+    }
+  }, [animationsStarted]);
+
+  // Animation du texte principal (une seule fois)
+  useEffect(() => {
+    if (!animationsStarted) return;
+    
     if (currentIndex < fullText.length) {
       const timer = setTimeout(() => {
         setDisplayText(fullText.slice(0, currentIndex + 1));
@@ -52,10 +62,12 @@ function HomePageContent() {
       }, typingSpeed);
       return () => clearTimeout(timer);
     }
-  }, [currentIndex, fullText.length]);
+  }, [currentIndex, fullText.length, animationsStarted]);
 
-  // Animation du titre
+  // Animation du titre (une seule fois)
   useEffect(() => {
+    if (!animationsStarted) return;
+    
     if (titleIndex < titleFullText.length) {
       const timer = setTimeout(() => {
         setTitleText(titleFullText.slice(0, titleIndex + 1));
@@ -63,10 +75,12 @@ function HomePageContent() {
       }, titleTypingSpeed);
       return () => clearTimeout(timer);
     }
-  }, [titleIndex, titleFullText.length]);
+  }, [titleIndex, titleFullText.length, animationsStarted]);
 
-  // Animation de la version
+  // Animation de la version (une seule fois)
   useEffect(() => {
+    if (!animationsStarted) return;
+    
     if (versionIndex < versionFullText.length) {
       const timer = setTimeout(() => {
         setVersionText(versionFullText.slice(0, versionIndex + 1));
@@ -74,10 +88,12 @@ function HomePageContent() {
       }, versionTypingSpeed);
       return () => clearTimeout(timer);
     }
-  }, [versionIndex, versionFullText.length]);
+  }, [versionIndex, versionFullText.length, animationsStarted]);
 
-  // Animation du curseur seulement pendant la frappe
+  // Animation du curseur seulement pendant la frappe (une seule fois)
   useEffect(() => {
+    if (!animationsStarted) return;
+    
     if (currentIndex < fullText.length) {
       const cursorTimer = setInterval(() => {
         setShowCursor(prev => !prev);
@@ -86,7 +102,7 @@ function HomePageContent() {
     } else {
       setShowCursor(true); // Garder le curseur visible mais sans clignotement
     }
-  }, [currentIndex, fullText.length]);
+  }, [currentIndex, fullText.length, animationsStarted]);
 
   const socials = [
     { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
@@ -449,7 +465,11 @@ function HomePageContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#051728] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+      </div>
+    }>
       <HomePageContent />
     </Suspense>
   );

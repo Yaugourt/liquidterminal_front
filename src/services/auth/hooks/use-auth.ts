@@ -34,7 +34,8 @@ export function useAuth() {
       const response = await authService.login(credentials);
       if (response.success && response.user) {
         // Vérifier le statut de vérification pour la closed beta
-        if (!response.user.verified) {
+        // Les admins peuvent accéder même s'ils ne sont pas vérifiés
+        if (!response.user.verified && response.user.role !== 'ADMIN') {
           setError({
             success: false,
             message: 'Access denied. Your account is not verified for the closed beta.',
@@ -45,7 +46,7 @@ export function useAuth() {
         
         setUser(response.user);
         setUserProcessed(true);
-        localStorage.removeItem('referrer'); // ← NETTOYER APRÈS CONNEXION RÉUSSIE
+        localStorage.removeItem('referrer');
         return true;
       }
     } catch (err) {
