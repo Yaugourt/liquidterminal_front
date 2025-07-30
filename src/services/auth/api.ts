@@ -1,6 +1,6 @@
 import { apiClient, axiosWithConfig, get } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
-import { AuthResponse, LoginCredentials } from './types';
+import { AuthResponse, LoginCredentials, ReferralStats, ReferralValidationResponse } from './types';
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
@@ -15,7 +15,8 @@ export const authService = {
 
       const requestData = {
         privyUserId: credentials.privyUserId,
-        name: credentials.name
+        name: credentials.name,
+        referrerName: credentials.referrerName // ← NOUVEAU CHAMP REFERRAL
       };
 
       // Use axiosWithConfig with custom auth header
@@ -50,5 +51,20 @@ export const authService = {
     return withErrorHandling(async () => {
       return await get<AuthResponse>('/auth/me');
     }, 'fetching current user');
+  },
+
+  // NOUVELLES ROUTES POUR LE SYSTÈME DE REFERRAL
+  getReferralStats: async (): Promise<ReferralStats> => {
+    return withErrorHandling(async () => {
+      const response = await get<{ success: boolean; data: ReferralStats }>('/auth/referral/stats');
+      return response.data;
+    }, 'fetching referral stats');
+  },
+
+  validateReferrer: async (name: string): Promise<boolean> => {
+    return withErrorHandling(async () => {
+      const response = await get<ReferralValidationResponse>(`/auth/referral/validate/${name}`);
+      return response.data.isValid;
+    }, 'validating referrer');
   },
 }; 

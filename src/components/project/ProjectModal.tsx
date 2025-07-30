@@ -87,12 +87,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       
       if (selectedFile) {
         // Upload file using the new API (route: /project/with-upload)
-        console.log('Using file upload route with file:', selectedFile.name);
-        console.log('Form data being sent:', {
-          title: projectForm.title,
-          desc: projectForm.desc,
-          categoryId: projectForm.categoryId
-        });
+
         
         const uploadData = {
           title: projectForm.title,
@@ -108,7 +103,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
         newProject = await createProjectWithUpload(uploadData);
       } else {
         // Use existing API for URL-based logo (route: /project)
-        console.log('Using URL route with logo URL:', projectForm.logo);
+
         const projectData = {
           ...projectForm,
           categoryId: projectForm.categoryId ? parseInt(projectForm.categoryId) : undefined

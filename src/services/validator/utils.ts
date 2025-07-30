@@ -8,7 +8,7 @@ import { StakingValidation, FormattedStakingValidation, UnstakingQueueItem, Form
  * @deprecated Use withErrorHandling from error-handler instead
  */
 export const handleApiError = (error: unknown, context: string) => {
-  console.error(`Error ${context}:`, error);
+
   
   if (error && typeof error === 'object' && 'response' in error && error.response) {
     const response = error.response as { status: number; data: { message?: string } };

@@ -3,7 +3,5 @@ export * from './types';
 
 // Exports des API
 export * from './api';
-export * from './service';
-
-// Exports des hooks
-export * from './hooks'; 
+export * from './hooks/use-auth';
+export { AuthService } from './service'; 

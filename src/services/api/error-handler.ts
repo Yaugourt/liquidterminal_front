@@ -5,7 +5,7 @@ import { StandardError } from './types';
  * Gère les erreurs axios de façon standardisée
  */
 export const handleAxiosError = (error: unknown, context: string): StandardError => {
-  console.error(`Error ${context}:`, error);
+
   
   // Erreur axios
   if (error && typeof error === 'object' && ('isAxiosError' in error || 'response' in error)) {

@@ -27,7 +27,8 @@ export function useAuth() {
       const credentials: LoginCredentials = {
         privyUserId: privyUser.id,
         name: username,
-        privyToken: token
+        privyToken: token,
+        referrerName: localStorage.getItem('referrer') || undefined // ← AJOUTER LE REFERRER
       };
 
       const response = await authService.login(credentials);
@@ -44,6 +45,7 @@ export function useAuth() {
         
         setUser(response.user);
         setUserProcessed(true);
+        localStorage.removeItem('referrer'); // ← NETTOYER APRÈS CONNEXION RÉUSSIE
         return true;
       }
     } catch (err) {
@@ -57,10 +59,20 @@ export function useAuth() {
       try {
         setLoading(true);
         setError(null);
-        const response = await authService.login(credentials);
+        
+        const loginData: LoginCredentials = {
+          ...credentials
+        };
+        
+        const response = await authService.login(loginData);
         if (response.success && response.user) {
           setUser(response.user);
           setUserProcessed(true);
+          
+          // Optionnel : Notification si parrain assigné
+          if (response.user.referredBy) {
+    
+          }
         }
       } catch (err) {
         setError(err as AuthError);
@@ -102,18 +114,18 @@ export function useAuth() {
     }
   }, [authenticated, privyUser, userProcessed, ensureUserInitialized]);
 
-  return {
-    user,
-    loading,
-    error,
-    login,
-    logout,
-    fetchUser,
-    ensureUserInitialized,
-    isAuthenticated: authenticated,
-    isInitialized,
-    authenticated,
-    privyUser,
-    userProcessed
-  };
+      return {
+      user,
+      loading,
+      error,
+      login,
+      logout,
+      fetchUser,
+      ensureUserInitialized,
+      isAuthenticated: authenticated,
+      isInitialized,
+      authenticated,
+      privyUser,
+      userProcessed
+    };
 } 

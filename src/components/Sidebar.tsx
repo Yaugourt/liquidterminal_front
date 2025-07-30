@@ -12,7 +12,6 @@ import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
 import { Gavel, Shield } from "lucide-react"
-import { useAuth } from "@/services/auth/hooks/use-auth"
 import { hasRole } from "@/utils/roleHelpers"
 import { ComponentType } from "react"
 
@@ -139,8 +138,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-    const { authenticated, login, logout, privyUser } = useAuthContext();
-    const { user } = useAuth();
+    const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
 
     const toggleSubmenu = (name: string) => {

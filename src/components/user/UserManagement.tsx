@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ProtectedAction } from '@/components/common/ProtectedAction';
-import { useAuth } from '@/services/auth/hooks/use-auth';
+import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
 import { AdminUpdateUserInput } from '@/services/auth/user/types';
 import { User } from '@/services/auth/types';
@@ -14,7 +14,7 @@ import { UserTable } from './UserTable';
 import { UserEditModal } from './UserEditModal';
 
 export function UserManagement() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser } = useAuthContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [editingUser, setEditingUser] = useState<User | null>(null);

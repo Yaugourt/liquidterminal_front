@@ -108,8 +108,8 @@ export const walletEmptyMessages = {
 };
 
 // Fonction utilitaire pour gérer les erreurs d'API
-export const handleWalletApiError = (error: unknown, context: 'add' | 'delete' | 'load' | 'reorder' | 'active') => {
-  console.error(`Wallet ${context} error:`, error);
+export const handleWalletApiError = (error: unknown) => {
+  
   
   if (error && typeof error === 'object' && 'response' in error && error.response) {
     const response = error.response as { status?: number };

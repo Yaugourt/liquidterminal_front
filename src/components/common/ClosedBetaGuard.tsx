@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/services/auth';
+import { useAuthContext } from '@/contexts/auth.context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, ShieldX, LogOut } from 'lucide-react';
@@ -11,7 +11,7 @@ interface ClosedBetaGuardProps {
 }
 
 export function ClosedBetaGuard({ children, fallback }: ClosedBetaGuardProps) {
-  const { user, loading, error, logout, isAuthenticated } = useAuth();
+  const { user, loading, error, logout, isAuthenticated } = useAuthContext();
 
   // Si en cours de chargement, afficher un loader
   if (loading) {
