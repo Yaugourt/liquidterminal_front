@@ -1,45 +1,131 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: [
-            // Twitter
-            "pbs.twimg.com",
-            "abs.twimg.com",
-            // Farcaster
-            "i.imgur.com",
-            "lh3.googleusercontent.com",
-            // GitHub
-            "avatars.githubusercontent.com",
-            // Hyperliquid
-            "app.hyperliquid.xyz",
-            // Link previews
-            "substackcdn.com",
-            "substack-post-media.s3.amazonaws.com",
-            "cdn.substack.com",
-            "images.unsplash.com",
-            "media.licdn.com",
-            "cdn-images-1.medium.com",
-            "miro.medium.com",
-            "cdn.hashnode.com",
-            "res.cloudinary.com",
-            "images.ctfassets.net",
-            "cdn.discordapp.com",
-            "media.discordapp.net",
-            "cdn.prod.website-files.com",
-            "images.website-files.com",
-            "assets.website-files.com",
-            // Placeholder images
-            "via.placeholder.com",
-            "placehold.co",
-            "placehold.it",
-            "picsum.photos",
-            "loremflickr.com",
-            "dummyimage.com",
-            "placekitten.com",
-            "placeimg.com",
-            // Local uploads
-            "localhost",
-            "127.0.0.1",
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'pbs.twimg.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'abs.twimg.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.imgur.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'app.hyperliquid.xyz',
+            },
+            {
+                protocol: 'https',
+                hostname: 'substackcdn.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'substack-post-media.s3.amazonaws.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.substack.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'media.licdn.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn-images-1.medium.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'miro.medium.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.hashnode.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.ctfassets.net',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.discordapp.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'media.discordapp.net',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.prod.website-files.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.website-files.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'assets.website-files.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'via.placeholder.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'placehold.co',
+            },
+            {
+                protocol: 'https',
+                hostname: 'placehold.it',
+            },
+            {
+                protocol: 'https',
+                hostname: 'picsum.photos',
+            },
+            {
+                protocol: 'https',
+                hostname: 'loremflickr.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'dummyimage.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'placekitten.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'placeimg.com',
+            },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+            },
+            {
+                protocol: 'http',
+                hostname: '127.0.0.1',
+            },
         ],
     },
 };

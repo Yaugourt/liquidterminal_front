@@ -412,9 +412,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Social Links */}
                 <div className="flex items-center justify-center gap-3 py-2 px-2 border-t border-[#83E9FF1A] bg-[#83E9FF05]">
                     {socials.map((item) => (
-                        <Link
+                        <a
                             key={item.name}
                             href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="group relative p-1.5"
                         >
                             <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
@@ -422,7 +424,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 icon={item.iconName} 
                                 className="h-4 w-4 text-[#83E9FFCC] group-hover:text-[#83E9FF] transition-colors relative z-10" 
                             />
-                        </Link>
+                        </a>
                     ))}
                 </div>
             </div>

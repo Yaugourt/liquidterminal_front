@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Icon } from '@iconify/react';
 import Image from "next/image";
-import { CheckCircle, Clock } from "lucide-react";
+import {  Clock } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 function HomePageContent() {
@@ -33,7 +33,7 @@ function HomePageContent() {
 
   // Fonction locale pour générer le lien de referral
   const generateReferralLink = (username: string) => {
-    return `${window.location.origin}/?ref=${username}`;
+    return `https://liquidterminal.xyz/?ref=${username}`;
   };
 
   // Détecter le referrer depuis l'URL et le stocker (une seule fois)
@@ -106,8 +106,8 @@ function HomePageContent() {
 
   const socials = [
     { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
-    { name: 'Twitter', href: '#', iconName: 'simple-icons:x' },
-    { name: 'Github', href: '#', iconName: 'mdi:github' },
+    { name: 'Twitter', href: 'https://x.com/liquidterminal', iconName: 'simple-icons:x' },
+    { name: 'Github', href: 'https://github.com/Liquid-Terminal', iconName: 'mdi:github' },
   ];
 
   const handleSignUp = async () => {
@@ -134,10 +134,18 @@ function HomePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#051728] relative overflow-hidden flex flex-col">
-      {/* Fond avec lumière blanche en arc de cercle */}
+    <div className="min-h-screen relative overflow-hidden flex flex-col">
+      {/* Image de fond banner.jpg */}
       <div className="absolute inset-0">
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-white/10 via-white/5 to-transparent rounded-full blur-3xl" />
+        <Image 
+          src="/banner.jpg" 
+          alt="Background" 
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        {/* Filtre sombre pour assurer la lisibilité */}
+        <div className="absolute inset-0 bg-[#051728]/95" />
       </div>
 
       {/* Header */}
@@ -163,6 +171,8 @@ function HomePageContent() {
             <a
               key={item.name}
               href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative p-2"
             >
               <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
@@ -176,7 +186,7 @@ function HomePageContent() {
       </div>
 
       {/* Contenu principal */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6">
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-4 md:px-6 py-4">
         {!authenticated || !privyUser ? (
           // État initial - pas connecté
           <div className="text-center max-w-2xl mx-auto">
@@ -191,9 +201,9 @@ function HomePageContent() {
                 </p>
               </div>
             )}
-            <h2 className="text-4xl md:text-6xl font-inter font-normal text-white mb-8 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-inter font-normal text-white mb-6 md:mb-8 leading-tight">
               {displayText.slice(0, 4)}
-              <span className="text-[#83E9FF]">{displayText.slice(4, 12)}</span>
+              <span className="text-[#83E9FF] font-higuen">{displayText.slice(4, 12)}</span>
               {displayText.slice(12)}
               {currentIndex >= fullText.length && (
                 <span className="text-[#83E9FF] font-higuen">{liquidText}</span>
@@ -255,27 +265,30 @@ function HomePageContent() {
 
 
             
-            <h3 className="text-2xl font-inter font-normal text-white mb-4">
-              Thank you for signing up!
-            </h3>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Image 
+                src="/pending.jpg" 
+                alt="Pending" 
+                width={32} 
+                height={32}
+                className="h-8 w-8 rounded-full object-cover" 
+              />
+              <h3 className="text-2xl font-inter font-normal text-white">
+                Thank you for signing up!
+              </h3>
+            </div>
             
             <p className="text-[#FFFFFF80] mb-6 font-inter font-normal">
               Your application has been submitted. We&apos;ll review it and notify you once your account is verified.
             </p>
             
-            <div className="flex items-center justify-center gap-2 text-[#83E9FF] mb-6">
-              <Clock className="h-5 w-5" />
-              <span className="text-sm font-inter font-normal">Pending verification</span>
-            </div>
-            
-
-
             <div className="flex gap-3">
               <Button 
                 disabled
-                className="flex-1 bg-[#83E9FF1A] text-[#83E9FF80] cursor-not-allowed"
+                className="flex-1 bg-[#83E9FF2A] text-[#83E9FFCC] cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Access pending verification
+                <Clock className="h-4 w-4" />
+                Pending verification
               </Button>
               <Button 
                 onClick={() => logout()}
@@ -314,13 +327,13 @@ function HomePageContent() {
                 <button 
                   onClick={() => {
                     const link = generateReferralLink(privyUser?.twitter?.username || privyUser?.farcaster?.username || privyUser?.github?.username || 'user');
-                    const tweetText = `@HyperliquidX is the house of all the finance, @liquidterminal is the house of all HyperLiquid.\n\nCome to the house of HyperLiquid: ${link}`;
+                    const tweetText = `@HyperliquidX is the house of all the finance.\n\nCome to the house of HyperLiquid: ${link}`;
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
                     window.open(twitterUrl, '_blank');
                   }}
-                  className="p-2 text-[#83E9FF] hover:text-white hover:bg-[#83E9FF1A] rounded transition-colors relative"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#83E9FF] hover:bg-[#83E9FFCC] text-[#051728] rounded transition-colors relative font-medium text-sm"
                 >
-                  <Icon icon="simple-icons:x" className="h-4 w-4" />
+                  Refer on <Icon icon="simple-icons:x" className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -330,31 +343,18 @@ function HomePageContent() {
           <div className="text-center">
 
 
-            {/* Affichage des stats de referral */}
-            {(user.referralCount > 0 || user.referredBy) && (
-              <div className="mb-6">
-                <h4 className="text-[#83E9FF] font-inter font-normal mb-2">Referral</h4>
-                {user.referredBy && (
-                  <p className="text-white font-inter font-normal text-sm mb-1">
-                    Joined via: <strong className="text-[#83E9FF]">{user.referredBy}</strong>
-                  </p>
-                )}
-                {user.referralCount > 0 && (
-                  <p className="text-white font-inter font-normal text-sm">
-                    Referrals: <strong className="text-[#83E9FF]">{user.referralCount}</strong> user(s)
-                  </p>
-                )}
-              </div>
-            )}
-            <div className="mx-auto mb-6 p-4 bg-[#52C41A1A] rounded-full w-fit">
-              <CheckCircle className="h-12 w-12 text-[#52C41A]" />
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <Image 
+                src="/verified.jpg" 
+                alt="Verified" 
+                width={48} 
+                height={48}
+                className="h-12 w-12 rounded-full object-cover" 
+              />
+              <h3 className="text-2xl font-inter font-normal text-white">
+                Welcome to Liquid Terminal!
+              </h3>
             </div>
-            <h3 className="text-2xl font-inter font-normal text-white mb-4">
-              Welcome to Liquid Terminal!
-            </h3>
-            <p className="text-[#FFFFFF80] mb-6 font-inter font-normal">
-              Your account has been verified.
-            </p>
             <div className="flex gap-3 justify-center">
               <Button 
                 onClick={() => window.location.href = '/dashboard'}
@@ -403,9 +403,9 @@ function HomePageContent() {
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
                     window.open(twitterUrl, '_blank');
                   }}
-                  className="p-2 text-[#83E9FF] hover:text-white hover:bg-[#83E9FF1A] rounded transition-colors relative"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#83E9FF] hover:bg-[#83E9FFCC] text-[#051728] rounded transition-colors relative font-medium text-sm"
                 >
-                  <Icon icon="simple-icons:x" className="h-4 w-4" />
+                  Refer on <Icon icon="simple-icons:x" className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -416,7 +416,7 @@ function HomePageContent() {
 
 
       {/* Footer */}
-      <div className="relative z-10 flex items-center justify-between text-sm p-6 flex-shrink-0 w-full">
+      <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between text-sm p-4 md:p-6 flex-shrink-0 w-full gap-4">
         <div className="flex items-center gap-4">
           <span className="text-white font-inter font-normal">{versionText}</span>
           <span className="text-white font-inter font-normal">•</span>
@@ -426,16 +426,16 @@ function HomePageContent() {
         </div>
 
         {/* API Providers Bandeau */}
-        <div className="flex items-center gap-4">
-          <span className="text-[#FFFFFF80] text-xs font-inter font-normal mr-2">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 w-full md:w-auto">
+          <span className="text-[#FFFFFF80] text-xs font-inter font-normal">
             API providers:
           </span>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6 overflow-x-auto scrollbar-hide w-full md:w-auto">
             <a 
               href="https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group"
+              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
             >
               <Image 
                 src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg" 
@@ -451,7 +451,7 @@ function HomePageContent() {
               href="https://api.hypurrscan.io/ui/#/Experimental/hypurrscanAPI.get%20spotUSDC" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group"
+              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
             >
               <Image 
                 src="/hypurrscan.jpg" 
@@ -467,7 +467,7 @@ function HomePageContent() {
               href="https://api-docs.defillama.com/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group"
+              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
             >
               <Image 
                 src="/defillama.jpg" 
