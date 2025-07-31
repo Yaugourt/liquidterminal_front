@@ -49,12 +49,12 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
           if ('blockTime' in item) {
             get().addBlock(item);
           }
-        } catch (error) {
+        } catch {
           set({ error: 'Failed to parse blocks data' });
         }
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = () => {
         set({ error: 'Blocks WebSocket connection error', isBlocksConnected: false });
       };
 
@@ -65,7 +65,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
       // Store WebSocket instance
       (window as WebSocketWindow).explorerBlocksWs = ws;
-    } catch (error) {
+    } catch {
       set({ error: 'Failed to connect to Blocks WebSocket', isBlocksConnected: false });
     }
   },
@@ -111,12 +111,12 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
           if ('time' in item && 'action' in item) {
             get().addTransaction(item);
           }
-        } catch (error) {
+        } catch {
           set({ error: 'Failed to parse transactions data' });
         }
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = () => {
         set({ error: 'Transactions WebSocket connection error', isTransactionsConnected: false });
       };
 
@@ -127,7 +127,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
       // Store WebSocket instance
       (window as WebSocketWindow).explorerTransactionsWs = ws;
-    } catch (error) {
+    } catch {
       set({ error: 'Failed to connect to Transactions WebSocket', isTransactionsConnected: false });
     }
   },
@@ -209,12 +209,12 @@ export function useWebSocket() {
             lastBlock: data.blockNumber
           }));
         }
-      } catch (error) {
+      } catch {
         // Silent error handling
       }
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = () => {
       // Silent error handling
     };
 

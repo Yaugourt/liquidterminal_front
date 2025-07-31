@@ -22,7 +22,7 @@ export class AuthService {
 
       const response = await authService.login(credentials);
       return response.success && !!response.user;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

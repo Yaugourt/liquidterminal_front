@@ -51,8 +51,8 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
     const response = await fetchSpotTokens({ limit: 1000 });
     const token = response.data.find(t => t.name.toLowerCase() === tokenName.toLowerCase());
     return token || null;
-  } catch (error) {
-            // Silent error handling
-    return null;
+      } catch {
+      // Silent error handling
+      return null;
   }
 }; 

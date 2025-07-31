@@ -54,13 +54,13 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
                 }, 1000);
               }
             }
-          } catch (error) {
+          } catch {
             // Silent error handling
             set({ error: 'Failed to parse HYPE price data' });
           }
         };
 
-        ws.onerror = (error) => {
+        ws.onerror = () => {
           // Silent error handling
           set({ error: 'HYPE WebSocket connection error', isConnected: false });
         };
@@ -79,7 +79,7 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
 
         // Store WebSocket instance
         (window as HypeWebSocketWindow).hypePriceWs = ws;
-      } catch (error) {
+      } catch {
         // Silent error handling
         set({ error: 'Failed to connect to HYPE WebSocket', isConnected: false });
       }

@@ -57,8 +57,8 @@ export function useWalletData({ addressOverride }: UseWalletDataProps) {
     setIsRefreshing(true);
     try {
       await Promise.all([refresh(), refetchSpotMarket(), refetchPerpMarket()]);
-    } catch (error) {
-              // Silent error handling
+          } catch {
+        // Silent error handling
     } finally {
       setTimeout(() => setIsRefreshing(false), 1000);
     }
