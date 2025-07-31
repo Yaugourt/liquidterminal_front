@@ -19,17 +19,31 @@ export const authService = {
         referrerName: credentials.referrerName // ← NOUVEAU CHAMP REFERRAL
       };
 
+      // Logs de diagnostic temporaires
+      console.log('🔍 Frontend - Tentative de connexion:', {
+        url: '/auth/login',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${credentials.privyToken?.substring(0, 20)}...`
+        },
+        body: requestData
+      });
+
       // Use axiosWithConfig with custom auth header
-      return await axiosWithConfig<AuthResponse>(apiClient, {
+      const response = await axiosWithConfig<AuthResponse>(apiClient, {
         method: 'POST',
         url: '/auth/login',
-        data: requestData,
+        data: requestData, // Utiliser data pour POST
         headers: {
           'Authorization': `Bearer ${credentials.privyToken}`,
         }
       }, {
         skipAuth: true // Skip auto auth token since we're providing custom auth
       });
+
+      console.log('🔍 Frontend - Réponse reçue:', response);
+      return response;
     }, 'authenticating user');
   },
 
