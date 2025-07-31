@@ -66,7 +66,6 @@ export const addWallet = async (
     }
     
     // Si la réponse n'indique pas un succès
-    console.error("Invalid response format from addWallet:", response);
     return {
       success: false,
       message: response.message || "Invalid response format from server"
@@ -85,7 +84,6 @@ export const getWalletsByUser = async (): Promise<WalletResponse> => {
     
     // Vérifier que la réponse contient les données attendues
     if (!response) {
-      console.error("Invalid response format from getWalletsByUser:", response);
       return {
         data: []
       };
@@ -105,7 +103,6 @@ export const getWalletsByUser = async (): Promise<WalletResponse> => {
       };
     }
     
-    console.error("Unexpected response format:", response);
     return {
       data: []
     };

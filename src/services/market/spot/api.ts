@@ -52,7 +52,7 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
     const token = response.data.find(t => t.name.toLowerCase() === tokenName.toLowerCase());
     return token || null;
   } catch (error) {
-    console.error('Erreur lors de la récupération du token:', error);
+            // Silent error handling
     return null;
   }
 }; 

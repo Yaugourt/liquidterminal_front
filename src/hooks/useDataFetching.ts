@@ -74,7 +74,7 @@ export function useDataFetching<T>({
     } catch (err) {
       if (!mountedRef.current) return;
 
-      console.error('Error fetching data:', err);
+              // Silent error handling
       const error = err instanceof Error ? err : new Error('Unknown error occurred');
       
       if (retryCount < maxRetries) {

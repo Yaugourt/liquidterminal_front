@@ -43,10 +43,8 @@ export async function fetchHyperliquidBalances(
       return response.data.balances;
     }
     
-    console.error("HyperliquidService: Format de réponse invalide pour les balances:", response.data);
     return [];
   } catch (error) {
-    console.error("HyperliquidService: Erreur lors de la récupération des balances:", error);
     throw error;
   }
 }
@@ -72,7 +70,6 @@ export async function fetchHyperliquidPerpPositions(
   
       return response.data;
     } else {
-      console.error("HyperliquidService: Format de réponse invalide pour les positions perp:", response.data);
       return {
         assetPositions: [],
         crossMaintenanceMarginUsed: "0.0",
@@ -93,7 +90,6 @@ export async function fetchHyperliquidPerpPositions(
       };
     }
   } catch (error) {
-    console.error("HyperliquidService: Erreur lors de la récupération des positions perp:", error);
     throw error;
   }
 } 

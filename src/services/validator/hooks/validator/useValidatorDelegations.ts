@@ -30,7 +30,7 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
 
         return response;
       } catch (err: unknown) {
-        console.error('Error fetching validator delegations:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch validator delegations';
         throw new Error(errorMessage);
       }

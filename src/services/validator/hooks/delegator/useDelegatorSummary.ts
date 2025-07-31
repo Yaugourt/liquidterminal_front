@@ -34,7 +34,7 @@ export const useDelegatorSummary = (address: string): UseDelegatorSummaryResult 
 
         return response;
       } catch (err: unknown) {
-        console.error('Error fetching delegator summary:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator summary';
         throw new Error(errorMessage);
       }

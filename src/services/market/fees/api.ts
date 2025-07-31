@@ -32,7 +32,7 @@ export const getFeesStats = async (): Promise<FeesStats> => {
     }
     
     // Cas par défaut: retourner des valeurs par défaut
-    console.error('Unexpected API response structure:', response);
+            // Silent error handling
     return {
       hourlyFees: 0,
       dailyFees: 0,
@@ -68,7 +68,7 @@ export const getFeesHistory = async (): Promise<FeesHistoryEntry[]> => {
     }
     
     // Cas par défaut: retourner un tableau vide
-    console.error('Unexpected API response structure for fees history:', response);
+            // Silent error handling
     return [];
   }, 'fetching fees history');
 }; 

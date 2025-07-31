@@ -156,7 +156,7 @@ export const useReadLists = create<ReadListsState>()(
             // Load items for the new active read list if it exists (non-blocking)
             if (newActiveId) {
               // Don't await - let it load in background
-              get().loadReadListItems(newActiveId).catch(console.error);
+              get().loadReadListItems(newActiveId).catch(() => {});
             }
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to initialize read lists'));
@@ -187,7 +187,7 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to create read list");
           } catch (error) {
-            console.error('Error creating read list:', error);
+            // Silent error handling
             actions.setError(handleApiError(error, 'Failed to create read list'));
           }
         },

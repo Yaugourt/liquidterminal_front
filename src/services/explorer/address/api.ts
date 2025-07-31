@@ -109,7 +109,7 @@ export const getUserTwapOrders = async (address: string): Promise<unknown[]> => 
     const data = await response.json();
     return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error('Error fetching user TWAP orders:', error);
+            // Silent error handling
     throw error;
   }
 };

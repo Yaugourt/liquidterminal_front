@@ -65,7 +65,7 @@ export const useWalletsBalances = (address?: string) => {
           perpPositions: perpResponse
         };
       } catch (err: unknown) {
-        console.error('Error fetching balances:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch balances';
         throw new Error(errorMessage);
       }

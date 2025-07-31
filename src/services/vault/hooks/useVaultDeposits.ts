@@ -28,7 +28,7 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult & { en
         });
         return response;
       } catch (err: unknown) {
-        console.error('Error fetching vault deposits:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch vault deposits';
         throw new Error(errorMessage);
       }

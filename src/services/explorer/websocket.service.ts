@@ -50,13 +50,11 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
             get().addBlock(item);
           }
         } catch (error) {
-          console.error('Error parsing Blocks WebSocket message:', error);
           set({ error: 'Failed to parse blocks data' });
         }
       };
 
       ws.onerror = (error) => {
-        console.error('Blocks WebSocket error:', error);
         set({ error: 'Blocks WebSocket connection error', isBlocksConnected: false });
       };
 
@@ -68,7 +66,6 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       // Store WebSocket instance
       (window as WebSocketWindow).explorerBlocksWs = ws;
     } catch (error) {
-      console.error('Failed to create Blocks WebSocket:', error);
       set({ error: 'Failed to connect to Blocks WebSocket', isBlocksConnected: false });
     }
   },
@@ -115,13 +112,11 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
             get().addTransaction(item);
           }
         } catch (error) {
-          console.error('Error parsing Transactions WebSocket message:', error);
           set({ error: 'Failed to parse transactions data' });
         }
       };
 
       ws.onerror = (error) => {
-        console.error('Transactions WebSocket error:', error);
         set({ error: 'Transactions WebSocket connection error', isTransactionsConnected: false });
       };
 
@@ -133,7 +128,6 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       // Store WebSocket instance
       (window as WebSocketWindow).explorerTransactionsWs = ws;
     } catch (error) {
-      console.error('Failed to create Transactions WebSocket:', error);
       set({ error: 'Failed to connect to Transactions WebSocket', isTransactionsConnected: false });
     }
   },
@@ -216,12 +210,12 @@ export function useWebSocket() {
           }));
         }
       } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
+        // Silent error handling
       }
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      // Silent error handling
     };
 
     ws.onclose = () => {

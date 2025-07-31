@@ -23,7 +23,6 @@ export class AuthService {
       const response = await authService.login(credentials);
       return response.success && !!response.user;
     } catch (err) {
-      console.error('Error ensuring user initialization:', err);
       return false;
     }
   }

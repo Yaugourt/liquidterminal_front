@@ -55,7 +55,7 @@ export const useDelegatorHistory = (address: string): UseDelegatorHistoryResult 
           }))
           .sort((a, b) => b.timestamp - a.timestamp); // Trier par timestamp décroissant
       } catch (err: unknown) {
-        console.error('Error fetching delegator history:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator history';
         throw new Error(errorMessage);
       }

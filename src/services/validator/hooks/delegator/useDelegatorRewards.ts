@@ -49,7 +49,7 @@ export const useDelegatorRewards = (address: string): UseDelegatorRewardsResult 
           }))
           .sort((a, b) => b.timestamp - a.timestamp); // Trier par timestamp décroissant
       } catch (err: unknown) {
-        console.error('Error fetching delegator rewards:', err);
+        // Silent error handling
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch delegator rewards';
         throw new Error(errorMessage);
       }
