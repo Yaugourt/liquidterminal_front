@@ -111,7 +111,7 @@ export function useHoldingsConverter({
           },
           szi: position.position.szi,
           unrealizedPnl: position.position.unrealizedPnl,
-          funding: position.position.cumFunding.sinceOpen,
+          funding: (-parseFloat(position.position.cumFunding.sinceOpen)).toString(),
         };
         
         return holding;
