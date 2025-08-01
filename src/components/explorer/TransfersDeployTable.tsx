@@ -37,9 +37,9 @@ export function TransfersDeployTable() {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   const AddressLink = ({ address }: { address: string }) => (

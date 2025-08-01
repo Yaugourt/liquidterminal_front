@@ -25,9 +25,9 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
           setCopiedValues((prev) => ({ ...prev, [key]: false }));
         }, 2000);
       })
-      .catch((err) => {
-        console.error("Erreur lors de la copie :", err);
-      });
+              .catch(() => {
+          // Error handled silently
+        });
   }, []);
 
   return (

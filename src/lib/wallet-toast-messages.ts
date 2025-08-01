@@ -31,7 +31,10 @@ export const walletAddMessages = {
       toast.error("Please enter a wallet address."),
     
     invalidFormat: () => 
-      toast.error("Invalid address format. Must start with 0x and contain 42 characters.")
+      toast.error("Invalid address format. Must start with 0x and contain 42 characters."),
+    
+    walletLimitExceeded: () => 
+      toast.error("Maximum number of wallets reached (5 wallets per user). Please remove an existing wallet to add a new one.")
   }
 };
 
@@ -109,12 +112,19 @@ export const walletEmptyMessages = {
 
 // Fonction utilitaire pour gérer les erreurs d'API
 export const handleWalletApiError = (error: unknown) => {
-  
+  // Vérifier si c'est une erreur de limite de wallets
+  if (error && typeof error === 'object' && 'code' in error && error.code === 'WALLET_LIMIT_EXCEEDED') {
+    return walletAddMessages.validation.walletLimitExceeded();
+  }
   
   if (error && typeof error === 'object' && 'response' in error && error.response) {
     const response = error.response as { status?: number };
     switch (response.status) {
       case 400:
+        // Vérifier si c'est une erreur de limite de wallets dans la réponse
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'WALLET_LIMIT_EXCEEDED') {
+          return walletAddMessages.validation.walletLimitExceeded();
+        }
         return walletAddMessages.error.invalidAddress();
       case 401:
         return toast.error("Session expired. Please reconnect.");

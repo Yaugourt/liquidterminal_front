@@ -18,7 +18,7 @@ export const useDelegatorHistory = (address: string): UseDelegatorHistoryResult 
   } = useDataFetching<FormattedDelegatorHistoryItem[]>({
     fetchFn: async () => {
       if (!address) {
-        console.warn('No address provided for delegator history');
+        // Warning: No address provided for delegator history
         return [];
       }
 
@@ -30,7 +30,7 @@ export const useDelegatorHistory = (address: string): UseDelegatorHistoryResult 
 
         // Vérifier que la réponse est un tableau
         if (!Array.isArray(response)) {
-          console.warn('Invalid response format for delegator history:', response);
+          // Warning: Invalid response format for delegator history
           return [];
         }
 

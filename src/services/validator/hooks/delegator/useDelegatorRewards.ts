@@ -16,7 +16,7 @@ export const useDelegatorRewards = (address: string): UseDelegatorRewardsResult 
   } = useDataFetching<FormattedDelegatorRewardItem[]>({
     fetchFn: async () => {
       if (!address) {
-        console.warn('No address provided for delegator rewards');
+        // Warning: No address provided for delegator rewards
         return [];
       }
 
@@ -28,7 +28,7 @@ export const useDelegatorRewards = (address: string): UseDelegatorRewardsResult 
 
         // Vérifier que la réponse est un tableau
         if (!Array.isArray(response)) {
-          console.warn('Invalid response format for delegator rewards:', response);
+          // Warning: Invalid response format for delegator rewards
           return [];
         }
 

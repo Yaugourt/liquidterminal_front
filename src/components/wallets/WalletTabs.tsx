@@ -42,6 +42,7 @@ export function WalletTabs() {
     initialize, 
     setActiveWallet,
     reorderWallets,
+    reloadWallets,
   } = useWallets();
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
@@ -78,7 +79,7 @@ export function WalletTabs() {
             privyToken: token
           });
         } catch (err) {
-          console.error("Error fetching wallets:", err);
+          // Error handled silently
           handleWalletApiError(err);
         }
       }
@@ -98,7 +99,7 @@ export function WalletTabs() {
   // Log when global error changes
   useEffect(() => {
     if (storeError) {
-      console.error("Error in wallet store:", storeError);
+      // Error handled silently
     }
   }, [storeError]);
 
@@ -109,10 +110,9 @@ export function WalletTabs() {
   };
 
   const handleWalletActionSuccess = async () => {
-    // Les fonctions addWallet et removeWallet du store mettent déjà à jour le state local
-    // Pas besoin de recharger complètement, cela peut causer des problèmes de timing
-    // et de persistance de l'ordre des wallets
-    
+    // Attendre un peu pour laisser l'API se synchroniser
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await reloadWallets();
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

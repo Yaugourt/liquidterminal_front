@@ -32,8 +32,8 @@ export default function TokenPage() {
                 if (!data) {
                     setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Spot.`);
                 }
-            } catch (err) {
-                console.error("Erreur lors du chargement du token spot:", err);
+                          } catch {
+                // Error handled silently
                 setError("Une erreur est survenue lors du chargement des données du token.");
             } finally {
                 setLoading(false);

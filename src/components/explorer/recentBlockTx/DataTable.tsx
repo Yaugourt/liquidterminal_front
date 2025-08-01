@@ -21,9 +21,9 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   const HashDisplay = ({ hash }: { hash: string }) => (

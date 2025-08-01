@@ -26,9 +26,24 @@ export const handleAxiosError = (error: unknown, context: string): StandardError
     
     // Erreur 400 - Mauvaise requête
     if (axiosError.response?.status === 400) {
+      const responseData = axiosError.response.data as { message?: string; code?: string };
+      
+      // Gestion spécifique de l'erreur de limite de wallets
+      if (responseData.code === 'WALLET_LIMIT_EXCEEDED') {
+        return {
+          success: false,
+          message: responseData.message || 'Maximum number of wallets reached (5 wallets per user)',
+          code: 'WALLET_LIMIT_EXCEEDED',
+          response: {
+            status: axiosError.response.status,
+            data: axiosError.response.data
+          }
+        };
+      }
+      
       return {
         success: false,
-        message: (axiosError.response.data as { message?: string })?.message || 'Bad request',
+        message: responseData.message || 'Bad request',
         code: 'BAD_REQUEST',
         response: {
           status: axiosError.response.status,

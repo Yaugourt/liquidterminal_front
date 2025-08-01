@@ -40,8 +40,8 @@ const AuctionsTableComponent = ({
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
+    } catch {
+      // Error handled silently
     }
   }, []);
 
@@ -135,8 +135,8 @@ const ValidatorsTableComponent = ({
       await navigator.clipboard.writeText(address);
       setCopiedValidatorAddress(address);
       setTimeout(() => setCopiedValidatorAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy validator address: ', err);
+    } catch {
+      // Error handled silently
     }
   }, []);
 
@@ -225,8 +225,8 @@ const VaultTableComponent = ({
       await navigator.clipboard.writeText(address);
       setCopiedVaultAddress(address);
       setTimeout(() => setCopiedVaultAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy vault address: ', err);
+    } catch {
+      // Error handled silently
     }
   }, []);
 

@@ -29,7 +29,7 @@ export const useWalletsBalances = (address?: string) => {
     fetchFn: async () => {
       // Utiliser l'adresse fournie
       if (!address || address.trim() === '') {
-        console.warn('No address provided for wallet balances');
+        // Warning: No address provided for wallet balances
         return {
           spotBalances: [],
           perpPositions: null

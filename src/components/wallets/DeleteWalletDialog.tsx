@@ -40,7 +40,6 @@ export function DeleteWalletDialog({
           onSuccess();
         }
       } catch (err: unknown) {
-        console.error("Error deleting wallet:", err);
         handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
       } finally {
         setIsLoading(false);

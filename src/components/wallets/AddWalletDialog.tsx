@@ -20,12 +20,21 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const { addWallet } = useWallets();
+  const { addWallet, wallets } = useWallets();
+  
+  // Vérifier si l'utilisateur a atteint la limite de 5 wallets
+  const hasReachedWalletLimit = wallets.length >= 5;
 
   
   const handleAddWallet = async () => {
     if (!address) {
       walletAddMessages.validation.emptyAddress();
+      return;
+    }
+    
+    // Vérifier la limite de wallets avant d'ajouter
+    if (hasReachedWalletLimit) {
+      walletAddMessages.validation.walletLimitExceeded();
       return;
     }
     
@@ -51,10 +60,13 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
         onSuccess();
       }
     } catch (err: unknown) {
-      console.error("Error adding wallet:", err);
-      
-      // Handle specific error cases with toast
-      handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
+      // Vérifier si c'est une erreur de limite de wallets
+      if (err instanceof Error && err.message.includes('WALLET_LIMIT_EXCEEDED')) {
+        walletAddMessages.validation.walletLimitExceeded();
+      } else {
+        // Handle other specific error cases with toast
+        handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -64,15 +76,18 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
-          <DialogTitle>Ajouter un nouveau wallet</DialogTitle>
+          <DialogTitle>Add a new wallet</DialogTitle>
           <DialogDescription className="text-white">
-            Entrez l&apos;adresse de votre wallet Ethereum et un nom optionnel.
+            {hasReachedWalletLimit 
+              ? `You have reached the limit of 5 wallets. Remove an existing wallet to add a new one.`
+              : `Enter your Ethereum wallet address and an optional name. (${wallets.length}/5 wallets)`
+            }
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <label htmlFor="address" className="text-sm text-white">
-              Adresse du wallet (obligatoire)
+              Wallet address (required)
             </label>
             <Input
               id="address"
@@ -84,13 +99,13 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
           </div>
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm text-white">
-              Nom du wallet (facultatif)
+              Wallet name (optional)
             </label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Mon Wallet"
+              placeholder="My Wallet"
               className="bg-[#0C2237] border-[#83E9FF4D]"
             />
           </div>
@@ -102,14 +117,14 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
             onClick={() => onOpenChange(false)}
             className="border-[#83E9FF4D] text-white"
           >
-            Annuler
+            Cancel
           </Button>
           <Button 
             onClick={handleAddWallet}
-            disabled={isLoading}
-            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
+            disabled={isLoading || hasReachedWalletLimit}
+            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Ajout en cours..." : "Ajouter"}
+            {isLoading ? "Adding..." : hasReachedWalletLimit ? "Limit reached (5/5)" : "Add"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -124,7 +139,7 @@ export function AddWalletButton({ onClick }: { onClick: () => void }) {
       className="ml-auto bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
       onClick={onClick}
     >
-      <PlusCircle className="mr-2 h-4 w-4" /> Ajouter un wallet
+      <PlusCircle className="mr-2 h-4 w-4" /> Add a wallet
     </Button>
   );
 } 

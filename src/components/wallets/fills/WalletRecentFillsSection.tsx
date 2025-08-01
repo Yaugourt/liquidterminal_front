@@ -87,9 +87,9 @@ export function WalletRecentFillsSection() {
       await navigator.clipboard.writeText(hash);
       setCopiedHash(hash);
       setTimeout(() => setCopiedHash(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy hash: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   // Fonction pour formater le hash - identique à TransactionList

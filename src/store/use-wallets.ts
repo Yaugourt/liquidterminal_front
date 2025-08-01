@@ -136,7 +136,7 @@ export const useWallets = create<WalletsState>()(
                 orderedWallets = [...savedWallets, ...newWallets];
               }
             } catch {
-              console.warn('Failed to restore wallets order from localStorage');
+              // Warning: Failed to restore wallets order from localStorage
             }
             
             // Ensure we have a valid active wallet
@@ -176,7 +176,7 @@ export const useWallets = create<WalletsState>()(
                 orderedWallets = [...savedWallets, ...newWallets];
               }
             } catch {
-              console.warn('Failed to restore wallets order from localStorage');
+              // Warning: Failed to restore wallets order from localStorage
             }
             
             // Ensure we have a valid active wallet
@@ -231,8 +231,8 @@ export const useWallets = create<WalletsState>()(
                     const newOrderIds = currentWallets.map(w => w.id).concat(newWallet.id);
                     localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
                   }
-                } catch (error) {
-                  console.warn('Failed to update wallets order in localStorage:', error);
+                } catch {
+                  // Warning: Failed to update wallets order in localStorage
                 }
                 
                 actions.updateWallets(() => newWallets);
@@ -295,8 +295,8 @@ export const useWallets = create<WalletsState>()(
                 const newOrderIds = orderIds.filter(walletId => walletId !== id);
                 localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
               }
-            } catch (error) {
-              console.warn('Failed to update wallets order in localStorage:', error);
+            } catch {
+              // Warning: Failed to update wallets order in localStorage
             }
             
             set({
@@ -329,9 +329,9 @@ export const useWallets = create<WalletsState>()(
           // Sauvegarder l'ordre dans localStorage pour persister les préférences
           try {
             localStorage.setItem('wallets-order', JSON.stringify(newOrder));
-          } catch (error) {
-            console.warn('Failed to save wallets order to localStorage:', error);
-          }
+                      } catch {
+              // Warning: Failed to save wallets order to localStorage
+            }
         },
         
         getActiveWallet: () => {

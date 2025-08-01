@@ -30,9 +30,9 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy address: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   // Format time lock

@@ -16,7 +16,7 @@ export const useDelegatorSummary = (address: string): UseDelegatorSummaryResult 
   } = useDataFetching<DelegatorSummaryData | null>({
     fetchFn: async () => {
       if (!address) {
-        console.warn('No address provided for delegator summary');
+        // Warning: No address provided for delegator summary
         return null;
       }
 
@@ -28,7 +28,7 @@ export const useDelegatorSummary = (address: string): UseDelegatorSummaryResult 
 
         // Vérifier que la réponse a une structure valide
         if (!response || typeof response !== 'object') {
-          console.warn('Invalid response format for delegator summary:', response);
+          // Warning: Invalid response format for delegator summary
           return null;
         }
 

@@ -56,8 +56,8 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
         setOpen(false);
         onSuccess?.(newCategory.data);
       }
-    } catch (error) {
-      console.error('Failed to create category:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -81,8 +81,8 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
         setOpen(false);
         onSuccess?.(newResource.data);
       }
-    } catch (error) {
-      console.error('Failed to create resource:', error);
+    } catch {
+      // Error handled silently
     }
   };
 

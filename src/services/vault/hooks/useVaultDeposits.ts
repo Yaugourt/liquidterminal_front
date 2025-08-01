@@ -18,7 +18,7 @@ export const useVaultDeposits = (address: string): UseVaultDepositsResult & { en
   } = useDataFetching<VaultDeposit[]>({
     fetchFn: async () => {
       if (!address) {
-        console.warn('No address provided for vault deposits');
+        // Warning: No address provided for vault deposits
         return [];
       }
       try {

@@ -71,10 +71,10 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
         setLocalResources(prev => [...prev, serverResources.find(r => r.id === resourceId)!].filter(Boolean));
         toast.error('Failed to delete resource');
       }
-    } catch (error) {
+    } catch {
       // If deletion failed, revert the optimistic update
       setLocalResources(prev => [...prev, serverResources.find(r => r.id === resourceId)!].filter(Boolean));
-      console.error('Failed to delete resource:', error);
+      // Error handled silently
       toast.error('Failed to delete resource');
     }
   }, [deleteResource, refetchResources, serverResources]);

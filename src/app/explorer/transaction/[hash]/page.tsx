@@ -25,8 +25,8 @@ export default function TransactionPage() {
       await navigator.clipboard.writeText(txHash);
       setCopiedHash(true);
       setTimeout(() => setCopiedHash(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy hash: ', err);
+    } catch {
+      // Error handled silently
     }
   };
 

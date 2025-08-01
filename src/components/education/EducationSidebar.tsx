@@ -37,9 +37,9 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
       await navigator.clipboard.writeText(text);
       setCopiedColor(text);
       setTimeout(() => setCopiedColor(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   return (

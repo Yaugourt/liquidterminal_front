@@ -64,9 +64,9 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
         notes: `Added from ${resource.title}`
       });
       setShowReadLists(false);
-    } catch (error) {
-      console.error('Error adding to read list:', error);
-    } finally {
+          } catch {
+        // Error handled silently
+      } finally {
       setIsAddingToList(false);
     }
   };

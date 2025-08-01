@@ -16,9 +16,9 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       await navigator.clipboard.writeText(text);
       setCopiedValue(text);
       setTimeout(() => setCopiedValue(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   const renderFieldValue = (field: FormattedTransactionField) => {

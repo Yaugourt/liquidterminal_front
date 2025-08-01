@@ -18,7 +18,7 @@ export const useValidatorDelegations = (address: string): UseValidatorDelegation
   } = useDataFetching<ValidatorDelegation[]>({
     fetchFn: async () => {
       if (!address) {
-        console.warn('No address provided for validator delegations');
+        // Warning: No address provided for validator delegations
         return [];
       }
 

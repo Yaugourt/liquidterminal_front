@@ -17,9 +17,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
       await navigator.clipboard.writeText(text);
       setCopiedValue(text);
       setTimeout(() => setCopiedValue(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
+          } catch {
+        // Error handled silently
+      }
   };
 
   const truncateAddress = (address: string) => {

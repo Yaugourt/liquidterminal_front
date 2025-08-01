@@ -113,7 +113,7 @@ export const useReadLists = create<ReadListsState>()(
             
             // Ensure readLists is an array
             if (!Array.isArray(readLists)) {
-              console.warn('getMyReadLists returned non-array:', readLists);
+              // Warning: getMyReadLists returned non-array
               set({
                 readLists: [],
                 activeReadListId: null,
@@ -138,7 +138,7 @@ export const useReadLists = create<ReadListsState>()(
                 orderedReadLists = [...savedLists, ...newLists];
               }
             } catch {
-              console.warn('Failed to restore read lists order from localStorage');
+              // Warning: Failed to restore read lists order from localStorage
             }
             
             // Ensure we have a valid active read list
@@ -397,9 +397,9 @@ export const useReadLists = create<ReadListsState>()(
           // Sauvegarder l'ordre dans localStorage pour persister les préférences
           try {
             localStorage.setItem('readlists-order', JSON.stringify(newOrder));
-          } catch (error) {
-            console.warn('Failed to save read lists order to localStorage:', error);
-          }
+                      } catch {
+              // Warning: Failed to save read lists order to localStorage
+            }
         },
 
         refreshReadLists: async () => {
@@ -421,9 +421,9 @@ export const useReadLists = create<ReadListsState>()(
                 const newLists = readLists.filter(list => !orderIds.includes(list.id));
                 orderedReadLists = [...savedLists, ...newLists];
               }
-            } catch (error) {
-              console.warn('Failed to restore read lists order from localStorage:', error);
-            }
+                          } catch {
+                // Warning: Failed to restore read lists order from localStorage
+              }
             
             set({ readLists: orderedReadLists });
           } catch (error) {
