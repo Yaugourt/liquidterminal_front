@@ -2,9 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { ProtectedAction } from '@/components/common/ProtectedAction';
+import { Pagination } from '@/components/common/pagination';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
-import { AdminUpdateUserInput } from '@/services/auth/user/types';
+import { AdminUpdateUserInput, AdminUsersQueryParams } from '@/services/auth/user/types';
 import { User } from '@/services/auth/types';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -19,45 +20,42 @@ export function UserManagement() {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editForm, setEditForm] = useState<AdminUpdateUserInput>({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  // Get all users without filters
-  const { users: allUsers, isLoading, error, refetch, pagination } = useAdminUsers() as {
-    users: User[];
-    isLoading: boolean;
-    error: Error | null;
-    refetch: () => Promise<void>;
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      pages: number;
+  // Build query parameters for server-side pagination and filtering
+  const queryParams: AdminUsersQueryParams = useMemo(() => {
+    const params: AdminUsersQueryParams = {
+      page: page + 1, // API uses 1-based pagination
+      limit: rowsPerPage,
     };
-  };
+
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    }
+
+    if (selectedRole !== 'all') {
+      params.role = selectedRole as 'USER' | 'MODERATOR' | 'ADMIN';
+    }
+
+    return params;
+  }, [page, rowsPerPage, searchTerm, selectedRole]);
+
+  // Get users with server-side pagination and filtering
+  const { users, isLoading, error, refetch, pagination } = useAdminUsers(queryParams);
   const { updateUser, isLoading: isUpdating } = useAdminUpdateUser();
   const { deleteUser } = useAdminDeleteUser();
 
-  // Client-side filtering
-  const filteredUsers = useMemo(() => {
-    if (!allUsers) return [];
-    
-    let filtered = allUsers;
-    
-    // Filter by search
-    if (searchTerm.trim()) {
-      const search = searchTerm.trim().toLowerCase();
-      filtered = filtered.filter((user: User) => 
-        user.name?.toLowerCase().includes(search) ||
-        user.email?.toLowerCase().includes(search)
-      );
-    }
-    
-    // Filter by role
-    if (selectedRole !== 'all') {
-      filtered = filtered.filter((user: User) => user.role === selectedRole);
-    }
-    
-    return filtered;
-  }, [allUsers, searchTerm, selectedRole]);
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    setRowsPerPage(newRowsPerPage);
+    setPage(0); // Reset to first page when changing rows per page
+  };
 
   // Handle user update
   const handleUpdateUser = async (userId: string, data: AdminUpdateUserInput) => {
@@ -194,7 +192,7 @@ export function UserManagement() {
 
         {/* Table */}
         <UserTable
-          users={filteredUsers}
+          users={users}
           isLoading={isLoading}
           currentUserId={currentUser?.id}
           isUpdating={isUpdating}
@@ -215,34 +213,15 @@ export function UserManagement() {
 
         {/* Pagination */}
         {pagination && (
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-[#FFFFFF80] font-inter">
-              {filteredUsers.length} user(s) displayed out of {pagination.total} total
-            </p>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={pagination.page <= 1}
-                onClick={handleRefresh}
-                className="border-[#83E9FF4D] text-[#83E9FF] hover:bg-[#83E9FF1A] font-inter text-xs"
-              >
-                Previous
-              </Button>
-              <span className="text-xs text-white font-inter">
-                Page {pagination.page} of {pagination.pages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={pagination.page >= pagination.pages}
-                onClick={handleRefresh}
-                className="border-[#83E9FF4D] text-[#83E9FF] hover:bg-[#83E9FF1A] font-inter text-xs"
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            total={pagination.total}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            disabled={isLoading}
+            className="mt-4"
+          />
         )}
       </div>
     </ProtectedAction>
