@@ -1,7 +1,7 @@
 // API Base URLs
 export const API_URLS = {
   // Notre backend
-  LOCAL_BACKEND: process.env.NEXT_PUBLIC_API || 'https://hyperinsightback-production.up.railway.app',
+  LOCAL_BACKEND: process.env.NEXT_PUBLIC_API,
   
   // APIs externes Hyperliquid
   HYPERLIQUID_RPC: 'https://rpc.hyperliquid.xyz',
