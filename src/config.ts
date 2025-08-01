@@ -1,5 +1,5 @@
 // API Configuration
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API;
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API || 'https://hyperinsightback-production.up.railway.app';
 
 // Privy Configuration
 export const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
