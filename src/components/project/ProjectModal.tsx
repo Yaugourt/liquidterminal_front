@@ -151,12 +151,12 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       <DialogTrigger asChild>
         <Button className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-black font-medium">
           <PiPlus className="mr-2 h-4 w-4" />
-          Edit Project
+          Add Project
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-[#0A1F32] border-[#1E3851] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-white">Edit Project Page</DialogTitle>
+          <DialogTitle className="text-white">Add Project</DialogTitle>
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">

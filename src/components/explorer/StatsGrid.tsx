@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/numberFormatting";
 import { ExplorerStat } from "@/components/types/explorer.types";
-import { useDashboardStats } from "@/services/dashboard";
 import { useExplorerStore } from "@/services/explorer";
 import { Loader2 } from "lucide-react";
 
@@ -11,8 +10,7 @@ export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
-  const { stats: dashboardStats, isLoading: isDashboardLoading } = useDashboardStats();
-  const { blocks, connectBlocks, disconnectBlocks } = useExplorerStore();
+  const { currentBlockHeight, connectBlocks, disconnectBlocks } = useExplorerStore();
 
   useEffect(() => {
     connectBlocks(); // Connecter seulement les blocks, pas les transactions
@@ -48,13 +46,12 @@ export function StatsGrid() {
   }, [format]);
 
   useEffect(() => {
-    if (!isDashboardLoading && blocks.length > 0) {
-      const latestBlock = blocks[0];
+    if (currentBlockHeight > 0) {
       setStats([
         {
           title: "Blocks",
           type: "block",
-          value: formatValue(latestBlock.height, "blocks"),
+          value: formatValue(currentBlockHeight, "blocks"),
         },
         {
           title: "Block Time",
@@ -69,22 +66,22 @@ export function StatsGrid() {
         {
           title: "Users",
           type: "users",
-          value: formatValue(dashboardStats?.numberOfUsers || 0, "users"),
+          value: "N/A", // Pas d'appel API
         },
         {
           title: "HYPE Staked",
           type: "hypeStaked",
-          value: formatValue(dashboardStats?.totalHypeStake || 0, "hypeStaked"),
+          value: "N/A", // Pas d'appel API
         },
         {
           title: "Vaults TVL",
           type: "vaultsTvl",
-          value: formatValue(dashboardStats?.vaultsTvl || 0, "vaultsTvl"),
+          value: "N/A", // Pas d'appel API
         },
       ]);
       setIsLoading(false);
     }
-  }, [blocks, dashboardStats, format, isDashboardLoading, formatValue]);
+  }, [currentBlockHeight, formatValue]);
 
   // Afficher un état de chargement
   if (isLoading) {

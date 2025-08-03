@@ -16,6 +16,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   isBlocksConnected: false,
   isTransactionsConnected: false,
   error: null,
+  currentBlockHeight: 0, // Ajout du compteur simple
 
   connectBlocks: () => {
     try {
@@ -28,7 +29,6 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       const ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
-
         set({ isBlocksConnected: true, error: null });
         
         // Subscribe to block updates only
@@ -48,6 +48,10 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
           // Only handle blocks
           if ('blockTime' in item) {
             get().addBlock(item);
+            // Incrémente directement le compteur
+            set((state) => ({
+              currentBlockHeight: Math.max(state.currentBlockHeight, item.height)
+            }));
           }
         } catch {
           set({ error: 'Failed to parse blocks data' });
@@ -59,7 +63,6 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       };
 
       ws.onclose = () => {
-
         set({ isBlocksConnected: false });
       };
 

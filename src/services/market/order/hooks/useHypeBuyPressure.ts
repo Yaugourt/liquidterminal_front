@@ -24,12 +24,11 @@ const calculateRealTimeProgression = (order: EnrichedTwapOrder) => {
   
   // Calculate remaining quantity and value based on smooth time progression
   const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
+  const originalAmount = parseFloat(order.action.twap.s);
+  const remainingAmount = originalAmount * (remainingPercent / 100);
   
-  // For value calculation, reconstruct original value (SAME AS TWAP TABLE)
-  const currentValue = order.totalValueUSD;
-  const currentProgression = order.progressionPercent;
-  const originalValue = currentProgression < 100 ? currentValue / (100 - currentProgression) * 100 : currentValue;
-  const remainingValue = originalValue * (remainingPercent / 100);
+  // For value calculation, use the remaining amount with current token price
+  const remainingValue = remainingAmount * (order.totalValueUSD / parseFloat(order.action.twap.s));
   
   return {
     progression: timeProgressionPercent,

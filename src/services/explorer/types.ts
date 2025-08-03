@@ -288,6 +288,7 @@ export interface ExplorerState {
   isBlocksConnected: boolean;
   isTransactionsConnected: boolean;
   error: string | null;
+  currentBlockHeight: number;
 }
 
 export interface ExplorerStore extends ExplorerState {

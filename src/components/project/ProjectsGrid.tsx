@@ -165,6 +165,18 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
   if (categoriesLoading && categories.length === 0) {
     return (
       <div className="space-y-6">
+        {/* Add Button - toujours visible même pendant le loading */}
+        <div className="flex justify-start">
+          {userCanCreateProject && (
+            <ProjectModal onSuccess={(newProject) => {
+              if (newProject) {
+                setLocalProjects(prev => [newProject, ...prev]);
+              }
+              refetch();
+            }} />
+          )}
+        </div>
+        
         <div className="flex gap-4 border-b border-[#83E9FF1A]">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-10 w-24 bg-[#112941]" />

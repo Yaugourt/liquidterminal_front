@@ -56,9 +56,8 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
   const originalAmount = parseFloat(twap.amount);
   const remainingAmount = originalAmount * (remainingPercent / 100);
   
-  // For value calculation, reconstruct original value and calculate remaining
-  const originalValue = twap.value / (100 - twap.progression) * 100; // Reconstruct original value
-  const remainingValue = originalValue * (remainingPercent / 100);
+  // For value calculation, use the remaining amount with current token price
+  const remainingValue = remainingAmount * (twap.value / parseFloat(twap.amount));
   
   return {
     progression: timeProgressionPercent,
