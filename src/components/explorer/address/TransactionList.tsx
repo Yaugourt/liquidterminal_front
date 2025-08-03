@@ -140,6 +140,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
       <TableCell className="py-3 px-4 text-sm">
         <Link 
           href={`/explorer/address/${address}`}
+          prefetch={false}
           className="text-[#83E9FF] hover:text-[#83E9FF]/80 truncate block"
           title={address}
         >
@@ -203,6 +204,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
                     <div className="flex items-center gap-1.5">
                       <Link 
                         href={`/explorer/transaction/${tx.hash}`}
+                        prefetch={false}
                         className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors"
                         title={tx.hash}
                       >

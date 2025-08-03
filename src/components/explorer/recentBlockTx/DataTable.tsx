@@ -51,6 +51,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
     <div className="flex items-center gap-1.5">
       <Link 
         href={`/explorer/address/${address}`}
+        prefetch={false}
         className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
       >
         {address.slice(0, 4)}..{address.slice(-3)}
@@ -166,6 +167,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
               <TableCell className="py-3 px-4 text-sm text-right">
                 <Link 
                   href={`/explorer/block/${tx.block}`}
+                  prefetch={false}
                   className="text-white font-inter hover:text-[#83E9FF] transition-colors"
                 >
                   {tx.block}

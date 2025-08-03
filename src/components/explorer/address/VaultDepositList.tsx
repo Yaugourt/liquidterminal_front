@@ -111,6 +111,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
                   <div className="flex items-center gap-1.5">
                     <Link
                       href={`/explorer/address/${row.vaultAddress}`}
+                      prefetch={false}
                       className="text-white font-inter hover:text-[#83E9FF] transition-colors"
                       title={row.vaultAddress}
                     >
