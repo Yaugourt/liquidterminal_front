@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { LayoutWrapper } from "@/components/common/LayoutWrapper";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 
 const geistSans = Geist({
@@ -41,6 +42,7 @@ export default function RootLayout({
           <LayoutWrapper>
             {children}
             <SpeedInsights />
+            <Analytics />
           </LayoutWrapper>
         </Providers>
       </body>
