@@ -12,8 +12,6 @@ export interface UserWallet {
   name?: string;
   address?: string;
   addedAt: Date;
-  Wallet?: Wallet;
-  wallet?: Wallet;
 }
 
 export interface WalletResponse {
@@ -28,7 +26,6 @@ export interface AddWalletRequest {
 
 export interface AddWalletResponse {
   success: boolean;
-  wallet?: Wallet;
   userWallet?: UserWallet;
   message?: string;
 }

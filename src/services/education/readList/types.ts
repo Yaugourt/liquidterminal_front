@@ -112,6 +112,56 @@ export interface ReadListQueryParams {
 export type ReadList = ReadListSummaryResponse;
 export type ReadListItem = ReadListItemResponse;
 export type CreateReadListDto = ReadListCreateInput;
+
+// ============================================
+// TYPES POUR LES READ LISTS PUBLIQUES
+// ============================================
+
+export interface PublicReadList {
+  id: number;
+  name: string;
+  description?: string;
+  isPublic: boolean;
+  itemsCount: number;
+  creator: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PublicReadListWithItems extends PublicReadList {
+  items: ReadListItem[];
+}
+
+export interface PublicReadListQueryParams {
+  page?: number;
+  limit?: number;
+  sort?: 'createdAt' | 'updatedAt' | 'name';
+  order?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface PublicReadListPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PublicReadListsResponse {
+  success: boolean;
+  data: PublicReadList[];
+  pagination: PublicReadListPagination;
+}
+
+export interface ReadListCopyResponse {
+  success: boolean;
+  data: PublicReadListWithItems;
+  message: string;
+}
 export type UpdateReadListDto = ReadListUpdateInput;
 export type AddResourceDto = ReadListItemCreateInput;
 

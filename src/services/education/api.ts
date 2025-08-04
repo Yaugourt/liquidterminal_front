@@ -7,16 +7,25 @@ import {
   CreateCategoryInput,
   CreateResourceInput,
   CategoryResponse,
-  ResourceResponse
+  ResourceResponse,
+  CsvUploadApiResponse,
+  CategoryParams
 } from './types';
+import { apiClient } from '../api/axios-config';
 
 /**
  * Récupère toutes les catégories éducatives
  */
-export const fetchEducationalCategories = async (): Promise<CategoriesResponse> => {
+export const fetchEducationalCategories = async (params?: CategoryParams): Promise<CategoriesResponse> => {
   return withErrorHandling(async () => {
-    // GET simple sans paramètres - le backend accepte tout maintenant
-    const endpoint = `/educational/categories`;
+    const queryParams = new URLSearchParams();
+    
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.sortBy) queryParams.append('sort', params.sortBy);
+    if (params?.sortOrder) queryParams.append('order', params.sortOrder);
+    
+    const endpoint = `/educational/categories${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     return await get<CategoriesResponse>(endpoint);
   }, 'fetching educational categories');
 };
@@ -89,4 +98,22 @@ export const fetchResourcesByCategories = async (categoryIds: number[]): Promise
     
     return Array.from(resourceMap.values());
   }, 'fetching resources by multiple categories');
+};
+
+/**
+ * Upload un fichier CSV de ressources éducatives
+ */
+export const uploadCsvResources = async (file: File): Promise<CsvUploadApiResponse> => {
+  return withErrorHandling(async () => {
+    const formData = new FormData();
+    formData.append('csv', file);
+
+    const response = await apiClient.post<CsvUploadApiResponse>('/educational/csv/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  }, 'uploading CSV resources');
 };

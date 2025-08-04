@@ -19,18 +19,24 @@ import { useEducationalCategories } from "@/services/education";
 export default function EducationPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+
+  
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();
   
   // Fetch categories to set default selection
-  const { categories } = useEducationalCategories();
+  const { categories } = useEducationalCategories({
+    limit: 100 // Get all categories for the page
+  });
+
+
 
   // Set all categories as selected by default when categories are loaded
   useEffect(() => {
     if (categories.length > 0 && selectedCategories.length === 0) {
       setSelectedCategories(categories.map(cat => cat.id));
     }
-  }, [categories, selectedCategories.length]);
+  }, [categories]); // Remove selectedCategories.length dependency
 
   // Transform data for the sidebar
   const sidebarInfo = hyperliquidInfo ? {
@@ -102,6 +108,8 @@ export default function EducationPage() {
             selectedCategoryIds={selectedCategories}
             sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
           />
+
+
         </main>
       </div>
     </div>

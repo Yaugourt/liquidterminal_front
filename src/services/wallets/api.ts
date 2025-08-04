@@ -31,30 +31,11 @@ export const addWallet = async (
     
     // Vérifier si la réponse indique un succès
     if (response && response.success === true) {
-      // Si la réponse contient les données attendues
-      if (response.wallet && response.userWallet) {
-        return {
-          success: true,
-          wallet: response.wallet,
-          userWallet: response.userWallet
-        };
-      }
-      
-      // Si la réponse contient seulement userWallet
+      // Si la réponse contient userWallet
       if (response.userWallet) {
-        // Créer un wallet à partir des données de userWallet
-        const userWallet = response.userWallet;
-        const wallet = {
-          id: userWallet.walletId || 0,
-          address: address,
-          name: userWallet.name || name || `Wallet ${userWallet.id}`,
-          addedAt: userWallet.addedAt || new Date()
-        };
-        
         return {
           success: true,
-          wallet: wallet,
-          userWallet: userWallet
+          userWallet: response.userWallet
         };
       }
       
@@ -80,7 +61,8 @@ export const addWallet = async (
 export const getWalletsByUser = async (): Promise<WalletResponse> => {
   return withErrorHandling(async () => {
     // NOUVEAU: utiliser /my-wallets au lieu de /user/:privyUserId
-    const response = await get<WalletResponse>('/wallet/my-wallets');
+    // Désactiver le cache pour toujours avoir les données fraîches
+    const response = await get<WalletResponse>('/wallet/my-wallets', {}, { useCache: false });
     
     // Vérifier que la réponse contient les données attendues
     if (!response) {

@@ -51,7 +51,7 @@ const parseUserWallet = (uw: UserWallet): Wallet | null => {
     return {
       id: uw.wallet.id,
       address: uw.wallet.address || uw.address || '',
-      name: uw.wallet.name || uw.name || `Wallet ${uw.id}`,
+      name: uw.name || `Wallet ${uw.id}`,
       addedAt: uw.wallet.addedAt || uw.addedAt || new Date()
     };
   }
@@ -158,6 +158,7 @@ export const useWallets = create<WalletsState>()(
           try {
             actions.setLoading(true);
             
+            // Forcer un rechargement complet depuis le serveur
             const response = await getWalletsByUser();
             const { wallets, userWallets } = processWalletsResponse(response);
             
@@ -183,11 +184,13 @@ export const useWallets = create<WalletsState>()(
             const currentActiveId = get().activeWalletId;
             const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
             
+            // Mettre à jour complètement l'état
             set({
               wallets: orderedWallets,
               userWallets,
               activeWalletId: hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null),
-              loading: false
+              loading: false,
+              error: null // Clear any previous errors
             });
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to reload wallets'));
@@ -204,48 +207,9 @@ export const useWallets = create<WalletsState>()(
             const walletName = name || `Wallet ${get().wallets.length + 1}`;
             const response = await addWallet(normalizedAddress, walletName);
             
-            // Si la réponse indique un succès
+            // Si la réponse indique un succès, recharger depuis le serveur
             if (response.success === true) {
-              // Si on a les objets wallet et userWallet
-              if (response.wallet && response.userWallet) {
-                const newWallet = {
-                  ...response.wallet,
-                  name: response.wallet.name || walletName
-                };
-                const newUserWallet = response.userWallet;
-                
-                // Ajouter le nouveau wallet en respectant l'ordre sauvegardé
-                const currentWallets = get().wallets;
-                const newWallets = [...currentWallets, newWallet];
-                
-                // Vérifier s'il y a un ordre sauvegardé
-                try {
-                  const savedOrder = localStorage.getItem('wallets-order');
-                  if (savedOrder) {
-                    const orderIds = JSON.parse(savedOrder) as number[];
-                    // Ajouter le nouveau wallet à la fin de l'ordre sauvegardé
-                    const newOrderIds = [...orderIds, newWallet.id];
-                    localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
-                  } else {
-                    // Créer un nouvel ordre avec le nouveau wallet
-                    const newOrderIds = currentWallets.map(w => w.id).concat(newWallet.id);
-                    localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
-                  }
-                } catch {
-                  // Warning: Failed to update wallets order in localStorage
-                }
-                
-                actions.updateWallets(() => newWallets);
-                actions.updateUserWallets(userWallets => [...userWallets, newUserWallet]);
-                if (!get().activeWalletId) {
-                  actions.setActiveWallet(newWallet.id);
-                }
-                actions.setLoading(false);
-                
-                return newWallet;
-              }
-              
-              // Si on a seulement un message de succès, recharger les wallets
+              // Forcer un rechargement complet pour éviter les problèmes de cache
               await get().reloadWallets();
               return;
             }
@@ -253,6 +217,7 @@ export const useWallets = create<WalletsState>()(
             throw new Error("Failed to add wallet");
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to add wallet'));
+            throw error; // Re-throw pour que le composant puisse gérer l'erreur
           }
         },
         
@@ -274,40 +239,11 @@ export const useWallets = create<WalletsState>()(
             
             await removeWalletFromUser(id);
             
-            const state = get();
-            const newWallets = state.wallets.filter(wallet => wallet.id !== id);
-            const newUserWallets = state.userWallets.filter(userWallet => {
-              if (userWallet.wallet && typeof userWallet.wallet === 'object' && 'id' in userWallet.wallet) {
-                return userWallet.wallet.id !== id;
-              }
-              return userWallet.walletId !== id;
-            });
-            
-            const newActiveId = state.activeWalletId === id 
-              ? (newWallets.length > 0 ? newWallets[0].id : null)
-              : state.activeWalletId;
-            
-            // Mettre à jour l'ordre sauvegardé en supprimant le wallet
-            try {
-              const savedOrder = localStorage.getItem('wallets-order');
-              if (savedOrder) {
-                const orderIds = JSON.parse(savedOrder) as number[];
-                const newOrderIds = orderIds.filter(walletId => walletId !== id);
-                localStorage.setItem('wallets-order', JSON.stringify(newOrderIds));
-              }
-            } catch {
-              // Warning: Failed to update wallets order in localStorage
-            }
-            
-            set({
-              wallets: newWallets,
-              userWallets: newUserWallets,
-              activeWalletId: newActiveId,
-              loading: false
-            });
+            // Forcer un rechargement complet depuis le serveur
+            await get().reloadWallets();
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to remove wallet'));
-            throw new Error(handleApiError(error, 'Failed to remove wallet'));
+            throw error; // Re-throw pour que le composant puisse gérer l'erreur
           }
         },
         

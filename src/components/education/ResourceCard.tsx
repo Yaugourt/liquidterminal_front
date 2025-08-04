@@ -10,6 +10,7 @@ import { useReadLists } from "@/store/use-readlists";
 import { useLinkPreview } from "@/services/education/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
+import { readListMessages, handleReadListApiError } from "@/lib/education-toast-messages";
 
 interface Resource {
   id: string;
@@ -59,14 +60,17 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
   const handleAddToReadList = async (readListId: number) => {
     try {
       setIsAddingToList(true);
+      const readList = readLists.find(list => list.id === readListId);
       await addItemToReadList(readListId, {
         resourceId: parseInt(resource.id),
         notes: `Added from ${resource.title}`
       });
       setShowReadLists(false);
-          } catch {
-        // Error handled silently
-      } finally {
+      readListMessages.success.addedToList(readList?.name || 'Read List');
+    } catch (error) {
+      const readList = readLists.find(list => list.id === readListId);
+      handleReadListApiError(error, `add to ${readList?.name || 'read list'}`);
+    } finally {
       setIsAddingToList(false);
     }
   };
@@ -105,17 +109,16 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           className="block"
         >
           {/* Image section */}
-          <div className="relative w-full overflow-hidden bg-[#112941]">
+          <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#112941] to-[#1a3a5a]" style={{ aspectRatio: '16/9' }}>
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
               <Image
                 src={preview.image}
                 alt={preview.title || resource.title}
-                width={400}
-                height={192}
-                className="w-full h-auto max-h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                className="object-contain group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
               />
-            ) : !imageError ? (
+            ) : !imageError && resource.image ? (
               <Image
                 src={resource.image}
                 alt={resource.title}

@@ -13,8 +13,10 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  // Fetch categories using the education service
-  const { categories, isLoading } = useEducationalCategories();
+  // Fetch categories using the education service - get all categories
+  const { categories, isLoading } = useEducationalCategories({
+    limit: 100 // Get all categories at once, no pagination for dropdown
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,7 +38,9 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   };
 
   const handleSelectAll = () => {
-    if (selectedCategories.length === categories.length) {
+    const allSelected = categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id));
+    
+    if (allSelected) {
       onCategoryChange([]);
     } else {
       onCategoryChange(categories.map(cat => cat.id));
@@ -44,16 +48,18 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   };
 
   const getButtonText = () => {
+    const allSelected = categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id));
+    
     if (selectedCategories.length === 0) {
-      return "Select categories...";
-    } else if (selectedCategories.length === categories.length) {
-      return "All categories";
+      return `Select categories... (${categories.length} total)`;
+    } else if (allSelected) {
+      return `All categories (${categories.length})`;
     } else {
       const selected = categories.filter(cat => selectedCategories.includes(cat.id));
       if (selectedCategories.length === 1) {
-        return selected[0].name;
+        return `${selected[0].name} (${selectedCategories.length}/${categories.length})`;
       }
-      return `${selectedCategories.length} categories selected`;
+      return `${selectedCategories.length}/${categories.length} categories selected`;
     }
   };
 
@@ -83,25 +89,36 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
       {isOpen && (
         <div className="absolute top-full mt-2 w-full bg-[#051728] border border-[#83E9FF4D] rounded-lg shadow-xl z-50 overflow-hidden">
           {/* Select All option */}
-          <button
-            onClick={handleSelectAll}
-            className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#112941] transition-colors border-b border-[#83E9FF1A]"
-          >
-            <span className="text-sm text-white font-medium">Select All</span>
-            <div className={`w-4 h-4 rounded border ${
-              selectedCategories.length === categories.length 
-                ? "bg-[#F9E370] border-[#F9E370]" 
-                : "border-gray-500"
-            } flex items-center justify-center`}>
-              {selectedCategories.length === categories.length && (
+          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#112941] transition-colors border-b border-[#83E9FF1A]">
+            <button
+              onClick={handleSelectAll}
+              className="text-sm text-white font-medium hover:text-[#83E9FF] transition-colors"
+            >
+              Select All
+            </button>
+            <button
+              onClick={handleSelectAll}
+              className={`w-4 h-4 rounded border cursor-pointer transition-colors ${
+                categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id))
+                  ? "bg-[#F9E370] border-[#F9E370] hover:bg-[#F9E370]/80" 
+                  : "border-gray-500 hover:border-[#83E9FF]"
+              } flex items-center justify-center`}
+            >
+              {categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id)) && (
                 <Check size={12} className="text-[#051728]" />
               )}
-            </div>
-          </button>
+            </button>
+          </div>
 
           {/* Category options */}
           <div className="max-h-64 overflow-y-auto">
-            {categories.map((category) => (
+            {isLoading ? (
+              <div className="p-4 text-center text-gray-400">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#83E9FF] mx-auto mb-2"></div>
+                <span className="text-sm">Chargement des catégories...</span>
+              </div>
+            ) : (
+              categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => handleToggleCategory(category.id)}
@@ -109,9 +126,6 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
               >
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-white">{category.name}</span>
-                  {category.description && (
-                    <span className="text-xs text-gray-400">({category.description})</span>
-                  )}
                 </div>
                 <div className={`w-4 h-4 rounded border ${
                   selectedCategories.includes(category.id) 
@@ -123,8 +137,11 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
                   )}
                 </div>
               </button>
-            ))}
+            ))
+            )}
           </div>
+
+
         </div>
       )}
     </div>

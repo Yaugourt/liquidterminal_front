@@ -98,7 +98,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
 
   // Group resources by category using local state
   const categoriesWithResources = localCategories
-    .filter(cat => selectedCategoryIds.length === 0 || selectedCategoryIds.includes(cat.id))
+    .filter(cat => selectedCategoryIds.length > 0 && selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = localResources
         .filter(resource => resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id))
@@ -130,7 +130,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
   if (categoriesWithResources.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-400">No resources found for the selected categories.</p>
+        <p className="text-gray-400">Select category or all the category</p>
       </div>
     );
   }

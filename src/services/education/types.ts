@@ -81,6 +81,12 @@ export interface CategoryParams {
 export interface CategoriesResponse {
   success: boolean;
   data: EducationalCategory[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
   message?: string;
 }
 
@@ -115,6 +121,12 @@ export interface UseEducationalCategoriesResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  pagination?: {
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+  updateParams: (params: Partial<CategoryParams>) => void;
 }
 
 export interface UseEducationalResourcesResult {
@@ -145,4 +157,36 @@ export interface UseEducationalResourcesOptions {
 export interface UseEducationalCategoriesOptions {
   initialData?: EducationalCategory[];
   refreshInterval?: number;
-} 
+}
+
+// ==================== TYPES POUR UPLOAD CSV ====================
+export interface CsvUploadError {
+  row: number;
+  error: string;
+  data: {
+    link: string;
+    category: string;
+  };
+}
+
+export interface CsvUploadResult {
+  totalRows: number;
+  successfulImports: number;
+  failedImports: number;
+  errors: CsvUploadError[];
+  createdCategories: string[];
+}
+
+export interface CsvUploadResponse {
+  success: true;
+  message: string;
+  data: CsvUploadResult;
+}
+
+export interface CsvUploadErrorResponse {
+  success: false;
+  error: string;
+  code: string;
+}
+
+export type CsvUploadApiResponse = CsvUploadResponse | CsvUploadErrorResponse; 

@@ -55,6 +55,12 @@ export function useAuth() {
     return false;
   }, [authenticated, privyUser, getAccessToken]);
 
+  const logout = useCallback(() => {
+    setUser(null);
+    setUserProcessed(false);
+    privyLogout();
+  }, [privyLogout]);
+
   const login = useCallback(async (credentials?: LoginCredentials) => {
     if (credentials) {
       try {
@@ -81,15 +87,25 @@ export function useAuth() {
         setLoading(false);
       }
     } else {
+      // Clear any cached tokens before login
+      if (typeof window !== 'undefined') {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes('privy')) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
+        // Clear axios cache to force fresh requests
+        import('../../api/axios-config').then(({ clearCache }) => {
+          if (clearCache) clearCache();
+        });
+      }
       privyLogin();
     }
   }, [privyLogin]);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    setUserProcessed(false);
-    privyLogout();
-  }, [privyLogout]);
 
   const fetchUser = useCallback(async (privyUserId: string) => {
     try {

@@ -6,7 +6,10 @@ import {
   ReadListUpdateInput,
   ReadListItem,
   ReadListItemCreateInput,
-  ReadListItemUpdateInput
+  ReadListItemUpdateInput,
+  PublicReadListQueryParams,
+  PublicReadListsResponse,
+  ReadListCopyResponse
 } from './types';
 
 // Get all user's read lists (private and public) - NOUVEAU: utiliser JWT
@@ -101,4 +104,35 @@ export const deleteReadListItem = async (itemId: number): Promise<void> => {
   return withErrorHandling(async () => {
     await del(`/readlists/items/${itemId}`);
   }, 'deleting read list item');
+};
+
+// ============================================
+// API POUR LES READ LISTS PUBLIQUES
+// ============================================
+
+// Get public read lists with pagination
+export const getPublicReadListsPaginated = async (params?: PublicReadListQueryParams): Promise<PublicReadListsResponse> => {
+  return withErrorHandling(async () => {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.sort) queryParams.append('sort', params.sort);
+    if (params?.order) queryParams.append('order', params.order);
+    if (params?.search) queryParams.append('search', params.search);
+    
+    const endpoint = `/readlists/public${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    // Use direct fetch for public endpoint without authentication
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}${endpoint}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  }, 'fetching public read lists');
+};
+
+// Copy a public read list
+export const copyPublicReadList = async (readListId: number): Promise<ReadListCopyResponse> => {
+  return withErrorHandling(async () => {
+    return await post<ReadListCopyResponse>(`/readlists/copy/${readListId}`, {});
+  }, 'copying public read list');
 }; 

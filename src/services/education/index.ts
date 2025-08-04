@@ -6,7 +6,8 @@ export {
   fetchResourcesByCategories,
   createEducationalCategory,
   createEducationalResource,
-  deleteEducationalResource
+  deleteEducationalResource,
+  uploadCsvResources
 } from './api';
 
 // Hooks
@@ -15,6 +16,7 @@ export { useEducationalResourcesByCategories } from './hooks/useEducationalResou
 export { useCreateEducationalCategory } from './hooks/useCreateEducationalCategory';
 export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
 export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
+export { useCsvUpload } from './hooks/useCsvUpload';
 
 // Types
 export type {
@@ -33,7 +35,12 @@ export type {
   UseEducationalResourcesResult,
   UseEducationalResourcesPaginatedResult,
   UseEducationalResourcesOptions,
-  UseEducationalCategoriesOptions
+  UseEducationalCategoriesOptions,
+  CsvUploadError,
+  CsvUploadResult,
+  CsvUploadResponse,
+  CsvUploadErrorResponse,
+  CsvUploadApiResponse
 } from './types';
 
 // ReadList exports

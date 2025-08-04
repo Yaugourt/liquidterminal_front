@@ -42,7 +42,6 @@ export function WalletTabs() {
     initialize, 
     setActiveWallet,
     reorderWallets,
-    reloadWallets,
   } = useWallets();
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
@@ -110,9 +109,19 @@ export function WalletTabs() {
   };
 
   const handleWalletActionSuccess = async () => {
-    // Attendre un peu pour laisser l'API se synchroniser
-    await new Promise(resolve => setTimeout(resolve, 500));
-    await reloadWallets();
+    try {
+      // Forcer un rechargement complet depuis le serveur
+      await new Promise(resolve => setTimeout(resolve, 200));
+      await initialize({
+        privyUserId: privyUser!.id,
+        username: privyUser!.twitter?.username || privyUser!.farcaster?.username || privyUser!.github?.username || '',
+        privyToken: await getAccessToken() || ''
+      });
+    } catch (error) {
+      console.error('Error reloading wallets:', error);
+      // Forcer un rechargement de la page en cas d'erreur
+      window.location.reload();
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

@@ -1,6 +1,19 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { API_URLS } from './constants';
-import { RequestOptions, CacheEntry, QueueItem, JWTPayload, ExtendedAxiosRequestConfig } from './types';
+import { RequestOptions, CacheEntry, QueueItem, ExtendedAxiosRequestConfig } from './types';
+
+// Extend Window interface for Privy context
+declare global {
+  interface Window {
+    privy?: {
+      getAccessToken?: () => Promise<string | null>;
+      logout?: () => void;
+    };
+    __PRIVY_CONTEXT__?: {
+      getAccessToken?: () => Promise<string | null>;
+    };
+  }
+}
 
 // Configuration constants
 const TIMEOUT_MS = 10000;
@@ -9,7 +22,7 @@ const BASE_RETRY_DELAY = 1000;
 const CACHE_DURATION = 30000;
 const MAX_CACHE_SIZE = 100;
 
-// Cache implementation with size limit
+// Cache implementation
 const cache = new Map<string, CacheEntry>();
 
 const cleanupCache = () => {
@@ -36,47 +49,55 @@ const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue = [];
 };
 
-const refreshTokenWithBackoff = async (retryCount = 0): Promise<string | null> => {
-  const maxRetries = 3;
-  const baseDelay = 1000;
+// Fonction améliorée pour récupérer le token Privy
+const getPrivyToken = async (): Promise<string | null> => {
+  if (typeof window === 'undefined') return null;
   
   try {
-    if (typeof window !== 'undefined') {
-      // @ts-expect-error - Privy is injected globally
-      const privy = window.privy;
-      if (privy?.getAccessToken) {
-        const newToken = await privy.getAccessToken();
-        if (newToken && typeof newToken === 'string') {
-          return newToken;
-        }
-      }
+    // Vérifier si Privy est disponible
+    const privy = window.privy;
+    if (privy?.getAccessToken) {
+      // Privy gère automatiquement le refresh
+      const token = await privy.getAccessToken();
+      return token || null;
     }
-    throw new Error('Failed to refresh token');
+
+    // Fallback vers usePrivy hook si disponible
+    if (window.__PRIVY_CONTEXT__?.getAccessToken) {
+      const token = await window.__PRIVY_CONTEXT__.getAccessToken();
+      return token || null;
+    }
+
+    // Dernier recours : localStorage (non recommandé mais nécessaire pour compatibilité)
+    return getAuthTokenFromStorage();
   } catch (error) {
-    if (retryCount < maxRetries) {
-      const delay = baseDelay * Math.pow(2, retryCount);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return refreshTokenWithBackoff(retryCount + 1);
-    } else {
-      throw error instanceof Error ? error : new Error('Token refresh failed');
-    }
+    console.warn('Erreur lors de la récupération du token Privy:', error);
+    return getAuthTokenFromStorage();
   }
 };
 
-// Axios instances
-export const apiClient = axios.create({
-  baseURL: API_URLS.LOCAL_BACKEND,
-  timeout: TIMEOUT_MS,
-  headers: { 'Content-Type': 'application/json' },
-});
+// Fonction fallback pour localStorage (simplifié)
+const getAuthTokenFromStorage = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    // Vérifier privy:pat en premier
+    const privyPat = localStorage.getItem('privy:pat');
+    if (privyPat) {
+      const cleanToken = privyPat.replace(/^"|"$/g, '');
+      if (isValidJWT(cleanToken)) return cleanToken;
+    }
+    
+    // Fallback vers authToken
+    const authToken = localStorage.getItem('authToken');
+    return authToken && isValidJWT(authToken) ? authToken : null;
+  } catch {
+    return null;
+  }
+};
 
-export const externalApiClient = axios.create({
-  timeout: TIMEOUT_MS,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-// JWT utilities
-const decodeJWT = (token: string): JWTPayload | null => {
+// JWT utilities (simplifiés)
+const decodeJWT = (token: string): { exp?: number } | null => {
   try {
     if (!token || typeof token !== 'string') return null;
     
@@ -99,7 +120,10 @@ const decodeJWT = (token: string): JWTPayload | null => {
 const isJWTExpired = (token: string): boolean => {
   const decoded = decodeJWT(token);
   if (!decoded?.exp) return true;
-  return decoded.exp < Math.floor(Date.now() / 1000);
+  
+  // Ajouter une marge de 5 minutes pour éviter les tokens qui expirent pendant la requête
+  const expirationBuffer = 5 * 60; // 5 minutes en secondes
+  return decoded.exp < Math.floor(Date.now() / 1000) + expirationBuffer;
 };
 
 const isValidJWT = (token: string): boolean => {
@@ -108,79 +132,97 @@ const isValidJWT = (token: string): boolean => {
   return decoded !== null && !isJWTExpired(token);
 };
 
-// Token management
-const getAuthTokenSync = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  
+// Fonction simplifiée de refresh des tokens
+const refreshToken = async (): Promise<string | null> => {
   try {
-    // Check privy:pat first
-    const privyPat = localStorage.getItem('privy:pat');
-    if (privyPat) {
-      const cleanToken = privyPat.replace(/^"|"$/g, '');
-      if (isValidJWT(cleanToken)) return cleanToken;
-    }
-    
-    // Check other privy keys
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      
-      if (key?.includes('privy') && key !== 'privy:pat') {
-        const value = localStorage.getItem(key);
-        
-        if (value) {
-          if (value.startsWith('eyJ') || value.startsWith('"eyJ')) {
-            const cleanToken = value.replace(/^"|"$/g, '');
-            if (isValidJWT(cleanToken)) return cleanToken;
-          }
-          
-          try {
-            const parsed = JSON.parse(value);
-            if (parsed.user?.id?.startsWith('did:privy:')) return parsed.user.id;
-            if (parsed.id?.startsWith('did:privy:')) return parsed.id;
-          } catch {
-            // Silent fail for invalid JSON
-          }
-        }
-      }
-    }
-    
-    // Fallback to authToken
-    const authToken = localStorage.getItem('authToken');
-    return authToken && isValidJWT(authToken) ? authToken : null;
-  } catch {
+    // Utiliser l'API Privy qui gère automatiquement le refresh
+    return await getPrivyToken();
+  } catch (error) {
+    console.error('Erreur lors du refresh du token:', error);
     return null;
   }
 };
 
-const clearAuthToken = (): void => {
+// Fonction pour nettoyer les tokens
+const clearAuthTokens = (): void => {
   if (typeof window !== 'undefined') {
     try {
+      // Effacer tous les tokens d'authentification
       localStorage.removeItem('authToken');
       localStorage.removeItem('privy:pat');
+      
+      // Effacer toutes les clés liées à Privy
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.includes('privy')) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
     } catch {
-      // Silent fail
+      // Échec silencieux
     }
   }
 };
 
-// Request interceptor
-apiClient.interceptors.request.use(
-  (config) => {
+// Fonction pour gérer la déconnexion
+const handleLogout = () => {
+  clearAuthTokens();
+  if (typeof window !== 'undefined') {
+    // Essayer d'utiliser l'API Privy pour se déconnecter proprement
     try {
-      const token = getAuthTokenSync();
+      const privy = window.privy;
+      if (privy?.logout) {
+        privy.logout();
+        return;
+      }
+    } catch {
+      // Si Privy n'est pas disponible, afficher un toast
+    }
+    
+    // Afficher un toast pour informer l'utilisateur
+    import('sonner').then(({ toast }) => {
+      toast.error('Session expirée. Veuillez vous reconnecter.', {
+        duration: 5000
+      });
+    });
+  }
+};
+
+// Création des instances Axios
+export const apiClient = axios.create({
+  baseURL: API_URLS.LOCAL_BACKEND,
+  timeout: TIMEOUT_MS,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+export const externalApiClient = axios.create({
+  timeout: TIMEOUT_MS,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+// Intercepteur de requête amélioré
+apiClient.interceptors.request.use(
+  async (config) => {
+    try {
+      // Toujours récupérer un token frais (Privy gère le cache et le refresh)
+      const token = await getPrivyToken();
       
-      if (token && !config.headers.Authorization) {
-        config.headers.Authorization = token.startsWith('did:privy:') ? token : `Bearer ${token}`;
-      } else if (!token && config.headers.Authorization) {
-        delete config.headers.Authorization;
+      if (token) {
+        config.headers.Authorization = token.startsWith('did:privy:') 
+          ? token 
+          : `Bearer ${token}`;
       }
       
       // Supprimer Content-Type pour FormData (upload de fichiers)
       if (config.data instanceof FormData) {
         delete config.headers['Content-Type'];
       }
-    } catch {
-      // Silent fail - continue without auth
+    } catch (error) {
+      console.warn('Erreur lors de l\'ajout du token à la requête:', error);
+      // Continuer sans authentification
     }
     
     return config;
@@ -188,13 +230,14 @@ apiClient.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error)
 );
 
-// Response interceptor
+// Intercepteur de réponse amélioré
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
     
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      // Si un refresh est déjà en cours, ajouter à la queue
       if (isRefreshingToken) {
         return new Promise<string>((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -210,29 +253,27 @@ apiClient.interceptors.response.use(
       isRefreshingToken = true;
 
       try {
-        const newToken = await refreshTokenWithBackoff();
+        const newToken = await refreshToken();
         
-        if (newToken) {
+        if (newToken && isValidJWT(newToken)) {
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
           }
           processQueue(null, newToken);
           return apiClient(originalRequest);
         } else {
-          processQueue(new Error('Token refresh failed'));
-          clearAuthToken();
-          if (typeof window !== 'undefined') {
-            window.location.href = '/';
-          }
-          return Promise.reject(error);
+          // Token refresh a échoué
+          const refreshError = new Error('Impossible de rafraîchir le token');
+          processQueue(refreshError);
+          handleLogout();
+          return Promise.reject(refreshError);
         }
       } catch (refreshError) {
-        const error = refreshError instanceof Error ? refreshError : new Error('Token refresh failed');
+        const error = refreshError instanceof Error 
+          ? refreshError 
+          : new Error('Échec du refresh du token');
         processQueue(error);
-        clearAuthToken();
-        if (typeof window !== 'undefined') {
-          window.location.href = '/';
-        }
+        handleLogout();
         return Promise.reject(error);
       } finally {
         isRefreshingToken = false;
@@ -243,7 +284,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Main wrapper function
+// Fonction wrapper principale (inchangée)
 export async function axiosWithConfig<T>(
   client: AxiosInstance,
   config: AxiosRequestConfig,
@@ -287,7 +328,7 @@ export async function axiosWithConfig<T>(
   throw lastError || new Error('Request failed');
 }
 
-// HTTP method helpers
+// Helpers HTTP (inchangés)
 export const get = <T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'GET', url, params }, options);
 
@@ -300,9 +341,31 @@ export const put = <T>(url: string, data?: unknown, options?: RequestOptions): P
 export const del = <T>(url: string, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'DELETE', url }, options);
 
-// External API helpers
 export const getExternal = <T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(externalApiClient, { method: 'GET', url, params }, options);
 
 export const postExternal = <T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> =>
-  axiosWithConfig<T>(externalApiClient, { method: 'POST', url, data }, options); 
+  axiosWithConfig<T>(externalApiClient, { method: 'POST', url, data }, options);
+
+export const clearCache = (): void => {
+  cache.clear();
+};
+
+// Utilitaires supplémentaires pour une meilleure intégration Privy
+export const checkTokenValidity = async (): Promise<boolean> => {
+  try {
+    const token = await getPrivyToken();
+    return token ? isValidJWT(token) : false;
+  } catch {
+    return false;
+  }
+};
+
+export const forceTokenRefresh = async (): Promise<string | null> => {
+  try {
+    clearAuthTokens();
+    return await getPrivyToken();
+  } catch {
+    return null;
+  }
+}; 

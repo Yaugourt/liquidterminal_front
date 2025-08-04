@@ -7,6 +7,7 @@ import { useReadLists } from "@/store/use-readlists";
 import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";
 import { CreateListModal } from "./CreateListModal";
+import { readListMessages, handleReadListApiError } from "@/lib/education-toast-messages";
 
 // Custom hook for initialization
 const useReadListInitialization = () => {
@@ -94,33 +95,42 @@ export function ReadList() {
       if (newList) {
         setActiveReadList(newList.id);
         setIsCreateModalOpen(false);
+        readListMessages.success.listCreated(data.name);
       }
-    } catch {
-      // Error handled by store
+    } catch (error) {
+      handleReadListApiError(error, 'create read list');
     }
   }, [createReadList, setActiveReadList]);
 
   const handleDeleteList = useCallback(async (id: number) => {
     try {
       await deleteReadList(id);
-    } catch {
-      // Error handled by store
+      readListMessages.success.listDeleted();
+    } catch (error) {
+      const listToDelete = readLists.find(list => list.id === id);
+      handleReadListApiError(error, `delete ${listToDelete?.name || 'read list'}`);
     }
-  }, [deleteReadList]);
+  }, [deleteReadList, readLists]);
 
   const handleRemoveItem = useCallback(async (itemId: number) => {
     try {
       await deleteReadListItem(itemId);
-    } catch {
-      // Error handled by store
+      readListMessages.success.removedFromList(activeList?.name || 'Read List');
+    } catch (error) {
+      handleReadListApiError(error, `remove from ${activeList?.name || 'read list'}`);
     }
-  }, [deleteReadListItem]);
+  }, [deleteReadListItem, activeList]);
 
   const handleToggleRead = useCallback(async (itemId: number, isRead: boolean) => {
     try {
       await toggleReadStatus(itemId, isRead);
-    } catch {
-      // Error handled by store
+      if (isRead) {
+        readListMessages.success.itemMarkedAsRead();
+      } else {
+        readListMessages.success.itemMarkedAsUnread();
+      }
+    } catch (error) {
+      handleReadListApiError(error, 'toggle read status');
     }
   }, [toggleReadStatus]);
 
