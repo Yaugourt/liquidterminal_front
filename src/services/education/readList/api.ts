@@ -113,20 +113,20 @@ export const deleteReadListItem = async (itemId: number): Promise<void> => {
 // Get public read lists with pagination
 export const getPublicReadListsPaginated = async (params?: PublicReadListQueryParams): Promise<PublicReadListsResponse> => {
   return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.sort) queryParams.append('sort', params.sort);
-    if (params?.order) queryParams.append('order', params.order);
-    if (params?.search) queryParams.append('search', params.search);
-    
-    const endpoint = `/readlists/public${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    // Use direct fetch for public endpoint without authentication
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}${endpoint}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await get<PublicReadListsResponse>('/readlists/public', params as Record<string, unknown>);
+    if (!response) {
+      return {
+        success: true,
+        data: [],
+        pagination: {
+          page: 1,
+          limit: 12,
+          total: 0,
+          totalPages: 0
+        }
+      };
     }
-    return await response.json();
+    return response;
   }, 'fetching public read lists');
 };
 

@@ -34,19 +34,22 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
       }
     } catch (err) {
       const errorMessage = handleReadListApiError(err, 'fetch public read lists');
-      setError(errorMessage);
+      setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch public read lists');
     } finally {
       setLoading(false);
     }
   }, [params]);
 
   const updateParams = useCallback((newParams: Partial<PublicReadListQueryParams>) => {
-    setParams(prev => ({
-      ...prev,
-      ...newParams,
-      // Reset to page 1 when changing search or filters
-      page: newParams.search !== undefined || newParams.sort !== undefined || newParams.order !== undefined ? 1 : prev.page
-    }));
+    setParams(prev => {
+      const shouldResetPage = newParams.search !== undefined || newParams.sort !== undefined || newParams.order !== undefined;
+      return {
+        ...prev,
+        ...newParams,
+        // Reset to page 1 when changing search or filters
+        page: shouldResetPage ? 1 : (prev.page || 1)
+      };
+    });
   }, []);
 
   const copyReadList = useCallback(async (readListId: number): Promise<boolean> => {

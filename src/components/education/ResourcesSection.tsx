@@ -18,7 +18,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
   
   // Fetch categories and resources using the education service
-  const { categories: serverCategories, isLoading: categoriesLoading, refetch: refetchCategories } = useEducationalCategories();
+  const { categories: serverCategories, isLoading: categoriesLoading } = useEducationalCategories();
   const { resources: serverResources, isLoading: resourcesLoading, refetch: refetchResources } = useEducationalResourcesByCategories(selectedCategoryIds);
   
   // Local state for optimistic updates
