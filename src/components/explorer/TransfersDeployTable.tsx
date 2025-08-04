@@ -46,6 +46,7 @@ export function TransfersDeployTable() {
     <div className="flex items-center gap-1.5">
       <Link 
         href={`/explorer/address/${address}`}
+        prefetch={false}
         className="hover:text-[#83E9FF] transition-colors"
       >
         {truncateHash(address)}
