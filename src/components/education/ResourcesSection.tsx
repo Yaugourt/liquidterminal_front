@@ -1,7 +1,6 @@
 "use client";
 
 import { ResourceCard } from "./ResourceCard";
-import { EducationModal } from "./EducationModal";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback, useEffect } from "react";
 import { useEducationalCategories } from "@/services/education";
@@ -79,22 +78,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
     }
   }, [deleteResource, refetchResources, serverResources]);
 
-  // Handle modal success with optimistic updates
-  const handleModalSuccess = useCallback((item?: EducationalCategory | EducationalResource) => {
-    if (item) {
-      if ('categories' in item) {
-        // It's a resource - add to local resources
-        setLocalResources(prev => [...prev, item as EducationalResource]);
-      } else {
-        // It's a category - add to local categories
-        setLocalCategories(prev => [...prev, item as EducationalCategory]);
-      }
-      
-      // Refresh both categories and resources in background
-      refetchCategories();
-      refetchResources();
-    }
-  }, [refetchCategories, refetchResources]);
+
 
   // Group resources by category using local state
   const categoriesWithResources = localCategories
@@ -137,10 +121,6 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
 
   return (
     <div className="space-y-12">
-      {/* Add Button */}
-      <div className="flex justify-start">
-        <EducationModal onSuccess={handleModalSuccess} />
-      </div>
       
       {categoriesWithResources.map((category) => {
         const displayCount = expandedCategories[category.id] || 4;

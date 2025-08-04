@@ -10,6 +10,9 @@ import { EducationContent } from "@/components/education/EducationContent";
 import { EducationSidebar } from "@/components/education/EducationSidebar";
 import { ResourcesSection } from "@/components/education/ResourcesSection";
 import { CategoryFilter } from "@/components/education/CategoryFilter";
+import { EducationModal } from "@/components/education/EducationModal";
+import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
 import { useEducationalCategories } from "@/services/education";
@@ -19,6 +22,7 @@ import { useEducationalCategories } from "@/services/education";
 export default function EducationPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const { user } = useAuthContext();
 
   
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
@@ -96,6 +100,16 @@ export default function EducationPage() {
               {sidebarInfo && !infoLoading && <EducationSidebar info={sidebarInfo} />}
             </div>
           </div>
+
+          {/* Admin Add Resource Button */}
+          <ProtectedAction requiredRole="ADMIN" user={user}>
+            <div className="flex justify-start">
+              <EducationModal onSuccess={() => {
+                // Optionally refresh the page or refetch data
+                window.location.reload();
+              }} />
+            </div>
+          </ProtectedAction>
 
           {/* Category filter */}
           <CategoryFilter 
