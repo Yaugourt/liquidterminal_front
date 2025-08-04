@@ -92,6 +92,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 <TableCell className="py-3 px-4 text-sm">
                   <Link 
                     href={`/explorer/block/${block.height}`}
+                    prefetch={false}
                     className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
                   >
                     {block.height}
