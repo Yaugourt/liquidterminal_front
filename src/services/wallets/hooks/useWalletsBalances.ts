@@ -8,6 +8,7 @@ import {
   fetchHyperliquidPerpPositions 
 } from '../hyperliquid.service';
 import { HyperliquidBalance, HyperliquidPerpResponse } from '../types';
+import { mapTokenBalances } from "@/utils/tokenNameMapper";
 
 interface WalletBalancesData {
   spotBalances: HyperliquidBalance[];
@@ -61,7 +62,7 @@ export const useWalletsBalances = (address?: string) => {
         ]);
 
         return {
-          spotBalances: spotResponse,
+          spotBalances: spotResponse ? mapTokenBalances(spotResponse) : spotResponse,
           perpPositions: perpResponse
         };
       } catch (err: unknown) {

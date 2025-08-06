@@ -108,10 +108,14 @@ export const ProjectCard = memo(function ProjectCard({
             <h3 className="text-[16px] text-white font-medium truncate">
               {project.title}
             </h3>
-            {project.category && (
-              <span className="text-xs text-[#83E9FF] bg-[#83E9FF20] px-2 py-1 rounded-full font-medium whitespace-nowrap">
-                {project.category.name}
-              </span>
+            {project.categories && project.categories.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {project.categories.map(category => (
+                  <span key={category.id} className="text-xs text-[#83E9FF] bg-[#83E9FF20] px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                    {category.name}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
           

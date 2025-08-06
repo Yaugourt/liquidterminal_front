@@ -5,6 +5,7 @@
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { fetchHyperliquidBalances } from "../api";
 import { HyperliquidBalance, HyperliquidBalancesRequest, UseHyperliquidBalancesResult } from "../types";
+import { mapTokenBalances } from "@/utils/tokenNameMapper";
 
 /**
  * Hook pour récupérer les balances de tokens d'un utilisateur depuis Hyperliquid
@@ -33,8 +34,8 @@ export function useHyperliquidBalances(userAddress: string | undefined): UseHype
       
       const response = await fetchHyperliquidBalances(request);
 
-      
-      return response;
+      // Appliquer le mapping des noms de tokens
+      return response ? mapTokenBalances(response) : response;
     },
     refreshInterval: 20000, // Rafraîchir toutes les 10 secondes
     maxRetries: 3,

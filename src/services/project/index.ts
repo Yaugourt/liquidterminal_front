@@ -15,5 +15,8 @@ export type {
   CreateProjectWithUploadInput,
   CreateCategoryInput,
   UpdateProjectInput,
-  UpdateCategoryInput 
+  UpdateCategoryInput,
+  AssignCategoriesInput,
+  RemoveCategoriesInput,
+  UseProjectCategoriesResult 
 } from './types'; 

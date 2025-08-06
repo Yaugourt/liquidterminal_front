@@ -4,4 +4,5 @@ export { useCreateProject } from './useCreateProject';
 export { useCreateCategory } from './useCreateCategory';
 export { useUpdateProject } from './useUpdateProject';
 export { useDeleteProject } from './useDeleteProject';
-export { useBulkDeleteProjects } from './useBulkDeleteProjects'; 
+export { useBulkDeleteProjects } from './useBulkDeleteProjects';
+export { useProjectCategories } from './useProjectCategories'; 

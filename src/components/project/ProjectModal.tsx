@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { useCreateProject, useCreateCategory, useCategories } from "@/services/project";
 import { Project } from "@/services/project/types";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
     discord: "",
     telegram: "",
     website: "",
-    categoryId: ""
+    categoryIds: [] as number[]
   });
   
   // File upload state
@@ -93,7 +93,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           title: projectForm.title,
           desc: projectForm.desc,
           logo: selectedFile,
-          categoryId: projectForm.categoryId ? parseInt(projectForm.categoryId) : undefined,
+          categoryIds: projectForm.categoryIds.length > 0 ? projectForm.categoryIds : undefined,
           twitter: projectForm.twitter || undefined,
           discord: projectForm.discord || undefined,
           telegram: projectForm.telegram || undefined,
@@ -106,7 +106,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
 
         const projectData = {
           ...projectForm,
-          categoryId: projectForm.categoryId ? parseInt(projectForm.categoryId) : undefined
+          categoryIds: projectForm.categoryIds.length > 0 ? projectForm.categoryIds : undefined
         };
         
         newProject = await createProject(projectData);
@@ -121,7 +121,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
         discord: "",
         telegram: "",
         website: "",
-        categoryId: ""
+        categoryIds: []
       });
       setSelectedFile(null);
       setLogoPreview("");
@@ -183,22 +183,32 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="category" className="text-white text-sm font-medium">Category</label>
-                  <Select
-                    value={projectForm.categoryId}
-                    onValueChange={(value) => setProjectForm(prev => ({ ...prev, categoryId: value }))}
-                  >
-                    <SelectTrigger className="bg-[#112941] border-[#1E3851] text-white">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#112941] border-[#1E3851]">
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label htmlFor="categories" className="text-white text-sm font-medium">Categories</label>
+                  <div className="space-y-2 max-h-32 overflow-y-auto bg-[#112941] border border-[#1E3851] rounded-md p-2">
+                    {categories.map((category) => (
+                      <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={projectForm.categoryIds.includes(category.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setProjectForm(prev => ({
+                                ...prev,
+                                categoryIds: [...prev.categoryIds, category.id]
+                              }));
+                            } else {
+                              setProjectForm(prev => ({
+                                ...prev,
+                                categoryIds: prev.categoryIds.filter(id => id !== category.id)
+                              }));
+                            }
+                          }}
+                          className="rounded border-[#1E3851] text-[#83E9FF] focus:ring-[#83E9FF]"
+                        />
+                        <span className="text-white text-sm">{category.name}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
               

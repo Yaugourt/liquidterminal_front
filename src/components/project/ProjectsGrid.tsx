@@ -25,7 +25,7 @@ export const ProjectsGrid = memo(function ProjectsGrid() {
   
   // Récupérer les projets selon l'onglet actif
   const { projects, isLoading: projectsLoading, error: projectsError, refetch } = useProjects({
-    categoryId: activeTab === 'all' ? undefined : activeTab,
+    categoryIds: activeTab === 'all' ? undefined : [activeTab as number],
     limit: 50
   });
 

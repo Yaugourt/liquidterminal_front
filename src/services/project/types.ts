@@ -7,10 +7,9 @@ export interface Project {
   discord?: string;
   telegram?: string;
   website?: string;
-  categoryId?: number;
   createdAt: string;
   updatedAt: string;
-  category?: Category;
+  categories?: Category[];
 }
 
 export interface Category {
@@ -49,7 +48,7 @@ export interface ProjectQueryParams {
   sort?: 'createdAt' | 'title' | 'updatedAt';
   order?: 'asc' | 'desc';
   search?: string;
-  categoryId?: number;
+  categoryIds?: number[];
 }
 
 // Hook result types
@@ -89,7 +88,7 @@ export interface CreateProjectInput {
   discord?: string;
   telegram?: string;
   website?: string;
-  categoryId?: number;
+  categoryIds?: number[];
 }
 
 // Nouveau type pour la création avec upload de fichier
@@ -101,7 +100,7 @@ export interface CreateProjectWithUploadInput {
   discord?: string;
   telegram?: string;
   website?: string;
-  categoryId?: number;
+  categoryIds?: number[];
 }
 
 export interface CreateCategoryInput {
@@ -117,7 +116,7 @@ export interface UpdateProjectInput {
   discord?: string;
   telegram?: string;
   website?: string;
-  categoryId?: number;
+  categoryIds?: number[];
 }
 
 export interface UpdateCategoryInput {
@@ -169,4 +168,22 @@ export interface UseBulkDeleteProjectsResult {
   isLoading: boolean;
   error: string | null;
   clearError: () => void;
+}
+
+// Nouveaux types pour la gestion des catégories de projets
+export interface AssignCategoriesInput {
+  categoryIds: number[];
+}
+
+export interface RemoveCategoriesInput {
+  categoryIds: number[];
+}
+
+export interface UseProjectCategoriesResult {
+  categories: Category[];
+  isLoading: boolean;
+  error: Error | null;
+  assignCategories: (categoryIds: number[]) => Promise<void>;
+  removeCategories: (categoryIds: number[]) => Promise<void>;
+  refetch: () => Promise<void>;
 } 
