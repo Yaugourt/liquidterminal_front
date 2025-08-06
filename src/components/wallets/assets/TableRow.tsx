@@ -1,9 +1,9 @@
 "use client";
 
 import { memo } from "react";
-import Image from "next/image";
 import { TableRow as UITableRow, TableCell } from "@/components/ui/table";
 import { HoldingDisplay, PerpHoldingDisplay } from "@/components/types/wallet.types";
+import { TokenIcon } from "@/components/common/TokenIcon";
 
 interface SpotRowProps {
   holding: HoldingDisplay;
@@ -27,29 +27,30 @@ export const SpotTableRow = memo(function SpotTableRow({
 }: SpotRowProps) {
   return (
     <UITableRow className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors">
-      <TableCell className="py-2 pl-4 w-[160px]">
-        <div className="flex items-center gap-2">
-          {holding.logo ? (
-            <Image src={holding.logo} alt={holding.coin} width={20} height={20} className="w-5 h-5 rounded mr-2 object-contain" />
-          ) : (
-            <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
-          )}
-          <span className="text-white text-sm">{holding.coin}</span>
+      <TableCell className="py-3 pl-6 pr-4">
+        <div className="flex items-center gap-3">
+          <TokenIcon 
+            src={holding.logo} 
+            name={holding.coin} 
+            size="md" 
+            variant="dark"
+          />
+          <span className="text-white text-sm ">{holding.coin}</span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm py-2 w-[140px]">
+      <TableCell className="text-white text-sm py-3 px-4">
         {formatTokenAmount(holding.total)}
       </TableCell>
-      <TableCell className="text-white text-sm py-2 w-[140px]">
+      <TableCell className="text-white text-sm py-3 px-4">
         {formatCurrency(holding.price)}
       </TableCell>
       <TableCell 
-        className="text-sm py-2 w-[140px]" 
+        className="text-sm py-3 px-4 " 
         style={{color: holding.pnlPercentage < 0 ? '#FF4D4F' : '#52C41A'}}
       >
         {formatPercent(holding.pnlPercentage)}
       </TableCell>
-      <TableCell className="text-white text-sm py-2 pr-4 w-[140px]">
+      <TableCell className="text-white text-sm py-3 px-4 pr-6 ">
         {formatCurrency(holding.totalValue)}
       </TableCell>
     </UITableRow>
@@ -88,17 +89,18 @@ export const PerpTableRow = memo(function PerpTableRow({
 
   return (
     <UITableRow className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors">
-      <TableCell className="py-2 pl-4 w-[140px]">
-        <div className="flex items-center gap-2">
-          {holding.logo ? (
-            <Image src={holding.logo} alt={holding.coin} width={20} height={20} className="w-5 h-5 rounded mr-2 object-contain" />
-          ) : (
-            <span className="w-5 h-5 bg-white rounded mr-2 inline-block" />
-          )}
-          <span className="text-white text-sm">{holding.coin}</span>
+      <TableCell className="py-3 pl-6 pr-4">
+        <div className="flex items-center gap-3">
+          <TokenIcon 
+            src={holding.logo} 
+            name={holding.coin} 
+            size="md" 
+            variant="dark"
+          />
+          <span className="text-white text-sm ">{holding.coin}</span>
         </div>
       </TableCell>
-      <TableCell className="text-sm py-2 w-[100px]">
+      <TableCell className="text-sm py-3 px-4">
         <div className="flex flex-col gap-1">
           <span className={holding.type === 'Short' ? 'text-[#FF4D4F]' : 'text-[#52C41A]'}>
             {holding.type}
@@ -108,18 +110,18 @@ export const PerpTableRow = memo(function PerpTableRow({
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm py-2 w-[120px]">
+      <TableCell className="text-white text-sm py-3 px-4">
         {formatCurrency(holding.entryPrice)}
       </TableCell>
-      <TableCell className="text-white text-sm py-2 w-[120px]">
+      <TableCell className="text-white text-sm py-3 px-4">
         {formatCurrency(holding.liquidation)}
       </TableCell>
-      <TableCell className="text-white text-sm py-2 w-[100px]">
+      <TableCell className="text-white text-sm py-3 px-4">
         {formatCurrency(holding.price)}
       </TableCell>
-      <TableCell className="text-sm py-2 w-[140px]">
+      <TableCell className="text-sm py-3 px-4">
         <div className="flex flex-col gap-1">
-          <span className="text-white text-sm">
+          <span className="text-white text-sm ">
             {formatCurrency(holding.positionValue)}
           </span>
           <span className="text-xs text-[#FFFFFF80]">
@@ -127,10 +129,10 @@ export const PerpTableRow = memo(function PerpTableRow({
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-sm py-2 w-[140px]">
+      <TableCell className="text-sm py-3 px-4 ">
         {formatUnrealizedPnl(holding.unrealizedPnl)}
       </TableCell>
-      <TableCell className="text-sm py-2 pr-4 w-[120px]">
+      <TableCell className="text-sm py-3 px-4 pr-6 ">
         {formatFunding(holding.funding)}
       </TableCell>
     </UITableRow>

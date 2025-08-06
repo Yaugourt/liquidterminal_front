@@ -18,16 +18,14 @@ export function mapTokenName(tokenName: string): string {
  * @param balance - L'objet balance avec potentiellement un nom de token à mapper
  * @returns L'objet balance avec le nom de token mappé
  */
-export function mapTokenBalance<T extends { coin?: string; token?: string; name?: string }>(balance: T): T {
+export function mapTokenBalance<T extends { coin?: string; token?: string | number; name?: string }>(balance: T): T {
   const mapped = { ...balance };
   
   // Mapper selon les propriétés possibles
   if (mapped.coin) {
     mapped.coin = mapTokenName(mapped.coin);
   }
-  if (mapped.token) {
-    mapped.token = mapTokenName(mapped.token);
-  }
+  // Note: token peut être un number dans HyperliquidBalance, on ne le mappe pas
   if (mapped.name) {
     mapped.name = mapTokenName(mapped.name);
   }
@@ -40,6 +38,6 @@ export function mapTokenBalance<T extends { coin?: string; token?: string; name?
  * @param balances - Le tableau de balances
  * @returns Le tableau avec les noms de tokens mappés
  */
-export function mapTokenBalances<T extends { coin?: string; token?: string; name?: string }>(balances: T[]): T[] {
+export function mapTokenBalances<T extends { coin?: string; token?: string | number; name?: string }>(balances: T[]): T[] {
   return balances.map(mapTokenBalance);
 }
