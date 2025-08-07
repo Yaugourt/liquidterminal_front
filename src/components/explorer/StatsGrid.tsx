@@ -4,6 +4,8 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/numberFormatting";
 import { ExplorerStat } from "@/components/types/explorer.types";
 import { useExplorerStore } from "@/services/explorer";
+import { useDashboardStats } from "@/services/dashboard";
+import { useVaults } from "@/services/vault/hooks/useVaults";
 import { Loader2 } from "lucide-react";
 
 export function StatsGrid() {
@@ -11,6 +13,12 @@ export function StatsGrid() {
   const [stats, setStats] = useState<ExplorerStat[]>([]);
   const { format } = useNumberFormat();
   const { currentBlockHeight, connectBlocks, disconnectBlocks } = useExplorerStore();
+  
+  // Récupérer les données du dashboard
+  const { stats: dashboardStats, isLoading: dashboardLoading } = useDashboardStats();
+  
+  // Récupérer les données des vaults
+  const { totalTvl: vaultsTvl, isLoading: vaultsLoading } = useVaults();
 
   useEffect(() => {
     connectBlocks(); // Connecter seulement les blocks, pas les transactions
@@ -66,22 +74,28 @@ export function StatsGrid() {
         {
           title: "Users",
           type: "users",
-          value: "N/A", // Pas d'appel API
+          value: dashboardStats?.numberOfUsers 
+            ? formatValue(dashboardStats.numberOfUsers, "users")
+            : dashboardLoading ? "Loading..." : "N/A",
         },
         {
           title: "HYPE Staked",
           type: "hypeStaked",
-          value: "N/A", // Pas d'appel API
+          value: dashboardStats?.totalHypeStake 
+            ? formatValue(dashboardStats.totalHypeStake, "hypeStaked")
+            : dashboardLoading ? "Loading..." : "N/A",
         },
         {
           title: "Vaults TVL",
           type: "vaultsTvl",
-          value: "N/A", // Pas d'appel API
+          value: vaultsTvl > 0 
+            ? formatValue(vaultsTvl, "vaultsTvl")
+            : vaultsLoading ? "Loading..." : "N/A",
         },
       ]);
       setIsLoading(false);
     }
-  }, [currentBlockHeight, formatValue]);
+  }, [currentBlockHeight, formatValue, dashboardStats, dashboardLoading, vaultsTvl, vaultsLoading]);
 
   // Afficher un état de chargement
   if (isLoading) {
