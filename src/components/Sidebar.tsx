@@ -204,8 +204,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         {navigationGroups.map((group, groupIndex) => (
                             <li key={groupIndex} className="space-y-1">
                                 {group.groupName && (
-                                    <div className="px-3 text-[11px] font-medium text-[#83E9FF99] uppercase tracking-wider">
-                                        {group.groupName}
+                                    <div className="px-3 text-xs">
+                                        <span className="text-[#83E9FFCC] font-higuen">{group.groupName.split(' ')[0]} </span>
+                                        <span className="text-[#FFFFFFCC] font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
                                     </div>
                                 )}
                                 <ul className="space-y-[2px]">
@@ -326,8 +327,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         {/* Admin Section - Only visible to admins */}
                         {isAdmin && (
                             <li className="space-y-1">
-                                <div className="px-3 text-[11px] font-medium text-[#f9e37099] uppercase tracking-wider">
-                                    Administration
+                                <div className="px-3 text-xs">
+                                    <span className="text-[#f9e370CC] font-higuen">Administration</span>
                                 </div>
                                 <ul className="space-y-[2px]">
                                     <li className="relative">

@@ -20,7 +20,7 @@ interface HeaderProps {
 
 export function Header({ 
     searchPlaceholder = "Search token, address, tx or block...",
-    searchWidth = "w-[300px]",
+    searchWidth = "w-[400px]",
     showFees = false
 }: HeaderProps) {
     const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
