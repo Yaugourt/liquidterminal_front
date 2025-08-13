@@ -80,7 +80,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
           <DialogDescription className="text-white">
             {hasReachedWalletLimit 
               ? `You have reached the limit of 5 wallets. Remove an existing wallet to add a new one.`
-              : `Enter your Ethereum wallet address and an optional name. (${wallets.length}/5 wallets)`
+              : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/5 wallets)`
             }
           </DialogDescription>
         </DialogHeader>
