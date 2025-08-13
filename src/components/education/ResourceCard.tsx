@@ -115,7 +115,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                 src={preview.image}
                 alt={preview.title || resource.title}
                 fill
-                className="object-contain group-hover:scale-105 transition-transform duration-300"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
               />
             ) : !imageError && resource.image ? (

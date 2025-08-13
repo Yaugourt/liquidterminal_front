@@ -135,24 +135,28 @@ export function Header({
                             </div>
 
                             {feesStats && !feesLoading && !feesError && (
-                                <div className="flex gap-2 lg:gap-3">
-                                    <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
-                                        <div className="flex items-center gap-1.5">
-                                            <Clock size={11} className="text-[#f9e370]" />
-                                            <span className="text-[#FFFFFF] text-[10px] font-medium">Hourly fees</span>
+                                <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-1.5">
+                                                <Clock size={11} className="text-[#f9e370]" />
+                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Hourly fees</span>
+                                            </div>
+                                            <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
+                                                {formatFee(feesStats.hourlyFees)}
+                                            </div>
                                         </div>
-                                        <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
-                                            {formatFee(feesStats.hourlyFees)}
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
-                                        <div className="flex items-center gap-1.5">
-                                            <CalendarDays size={11} className="text-[#f9e370]" />
-                                            <span className="text-[#FFFFFF] text-[10px] font-medium">Daily fees</span>
-                                        </div>
-                                        <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
-                                            {formatFee(feesStats.dailyFees)}
+                                        
+                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+                                        
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-1.5">
+                                                <CalendarDays size={11} className="text-[#f9e370]" />
+                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Daily fees</span>
+                                            </div>
+                                            <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
+                                                {formatFee(feesStats.dailyFees)}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

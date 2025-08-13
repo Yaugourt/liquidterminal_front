@@ -60,14 +60,14 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
             <p className="text-xs text-gray-400 mb-3">{info.description}</p>
           )}
           {/* Banner */}
-          <div className="relative w-full h-24 rounded-md overflow-hidden">
+         {/* <div className="relative w-full h-24 rounded-md overflow-hidden">
             <Image
               src="/Hyperliquid banner.jpg"
               alt="HyperLiquid Banner"
               fill
               className="object-cover object-center"
             />
-          </div>
+         </div> */ }
         </div>
 
         <div className="space-y-2 pt-3 border-t border-[#83E9FF1A]">

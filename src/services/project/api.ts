@@ -27,8 +27,8 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (key === 'categoryIds' && Array.isArray(value)) {
-            // Pour categoryIds, ajouter chaque ID comme paramètre séparé
-            value.forEach(id => queryParams.append('categoryIds', id.toString()));
+            // Pour categoryIds, ajouter chaque ID avec la notation array
+            value.forEach(id => queryParams.append('categoryIds[]', id.toString()));
           } else {
             queryParams.append(key, value.toString());
           }
@@ -93,7 +93,9 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
     if (data.discord) formData.append('discord', data.discord);
     if (data.telegram) formData.append('telegram', data.telegram);
     if (data.website) formData.append('website', data.website);
-    if (data.categoryIds) formData.append('categoryIds', JSON.stringify(data.categoryIds));
+    if (data.categoryIds && data.categoryIds.length > 0) {
+      formData.append('categoryIds', JSON.stringify(data.categoryIds));
+    }
     
     // Ajouter le fichier si présent
     if (data.logo) {

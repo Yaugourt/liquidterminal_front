@@ -52,7 +52,7 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
               src={preview.image}
               alt={preview.title || 'Preview'}
               fill
-              className="object-contain group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
               onError={() => setImageError(true)}
             />
           ) : !imageError ? (

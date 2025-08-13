@@ -88,7 +88,7 @@ export default function EducationPage() {
           <SearchBar placeholder="Search educational content..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-1 max-w-[1920px] mx-auto">
           {/* Main content area */}
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
@@ -101,21 +101,19 @@ export default function EducationPage() {
             </div>
           </div>
 
-          {/* Admin Add Resource Button */}
-          <ProtectedAction requiredRole="ADMIN" user={user}>
-            <div className="flex justify-start">
+          {/* Category filter and Admin Add Resource Button */}
+          <div className="flex items-center gap-4">
+            <CategoryFilter 
+              selectedCategories={selectedCategories}
+              onCategoryChange={setSelectedCategories}
+            />
+            <ProtectedAction requiredRole="ADMIN" user={user}>
               <EducationModal onSuccess={() => {
                 // Optionally refresh the page or refetch data
                 window.location.reload();
               }} />
-            </div>
-          </ProtectedAction>
-
-          {/* Category filter */}
-          <CategoryFilter 
-            selectedCategories={selectedCategories}
-            onCategoryChange={setSelectedCategories}
-          />
+            </ProtectedAction>
+          </div>
 
           {/* Resources section */}
           <ResourcesSection 
