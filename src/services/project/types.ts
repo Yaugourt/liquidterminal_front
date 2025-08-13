@@ -186,4 +186,43 @@ export interface UseProjectCategoriesResult {
   assignCategories: (categoryIds: number[]) => Promise<void>;
   removeCategories: (categoryIds: number[]) => Promise<void>;
   refetch: () => Promise<void>;
-} 
+}
+
+// ==================== TYPES POUR UPLOAD CSV PROJETS ====================
+export interface ProjectCsvUploadError {
+  row: number;
+  error: string;
+  data: {
+    title: string;
+    desc: string;
+    logo: string;
+    category?: string;
+    twitter?: string;
+    discord?: string;
+    telegram?: string;
+    website?: string;
+  };
+}
+
+export interface ProjectCsvUploadResult {
+  totalRows: number;
+  successfulImports: number;
+  failedImports: number;
+  errors: ProjectCsvUploadError[];
+  createdCategories: string[];
+  createdProjects: Project[];
+}
+
+export interface ProjectCsvUploadResponse {
+  success: true;
+  message: string;
+  data: ProjectCsvUploadResult;
+}
+
+export interface ProjectCsvUploadErrorResponse {
+  success: false;
+  error: string;
+  code: string;
+}
+
+export type ProjectCsvUploadApiResponse = ProjectCsvUploadResponse | ProjectCsvUploadErrorResponse; 

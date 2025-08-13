@@ -13,7 +13,7 @@ import {
   UpdateCategoryInput,
   ProjectResponse,
   CategoryResponse,
-
+  ProjectCsvUploadApiResponse,
 } from './types';
 
 /**
@@ -187,4 +187,22 @@ export const fetchProjectCategories = async (projectId: number): Promise<{ succe
   return withErrorHandling(async () => {
     return await get<{ success: boolean; data: Category[] }>(`/project/${projectId}/categories`);
   }, 'fetching project categories');
+};
+
+/**
+ * Upload un fichier CSV de projets
+ */
+export const uploadCsvProjects = async (file: File): Promise<ProjectCsvUploadApiResponse> => {
+  return withErrorHandling(async () => {
+    const formData = new FormData();
+    formData.append('csv', file);
+
+    const response = await apiClient.post<ProjectCsvUploadApiResponse>('/project/csv/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  }, 'uploading CSV projects');
 }; 

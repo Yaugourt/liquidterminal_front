@@ -18,5 +18,8 @@ export type {
   UpdateCategoryInput,
   AssignCategoriesInput,
   RemoveCategoriesInput,
-  UseProjectCategoriesResult 
+  UseProjectCategoriesResult,
+  ProjectCsvUploadApiResponse,
+  ProjectCsvUploadResult,
+  ProjectCsvUploadError
 } from './types'; 
