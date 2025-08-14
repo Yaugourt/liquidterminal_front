@@ -91,8 +91,8 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 ]
             },
             {
-                name: 'Wallet',
-                href: '/wallets',
+                name: 'Tracker',
+                href: '/tracker',
                 icon: null,
                 IconComponent: PiWallet
             },
