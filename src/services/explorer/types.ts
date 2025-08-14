@@ -303,4 +303,16 @@ export interface ExplorerStore extends ExplorerState {
   setError: (error: string | null) => void;
 }
 
+// Types pour les alias globaux
+export interface GlobalAliasesData {
+  [address: string]: string;
+}
+
+export interface UseGlobalAliasesResult {
+  aliases: GlobalAliasesData | null;
+  isLoading: boolean;
+  error: Error | null;
+  getAlias: (address: string) => string | null;
+}
+
  

@@ -3,6 +3,7 @@ import {
     TransactionDetailsResponse,
     TransferData,
     DeployData,
+    GlobalAliasesData,
 } from './types';
 import { postExternal, getExternal } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
@@ -53,6 +54,17 @@ export async function fetchDeploys(): Promise<DeployData[]> {
         const url = `${API_URLS.HYPURRSCAN_API}/deploys`;
         return await getExternal<DeployData[]>(url);
     }, 'fetching deploys');
+}
+
+/**
+ * Récupère les alias globaux depuis l'API Hypurrscan
+ * @returns Mapping des adresses vers leurs alias
+ */
+export async function fetchGlobalAliases(): Promise<GlobalAliasesData> {
+    return withErrorHandling(async () => {
+        const url = `${API_URLS.HYPURRSCAN_API}/globalAliases`;
+        return await getExternal<GlobalAliasesData>(url);
+    }, 'fetching global aliases');
 }
 
  
