@@ -40,7 +40,7 @@ export default function EducationPage() {
     if (categories.length > 0 && selectedCategories.length === 0) {
       setSelectedCategories(categories.map(cat => cat.id));
     }
-  }, [categories]); // Remove selectedCategories.length dependency
+  }, [categories, selectedCategories.length]);
 
   // Transform data for the sidebar
   const sidebarInfo = hyperliquidInfo ? {

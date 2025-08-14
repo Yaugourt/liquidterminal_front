@@ -1,18 +1,33 @@
-import { useDataFetching } from '../../../hooks/useDataFetching';
+import { useState, useEffect } from 'react';
 import { fetchCategories } from '../api';
-import { CategoriesResponse, UseCategoriesResult } from '../types';
+import { Category, UseCategoriesResult } from '../types';
 
-export const useCategories = (initialData?: CategoriesResponse): UseCategoriesResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<CategoriesResponse>({
-    fetchFn: fetchCategories,
-    initialData,
-    refreshInterval: 60000 // 60 seconds
-  });
+export const useCategories = (): UseCategoriesResult => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const loadCategories = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetchCategories();
+      setCategories(response.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to fetch categories'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
   return {
-    categories: data?.data || [],
+    categories,
     isLoading,
     error,
-    refetch
+    refetch: loadCategories
   };
 }; 

@@ -10,6 +10,17 @@ import { ProjectsGrid } from "@/components/project";
 
 export default function L1ProjectPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setCurrentPage(1); // Reset à la page 1 quand on change de tab
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="min-h-screen">
@@ -35,7 +46,12 @@ export default function L1ProjectPage() {
         </div>
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-          <ProjectsGrid />
+          <ProjectsGrid 
+            activeTab={activeTab}
+            currentPage={currentPage}
+            onTabChange={handleTabChange}
+            onPageChange={handlePageChange}
+          />
         </main>
       </div>
     </div>

@@ -21,20 +21,26 @@ import {
  */
 export const fetchProjects = async (params?: ProjectQueryParams): Promise<ProjectsResponse> => {
   return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
+    // Convertir categoryIds array en string AVANT de construire l'URL
+    const processedParams: Record<string, string | number> = {};
     
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           if (key === 'categoryIds' && Array.isArray(value)) {
-            // Pour categoryIds, ajouter chaque ID avec la notation array
-            value.forEach(id => queryParams.append('categoryIds[]', id.toString()));
+            // Convertir array en string comma-separated
+            processedParams[key] = value.join(',');
           } else {
-            queryParams.append(key, value.toString());
+            processedParams[key] = value;
           }
         }
       });
     }
+    
+    const queryParams = new URLSearchParams();
+    Object.entries(processedParams).forEach(([key, value]) => {
+      queryParams.append(key, value.toString());
+    });
     
     const endpoint = `/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     return await get<ProjectsResponse>(endpoint);
