@@ -4,12 +4,13 @@ import { SearchBar } from "@/components/SearchBar"
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats"
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice"
 import { useHypeBuyPressure } from "@/services/market/order/hooks/useHypeBuyPressure"
-import { Clock, CalendarDays, TrendingUp } from "lucide-react"
+import { useAssistanceFund } from "@/services/market/assistanceFund/hooks/useAssistanceFund"
+import { Clock, CalendarDays, TrendingUp, Shield, ArrowUpRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { SettingsSelector } from "@/components/common/settings/SettingsSelector"
 import { useNumberFormat } from "@/store/number-format.store"
-import { formatNumber } from "@/lib/numberFormatting"
+import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting"
 
 interface HeaderProps {
     searchPlaceholder?: string;
@@ -20,12 +21,13 @@ interface HeaderProps {
 
 export function Header({ 
     searchPlaceholder = "Search token, address, tx or block...",
-    searchWidth = "w-[400px]",
+    searchWidth = "w-[350px]",
     showFees = false
 }: HeaderProps) {
     const { feesStats, isLoading: feesLoading, error: feesError } = useFeesStats();
     const { price: hypePrice, lastSide, isLoading: hypePriceLoading } = useHypePrice();
     const { buyPressure, isLoading: buyPressureLoading } = useHypeBuyPressure();
+    const { data: assistanceFund, isLoading: assistanceFundLoading, error: assistanceFundError } = useAssistanceFund();
     const { format } = useNumberFormat();
     
     // Format numbers with up to 2 decimal places
@@ -63,6 +65,39 @@ export function Header({
             isPositive,
             display: isPositive ? `+${formatted}` : `-${formatted}`
         };
+    };
+
+    // Format HYPE balance without decimals
+    const formatHypeBalance = (value: number) => {
+        return formatNumber(value, format, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    };
+
+    // Format USD value with compact notation (K, M, B)
+    const formatCompactUsd = (value: number) => {
+        return formatLargeNumber(value, {
+            prefix: '$',
+            decimals: 1
+        });
+    };
+
+    // Generate Twitter share URL
+    const generateTwitterUrl = () => {
+        if (!feesStats || !assistanceFund) return '#';
+        
+        const dailyFees = formatFee(feesStats.dailyFees);
+        const hourlyFees = formatFee(feesStats.hourlyFees);
+        const assistanceFundAmount = `${formatHypeBalance(assistanceFund.hypeBalance)} HYPE (${formatCompactUsd(assistanceFund.hypeValueUsd)})`;
+        
+        const tweetText = `Daily fees: ${dailyFees}
+Hourly fees: ${hourlyFees}
+Assistance fund: ${assistanceFundAmount}
+
+Source: @Liquidterminal`;
+        
+        return `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     };
 
     return (
@@ -134,8 +169,9 @@ export function Header({
                                 </div>
                             </div>
 
-                            {feesStats && !feesLoading && !feesError && (
-                                <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group">
+                            {/* Combined Fees and Assistance Fund Display with Share Button */}
+                            {feesStats && assistanceFund && !feesLoading && !feesError && !assistanceFundLoading && !assistanceFundError && (
+                                <div className="bg-[#051728]/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group relative">
                                     <div className="flex items-center gap-3">
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
@@ -158,6 +194,30 @@ export function Header({
                                                 {formatFee(feesStats.dailyFees)}
                                             </div>
                                         </div>
+
+                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-1.5">
+                                                <Shield size={11} className="text-[#00ff88]" />
+                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Assistance Fund</span>
+                                            </div>
+                                            <div className="text-white text-xs lg:text-sm font-medium group-hover:text-[#83E9FF] transition-colors">
+                                                {formatHypeBalance(assistanceFund.hypeBalance)} HYPE ({formatCompactUsd(assistanceFund.hypeValueUsd)})
+                                            </div>
+                                        </div>
+
+                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+
+                                        <a
+                                            href={generateTwitterUrl()}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-center w-8 h-8 rounded-md bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 transition-colors"
+                                            title="Share on Twitter"
+                                        >
+                                            <ArrowUpRight size={14} className="text-[#1DA1F2]" />
+                                        </a>
                                     </div>
                                 </div>
                             )}
