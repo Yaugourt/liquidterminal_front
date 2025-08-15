@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
 import { Menu } from "lucide-react"
-import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight, PiGlobe } from "react-icons/pi";
+import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight, PiGlobe, PiBooks } from "react-icons/pi";
 import { AiOutlineHome, AiOutlineSearch  } from "react-icons/ai";
 import { MdOutlineCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/utils"
@@ -112,21 +112,23 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 href: '/education',
                 icon: null,
                 IconComponent: PiChalkboardTeacherLight,
+
+            },
+            {
+                name: 'Read List',
+                href: '/readlist',
+                icon: null,
+                IconComponent: PiBooks,
                 children: [
-                    {
-                        name: 'Read List',
-                        href: '/education/readlist',
-                        icon: null,
-                        IconComponent: PiListMagnifyingGlass
-                    },
+                 
                     {
                         name: 'Public Read Lists',
-                        href: '/education/public-readlists',
+                        href: '/readlist/public-readlists',
                         icon: null,
                         IconComponent: PiGlobe
                     }
                 ]
-            },
+            }
         ]
     },
 ]

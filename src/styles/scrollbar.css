@@ -1,0 +1,22 @@
+/* Custom thin scrollbar styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(131, 233, 255, 0.3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(131, 233, 255, 0.3);
+  border-radius: 1px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(131, 233, 255, 0.5);
+}
