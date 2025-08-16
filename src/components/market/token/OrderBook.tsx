@@ -17,7 +17,7 @@ interface OrderBookProps {
 
 export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: OrderBookProps) {
   // Connect to WebSocket for real-time order book and trades
-  const coinId = marketIndex ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
+  const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
   const { orderBook, trades } = useTokenWebSocket(coinId);
   
   // Use only real data from WebSocket

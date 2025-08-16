@@ -55,7 +55,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeType>('1d');
 
   // Convert marketIndex to coinId (like @107)
-  const coinId = marketIndex ? marketIndexToCoinId(marketIndex, tokenName) : null;
+  const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenName) : null;
 
   // Fetch candle data using our hook with coinId
   const { candles, isLoading, error } = useTokenCandles({
