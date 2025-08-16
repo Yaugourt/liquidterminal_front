@@ -135,8 +135,8 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
 
 const socials = [
     { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
-    { name: 'Twitter', href: '#', iconName: 'simple-icons:x' },
-    { name: 'Github', href: '#', iconName: 'mdi:github' },
+    { name: 'Twitter', href: 'https://x.com/liquidterminal', iconName: 'simple-icons:x' },
+    { name: 'Github', href: 'https://github.com/Liquid-Terminal', iconName: 'mdi:github' },
 ]
 
 interface SidebarProps {
