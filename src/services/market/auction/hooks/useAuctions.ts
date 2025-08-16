@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchAuctions, fetchLatestAuctions } from '../api';
+import { fetchAuctions, fetchLatestAuctions, fetchTokenAuction } from '../api';
 import { 
   AuctionParams, 
   AuctionPaginatedResponse, 
@@ -103,5 +103,26 @@ export function useLatestAuctions(
     refetch,
     splitTimestamp: data?.metadata?.splitTimestamp,
     totalVolume: data?.pagination.totalVolume || 0
+  };
+}
+
+/**
+ * Hook pour récupérer les informations d'auction d'un token spécifique
+ */
+export function useTokenAuction(tokenName: string | null) {
+  const { data, isLoading, error, refetch } = useDataFetching<AuctionInfo | null>({
+    fetchFn: async () => {
+      if (!tokenName) return null;
+      return await fetchTokenAuction(tokenName);
+    },
+    refreshInterval: 60000, // Refresh every minute
+    dependencies: [tokenName]
+  });
+
+  return {
+    auctionInfo: data,
+    isLoading,
+    error,
+    refetch
   };
 } 

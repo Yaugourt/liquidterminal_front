@@ -1,6 +1,6 @@
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse, AuctionTiming } from './types';
+import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse, AuctionTiming, AuctionInfo } from './types';
 
 /**
  * Récupère les informations de timing de l'auction en cours
@@ -115,4 +115,27 @@ export const fetchLatestAuctions = async (
     sortOrder: 'desc',
     page: 1
   });
+};
+
+/**
+ * Récupère les informations d'auction d'un token spécifique par son nom
+ */
+export const fetchTokenAuction = async (tokenName: string): Promise<AuctionInfo | null> => {
+  return withErrorHandling(async () => {
+    const allAuctionsResponse = await fetchAllAuctions();
+    
+    if (!allAuctionsResponse.success) {
+      return null;
+    }
+
+    const { usdcAuctions, hypeAuctions } = allAuctionsResponse.data;
+    const allAuctions = [...usdcAuctions, ...hypeAuctions];
+    
+    // Chercher le token par son nom
+    const tokenAuction = allAuctions.find(auction => 
+      auction.name && auction.name.toLowerCase() === tokenName.toLowerCase()
+    );
+    
+    return tokenAuction || null;
+  }, 'fetching token auction info');
 }; 

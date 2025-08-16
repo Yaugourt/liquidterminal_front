@@ -106,13 +106,13 @@ export default function TokenPage() {
                     </div>
                     <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
                         <div className="text-white flex flex-col items-center justify-center min-h-[50vh]">
-                            <div className="text-xl mb-4">Token non trouvé</div>
+                            <div className="text-xl mb-4">Token not found</div>
                             <div className="text-white mb-6">{error}</div>
                             <Button
                                 onClick={handleBackToList}
                                 className="bg-[#83E9FF4D] hover:bg-[#83E9FF80] text-white"
                             >
-                                Retour à la liste des tokens
+                                Back to tokens list
                             </Button>
                         </div>
                     </main>
@@ -156,19 +156,19 @@ export default function TokenPage() {
                             change24h: token.change24h,
                             volume24h: token.volume,
                             marketCap: token.marketCap,
-                            marketIndex: token.marketIndex, // Pass marketIndex for WebSocket
-                            contract: '0x55db...d99a' // Mock contract address
+                            marketIndex: token.marketIndex // Pass marketIndex for WebSocket
                         } as TokenData}
                         className="mb-6"
                     />
 
                     {/* Trading Interface Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                         {/* Chart - Fixed height */}
                         <div className="lg:col-span-6">
                             <TradingViewChart 
                                 symbol={`${token.name}/USDC`}
-                                className="h-[500px]"
+                                marketIndex={token.marketIndex} // Pass marketIndex for API
+                                className="h-[450px]"
                             />
                         </div>
                         
@@ -177,7 +177,7 @@ export default function TokenPage() {
                             <OrderBook 
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for WebSocket
-                                className="h-[500px]"
+                                className="h-[510px]"
                             />
                         </div>
                         
@@ -193,6 +193,7 @@ export default function TokenPage() {
                                     volume24h: token.volume,
                                     marketCap: token.marketCap,
                                     marketIndex: token.marketIndex, // Pass marketIndex for consistency
+                                    contract: token.tokenId // Pass tokenId for token details API
                                 } as TokenData}
                                 className="min-h-[500px]"
                             />

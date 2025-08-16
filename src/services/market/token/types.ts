@@ -65,3 +65,62 @@ export interface UseTokenWebSocketResult {
   isLoading: boolean;
   error: string | null;
 }
+
+// Types for token details API
+export interface TokenGenesisUserBalance {
+  address: string;
+  balance: string;
+}
+
+export interface TokenGenesis {
+  userBalances: [string, string][]; // [address, balance]
+  existingTokenBalances: unknown[];
+}
+
+export interface TokenDetails {
+  name: string;
+  maxSupply: string;
+  totalSupply: string;
+  circulatingSupply: string;
+  szDecimals: number;
+  weiDecimals: number;
+  midPx: string;
+  markPx: string;
+  prevDayPx: string;
+  genesis: TokenGenesis;
+  deployer: string;
+  deployGas: string;
+  deployTime: string;
+  seededUsdc: string;
+  nonCirculatingUserBalances: unknown[];
+  futureEmissions: string;
+}
+
+export interface TokenDetailsRequest {
+  type: "tokenDetails";
+  tokenId: string;
+}
+
+// Types for candle data API
+export interface TokenCandle {
+  T: number;      // End timestamp (epoch millis)
+  c: string;      // Close price
+  h: string;      // High price
+  l: string;      // Low price
+  o: string;      // Open price
+  v: string;      // Volume
+  t: number;      // Start timestamp (epoch millis)
+  s: string;      // Symbol/coin
+  i: string;      // Interval
+  n: number;      // Number of trades
+}
+
+export interface TokenCandleRequest {
+  type: "candleSnapshot";
+  req: {
+    coin: string;
+    interval: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "2h" | "4h" | "8h" | "12h" | "1d" | "3d" | "1w" | "1M";
+    startTime: number;  // epoch millis
+    endTime: number;    // epoch millis
+  };
+}

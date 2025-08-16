@@ -2,32 +2,36 @@
 
 import { Card } from "@/components/ui/card";
 import { TokenCardProps } from "./types";
-import { formatNumber } from "@/lib/digitFormat";
+import { formatNumber, formatPrice } from "@/lib/numberFormatting";
+import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
 
 export function TokenCard({ token, className }: TokenCardProps) {
+  // Get user's number format preference
+  const { format } = useNumberFormat();
+  
   // Connect to WebSocket for real-time data if marketIndex is available
   const coinId = token.marketIndex ? marketIndexToCoinId(token.marketIndex) : '';
   const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
   
-  const formatPrice = (value: number) => {
-    return formatNumber(value, 'price');
+  const formatPriceValue = (value: number) => {
+    return formatPrice(value, format);
   };
 
-  const formatVolume = (value: number) => {
-    return formatNumber(value, 'volume');
+  const formatVolumeValue = (value: number) => {
+    return formatNumber(value, format, { currency: '$', showCurrency: true, maximumFractionDigits: 0 });
   };
 
-  const formatMarketCap = (value: number) => {
-    return formatNumber(value, 'marketCap');
+  const formatMarketCapValue = (value: number) => {
+    return formatNumber(value, format, { currency: '$', showCurrency: true, maximumFractionDigits: 0 });
   };
 
   const formatPercentage = (value: number) => {
     const sign = value >= 0 ? '+' : '';
-    return `${sign}${value.toFixed(2)}%`;
+    return `${sign}${formatNumber(Math.abs(value), format, { maximumFractionDigits: 2 })}%`;
   };
 
   const copyToClipboard = (text: string) => {
@@ -100,7 +104,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
               lastSide === "B" ? "text-green-400" : 
               "text-white"
             )}>
-              ${formatPrice(livePrice || token.mark || token.price || 0)}
+              {formatPriceValue(livePrice || token.mark || token.price || 0)}
             </span>
           </div>
 
@@ -109,7 +113,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
             <div className="flex flex-col">
               <span className="text-gray-400 text-[10px] uppercase tracking-wide">Oracle</span>
               <span className="text-white text-sm">
-                ${formatPrice(token.oracle)}
+                {formatPriceValue(token.oracle)}
               </span>
             </div>
           )}
@@ -129,7 +133,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
           <div className="flex flex-col">
             <span className="text-gray-400 text-[10px] uppercase tracking-wide">24h Volume</span>
             <span className="text-white text-sm">
-              ${formatVolume(token.volume24h)}
+              {formatVolumeValue(token.volume24h)}
             </span>
           </div>
 
@@ -138,7 +142,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
             <div className="flex flex-col">
               <span className="text-gray-400 text-[10px] uppercase tracking-wide">Market Cap</span>
               <span className="text-white text-sm">
-                ${formatMarketCap(token.marketCap)}
+                {formatMarketCapValue(token.marketCap)}
               </span>
             </div>
           )}
@@ -147,7 +151,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
             <div className="flex flex-col">
               <span className="text-gray-400 text-[10px] uppercase tracking-wide">Open Interest</span>
               <span className="text-white text-sm">
-                ${formatVolume(token.openInterest)}
+                {formatVolumeValue(token.openInterest)}
               </span>
             </div>
           )}

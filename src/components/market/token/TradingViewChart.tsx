@@ -1,79 +1,218 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
+import { useTokenCandles, marketIndexToCoinId } from '@/services/market/token';
+import { TokenCandle } from '@/services/market/token/types';
 
 interface TradingViewChartProps {
   symbol: string;
+  marketIndex?: number;
   className?: string;
 }
 
-declare global {
-  interface Window {
-    TradingView: {
-      widget: new (config: Record<string, unknown>) => void;
-    };
-  }
-}
+// Helper function to convert TokenCandle to CandlestickData
+const convertToCandlestickData = (candle: TokenCandle): CandlestickData<Time> => {
+  const timeInSeconds = Math.floor(candle.t / 1000) as Time;
+  
+  return {
+    time: timeInSeconds,
+    open: parseFloat(candle.o),
+    high: parseFloat(candle.h),
+    low: parseFloat(candle.l),
+    close: parseFloat(candle.c)
+  };
+};
 
-export function TradingViewChart({ symbol, className }: TradingViewChartProps) {
+
+
+type TimeframeType = "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "2h" | "4h" | "8h" | "12h" | "1d" | "3d" | "1w" | "1M";
+
+const TIMEFRAMES: { label: string; value: TimeframeType }[] = [
+  { label: '1m', value: '1m' },
+  { label: '3m', value: '3m' },
+  { label: '5m', value: '5m' },
+  { label: '15m', value: '15m' },
+  { label: '30m', value: '30m' },
+  { label: '1h', value: '1h' },
+  { label: '2h', value: '2h' },
+  { label: '4h', value: '4h' },
+  { label: '8h', value: '8h' },
+  { label: '12h', value: '12h' },
+  { label: '1d', value: '1d' },
+  { label: '3d', value: '3d' },
+  { label: '1w', value: '1w' },
+  { label: '1M', value: '1M' }
+];
+
+export function TradingViewChart({ symbol, marketIndex, className }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
 
+  // State for timeframe selection
+  const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeType>('1d');
+
+  // Convert marketIndex to coinId (like @107)
+  const coinId = marketIndex ? marketIndexToCoinId(marketIndex) : null;
+
+  // Fetch candle data using our hook with coinId
+  const { candles, isLoading, error } = useTokenCandles({
+    coin: coinId,
+    interval: selectedTimeframe
+  });
+
+  // Initialize chart
   useEffect(() => {
-    // Load TradingView script
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.TradingView && containerRef.current) {
-        new window.TradingView.widget({
-          autosize: true,
-          symbol: `HYPERLIQUID:${symbol.replace('/', '')}`,
-          interval: '15',
-          timezone: 'Etc/UTC',
-          theme: 'dark',
-          style: '1',
-          locale: 'en',
-          toolbar_bg: '#051728',
-          enable_publishing: false,
-          hide_top_toolbar: false,
-          hide_legend: true,
-          save_image: false,
-          container_id: containerRef.current.id,
-          backgroundColor: '#051728',
-          gridColor: '#1E3851',
-          studies: [],
-          overrides: {
-            'paneProperties.background': '#051728',
-            'paneProperties.vertGridProperties.color': '#1E3851',
-            'paneProperties.horzGridProperties.color': '#1E3851',
-            'symbolWatermarkProperties.transparency': 90,
-            'scalesProperties.textColor': '#83E9FF',
-            'mainSeriesProperties.candleStyle.upColor': '#4ADE80',
-            'mainSeriesProperties.candleStyle.downColor': '#F87171',
-            'mainSeriesProperties.candleStyle.borderUpColor': '#4ADE80',
-            'mainSeriesProperties.candleStyle.borderDownColor': '#F87171',
-            'mainSeriesProperties.candleStyle.wickUpColor': '#4ADE80',
-            'mainSeriesProperties.candleStyle.wickDownColor': '#F87171'
-          }
+    if (!containerRef.current) {
+      console.log('No container ref');
+      return;
+    }
+    
+    console.log('Initializing chart...');
+
+    const chart = createChart(containerRef.current, {
+      layout: {
+        background: { type: ColorType.Solid, color: '#051728' },
+        textColor: '#83E9FF',
+      },
+      grid: {
+        vertLines: { color: '#1E385120' },
+        horzLines: { color: '#1E385120' },
+      },
+      crosshair: {
+        mode: 1,
+        vertLine: {
+          color: '#83E9FF80',
+          width: 1,
+          style: 2,
+          labelBackgroundColor: '#051728',
+        },
+        horzLine: {
+          color: '#83E9FF80',
+          width: 1,
+          style: 2,
+          labelBackgroundColor: '#051728',
+        },
+      },
+      rightPriceScale: {
+        borderColor: '#83E9FF40',
+        textColor: '#83E9FF',
+      },
+      timeScale: {
+        borderColor: '#83E9FF40',
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      // Watermark not supported in this version
+    });
+
+    // Add candlestick series
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
+      upColor: '#4ADE80',
+      downColor: '#F87171',
+      borderDownColor: '#F87171',
+      borderUpColor: '#4ADE80',
+      wickDownColor: '#F87171',
+      wickUpColor: '#4ADE80',
+    });
+
+    // Temporarily disable volume to debug
+    // const volumeSeries = chart.addSeries(HistogramSeries, {
+    //   color: '#4ADE8060',
+    //   priceFormat: {
+    //     type: 'volume',
+    //   },
+    //   priceScaleId: 'volume',
+    // });
+
+    chartRef.current = chart;
+    seriesRef.current = candlestickSeries;
+    // volumeSeriesRef.current = volumeSeries;
+    
+    console.log('Chart initialized successfully');
+
+    // Auto-resize chart
+    const handleResize = () => {
+      if (containerRef.current && chart) {
+        chart.applyOptions({
+          width: containerRef.current.clientWidth,
+          height: containerRef.current.clientHeight,
         });
       }
     };
-    
-    document.head.appendChild(script);
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
+      window.removeEventListener('resize', handleResize);
+      chart.remove();
     };
   }, [symbol]);
 
+  // Update chart data when candles change
+  useEffect(() => {
+    if (!seriesRef.current || !candles || candles.length === 0) {
+      return;
+    }
+
+    try {
+      console.log('Updating chart with', candles.length, 'candles');
+      
+      const chartData = candles
+        .map(convertToCandlestickData)
+        .sort((a, b) => (a.time as number) - (b.time as number));
+
+      console.log('Chart data converted:', chartData.length, 'items');
+      
+      seriesRef.current.setData(chartData);
+      
+      // Fit content to show all data
+      if (chartRef.current) {
+        chartRef.current.timeScale().fitContent();
+      }
+      
+      console.log('Chart updated successfully');
+    } catch (error) {
+      console.error('Error updating chart data:', error);
+    }
+  }, [candles]);
+
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full ${className} relative`}>
+      {/* Timeframe Selector - Range Switcher */}
+      <div className="absolute top-2 left-2 z-20 flex gap-1 bg-[#051728]/90 rounded-lg p-1 border border-[#83E9FF40]">
+        {TIMEFRAMES.map((timeframe) => (
+          <button
+            key={timeframe.value}
+            onClick={() => setSelectedTimeframe(timeframe.value)}
+            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${
+              selectedTimeframe === timeframe.value
+                ? 'bg-[#83E9FF] text-[#051728]'
+                : 'text-[#83E9FF] hover:bg-[#83E9FF20]'
+            }`}
+          >
+            {timeframe.label}
+          </button>
+        ))}
+      </div>
+
+      {(isLoading || (!candles || candles.length === 0)) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#051728] rounded-lg border-2 border-[#83E9FF4D] z-10">
+          <div className="flex flex-col items-center">
+            <div className="w-8 h-8 border-2 border-[#83E9FF] border-t-transparent rounded-full animate-spin mb-2"></div>
+            <span className="text-[#83E9FF] text-sm">
+              {isLoading ? 'Loading chart data...' : 'No data available'}
+            </span>
+            {error && (
+              <span className="text-red-400 text-xs mt-1">Error: {error}</span>
+            )}
+          </div>
+        </div>
+      )}
       <div 
         ref={containerRef}
-        id={`tradingview_chart_${symbol.replace('/', '_')}`}
-        className="h-[500px] w-full rounded-lg overflow-hidden bg-[#051728] border-2 border-[#83E9FF4D]"
+        className="w-full h-full rounded-lg overflow-hidden bg-[#051728] border-2 border-[#83E9FF4D]"
       />
     </div>
   );

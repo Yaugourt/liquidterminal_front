@@ -17,6 +17,7 @@ export interface SpotToken {
   liquidity: number;
   supply: number;
   marketIndex: number;
+  tokenId: string;
 }
 
 // Paramètres pour les requêtes de marché spot
