@@ -16,7 +16,7 @@ export const useTokenCandles = ({
   interval = "1d", // Changed default to 15m
   startTime = 1713225600000, // 16 avril 2024
   endTime, // Remove default Date.now() to avoid constant changes
-  refreshInterval = 60000 // Default 1 minute refresh
+  refreshInterval = 0 // Default 1 minute refresh
 }: UseTokenCandlesParams) => {
   // Set endTime only once using useMemo to avoid constant changes
   const fixedEndTime = useMemo(() => endTime || Date.now(), [endTime]);

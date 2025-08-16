@@ -65,11 +65,9 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
   // Initialize chart
   useEffect(() => {
     if (!containerRef.current) {
-      console.log('No container ref');
       return;
     }
     
-    console.log('Initializing chart...');
 
     const chart = createChart(containerRef.current, {
       layout: {
@@ -77,8 +75,8 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
         textColor: '#83E9FF',
       },
       grid: {
-        vertLines: { color: '#1E385120' },
-        horzLines: { color: '#1E385120' },
+        vertLines: { color: '#1E385160' },
+        horzLines: { color: '#1E385160' },
       },
       crosshair: {
         mode: 1,
@@ -97,13 +95,19 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
       },
       rightPriceScale: {
         borderColor: '#83E9FF40',
-        textColor: '#83E9FF',
+        textColor: '#FFFFFF',
       },
-      timeScale: {
-        borderColor: '#83E9FF40',
-        timeVisible: true,
-        secondsVisible: false,
-      },
+              timeScale: {
+          borderColor: '#83E9FF40',
+          timeVisible: true,
+          secondsVisible: false,
+          rightOffset: 24,
+          barSpacing: 10,
+          fixLeftEdge: true,
+          lockVisibleTimeRangeOnResize: true,
+          rightBarStaysOnScroll: true,
+          minBarSpacing: 1,
+        },
       // Watermark not supported in this version
     });
 
@@ -117,20 +121,12 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
       wickUpColor: '#4ADE80',
     });
 
-    // Temporarily disable volume to debug
-    // const volumeSeries = chart.addSeries(HistogramSeries, {
-    //   color: '#4ADE8060',
-    //   priceFormat: {
-    //     type: 'volume',
-    //   },
-    //   priceScaleId: 'volume',
-    // });
 
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
-    // volumeSeriesRef.current = volumeSeries;
+
+
     
-    console.log('Chart initialized successfully');
 
     // Auto-resize chart
     const handleResize = () => {
@@ -157,24 +153,34 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
     }
 
     try {
-      console.log('Updating chart with', candles.length, 'candles');
       
       const chartData = candles
         .map(convertToCandlestickData)
         .sort((a, b) => (a.time as number) - (b.time as number));
 
-      console.log('Chart data converted:', chartData.length, 'items');
       
       seriesRef.current.setData(chartData);
       
-      // Fit content to show all data
+      // Set default visible range to show 131 candles
       if (chartRef.current) {
-        chartRef.current.timeScale().fitContent();
+        const timeScale = chartRef.current.timeScale();
+        
+        // Wait a bit for the data to be processed, then set the range
+        setTimeout(() => {
+          if (chartData.length > 0) {
+            const totalCandles = chartData.length;
+            const startIndex = Math.max(0, totalCandles - 131);
+            const endIndex = totalCandles - 1;
+            
+            timeScale.setVisibleLogicalRange({
+              from: startIndex,
+              to: endIndex,
+            });
+          }
+        }, 100);
       }
       
-      console.log('Chart updated successfully');
-    } catch (error) {
-      console.error('Error updating chart data:', error);
+    } catch {
     }
   }, [candles]);
 
