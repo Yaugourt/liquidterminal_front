@@ -168,6 +168,7 @@ export default function TokenPage() {
                             <TradingViewChart 
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for API
+                                tokenName={token.name} // Pass token name for special cases like PURR
                                 className="h-[450px]"
                             />
                         </div>
@@ -177,6 +178,7 @@ export default function TokenPage() {
                             <OrderBook 
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for WebSocket
+                                tokenNameProp={token.name} // Pass token name for special cases like PURR
                                 className="h-[510px]"
                             />
                         </div>

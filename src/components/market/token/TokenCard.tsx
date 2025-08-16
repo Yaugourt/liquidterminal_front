@@ -14,7 +14,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
   const { format } = useNumberFormat();
   
   // Connect to WebSocket for real-time data if marketIndex is available
-  const coinId = token.marketIndex ? marketIndexToCoinId(token.marketIndex) : '';
+  const coinId = token.marketIndex ? marketIndexToCoinId(token.marketIndex, token.name) : '';
   const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
   
   const formatPriceValue = (value: number) => {

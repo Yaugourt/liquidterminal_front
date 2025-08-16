@@ -1,9 +1,14 @@
 /**
  * Convert market index to coin ID for WebSocket subscription
  * @param marketIndex - The market index from SpotToken
- * @returns The coin ID string (e.g., "@107")
+ * @param tokenName - The token name (used for special cases like PURR)
+ * @returns The coin ID string (e.g., "@107" or "PURR/USDC")
  */
-export function marketIndexToCoinId(marketIndex: number): string {
+export function marketIndexToCoinId(marketIndex: number, tokenName?: string): string {
+  // Special case for PURR token with marketIndex 0
+  if (marketIndex === 0 && tokenName === 'PURR') {
+    return 'PURR/USDC';
+  }
   return `@${marketIndex}`;
 }
 

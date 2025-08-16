@@ -8,6 +8,7 @@ import { TokenCandle } from '@/services/market/token/types';
 interface TradingViewChartProps {
   symbol: string;
   marketIndex?: number;
+  tokenName?: string;
   className?: string;
 }
 
@@ -45,7 +46,7 @@ const TIMEFRAMES: { label: string; value: TimeframeType }[] = [
   { label: '1M', value: '1M' }
 ];
 
-export function TradingViewChart({ symbol, marketIndex, className }: TradingViewChartProps) {
+export function TradingViewChart({ symbol, marketIndex, tokenName, className }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
@@ -54,7 +55,7 @@ export function TradingViewChart({ symbol, marketIndex, className }: TradingView
   const [selectedTimeframe, setSelectedTimeframe] = useState<TimeframeType>('1d');
 
   // Convert marketIndex to coinId (like @107)
-  const coinId = marketIndex ? marketIndexToCoinId(marketIndex) : null;
+  const coinId = marketIndex ? marketIndexToCoinId(marketIndex, tokenName) : null;
 
   // Fetch candle data using our hook with coinId
   const { candles, isLoading, error } = useTokenCandles({

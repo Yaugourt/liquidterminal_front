@@ -9,14 +9,15 @@ import "@/styles/scrollbar.css";
 interface OrderBookProps {
   symbol?: string;
   marketIndex?: number;
+  tokenNameProp?: string;
   className?: string;
 }
 
 
 
-export function OrderBook({ symbol, marketIndex, className }: OrderBookProps) {
+export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: OrderBookProps) {
   // Connect to WebSocket for real-time order book and trades
-  const coinId = marketIndex ? marketIndexToCoinId(marketIndex) : '';
+  const coinId = marketIndex ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
   const { orderBook, trades } = useTokenWebSocket(coinId);
   
   // Use only real data from WebSocket
