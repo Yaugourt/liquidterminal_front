@@ -1,10 +1,10 @@
 import { Plus, BookOpen, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { ReadList, ReadListItem } from "@/services/education";
+import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
 import { ReadListItemCard } from "./ReadListItemCard";
-import { useLinkPreviewsBatch } from "@/services/education/linkPreview/hooks/hooks";
+import { useLinkPreviewsBatch } from "@/services/wiki/linkPreview/hooks/hooks";
 
 interface ReadListContentProps {
   activeList?: ReadList;

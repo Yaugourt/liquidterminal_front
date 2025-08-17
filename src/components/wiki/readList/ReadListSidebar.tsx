@@ -1,7 +1,7 @@
 import { Plus, BookOpen, Trash2, GripVertical } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import type { ReadList } from "@/services/education";
+import type { ReadList } from "@/services/wiki";
 import {
   DndContext,
   closestCenter,

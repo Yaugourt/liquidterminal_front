@@ -3,10 +3,10 @@
 import { ResourceCard } from "./ResourceCard";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback, useEffect } from "react";
-import { useEducationalCategories } from "@/services/education";
-import { useEducationalResourcesByCategories } from "@/services/education/hooks/useEducationalResourcesByCategories";
-import { useDeleteEducationalResource } from "@/services/education";
-import { EducationalCategory, EducationalResource, EducationalResourceCategory } from "@/services/education/types";
+import { useEducationalCategories } from "@/services/wiki";
+import { useEducationalResourcesByCategories } from "@/services/wiki/hooks/useEducationalResourcesByCategories";
+import { useDeleteEducationalResource } from "@/services/wiki";
+import { EducationalCategory, EducationalResource, EducationalResourceCategory } from "@/services/wiki/types";
 import { toast } from "sonner";
 
 interface ResourcesSectionProps {

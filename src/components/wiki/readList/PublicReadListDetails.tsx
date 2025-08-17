@@ -11,10 +11,10 @@ import {
   FileText,
   ArrowLeft
 } from "lucide-react";
-import { PublicReadList, ReadListItem } from "@/services/education/readList/types";
+import { PublicReadList, ReadListItem } from "@/services/wiki/readList/types";
 import { formatDistanceToNow } from "date-fns";
 import { ResourceCard } from "../ResourceCard";
-import { getReadListItems } from "@/services/education/readList/api";
+import { getReadListItems } from "@/services/wiki/readList/api";
 
 interface PublicReadListDetailsProps {
   readList: PublicReadList | null;

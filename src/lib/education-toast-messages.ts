@@ -6,8 +6,8 @@ export const readListMessages = {
     addedToList: (listName: string) => 
       toast.success(`Added to "${listName}" successfully!`),
     
-    removedFromList: () => 
-      toast.success(`Removed from list successfully!`),
+    removedFromList: (listName?: string) => 
+      toast.success(`Removed from ${listName ? `"${listName}"` : 'list'} successfully!`),
     
     listCreated: (listName: string) => 
       toast.success(`Read list "${listName}" created successfully!`),
@@ -21,6 +21,9 @@ export const readListMessages = {
     
     itemMarkedAsUnread: () => 
       toast.success(`Marked as unread!`),
+    
+    listDeleted: () => 
+      toast.success(`Read list deleted successfully!`),
   },
   
   error: {

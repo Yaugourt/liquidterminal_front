@@ -12,7 +12,7 @@ import {
   CheckCircle,
   Loader2
 } from "lucide-react";
-import { PublicReadList } from "@/services/education/readList/types";
+import { PublicReadList } from "@/services/wiki/readList/types";
 import { formatDistanceToNow } from "date-fns";
 
 interface PublicReadListCardProps {

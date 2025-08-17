@@ -2,7 +2,7 @@
 
 import { ChevronDown, Check } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { useEducationalCategories } from "@/services/education";
+import { useEducationalCategories } from "@/services/wiki";
 
 interface CategoryFilterProps {
   selectedCategories: number[];

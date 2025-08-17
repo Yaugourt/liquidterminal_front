@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { ReadList, ReadListItem } from "../services/education/readList/types";
+import { ReadList, ReadListItem } from "../services/wiki/readList/types";
 import { 
   getMyReadLists, 
   createReadList as apiCreateReadList,
@@ -10,7 +10,7 @@ import {
   addItemToReadList,
   updateReadListItem as apiUpdateReadListItem,
   deleteReadListItem as apiDeleteReadListItem
-} from "../services/education/readList/api";
+} from "../services/wiki/readList/api";
 import { AuthService } from "../services/auth";
 
 interface InitializeParams {

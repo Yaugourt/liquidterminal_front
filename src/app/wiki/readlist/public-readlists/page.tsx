@@ -6,12 +6,12 @@ import { Sidebar } from "@/components/Sidebar";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { usePublicReadLists } from "@/services/education/readList/hooks/usePublicReadLists";
-import { PublicReadListCard } from "@/components/education/readList/PublicReadListCard";
-import { PublicReadListDetails } from "@/components/education/readList/PublicReadListDetails";
+import { usePublicReadLists } from "@/services/wiki/readList/hooks/usePublicReadLists";
+import { PublicReadListCard } from "@/components/wiki/readList/PublicReadListCard";
+import { PublicReadListDetails } from "@/components/wiki/readList/PublicReadListDetails";
 import { Pagination } from "@/components/common/pagination";
 import { Loader2, BookOpen } from "lucide-react";
-import { PublicReadList } from "@/services/education/readList/types";
+import { PublicReadList } from "@/services/wiki/readList/types";
 
 export default function PublicReadListsPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

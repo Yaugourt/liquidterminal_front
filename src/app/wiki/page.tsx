@@ -6,16 +6,16 @@ import { Sidebar } from "@/components/Sidebar";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { EducationContent } from "@/components/education/EducationContent";
-import { EducationSidebar } from "@/components/education/EducationSidebar";
-import { ResourcesSection } from "@/components/education/ResourcesSection";
-import { CategoryFilter } from "@/components/education/CategoryFilter";
-import { EducationModal } from "@/components/education/EducationModal";
+import { EducationContent } from "@/components/wiki/EducationContent";
+import { EducationSidebar } from "@/components/wiki/EducationSidebar";
+import { ResourcesSection } from "@/components/wiki/ResourcesSection";
+import { CategoryFilter } from "@/components/wiki/CategoryFilter";
+import { EducationModal } from "@/components/wiki/EducationModal";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
-import { useEducationalCategories } from "@/services/education";
+import { useEducationalCategories } from "@/services/wiki";
 
 // Using education service hooks instead of mock data
 
@@ -82,7 +82,7 @@ export default function EducationPage() {
 
       {/* Main content */}
       <div className="">
-        <Header customTitle="Education" showFees={true} />
+        <Header customTitle="Introduction" showFees={true} />
         
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search educational content..." />

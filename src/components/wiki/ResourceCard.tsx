@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
-import { useLinkPreview } from "@/services/education/linkPreview/hooks/hooks";
+import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { readListMessages, handleReadListApiError } from "@/lib/education-toast-messages";

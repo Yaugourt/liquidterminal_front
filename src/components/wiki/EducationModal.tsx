@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useCreateEducationalCategory, useCreateEducationalResource, useEducationalCategories, useCsvUpload } from "@/services/education";
-import { EducationalCategory, EducationalResource } from "@/services/education/types";
+import { useCreateEducationalCategory, useCreateEducationalResource, useEducationalCategories, useCsvUpload } from "@/services/wiki";
+import { EducationalCategory, EducationalResource } from "@/services/wiki/types";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Plus, Upload, CheckCircle, AlertCircle } from "lucide-react";
-
+  
 interface EducationModalProps {
   onSuccess?: (item?: EducationalCategory | EducationalResource) => void;
 }

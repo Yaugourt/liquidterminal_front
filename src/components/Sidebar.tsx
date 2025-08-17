@@ -106,24 +106,27 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 href: '/project',
                 icon: null,
                 IconComponent: PiListMagnifyingGlass
-            },
+            }
+        ]
+    },
+    {
+        groupName: 'Liquid Wiki',
+        items: [
             {
-                name: 'Education',
-                href: '/education',
+                name: 'Introduction',
+                href: '/wiki',
                 icon: null,
                 IconComponent: PiChalkboardTeacherLight,
-
             },
             {
                 name: 'Read List',
-                href: '/readlist',
+                href: '/wiki/readlist',
                 icon: null,
                 IconComponent: PiBooks,
                 children: [
-                 
                     {
                         name: 'Public Read Lists',
-                        href: '/readlist/public-readlists',
+                        href: '/wiki/readlist/public-readlists',
                         icon: null,
                         IconComponent: PiGlobe
                     }

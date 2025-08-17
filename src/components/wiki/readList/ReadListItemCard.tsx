@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Image from "next/image";
-import type { ReadListItem } from "@/services/education";
-import type { LinkPreview } from "@/services/education/linkPreview";
+import type { ReadListItem } from "@/services/wiki";
+import type { LinkPreview } from "@/services/wiki/linkPreview";
 
 interface ReadListItemCardProps {
   item: ReadListItem;

@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { ReadList } from "@/components/education/readList";
+import { ReadList } from "@/components/wiki/readList";
 
 export default function ReadListPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
