@@ -59,12 +59,6 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
       <div className="p-4 space-y-4">
         {/* Token Header */}
         <div className="text-center space-y-2">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#83E9FF] to-[#4ADE80] rounded-full flex items-center justify-center mx-auto">
-            <span className="text-[#051728] text-2xl font-bold">
-              {token.symbol.split('/')[0].charAt(0)}
-            </span>
-          </div>
-          <h3 className="text-white text-base font-bold">{tokenDetails?.name || token.symbol.split('/')[0]}</h3>
           <p className="text-gray-400 text-xs">Token details and supply information</p>
         </div>
 
