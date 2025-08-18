@@ -1,10 +1,10 @@
 import { memo, useMemo, useState } from "react";
-import { useValidators } from "@/services/validator";
-import { useVaults } from "@/services/vault/hooks/useVaults";
+import { useValidators } from "@/services/explorer/validator";
+import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { TabButtons } from "./TabButtons";
 import { ValidatorsTable, VaultTable } from "./DataTablesContent";
-import type { VaultSummary } from "@/services/vault/types";
-import type { Validator } from "@/services/validator/types/validators";
+import type { VaultSummary } from "@/services/explorer/vault/types";
+import type { Validator } from "@/services/explorer/validator/types/validators";
 
 interface TabSectionComponentProps {
   validators?: Validator[];

@@ -3,7 +3,7 @@ import { useAuthContext } from '@/contexts/auth.context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, ShieldX, LogOut } from 'lucide-react';
-import { hasRole } from '@/utils/roleHelpers';
+import { hasRole } from '@/lib/roleHelpers';
 
 interface ClosedBetaGuardProps {
   children: React.ReactNode;

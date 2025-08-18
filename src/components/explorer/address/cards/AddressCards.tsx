@@ -6,7 +6,7 @@ import { OverviewCard } from "./OverviewCard";
 import { PnLCard } from "./PnLCard";
 import { InfoCard } from "./InfoCard";
 import { AddressCardsProps } from "@/components/types/explorer.types";
-import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
+import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposits';
 import { FormattedUserTransaction } from "@/services/explorer/address/types";
 
 const GRID_CLASSES = "grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6";

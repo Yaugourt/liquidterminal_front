@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Copy, Check, Database } from "lucide-react";
-import { useVaultDeposits } from '@/services/vault/hooks/useVaultDeposits';
-import { useVaults } from '@/services/vault/hooks/useVaults';
+import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposits';
+import { useVaults } from '@/services/explorer/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/numberFormatting';
 import { Pagination } from '@/components/common';

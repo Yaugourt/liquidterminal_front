@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
-import { ValidatorStatsCard } from "@/components/validator/ValidatorStatsCard";
-import { ValidatorTable } from "@/components/validator/ValidatorTable";
-import { ValidatorChartSection } from "@/components/validator/chart/ValidatorChartSection";
-import { ValidatorTabButtons } from "@/components/validator/ValidatorTabButtons";
-import { ValidatorSubTab } from "@/components/validator/types";
+import { ValidatorStatsCard } from "@/components/explorer/validator/ValidatorStatsCard";
+import { ValidatorTable } from "@/components/explorer/validator/ValidatorTable";
+import { ValidatorChartSection } from "@/components/explorer/validator/chart/ValidatorChartSection";
+import { ValidatorTabButtons } from "@/components/explorer/validator/ValidatorTabButtons";
+import { ValidatorSubTab } from "@/components/explorer/validator/types";
 
 export default function ValidatorPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

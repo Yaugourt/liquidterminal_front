@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { Wallet, UserWallet, WalletsState } from "../services/wallets/types";
-import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/wallets/api";
+import { Wallet, UserWallet, WalletsState } from "../services/market/tracker/types";
+import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
 import { AuthService } from "../services/auth";
 
 interface InitializeParams {

@@ -6,8 +6,8 @@ import { formatDateTime } from "@/lib/dateFormatting";
 import { useState } from "react";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { NumberFormatType } from "@/store/number-format.store";
-import { ValidatorDelegation } from "@/services/validator/types/validators";
-import { FormattedDelegatorHistoryItem, FormattedDelegatorRewardItem } from "@/services/validator/types/delegator";
+import { ValidatorDelegation } from "@/services/explorer/validator/types/validators";
+import { FormattedDelegatorHistoryItem, FormattedDelegatorRewardItem } from "@/services/explorer/validator/types/delegator";
 
 type StakingSubTab = 'delegations' | 'history' | 'rewards';
 

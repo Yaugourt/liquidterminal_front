@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from '@/services/auth/types';
-import { hasRole } from '@/utils/roleHelpers';
+import { hasRole } from '@/lib/roleHelpers';
 
 interface ProtectedActionProps {
   children: React.ReactNode;

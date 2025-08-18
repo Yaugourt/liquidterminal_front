@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Liquid Terminal
 
-## Getting Started
+Liquid Terminal is a data processing platform and services dedicated to the HyperLiquid ecosystem. Our goal is to allow everyone to find everything they need through our services/products to navigate the HyperLiquid ecosystem.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Real-time Market Data** - Live order books, price feeds, and trading data
+- **Token Analytics** - Comprehensive token information and charts
+- **Blockchain Explorer** - Transaction tracking and address monitoring
+- **User Dashboard** - Personalized portfolio and trading history
+- **Wiki Documentation** - Educational resources and guides
+- **Authentication** - Secure user management with Privy
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Charts**: TradingView Lightweight Charts, Recharts
+- **State Management**: Zustand
+- **Authentication**: Privy
+- **Data Fetching**: Axios with custom hooks
+- **Real-time**: WebSocket connections
+- **Deployment**: Vercel-ready
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                     # Next.js App Router pages
+│   ├── dashboard/           # User dashboard
+│   ├── ecosystem/           # Liquid ecosystem features
+│   ├── explorer/            # Blockchain explorer
+│   ├── market/              # Market data & trading
+│   ├── user/                # User profile & settings
+│   └── wiki/                # Documentation
+├── components/              # React components by domain
+│   ├── ui/                  # Reusable UI components (shadcn)
+│   ├── common/              # Shared components
+│   ├── dashboard/           # Dashboard components
+│   ├── ecosystem/           # Ecosystem components
+│   ├── explorer/            # Explorer components
+│   ├── market/              # Market components
+│   ├── user/                # User components
+│   └── wiki/                # Wiki components
+├── services/                # API services by domain
+│   ├── api/                 # Axios configuration
+│   ├── auth/                # Authentication services
+│   ├── common/              # Shared services
+│   ├── dashboard/           # Dashboard services
+│   ├── ecosystem/           # Ecosystem services
+│   ├── explorer/            # Explorer services
+│   ├── market/              # Market services
+│   └── wiki/                # Wiki services
+├── lib/                     # Utility libraries
+│   ├── utils.ts             # General utilities
+│   ├── dateFormatting.ts    # Date formatting
+│   ├── numberFormatting.ts  # Number formatting
+│   ├── tokenNameMapper.ts   # Token mapping
+│   └── roleHelpers.ts       # Role management
+├── hooks/                   # Custom React hooks
+├── contexts/                # React contexts
+├── store/                   # Global state (Zustand)
+└── styles/                  # Custom CSS
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
 
-## Learn More
+### Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/liquidterminal_front.git
+   cd liquidterminal_front
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Set up environment variables**
+   ```bash
+   cp env.example .env
+   ```
+   
+   Update `.env` with your configuration:
+   ```env
+   # For local development (requires backend)
+   NEXT_PUBLIC_API=http://localhost:3002
+   
+   # For production (deployed API)
+   # NEXT_PUBLIC_API=https://liquidterminal.up.railway.app
+   
+   JWKS_URL=https://auth.privy.io/api/v1/apps/YOUR_PRIVY_APP_ID/jwks.json
+   NEXT_PUBLIC_PRIVY_AUDIENCE=YOUR_PRIVY_APP_ID
+   NEXT_PUBLIC_ENVIRONMENT=development
+   ```
+   
+   **Note**: For local development, you'll need to run the backend API. See [LiquidTerminal Backend](https://github.com/Liquid-Terminal/LiquidTerminal_Back) for setup instructions.
 
-## Deploy on Vercel
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔧 Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Code Style
+
+- **TypeScript** - Strict type checking enabled
+- **ESLint** - Code quality and consistency
+- **Prettier** - Code formatting
+- **Tailwind CSS** - Utility-first styling
+
+## 🤝 Contributing
+
+Coming soon.
+
+## 📚 Documentation
+
+- [API Implementation Guide](API_IMPLEMENTATION_GUIDE.md) - How to add new API service
+
+## 🔗 Links
+
+- **Website**: [liquidterminal.com](https://liquidterminal.com)
+- **X**: [@LiquidTerminal](https://x.com/liquidterminal)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

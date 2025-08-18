@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
+import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
-import { useDelegatorSummary } from "@/services/validator/hooks/delegator/useDelegatorSummary";
+import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 
 export function useAddressBalance(address: string) {

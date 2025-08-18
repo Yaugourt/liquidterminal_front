@@ -5,7 +5,7 @@ import { formatNumber } from "@/lib/numberFormatting";
 import { ExplorerStat } from "@/components/types/explorer.types";
 import { useExplorerStore } from "@/services/explorer";
 import { useDashboardStats } from "@/services/dashboard";
-import { useVaults } from "@/services/vault/hooks/useVaults";
+import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { Loader2 } from "lucide-react";
 
 export function StatsGrid() {

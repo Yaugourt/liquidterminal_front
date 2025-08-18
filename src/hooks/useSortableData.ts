@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import { SortKey } from '@/components/wallets/assets';
+import { SortKey } from '@/components/market/tracker/assets';
 import { SortableHolding } from '@/components/types/wallet.types';
 
 export type SortDirection = 'asc' | 'desc';

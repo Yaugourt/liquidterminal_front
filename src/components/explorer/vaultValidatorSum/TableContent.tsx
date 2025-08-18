@@ -2,9 +2,9 @@ import { formatNumber } from "@/lib/numberFormatting";
 import { DataTable } from "./DataTable";
 import { Copy, Check } from "lucide-react";
 import { NumberFormatType } from "@/store/number-format.store";
-import { Validator } from "@/services/validator/types/validators";
-import { FormattedStakingValidation, FormattedUnstakingQueueItem } from "@/services/validator/types/staking";
-import { VaultSummary } from "@/services/vault/types";
+import { Validator } from "@/services/explorer/validator/types/validators";
+import { FormattedStakingValidation, FormattedUnstakingQueueItem } from "@/services/explorer/validator/types/staking";
+import { VaultSummary } from "@/services/explorer/vault/types";
 
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/dateFormatting";

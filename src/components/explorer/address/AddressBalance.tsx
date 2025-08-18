@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { useWalletsBalances } from "@/services/wallets/hooks/useWalletsBalances";
+import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/numberFormatting';

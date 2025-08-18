@@ -3,11 +3,11 @@ import { formatNumber } from "@/lib/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { Pagination } from "@/components/common/pagination";
 import { StakingTabButtons, StakingTableContent } from "./staking";
-import { useValidatorDelegations } from "@/services/validator/hooks/validator/useValidatorDelegations";
-import { useStakingValidationsPaginated } from "@/services/validator/hooks/staking/useStakingValidationsPaginated";
-import { useDelegatorHistory } from "@/services/validator/hooks/delegator/useDelegatorHistory";
-import { useDelegatorRewards } from "@/services/validator/hooks/delegator/useDelegatorRewards";
-import { useDelegatorSummary } from "@/services/validator/hooks/delegator/useDelegatorSummary";
+import { useValidatorDelegations } from "@/services/explorer/validator/hooks/validator/useValidatorDelegations";
+import { useStakingValidationsPaginated } from "@/services/explorer/validator/hooks/staking/useStakingValidationsPaginated";
+import { useDelegatorHistory } from "@/services/explorer/validator/hooks/delegator/useDelegatorHistory";
+import { useDelegatorRewards } from "@/services/explorer/validator/hooks/delegator/useDelegatorRewards";
+import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect, useMemo } from "react";
 

@@ -12,7 +12,7 @@ import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
 import { Gavel, Shield } from "lucide-react"
-import { hasRole } from "@/utils/roleHelpers"
+import { hasRole } from "@/lib/roleHelpers"
 import { ComponentType } from "react"
 
 // Define navigation groups
@@ -92,7 +92,7 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
             },
             {
                 name: 'Tracker',
-                href: '/tracker',
+                href: '/market/tracker',
                 icon: null,
                 IconComponent: PiWallet
             },
@@ -103,7 +103,7 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
         items: [
             {
                 name: 'Project',
-                href: '/project',
+                href: '/ecosystem/project',
                 icon: null,
                 IconComponent: PiListMagnifyingGlass
             }

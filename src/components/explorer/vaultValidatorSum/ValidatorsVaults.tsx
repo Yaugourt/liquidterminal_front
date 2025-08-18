@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { useValidators } from "@/services/validator";
-import { useVaults } from "@/services/vault/hooks/useVaults";
-import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/validator";
+import { useValidators } from "@/services/explorer/validator";
+import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
+import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator/hooks/staking";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect } from "react";

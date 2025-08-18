@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
-import { VaultStatsCard, VaultSection, VaultChartSection } from "@/components/vault";
+import { VaultStatsCard, VaultSection, VaultChartSection } from "@/components/explorer/vault";
 
 export default function VaultsPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
