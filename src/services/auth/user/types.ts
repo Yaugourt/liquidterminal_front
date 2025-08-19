@@ -10,7 +10,9 @@ export interface AdminUsersResponse {
       page: number;
       limit: number;
       total: number;
-      pages: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrevious: boolean;
     };
   };
 }
@@ -64,7 +66,9 @@ export interface UseAdminUsersResult {
     page: number;
     limit: number;
     total: number;
-    pages: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
 }
 

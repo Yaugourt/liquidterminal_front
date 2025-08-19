@@ -40,4 +40,6 @@ export interface SpotMarketResponse {
   limit: number;
   totalPages: number;
   totalVolume: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 } 

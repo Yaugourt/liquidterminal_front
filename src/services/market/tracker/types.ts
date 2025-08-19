@@ -21,6 +21,14 @@ export interface UserWallet {
 
 export interface WalletResponse {
   data: UserWallet[];
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  };
 }
 
 export interface AddWalletRequest {

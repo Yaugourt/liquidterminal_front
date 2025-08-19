@@ -98,6 +98,8 @@ export interface ResourcesResponse {
     page: number;
     limit: number;
     totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
   message?: string;
 }
@@ -109,6 +111,8 @@ export interface ResourcesPaginatedResponse {
     page: number;
     limit: number;
     totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
   metadata?: {
     lastUpdate: number;

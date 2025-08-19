@@ -101,8 +101,8 @@ export const buildPaginatedResponse = <T>(
       limit: pagination.itemsPerPage,
       totalPages: pagination.totalPages,
       totalVolume: calculateTotalVolume(data),
-      hasNextPage: pagination.hasNextPage,
-      hasPreviousPage: pagination.hasPreviousPage,
+      hasNext: pagination.hasNextPage,
+      hasPrevious: pagination.hasPreviousPage,
     }
   };
 }; 

@@ -28,6 +28,8 @@ export interface ProjectsResponse {
     page: number;
     limit: number;
     totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
 }
 
@@ -39,6 +41,8 @@ export interface CategoriesResponse {
     page: number;
     limit: number;
     totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
 }
 

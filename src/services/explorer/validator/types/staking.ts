@@ -52,8 +52,8 @@ export interface StakingValidationsPaginatedResponse {
     limit: number;
     totalPages: number;
     totalVolume: number; // Total amount staked/unstaked
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
   metadata?: {
     lastUpdate: number;
@@ -132,8 +132,8 @@ export interface UnstakingQueuePaginatedResponse {
     limit: number;
     totalPages: number;
     totalVolume: number; // Total amount in unstaking queue
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
+    hasNext: boolean;
+    hasPrevious: boolean;
   };
   metadata?: {
     lastUpdate: number;

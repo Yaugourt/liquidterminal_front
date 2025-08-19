@@ -33,6 +33,8 @@ export interface StakedHoldersResponse {
       limit: number;
       total: number;
       totalPages: number;
+      hasNext: boolean;
+      hasPrevious: boolean;
     };
     metadata: {
       token: string;

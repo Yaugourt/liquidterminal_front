@@ -50,8 +50,8 @@ export const useUnstakingQueuePaginated = ({
         limit: initialData.length,
         totalPages: 1,
         totalVolume: initialData.reduce((sum, item) => sum + item.amount, 0),
-        hasNextPage: false,
-        hasPreviousPage: false,
+        hasNext: false,
+        hasPrevious: false,
       }
     } : undefined
   });
@@ -72,8 +72,8 @@ export const useUnstakingQueuePaginated = ({
     page: response?.pagination.page || 1,
     totalPages: response?.pagination.totalPages || 0,
     totalVolume: response?.pagination.totalVolume || 0,
-    hasNextPage: response?.pagination.hasNextPage || false,
-    hasPreviousPage: response?.pagination.hasPreviousPage || false,
+    hasNext: response?.pagination.hasNext || false,
+    hasPrevious: response?.pagination.hasPrevious || false,
     isLoading,
     error,
     updateParams,

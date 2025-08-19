@@ -45,4 +45,6 @@ export interface PerpMarketResponse {
   limit: number;
   totalPages: number;
   totalVolume: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 } 

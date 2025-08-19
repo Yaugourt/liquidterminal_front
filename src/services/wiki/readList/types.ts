@@ -149,6 +149,8 @@ export interface PublicReadListPagination {
   limit: number;
   total: number;
   totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
 export interface PublicReadListsResponse {
