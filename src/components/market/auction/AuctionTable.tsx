@@ -15,6 +15,10 @@ import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/dateFormatting';
 
+interface AuctionTableProps {
+  marketType: "spot" | "perp";
+}
+
 // TableHeaderCell strictement identique à SpotTokenTable
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: string; onClick?: () => void; className?: string; isActive?: boolean }) => (
   <TableHead className={className}>
@@ -44,6 +48,18 @@ const EmptyState = memo(() => (
 ));
 EmptyState.displayName = 'EmptyState';
 
+// Coming Soon State pour perp
+const ComingSoonState = memo(() => (
+  <div className="flex items-center justify-center h-[400px]">
+    <div className="flex flex-col items-center text-center px-4">
+      <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
+      <p className="text-white text-lg mb-2">Coming Soon</p>
+      <p className="text-[#FFFFFF80] text-sm">Perpetual auctions table will be available soon.</p>
+    </div>
+  </div>
+));
+ComingSoonState.displayName = 'ComingSoonState';
+
 const columns = [
   { key: 'time', label: 'Date', sortable: true, className: 'pl-4 w-[16%] text-left' },
   { key: 'name', label: 'Name', sortable: false, className: 'pl-2 w-[12%] text-left' },
@@ -57,7 +73,7 @@ const columns = [
 // Format court pour l'adresse
 const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-export function AuctionTable() {
+export function AuctionTable({ marketType }: AuctionTableProps) {
   const { auctions, isLoading, error } = useAuctions({ currency: 'ALL', limit: 100 });
   const [sortField, setSortField] = useState('time');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -110,6 +126,15 @@ export function AuctionTable() {
       setSortOrder('desc');
     }
   };
+
+  // Si c'est perp, afficher Coming Soon
+  if (marketType === "perp") {
+    return (
+      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+        <ComingSoonState />
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -187,4 +212,4 @@ export function AuctionTable() {
       </div>
     </Card>
   );
-} 
+}

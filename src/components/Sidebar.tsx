@@ -66,29 +66,19 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 name: 'Spot',
                 href: '/market/spot',
                 icon: null,
-                IconComponent: MdOutlineCandlestickChart,
-                children: [
-                    {
-                        name: 'Auction',
-                        href: '/market/spot/auction',
-                        icon: null,
-                        IconComponent: Gavel
-                    }
-                ]
+                IconComponent: MdOutlineCandlestickChart
             },
             {
                 name: 'Perpetual',
                 href: '/market/perp',
                 icon: null,
-                IconComponent: PiInfinity,
-                children: [
-                    {
-                        name: 'Auction',
-                        href: '/market/perp/auction',
-                        icon: null,
-                        IconComponent: Gavel
-                    }
-                ]
+                IconComponent: PiInfinity
+            },
+            {
+                name: 'Auction',
+                href: '/market/auction',
+                icon: null,
+                IconComponent: Gavel
             },
             {
                 name: 'Tracker',

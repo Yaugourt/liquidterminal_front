@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/Header";
 import { TrendingTokensCard, GlobalStatsCard, TokensSection } from "@/components/market/common";
-import { AuctionCard } from "@/components/market/spot/auction/AuctionCard";
+import { AuctionCard } from "@/components/market/auction";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ export default function Market() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
                       <GlobalStatsCard market="spot" />
           <TrendingTokensCard market="spot" />
-          <AuctionCard/>
+          <AuctionCard marketType="spot" />
         </div>
                     <TokensSection market="spot" />
         </main>

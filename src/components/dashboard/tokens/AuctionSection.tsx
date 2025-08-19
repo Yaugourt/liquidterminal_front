@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AuctionCard as SpotAuctionCard } from "@/components/market/spot/auction/AuctionCard";
+import { AuctionCard } from "@/components/market/auction/AuctionCard";
 
 export const AuctionSection = () => {
   const [activeSubTab, setActiveSubTab] = useState<"spot" | "perp">("spot");
@@ -41,14 +41,7 @@ export const AuctionSection = () => {
 
       {/* Contenu de l'onglet actif */}
       <div className="flex-1 flex flex-col">
-        {activeSubTab === "spot" ? (
-          <SpotAuctionCard />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full bg-[#051728E5] border border-[#83E9FF4D] rounded-lg">
-            <span className="text-white text-lg font-medium mb-2">Coming Soon</span>
-            <span className="text-[#FFFFFF80] text-sm">Perp auctions will be available soon</span>
-          </div>
-        )}
+        <AuctionCard key={activeSubTab} marketType={activeSubTab} />
       </div>
     </div>
   );

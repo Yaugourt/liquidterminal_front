@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Header } from "@/components/Header";
-import { AuctionCard } from "@/components/market";
+import { AuctionCard } from "@/components/market/auction";
 import { TrendingTokensCard, GlobalStatsCard, TokensSection } from "@/components/market/common";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export default function MarketPerp() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <GlobalStatsCard market="perp" />
           <TrendingTokensCard market="perp" />
-          <AuctionCard />
+          <AuctionCard marketType="perp" />
         </div>
                     <TokensSection market="perp" />
         </main>
