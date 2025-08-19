@@ -9,7 +9,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { OpenOrder } from '@/services/explorer/address/types';
 import { Pagination } from '@/components/common';

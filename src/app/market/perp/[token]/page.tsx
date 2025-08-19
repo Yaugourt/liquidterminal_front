@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { formatNumber } from "@/lib/digitFormat";
+import { formatNumber } from "@/lib/formatters/digitFormat";
 import { Button } from "@/components/ui/button";
 
 // Type pour les tokens perp

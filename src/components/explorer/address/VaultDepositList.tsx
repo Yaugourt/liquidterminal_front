@@ -4,7 +4,7 @@ import { Copy, Check, Database } from "lucide-react";
 import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposits';
 import { useVaults } from '@/services/explorer/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { Pagination } from '@/components/common';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 

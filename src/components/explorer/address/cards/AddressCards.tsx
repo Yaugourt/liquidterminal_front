@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 import { useAddressBalance } from "@/services/explorer/address";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { OverviewCard } from "./OverviewCard";
 import { PnLCard } from "./PnLCard";
 import { InfoCard } from "./InfoCard";

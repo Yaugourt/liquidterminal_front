@@ -7,7 +7,7 @@ import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect } from "react";
 import { Pagination } from "../../common/pagination";
 import { TabButtons, TableContent } from ".";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 
 type TabType = 'validators' | 'vaults';
 type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";

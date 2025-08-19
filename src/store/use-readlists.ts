@@ -12,12 +12,14 @@ import {
   deleteReadListItem as apiDeleteReadListItem
 } from "../services/wiki/readList/api";
 import { AuthService } from "../services/auth";
-
-interface InitializeParams {
-  privyUserId: string;
-  username: string;
-  privyToken: string;
-}
+import { handleApiError, createOrderManager, validateName } from './utils';
+import { 
+  InitializeParams, 
+  CreateReadListData, 
+  UpdateReadListData, 
+  AddItemData, 
+  UpdateItemData 
+} from './types';
 
 interface ReadListsState {
   readLists: ReadList[];
@@ -27,8 +29,8 @@ interface ReadListsState {
   error: string | null;
   
   initialize: (params: InitializeParams) => Promise<void>;
-  createReadList: (data: { name: string; description?: string; isPublic?: boolean }) => Promise<ReadList | void>;
-  updateReadList: (id: number, data: { name?: string; description?: string; isPublic?: boolean }) => Promise<ReadList | void>;
+  createReadList: (data: CreateReadListData) => Promise<ReadList | void>;
+  updateReadList: (id: number, data: UpdateReadListData) => Promise<ReadList | void>;
   deleteReadList: (id: number) => Promise<void>;
   setActiveReadList: (id: number) => void;
   getActiveReadList: () => ReadList | undefined;
@@ -37,37 +39,15 @@ interface ReadListsState {
   
   // Items management
   loadReadListItems: (listId: number) => Promise<void>;
-  refreshReadListItems: (listId: number) => Promise<void>;
-  addItemToReadList: (listId: number, item: { resourceId: number; notes?: string; order?: number; isRead?: boolean }) => Promise<ReadListItem | void>;
-  updateReadListItem: (itemId: number, data: { notes?: string; order?: number; isRead?: boolean }) => Promise<ReadListItem | void>;
+  
+  addItemToReadList: (listId: number, item: AddItemData) => Promise<ReadListItem | void>;
+  updateReadListItem: (itemId: number, data: UpdateItemData) => Promise<ReadListItem | void>;
   deleteReadListItem: (itemId: number) => Promise<void>;
   toggleReadStatus: (itemId: number, isRead: boolean) => Promise<void>;
 }
 
-// Utility functions
-const handleApiError = (error: unknown, defaultMessage: string): string => {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as { response?: { status?: number } }).response;
-    switch (response?.status) {
-      case 409: return 'A read list with this name already exists';
-      case 400: return 'Invalid data provided';
-      case 404: return 'Resource not found';
-      case 403: return 'Access denied';
-      default: return defaultMessage;
-    }
-  }
-  return defaultMessage;
-};
 
-const validateReadListName = (name: string): void => {
-  if (!name?.trim() || name.trim().length < 2) {
-    throw new Error("Read list name must be at least 2 characters");
-  }
-  if (name.length > 255) {
-    throw new Error("Read list name is too long");
-  }
-};
+
 
 
 
@@ -87,6 +67,7 @@ export const useReadLists = create<ReadListsState>()(
   persist(
     (set, get) => {
       const actions = createActionCreators(set);
+      const orderManager = createOrderManager<ReadList>('readlists', (list) => list.id);
       
       return {
         readLists: [],
@@ -108,54 +89,27 @@ export const useReadLists = create<ReadListsState>()(
             
             const response = await getMyReadLists();
             
-            // Extract data from response object
             const readLists = response?.data || [];
             
-            // Ensure readLists is an array
             if (!Array.isArray(readLists)) {
-              // Warning: getMyReadLists returned non-array
-              set({
-                readLists: [],
-                activeReadListId: null,
-                activeReadListItems: [],
-                loading: false
-              });
+              actions.updateReadLists(() => []);
+              actions.setActiveList(null);
+              actions.updateActiveItems(() => []);
+              actions.setLoading(false);
               return;
             }
             
-            // Restaurer l'ordre sauvegardé si disponible
-            let orderedReadLists = readLists;
-            try {
-              const savedOrder = localStorage.getItem('readlists-order');
-              if (savedOrder) {
-                const orderIds = JSON.parse(savedOrder) as number[];
-                const savedLists = orderIds
-                  .map(id => readLists.find(list => list.id === id))
-                  .filter((list): list is ReadList => list !== undefined);
-                
-                // Ajouter les nouvelles listes qui ne sont pas dans l'ordre sauvegardé
-                const newLists = readLists.filter(list => !orderIds.includes(list.id));
-                orderedReadLists = [...savedLists, ...newLists];
-              }
-            } catch {
-              // Warning: Failed to restore read lists order from localStorage
-            }
-            
-            // Ensure we have a valid active read list
+            const orderedReadLists = orderManager.restoreOrder(readLists);
             const currentActiveId = get().activeReadListId;
             const hasValidActiveReadList = orderedReadLists.some(r => r.id === currentActiveId);
             const newActiveId = hasValidActiveReadList ? currentActiveId : (orderedReadLists.length > 0 ? orderedReadLists[0].id : null);
             
-            set({
-              readLists: orderedReadLists,
-              activeReadListId: newActiveId,
-              activeReadListItems: [],
-              loading: false
-            });
+            actions.updateReadLists(() => orderedReadLists);
+            actions.setActiveList(newActiveId);
+            actions.updateActiveItems(() => []);
+            actions.setLoading(false);
             
-            // Load items for the new active read list if it exists (non-blocking)
             if (newActiveId) {
-              // Don't await - let it load in background
               get().loadReadListItems(newActiveId).catch(() => {});
             }
           } catch (err) {
@@ -163,21 +117,16 @@ export const useReadLists = create<ReadListsState>()(
           }
         },
         
-        createReadList: async (data): Promise<ReadList | void> => {
+        createReadList: async (data: CreateReadListData): Promise<ReadList | void> => {
           try {
             actions.setLoading(true);
-            validateReadListName(data.name);
+            validateName(data.name, { fieldName: 'Read list name' });
             
             const response = await apiCreateReadList(data);
             
             if (response) {
-              const currentState = get();
-              
-              // Mise à jour directe du state
-              set({
-                readLists: [...currentState.readLists, response],
-                loading: false
-              });
+              actions.updateReadLists(lists => [...lists, response]);
+              actions.setLoading(false);
               
               if (!get().activeReadListId) {
                 actions.setActiveList(response.id);
@@ -187,15 +136,14 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to create read list");
           } catch (error) {
-            // Silent error handling
             actions.setError(handleApiError(error, 'Failed to create read list'));
           }
         },
         
-        updateReadList: async (id: number, data): Promise<ReadList | void> => {
+        updateReadList: async (id: number, data: UpdateReadListData): Promise<ReadList | void> => {
           try {
             actions.setLoading(true);
-            if (data.name) validateReadListName(data.name);
+            if (data.name) validateName(data.name, { fieldName: 'Read list name' });
             
             const response = await apiUpdateReadList(id, data);
             
@@ -227,15 +175,16 @@ export const useReadLists = create<ReadListsState>()(
               newActiveId = newReadLists.length > 0 ? newReadLists[0].id : null;
             }
             
-            set({
-              readLists: newReadLists,
-              activeReadListId: newActiveId,
-              activeReadListItems: state.activeReadListId === id ? [] : state.activeReadListItems,
-              loading: false
-            });
+            actions.updateReadLists(() => newReadLists);
+            actions.setActiveList(newActiveId);
+            if (state.activeReadListId === id) {
+              actions.updateActiveItems(() => []);
+            }
+            actions.setLoading(false);
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to delete read list'));
-            throw new Error(handleApiError(error, 'Failed to delete read list'));
+            const errorMessage = handleApiError(error, 'Failed to delete read list');
+            actions.setError(errorMessage);
+            throw new Error(errorMessage);
           }
         },
         
@@ -245,7 +194,6 @@ export const useReadLists = create<ReadListsState>()(
           const readList = get().readLists.find(r => r.id === id);
           if (readList) {
             actions.setActiveList(id);
-            // Toujours recharger les items pour avoir les données fraîches
             get().loadReadListItems(id);
           }
         },
@@ -258,48 +206,26 @@ export const useReadLists = create<ReadListsState>()(
         loadReadListItems: async (listId: number): Promise<void> => {
           try {
             if (!listId || isNaN(listId)) {
-              set({ activeReadListItems: [], loading: false });
+              actions.updateActiveItems(() => []);
+              actions.setLoading(false);
               return;
             }
             
-            // Toujours recharger depuis l'API pour avoir les données fraîches
             actions.setLoading(true);
             
             const response = await getReadListItems(listId);
             const itemsArray = response?.data || [];
             
-            set({
-              activeReadListItems: itemsArray,
-              loading: false
-            });
+            actions.updateActiveItems(() => itemsArray);
+            actions.setLoading(false);
             
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to load read list items'));
-            set({ activeReadListItems: [] });
+            actions.updateActiveItems(() => []);
           }
         },
         
-        refreshReadListItems: async (listId: number): Promise<void> => {
-          try {
-            if (!listId || isNaN(listId)) {
-              return;
-            }
-            
-            actions.setLoading(true);
-            
-            const response = await getReadListItems(listId);
-            const itemsArray = response?.data || [];
-            
-            set({
-              activeReadListItems: itemsArray,
-              loading: false
-            });
-          } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to refresh read list items'));
-          }
-        },
-        
-        addItemToReadList: async (listId: number, item): Promise<ReadListItem | void> => {
+        addItemToReadList: async (listId: number, item: AddItemData): Promise<ReadListItem | void> => {
           try {
             actions.setLoading(true);
             
@@ -308,11 +234,10 @@ export const useReadLists = create<ReadListsState>()(
             if (response) {
               actions.setLoading(false);
               
-              // Recharger la liste des readlists pour mettre à jour le itemsCount
-              await get().refreshReadLists();
+              const currentActiveId = get().activeReadListId;
               
-              // Si c'est la readlist active, recharger les items
-              if (get().activeReadListId === listId) {
+              get().refreshReadLists().catch(() => {});
+              if (currentActiveId === listId) {
                 await get().loadReadListItems(listId);
               }
               
@@ -325,7 +250,7 @@ export const useReadLists = create<ReadListsState>()(
           }
         },
         
-        updateReadListItem: async (itemId: number, data): Promise<ReadListItem | void> => {
+        updateReadListItem: async (itemId: number, data: UpdateItemData): Promise<ReadListItem | void> => {
           try {
             actions.setLoading(true);
             
@@ -349,23 +274,16 @@ export const useReadLists = create<ReadListsState>()(
           try {
             actions.setLoading(true);
             
-            // Appel API d'abord
             await apiDeleteReadListItem(itemId);
+            actions.updateActiveItems(items => items.filter(item => item.id !== itemId));
+            actions.setLoading(false);
             
-            // Si l'API réussit, mettre à jour l'état local
-            const updatedItems = get().activeReadListItems.filter(item => item.id !== itemId);
-            
-            set({ 
-              activeReadListItems: updatedItems,
-              loading: false 
-            });
-            
-            // Recharger la liste des readlists pour mettre à jour le itemsCount
-            await get().refreshReadLists();
+            get().refreshReadLists().catch(() => {});
             
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to delete read list item'));
-            throw new Error(handleApiError(error, 'Failed to delete read list item'));
+            const errorMessage = handleApiError(error, 'Failed to delete read list item');
+            actions.setError(errorMessage);
+            throw new Error(errorMessage);
           }
         },
         
@@ -392,14 +310,8 @@ export const useReadLists = create<ReadListsState>()(
             .map(id => currentLists.find(list => list.id === id))
             .filter((list): list is ReadList => list !== undefined);
           
-          set({ readLists: reorderedLists });
-          
-          // Sauvegarder l'ordre dans localStorage pour persister les préférences
-          try {
-            localStorage.setItem('readlists-order', JSON.stringify(newOrder));
-                      } catch {
-              // Warning: Failed to save read lists order to localStorage
-            }
+          actions.updateReadLists(() => reorderedLists);
+          orderManager.saveOrder(reorderedLists);
         },
 
         refreshReadLists: async () => {
@@ -407,25 +319,9 @@ export const useReadLists = create<ReadListsState>()(
             const response = await getMyReadLists();
             const readLists = response?.data || [];
             
-            // Préserver l'ordre sauvegardé
-            let orderedReadLists = readLists;
-            try {
-              const savedOrder = localStorage.getItem('readlists-order');
-              if (savedOrder) {
-                const orderIds = JSON.parse(savedOrder) as number[];
-                const savedLists = orderIds
-                  .map(id => readLists.find(list => list.id === id))
-                  .filter((list): list is ReadList => list !== undefined);
-                
-                // Ajouter les nouvelles listes qui ne sont pas dans l'ordre sauvegardé
-                const newLists = readLists.filter(list => !orderIds.includes(list.id));
-                orderedReadLists = [...savedLists, ...newLists];
-              }
-                          } catch {
-                // Warning: Failed to restore read lists order from localStorage
-              }
+            const orderedReadLists = orderManager.restoreOrder(readLists);
             
-            set({ readLists: orderedReadLists });
+            actions.updateReadLists(() => orderedReadLists);
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to refresh read lists'));
           }

@@ -10,7 +10,7 @@ import { useReadLists } from "@/store/use-readlists";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
-import { readListMessages, handleReadListApiError } from "@/lib/education-toast-messages";
+import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
 
 interface Resource {
   id: string;

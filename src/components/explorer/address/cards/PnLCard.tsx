@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, TrendingUp } from "lucide-react";
 import { PnLCardProps, PnLVariation } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES, PERIODS } from "./constants";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { NumberFormatType } from "@/store/number-format.store";
 
 const getVariation = (

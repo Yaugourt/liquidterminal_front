@@ -3,86 +3,13 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { Wallet, UserWallet, WalletsState } from "../services/market/tracker/types";
 import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
 import { AuthService } from "../services/auth";
+import { handleApiError, createOrderManager, validateWalletAddress, validateName, processWalletsResponse } from './utils';
+import { InitializeParams } from './types';
 
-interface InitializeParams {
-  privyUserId: string;
-  username: string;
-  privyToken: string;
-}
 
-// Utility functions
-const handleApiError = (error: unknown, defaultMessage: string): string => {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'object' && error && 'response' in error) {
-    const response = (error as { response?: { status?: number } }).response;
-    switch (response?.status) {
-      case 409: return 'This wallet already exists in your account';
-      case 400: return 'Invalid wallet address or name';
-      case 404: return 'Wallet not found';
-      case 403: return 'Access denied';
-      default: return defaultMessage;
-    }
-  }
-  return defaultMessage;
-};
 
-const validateWalletAddress = (address: string): string => {
-  if (!address?.trim()) {
-    throw new Error("Address is required");
-  }
-  
-  const normalizedAddress = address.toLowerCase().trim();
-  if (!/^0x[a-fA-F0-9]{40}$/.test(normalizedAddress)) {
-    throw new Error("Invalid wallet address format");
-  }
-  
-  return normalizedAddress;
-};
 
-const validateWalletName = (name?: string): void => {
-  if (name && name.length > 255) {
-    throw new Error("Wallet name is too long");
-  }
-};
 
-const parseUserWallet = (uw: UserWallet): Wallet | null => {
-  // Si nous avons un objet wallet complet
-  if (uw.wallet && typeof uw.wallet === 'object') {
-    return {
-      id: uw.wallet.id,
-      address: uw.wallet.address || uw.address || '',
-      name: uw.name || `Wallet ${uw.id}`,
-      addedAt: uw.wallet.addedAt || uw.addedAt || new Date()
-    };
-  }
-  
-  // Si nous n'avons que les informations de base
-  return {
-    id: uw.walletId,
-    address: uw.address || '',
-    name: uw.name || `Wallet ${uw.id}`,
-    addedAt: uw.addedAt || new Date()
-  };
-};
-
-const processWalletsResponse = (response: { data?: UserWallet[] }): { wallets: Wallet[], userWallets: UserWallet[] } => {
-  if (!response?.data || !Array.isArray(response.data)) {
-    throw new Error("Invalid response format from server");
-  }
-  
-  const userWallets = response.data;
-  const wallets = userWallets
-    .map(parseUserWallet)
-    .filter((wallet: Wallet | null): wallet is Wallet => {
-      const isValid = wallet !== null && 
-        typeof wallet.id === 'number' &&
-        typeof wallet.name === 'string';
-      
-      return isValid;
-    });
-  
-  return { wallets, userWallets };
-};
 
 // Action creators for better state management
 const createActionCreators = (set: (fn: (state: WalletsState) => Partial<WalletsState>) => void) => ({
@@ -100,6 +27,19 @@ export const useWallets = create<WalletsState>()(
   persist(
     (set, get) => {
       const actions = createActionCreators(set);
+      const orderManager = createOrderManager<Wallet>('wallets', (wallet) => wallet.id);
+      
+      // Fonction commune pour mettre à jour les wallets
+      const updateWalletsState = (wallets: unknown[], userWallets: UserWallet[]) => {
+        const orderedWallets = orderManager.restoreOrder(wallets as Wallet[]);
+        const currentActiveId = get().activeWalletId;
+        const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
+        
+        actions.updateWallets(() => orderedWallets);
+        actions.updateUserWallets(() => userWallets);
+        actions.setActiveWallet(hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null));
+        actions.setLoading(false);
+      };
       
       return {
         wallets: [],
@@ -121,34 +61,7 @@ export const useWallets = create<WalletsState>()(
             const response = await getWalletsByUser();
             const { wallets, userWallets } = processWalletsResponse(response);
             
-            // Restaurer l'ordre sauvegardé si disponible
-            let orderedWallets = wallets;
-            try {
-              const savedOrder = localStorage.getItem('wallets-order');
-              if (savedOrder) {
-                const orderIds = JSON.parse(savedOrder) as number[];
-                const savedWallets = orderIds
-                  .map(id => wallets.find(wallet => wallet.id === id))
-                  .filter((wallet): wallet is Wallet => wallet !== undefined);
-                
-                // Ajouter les nouveaux wallets qui ne sont pas dans l'ordre sauvegardé
-                const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
-                orderedWallets = [...savedWallets, ...newWallets];
-              }
-            } catch {
-              // Warning: Failed to restore wallets order from localStorage
-            }
-            
-            // Ensure we have a valid active wallet
-            const currentActiveId = get().activeWalletId;
-            const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
-            
-            set({
-              wallets: orderedWallets,
-              userWallets,
-              activeWalletId: hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null),
-              loading: false
-            });
+            updateWalletsState(wallets, userWallets as UserWallet[]);
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to initialize wallets'));
           }
@@ -158,40 +71,10 @@ export const useWallets = create<WalletsState>()(
           try {
             actions.setLoading(true);
             
-            // Forcer un rechargement complet depuis le serveur
             const response = await getWalletsByUser();
             const { wallets, userWallets } = processWalletsResponse(response);
             
-            // Restaurer l'ordre sauvegardé si disponible
-            let orderedWallets = wallets;
-            try {
-              const savedOrder = localStorage.getItem('wallets-order');
-              if (savedOrder) {
-                const orderIds = JSON.parse(savedOrder) as number[];
-                const savedWallets = orderIds
-                  .map(id => wallets.find(wallet => wallet.id === id))
-                  .filter((wallet): wallet is Wallet => wallet !== undefined);
-                
-                // Ajouter les nouveaux wallets qui ne sont pas dans l'ordre sauvegardé
-                const newWallets = wallets.filter(wallet => !orderIds.includes(wallet.id));
-                orderedWallets = [...savedWallets, ...newWallets];
-              }
-            } catch {
-              // Warning: Failed to restore wallets order from localStorage
-            }
-            
-            // Ensure we have a valid active wallet
-            const currentActiveId = get().activeWalletId;
-            const hasValidActiveWallet = orderedWallets.some(w => w.id === currentActiveId);
-            
-            // Mettre à jour complètement l'état
-            set({
-              wallets: orderedWallets,
-              userWallets,
-              activeWalletId: hasValidActiveWallet ? currentActiveId : (orderedWallets.length > 0 ? orderedWallets[0].id : null),
-              loading: false,
-              error: null // Clear any previous errors
-            });
+            updateWalletsState(wallets, userWallets as UserWallet[]);
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to reload wallets'));
           }
@@ -202,21 +85,20 @@ export const useWallets = create<WalletsState>()(
             actions.setLoading(true);
             
             const normalizedAddress = validateWalletAddress(address);
-            validateWalletName(name);
+            if (name) validateName(name, { maxLength: 255, fieldName: 'Wallet name' });
             
             const walletName = name || `Wallet ${get().wallets.length + 1}`;
             const response = await addWallet(normalizedAddress, walletName);
             
-            // Si la réponse indique un succès, recharger depuis le serveur
             if (response.success === true) {
-              // Forcer un rechargement complet pour éviter les problèmes de cache
               await get().reloadWallets();
               return;
             }
             
             throw new Error("Failed to add wallet");
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to add wallet'));
+            const errorMessage = handleApiError(error, 'Failed to add wallet');
+            actions.setError(errorMessage);
             throw error; // Re-throw pour que le composant puisse gérer l'erreur
           }
         },
@@ -239,10 +121,10 @@ export const useWallets = create<WalletsState>()(
             
             await removeWalletFromUser(id);
             
-            // Forcer un rechargement complet depuis le serveur
             await get().reloadWallets();
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to remove wallet'));
+            const errorMessage = handleApiError(error, 'Failed to remove wallet');
+            actions.setError(errorMessage);
             throw error; // Re-throw pour que le composant puisse gérer l'erreur
           }
         },
@@ -260,14 +142,8 @@ export const useWallets = create<WalletsState>()(
             .map(id => currentWallets.find(wallet => wallet.id === id))
             .filter((wallet): wallet is Wallet => wallet !== undefined);
           
-          set({ wallets: reorderedWallets });
-          
-          // Sauvegarder l'ordre dans localStorage pour persister les préférences
-          try {
-            localStorage.setItem('wallets-order', JSON.stringify(newOrder));
-                      } catch {
-              // Warning: Failed to save wallets order to localStorage
-            }
+          actions.updateWallets(() => reorderedWallets);
+          orderManager.saveOrder(reorderedWallets);
         },
         
         getActiveWallet: () => {

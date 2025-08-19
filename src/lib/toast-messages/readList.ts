@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { commonMessages, handleApiError } from "./shared";
 
 // Messages pour les read lists
 export const readListMessages = {
@@ -11,7 +12,6 @@ export const readListMessages = {
     
     listCreated: (listName: string) => 
       toast.success(`Read list "${listName}" created successfully!`),
-    
     
     listUpdated: (listName: string) => 
       toast.success(`Read list "${listName}" updated successfully!`),
@@ -45,18 +45,9 @@ export const readListMessages = {
     toggleReadStatus: () => 
       toast.error("Failed to update read status. Please try again."),
     
-    networkError: () => 
-      toast.error("Connection error. Check your internet connection.", {
-        action: { label: "Retry", onClick: () => window.location.reload() }
-      }),
-    
-    serverError: () => 
-      toast.error("Server error. Please try again later."),
-    
-    generic: (message?: string) => 
-      toast.error(message || "An error occurred. Please try again.", {
-        action: { label: "Retry", onClick: () => window.location.reload() }
-      })
+    networkError: commonMessages.networkError,
+    serverError: commonMessages.serverError,
+    generic: commonMessages.generic
   },
   
   validation: {
@@ -74,37 +65,7 @@ export const readListMessages = {
   }
 };
 
-// Fonction utilitaire pour gérer les erreurs d'API des read lists
-export const handleReadListApiError = (error: unknown, operation: string) => {
-  if (error && typeof error === 'object' && 'response' in error && error.response) {
-    const response = error.response as { status?: number };
-    switch (response.status) {
-      case 400:
-        return readListMessages.error.generic("Invalid data provided");
-      case 401:
-        return toast.error("Session expired. Please reconnect.");
-      case 403:
-        return readListMessages.error.generic("Access denied");
-      case 404:
-        return readListMessages.error.generic("Resource not found");
-      case 409:
-        return readListMessages.error.generic("A read list with this name already exists");
-      case 500:
-        return readListMessages.error.serverError();
-      default:
-        return readListMessages.error.generic();
-    }
-  }
-  
-  if (error && typeof error === 'object' && 'code' in error) {
-    const code = error.code as string;
-    if (code === 'NETWORK_ERROR' || code === 'ERR_NETWORK') {
-      return readListMessages.error.networkError();
-    }
-  }
-  
-  const errorMessage = error && typeof error === 'object' && 'message' in error 
-    ? (error.message as string) 
-    : `Failed to ${operation}`;
-  return readListMessages.error.generic(errorMessage);
-}; 
+// Fonction spécifique pour les read lists (pour la compatibilité)
+export const handleReadListApiError = (error: unknown) => {
+  return handleApiError(error, 'readList');
+};

@@ -4,7 +4,7 @@ import { Gavel, Clock, ExternalLink, AlertCircle, Database } from "lucide-react"
 import Link from "next/link";
 import { useAuctionTiming } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 
 interface AuctionCardProps {
   marketType: "spot" | "perp";

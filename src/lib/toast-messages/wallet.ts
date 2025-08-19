@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { commonMessages, handleApiError } from "./shared";
 
 // Messages pour l'ajout de wallet
 export const walletAddMessages = {
@@ -12,18 +13,9 @@ export const walletAddMessages = {
     alreadyExists: () => 
       toast.error("This wallet is already associated with your account."),
     
-    networkError: () => 
-      toast.error("Connection error. Check your internet connection.", {
-        action: { label: "Retry", onClick: () => window.location.reload() }
-      }),
-    
-    serverError: () => 
-      toast.error("Server error. Please try again later."),
-    
-    generic: (message?: string) => 
-      toast.error(message || "Error adding wallet.", {
-        action: { label: "Retry", onClick: () => window.location.reload() }
-      })
+    networkError: commonMessages.networkError,
+    serverError: commonMessages.serverError,
+    generic: commonMessages.generic
   },
   
   validation: {
@@ -110,49 +102,12 @@ export const walletEmptyMessages = {
     toast.warning("No active wallet selected.")
 };
 
-// Fonction utilitaire pour gérer les erreurs d'API
+// Fonction spécifique pour les wallets (pour la compatibilité)
 export const handleWalletApiError = (error: unknown) => {
   // Vérifier si c'est une erreur de limite de wallets
   if (error && typeof error === 'object' && 'code' in error && error.code === 'WALLET_LIMIT_EXCEEDED') {
     return walletAddMessages.validation.walletLimitExceeded();
   }
   
-  if (error && typeof error === 'object' && 'response' in error && error.response) {
-    const response = error.response as { status?: number };
-    switch (response.status) {
-      case 400:
-        // Vérifier si c'est une erreur de limite de wallets dans la réponse
-        if (error && typeof error === 'object' && 'code' in error && error.code === 'WALLET_LIMIT_EXCEEDED') {
-          return walletAddMessages.validation.walletLimitExceeded();
-        }
-        return walletAddMessages.error.invalidAddress();
-      case 401:
-        return toast.error("Session expired. Please reconnect.");
-      case 403:
-        return walletDeleteMessages.error.noPermission();
-      case 404:
-        return walletDeleteMessages.error.notFound();
-      case 409:
-        return walletAddMessages.error.alreadyExists();
-      case 500:
-        return walletAddMessages.error.serverError();
-      default:
-        const errorMessage = error && typeof error === 'object' && 'message' in error 
-          ? (error.message as string) 
-          : 'Unknown error';
-        return walletAddMessages.error.generic(errorMessage);
-    }
-  }
-  
-  if (error && typeof error === 'object' && 'code' in error) {
-    const code = error.code as string;
-    if (code === 'NETWORK_ERROR' || code === 'ERR_NETWORK') {
-      return walletAddMessages.error.networkError();
-    }
-  }
-  
-  const errorMessage = error && typeof error === 'object' && 'message' in error 
-    ? (error.message as string) 
-    : 'Unknown error';
-  return walletAddMessages.error.generic(errorMessage);
+  return handleApiError(error, 'wallet');
 };

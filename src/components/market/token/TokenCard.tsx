@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { TokenCardProps } from "./types";
-import { formatNumber, formatPrice } from "@/lib/numberFormatting";
+import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";

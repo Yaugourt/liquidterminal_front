@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { Pagination } from "@/components/common/pagination";
 import { StakingTabButtons, StakingTableContent } from "./staking";

@@ -5,7 +5,7 @@ import {
   PublicReadListQueryParams, 
   PublicReadListPagination 
 } from '../types';
-import { readListMessages, handleReadListApiError } from '@/lib/education-toast-messages';
+import { readListMessages, handleReadListApiError } from '@/lib/toast-messages';
 
 export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) => {
   const [readLists, setReadLists] = useState<PublicReadList[]>([]);

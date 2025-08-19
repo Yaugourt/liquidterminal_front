@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useTokenDetails } from "@/services/market/token";
 import { useTokenAuction } from "@/services/market/auction/hooks/useAuctions";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { TokenData } from "./types";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";

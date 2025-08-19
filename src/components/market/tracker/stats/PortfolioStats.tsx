@@ -10,7 +10,7 @@ import { useAddressBalance } from "@/services/explorer/address";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/numberFormatting';
+import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 
 export function PortfolioStats() {
   const [isMounted, setIsMounted] = useState(false);

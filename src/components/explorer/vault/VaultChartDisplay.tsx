@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { VaultChartData, VaultChartTimeframe } from "@/services/explorer/vault/types";
 import { Chart } from '@/components/common/charts';
-import { formatLargeNumber } from '@/lib/numberFormatting';
+import { formatLargeNumber } from '@/lib/formatters/numberFormatting';
 
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDate } from '@/lib/dateFormatting';
+import { formatDate } from '@/lib/formatters/dateFormatting';
 import { useState, useRef, useEffect } from 'react';
 
 // Types pour le tooltip

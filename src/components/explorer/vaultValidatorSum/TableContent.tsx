@@ -1,4 +1,4 @@
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { DataTable } from "./DataTable";
 import { Copy, Check } from "lucide-react";
 import { NumberFormatType } from "@/store/number-format.store";
@@ -7,7 +7,7 @@ import { FormattedStakingValidation, FormattedUnstakingQueueItem } from "@/servi
 import { VaultSummary } from "@/services/explorer/vault/types";
 
 import { useDateFormat } from "@/store/date-format.store";
-import { formatDate, formatDateTime } from "@/lib/dateFormatting";
+import { formatDate, formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useState } from "react";
 import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import Link from "next/link";

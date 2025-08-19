@@ -7,7 +7,7 @@ import { useReadLists } from "@/store/use-readlists";
 import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";
 import { CreateListModal } from "./CreateListModal";
-import { readListMessages, handleReadListApiError } from "@/lib/education-toast-messages";
+import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
 
 // Custom hook for initialization
 const useReadListInitialization = () => {

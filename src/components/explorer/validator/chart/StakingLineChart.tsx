@@ -3,8 +3,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useUnstakingStatsForChartWithPeriod } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting";
-import { formatDate } from "@/lib/dateFormatting";
+import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { formatDate } from "@/lib/formatters/dateFormatting";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
 
 // Types pour le tooltip

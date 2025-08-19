@@ -4,7 +4,7 @@ import { useMemo, useCallback } from "react";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { AddressBalanceProps } from "@/components/types/explorer.types";
 
 export function AddressBalance({ address }: AddressBalanceProps) {

@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 
-import { walletDeleteMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
+import { walletDeleteMessages, handleWalletApiError } from "@/lib/toast-messages";
 
 interface DeleteWalletDialogProps {
   isOpen: boolean;

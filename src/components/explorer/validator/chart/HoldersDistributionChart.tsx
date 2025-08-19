@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useHoldersStats } from "@/services/explorer/validator/hooks/useHoldersStats";
 import { HoldersDistributionRange } from "@/services/explorer/validator/types/holders";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatLargeNumber, formatNumber } from "@/lib/numberFormatting";
+import { formatLargeNumber, formatNumber } from "@/lib/formatters/numberFormatting";
 
 // Types pour le tooltip
 interface TooltipProps {

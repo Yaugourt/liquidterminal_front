@@ -3,7 +3,7 @@ import { useWallets } from "@/store/use-wallets";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
-import { truncateAddress } from '@/lib/numberFormatting';
+import { truncateAddress } from '@/lib/formatters/numberFormatting';
 
 interface UseWalletDataProps {
   addressOverride?: string;

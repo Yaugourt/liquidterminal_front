@@ -1,6 +1,6 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { BarChart2, FolderOpen } from "lucide-react";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useNumberFormat } from "@/store/number-format.store";

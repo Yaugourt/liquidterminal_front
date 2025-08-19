@@ -1,5 +1,5 @@
 import { memo, useMemo, useState, useCallback } from "react";
-import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/numberFormatting";
+import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/formatters/numberFormatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
 import { DataTable, Column } from "./DataTable";
 import { useNumberFormat } from "@/store/number-format.store";

@@ -2,7 +2,7 @@ import { memo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Loader2, Database, Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import {
   Table,
   TableBody,

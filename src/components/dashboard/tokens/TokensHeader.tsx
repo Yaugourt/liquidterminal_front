@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { formatLargeNumber } from "@/lib/numberFormatting";
+import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { StatItemProps, TokensHeaderProps } from "@/components/types/dashboard.types";
 
 // Composant pour les statistiques

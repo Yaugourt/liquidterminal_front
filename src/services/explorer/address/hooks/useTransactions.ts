@@ -1,7 +1,7 @@
 import { FormattedUserTransaction, UseTransactionsResult } from '../types';
 import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { formatHip2Display } from '../utils';
 import { NumberFormatType } from '@/store/number-format.store';
 

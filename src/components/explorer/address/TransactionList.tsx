@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { formatAddress, formatHash, isHip2Address } from '@/services/explorer/address';
 import { Pagination } from '@/components/common';
 import { TransactionListProps } from "@/components/types/explorer.types";

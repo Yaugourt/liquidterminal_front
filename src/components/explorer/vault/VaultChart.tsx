@@ -15,9 +15,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { formatLargeNumber } from '@/lib/numberFormatting';
+import { formatLargeNumber } from '@/lib/formatters/numberFormatting';
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDate } from '@/lib/dateFormatting';
+import { formatDate } from '@/lib/formatters/dateFormatting';
 
 // Types pour le tooltip
 interface TooltipProps {

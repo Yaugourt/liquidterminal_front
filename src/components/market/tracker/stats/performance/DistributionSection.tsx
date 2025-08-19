@@ -5,7 +5,7 @@ import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBa
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/numberFormatting';
+import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 
 // Types pour le tooltip
 interface TooltipProps {

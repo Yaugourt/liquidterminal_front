@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AssetsTable } from "./AssetsTable";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue, formatAssetTokenAmount, formatAssetPercent } from '@/lib/numberFormatting';
+import { formatAssetValue, formatAssetTokenAmount, formatAssetPercent } from '@/lib/formatters/numberFormatting';
 import { ErrorCard } from './components';
 import { useWalletData } from './hooks/useWalletData';
 import { useHoldingsConverter } from './hooks/useHoldingsConverter';

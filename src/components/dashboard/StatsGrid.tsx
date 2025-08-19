@@ -2,7 +2,7 @@ import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/numberFormatting";
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 
 interface StatsGridProps {
   stats?: DashboardGlobalStats;

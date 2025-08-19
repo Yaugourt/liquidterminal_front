@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDateTime } from '@/lib/dateFormatting';
+import { formatDateTime } from '@/lib/formatters/dateFormatting';
 
 interface AuctionTableProps {
   marketType: "spot" | "perp";

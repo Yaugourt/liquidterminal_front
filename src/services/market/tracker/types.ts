@@ -9,6 +9,11 @@ export interface UserWallet {
   id: number;
   userId: number;
   walletId: number;
+  wallet?: {
+    id: number;
+    address: string;
+    addedAt: Date;
+  };
   name?: string;
   address?: string;
   addedAt: Date;

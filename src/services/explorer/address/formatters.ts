@@ -1,4 +1,4 @@
-import { formatNumber } from '@/lib/numberFormatting';
+import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { SpotToken } from '@/services/market/spot/types';
 import { PerpMarketData } from '@/services/market/perp/types';
 import { NumberFormatType } from '@/store/number-format.store';

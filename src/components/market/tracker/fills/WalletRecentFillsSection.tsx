@@ -6,7 +6,7 @@ import { useUserFills } from "@/services/explorer/address/hooks/useUserFills";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/numberFormatting';
+import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { formatAge } from "@/services/explorer/address/utils";
 import { Pagination } from "@/components/common/pagination";
 

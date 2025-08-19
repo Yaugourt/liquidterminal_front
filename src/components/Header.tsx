@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { SettingsSelector } from "@/components/common/settings/SettingsSelector"
 import { useNumberFormat } from "@/store/number-format.store"
-import { formatNumber, formatLargeNumber } from "@/lib/numberFormatting"
+import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting"
 
 interface HeaderProps {
     searchPlaceholder?: string;

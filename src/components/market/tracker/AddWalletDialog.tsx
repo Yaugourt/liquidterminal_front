@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 
-import { walletAddMessages, handleWalletApiError } from "@/lib/wallet-toast-messages";
+import { walletAddMessages, handleWalletApiError } from "@/lib/toast-messages";
 
 interface AddWalletDialogProps {
   isOpen: boolean;

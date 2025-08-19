@@ -13,7 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Button } from "@/components/ui/button";
-import { formatLargeNumber, formatNumber } from '@/lib/numberFormatting';
+import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useState, useRef, useEffect } from 'react';
 
