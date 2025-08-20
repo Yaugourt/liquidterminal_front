@@ -65,7 +65,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
 
   if (isLoading) {
     return (
-      <div className="relative w-full md:w-96">
+      <div className="relative w-full md:w-80">
         <div className="w-full px-4 py-3 bg-[#051728E5] border border-[#83E9FF4D] rounded-lg text-white">
           <span className="text-sm text-gray-400">Loading categories...</span>
         </div>
@@ -74,7 +74,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   }
 
   return (
-    <div className="relative w-full md:w-96" ref={dropdownRef}>
+    <div className="relative w-full md:w-80" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-3 bg-[#051728E5] border border-[#83E9FF4D] hover:border-[#83E9FF80] rounded-lg flex items-center justify-between text-white transition-all"

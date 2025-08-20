@@ -12,9 +12,10 @@ import { toast } from "sonner";
 interface ResourcesSectionProps {
   selectedCategoryIds: number[];
   sectionColor: string;
+  searchQuery?: string;
 }
 
-export function ResourcesSection({ selectedCategoryIds, sectionColor }: ResourcesSectionProps) {
+export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuery = "" }: ResourcesSectionProps) {
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
   
   // Fetch categories and resources using the education service
@@ -80,12 +81,29 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
 
 
 
+  // Helper function to check if resource matches search query
+  const matchesSearch = (resource: EducationalResource, categoryName: string) => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase();
+    const searchableText = [
+      resource.url.toLowerCase(),
+      categoryName.toLowerCase(),
+      resource.categories.map(cat => cat.category.name).join(' ').toLowerCase()
+    ].join(' ');
+    
+    return searchableText.includes(query);
+  };
+
   // Group resources by category using local state
   const categoriesWithResources = localCategories
     .filter(cat => selectedCategoryIds.length > 0 && selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = localResources
-        .filter(resource => resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id))
+        .filter(resource => 
+          resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id) &&
+          matchesSearch(resource, category.name)
+        )
         .map((resource: EducationalResource) => ({
           id: resource.id.toString(),
           title: resource.url,
@@ -120,7 +138,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor }: Resource
   }
 
   return (
-    <div className="space-y-12">
+    <div className="pt-4 space-y-12">
       
       {categoriesWithResources.map((category) => {
         const displayCount = expandedCategories[category.id] || 4;

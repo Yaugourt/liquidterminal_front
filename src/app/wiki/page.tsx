@@ -11,6 +11,7 @@ import { EducationSidebar } from "@/components/wiki/EducationSidebar";
 import { ResourcesSection } from "@/components/wiki/ResourcesSection";
 import { CategoryFilter } from "@/components/wiki/CategoryFilter";
 import { EducationModal } from "@/components/wiki/EducationModal";
+import { WikiSearchBar } from "@/components/wiki/WikiSearchBar";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
@@ -22,6 +23,8 @@ import { useEducationalCategories } from "@/services/wiki";
 export default function EducationPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
 
   
@@ -35,12 +38,23 @@ export default function EducationPage() {
 
 
 
-  // Set all categories as selected by default when categories are loaded
+  // Set all categories as selected by default when categories are loaded (only if user hasn't interacted)
   useEffect(() => {
-    if (categories.length > 0 && selectedCategories.length === 0) {
+    if (categories.length > 0 && selectedCategories.length === 0 && !hasUserInteracted) {
       setSelectedCategories(categories.map(cat => cat.id));
     }
-  }, [categories, selectedCategories.length]);
+  }, [categories, selectedCategories.length, hasUserInteracted]);
+
+  // Handle category changes and mark user interaction
+  const handleCategoryChange = (categories: number[]) => {
+    setHasUserInteracted(true);
+    setSelectedCategories(categories);
+  };
+
+  // Handle search query changes
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   // Transform data for the sidebar
   const sidebarInfo = hyperliquidInfo ? {
@@ -101,11 +115,15 @@ export default function EducationPage() {
             </div>
           </div>
 
-          {/* Category filter and Admin Add Resource Button */}
+          {/* Category filter, Search bar and Admin Add Resource Button */}
           <div className="flex items-center gap-4">
             <CategoryFilter 
               selectedCategories={selectedCategories}
-              onCategoryChange={setSelectedCategories}
+              onCategoryChange={handleCategoryChange}
+            />
+            <WikiSearchBar 
+              onSearch={handleSearch}
+              placeholder="Search in titles, categories, links..."
             />
             <ProtectedAction requiredRole="ADMIN" user={user}>
               <EducationModal onSuccess={() => {
@@ -119,6 +137,7 @@ export default function EducationPage() {
           <ResourcesSection 
             selectedCategoryIds={selectedCategories}
             sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
+            searchQuery={searchQuery}
           />
 
 
