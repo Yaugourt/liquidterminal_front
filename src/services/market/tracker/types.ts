@@ -59,7 +59,7 @@ export interface WalletsState {
   
   initialize: (params: InitializeParams) => Promise<void>;
   reloadWallets: () => Promise<void>;
-  addWallet: (address: string, name?: string) => Promise<Wallet | void>;
+  addWallet: (address: string, name?: string, walletListId?: number) => Promise<Wallet | void>;
   removeWallet: (id: number) => Promise<void>;
   setActiveWallet: (id: number) => void;
   reorderWallets: (newOrder: number[]) => void;
@@ -153,4 +153,105 @@ export interface HyperliquidPerpResponse {
 export interface HyperliquidPerpRequest {
   type: string;
   user: string;
-} 
+}
+
+/**
+ * Types pour les listes de wallets
+ */
+export interface WalletList {
+  id: number;
+  name: string;
+  description: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: number;
+  isPublic: boolean;
+  creator: {
+    id: number;
+    name: string | null;
+    email: string | null;
+  };
+  items: WalletListItem[];
+  itemsCount: number;
+}
+
+export interface WalletListItem {
+  id: number;
+  walletListId: number;
+  userWalletId: number;
+  addedAt: Date;
+  notes: string | null;
+  order: number | null;
+  userWallet: {
+    id: number;
+    name: string | null;
+    addedAt: Date;
+    User: {
+      id: number;
+      name: string | null;
+      email: string | null;
+    };
+    Wallet: {
+      id: number;
+      address: string;
+      addedAt: Date;
+    };
+  };
+}
+
+export interface CreateWalletListInput {
+  name: string;
+  description?: string;
+  isPublic?: boolean;
+}
+
+export interface UpdateWalletListInput {
+  name?: string;
+  description?: string;
+  isPublic?: boolean;
+}
+
+export interface CreateWalletListItemInput {
+  userWalletId: number;
+  notes?: string;
+  order?: number;
+}
+
+export interface UpdateWalletListItemInput {
+  notes?: string;
+  order?: number;
+}
+
+export interface WalletListResponse {
+  data: WalletList[];
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  };
+}
+
+/**
+ * Types pour le store wallet lists
+ */
+export interface WalletListsState {
+  userLists: WalletList[];
+  publicLists: WalletList[];
+  loading: boolean;
+  error: string | null;
+  
+  // Actions
+  initialize: () => Promise<void>;
+  loadUserLists: (params?: { search?: string; limit?: number }) => Promise<void>;
+  loadPublicLists: (params?: { search?: string; limit?: number }) => Promise<void>;
+  createList: (data: CreateWalletListInput) => Promise<WalletList>;
+  updateList: (id: number, data: UpdateWalletListInput) => Promise<WalletList>;
+  deleteList: (id: number) => Promise<void>;
+  copyList: (id: number) => Promise<WalletList>;
+  
+  // Utility
+  clearError: () => void;
+}

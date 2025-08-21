@@ -12,22 +12,33 @@ import {
 // Réexporter les fonctions du service Hyperliquid
 export { fetchHyperliquidBalances, fetchHyperliquidPerpPositions };
 
+// Réexporter les fonctions du service WalletList
+export * from './walletlist.service';
+
 /**
  * Adds a new wallet to the user's account - NOUVEAU: utiliser JWT
  * @param address The wallet address
  * @param name Optional name for the wallet
+ * @param walletListId Optional ID of the wallet list to add the wallet to
  * @returns The wallet response
  */
 export const addWallet = async (
   address: string,
-  name?: string
+  name?: string,
+  walletListId?: number
 ): Promise<AddWalletResponse> => {
   return withErrorHandling(async () => {
-    const response = await post<AddWalletResponse>('/wallet', {
+    const payload: { address: string; name?: string; walletListId?: number } = {
       address,
       name
-      // ❌ PAS de privyUserId !
-    });
+    };
+    
+    // Ajouter walletListId seulement s'il est fourni
+    if (walletListId !== undefined) {
+      payload.walletListId = walletListId;
+    }
+    
+    const response = await post<AddWalletResponse>('/wallet', payload);
     
     // Vérifier si la réponse indique un succès
     if (response && response.success === true) {

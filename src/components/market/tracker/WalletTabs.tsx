@@ -9,6 +9,12 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
+import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
+
+import { WalletListContent } from "./walletlists/WalletListContent";
+import { useWalletLists } from "@/store/use-wallet-lists";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/toast-messages";
 import {
   DndContext,
@@ -34,6 +40,10 @@ export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [isCreateListOpen, setIsCreateListOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<"all-wallets" | number>("all-wallets"); // "all-wallets" ou ID de liste
+  const [listContentKey, setListContentKey] = useState(0); // Pour forcer le rechargement du contenu
   
   const { 
     wallets,
@@ -43,6 +53,8 @@ export function WalletTabs() {
     setActiveWallet,
     reorderWallets,
   } = useWallets();
+  
+  const { userLists, loadUserLists } = useWalletLists();
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
 
@@ -117,6 +129,10 @@ export function WalletTabs() {
         username: privyUser!.twitter?.username || privyUser!.farcaster?.username || privyUser!.github?.username || '',
         privyToken: await getAccessToken() || ''
       });
+      // Si on est sur un onglet de liste, forcer le rechargement du contenu
+      if (activeTab !== "all-wallets") {
+        setListContentKey(prev => prev + 1);
+      }
     } catch (error) {
       console.error('Error reloading wallets:', error);
       // Forcer un rechargement de la page en cas d'erreur
@@ -144,21 +160,44 @@ export function WalletTabs() {
     }
   };
 
-  // Convertir l'ID actif en chaîne pour Radix UI
-  const activeTabValue = activeWalletId?.toString() || "";
-  
-  // Gérer le changement d'onglet en convertissant la chaîne en nombre
-  const handleTabChange = (value: string) => {
-    try {
-      const walletId = parseInt(value, 10);
-      setActiveWallet(walletId);
-      const wallet = wallets.find(w => w.id === walletId);
-      if (wallet) {
-        walletActiveMessages.success(wallet.name || 'Unnamed Wallet');
-      }
-    } catch {
-      walletActiveMessages.error();
+  // Charger les listes au montage
+  useEffect(() => {
+    if (privyUser?.id) {
+      loadUserLists({ limit: 20 });
     }
+  }, [privyUser?.id, loadUserLists]);
+
+  // Debug temporaire
+  console.log('WalletTabs userLists:', userLists?.map(l => ({ id: l?.id, name: l?.name })));
+
+  // Gérer le changement d'onglet
+  const handleTabChange = (value: string) => {
+    if (value === "all-wallets") {
+      setActiveTab("all-wallets");
+    } else {
+      // C'est un ID de liste
+      const listId = parseInt(value, 10);
+      setActiveTab(listId);
+      // Force le rechargement du contenu de la liste pour déclencher la sélection automatique
+      setListContentKey(prev => prev + 1);
+    }
+  };
+
+  // Gérer le succès de création de liste
+  const handleCreateListSuccess = () => {
+    setIsCreateListOpen(false);
+    loadUserLists({ limit: 20 }); // Recharger les listes
+  };
+
+
+
+  // Obtenir les infos de la liste active
+  const getActiveListInfo = () => {
+    if (typeof activeTab === "number") {
+      const list = userLists.find(l => l.id === activeTab);
+      return list ? { id: list.id, name: list.name } : null;
+    }
+    return null;
   };
 
   // Sortable wallet tab component
@@ -227,50 +266,118 @@ export function WalletTabs() {
       <div className="flex gap-2 items-center">
         <div className="flex items-center gap-2">
           <Tabs 
-            value={activeTabValue} 
+            value={activeTab.toString()} 
             onValueChange={handleTabChange}
             className="w-auto"
           >
             <TabsList className="gap-3">
-              {wallets.length > 0 ? (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
+              {/* Tab "All Wallets" */}
+              <TabsTrigger 
+                value="all-wallets"
+                className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg text-white font-medium"
+              >
+                All Wallets
+              </TabsTrigger>
+              
+              {/* Tabs des listes */}
+              {userLists.filter(list => list?.id).map((list, index) => (
+                <TabsTrigger 
+                  key={`list-${list.id || index}`}
+                  value={(list.id || index).toString()}
+                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg text-white font-medium"
                 >
-                  <SortableContext
-                    items={wallets.map(wallet => wallet.id)}
-                    strategy={horizontalListSortingStrategy}
-                  >
-                    {wallets.map((wallet) => (
-                      <SortableWalletTab key={wallet.id} wallet={wallet} />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              ) : (
-                <div className="text-gray-400 px-4">
-                  No wallets added
-                </div>
-              )}
+                  {list.name || 'Unnamed List'}
+                </TabsTrigger>
+              ))}
             </TabsList>
           </Tabs>
           
-          {wallets.length > 1 && (
-            <div className="flex items-center gap-1 text-xs text-[#FFFFFF60]">
-              <GripVertical className="w-3 h-3" />
-              <span>Drag to reorder</span>
+          {/* Bouton Create List sur la même ligne que les tabs */}
+          <Button 
+            onClick={() => setIsCreateListOpen(true)}
+            className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+            size="sm"
+          >
+            <Plus size={16} className="mr-2" />
+            Create List
+          </Button>
+        </div>
+      </div>
+      
+      {/* Affichage conditionnel selon l'onglet actif */}
+      {activeTab === "all-wallets" && (
+        <div className="mt-4">
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
+              <Tabs 
+                value={activeWalletId?.toString() || ""} 
+                onValueChange={(value) => {
+                  const walletId = parseInt(value, 10);
+                  setActiveWallet(walletId);
+                  const wallet = wallets.find(w => w.id === walletId);
+                  if (wallet) {
+                    walletActiveMessages.success(wallet.name || 'Unnamed Wallet');
+                  }
+                }}
+                className="w-auto"
+              >
+                <TabsList className="gap-3">
+                  {wallets.length > 0 ? (
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={wallets.map(wallet => wallet.id)}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        {wallets.map((wallet) => (
+                          <SortableWalletTab key={wallet.id} wallet={wallet} />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  ) : (
+                    <div className="text-gray-400 px-4">
+                      No wallets added
+                    </div>
+                  )}
+                </TabsList>
+              </Tabs>
+              
+              {wallets.length > 1 && (
+                <div className="flex items-center gap-1 text-xs text-[#FFFFFF60]">
+                  <GripVertical className="w-3 h-3" />
+                  <span>Drag to reorder</span>
+                </div>
+              )}
             </div>
+            
+            <AddWalletButton onClick={() => setIsAddWalletOpen(true)} />
+          </div>
+        </div>
+      )}
+      
+      {activeTab !== "all-wallets" && (
+        <div className="mt-4">
+          {getActiveListInfo() && (
+            <WalletListContent 
+              key={`list-${getActiveListInfo()!.id}-${listContentKey}`}
+              listId={getActiveListInfo()!.id}
+              listName={getActiveListInfo()!.name}
+              onAddWallet={() => setIsAddWalletOpen(true)}
+            />
           )}
         </div>
-        
-        <AddWalletButton onClick={() => setIsAddWalletOpen(true)} />
-      </div>
+      )}
 
       {/* Dialogs */}
       <AddWalletDialog 
         isOpen={isAddWalletOpen} 
         onOpenChange={setIsAddWalletOpen}
         onSuccess={handleWalletActionSuccess}
+        walletListId={activeTab !== "all-wallets" ? Number(activeTab) : undefined}
+        walletListName={activeTab !== "all-wallets" ? getActiveListInfo()?.name : undefined}
       />
 
       <DeleteWalletDialog
@@ -279,6 +386,14 @@ export function WalletTabs() {
         walletToDelete={walletToDelete}
         onSuccess={handleWalletActionSuccess}
       />
+
+      <CreateWalletListDialog
+        isOpen={isCreateListOpen}
+        onOpenChange={setIsCreateListOpen}
+        onSuccess={handleCreateListSuccess}
+      />
+
+
     </>
   );
 }

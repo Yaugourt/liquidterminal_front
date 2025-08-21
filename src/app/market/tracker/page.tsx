@@ -22,6 +22,7 @@ export default function Wallets() {
   const { isAuthenticated, login } = useAuthContext();
   const { width } = useWindowSize();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Plus besoin de activeMainTab, tout est géré dans WalletTabs
   const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
 
   useEffect(() => {
@@ -80,9 +81,12 @@ export default function Wallets() {
           )}
           
           <div className={isAuthenticated ? "" : "filter blur-[5px] pointer-events-none select-none"}>
+            {/* Navigation principale - maintenant intégrée dans WalletTabs */}
             <div className="mb-8">
               <WalletTabs />
             </div>
+            
+            {/* Stats et graphiques - toujours affichés */}
             <div className="mb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                 <div className="lg:col-span-5">
@@ -93,17 +97,17 @@ export default function Wallets() {
                 </div>
               </div>
             </div>
+            
+            {/* Navigation des assets */}
             <WalletAssetsNavigation 
               activeTab={activeAssetsTab}
               onChange={setActiveAssetsTab}
             />
             
+            {/* Contenu selon l'onglet des assets */}
             {activeAssetsTab === "holdings" && <AssetsSection />}
-            
             {activeAssetsTab === "orders" && <WalletOrdersSection />}
-            
             {activeAssetsTab === "twap" && <WalletTwapSection />}
-            
             {activeAssetsTab === "recent-fills" && <WalletRecentFillsSection />}
           </div>
         </main>

@@ -13,9 +13,11 @@ interface AddWalletDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  walletListId?: number;
+  walletListName?: string;
 }
 
-export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDialogProps) {
+export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId, walletListName }: AddWalletDialogProps) {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,8 +46,8 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       // Ensure name is not undefined
       const walletName = name.trim() || undefined;
       
-      // NOUVEAU: pas besoin de privyUserId
-      await addWallet(address, walletName);
+      // NOUVEAU: pas besoin de privyUserId, et support pour walletListId
+      await addWallet(address, walletName, walletListId);
       
       // Clear form and close dialog
       setAddress("");
@@ -53,7 +55,11 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
       onOpenChange(false);
       
       // Show success toast
-      walletAddMessages.success(walletName || 'Nouveau wallet');
+      if (walletListName) {
+        walletAddMessages.success(`Wallet "${walletName || address}" added to "${walletListName}"`);
+      } else {
+        walletAddMessages.success(walletName || 'Nouveau wallet');
+      }
       
       // Notify parent component of success
       if (onSuccess) {
@@ -76,11 +82,15 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
-          <DialogTitle>Add a new wallet</DialogTitle>
+          <DialogTitle>
+            {walletListName ? `Add wallet to "${walletListName}"` : "Add a new wallet"}
+          </DialogTitle>
           <DialogDescription className="text-white">
             {hasReachedWalletLimit 
               ? `You have reached the limit of 5 wallets. Remove an existing wallet to add a new one.`
-              : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/5 wallets)`
+              : walletListName 
+                ? `Enter a wallet address to add it directly to the "${walletListName}" list.`
+                : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/5 wallets)`
             }
           </DialogDescription>
         </DialogHeader>
@@ -124,7 +134,14 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess }: AddWalletDi
             disabled={isLoading || hasReachedWalletLimit}
             className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Adding..." : hasReachedWalletLimit ? "Limit reached (5/5)" : "Add"}
+            {isLoading 
+              ? "Adding..." 
+              : hasReachedWalletLimit 
+                ? "Limit reached (5/5)" 
+                : walletListName 
+                  ? "Add to List" 
+                  : "Add"
+            }
           </Button>
         </DialogFooter>
       </DialogContent>

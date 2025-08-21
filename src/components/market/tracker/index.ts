@@ -11,4 +11,8 @@ export * from './fills';
 export { WalletTabs } from './WalletTabs';
 export { AddWalletDialog } from './AddWalletDialog';
 export { DeleteWalletDialog } from './DeleteWalletDialog';
-export { WalletAssetsNavigation } from './WalletAssetsNavigation'; 
+export { WalletAssetsNavigation } from './WalletAssetsNavigation';
+export { TrackerNavigation } from './TrackerNavigation';
+
+// WalletLists exports
+export * from './walletlists'; 

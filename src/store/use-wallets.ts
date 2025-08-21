@@ -80,7 +80,7 @@ export const useWallets = create<WalletsState>()(
           }
         },
         
-        addWallet: async (address: string, name?: string): Promise<Wallet | void> => {
+        addWallet: async (address: string, name?: string, walletListId?: number): Promise<Wallet | void> => {
           try {
             actions.setLoading(true);
             
@@ -88,7 +88,7 @@ export const useWallets = create<WalletsState>()(
             if (name) validateName(name, { maxLength: 255, fieldName: 'Wallet name' });
             
             const walletName = name || `Wallet ${get().wallets.length + 1}`;
-            const response = await addWallet(normalizedAddress, walletName);
+            const response = await addWallet(normalizedAddress, walletName, walletListId);
             
             if (response.success === true) {
               await get().reloadWallets();
