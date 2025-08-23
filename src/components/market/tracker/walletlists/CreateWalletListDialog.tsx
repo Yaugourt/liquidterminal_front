@@ -14,13 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Users, Lock } from "lucide-react";
-import { useWalletLists } from "@/store/use-wallet-lists";
+
 import { toast } from "sonner";
 
 interface CreateWalletListDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onSuccess: (listData: { name: string; description?: string; isPublic?: boolean }) => void;
 }
 
 export function CreateWalletListDialog({ 
@@ -32,8 +32,6 @@ export function CreateWalletListDialog({
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { createList } = useWalletLists();
 
   const handleCreateList = async () => {
     if (!name.trim()) {
@@ -48,21 +46,23 @@ export function CreateWalletListDialog({
 
     setIsLoading(true);
     
+    const listData = {
+      name: name.trim(),
+      description: description.trim() || undefined,
+      isPublic: isPublic
+    };
+
     try {
-      await createList({
-        name: name.trim(),
-        description: description.trim() || undefined,
-        isPublic: isPublic
-      });
-      
-      // Clear form and close dialog
+      // Clear form and close dialog first
       setName("");
       setDescription("");
       setIsPublic(false);
       onOpenChange(false);
       
-      toast.success(`List "${name.trim()}" created successfully`);
-      onSuccess();
+      toast.success(`List "${listData.name}" created successfully`);
+      
+      // Pass data to parent for creation and selection
+      onSuccess(listData);
     } catch {
       toast.error('Failed to create wallet list');
     } finally {

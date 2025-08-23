@@ -4,43 +4,42 @@ import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useWallets } from "@/store/use-wallets";
+import { useWalletLists } from "@/store/use-wallet-lists";
+import { toast } from "sonner";
 
-import { walletDeleteMessages, handleWalletApiError } from "@/lib/toast-messages";
-
-interface DeleteWalletDialogProps {
+interface DeleteWalletListDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  walletToDelete: { id: number; name: string } | null;
+  listToDelete: { id: number; name: string } | null;
   onSuccess?: () => void;
 }
 
-export function DeleteWalletDialog({ 
+export function DeleteWalletListDialog({ 
   isOpen, 
   onOpenChange, 
-  walletToDelete,
+  listToDelete,
   onSuccess 
-}: DeleteWalletDialogProps) {
+}: DeleteWalletListDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   
-  const { removeWallet } = useWallets();
+  const { deleteList } = useWalletLists();
 
   const handleConfirmDelete = async () => {
-    if (walletToDelete) {
+    if (listToDelete) {
       try {
         setIsLoading(true);
-        await removeWallet(walletToDelete.id);
+        await deleteList(listToDelete.id);
         onOpenChange(false);
         
         // Show success toast
-        walletDeleteMessages.success(walletToDelete.name);
+        toast.success(`List "${listToDelete.name}" deleted successfully!`);
         
         // Notify parent component of success
         if (onSuccess) {
           onSuccess();
         }
-      } catch (err: unknown) {
-        handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
+      } catch {
+        toast.error('Failed to delete wallet list');
       } finally {
         setIsLoading(false);
       }
@@ -51,14 +50,14 @@ export function DeleteWalletDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
-          <DialogTitle>Delete Wallet</DialogTitle>
+          <DialogTitle>Delete Wallet List</DialogTitle>
           <DialogDescription className="text-white">
-            Are you sure you want to delete this wallet?
+            Are you sure you want to delete this wallet list?
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 flex items-center gap-3 text-[#FF5252]">
           <AlertCircle className="h-5 w-5" />
-          <p>This action is irreversible. The wallet &quot;{walletToDelete?.name}&quot; will be permanently deleted.</p>
+          <p>This action is irreversible. The list &quot;{listToDelete?.name}&quot; and all its contents will be permanently deleted.</p>
         </div>
 
         <DialogFooter>
@@ -80,4 +79,4 @@ export function DeleteWalletDialog({
       </DialogContent>
     </Dialog>
   );
-} 
+}

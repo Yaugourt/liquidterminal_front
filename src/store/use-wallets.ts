@@ -4,6 +4,7 @@ import { Wallet, UserWallet, WalletsState } from "../services/market/tracker/typ
 import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
 import { AuthService } from "../services/auth";
 import { handleApiError, createOrderManager, validateWalletAddress, validateName, processWalletsResponse } from './utils';
+import { handleWalletApiError } from '../lib/toast-messages/wallet';
 import { InitializeParams } from './types';
 
 
@@ -97,8 +98,8 @@ export const useWallets = create<WalletsState>()(
             
             throw new Error("Failed to add wallet");
           } catch (error) {
-            const errorMessage = handleApiError(error, 'Failed to add wallet');
-            actions.setError(errorMessage);
+            // Utiliser handleWalletApiError pour gérer les erreurs spécifiques aux wallets
+            handleWalletApiError(error);
             throw error; // Re-throw pour que le composant puisse gérer l'erreur
           }
         },
@@ -129,7 +130,11 @@ export const useWallets = create<WalletsState>()(
           }
         },
         
-        setActiveWallet: (id: number) => {
+        setActiveWallet: (id: number | null) => {
+          if (id === null) {
+            actions.setActiveWallet(null);
+            return;
+          }
           const wallet = get().wallets.find(w => w.id === id);
           if (wallet) {
             actions.setActiveWallet(id);

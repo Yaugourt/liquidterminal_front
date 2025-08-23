@@ -5,75 +5,93 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { toast } from "sonner";
-import { getWalletListItems, removeWalletFromList } from "@/services/market/tracker/walletlist.service";
-import { WalletListItem } from "@/services/market/tracker/types";
+// Imports supprimés car on utilise le DeleteWalletDialog existant
 import { useWallets } from "@/store/use-wallets";
+import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletActiveMessages } from "@/lib/toast-messages";
 import { AddWalletButton } from "../AddWalletDialog";
+import { DeleteWalletDialog } from "../DeleteWalletDialog";
 
 interface WalletListContentProps {
   listId: number;
-  listName: string;
   onAddWallet?: () => void;
 }
 
-export function WalletListContent({ listId, listName, onAddWallet }: WalletListContentProps) {
-  const [items, setItems] = useState<WalletListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function WalletListContent({ listId, onAddWallet }: WalletListContentProps) {
   const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
   
-  const { setActiveWallet } = useWallets();
+  const { setActiveWallet, userWallets } = useWallets();
+  const { activeListId, activeListItems, loading, error, setActiveList, refreshUserLists, loadListItems } = useWalletLists();
 
-  // Charger les items de la liste
-  const loadItems = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getWalletListItems(listId);
-      const walletItems = response.data || [];
-      setItems(walletItems);
-      
-      // Sélectionner automatiquement le premier wallet de la liste
-      if (walletItems.length > 0 && !selectedWalletId) {
-        const firstWallet = walletItems[0];
-        if (firstWallet.userWallet?.Wallet?.id) {
-          setSelectedWalletId(firstWallet.userWallet.Wallet.id);
-          setActiveWallet(firstWallet.userWallet.Wallet.id);
-          walletActiveMessages.success(firstWallet.userWallet.name || 'Unnamed Wallet');
-        }
-      }
-    } catch (err) {
-      console.error('Error loading wallet list items:', err);
-      setError('Failed to load wallet list items');
-    } finally {
-      setLoading(false);
+  // Filtrer les items pour ne garder que ceux dont le wallet existe encore
+  const validItems = activeListItems.filter(item => {
+    if (!item.userWallet || !item.userWallet.Wallet) {
+      return false;
     }
-  };
+    
+    // Vérifier si ce wallet existe encore dans userWallets
+    const walletStillExists = userWallets.some(uw => 
+      uw.walletId === item.userWallet.Wallet.id || 
+      (uw.wallet && typeof uw.wallet === 'object' && 'id' in uw.wallet && uw.wallet.id === item.userWallet.Wallet.id)
+    );
+    
+// Log supprimé
+    
+    return walletStillExists;
+  });
 
+  // Définir la liste active quand le composant se monte ou que listId change
   useEffect(() => {
-    loadItems();
-  }, [listId]);
+    setActiveList(listId);
+  }, [listId, setActiveList]);
 
   // Reset selection when changing lists
   useEffect(() => {
     setSelectedWalletId(null);
   }, [listId]);
 
-  const handleRemoveWallet = async (item: WalletListItem) => {
-    if (!window.confirm(`Remove wallet from "${listName}"?`)) {
-      return;
+  // Auto-sélectionner le premier wallet quand les items changent
+  useEffect(() => {
+    if (validItems.length > 0 && !selectedWalletId) {
+      const firstWallet = validItems[0];
+      if (firstWallet.userWallet?.Wallet?.id) {
+        setSelectedWalletId(firstWallet.userWallet.Wallet.id);
+        setActiveWallet(firstWallet.userWallet.Wallet.id);
+        walletActiveMessages.success(firstWallet.userWallet.name || 'Unnamed Wallet');
+      }
     }
+  }, [validItems, selectedWalletId, setActiveWallet]);
 
-    try {
-      await removeWalletFromList(item.id);
-      toast.success('Wallet removed from list');
-      loadItems(); // Recharger la liste
-    } catch (err) {
-      console.error('Error removing wallet from list:', err);
-      toast.error('Failed to remove wallet from list');
+  // Nettoyer le wallet actif si la liste active est vide
+  useEffect(() => {
+    if (activeListId === listId && validItems.length === 0) {
+      setActiveWallet(null);
     }
+  }, [activeListId, listId, validItems.length, setActiveWallet]);
+
+  const handleDeleteClick = (walletId: number, walletName: string | null, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
+    setWalletToDelete({
+      id: walletId,
+      name: walletName || 'Unnamed Wallet'
+    });
+    setIsDeleteDialogOpen(true);
+  };
+
+    const handleDeleteSuccess = async () => {
+    // Le DeleteWalletDialog gère déjà la suppression avec removeWallet
+    // On n'a rien à faire de plus, le wallet sera supprimé de partout
+    setIsDeleteDialogOpen(false);
+    setWalletToDelete(null);
+    // Assurer la mise à jour immédiate de la liste active
+    await refreshUserLists();
+    await loadListItems(listId);
   };
 
   if (loading) {
@@ -90,33 +108,27 @@ export function WalletListContent({ listId, listName, onAddWallet }: WalletListC
     return (
       <div className="text-center py-4">
         <p className="text-red-400 text-sm mb-2">{error}</p>
-        <Button onClick={loadItems} variant="outline" size="sm">
+        <Button onClick={() => setActiveList(listId)} variant="outline" size="sm">
           Retry
         </Button>
       </div>
     );
   }
 
-  if (items.length === 0) {
+  if (validItems.length === 0) {
     return (
-      <div className="text-center py-6">
-        <p className="text-gray-400 text-sm">No wallets in this list yet</p>
-        <p className="text-gray-500 text-xs mt-1">Use the &quot;Add Wallet&quot; button to add wallets to this list</p>
+      <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
+          <div className="text-gray-400 px-4">
+            No wallets in this list yet
+          </div>
+        </div>
+        <AddWalletButton onClick={onAddWallet || (() => {})} />
       </div>
     );
   }
 
-  const handleDeleteClick = (walletId: number, walletName: string | null, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!window.confirm(`Remove "${walletName || 'Unnamed Wallet'}" from "${listName}"?`)) {
-      return;
-    }
-    
-    const item = items.find(i => i.userWallet?.Wallet?.id === walletId);
-    if (item) {
-      handleRemoveWallet(item);
-    }
-  };
+// Fonction supprimée car remplacée par handleDeleteClick ci-dessus
 
   return (
     <div className="flex gap-2 items-center">
@@ -127,7 +139,7 @@ export function WalletListContent({ listId, listName, onAddWallet }: WalletListC
             const walletId = parseInt(value, 10);
             setSelectedWalletId(walletId);
             setActiveWallet(walletId);
-            const item = items.find(i => i.userWallet?.Wallet?.id === walletId);
+            const item = validItems.find(i => i.userWallet?.Wallet?.id === walletId);
             if (item) {
               walletActiveMessages.success(item.userWallet?.name || 'Unnamed Wallet');
             }
@@ -135,11 +147,16 @@ export function WalletListContent({ listId, listName, onAddWallet }: WalletListC
           className="w-auto"
         >
           <TabsList className="gap-3">
-            {items.length > 0 ? (
-              items.map((item) => {
-                const walletId = item.userWallet?.Wallet?.id;
-                const walletName = item.userWallet?.name;
-                const addedAt = item.userWallet?.addedAt;
+            {validItems.length > 0 ? (
+              validItems.map((item) => {
+                // Vérification stricte : si userWallet ou Wallet n'existe pas, ne pas afficher
+                if (!item.userWallet || !item.userWallet.Wallet) {
+                  return null;
+                }
+                
+                const walletId = item.userWallet.Wallet.id;
+                const walletName = item.userWallet.name;
+                const addedAt = item.userWallet.addedAt;
                 
                 if (!walletId) return null;
                 
@@ -155,14 +172,14 @@ export function WalletListContent({ listId, listName, onAddWallet }: WalletListC
                         <span className="text-xs text-white">
                           {addedAt ? `Added: ${new Date(addedAt).toLocaleDateString()}` : ''}
                         </span>
-                        {item.notes && (
+                {item.notes && (
                           <span className="text-xs text-gray-300 bg-gray-600/30 px-1 rounded">
-                            {item.notes}
+                    {item.notes}
                           </span>
-                        )}
-                      </div>
-                    </div>
-                    
+                )}
+              </div>
+            </div>
+            
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -191,6 +208,13 @@ export function WalletListContent({ listId, listName, onAddWallet }: WalletListC
       </div>
       
       <AddWalletButton onClick={onAddWallet || (() => {})} />
+      
+      <DeleteWalletDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        walletToDelete={walletToDelete}
+        onSuccess={handleDeleteSuccess}
+      />
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog, AddWalletButton } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
-
+import { DeleteWalletListDialog } from "./walletlists/DeleteWalletListDialog";
 import { WalletListContent } from "./walletlists/WalletListContent";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { Plus } from "lucide-react";
@@ -41,6 +41,8 @@ export function WalletTabs() {
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
   const [isCreateListOpen, setIsCreateListOpen] = useState(false);
+  const [isDeleteListOpen, setIsDeleteListOpen] = useState(false);
+  const [listToDelete, setListToDelete] = useState<{ id: number; name: string } | null>(null);
 
   const [activeTab, setActiveTab] = useState<"all-wallets" | number>("all-wallets"); // "all-wallets" ou ID de liste
   const [listContentKey, setListContentKey] = useState(0); // Pour forcer le rechargement du contenu
@@ -54,7 +56,9 @@ export function WalletTabs() {
     reorderWallets,
   } = useWallets();
   
-  const { userLists, loadUserLists } = useWalletLists();
+  const { userLists, loadUserLists, createList, setActiveList, refreshUserLists, loadListItems } = useWalletLists();
+  
+
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
 
@@ -120,23 +124,29 @@ export function WalletTabs() {
     setIsDeleteWalletOpen(true);
   };
 
+  const handleDeleteListClick = (id: number, listName: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Empêcher le clic de sélectionner l'onglet
+    e.preventDefault(); // Empêcher complètement le comportement par défaut
+    setListToDelete({ id, name: listName });
+    setIsDeleteListOpen(true);
+  };
+
   const handleWalletActionSuccess = async () => {
     try {
-      // Forcer un rechargement complet depuis le serveur
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Recharger les wallets
       await initialize({
         privyUserId: privyUser!.id,
         username: privyUser!.twitter?.username || privyUser!.farcaster?.username || privyUser!.github?.username || '',
         privyToken: await getAccessToken() || ''
       });
-      // Si on est sur un onglet de liste, forcer le rechargement du contenu
-      if (activeTab !== "all-wallets") {
-        setListContentKey(prev => prev + 1);
+
+      // Rafraîchir les listes et les items de la liste active si besoin
+      await refreshUserLists();
+      if (typeof activeTab === 'number') {
+        await loadListItems(activeTab);
       }
     } catch (error) {
       console.error('Error reloading wallets:', error);
-      // Forcer un rechargement de la page en cas d'erreur
-      window.location.reload();
     }
   };
 
@@ -161,35 +171,61 @@ export function WalletTabs() {
   };
 
   // Charger les listes au montage
+  // Charger les listes au montage et quand on change d'onglet
   useEffect(() => {
     if (privyUser?.id) {
-      loadUserLists({ limit: 20 });
+      loadUserLists({ limit: 20 }); // Load lists on mount
     }
   }, [privyUser?.id, loadUserLists]);
 
-  // Debug temporaire
-  console.log('WalletTabs userLists:', userLists?.map(l => ({ id: l?.id, name: l?.name })));
+  // Pas besoin de recharger à chaque changement d'onglet - le store gère la sync
+
+
 
   // Gérer le changement d'onglet
   const handleTabChange = (value: string) => {
     if (value === "all-wallets") {
       setActiveTab("all-wallets");
+      // Quand on revient sur all-wallets, ne pas forcer tout de suite; laisser la sélection user
     } else {
       // C'est un ID de liste
       const listId = parseInt(value, 10);
       setActiveTab(listId);
+      
+      // Définir la liste active dans le store
+      setActiveList(listId);
+      
       // Force le rechargement du contenu de la liste pour déclencher la sélection automatique
       setListContentKey(prev => prev + 1);
+      // Ne pas faire de setActiveWallet ici pour éviter les boucles; géré dans WalletListContent
     }
   };
 
   // Gérer le succès de création de liste
-  const handleCreateListSuccess = () => {
-    setIsCreateListOpen(false);
-    loadUserLists({ limit: 20 }); // Recharger les listes
+  const handleCreateListSuccess = async (listData: { name: string; description?: string; isPublic?: boolean }) => {
+    try {
+      const newList = await createList(listData);
+      if (newList) {
+        // Rafraîchir pour s'assurer que les tabs obtiennent l'état le plus récent
+        await refreshUserLists();
+        // Garder l'onglet actuel actif, ne pas changer vers la nouvelle liste
+        setIsCreateListOpen(false);
+      }
+    } catch (error) {
+      console.error('Error creating list:', error);
+    }
   };
 
-
+  const handleListActionSuccess = async () => {
+    try {
+      // Recharger les listes après suppression
+      await loadUserLists({ limit: 20 });
+      // Toujours revenir à "All Wallets" après suppression d'une liste
+      setActiveTab("all-wallets");
+    } catch (error) {
+      console.error('Error reloading lists:', error);
+    }
+  };
 
   // Obtenir les infos de la liste active
   const getActiveListInfo = () => {
@@ -266,7 +302,7 @@ export function WalletTabs() {
       <div className="flex gap-2 items-center">
         <div className="flex items-center gap-2">
           <Tabs 
-            value={activeTab.toString()} 
+            value={activeTab?.toString() || "all-wallets"} 
             onValueChange={handleTabChange}
             className="w-auto"
           >
@@ -284,9 +320,34 @@ export function WalletTabs() {
                 <TabsTrigger 
                   key={`list-${list.id || index}`}
                   value={(list.id || index).toString()}
-                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg text-white font-medium"
+                  className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
                 >
-                  {list.name || 'Unnamed List'}
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium text-white">{list.name || 'Unnamed List'}</span>
+                      <span className="text-xs text-white">
+                        Created: {new Date(list.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          onClick={(e) => handleDeleteListClick(list.id, list.name, e)}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delete this list</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -364,7 +425,6 @@ export function WalletTabs() {
             <WalletListContent 
               key={`list-${getActiveListInfo()!.id}-${listContentKey}`}
               listId={getActiveListInfo()!.id}
-              listName={getActiveListInfo()!.name}
               onAddWallet={() => setIsAddWalletOpen(true)}
             />
           )}
@@ -393,6 +453,12 @@ export function WalletTabs() {
         onSuccess={handleCreateListSuccess}
       />
 
+      <DeleteWalletListDialog
+        isOpen={isDeleteListOpen}
+        onOpenChange={setIsDeleteListOpen}
+        listToDelete={listToDelete}
+        onSuccess={handleListActionSuccess}
+      />
 
     </>
   );

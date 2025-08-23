@@ -109,5 +109,10 @@ export const handleWalletApiError = (error: unknown) => {
     return walletAddMessages.validation.walletLimitExceeded();
   }
   
+  // Vérifier si c'est une erreur de wallet déjà existant
+  if (error && typeof error === 'object' && 'code' in error && error.code === 'WALLET_ALREADY_EXISTS') {
+    return toast.error("This wallet address is already in your list.");
+  }
+  
   return handleApiError(error, 'wallet');
 };

@@ -26,7 +26,11 @@ export const getPublicWalletLists = async (params?: {
   search?: string 
 }): Promise<WalletListResponse> => {
   return withErrorHandling(async () => {
-    const response = await get<WalletListResponse>(`${BASE_URL}/public`, params);
+    const response = await get<WalletListResponse>(
+      `${BASE_URL}/public`, 
+      params,
+      { useCache: false }
+    );
     return response || { data: [] };
   }, 'fetching public wallet lists');
 };
@@ -40,7 +44,11 @@ export const getUserWalletLists = async (params?: {
   search?: string 
 }): Promise<WalletListResponse> => {
   return withErrorHandling(async () => {
-    const response = await get<WalletListResponse>(BASE_URL, params);
+    const response = await get<WalletListResponse>(
+      BASE_URL, 
+      params,
+      { useCache: false }
+    );
     return response || { data: [] };
   }, 'fetching user wallet lists');
 };
@@ -50,7 +58,11 @@ export const getUserWalletLists = async (params?: {
  */
 export const getWalletListById = async (id: number): Promise<WalletList> => {
   return withErrorHandling(async () => {
-    const response = await get<WalletList>(`${BASE_URL}/${id}`);
+    const response = await get<WalletList>(
+      `${BASE_URL}/${id}`,
+      {},
+      { useCache: false }
+    );
     if (!response) {
       throw new Error('Wallet list not found');
     }
@@ -117,10 +129,14 @@ export const getWalletListItems = async (
   params?: { page?: number; limit?: number; search?: string }
 ): Promise<{ data: WalletListItem[]; pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean } }> => {
   return withErrorHandling(async () => {
-          const response = await get<{ data: WalletListItem[]; pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean } }>(
-        `${BASE_URL}/${listId}/items`, 
-        params
-      );
+    const response = await get<{
+      data: WalletListItem[];
+      pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean } 
+    }>(
+      `${BASE_URL}/${listId}/items`, 
+      params,
+      { useCache: false }
+    );
     return response || { data: [] };
   }, 'fetching wallet list items');
 };

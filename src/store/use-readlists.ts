@@ -44,7 +44,7 @@ interface ReadListsState {
   updateReadListItem: (itemId: number, data: UpdateItemData) => Promise<ReadListItem | void>;
   deleteReadListItem: (itemId: number) => Promise<void>;
   toggleReadStatus: (itemId: number, isRead: boolean) => Promise<void>;
-}
+} 
 
 
 

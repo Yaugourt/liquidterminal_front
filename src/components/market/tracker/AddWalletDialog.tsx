@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 
-import { walletAddMessages, handleWalletApiError } from "@/lib/toast-messages";
+import { walletAddMessages } from "@/lib/toast-messages";
 
 interface AddWalletDialogProps {
   isOpen: boolean;
@@ -65,14 +65,8 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
       if (onSuccess) {
         onSuccess();
       }
-    } catch (err: unknown) {
-      // Vérifier si c'est une erreur de limite de wallets
-      if (err instanceof Error && err.message.includes('WALLET_LIMIT_EXCEEDED')) {
-        walletAddMessages.validation.walletLimitExceeded();
-      } else {
-        // Handle other specific error cases with toast
-        handleWalletApiError(err instanceof Error ? err : new Error(String(err)));
-      }
+    } catch {
+      // Les erreurs sont déjà gérées dans le store
     } finally {
       setIsLoading(false);
     }

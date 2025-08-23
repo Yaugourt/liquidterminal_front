@@ -61,7 +61,7 @@ export interface WalletsState {
   reloadWallets: () => Promise<void>;
   addWallet: (address: string, name?: string, walletListId?: number) => Promise<Wallet | void>;
   removeWallet: (id: number) => Promise<void>;
-  setActiveWallet: (id: number) => void;
+  setActiveWallet: (id: number | null) => void;
   reorderWallets: (newOrder: number[]) => void;
   getActiveWallet: () => Wallet | undefined;
 }
@@ -240,6 +240,8 @@ export interface WalletListResponse {
 export interface WalletListsState {
   userLists: WalletList[];
   publicLists: WalletList[];
+  activeListId: number | null;
+  activeListItems: WalletListItem[];
   loading: boolean;
   error: string | null;
   
@@ -252,6 +254,15 @@ export interface WalletListsState {
   deleteList: (id: number) => Promise<void>;
   copyList: (id: number) => Promise<WalletList>;
   
+  // Items management
+  loadListItems: (listId: number) => Promise<void>;
+  addWalletToList: (listId: number, data: CreateWalletListItemInput) => Promise<WalletListItem | void>;
+  removeWalletFromList: (itemId: number) => Promise<void>;
+  setActiveList: (id: number) => void;
+  
   // Utility
   clearError: () => void;
+  refreshUserLists: () => Promise<void>;
+  refreshListItems: (listId: number) => Promise<void>;
+  getListItems: (listId: number) => Promise<WalletListItem[]>;
 }
