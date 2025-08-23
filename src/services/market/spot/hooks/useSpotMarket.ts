@@ -37,7 +37,7 @@ export function useSpotTokens({
           page: response.pagination.page,
           limit: response.pagination.limit,
           totalPages: response.pagination.totalPages,
-          totalVolume: response.pagination.totalVolume
+          totalVolume: response.metadata?.totalVolume || 0
         };
       } else {
         // Mode STRICT : tout récupérer, filtrer, paginer localement
@@ -57,7 +57,7 @@ export function useSpotTokens({
           page,
           limit,
           totalPages: Math.ceil(filteredData.length / limit),
-          totalVolume: response.pagination.totalVolume
+          totalVolume: response.metadata?.totalVolume || 0
         };
       }
     },
