@@ -24,8 +24,8 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
   
   const { addWallet, wallets } = useWallets();
   
-  // Vérifier si l'utilisateur a atteint la limite de 5 wallets
-  const hasReachedWalletLimit = wallets.length >= 5;
+  // Vérifier si l'utilisateur a atteint la limite de 25 wallets au total
+  const hasReachedWalletLimit = wallets.length >= 25;
 
   
   const handleAddWallet = async () => {
@@ -81,10 +81,10 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           </DialogTitle>
           <DialogDescription className="text-white">
             {hasReachedWalletLimit 
-              ? `You have reached the limit of 5 wallets. Remove an existing wallet to add a new one.`
+              ? `You have reached the limit of 25 wallets. Remove an existing wallet to add a new one.`
               : walletListName 
                 ? `Enter a wallet address to add it directly to the "${walletListName}" list.`
-                : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/5 wallets)`
+                : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/25 wallets)`
             }
           </DialogDescription>
         </DialogHeader>

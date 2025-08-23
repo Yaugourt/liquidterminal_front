@@ -32,7 +32,7 @@ export const handleAxiosError = (error: unknown, context: string): StandardError
       if (responseData.code === 'WALLET_LIMIT_EXCEEDED') {
         return {
           success: false,
-          message: responseData.message || 'Maximum number of wallets reached (5 wallets per user)',
+          message: responseData.message || 'Maximum number of wallets reached (25 wallets per user)',
           code: 'WALLET_LIMIT_EXCEEDED',
           response: {
             status: axiosError.response.status,

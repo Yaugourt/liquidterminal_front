@@ -25,8 +25,8 @@ export const walletAddMessages = {
     invalidFormat: () => 
       toast.error("Invalid address format. Must start with 0x and contain 42 characters."),
     
-    walletLimitExceeded: () => 
-      toast.error("Maximum number of wallets reached (5 wallets per user). Please remove an existing wallet to add a new one.")
+      walletLimitExceeded: () =>
+    toast.error("Maximum number of wallets reached (25 wallets per user). Please remove an existing wallet to add a new one.")
   }
 };
 

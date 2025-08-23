@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Users, Lock } from "lucide-react";
 
 import { toast } from "sonner";
+import { useWalletLists } from "@/store/use-wallet-lists";
 
 interface CreateWalletListDialogProps {
   isOpen: boolean;
@@ -28,6 +29,10 @@ export function CreateWalletListDialog({
   onOpenChange, 
   onSuccess 
 }: CreateWalletListDialogProps) {
+  const { userLists } = useWalletLists();
+  
+  // Vérifier si l'utilisateur a atteint la limite de 5 listes
+  const hasReachedListLimit = userLists.length >= 5;
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
@@ -41,6 +46,12 @@ export function CreateWalletListDialog({
 
     if (name.trim().length < 3) {
       toast.error("List name must be at least 3 characters");
+      return;
+    }
+
+    // Vérifier la limite de listes avant de créer
+    if (hasReachedListLimit) {
+      toast.error("Maximum number of lists reached (5 lists per user). Please remove an existing list to create a new one.");
       return;
     }
 
@@ -76,7 +87,10 @@ export function CreateWalletListDialog({
         <DialogHeader>
           <DialogTitle>Create Wallet List</DialogTitle>
           <DialogDescription className="text-white">
-            Create a new list to organize and track interesting wallets
+            {hasReachedListLimit 
+              ? `You have reached the limit of 5 lists. Remove an existing list to create a new one.`
+              : `Create a new list to organize and track interesting wallets (${userLists.length}/5 lists)`
+            }
           </DialogDescription>
         </DialogHeader>
         
@@ -143,7 +157,7 @@ export function CreateWalletListDialog({
           </Button>
           <Button 
             onClick={handleCreateList}
-            disabled={isLoading || !name.trim()}
+            disabled={isLoading || !name.trim() || hasReachedListLimit}
             className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90 disabled:opacity-50"
           >
             {isLoading ? "Creating..." : "Create List"}
