@@ -56,7 +56,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
   }
 
   if (!walletAddress) {
-    return <ErrorCard message="Veuillez sélectionner un wallet pour voir vos assets" />;
+    return <ErrorCard message="Please select a wallet to view your assets" />;
   }
 
   if (error) {
