@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
 import { 
@@ -31,7 +31,7 @@ TableHeaderCell.displayName = 'TableHeaderCell';
 // Composant pour l'état vide
 const EmptyState = memo(() => (
     <TableRow>
-        <TableCell colSpan={3} className="text-center py-8">
+        <TableCell colSpan={4} className="text-center py-8">
             <div className="flex flex-col items-center justify-center">
                 <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
                 <p className="text-white text-lg">Aucun token disponible</p>
@@ -54,19 +54,27 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
         </TableCell>
         <TableCell className="py-2 pl-4">
             <div className="text-white text-sm">
-                {type === "spot"
-                    ? formatNumber(token.price, format, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 4,
-                        currency: '$',
-                        showCurrency: true
-                    })
-                    : formatNumber(token.price, format, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 3,
-                        currency: '$',
-                        showCurrency: true
-                    })}
+                {token.price >= 1000000 
+                    ? formatLargeNumber(token.price, { prefix: '$', decimals: 2, forceDecimals: true })
+                    : type === "spot"
+                        ? formatNumber(token.price, format, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 4,
+                            currency: '$',
+                            showCurrency: true
+                        })
+                        : formatNumber(token.price, format, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 3,
+                            currency: '$',
+                            showCurrency: true
+                        })
+                }
+            </div>
+        </TableCell>
+        <TableCell className="py-2 pl-4">
+            <div className="text-white text-sm">
+                {formatLargeNumber(token.volume, { prefix: '$', decimals: 1, forceDecimals: true })}
             </div>
         </TableCell>
         <TableCell className="py-2 pl-4 pr-4">
@@ -113,7 +121,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 label="Name"
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[35%]"
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[30%]"
                             />
                             <TableHeaderCell
                                 label="Price"
@@ -122,10 +130,16 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]"
                             />
                             <TableHeaderCell
+                                label="Volume"
+                                onClick={handleSort("volume")}
+                                isActive={activeSort === "volume"}
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[25%]"
+                            />
+                            <TableHeaderCell
                                 label="24h"
                                 onClick={handleSort("change24h")}
                                 isActive={activeSort === "change24h"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]"
+                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[15%]"
                             />
                         </TableRow>
                     </TableHeader>
