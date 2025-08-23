@@ -113,7 +113,7 @@ export function DistributionSection() {
     return (
       <div className="absolute inset-0 p-4 pt-12">
         <div className="flex justify-center items-center h-full">
-          <p className="text-[#FFFFFF80]">Aucun asset spot disponible</p>
+          <p className="text-[#FFFFFF80]">No spot assets available</p>
         </div>
       </div>
     );

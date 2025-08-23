@@ -51,7 +51,7 @@ export function DataTable<T>({
   columns,
   isLoading,
   error,
-  emptyMessage = "Aucune donnée disponible",
+          emptyMessage = "No data available",
   total = 0,
   page = 0,
   rowsPerPage = 5,

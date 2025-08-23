@@ -143,7 +143,7 @@ export function PerformanceSection() {
           </div>
         ) : chartData.data.length === 0 ? (
           <div className="flex justify-center items-center h-full">
-            <p className="text-[#FFFFFF80]">Aucune donnée disponible</p>
+            <p className="text-[#FFFFFF80]">No data available</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
