@@ -26,7 +26,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
   };
 
   return (
-    <div className="mb-4 p-2">
+    <div className="mb-3 p-2">
       <div className="flex items-center gap-3 mb-1">
         <span className="text-[#FFFFFF] text-xs tracking-wide font-medium uppercase">Address</span>
         {alias && !aliasLoading && (
@@ -46,10 +46,10 @@ export function AddressHeader({ address }: AddressHeaderProps) {
       </div>
       <div className="flex items-center gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <div className="hidden sm:block">
-                      <code className="text-[#83E9FF] text-lg font-medium font-inter">{address}</code>
+                      <code className="text-[#83E9FF] text-base font-medium font-inter">{address}</code>
         </div>
         <div className="sm:hidden">
-                      <code className="text-[#83E9FF] text-base font-medium font-inter">{formatAddress(address)}</code>
+                      <code className="text-[#83E9FF] text-sm font-medium font-inter">{formatAddress(address)}</code>
         </div>
         <TooltipProvider>
           <Tooltip open={showCopied}>
