@@ -249,7 +249,7 @@ export default function TokenPage() {
 
 // Composant HoldersSection
 function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {
-    const { holders, isLoading, error } = useTokenHolders(tokenName);
+    const { holders, isLoading, error, stakedHolders } = useTokenHolders(tokenName);
     const { data: tokenDetails } = useTokenDetails(token.tokenId || null); // Pour récupérer maxSupply
 
     return (
@@ -261,6 +261,7 @@ function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; t
                 tokenName={tokenName}
                 tokenPrice={tokenPrice}
                 maxSupply={tokenDetails?.maxSupply ? parseFloat(tokenDetails.maxSupply) : undefined}
+                stakedHolders={stakedHolders}
             />
         </div>
     );

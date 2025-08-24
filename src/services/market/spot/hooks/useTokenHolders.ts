@@ -40,6 +40,7 @@ export function useTokenHolders(tokenName: string) {
     holdersCount: totalHoldersCount,
     lastUpdate: Math.max(normalHolders?.lastUpdate || 0, stakedHolders?.lastUpdate || 0),
     token: normalHolders?.token || tokenName,
+    stakedHolders: stakedHolders?.holders || {},
     isLoading: isLoadingNormal || isLoadingStaked,
     error: errorNormal || errorStaked,
     refetch: () => {

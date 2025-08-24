@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, Database, Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { useGlobalAliases } from "@/services/explorer";
 import {
   Table,
   TableBody,
@@ -23,6 +24,7 @@ interface HoldersTableProps {
   tokenName: string;
   tokenPrice?: number; // Prix du token pour calculer la valeur
   maxSupply?: number; // Max supply pour calculer le pourcentage
+  stakedHolders?: Record<string, number>; // Holders stakés pour identifier les adresses stakées
 }
 
 const formatAddress = (address: string) => {
@@ -36,8 +38,9 @@ const formatPercentage = (amount: number, totalSupply: number, format: NumberFor
   return `${formatNumber(percentage, format, { maximumFractionDigits: 2 })}%`;
 };
 
-export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSupply }: HoldersTableProps) => {
+export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSupply, stakedHolders }: HoldersTableProps) => {
   const { format } = useNumberFormat();
+  const { getAlias } = useGlobalAliases();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -117,6 +120,11 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSu
                         >
                           {formatAddress(holder.address)}
                         </Link>
+                        {getAlias(holder.address) && (
+                          <span className="text-gray-400 text-xs ml-1">
+                            ({getAlias(holder.address)})
+                          </span>
+                        )}
                         <button 
                           onClick={() => copyToClipboard(holder.address)}
                           className="group p-1 rounded transition-colors"
@@ -131,7 +139,14 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSu
                     </div>
                   </TableCell>
                   <TableCell className="py-3 px-3 w-[120px] text-white text-sm text-left">
-                    {formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}
+                    <div className="flex items-center gap-1">
+                      <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
+                      {stakedHolders && stakedHolders[holder.address] && (
+                        <span className="text-[#f9e370] text-xs">
+                          (staked)
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="py-3 px-3 w-[120px] text-white text-sm text-left">
                     {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
