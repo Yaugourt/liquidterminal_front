@@ -137,7 +137,7 @@ export function TransfersDeployTable() {
                     <div className="flex flex-col items-center justify-center text-center">
                       <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
                       <p className="text-white text-sm mb-1">Aucun transfer disponible</p>
-                      <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                      <p className="text-[#FFFFFF80] text-xs">Come later</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -239,7 +239,7 @@ export function TransfersDeployTable() {
                     <div className="flex flex-col items-center justify-center text-center">
                       <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
                       <p className="text-white text-sm mb-1">Aucun deploy disponible</p>
-                      <p className="text-[#FFFFFF80] text-xs">Revenez plus tard</p>
+                      <p className="text-[#FFFFFF80] text-xs">Come later</p>
                     </div>
                   </TableCell>
                 </TableRow>

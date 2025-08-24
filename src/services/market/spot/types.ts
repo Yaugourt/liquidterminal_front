@@ -42,4 +42,19 @@ export interface SpotMarketResponse {
   totalVolume: number;
   hasNext: boolean;
   hasPrevious: boolean;
+}
+
+// Types pour les holders
+export interface TokenHolders {
+  token: string;
+  lastUpdate: number;
+  holders: Record<string, number>;
+  holdersCount: number;
+}
+
+export interface TokenHoldersResponse {
+  token: string;
+  lastUpdate: number;
+  holders: Record<string, number>;
+  holdersCount: number;
 } 

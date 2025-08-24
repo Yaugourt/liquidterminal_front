@@ -11,6 +11,10 @@ import { Sidebar } from "@/components/Sidebar";
 import { SearchBar } from "@/components/SearchBar";
 import { Menu } from "lucide-react";
 import { TokenCard, TokenData, TradingViewChart, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
+import { HoldersTable } from "@/components/market/token/HoldersTable";
+import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
+import { useTokenDetails } from "@/services/market/token";
 
 export default function TokenPage() {
     const { setTitle } = usePageTitle();
@@ -22,6 +26,7 @@ export default function TokenPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<'twap' | 'holders'>('twap');
 
     useEffect(() => {
         setTitle(`${tokenName} - Market`);
@@ -171,6 +176,34 @@ export default function TokenPage() {
                                 tokenName={token.name} // Pass token name for special cases like PURR
                                 className="h-[450px]"
                             />
+                            
+                            {/* Tabs dans l'espace vide */}
+                            <div className="mt-4">
+                                <div className="flex justify-start items-center">
+                                    <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 w-fit">
+                                        <button 
+                                            onClick={() => setActiveTab('twap')}
+                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                                activeTab === 'twap'
+                                                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                                                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                            }`}
+                                        >
+                                            TWAP
+                                        </button>
+                                        <button 
+                                            onClick={() => setActiveTab('holders')}
+                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                                                activeTab === 'holders'
+                                                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                                                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                            }`}
+                                        >
+                                            Holders
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         {/* Order Book - Fixed height */}
@@ -201,8 +234,34 @@ export default function TokenPage() {
                             />
                         </div>
                     </div>
+
+                    {/* TWAP or Holders Table */}
+                    {activeTab === 'twap' ? (
+                        <TokenTwapSection tokenName={token.name} />
+                    ) : (
+                        <HoldersSection tokenName={token.name} tokenPrice={token.price} token={token} />
+                    )}
                 </main>
             </div>
+        </div>
+    );
+}
+
+// Composant HoldersSection
+function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {
+    const { holders, isLoading, error } = useTokenHolders(tokenName);
+    const { data: tokenDetails } = useTokenDetails(token.tokenId || null); // Pour récupérer maxSupply
+
+    return (
+        <div className="w-full">
+            <HoldersTable
+                holders={holders}
+                isLoading={isLoading}
+                error={error}
+                tokenName={tokenName}
+                tokenPrice={tokenPrice}
+                maxSupply={tokenDetails?.maxSupply ? parseFloat(tokenDetails.maxSupply) : undefined}
+            />
         </div>
     );
 }

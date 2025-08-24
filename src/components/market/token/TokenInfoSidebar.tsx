@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { useTokenDetails } from "@/services/market/token";
 import { useTokenAuction } from "@/services/market/auction/hooks/useAuctions";
+import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { TokenData } from "./types";
@@ -42,6 +43,9 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
   
   // Get auction info using token name from tokenDetails
   const { auctionInfo, isLoading: isAuctionLoading } = useTokenAuction(tokenDetails?.name || null);
+  
+  // Get holders info
+  const { holdersCount, isLoading: isHoldersLoading } = useTokenHolders(token.name);
 
   // Copy to clipboard function
   const copyToClipboard = async (text: string) => {
@@ -89,6 +93,13 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
             <span className="text-gray-400 text-xs">Deploy gas</span>
             <span className="text-white text-xs font-medium text-right">
               {isAuctionLoading ? "Loading..." : auctionInfo ? `${formatNumber(parseFloat(auctionInfo.deployGas), format, { maximumFractionDigits: 2 })} ${auctionInfo.currency}` : "N/A"}
+            </span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-gray-400 text-xs">Holders</span>
+            <span className="text-white text-xs font-medium text-right">
+              {isHoldersLoading ? "Loading..." : formatNumber(holdersCount, format, { maximumFractionDigits: 0 })}
             </span>
           </div>
         </div>

@@ -1,7 +1,8 @@
-import { SpotGlobalStats, SpotToken } from './types';
+import { SpotGlobalStats, SpotToken, TokenHoldersResponse } from './types';
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse } from '../../common';
+import { buildHypurrscanUrl } from '../../api/constants';
 
 /**
  * Récupère les statistiques globales du marché spot
@@ -55,4 +56,24 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
       // Silent error handling
       return null;
   }
+};
+
+/**
+ * Récupère les holders d'un token spécifique
+ */
+export const fetchTokenHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
+  return withErrorHandling(async () => {
+    const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/${tokenName}`;
+    return await get<TokenHoldersResponse>(url);
+  }, 'fetching token holders');
+};
+
+/**
+ * Récupère les holders stakés (stakedHYPE)
+ */
+export const fetchStakedHolders = async (): Promise<TokenHoldersResponse> => {
+  return withErrorHandling(async () => {
+    const url = buildHypurrscanUrl('HYPURRSCAN_STAKED_HOLDERS');
+    return await get<TokenHoldersResponse>(url);
+  }, 'fetching staked holders');
 }; 

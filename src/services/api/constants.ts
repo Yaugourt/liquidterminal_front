@@ -30,6 +30,8 @@ export const ENDPOINTS = {
   HYPURRSCAN_TRANSFERS: '/transfers',
   HYPURRSCAN_DEPLOYS: '/deploys',
   HYPURRSCAN_TWAP: '/twap/*',
+  HYPURRSCAN_HOLDERS: '/holders',
+  HYPURRSCAN_STAKED_HOLDERS: '/holders/stakedHYPE',
   
   // LlamaFi endpoints
   LLAMA_FI_HYPERLIQUID_BRIDGE: '/protocol/hyperliquid-bridge',
