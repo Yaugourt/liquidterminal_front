@@ -116,7 +116,7 @@ export function processUserTransactions(
                 from: addresses.from,
                 to: addresses.to,
                 amount,
-                token: order?.a?.toString() || tx.action.token || "unknown",
+                token: order?.a?.toString() || (tx.action.token?.includes(':') ? tx.action.token.split(':')[0] : tx.action.token) || "unknown",
                 price: displayPrice,
                 time: tx.time,
                 isShort: isShort || false,
