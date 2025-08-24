@@ -31,6 +31,7 @@ import { SpotToken as SpotTokenService } from "@/services/market/spot/types";
 interface TokenTableProps extends BaseTableProps {
   market: 'spot' | 'perp';
   strict?: boolean; // Only for spot market
+  searchQuery?: string;
 }
 
 interface TableHeaderCellProps {
@@ -162,7 +163,7 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
 
 PerpTokenRow.displayName = 'PerpTokenRow';
 
-export function TokenTable({ market, strict = false }: TokenTableProps) {
+export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTableProps) {
   const router = useRouter();
   const [sortField, setSortField] = useState<SpotSortableFields | PerpSortableFields>(
     market === 'spot' ? "volume" : "volume"
@@ -172,7 +173,11 @@ export function TokenTable({ market, strict = false }: TokenTableProps) {
   const [page, setPage] = useState(1);
   const { format } = useNumberFormat();
 
-  // Toujours appeler les hooks, mais ignorer les résultats non pertinents
+  // Récupérer tous les tokens pour la recherche
+  const { data: allSpotTokens } = useSpotTokens({ limit: 1000, strict });
+  const { data: allPerpMarkets } = usePerpMarkets({ limit: 1000 });
+
+  // Récupérer les tokens paginés pour l'affichage
   const spotResult = useSpotTokens({
     limit: pageSize,
     page,
@@ -191,12 +196,13 @@ export function TokenTable({ market, strict = false }: TokenTableProps) {
 
   // Sélectionner les bonnes données selon le marché
   const rawTokens = market === 'spot' ? spotResult.data : perpResult.data;
+  const allTokens = market === 'spot' ? allSpotTokens : allPerpMarkets;
   const total = market === 'spot' ? spotResult.total : perpResult.total;
   const isLoading = market === 'spot' ? spotResult.isLoading : perpResult.isLoading;
   const currentPage = market === 'spot' ? page : perpResult.page;
 
-  // Dédupliquer les tokens basé sur la clé unique
-  const tokens = rawTokens.filter((token, index, self) => {
+  // Dédupliquer tous les tokens basé sur la clé unique
+  const uniqueAllTokens = allTokens?.filter((token, index, self) => {
     const key = market === 'spot' 
       ? `${market}-${token.name}-${(token as SpotTokenService).tokenId}`
       : `${market}-${token.name}-${(token as PerpMarketData).index}`;
@@ -207,7 +213,15 @@ export function TokenTable({ market, strict = false }: TokenTableProps) {
         : `${market}-${t.name}-${(t as PerpMarketData).index}`;
       return tKey === key;
     }) === index;
-  });
+  }) || [];
+
+  // Filtrer tous les tokens par recherche
+  const filteredTokens = uniqueAllTokens.filter(token => 
+    token.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Si il y a une recherche, utiliser les tokens filtrés, sinon utiliser les tokens paginés
+  const tokens = searchQuery ? filteredTokens : rawTokens;
 
 
 

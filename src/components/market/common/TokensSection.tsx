@@ -11,18 +11,22 @@ interface TokensSectionProps {
 
 export function TokensSection({ market }: TokensSectionProps) {
   const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div>
       <TokenTabs 
         market={market}
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={setActiveTab}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
       
       <TokenTable 
         market={market}
-        strict={market === 'spot' ? activeTab === "strict" : false} 
+        strict={market === 'spot' ? activeTab === "strict" : false}
+        searchQuery={searchQuery}
       />
     </div>
   );
