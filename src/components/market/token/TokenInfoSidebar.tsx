@@ -56,55 +56,55 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
 
   return (
     <Card className={`bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] ${className}`}>
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         {/* Token Header */}
         <div className="text-center space-y-2">
           <p className="text-gray-400 text-xs">Token details and supply information</p>
         </div>
 
         {/* Token Stats */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-gray-400 text-xs">Max supply</span>
-            <span className="text-white text-xs font-medium">
+            <span className="text-white text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.maxSupply, format) : "N/A"}
             </span>
           </div>
           
           <div className="flex justify-between items-center">
             <span className="text-gray-400 text-xs">Total supply</span>
-            <span className="text-white text-xs font-medium">
+            <span className="text-white text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.totalSupply, format) : "N/A"}
             </span>
           </div>
           
           <div className="flex justify-between items-center">
-            <span className="text-gray-400 text-xs">Circulating supply</span>
-            <span className="text-white text-xs font-medium">
+            <span className="text-gray-400 text-xs">Circulating</span>
+            <span className="text-white text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.circulatingSupply, format) : "N/A"}
             </span>
           </div>
           
           <div className="flex justify-between items-center">
             <span className="text-gray-400 text-xs">Deploy gas</span>
-            <span className="text-white text-xs font-medium">
+            <span className="text-white text-xs font-medium text-right">
               {isAuctionLoading ? "Loading..." : auctionInfo ? `${formatNumber(parseFloat(auctionInfo.deployGas), format, { maximumFractionDigits: 2 })} ${auctionInfo.currency}` : "N/A"}
             </span>
           </div>
         </div>
 
         {/* Addresses */}
-        <div className="space-y-3 border-t border-[#83E9FF33] pt-4">
+        <div className="space-y-2 border-t border-[#83E9FF33] pt-3">
           <div>
             <span className="text-gray-400 text-xs block mb-1">Deployer</span>
             <div className="flex items-center justify-between">
-              <span className="text-[#83E9FF] text-xs">
+              <span className="text-[#83E9FF] text-xs flex-1 truncate mr-1">
                 {isLoading ? "Loading..." : tokenDetails ? truncateAddress(tokenDetails.deployer) : "N/A"}
               </span>
               {tokenDetails?.deployer && (
                 <button 
                   onClick={() => copyToClipboard(tokenDetails.deployer)}
-                  className="group p-1 rounded transition-colors"
+                  className="group p-1 rounded transition-colors flex-shrink-0"
                 >
                   {copiedAddress === tokenDetails.deployer ? (
                     <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
@@ -119,13 +119,13 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           <div>
             <span className="text-gray-400 text-xs block mb-1">Token address</span>
             <div className="flex items-center justify-between">
-              <span className="text-[#83E9FF] text-xs">
+              <span className="text-[#83E9FF] text-xs flex-1 truncate mr-1">
                 {token.contract ? truncateAddress(token.contract) : "N/A"}
               </span>
               {token.contract && (
                 <button 
                   onClick={() => copyToClipboard(token.contract!)}
-                  className="group p-1 rounded transition-colors"
+                  className="group p-1 rounded transition-colors flex-shrink-0"
                 >
                   {copiedAddress === token.contract ? (
                     <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />

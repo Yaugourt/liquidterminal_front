@@ -1,4 +1,4 @@
-import { useState, useMemo, memo } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
 import { Card } from '@/components/ui/card';
 import {
@@ -14,6 +14,7 @@ import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
+import { Pagination } from '@/components/common';
 
 interface AuctionTableProps {
   marketType: "spot" | "perp";
@@ -74,10 +75,28 @@ const columns = [
 const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
 export function AuctionTable({ marketType }: AuctionTableProps) {
-  const { auctions, isLoading, error } = useAuctions({ currency: 'ALL', limit: 100 });
-  const [sortField, setSortField] = useState('time');
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [sortField, setSortField] = useState<'time' | 'gasHype' | 'gasUsdc'>('time');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const { 
+    auctions, 
+    total, 
+    page: currentPage, 
+    isLoading, 
+    error,
+    updateParams 
+  } = useAuctions({ 
+    currency: 'ALL', 
+    limit: pageSize,
+    defaultParams: {
+      page,
+      sortBy: sortField === 'time' ? 'time' : 'deployGas',
+      sortOrder
+    }
+  });
 
   const { format: dateFormat } = useDateFormat();
 
@@ -89,43 +108,42 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
     } catch {}
   };
 
-  // Tri local
-  const sortedAuctions = useMemo(() => {
-    return [...auctions].sort((a, b) => {
-      let aValue: number | string, bValue: number | string;
-      switch (sortField) {
-        case 'time':
-          aValue = a.time;
-          bValue = b.time;
-          break;
-        case 'gasHype':
-          aValue = a.currency === 'HYPE' ? parseFloat(a.deployGas) : 0;
-          bValue = b.currency === 'HYPE' ? parseFloat(b.deployGas) : 0;
-          break;
-        case 'gasUsdc':
-          aValue = a.currency === 'USDC' ? parseFloat(a.deployGas) : 0;
-          bValue = b.currency === 'USDC' ? parseFloat(b.deployGas) : 0;
-          break;
-        default:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          aValue = (a as any)[sortField] || 0;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          bValue = (b as any)[sortField] || 0;
-      }
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [auctions, sortField, sortOrder]);
 
-  const handleSort = (field: string) => {
+
+  const handleSort = useCallback((field: string) => {
+    // Map column keys to API sort fields
+    const sortFieldMap: Record<string, 'time' | 'deployGas'> = {
+      'time': 'time',
+      'gasHype': 'deployGas',
+      'gasUsdc': 'deployGas'
+    };
+    
+    const apiSortField = sortFieldMap[field];
+    if (!apiSortField) return;
+    
     if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+      setSortOrder(newOrder);
+      updateParams({ sortBy: apiSortField, sortOrder: newOrder, page: 1 });
+      setPage(1);
     } else {
-      setSortField(field);
+      setSortField(field as 'time' | 'gasHype' | 'gasUsdc');
       setSortOrder('desc');
+      updateParams({ sortBy: apiSortField, sortOrder: 'desc', page: 1 });
+      setPage(1);
     }
-  };
+  }, [sortField, sortOrder, updateParams]);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage + 1);
+    updateParams({ page: newPage + 1 });
+  }, [updateParams]);
+
+  const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
+    setPageSize(newRowsPerPage);
+    setPage(1);
+    updateParams({ limit: newRowsPerPage, page: 1 });
+  }, [updateParams]);
 
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
@@ -182,10 +200,10 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody className="bg-[#051728]">
-            {sortedAuctions.length === 0 ? (
+            {auctions.length === 0 ? (
               <EmptyState />
             ) : (
-              sortedAuctions.map((auction) => (
+              auctions.map((auction) => (
                 <TableRow key={auction.tokenId} className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer">
                   <TableCell className="py-2 pl-4 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">{auction.name}</TableCell>
@@ -209,6 +227,18 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
             )}
           </TableBody>
         </Table>
+      </div>
+      
+      {/* Pagination intégrée */}
+      <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
+        <Pagination
+          total={total}
+          page={currentPage - 1}
+          rowsPerPage={pageSize}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          rowsPerPageOptions={[5, 10, 15, 20]}
+        />
       </div>
     </Card>
   );

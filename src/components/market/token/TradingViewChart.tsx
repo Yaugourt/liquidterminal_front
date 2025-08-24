@@ -139,13 +139,35 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       }
     };
 
+    // ResizeObserver pour détecter les changements de taille du conteneur
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       chart.remove();
     };
   }, [symbol]);
+
+  // Force resize when component mounts to ensure chart takes full width
+  useEffect(() => {
+    if (chartRef.current && containerRef.current) {
+      setTimeout(() => {
+        chartRef.current?.applyOptions({
+          width: containerRef.current?.clientWidth || 0,
+          height: containerRef.current?.clientHeight || 0,
+        });
+      }, 100);
+    }
+  }, []);
 
   // Update chart data when candles change
   useEffect(() => {

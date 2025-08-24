@@ -148,7 +148,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
                     const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
                     
                     return (
-                      <div key={`bid-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-[#83E9FF10] py-1 rounded relative">
+                      <div key={`bid-${index}`} className="grid grid-cols-3 gap-1 text-xs hover:bg-[#83E9FF10] py-0.5 rounded relative">
                         <div 
                           className="absolute inset-0 bg-green-500/25 rounded"
                           style={{ 

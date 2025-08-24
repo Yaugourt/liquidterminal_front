@@ -25,7 +25,8 @@ import {
   SpotSortableFields, 
   BaseTableProps, 
 } from "./types";
-import { PerpSortableFields } from "@/services/market/perp/types";
+import { PerpSortableFields, PerpMarketData } from "@/services/market/perp/types";
+import { SpotToken as SpotTokenService } from "@/services/market/spot/types";
 
 interface TokenTableProps extends BaseTableProps {
   market: 'spot' | 'perp';
@@ -76,33 +77,33 @@ const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onCli
     className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
     onClick={onClick}
   >
-    <TableCell className="py-2 pl-4">
+    <TableCell className="py-4 pl-4">
       <div className="flex items-center gap-2">
         <TokenIcon src={token.logo} name={token.name} size="sm" />
         <span className="text-white text-sm">{token.name}</span>
       </div>
     </TableCell>
-    <TableCell className="py-2 pl-0 w-[10%]">
+    <TableCell className="py-4 pl-0 w-[10%]">
       <div className="text-white text-sm">
         {formatPrice(token.price, format)}
       </div>
     </TableCell>
-    <TableCell className="py-2 pl-4 pr-10 w-[10%]">
+    <TableCell className="py-4 pl-4 pr-10 w-[10%]">
       <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
         {formatPriceChange(token.change24h)}
       </div>
     </TableCell>
-    <TableCell className="py-2 pl-0 pr-2 w-[12%]">
+    <TableCell className="py-4 pl-0 pr-2 w-[12%]">
       <div className="text-white text-sm">
         ${formatNumber(token.volume, format)}
       </div>
     </TableCell>
-    <TableCell className="py-2 pl-10 pr-10 w-[20%]">
+    <TableCell className="py-4 pl-10 pr-10 w-[20%]">
       <div className="text-white text-sm">
         ${formatNumber(token.marketCap, format)}
       </div>
     </TableCell>
-    <TableCell className="py-2 pl-0 w-[12%]">
+    <TableCell className="py-4 pl-0 w-[12%]">
       <div className="text-white text-sm">
         {formatMetricValue(token.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </div>
@@ -124,33 +125,33 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
       className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
       onClick={onClick}
     >
-      <TableCell className="py-2 pl-4 w-[17%]">
+      <TableCell className="py-4 pl-4 w-[17%]">
         <div className="flex items-center gap-2">
           <TokenIcon src={token.logo} name={token.name} size="sm" />
           <span className="text-white text-sm">{token.name}</span>
         </div>
       </TableCell>
-      <TableCell className="py-2 pl-0 pr-8 w-[10%]">
+      <TableCell className="py-4 pl-0 pr-8 w-[10%]">
         <div className="text-white text-sm">
           {formatPrice(token.price, format)}
         </div>
       </TableCell>
-      <TableCell className="py-2 pl-4 pr-20 w-[10%]">
+      <TableCell className="py-4 pl-4 pr-20 w-[10%]">
         <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
           {formatPriceChange(token.change24h)}
         </div>
       </TableCell>
-      <TableCell className="py-2 pl-0 w-[20%]">
+      <TableCell className="py-4 pl-0 w-[20%]">
         <div className="text-white text-sm">
           ${formatNumber(token.volume, format)}
         </div>
       </TableCell>
-      <TableCell className="py-2 pl-4 pr-12 w-[20%]">
+      <TableCell className="py-4 pl-4 pr-12 w-[20%]">
         <div className="text-white text-sm">
           ${formatNumber(token.openInterest, format)}
         </div>
       </TableCell>
-      <TableCell className="py-2 pr-0 w-[11%]">
+      <TableCell className="py-4 pr-0 w-[11%]">
         <div className="text-sm" style={{color: token.funding >= 0 ? '#52C41A' : '#FF4D4F'}}>
           {formatFunding(token.funding)}
         </div>
@@ -189,10 +190,26 @@ export function TokenTable({ market, strict = false }: TokenTableProps) {
   });
 
   // Sélectionner les bonnes données selon le marché
-  const tokens = market === 'spot' ? spotResult.data : perpResult.data;
+  const rawTokens = market === 'spot' ? spotResult.data : perpResult.data;
   const total = market === 'spot' ? spotResult.total : perpResult.total;
   const isLoading = market === 'spot' ? spotResult.isLoading : perpResult.isLoading;
   const currentPage = market === 'spot' ? page : perpResult.page;
+
+  // Dédupliquer les tokens basé sur la clé unique
+  const tokens = rawTokens.filter((token, index, self) => {
+    const key = market === 'spot' 
+      ? `${market}-${token.name}-${(token as SpotTokenService).tokenId}`
+      : `${market}-${token.name}-${(token as PerpMarketData).index}`;
+    
+    return self.findIndex(t => {
+      const tKey = market === 'spot' 
+        ? `${market}-${t.name}-${(t as SpotTokenService).tokenId}`
+        : `${market}-${t.name}-${(t as PerpMarketData).index}`;
+      return tKey === key;
+    }) === index;
+  });
+
+
 
   const handlePageChange = (newPage: number) => {
     if (market === 'spot') {
@@ -324,14 +341,14 @@ export function TokenTable({ market, strict = false }: TokenTableProps) {
               tokens.map((token) => (
                 market === 'spot' ? (
                   <SpotTokenRow
-                    key={token.name}
+                    key={`${market}-${token.name}-${(token as SpotTokenService).tokenId}`}
                     token={token as SpotToken}
                     onClick={() => handleTokenClick(token.name)}
                     format={format}
                   />
                 ) : (
                   <PerpTokenRow
-                    key={token.name}
+                    key={`${market}-${token.name}-${(token as PerpMarketData).index}`}
                     token={token as PerpToken}
                     onClick={() => handleTokenClick(token.name)}
                     format={format}

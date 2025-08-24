@@ -164,7 +164,7 @@ export default function TokenPage() {
                     {/* Trading Interface Layout */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                         {/* Chart - Fixed height */}
-                        <div className="lg:col-span-6">
+                        <div className="lg:col-span-7">
                             <TradingViewChart 
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for API
@@ -184,7 +184,7 @@ export default function TokenPage() {
                         </div>
                         
                         {/* Token Info Sidebar - Adapts to available space */}
-                        <div className="lg:col-span-3">
+                        <div className="lg:col-span-2">
                             <TokenInfoSidebar 
                                 token={{
                                     symbol: `${token.name}/USDC`,
