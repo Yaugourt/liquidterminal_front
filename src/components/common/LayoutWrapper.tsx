@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ClosedBetaGuard } from "./ClosedBetaGuard";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -16,10 +15,8 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   }
 
   return (
-    <ClosedBetaGuard>
-      <div className="lg:pl-[220px] relative">
-        {children}
-      </div>
-    </ClosedBetaGuard>
+    <div className="lg:pl-[220px] relative">
+      {children}
+    </div>
   );
 } 

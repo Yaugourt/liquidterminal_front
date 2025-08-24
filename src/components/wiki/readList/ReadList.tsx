@@ -57,11 +57,25 @@ const useReadListInitialization = () => {
 };
 
 // Simple state components
-const AuthRequired = () => (
-  <div className="flex items-center justify-center h-96">
-    <div className="text-center">
-      <h3 className="text-white text-lg mb-2">Authentication Required</h3>
-      <p className="text-[#FFFFFF80]">Please login to access your read lists</p>
+const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
+  <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
+    <div className="bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md p-6 max-w-md w-full mx-4">
+      <div className="text-center mb-6">
+        <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
+        <p className="text-[#83E9FF]/60 text-sm">You need to login to access your read lists</p>
+      </div>
+      <button 
+        onClick={onLogin}
+        className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
+      >
+        <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
+        <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
+        <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
+          <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
+            Login
+          </span>
+        </div>
+      </button>
     </div>
   </div>
 );
@@ -81,7 +95,7 @@ const Error = ({ error }: { error: string }) => (
 );
 
 export function ReadList() {
-  const { authenticated } = useAuthContext();
+  const { authenticated, login } = useAuthContext();
   const { readLists, activeReadListId, activeReadListItems, loading: storeLoading, error: storeError, createReadList, deleteReadList, setActiveReadList, deleteReadListItem, toggleReadStatus, reorderReadLists } = useReadLists();
   const { isInitializing, initError, isMounted } = useReadListInitialization();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -98,7 +112,7 @@ export function ReadList() {
         readListMessages.success.listCreated(data.name);
       }
     } catch (error) {
-      handleReadListApiError(error, 'create read list');
+      handleReadListApiError(error);
     }
   }, [createReadList, setActiveReadList]);
 
@@ -107,17 +121,16 @@ export function ReadList() {
       await deleteReadList(id);
       readListMessages.success.listDeleted();
     } catch (error) {
-      const listToDelete = readLists.find(list => list.id === id);
-      handleReadListApiError(error, `delete ${listToDelete?.name || 'read list'}`);
+      handleReadListApiError(error);
     }
-  }, [deleteReadList, readLists]);
+  }, [deleteReadList]);
 
   const handleRemoveItem = useCallback(async (itemId: number) => {
     try {
       await deleteReadListItem(itemId);
       readListMessages.success.removedFromList(activeList?.name || 'Read List');
     } catch (error) {
-      handleReadListApiError(error, `remove from ${activeList?.name || 'read list'}`);
+      handleReadListApiError(error);
     }
   }, [deleteReadListItem, activeList]);
 
@@ -130,7 +143,7 @@ export function ReadList() {
         readListMessages.success.itemMarkedAsUnread();
       }
     } catch (error) {
-      handleReadListApiError(error, 'toggle read status');
+      handleReadListApiError(error);
     }
   }, [toggleReadStatus]);
 
@@ -141,12 +154,13 @@ export function ReadList() {
     reorderReadLists(newOrder);
   }, [reorderReadLists]);
 
-  if (!authenticated) return <AuthRequired />;
   if (error) return <Error error={error} />;
 
   return (
     <div className="flex h-full min-h-screen">
-      <div className="w-80 flex-shrink-0">
+      {!authenticated && <AuthRequired onLogin={login} />}
+      
+      <div className={`w-80 flex-shrink-0 ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
         <ReadListSidebar
           readLists={readLists}
           activeReadListId={activeReadListId}
@@ -157,7 +171,7 @@ export function ReadList() {
           loading={isInitializing}
         />
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className={`flex-1 overflow-auto ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
         <ReadListContent
           activeList={activeList}
           items={activeReadListItems}

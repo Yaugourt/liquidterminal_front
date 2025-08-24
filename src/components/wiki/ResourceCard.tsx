@@ -33,7 +33,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
   const [showReadLists, setShowReadLists] = useState(false);
   const { readLists, addItemToReadList } = useReadLists();
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuthContext();
+  const { user, authenticated } = useAuthContext();
   
   // Load link preview
   const { data: preview, isLoading: previewLoading } = useLinkPreview(
@@ -68,8 +68,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
       setShowReadLists(false);
       readListMessages.success.addedToList(readList?.name || 'Read List');
     } catch (error) {
-      const readList = readLists.find(list => list.id === readListId);
-      handleReadListApiError(error, `add to ${readList?.name || 'read list'}`);
+      handleReadListApiError(error);
     } finally {
       setIsAddingToList(false);
     }
@@ -163,13 +162,20 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                 <Button
                   size="sm"
                   variant="ghost"
+                  disabled={!authenticated}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setShowReadLists(!showReadLists);
+                    if (authenticated) {
+                      setShowReadLists(!showReadLists);
+                    }
                   }}
-                  className="p-1 h-auto text-[#83E9FF] hover:text-[#F9E370] hover:bg-[#83E9FF1A]"
-                  title="Add to read list"
+                  className={`p-1 h-auto ${
+                    authenticated 
+                      ? "text-[#83E9FF] hover:text-[#F9E370] hover:bg-[#83E9FF1A]" 
+                      : "text-[#83E9FF]/40 cursor-not-allowed"
+                  }`}
+                  title={authenticated ? "Add to read list" : "Login required to add to read list"}
                 >
                   <Plus className="w-3 h-3" />
                 </Button>
@@ -179,7 +185,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
         </a>
 
         {/* Read Lists Modal - EN DEHORS du lien */}
-        {showReadLists && (
+        {showReadLists && authenticated && (
           <div 
             ref={dropdownRef} 
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
