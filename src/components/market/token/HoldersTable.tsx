@@ -23,7 +23,7 @@ interface HoldersTableProps {
   error: Error | null;
   tokenName: string;
   tokenPrice?: number; // Prix du token pour calculer la valeur
-  maxSupply?: number; // Max supply pour calculer le pourcentage
+  totalSupply?: number; // Total supply pour calculer le pourcentage
   stakedHolders?: Record<string, number>; // Holders stakés pour identifier les adresses stakées
 }
 
@@ -38,20 +38,18 @@ const formatPercentage = (amount: number, totalSupply: number, format: NumberFor
   return `${formatNumber(percentage, format, { maximumFractionDigits: 2 })}%`;
 };
 
-export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSupply, stakedHolders }: HoldersTableProps) => {
+export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, totalSupply, stakedHolders }: HoldersTableProps) => {
   const { format } = useNumberFormat();
   const { getAlias } = useGlobalAliases();
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Convertir les holders en tableau et trier par montant décroissant
   const holdersArray = Object.entries(holders)
     .map(([address, amount]) => ({ address, amount }))
     .sort((a, b) => b.amount - a.amount);
 
-  // Calculer le total supply à partir des holders
-  const totalSupply = holdersArray.reduce((sum, holder) => sum + holder.amount, 0);
+  const supplyForCalculation = totalSupply || holdersArray.reduce((sum, holder) => sum + holder.amount, 0);
 
   // Pagination
   const startIndex = currentPage * rowsPerPage;
@@ -152,7 +150,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSu
                     {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
                   </TableCell>
                   <TableCell className="py-3 px-3 w-[80px] text-white text-sm text-left">
-                    {formatPercentage(holder.amount, totalSupply, format)}
+                    {formatPercentage(holder.amount, supplyForCalculation, format)}
                   </TableCell>
                 </TableRow>
               ))
