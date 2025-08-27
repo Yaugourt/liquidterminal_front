@@ -50,8 +50,8 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, maxSu
     .map(([address, amount]) => ({ address, amount }))
     .sort((a, b) => b.amount - a.amount);
 
-  // Utiliser maxSupply si disponible, sinon calculer le total supply
-  const totalSupply = maxSupply || holdersArray.reduce((sum, holder) => sum + holder.amount, 0);
+  // Calculer le total supply à partir des holders
+  const totalSupply = holdersArray.reduce((sum, holder) => sum + holder.amount, 0);
 
   // Pagination
   const startIndex = currentPage * rowsPerPage;
