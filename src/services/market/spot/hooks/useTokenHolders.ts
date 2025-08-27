@@ -24,11 +24,11 @@ export function useTokenHolders(tokenName: string) {
     refetch: refetchStaked
   } = useDataFetching<TokenHoldersResponse>({
     fetchFn: async () => {
-      return await fetchStakedHolders();
+      return await fetchStakedHolders(tokenName);
     },
     refreshInterval: 60000,
     maxRetries: 3,
-    dependencies: []
+    dependencies: [tokenName]
   });
 
   // Combiner les holders normaux et stakés

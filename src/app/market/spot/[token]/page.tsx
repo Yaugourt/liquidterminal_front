@@ -239,7 +239,7 @@ export default function TokenPage() {
                     {activeTab === 'twap' ? (
                         <TokenTwapSection tokenName={token.name} />
                     ) : (
-                        <HoldersSection tokenName={token.name} tokenPrice={token.price} token={token} />
+                        <HoldersSection tokenName={tokenName} tokenPrice={token.price} token={token} />
                     )}
                 </main>
             </div>

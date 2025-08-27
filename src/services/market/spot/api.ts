@@ -69,11 +69,11 @@ export const fetchTokenHolders = async (tokenName: string): Promise<TokenHolders
 };
 
 /**
- * Récupère les holders stakés (stakedHYPE)
+ * Récupère les holders stakés d'un token spécifique
  */
-export const fetchStakedHolders = async (): Promise<TokenHoldersResponse> => {
+export const fetchStakedHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
   return withErrorHandling(async () => {
-    const url = buildHypurrscanUrl('HYPURRSCAN_STAKED_HOLDERS');
+    const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/staked${tokenName}`;
     return await get<TokenHoldersResponse>(url);
   }, 'fetching staked holders');
 }; 
