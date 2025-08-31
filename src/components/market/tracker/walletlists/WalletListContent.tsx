@@ -157,8 +157,11 @@ export function WalletListContent({ listId, onAddWallet, onDragEnd }: WalletList
 
   // Définir la liste active quand le composant se monte ou que listId change
   useEffect(() => {
-    setActiveList(listId);
-  }, [listId, setActiveList]);
+    // Ne charger que si ce n'est pas déjà la liste active
+    if (activeListId !== listId) {
+      setActiveList(listId);
+    }
+  }, [listId, setActiveList, activeListId]);
 
   // Reset selection when changing lists
   useEffect(() => {

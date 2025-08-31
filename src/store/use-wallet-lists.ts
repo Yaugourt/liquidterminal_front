@@ -251,9 +251,18 @@ export const useWalletLists = create<WalletListsState>()(
             actions.updateActiveItems(() => validItems);
             actions.setLoading(false);
             
-          } catch (error) {
+          } catch (error: unknown) {
+            // Si c'est une erreur 404, c'est probablement une liste vide
+            const apiError = error as { statusCode?: number; status?: number; response?: { status?: number } };
+            if (apiError?.statusCode === 404 || apiError?.status === 404 || (apiError?.response?.status === 404)) {
+              actions.updateActiveItems(() => []);
+              actions.setLoading(false);
+              return;
+            }
+            
             actions.setError(handleApiError(error, 'Failed to load wallet list items'));
             actions.updateActiveItems(() => []);
+            actions.setLoading(false);
           }
         },
 
@@ -262,7 +271,13 @@ export const useWalletLists = create<WalletListsState>()(
           try {
             const response = await getWalletListItems(listId);
             return response.data || [];
-          } catch (err) {
+          } catch (err: unknown) {
+            // Si c'est une erreur 404, retourner une liste vide
+            const apiError = err as { statusCode?: number; status?: number; response?: { status?: number } };
+            if (apiError?.statusCode === 404 || apiError?.status === 404 || (apiError?.response?.status === 404)) {
+              return [];
+            }
+            
             actions.setError(handleApiError(err, 'Failed to get list items'));
             throw err;
           }

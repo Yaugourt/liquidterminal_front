@@ -101,6 +101,8 @@ export const useWallets = create<WalletsState>()(
             // Utiliser handleWalletApiError pour gérer les erreurs spécifiques aux wallets
             handleWalletApiError(error);
             throw error; // Re-throw pour que le composant puisse gérer l'erreur
+          } finally {
+            actions.setLoading(false);
           }
         },
         
