@@ -124,7 +124,17 @@ export async function axiosWithConfig<T>(
     } catch (error) {
       lastError = error instanceof Error ? error : new Error('Request failed');
 
-      if (!retryOnError || retries >= MAX_RETRIES) break;
+      // Determine if the error is retryable (network/timeout/5xx/429). Do not retry 4xx like 404.
+      const axiosError = error as AxiosError;
+      const status = axiosError?.response?.status;
+      const code = (axiosError as unknown as { code?: string })?.code;
+
+      const isRetryableStatus = status === 429 || (typeof status === 'number' && status >= 500);
+      const isNetworkOrTimeout = code === 'ECONNABORTED' || code === 'ETIMEDOUT' || code === 'ERR_NETWORK';
+
+      const canRetry = retryOnError && (isRetryableStatus || isNetworkOrTimeout) && retries < MAX_RETRIES;
+
+      if (!canRetry) break;
 
       const delay = BASE_RETRY_DELAY * Math.pow(2, retries);
       await new Promise(resolve => setTimeout(resolve, delay));

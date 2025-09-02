@@ -165,7 +165,15 @@ export const useWalletListItems = (
       setData(response.data);
       setPagination(response.pagination || null);
     } catch (err) {
-      setError(err as Error);
+      // Treat 404 as empty list; only surface other errors
+      const e = err as { code?: string };
+      if (e?.code === 'NOT_FOUND') {
+        setData([]);
+        setPagination(null);
+        setError(null);
+      } else {
+        setError(err as Error);
+      }
     } finally {
       setIsLoading(false);
     }

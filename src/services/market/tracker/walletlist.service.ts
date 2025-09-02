@@ -135,7 +135,7 @@ export const getWalletListItems = async (
     }>(
       `${BASE_URL}/${listId}/items`, 
       params,
-      { useCache: false }
+      { useCache: false, retryOnError: false }
     );
     return response || { data: [] };
   }, 'fetching wallet list items');
