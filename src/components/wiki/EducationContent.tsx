@@ -29,20 +29,39 @@ export function EducationContent({ chapters }: EducationContentProps) {
       <CardContent className="p-6">
         <div className="w-full">
           <div className="flex justify-start items-center mb-6">
-            <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+            {/* Desktop version - Horizontal tabs */}
+            <div className="hidden min-[750px]:flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
               {chapters.map((chapter) => (
                 <button
                   key={chapter.id}
                   onClick={() => setActiveTab(chapter.title)}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === chapter.title
-                      ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                      : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-                  }`}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${activeTab === chapter.title
+                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                    }`}
                 >
                   {chapter.title}
                 </button>
               ))}
+            </div>
+
+            {/* Mobile version - Dropdown for screens < 750px */}
+            <div className="max-[749px]:block hidden w-full">
+              <select
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                className="w-full bg-[#FFFFFF0A] border border-[#83E9FF40] rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:border-[#83E9FF] focus:bg-[#051728]/50"
+              >
+                {chapters.map((chapter) => (
+                  <option
+                    key={chapter.id}
+                    value={chapter.title}
+                    className="bg-[#051728] text-white"
+                  >
+                    {chapter.title}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

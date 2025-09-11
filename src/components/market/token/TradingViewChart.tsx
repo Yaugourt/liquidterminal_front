@@ -15,7 +15,7 @@ interface TradingViewChartProps {
 // Helper function to convert TokenCandle to CandlestickData
 const convertToCandlestickData = (candle: TokenCandle): CandlestickData<Time> => {
   const timeInSeconds = Math.floor(candle.t / 1000) as Time;
-  
+
   return {
     time: timeInSeconds,
     open: parseFloat(candle.o),
@@ -68,7 +68,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
     if (!containerRef.current) {
       return;
     }
-    
+
 
     const chart = createChart(containerRef.current, {
       layout: {
@@ -98,17 +98,17 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
         borderColor: '#83E9FF40',
         textColor: '#FFFFFF',
       },
-              timeScale: {
-          borderColor: '#83E9FF40',
-          timeVisible: true,
-          secondsVisible: false,
-          rightOffset: 24,
-          barSpacing: 10,
-          fixLeftEdge: true,
-          lockVisibleTimeRangeOnResize: true,
-          rightBarStaysOnScroll: true,
-          minBarSpacing: 1,
-        },
+      timeScale: {
+        borderColor: '#83E9FF40',
+        timeVisible: true,
+        secondsVisible: false,
+        rightOffset: 24,
+        barSpacing: 10,
+        fixLeftEdge: true,
+        lockVisibleTimeRangeOnResize: true,
+        rightBarStaysOnScroll: true,
+        minBarSpacing: 1,
+      },
       // Watermark not supported in this version
     });
 
@@ -127,7 +127,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
     seriesRef.current = candlestickSeries;
 
 
-    
+
 
     // Auto-resize chart
     const handleResize = () => {
@@ -176,25 +176,25 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
     }
 
     try {
-      
+
       const chartData = candles
         .map(convertToCandlestickData)
         .sort((a, b) => (a.time as number) - (b.time as number));
 
-      
+
       seriesRef.current.setData(chartData);
-      
+
       // Set default visible range to show 131 candles
       if (chartRef.current) {
         const timeScale = chartRef.current.timeScale();
-        
+
         // Wait a bit for the data to be processed, then set the range
         setTimeout(() => {
           if (chartData.length > 0) {
             const totalCandles = chartData.length;
             const startIndex = Math.max(0, totalCandles - 131);
             const endIndex = totalCandles - 1;
-            
+
             timeScale.setVisibleLogicalRange({
               from: startIndex,
               to: endIndex,
@@ -202,7 +202,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
           }
         }, 100);
       }
-      
+
     } catch {
     }
   }, [candles]);
@@ -210,20 +210,39 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
   return (
     <div className={`w-full ${className} relative`}>
       {/* Timeframe Selector - Range Switcher */}
-      <div className="absolute top-2 left-2 z-20 flex gap-1 bg-[#051728]/90 rounded-lg p-1 border border-[#83E9FF40]">
+      {/* Desktop version - Hidden on small screens */}
+      <div className="absolute top-2 left-2 z-20 hidden min-[620px]:flex gap-1 bg-[#051728]/90 rounded-lg p-1 border border-[#83E9FF40]">
         {TIMEFRAMES.map((timeframe) => (
           <button
             key={timeframe.value}
             onClick={() => setSelectedTimeframe(timeframe.value)}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${
-              selectedTimeframe === timeframe.value
-                ? 'bg-[#83E9FF] text-[#051728]'
-                : 'text-[#83E9FF] hover:bg-[#83E9FF20]'
-            }`}
+            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
+              ? 'bg-[#83E9FF] text-[#051728]'
+              : 'text-[#83E9FF] hover:bg-[#83E9FF20]'
+              }`}
           >
             {timeframe.label}
           </button>
         ))}
+      </div>
+
+      {/* Mobile version - Dropdown for screens < 620px */}
+      <div className="absolute top-2 left-2 z-20 max-[619px]:block hidden">
+        <select
+          value={selectedTimeframe}
+          onChange={(e) => setSelectedTimeframe(e.target.value as TimeframeType)}
+          className="bg-[#051728]/90 border border-[#83E9FF40] rounded-lg px-3 py-2 text-xs font-medium text-[#83E9FF] focus:outline-none focus:border-[#83E9FF] focus:bg-[#051728]"
+        >
+          {TIMEFRAMES.map((timeframe) => (
+            <option
+              key={timeframe.value}
+              value={timeframe.value}
+              className="bg-[#051728] text-[#83E9FF]"
+            >
+              {timeframe.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {(isLoading || (!candles || candles.length === 0)) && (
@@ -239,7 +258,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
           </div>
         </div>
       )}
-      <div 
+      <div
         ref={containerRef}
         className="w-full h-full rounded-lg overflow-hidden bg-[#051728] border-2 border-[#83E9FF4D]"
       />

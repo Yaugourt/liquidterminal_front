@@ -26,23 +26,23 @@ const useReadListInitialization = () => {
       if (!privyUser?.id || !isMounted) {
         return;
       }
-      
+
       try {
         setIsInitializing(true);
         const username = privyUser.twitter?.username || privyUser.farcaster?.username || privyUser.github?.username;
-        
+
         if (!username) {
           setInitError("No username available");
           return;
         }
-        
+
         const token = await getAccessToken();
-        
+
         if (!token) {
           setInitError("No access token available");
           return;
         }
-        
+
         await initialize({ privyUserId: privyUser.id, username, privyToken: token });
       } catch {
         setInitError("Failed to initialize read lists");
@@ -64,7 +64,7 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
         <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
         <p className="text-[#83E9FF]/60 text-sm">You need to login to access your read lists</p>
       </div>
-      <button 
+      <button
         onClick={onLogin}
         className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
       >
@@ -157,10 +157,10 @@ export function ReadList() {
   if (error) return <Error error={error} />;
 
   return (
-    <div className="flex h-full min-h-screen">
+    <div className="flex h-full min-h-screen max-[699px]:flex-col">
       {!authenticated && <AuthRequired onLogin={login} />}
-      
-      <div className={`w-80 flex-shrink-0 ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
+
+      <div className={`w-80 flex-shrink-0 max-[699px]:w-full ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
         <ReadListSidebar
           readLists={readLists}
           activeReadListId={activeReadListId}
