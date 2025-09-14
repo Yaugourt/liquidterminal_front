@@ -8,7 +8,7 @@ import { useProjects, useCategories } from "@/services/ecosystem/project";
 import { useAuthContext } from "@/contexts/auth.context";
 import { canCreateProject } from "@/lib/roleHelpers";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination, SimpleSearchBar } from "@/components/common";
 
 interface ProjectsGridProps {
   activeTab?: string;
@@ -24,6 +24,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
   onPageChange
 }: ProjectsGridProps) {
   const [rowsPerPage, setRowsPerPage] = useState(50);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
   
   // Récupérer les catégories pour les tabs
@@ -31,7 +32,11 @@ export const ProjectsGrid = memo(function ProjectsGrid({
   
   // Construire les paramètres pour les projets selon le tab actif
   const projectParams = useMemo(() => {
-    const baseParams = { page: currentPage, limit: rowsPerPage };
+    const baseParams = { 
+      page: currentPage, 
+      limit: rowsPerPage,
+      ...(searchQuery && { search: searchQuery })
+    };
     
     if (activeTab === 'all') {
       return baseParams; // Pas de categoryIds = tous les projets
@@ -41,7 +46,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
         categoryIds: [parseInt(activeTab)] // Avec categoryIds = filtrés
       };
     }
-  }, [activeTab, currentPage, rowsPerPage]);
+  }, [activeTab, currentPage, rowsPerPage, searchQuery]);
   
   const { projects, isLoading: projectsLoading, error: projectsError, refetch, pagination } = useProjects(projectParams);
 
@@ -85,6 +90,15 @@ export const ProjectsGrid = memo(function ProjectsGrid({
         isLoading={categoriesLoading}
         error={categoriesError}
       />
+
+      {/* Search Bar */}
+      <div className="flex justify-start">
+        <SimpleSearchBar
+          onSearch={setSearchQuery}
+          placeholder="Search projects..."
+          className="max-w-sm"
+        />
+      </div>
 
       {/* Projects Grid */}
       {projectsLoading ? (

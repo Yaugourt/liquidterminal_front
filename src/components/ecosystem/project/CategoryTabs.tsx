@@ -97,7 +97,7 @@ export function CategoryTabs({
 
   return (
     <div className="flex items-center mb-4 w-full max-w-full overflow-hidden">
-      <div className="flex items-center gap-1 flex-1 min-w-0">
+      <div className="flex items-center gap-1 flex-1 min-w-0 mr-4">
         {/* Bouton scroll gauche */}
         {canScrollLeft && (
           <button
@@ -110,10 +110,10 @@ export function CategoryTabs({
         )}
         
         {/* Container des tabs avec défilement */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 max-w-[700px]">
           <div
             ref={scrollContainerRef}
-            className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 w-fit"
+            className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 max-w-full"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
@@ -122,7 +122,7 @@ export function CategoryTabs({
             {/* Tab "All" */}
             <button
               onClick={() => onTabChange('all')}
-              className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`flex-shrink-0 px-5 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'all'
                   ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
                   : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
@@ -136,7 +136,7 @@ export function CategoryTabs({
               <button
                 key={category.id}
                 onClick={() => onTabChange(category.id.toString())}
-                className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === category.id.toString()
                     ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
                     : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
