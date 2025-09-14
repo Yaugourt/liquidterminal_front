@@ -82,22 +82,24 @@ export const ProjectsGrid = memo(function ProjectsGrid({
         )}
       </div>
 
-      {/* Category Tabs */}
-      <CategoryTabs
-        categories={categories}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        isLoading={categoriesLoading}
-        error={categoriesError}
-      />
-
-      {/* Search Bar */}
-      <div className="flex justify-start">
-        <SimpleSearchBar
-          onSearch={setSearchQuery}
-          placeholder="Search projects..."
-          className="max-w-sm"
-        />
+      {/* Category Tabs and Search Bar */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <CategoryTabs
+            categories={categories}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            isLoading={categoriesLoading}
+            error={categoriesError}
+          />
+        </div>
+        <div className="flex-shrink-0">
+          <SimpleSearchBar
+            onSearch={setSearchQuery}
+            placeholder="Search projects..."
+            className="max-w-sm"
+          />
+        </div>
       </div>
 
       {/* Projects Grid */}

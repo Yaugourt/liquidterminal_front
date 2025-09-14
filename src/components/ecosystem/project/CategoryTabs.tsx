@@ -71,7 +71,7 @@ export function CategoryTabs({
 
   if (isLoading) {
     return (
-      <div className="flex items-center mb-4 w-full max-w-full overflow-hidden">
+      <div className="flex items-center w-full max-w-full overflow-hidden">
         <div className="flex items-center gap-1 flex-1 min-w-0">
           <div className="flex-1 min-w-0">
             <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 gap-1">
@@ -87,7 +87,7 @@ export function CategoryTabs({
 
   if (error) {
     return (
-      <div className="flex items-center mb-4 w-full">
+      <div className="flex items-center w-full">
         <div className="text-red-400 text-sm py-2 px-3">
           Failed to load categories: {error.message}
         </div>
@@ -96,7 +96,7 @@ export function CategoryTabs({
   }
 
   return (
-    <div className="flex items-center mb-4 w-full max-w-full overflow-hidden">
+    <div className="flex items-center w-full max-w-full overflow-hidden">
       <div className="flex items-center gap-1 flex-1 min-w-0 mr-4">
         {/* Bouton scroll gauche */}
         {canScrollLeft && (
