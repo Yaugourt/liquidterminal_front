@@ -17,13 +17,13 @@ export function ValidatorsTable() {
   const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>('all');
   const { validators, stats, isLoading: validatorsLoading, error: validatorsError } = useValidators();
   const [currentPage, setCurrentPage] = useState(0); // 0-based pour le composant common
-  const [rowsPerPage, setRowsPerPage] = useState(10); 
-  
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   // Use paginated staking validations when on transactions tab
-  const { 
-    validations: stakingValidations, 
+  const {
+    validations: stakingValidations,
     total: stakingTotal,
-    isLoading: stakingLoading, 
+    isLoading: stakingLoading,
     error: stakingError,
     updateParams: updateStakingParams
   } = useStakingValidationsPaginated({
@@ -31,18 +31,18 @@ export function ValidatorsTable() {
   });
 
   // Use paginated unstaking queue when on unstaking tab
-  const { 
-    unstakingQueue, 
+  const {
+    unstakingQueue,
     total: unstakingTotal,
-    isLoading: unstakingLoading, 
+    isLoading: unstakingLoading,
     error: unstakingError,
     updateParams: updateUnstakingParams
   } = useUnstakingQueuePaginated({
     limit: rowsPerPage
   });
-  
+
   // For vaults, use API pagination instead of client-side pagination
-  const { vaults, totalTvl, totalCount: vaultsTotalCount, isLoading: vaultsLoading, error: vaultsError, updateParams: updateVaultsParams } = useVaults({ 
+  const { vaults, totalTvl, totalCount: vaultsTotalCount, isLoading: vaultsLoading, error: vaultsError, updateParams: updateVaultsParams } = useVaults({
     page: currentPage + 1, // Convert 0-based to 1-based for API
     limit: rowsPerPage,
     sortBy: 'tvl'
@@ -67,10 +67,10 @@ export function ValidatorsTable() {
   // Sync hooks pagination when switching to transactions tab
   useEffect(() => {
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-  
-      updateStakingParams({ 
+
+      updateStakingParams({
         page: currentPage + 1,
-        limit: rowsPerPage 
+        limit: rowsPerPage
       });
     }
   }, [activeTab, validatorSubTab, currentPage, rowsPerPage, updateStakingParams]);
@@ -78,10 +78,10 @@ export function ValidatorsTable() {
   // Sync hooks pagination when switching to unstaking tab
   useEffect(() => {
     if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-  
-      updateUnstakingParams({ 
+
+      updateUnstakingParams({
         page: currentPage + 1,
-        limit: rowsPerPage 
+        limit: rowsPerPage
       });
     }
   }, [activeTab, validatorSubTab, currentPage, rowsPerPage, updateUnstakingParams]);
@@ -90,12 +90,12 @@ export function ValidatorsTable() {
   const handlePageChange = useCallback((newPage: number) => {
 
     setCurrentPage(newPage);
-    
+
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-      
+
       updateStakingParams({ page: newPage + 1 }); // Convert to 1-based for API
     } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-      
+
       updateUnstakingParams({ page: newPage + 1 }); // Convert to 1-based for API
     } else if (activeTab === 'vaults') {
       updateVaultsParams({ page: newPage + 1 }); // Convert to 1-based for API
@@ -107,23 +107,23 @@ export function ValidatorsTable() {
 
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(0); // Reset to first page
-    
+
     if (activeTab === 'validators' && validatorSubTab === 'transactions') {
-      
-      updateStakingParams({ 
+
+      updateStakingParams({
         page: 1, // Reset to first page (1-based for API)
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     } else if (activeTab === 'validators' && validatorSubTab === 'unstaking') {
-      
-      updateUnstakingParams({ 
+
+      updateUnstakingParams({
         page: 1, // Reset to first page (1-based for API)
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     } else if (activeTab === 'vaults') {
-      updateVaultsParams({ 
+      updateVaultsParams({
         page: 1, // Reset to first page (1-based for API)
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     }
   }, [activeTab, validatorSubTab, updateStakingParams, updateUnstakingParams, updateVaultsParams]);
@@ -131,7 +131,7 @@ export function ValidatorsTable() {
   // Calculate pagination for validators (client-side) - only for 'all' tab
   const startIndex = currentPage * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  
+
   // Calculate total items based on active tab and validator sub-tab
   const getTotalItems = () => {
     if (activeTab === 'validators') {
@@ -144,32 +144,31 @@ export function ValidatorsTable() {
     }
     return vaultsTotalCount;
   };
-  
+
   const totalItems = getTotalItems();
 
   return (
     <div className="w-full">
       {/* Header avec TabButtons */}
       <div className="flex justify-start items-center mb-4">
-        <TabButtons 
+        <TabButtons
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />
       </div>
 
       <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-4">
           {activeTab === 'validators' && (
             <div className="flex items-center bg-[#FFFFFF0A] rounded-md p-0.5 w-fit">
               {['all', 'transactions', 'unstaking'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => handleValidatorSubTabChange(tab as ValidatorSubTab)}
-                  className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
-                    validatorSubTab === tab
-                      ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                      : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-                  }`}
+                  className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${validatorSubTab === tab
+                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                    }`}
                 >
                   {tab === 'all' ? 'All' : tab === 'transactions' ? 'Transactions' : 'Unstaking Queue'}
                 </button>
@@ -177,36 +176,38 @@ export function ValidatorsTable() {
             </div>
           )}
           {activeTab === 'validators' ? (
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-8 max-[720px]:flex-wrap max-[720px]:gap-4">
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Total:</span>
                 <span className="text-white text-sm font-semibold">{stats.total}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Active:</span>
                 <span className="text-[#83E9FF] text-sm font-semibold">{stats.active}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">HYPE Staked:</span>
-                <span className="text-[#F9E370] text-sm font-semibold">
-                  {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
+                <div className="flex flex-col">
+                  <span className="text-[#F9E370] text-sm font-semibold">
+                    {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
+                  </span>
                   {hypePrice && (
-                    <span className="text-white text-xs ml-1">
+                    <span className="text-white text-xs">
                       (${formatNumber(stats.totalHypeStaked * hypePrice, format, { maximumFractionDigits: 0 })})
                     </span>
                   )}
-                </span>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-8 justify-start pl-6">
+            <div className="flex items-center gap-8 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Total:</span>
                 <span className="text-white text-sm font-semibold">{vaultsTotalCount}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-white text-xs font-medium">Total TVL:</span>
                 <span className="text-[#F9E370] text-sm font-semibold">
@@ -216,7 +217,7 @@ export function ValidatorsTable() {
             </div>
           )}
         </div>
-        
+
         <div className="flex flex-col flex-1">
           <div className="flex-1">
             <TableContent

@@ -27,10 +27,10 @@ export default function EducationPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
 
-  
+
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();
-  
+
   // Fetch categories to set default selection
   const { categories } = useEducationalCategories({
     limit: 100 // Get all categories for the page
@@ -97,7 +97,7 @@ export default function EducationPage() {
       {/* Main content */}
       <div className="">
         <Header customTitle="Introduction" showFees={true} />
-        
+
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search educational content..." />
         </div>
@@ -116,15 +116,17 @@ export default function EducationPage() {
           </div>
 
           {/* Category filter, Search bar and Admin Add Resource Button */}
-          <div className="flex items-center gap-4">
-            <CategoryFilter 
-              selectedCategories={selectedCategories}
-              onCategoryChange={handleCategoryChange}
-            />
-            <WikiSearchBar 
-              onSearch={handleSearch}
-              placeholder="Search in titles, categories, links..."
-            />
+          <div className="flex items-center gap-4 max-[599px]:grid max-[599px]:grid-cols-1 max-[599px]:gap-4">
+            <div className="flex items-center gap-4">
+              <CategoryFilter
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <WikiSearchBar
+                onSearch={handleSearch}
+                placeholder="Search in titles, categories, links..."
+              />
+            </div>
             <ProtectedAction requiredRole="ADMIN" user={user}>
               <EducationModal onSuccess={() => {
                 // Optionally refresh the page or refetch data
@@ -134,7 +136,7 @@ export default function EducationPage() {
           </div>
 
           {/* Resources section */}
-          <ResourcesSection 
+          <ResourcesSection
             selectedCategoryIds={selectedCategories}
             sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
             searchQuery={searchQuery}

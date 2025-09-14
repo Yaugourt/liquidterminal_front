@@ -40,7 +40,7 @@ export default function TokenPage() {
                 if (!data) {
                     setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Spot.`);
                 }
-                          } catch {
+            } catch {
                 // Error handled silently
                 setError("Une erreur est survenue lors du chargement des données du token.");
             } finally {
@@ -151,7 +151,7 @@ export default function TokenPage() {
 
                 <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
                     {/* Token Overview Card */}
-                    <TokenCard 
+                    <TokenCard
                         token={{
                             symbol: `${token.name}/USDC`,
                             name: token.name,
@@ -167,37 +167,35 @@ export default function TokenPage() {
                     />
 
                     {/* Trading Interface Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
                         {/* Chart - Fixed height */}
-                        <div className="lg:col-span-7">
-                            <TradingViewChart 
+                        <div className="xl:col-span-7">
+                            <TradingViewChart
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for API
                                 tokenName={token.name} // Pass token name for special cases like PURR
                                 className="h-[450px]"
                             />
-                            
+
                             {/* Tabs dans l'espace vide */}
                             <div className="mt-4">
                                 <div className="flex justify-start items-center">
                                     <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 w-fit">
-                                        <button 
+                                        <button
                                             onClick={() => setActiveTab('twap')}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                                                activeTab === 'twap'
-                                                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                                                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-                                            }`}
+                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${activeTab === 'twap'
+                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                                                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                                }`}
                                         >
                                             TWAP
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => setActiveTab('holders')}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                                                activeTab === 'holders'
-                                                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                                                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-                                            }`}
+                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${activeTab === 'holders'
+                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                                                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                                }`}
                                         >
                                             Holders
                                         </button>
@@ -205,20 +203,20 @@ export default function TokenPage() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Order Book - Fixed height */}
-                        <div className="lg:col-span-3">
-                            <OrderBook 
+                        <div className="xl:col-span-3">
+                            <OrderBook
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for WebSocket
                                 tokenNameProp={token.name} // Pass token name for special cases like PURR
                                 className="h-[510px]"
                             />
                         </div>
-                        
+
                         {/* Token Info Sidebar - Adapts to available space */}
-                        <div className="lg:col-span-2">
-                            <TokenInfoSidebar 
+                        <div className="xl:col-span-2">
+                            <TokenInfoSidebar
                                 token={{
                                     symbol: `${token.name}/USDC`,
                                     name: token.name,
@@ -250,7 +248,7 @@ export default function TokenPage() {
 // Composant HoldersSection
 function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {
     const { holders, isLoading, error, stakedHolders } = useTokenHolders(tokenName);
-    const { data: tokenDetails } = useTokenDetails(token.tokenId || null); 
+    const { data: tokenDetails } = useTokenDetails(token.tokenId || null);
 
     return (
         <div className="w-full">
