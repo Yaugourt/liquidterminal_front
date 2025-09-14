@@ -100,6 +100,8 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
     if (data.telegram) formData.append('telegram', data.telegram);
     if (data.website) formData.append('website', data.website);
     if (data.categoryIds && data.categoryIds.length > 0) {
+      // Envoyer comme JSON string - le backend devra parser
+      console.log('Sending categoryIds:', data.categoryIds, 'as JSON:', JSON.stringify(data.categoryIds));
       formData.append('categoryIds', JSON.stringify(data.categoryIds));
     }
     

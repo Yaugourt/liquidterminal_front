@@ -43,7 +43,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
   // Hooks
   const { createProject, createProjectWithUpload, isLoading: creatingProject } = useCreateProject();
   const { createCategory, isLoading: creatingCategory } = useCreateCategory();
-  const { categories } = useCategories();
+  const { categories, refetch: refetchCategories } = useCategories();
   const { uploadFile, result, loading: uploadingCsv, error: csvError, reset: resetCsv } = useCsvUploadProjects();
 
   // File handling functions
@@ -138,6 +138,8 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       toast.success("Category created successfully!");
       setCategoryForm({ name: "", description: "" });
       setActiveTab("project"); // Switch back to project tab
+      // Recharger les catégories pour mettre à jour les tabs
+      await refetchCategories();
       onSuccess?.();
     } catch {
       toast.error("Failed to create category");

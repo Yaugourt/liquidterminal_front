@@ -27,7 +27,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
   const { user } = useAuthContext();
   
   // Récupérer les catégories pour les tabs
-  const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
+  const { categories, isLoading: categoriesLoading, error: categoriesError, refetch: refetchCategories } = useCategories();
   
   // Construire les paramètres pour les projets selon le tab actif
   const projectParams = useMemo(() => {
@@ -65,6 +65,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
 
   const handleProjectSuccess = () => {
     refetch(); // Recharger les projets après création
+    refetchCategories(); // Recharger les catégories aussi (au cas où une nouvelle catégorie a été créée)
   };
 
   return (

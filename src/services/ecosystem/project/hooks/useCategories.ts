@@ -1,33 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchCategories } from '../api';
 import { Category, UseCategoriesResult } from '../types';
 
 export const useCategories = (): UseCategoriesResult => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const loadCategories = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
+  const { data, isLoading, error, refetch } = useDataFetching<Category[]>({
+    fetchFn: async () => {
       const response = await fetchCategories();
-      setCategories(response.data || []);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch categories'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
+      return response.data || [];
+    },
+    refreshInterval: 30000, // 30 seconds
+    dependencies: [],
+    maxRetries: 3
+  });
 
   return {
-    categories,
+    categories: data || [],
     isLoading,
     error,
-    refetch: loadCategories
+    refetch
   };
 }; 
