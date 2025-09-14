@@ -61,7 +61,8 @@ export const fetchProject = async (id: number): Promise<{ success: boolean; data
  */
 export const fetchCategories = async (): Promise<CategoriesResponse> => {
   return withErrorHandling(async () => {
-    return await get<CategoriesResponse>('/category');
+    // Récupérer toutes les catégories sans pagination
+    return await get<CategoriesResponse>('/category?limit=100');
   }, 'fetching categories');
 };
 
