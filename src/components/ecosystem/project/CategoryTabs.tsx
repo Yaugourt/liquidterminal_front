@@ -110,7 +110,7 @@ export function CategoryTabs({
         )}
         
         {/* Container des tabs avec défilement */}
-        <div className="flex-1 min-w-0 max-w-[700px]">
+        <div className="flex-1 min-w-0 max-w-[800px]">
           <div
             ref={scrollContainerRef}
             className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 max-w-full"
