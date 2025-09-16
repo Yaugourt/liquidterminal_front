@@ -45,7 +45,7 @@ export const getUserWalletLists = async (params?: {
 }): Promise<WalletListResponse> => {
   return withErrorHandling(async () => {
     const response = await get<WalletListResponse>(
-      BASE_URL, 
+      `${BASE_URL}/userlists`, 
       params,
       { useCache: false }
     );
