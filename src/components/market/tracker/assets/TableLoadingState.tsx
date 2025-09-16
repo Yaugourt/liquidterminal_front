@@ -22,13 +22,13 @@ export function TableLoadingState({
           {isLoading ? (
             <>
               <Loader2 className="w-10 h-10 mb-4 text-[#83E9FF4D] animate-spin" />
-              <p className="text-white text-lg">Chargement...</p>
+              <p className="text-white text-lg">Loading...</p>
             </>
           ) : isEmpty ? (
             <>
               <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-              <p className="text-white text-lg">Aucune position trouvée</p>
-              <p className="text-[#FFFFFF80] text-sm mt-2">Ajoutez une position ou vérifiez plus tard</p>
+              <p className="text-white text-lg">No positions found</p>
+              <p className="text-[#FFFFFF80] text-sm mt-2">Add a position or check back later</p>
             </>
           ) : null}
         </div>
