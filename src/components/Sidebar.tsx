@@ -96,6 +96,12 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 href: '/ecosystem/project',
                 icon: null,
                 IconComponent: PiListMagnifyingGlass
+            },
+            {
+                name: 'Public Goods',
+                href: '/ecosystem/publicgoods',
+                icon: null,
+                IconComponent: PiGlobe
             }
         ]
     },
