@@ -31,7 +31,7 @@ export const useTransactions = (address: string): UseTransactionsResult => {
   const { data, isLoading, error } = useDataFetching<FormattedUserTransaction[]>({
     fetchFn: () => getUserTransactions(address),
     dependencies: [address],
-    refreshInterval: 60000
+    refreshInterval: 120000
   });
 
   return {
