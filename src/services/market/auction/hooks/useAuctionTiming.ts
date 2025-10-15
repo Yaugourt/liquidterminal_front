@@ -136,9 +136,19 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
     const lastAuctionName = lastAuction ? lastAuction.name : "MONEY";
     
     // Formater le temps jusqu'à la prochaine auction
-    const nextAuctionStart = nextAuction.startTime > now 
-      ? formatTimeRemaining(nextAuction.startTime - now)
-      : "Starting soon";
+    // Si l'auction actuelle est encore en période mais inactive (currentGas null),
+    // la "prochaine" peut démarrer dès la fin de currentAuction
+    let nextAuctionStart;
+    if (!isActive && now < currentAuction.endTime) {
+      // On est dans la période currentAuction mais elle est inactive
+      // La prochaine peut démarrer à la fin de cette période
+      nextAuctionStart = formatTimeRemaining(currentAuction.endTime - now);
+    } else {
+      // Sinon, utiliser nextAuction.startTime
+      nextAuctionStart = nextAuction.startTime > now 
+        ? formatTimeRemaining(nextAuction.startTime - now)
+        : "Starting soon";
+    }
 
     return {
       isActive,
