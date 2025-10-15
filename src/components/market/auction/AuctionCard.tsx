@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { Gavel, Clock, ExternalLink, AlertCircle, Database } from "lucide-react";
+import { Gavel, Clock, ExternalLink, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { useAuctionTiming } from "@/services/market/auction";
+import { useAuctionTiming, usePerpAuctionTiming } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 
@@ -14,33 +14,14 @@ interface AuctionCardProps {
  * Carte affichant les informations d'enchères en temps réel
  */
 export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCardProps) {
-  // Toujours appeler les hooks en premier
-  const { auctionState, isLoading, error } = useAuctionTiming();
+  // Utiliser le hook approprié selon le type de market
+  const spotAuction = useAuctionTiming();
+  const perpAuction = usePerpAuctionTiming();
+  
+  const { auctionState, isLoading, error } = marketType === "spot" ? spotAuction : perpAuction;
   const { format } = useNumberFormat();
 
-  // Si c'est perp, afficher Coming Soon
-  if (marketType === "perp") {
-    return (
-      <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full flex flex-col">
-        {/* Header avec titre */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1.5">
-            <Gavel size={16} className="text-[#f9e370]" />
-            <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">AUCTION</h3>
-          </div>
-        </div>
-
-        {/* Contenu Coming Soon - flex-1 pour occuper l'espace */}
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-          <span className="text-white text-lg font-medium mb-2">Coming Soon</span>
-          <span className="text-[#FFFFFF80] text-sm">Perp auctions will be available soon</span>
-        </div>
-      </Card>
-    );
-  }
-
-  // Affichage pour spot
+  // Gestion des erreurs
   if (error) {
     return (
       <Card className="p-3 bg-[#051728E5] border border-red-500/50 shadow-sm backdrop-blur-sm rounded-md h-full flex flex-col">
@@ -68,7 +49,9 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
         </div>
         
         <Link
-          href="https://app.hyperliquid.xyz/deploySpot"
+          href={marketType === "spot" 
+            ? "https://app.hyperliquid.xyz/deploySpot" 
+            : "https://app.hyperliquid.xyz/deployPerp"}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 px-2 py-1 text-xs text-[#83E9FF] hover:text-white transition-colors"

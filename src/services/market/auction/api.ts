@@ -1,6 +1,16 @@
-import { get } from '../../api/axios-config';
+import { get, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { AuctionsResponse, AuctionParams, AuctionPaginatedResponse, AuctionTiming, AuctionInfo } from './types';
+import { API_URLS } from '../../api/constants';
+import { 
+  AuctionsResponse, 
+  AuctionParams, 
+  AuctionPaginatedResponse, 
+  AuctionTiming, 
+  AuctionInfo,
+  PerpDeployAuctionStatus,
+  PerpAuctionTiming,
+  PerpDex
+} from './types';
 
 /**
  * Récupère les informations de timing de l'auction en cours
@@ -138,4 +148,78 @@ export const fetchTokenAuction = async (tokenName: string): Promise<AuctionInfo 
     
     return tokenAuction || null;
   }, 'fetching token auction info');
+};
+
+// ==================== PERP AUCTION API ====================
+
+/**
+ * Récupère le statut de l'auction perp directement depuis Hyperliquid
+ */
+export const fetchPerpAuctionStatus = async (): Promise<PerpDeployAuctionStatus> => {
+  return withErrorHandling(async () => {
+    const response = await postExternal<PerpDeployAuctionStatus>(
+      `${API_URLS.HYPERLIQUID_API}/info`,
+      { type: "perpDeployAuctionStatus" }
+    );
+    return response;
+  }, 'fetching perp auction status');
+};
+
+/**
+ * Transforme le statut brut Hyperliquid en format PerpAuctionTiming
+ */
+export const fetchPerpAuctionTiming = async (): Promise<PerpAuctionTiming> => {
+  return withErrorHandling(async () => {
+    const status = await fetchPerpAuctionStatus();
+    
+    // Convertir secondes en millisecondes
+    const startTime = status.startTimeSeconds * 1000;
+    const endTime = startTime + (status.durationSeconds * 1000);
+    const now = Date.now();
+    
+    // Calculer la prochaine auction (31h après la fin de la current)
+    const AUCTION_DURATION_MS = 31 * 60 * 60 * 1000; // 31 heures
+    const nextStartTime = endTime + AUCTION_DURATION_MS;
+    
+    // Déterminer le prix de départ de la prochaine auction
+    // Si l'auction actuelle a échoué (currentGas = null à la fin), startGas reste 500
+    // Sinon, c'est 2x le dernier prix
+    let nextStartGas = "500";
+    if (now > endTime && status.currentGas === null) {
+      nextStartGas = "500"; // Auction échouée
+    } else if (now > endTime && status.currentGas !== null) {
+      const lastPrice = parseFloat(status.currentGas);
+      nextStartGas = (lastPrice * 2).toString();
+    } else {
+      // Auction en cours, on suppose 2x startGas actuel pour la prochaine
+      nextStartGas = (parseFloat(status.startGas) * 2).toString();
+    }
+    
+    return {
+      currentAuction: {
+        startTime,
+        endTime,
+        startGas: status.startGas,
+        currentGas: status.currentGas,
+        endGas: status.endGas
+      },
+      nextAuction: {
+        startTime: nextStartTime,
+        startGas: nextStartGas
+      }
+    };
+  }, 'fetching perp auction timing');
+};
+
+/**
+ * Récupère la liste des perp dexs déployés
+ */
+export const fetchPerpDexs = async (): Promise<PerpDex[]> => {
+  return withErrorHandling(async () => {
+    const response = await postExternal<PerpDex[]>(
+      `${API_URLS.HYPERLIQUID_API}/info`,
+      { type: "perpDexs" }
+    );
+    return response;
+  }, 'fetching perp dexs');
 }; 

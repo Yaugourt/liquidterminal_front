@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { AuctionCard, AuctionTable, AuctionChartSection } from "@/components/market/auction";
+import { AuctionCard, AuctionTable, AuctionChartSection, PerpDexsTable } from "@/components/market/auction";
 import { Sidebar } from "@/components/Sidebar";
 import { Menu } from "lucide-react";
 
@@ -77,9 +77,13 @@ export default function AuctionPage() {
 
           <div>
             <h2 className="text-white text-lg font-bold mb-4 mt-2">
-              {marketType === "spot" ? "Past Auctions" : "Perpetual Auctions"}
+              {marketType === "spot" ? "Past Auctions" : "Perpetual DEXs"}
             </h2>
-            <AuctionTable key={`table-${marketType}`} marketType={marketType} />
+            {marketType === "spot" ? (
+              <AuctionTable key={`table-${marketType}`} marketType={marketType} />
+            ) : (
+              <PerpDexsTable />
+            )}
           </div>
         </main>
       </div>

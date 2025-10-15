@@ -98,4 +98,55 @@ export interface UseAuctionTimingResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+}
+
+// ==================== PERP AUCTION TYPES ====================
+
+// Réponse brute API Hyperliquid pour perp deploy auction
+export interface PerpDeployAuctionStatus {
+  startTimeSeconds: number;
+  durationSeconds: number;
+  startGas: string;
+  currentGas: string | null;
+  endGas: string | null;
+}
+
+// Types pour perp auction timing (structure similaire à spot)
+export interface PerpCurrentAuction {
+  startTime: number;
+  endTime: number;
+  startGas: string;
+  currentGas: string | null;
+  endGas: string | null;
+}
+
+export interface PerpNextAuction {
+  startTime: number;
+  startGas: string;
+}
+
+export interface PerpAuctionTiming {
+  currentAuction: PerpCurrentAuction;
+  nextAuction: PerpNextAuction;
+}
+
+// ==================== PERP DEXS TYPES ====================
+
+// Réponse API Hyperliquid pour perpDexs
+export interface PerpDex {
+  name: string;
+  fullName: string;
+  deployer: string;
+  oracleUpdater: string;
+  feeRecipient: string | null;
+  assetToStreamingOiCap: [string, string][];
+  gas?: string; // Optionnel pour l'instant, viendra du backend plus tard
+  deployerName?: string; // Nom du deployer (viendra du backend)
+}
+
+export interface UsePerpDexsResult {
+  perpDexs: PerpDex[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
 } 

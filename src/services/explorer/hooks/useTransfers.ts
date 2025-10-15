@@ -46,7 +46,7 @@ const formatTransfer = (transfer: TransferData): FormattedTransfer | null => {
       token: token,
       blockNumber: transfer.block || 0
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 };
