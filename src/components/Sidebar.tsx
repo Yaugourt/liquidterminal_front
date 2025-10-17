@@ -11,7 +11,7 @@ import { useState } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
-import { Gavel, Shield } from "lucide-react"
+import { Gavel, Shield, Heart, ClipboardList, Clock } from "lucide-react"
 import { hasRole } from "@/lib/roleHelpers"
 import { ComponentType } from "react"
 
@@ -96,6 +96,32 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 href: '/ecosystem/project',
                 icon: null,
                 IconComponent: PiListMagnifyingGlass
+            },
+            {
+                name: 'Public Goods',
+                href: '/ecosystem/publicgoods',
+                icon: null,
+                IconComponent: Heart,
+                children: [
+                    {
+                        name: 'All Projects',
+                        href: '/ecosystem/publicgoods',
+                        icon: null,
+                        IconComponent: Heart
+                    },
+                    {
+                        name: 'My Submissions',
+                        href: '/ecosystem/publicgoods/my-submissions',
+                        icon: null,
+                        IconComponent: ClipboardList
+                    },
+                    {
+                        name: 'Pending Review',
+                        href: '/ecosystem/publicgoods/pending',
+                        icon: null,
+                        IconComponent: Clock
+                    }
+                ]
             }
         ]
     },
