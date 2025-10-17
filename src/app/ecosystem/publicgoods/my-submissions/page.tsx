@@ -5,32 +5,43 @@ import { SearchBar } from "@/components/SearchBar";
 import { useState, useMemo } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus, Loader2 } from "lucide-react";
+import { Menu, Plus, ArrowLeft, Loader2 } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
 import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/SubmitProjectModal";
+import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
+import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
 import { SimpleSearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
-import { usePublicGoods } from "@/services/ecosystem/publicgood";
+import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function PublicGoodsPage() {
+export default function MySubmissionsPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState("");
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [projectToEdit, setProjectToEdit] = useState<PublicGood | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<PublicGood | null>(null);
   
   const { user, login } = useAuthContext();
+  const router = useRouter();
   
-  // Fetch projects from API
-  const { publicGoods, isLoading, refetch } = usePublicGoods({
-    status: activeTab === 'all' ? undefined : activeTab as 'pending' | 'approved' | 'rejected',
-    limit: 50
-  });
+  // Fetch user's projects from API
+  const { myPublicGoods, isLoading, refetch } = useMyPublicGoods({ limit: 50 });
+  const { deletePublicGood, isLoading: isDeleting } = useDeletePublicGood();
 
-  // Filter projects based on search
+  // Filter projects based on active tab and search
   const filteredProjects = useMemo(() => {
-    let filtered = publicGoods;
+    let filtered = myPublicGoods;
+
+    // Filter by status
+    if (activeTab !== 'all') {
+      filtered = filtered.filter(project => project.status === activeTab.toUpperCase());
+    }
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -45,15 +56,15 @@ export default function PublicGoodsPage() {
     }
 
     return filtered;
-  }, [publicGoods, searchQuery]);
+  }, [activeTab, searchQuery, myPublicGoods]);
 
   // Calculate counts for tabs
   const counts = useMemo(() => ({
-    all: publicGoods.length,
-    approved: publicGoods.filter(p => p.status === 'APPROVED').length,
-    pending: publicGoods.filter(p => p.status === 'PENDING').length,
-    rejected: publicGoods.filter(p => p.status === 'REJECTED').length,
-  }), [publicGoods]);
+    all: myPublicGoods.length,
+    approved: myPublicGoods.filter(p => p.status === 'APPROVED').length,
+    pending: myPublicGoods.filter(p => p.status === 'PENDING').length,
+    rejected: myPublicGoods.filter(p => p.status === 'REJECTED').length,
+  }), [myPublicGoods]);
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
@@ -71,6 +82,50 @@ export default function PublicGoodsPage() {
   const handleSubmitSuccess = () => {
     refetch();
   };
+
+  const handleEdit = (project: PublicGood | import("@/components/ecosystem/publicgoods/mockData").PublicGoodsProject) => {
+    setProjectToEdit(project as PublicGood);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = () => {
+    refetch();
+    setProjectToEdit(null);
+  };
+
+  const handleDelete = (project: PublicGood | import("@/components/ecosystem/publicgoods/mockData").PublicGoodsProject) => {
+    setProjectToDelete(project as PublicGood);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      await deletePublicGood(projectToDelete.id);
+      toast.success("Project deleted successfully!");
+      setIsDeleteDialogOpen(false);
+      setProjectToDelete(null);
+      refetch();
+    } catch {
+      toast.error("Failed to delete project");
+    }
+  };
+
+  // Redirect if not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold text-white">Authentication Required</h2>
+          <p className="text-gray-400">Please login to view your submissions</p>
+          <Button onClick={() => login()} className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90">
+            Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -90,19 +145,28 @@ export default function PublicGoodsPage() {
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="">
-        <Header customTitle="Public Goods" showFees={true} />
+        <Header customTitle="My Submissions" showFees={true} />
         <div className="p-2 lg:hidden">
-          <SearchBar placeholder="Search projects..." />
+          <SearchBar placeholder="Search your projects..." />
         </div>
 
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           {/* Header section */}
           <div className="space-y-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.push('/ecosystem/publicgoods')}
+              className="text-gray-400 hover:text-white -ml-2 mb-2"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to all projects
+            </Button>
+
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-white">Public Goods Program</h1>
+                <h1 className="text-2xl font-bold text-white">My Submissions</h1>
                 <p className="text-gray-400 mt-1">
-                  Supporting open source projects that benefit the HyperLiquid ecosystem
+                  Manage your submitted projects
                 </p>
               </div>
               <Button 
@@ -110,7 +174,7 @@ export default function PublicGoodsPage() {
                 className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Submit Project
+                Submit New Project
               </Button>
             </div>
           </div>
@@ -127,7 +191,7 @@ export default function PublicGoodsPage() {
             <div className="flex-shrink-0">
               <SimpleSearchBar
                 onSearch={setSearchQuery}
-                placeholder="Search projects..."
+                placeholder="Search your projects..."
                 className="max-w-sm"
               />
             </div>
@@ -144,6 +208,9 @@ export default function PublicGoodsPage() {
                 <PublicGoodsCard 
                   key={project.id} 
                   project={project}
+                  currentUser={user}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>
@@ -157,16 +224,16 @@ export default function PublicGoodsPage() {
                 {searchQuery.trim() 
                   ? "Try adjusting your search criteria"
                   : activeTab === 'all' 
-                    ? "No projects have been submitted yet"
-                    : `No ${activeTab} projects found`
+                    ? "You haven't submitted any projects yet"
+                    : `You have no ${activeTab} projects`
                 }
               </p>
-              {!searchQuery.trim() && (
+              {!searchQuery.trim() && activeTab === 'all' && (
                 <Button 
                   onClick={handleSubmitClick}
                   className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90"
                 >
-                  Submit the first project
+                  Submit your first project
                 </Button>
               )}
             </div>
@@ -177,7 +244,7 @@ export default function PublicGoodsPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-[#83E9FF]">{counts.all}</div>
-                <div className="text-sm text-gray-400">Total Projects</div>
+                <div className="text-sm text-gray-400">Total Submissions</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-400">{counts.approved}</div>
@@ -202,6 +269,32 @@ export default function PublicGoodsPage() {
         onClose={() => setIsSubmitModalOpen(false)}
         onSuccess={handleSubmitSuccess}
       />
+
+      {/* Edit Project Modal */}
+      {projectToEdit && (
+        <EditProjectModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setProjectToEdit(null);
+          }}
+          onSuccess={handleEditSuccess}
+          project={projectToEdit}
+        />
+      )}
+
+      {/* Delete Confirm Dialog */}
+      <DeleteConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false);
+          setProjectToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        projectName={projectToDelete?.name || ""}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }
+

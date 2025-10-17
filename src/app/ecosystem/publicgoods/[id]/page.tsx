@@ -1,14 +1,20 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { useState, useMemo, use } from "react";
+import { useState, use } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Menu, ArrowLeft, Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign, Calendar, User, Mail, ExternalLink, CheckCircle, XCircle, AlertCircle } from "lucide-react";
-import { mockProjects } from "@/components/ecosystem/publicgoods/mockData";
+import { Menu, ArrowLeft, Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign, User, Mail, ExternalLink, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Loader2 } from "lucide-react";
+import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
+import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
+import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
+import { useAuthContext } from "@/contexts/auth.context";
+import { hasRole } from "@/lib/roleHelpers";
 import { useRouter } from "next/navigation";
+import { usePublicGood, useDeletePublicGood } from "@/services/ecosystem/publicgood";
+import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -21,12 +27,67 @@ interface ProjectDetailPageProps {
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
   const router = useRouter();
   const resolvedParams = use(params);
+  const { user } = useAuthContext();
   
-  const project = useMemo(() => {
-    return mockProjects.find(p => p.id === parseInt(resolvedParams.id));
-  }, [resolvedParams.id]);
+  // Fetch project from API
+  const { publicGood: project, isLoading, refetch } = usePublicGood(parseInt(resolvedParams.id));
+  const { deletePublicGood, isLoading: isDeleting } = useDeletePublicGood();
+
+  // Check permissions
+  const isOwner = user && project ? Number(user.id) === project.submitterId : false;
+  const isAdmin = user ? hasRole(user, 'ADMIN') : false;
+  const isModerator = user ? hasRole(user, 'MODERATOR') : false;
+  const canEdit = isOwner || isAdmin;
+  const canDelete = isOwner || isAdmin;
+  const canReview = (isModerator || isAdmin) && project?.status === 'PENDING';
+
+  const handleEdit = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSuccess = () => {
+    refetch();
+  };
+
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!project) return;
+    
+    try {
+      await deletePublicGood(project.id);
+      toast.success("Project deleted successfully!");
+      router.push('/ecosystem/publicgoods');
+    } catch {
+      toast.error("Failed to delete project");
+    } finally {
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const handleReview = () => {
+    setIsReviewModalOpen(true);
+  };
+
+  const handleReviewSuccess = () => {
+    refetch();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#83E9FF] animate-spin" />
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -41,11 +102,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved':
+      case 'APPROVED':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'pending':
+      case 'PENDING':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'rejected':
+      case 'REJECTED':
         return 'bg-red-500/20 text-red-400 border-red-500/30';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -54,11 +115,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved':
+      case 'APPROVED':
         return <CheckCircle className="w-5 h-5" />;
-      case 'pending':
+      case 'PENDING':
         return <AlertCircle className="w-5 h-5" />;
-      case 'rejected':
+      case 'REJECTED':
         return <XCircle className="w-5 h-5" />;
       default:
         return null;
@@ -253,9 +314,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     <h3 className="text-sm font-medium text-[#F9E370] mb-2">Lead Developer</h3>
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-gray-400" />
-                      <span className="text-white">{project.leadDeveloper.name}</span>
+                      <span className="text-white">{project.leadDeveloperName}</span>
                       <Mail className="w-4 h-4 text-gray-400 ml-2" />
-                      <span className="text-gray-300">{project.leadDeveloper.contact}</span>
+                      <span className="text-gray-300">{project.leadDeveloperContact}</span>
                     </div>
                   </div>
                   
@@ -298,41 +359,43 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               </Card>
 
               {/* Section 4: Support Requested */}
-              {project.supportRequested && (
+              {(project.supportTypes.length > 0 || project.budgetRange || project.timeline) && (
                 <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
                   <h2 className="text-xl font-semibold text-white mb-4">Support Requested</h2>
                   
                   <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-medium text-[#F9E370] mb-2">Types of Support</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {project.supportRequested.types.map(type => (
-                          <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
-                            {type === 'funding' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
-                            {type === 'promotion' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
-                            {type === 'services' && <Code2 className="w-4 h-4 text-purple-400" />}
-                            <span className="text-white capitalize">{type}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {project.supportRequested.budgetRange && (
+                    {project.supportTypes.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Budget Range</h3>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4 text-[#F9E370]" />
-                          <span className="text-white">${project.supportRequested.budgetRange}</span>
+                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Types of Support</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {project.supportTypes.map((type: string) => (
+                            <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
+                              {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
+                              {type === 'PROMOTION' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
+                              {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
+                              <span className="text-white capitalize">{type.toLowerCase()}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
                     
-                    {project.supportRequested.timeline && (
+                    {project.budgetRange && (
+                      <div>
+                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Budget Range</h3>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-[#F9E370]" />
+                          <span className="text-white">{project.budgetRange.replace(/_/g, ' ')}</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {project.timeline && (
                       <div>
                         <h3 className="text-sm font-medium text-[#F9E370] mb-2">Timeline</h3>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-gray-400" />
-                          <span className="text-white">{project.supportRequested.timeline} months</span>
+                          <span className="text-white">{project.timeline.replace(/_/g, ' ')}</span>
                         </div>
                       </div>
                     )}
@@ -361,7 +424,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                   )}
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-300">{project.leadDeveloper.contact}</span>
+                    <span className="text-gray-300">{project.leadDeveloperContact}</span>
                   </div>
                 </div>
               </Card>
@@ -396,21 +459,75 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               </Card>
 
               {/* Actions */}
-              <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Actions</h3>
-                <div className="space-y-3">
-                  <Button className="w-full bg-[#F9E370] text-black hover:bg-[#F9E370]/90">
-                    Support This Project
-                  </Button>
-                  <Button variant="outline" className="w-full border-[#1E3851] text-gray-300 hover:text-white">
-                    Share Project
-                  </Button>
-                </div>
-              </Card>
+              {(canEdit || canDelete || canReview) && (
+                <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Manage Project</h3>
+                  <div className="space-y-3">
+                    {canReview && (
+                      <Button 
+                        onClick={handleReview}
+                        className="w-full bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Review Project
+                      </Button>
+                    )}
+                    {canEdit && (
+                      <Button 
+                        onClick={handleEdit}
+                        variant="outline"
+                        className="w-full border-[#1E3851] text-gray-300 hover:text-white"
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit Project
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button 
+                        onClick={handleDelete}
+                        variant="outline"
+                        className="w-full border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Project
+                      </Button>
+                    )}
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
         </main>
       </div>
+      
+      {/* Review Modal */}
+      {project && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          onSuccess={handleReviewSuccess}
+          project={project}
+        />
+      )}
+
+      {/* Edit Project Modal */}
+      {project && (
+        <EditProjectModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleEditSuccess}
+          project={project}
+        />
+      )}
+
+      {/* Delete Confirm Dialog */}
+      <DeleteConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={confirmDelete}
+        projectName={project?.name || ""}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

@@ -1,19 +1,50 @@
 import { memo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign, MoreVertical, Edit, Trash2, CheckCircle } from "lucide-react";
 import { PublicGoodsProject } from "./mockData";
+import { PublicGood } from "@/services/ecosystem/publicgood";
+import { User } from "@/services/auth/types";
+import { hasRole } from "@/lib/roleHelpers";
 import Link from "next/link";
 import Image from "next/image";
 
 interface PublicGoodsCardProps {
-  project: PublicGoodsProject;
+  project: PublicGood | PublicGoodsProject;
+  currentUser?: User | null;
+  onEdit?: (project: PublicGood | PublicGoodsProject) => void;
+  onDelete?: (project: PublicGood | PublicGoodsProject) => void;
+  onReview?: (project: PublicGood | PublicGoodsProject) => void;
 }
 
-export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: PublicGoodsCardProps) {
+export const PublicGoodsCard = memo(function PublicGoodsCard({ 
+  project, 
+  currentUser,
+  onEdit,
+  onDelete,
+  onReview
+}: PublicGoodsCardProps) {
   const [imageError, setImageError] = useState(false);
+  
+  // Check permissions
+  const isOwner = currentUser && 'submitterId' in project ? Number(currentUser.id) === project.submitterId : false;
+  const isAdmin = currentUser ? hasRole(currentUser, 'ADMIN') : false;
+  const isModerator = currentUser ? hasRole(currentUser, 'MODERATOR') : false;
+  const canEdit = isOwner || isAdmin;
+  const canDelete = isOwner || isAdmin;
+  const canReview = (isModerator || isAdmin) && (project.status === 'pending' || project.status === 'PENDING');
+  const showActions = canEdit || canDelete || canReview;
+  
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const normalizedStatus = status.toLowerCase();
+    switch (normalizedStatus) {
       case 'approved':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'pending':
@@ -26,7 +57,8 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: Public
   };
 
   const getDevelopmentStatusColor = (status: string) => {
-    switch (status) {
+    const normalizedStatus = status.toLowerCase();
+    switch (normalizedStatus) {
       case 'production':
         return 'bg-[#83E9FF]/20 text-[#83E9FF]';
       case 'beta':
@@ -41,19 +73,22 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: Public
   };
 
   const getTeamSizeIcon = () => {
-    switch (project.teamSize) {
+    const normalizedSize = project.teamSize.toLowerCase();
+    switch (normalizedSize) {
       case 'solo':
         return <Users className="w-3 h-3" />;
+      case 'small':
       case '2-3':
         return <Users className="w-4 h-4" />;
+      case 'large':
       case '4+':
         return <Users className="w-5 h-5" />;
     }
   };
 
   return (
-    <Link href={`/ecosystem/publicgoods/${project.id}`}>
-      <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group cursor-pointer">
+    <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group relative">
+      <Link href={`/ecosystem/publicgoods/${project.id}`} className="cursor-pointer">
         {/* Header with logo and status badge */}
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3 flex-1">
@@ -84,9 +119,75 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: Public
               <p className="text-sm text-gray-400 mt-1">{project.category}</p>
             </div>
           </div>
-          <Badge className={`${getStatusColor(project.status)} ml-4`}>
-            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge className={`${getStatusColor(project.status)}`}>
+              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+            </Badge>
+            
+            {/* Actions Menu */}
+            {showActions && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-8 w-8 text-gray-400 hover:text-white hover:bg-[#112941]"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  className="bg-[#0A1F32] border-[#1E3851]" 
+                  align="end"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {canEdit && onEdit && (
+                    <DropdownMenuItem 
+                      className="text-gray-300 hover:text-white hover:bg-[#112941] cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onEdit(project);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                  )}
+                  {canReview && onReview && (
+                    <DropdownMenuItem 
+                      className="text-[#83E9FF] hover:text-white hover:bg-[#112941] cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onReview(project);
+                      }}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Review
+                    </DropdownMenuItem>
+                  )}
+                  {canDelete && onDelete && (
+                    <DropdownMenuItem 
+                      className="text-red-400 hover:text-white hover:bg-red-500/20 cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onDelete(project);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
 
         {/* Description */}
@@ -117,24 +218,33 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: Public
         </div>
 
         {/* Support requested */}
-        {project.supportRequested && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {project.supportRequested.types.map(type => (
-              <div key={type} className="flex items-center gap-1">
-                {type === 'funding' && <DollarSign className="w-3 h-3 text-[#F9E370]" />}
-                {type === 'promotion' && <Globe className="w-3 h-3 text-[#83E9FF]" />}
-                {type === 'services' && <Code2 className="w-3 h-3 text-purple-400" />}
-                <span className="text-xs text-gray-400">{type}</span>
-              </div>
-            ))}
-            {project.supportRequested.timeline && (
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3 text-gray-400" />
-                <span className="text-xs text-gray-400">{project.supportRequested.timeline} months</span>
-              </div>
-            )}
-          </div>
-        )}
+        {(() => {
+          const supportTypes = 'supportTypes' in project ? project.supportTypes : 
+                              'supportRequested' in project ? project.supportRequested?.types : [];
+          const timeline = 'timeline' in project ? project.timeline :
+                          'supportRequested' in project ? project.supportRequested?.timeline : null;
+          
+          if (!supportTypes || supportTypes.length === 0) return null;
+          
+          return (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {supportTypes.map((type: string) => (
+                <div key={type} className="flex items-center gap-1">
+                  {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-[#F9E370]" />}
+                  {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-[#83E9FF]" />}
+                  {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
+                  <span className="text-xs text-gray-400">{type.toLowerCase()}</span>
+                </div>
+              ))}
+              {timeline && (
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-gray-400" />
+                  <span className="text-xs text-gray-400">{timeline}</span>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Links */}
         <div className="flex items-center gap-3 pt-3 border-t border-[#1E3851]">
@@ -162,7 +272,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({ project }: Public
             {new Date(project.submittedAt).toLocaleDateString()}
           </div>
         </div>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 });
