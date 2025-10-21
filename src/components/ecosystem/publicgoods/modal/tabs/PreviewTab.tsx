@@ -97,7 +97,7 @@ export function PreviewTab({ formData }: PreviewTabProps) {
             </div>
           )}
           
-          {formData.supportTypes.includes('CONTRIBUTORS') && formData.contributorTypes.length > 0 && (
+          {formData.supportTypes.includes('CONTRIBUTOR') && formData.contributorTypes.length > 0 && (
             <div>
               <p className="text-sm text-gray-400">Looking for Contributors</p>
               <div className="flex flex-wrap gap-1 mt-1">

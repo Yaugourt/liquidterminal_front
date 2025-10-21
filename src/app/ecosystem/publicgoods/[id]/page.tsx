@@ -373,7 +373,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                               {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
                               {type === 'PROMOTION' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
                               {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
-                              {type === 'CONTRIBUTORS' && <Users className="w-4 h-4 text-green-400" />}
+                              {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-green-400" />}
                               <span className="text-white capitalize">{type.toLowerCase()}</span>
                             </div>
                           ))}
@@ -381,7 +381,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                       </div>
                     )}
                     
-                    {project.supportTypes.includes('CONTRIBUTORS') && project.contributorTypes.length > 0 && (
+                    {project.supportTypes.includes('CONTRIBUTOR') && project.contributorTypes.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-[#F9E370] mb-2">Looking for Contributors</h3>
                         <div className="flex flex-wrap gap-2">

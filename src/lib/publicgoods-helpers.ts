@@ -53,7 +53,7 @@ export const SUPPORT_TYPES = [
     icon: '💰'
   },
   { 
-    value: 'CONTRIBUTORS', 
+    value: 'CONTRIBUTOR', 
     label: 'Contributors', 
     description: 'Looking for people to help build the project',
     icon: '👥'
@@ -63,9 +63,9 @@ export const SUPPORT_TYPES = [
 export const CONTRIBUTOR_TYPES = [
   { value: 'DEVELOPERS', label: 'Developers', icon: '👨‍💻' },
   { value: 'DESIGNERS', label: 'Designers', icon: '🎨' },
-  { value: 'MARKETING', label: 'Marketing/Community', icon: '📢' },
-  { value: 'WRITERS', label: 'Technical Writers', icon: '📝' },
-  { value: 'QA', label: 'QA/Testers', icon: '🧪' }
+  { value: 'MARKETING_COMMUNITY', label: 'Marketing/Community', icon: '📢' },
+  { value: 'TECHNICAL_WRITERS', label: 'Technical Writers', icon: '📝' },
+  { value: 'QA_TESTERS', label: 'QA/Testers', icon: '🧪' }
 ] as const;
 
 export const BUDGET_RANGES = [

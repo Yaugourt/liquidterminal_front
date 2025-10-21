@@ -223,8 +223,8 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
         experienceLevel: formData.experienceLevel as 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT',
         technologies: formData.technologies,
         // Section 4
-        supportTypes: formData.supportTypes.length > 0 ? formData.supportTypes as ('PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTORS')[] : undefined,
-        contributorTypes: formData.contributorTypes.length > 0 ? formData.contributorTypes as ('DEVELOPERS' | 'DESIGNERS' | 'MARKETING' | 'WRITERS' | 'QA')[] : undefined,
+        supportTypes: formData.supportTypes.length > 0 ? formData.supportTypes as ('PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTOR')[] : undefined,
+        contributorTypes: formData.contributorTypes.length > 0 ? formData.contributorTypes as ('DEVELOPERS' | 'DESIGNERS' | 'MARKETING_COMMUNITY' | 'TECHNICAL_WRITERS' | 'QA_TESTERS')[] : undefined,
         budgetRange: formData.budgetRange ? formData.budgetRange as 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS' : undefined,
         // Files
         logo: logo || undefined,

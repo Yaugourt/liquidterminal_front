@@ -42,7 +42,7 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
         </div>
       </div>
       
-      {formData.supportTypes.includes('CONTRIBUTORS') && (
+      {formData.supportTypes.includes('CONTRIBUTOR') && (
         <div>
           <Label className="text-white">What type of contributors are you looking for?</Label>
           <div className="grid grid-cols-2 gap-2 mt-2">

@@ -230,7 +230,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-[#F9E370]" />}
                   {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-[#83E9FF]" />}
                   {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
-                  {(type === 'contributors' || type === 'CONTRIBUTORS') && <Users className="w-3 h-3 text-green-400" />}
+                  {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-green-400" />}
                   <span className="text-xs text-gray-400">{type.toLowerCase()}</span>
                 </div>
               ))}
