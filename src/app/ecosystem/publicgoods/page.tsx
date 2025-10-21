@@ -24,7 +24,7 @@ export default function PublicGoodsPage() {
   
   // Fetch projects from API
   const { publicGoods, isLoading, refetch } = usePublicGoods({
-    status: activeTab === 'all' ? undefined : activeTab as 'pending' | 'approved' | 'rejected',
+    status: activeTab as 'all' | 'pending' | 'approved' | 'rejected',
     limit: 50
   });
 

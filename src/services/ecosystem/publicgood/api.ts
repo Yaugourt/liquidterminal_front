@@ -116,13 +116,8 @@ export const createPublicGood = async (data: CreatePublicGoodInput): Promise<Pub
     formData.append('technologies', JSON.stringify(data.technologies));
     
     // Section 4: Support (optional)
-    console.log('🔍 DEBUG supportTypes:', data.supportTypes);
     if (data.supportTypes && data.supportTypes.length > 0) {
-      const stringified = JSON.stringify(data.supportTypes);
-      console.log('📤 Sending supportTypes:', stringified);
-      formData.append('supportTypes', stringified);
-    } else {
-      console.log('⚠️ supportTypes NOT sent (empty or undefined)');
+      formData.append('supportTypes', JSON.stringify(data.supportTypes));
     }
     if (data.contributorTypes && data.contributorTypes.length > 0) {
       formData.append('contributorTypes', JSON.stringify(data.contributorTypes));
