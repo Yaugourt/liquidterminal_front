@@ -9,13 +9,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useReviewPublicGood, PublicGood } from "@/services/ecosystem/publicgood";
-import type { PublicGoodsProject } from "./mockData";
 
 interface ReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  project: PublicGood | PublicGoodsProject;
+  project: PublicGood;
 }
 
 type ReviewStatus = 'APPROVED' | 'REJECTED' | '';

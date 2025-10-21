@@ -1,14 +1,13 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SUPPORT_TYPES, CONTRIBUTOR_TYPES, BUDGET_RANGES, TIMELINES } from "@/lib/publicgoods-helpers";
+import { SUPPORT_TYPES, CONTRIBUTOR_TYPES, BUDGET_RANGES } from "@/lib/publicgoods-helpers";
 
 interface SupportTabProps {
   formData: {
     supportTypes: string[];
     contributorTypes: string[];
     budgetRange: string;
-    timeline: string;
   };
   updateField: (field: string, value: string) => void;
   toggleSupportType: (type: string) => void;
@@ -76,24 +75,6 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
               {BUDGET_RANGES.map(range => (
                 <SelectItem key={range.value} value={range.value} className="text-white">
                   {range.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-      
-      {formData.supportTypes.length > 0 && (
-        <div>
-          <Label htmlFor="timeline" className="text-white">Timeline</Label>
-          <Select value={formData.timeline} onValueChange={(val) => updateField('timeline', val)}>
-            <SelectTrigger className="bg-[#112941] border-[#1E3851] text-white mt-1">
-              <SelectValue placeholder="Select timeline" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#112941] border-[#1E3851]">
-              {TIMELINES.map(timeline => (
-                <SelectItem key={timeline.value} value={timeline.value} className="text-white">
-                  {timeline.label}
                 </SelectItem>
               ))}
             </SelectContent>

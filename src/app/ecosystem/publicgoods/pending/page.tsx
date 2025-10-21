@@ -42,8 +42,8 @@ export default function PendingReviewPage() {
     );
   }, [searchQuery, pendingPublicGoods]);
 
-  const handleReview = (project: PublicGood | import("@/components/ecosystem/publicgoods/mockData").PublicGoodsProject) => {
-    setProjectToReview(project as PublicGood);
+  const handleReview = (project: PublicGood) => {
+    setProjectToReview(project);
     setIsReviewModalOpen(true);
   };
 

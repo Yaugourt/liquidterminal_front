@@ -76,12 +76,6 @@ export const BUDGET_RANGES = [
   { value: 'RANGE_50K_PLUS', label: '$50k+', description: 'Over $50,000' }
 ] as const;
 
-export const TIMELINES = [
-  { value: 'THREE_MONTHS', label: '3 months', description: 'Short term' },
-  { value: 'SIX_MONTHS', label: '6 months', description: 'Medium term' },
-  { value: 'TWELVE_MONTHS', label: '12 months', description: 'Long term' }
-] as const;
-
 export const PROJECT_STATUSES = [
   { value: 'PENDING', label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
   { value: 'APPROVED', label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
@@ -163,14 +157,6 @@ export const formatBudgetRange = (range: string): string => {
 };
 
 /**
- * Format timeline enum to display string
- */
-export const formatTimeline = (timeline: string): string => {
-  const found = TIMELINES.find(t => t.value === timeline);
-  return found ? found.label : timeline;
-};
-
-/**
  * Format team size enum to display string
  */
 export const formatTeamSize = (size: string): string => {
@@ -243,7 +229,6 @@ export const buildPublicGoodFormData = (data: {
   supportTypes?: string[];
   contributorTypes?: string[];
   budgetRange?: string;
-  timeline?: string;
   
   // Files
   logo?: File;
@@ -284,9 +269,6 @@ export const buildPublicGoodFormData = (data: {
   }
   if (data.budgetRange) {
     formData.append('budgetRange', data.budgetRange);
-  }
-  if (data.timeline) {
-    formData.append('timeline', data.timeline);
   }
   
   // Files

@@ -6,7 +6,6 @@ export type ExperienceLevel = 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
 export type SupportType = 'PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTORS';
 export type ContributorType = 'DEVELOPERS' | 'DESIGNERS' | 'MARKETING' | 'WRITERS' | 'QA';
 export type BudgetRange = 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS';
-export type Timeline = 'THREE_MONTHS' | 'SIX_MONTHS' | 'TWELVE_MONTHS';
 
 // Main entity
 export interface PublicGood {
@@ -46,7 +45,6 @@ export interface PublicGood {
   supportTypes: SupportType[];
   contributorTypes: ContributorType[];
   budgetRange: BudgetRange | null;
-  timeline: Timeline | null;
   
   // Metadata
   status: ProjectStatus;
@@ -135,7 +133,6 @@ export interface CreatePublicGoodInput {
   supportTypes?: SupportType[];
   contributorTypes?: ContributorType[];
   budgetRange?: BudgetRange;
-  timeline?: Timeline;
   
   // Files (OPTIONAL)
   logo?: File;
@@ -164,7 +161,6 @@ export interface UpdatePublicGoodInput {
   supportTypes?: SupportType[];
   contributorTypes?: ContributorType[];
   budgetRange?: BudgetRange;
-  timeline?: Timeline;
   logo?: File;
   banner?: File;
   screenshots?: File[];

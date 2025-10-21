@@ -41,7 +41,6 @@ interface FormData {
   supportTypes: string[];
   contributorTypes: string[];
   budgetRange: string;
-  timeline: string;
 }
 
 export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProjectModalProps) {
@@ -68,8 +67,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
     technologies: [],
     supportTypes: [],
     contributorTypes: [],
-    budgetRange: "",
-    timeline: ""
+    budgetRange: ""
   });
   
   const [logo, setLogo] = useState<File | null>(null);
@@ -228,7 +226,6 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
         supportTypes: formData.supportTypes.length > 0 ? formData.supportTypes as ('PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTORS')[] : undefined,
         contributorTypes: formData.contributorTypes.length > 0 ? formData.contributorTypes as ('DEVELOPERS' | 'DESIGNERS' | 'MARKETING' | 'WRITERS' | 'QA')[] : undefined,
         budgetRange: formData.budgetRange ? formData.budgetRange as 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS' : undefined,
-        timeline: formData.timeline ? formData.timeline as 'THREE_MONTHS' | 'SIX_MONTHS' | 'TWELVE_MONTHS' : undefined,
         // Files
         logo: logo || undefined,
         banner: banner || undefined,
@@ -265,8 +262,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       technologies: [],
       supportTypes: [],
       contributorTypes: [],
-      budgetRange: "",
-      timeline: ""
+      budgetRange: ""
     });
     setLogo(null);
     setLogoPreview("");

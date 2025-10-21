@@ -119,11 +119,11 @@ export const createPublicGood = async (data: CreatePublicGoodInput): Promise<Pub
     if (data.supportTypes && data.supportTypes.length > 0) {
       formData.append('supportTypes', JSON.stringify(data.supportTypes));
     }
+    if (data.contributorTypes && data.contributorTypes.length > 0) {
+      formData.append('contributorTypes', JSON.stringify(data.contributorTypes));
+    }
     if (data.budgetRange) {
       formData.append('budgetRange', data.budgetRange);
-    }
-    if (data.timeline) {
-      formData.append('timeline', data.timeline);
     }
     
     // Files (optional)
@@ -176,8 +176,8 @@ export const updatePublicGood = async (id: number, data: UpdatePublicGoodInput):
     if (data.technologies !== undefined) formData.append('technologies', JSON.stringify(data.technologies));
     
     if (data.supportTypes !== undefined) formData.append('supportTypes', JSON.stringify(data.supportTypes));
+    if (data.contributorTypes !== undefined) formData.append('contributorTypes', JSON.stringify(data.contributorTypes));
     if (data.budgetRange !== undefined) formData.append('budgetRange', data.budgetRange);
-    if (data.timeline !== undefined) formData.append('timeline', data.timeline);
     
     if (data.logo !== undefined) formData.append('logo', data.logo);
     if (data.banner !== undefined) formData.append('banner', data.banner);

@@ -83,8 +83,8 @@ export default function MySubmissionsPage() {
     refetch();
   };
 
-  const handleEdit = (project: PublicGood | import("@/components/ecosystem/publicgoods/mockData").PublicGoodsProject) => {
-    setProjectToEdit(project as PublicGood);
+  const handleEdit = (project: PublicGood) => {
+    setProjectToEdit(project);
     setIsEditModalOpen(true);
   };
 
@@ -93,8 +93,8 @@ export default function MySubmissionsPage() {
     setProjectToEdit(null);
   };
 
-  const handleDelete = (project: PublicGood | import("@/components/ecosystem/publicgoods/mockData").PublicGoodsProject) => {
-    setProjectToDelete(project as PublicGood);
+  const handleDelete = (project: PublicGood) => {
+    setProjectToDelete(project);
     setIsDeleteDialogOpen(true);
   };
 

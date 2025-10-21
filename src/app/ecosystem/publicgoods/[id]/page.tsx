@@ -6,7 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Menu, ArrowLeft, Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign, User, Mail, ExternalLink, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Loader2 } from "lucide-react";
+import { Menu, ArrowLeft, Github, Globe, MessageCircle, Send, Users, Code2, DollarSign, User, Mail, ExternalLink, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Loader2 } from "lucide-react";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
 import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
@@ -359,7 +359,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               </Card>
 
               {/* Section 4: Support Requested */}
-              {(project.supportTypes.length > 0 || project.budgetRange || project.timeline) && (
+              {(project.supportTypes.length > 0 || project.budgetRange) && (
                 <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
                   <h2 className="text-xl font-semibold text-white mb-4">Support Requested</h2>
                   
@@ -373,7 +373,22 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                               {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
                               {type === 'PROMOTION' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
                               {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
+                              {type === 'CONTRIBUTORS' && <Users className="w-4 h-4 text-green-400" />}
                               <span className="text-white capitalize">{type.toLowerCase()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {project.supportTypes.includes('CONTRIBUTORS') && project.contributorTypes.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Looking for Contributors</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {project.contributorTypes.map((type: string) => (
+                            <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
+                              <Users className="w-4 h-4 text-green-400" />
+                              <span className="text-white capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
                             </div>
                           ))}
                         </div>
@@ -386,16 +401,6 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-4 h-4 text-[#F9E370]" />
                           <span className="text-white">{project.budgetRange.replace(/_/g, ' ')}</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {project.timeline && (
-                      <div>
-                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Timeline</h3>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          <span className="text-white">{project.timeline.replace(/_/g, ' ')}</span>
                         </div>
                       </div>
                     )}

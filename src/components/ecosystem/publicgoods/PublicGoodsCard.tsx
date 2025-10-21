@@ -8,8 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Github, Globe, MessageCircle, Send, Users, Code2, Clock, DollarSign, MoreVertical, Edit, Trash2, CheckCircle } from "lucide-react";
-import { PublicGoodsProject } from "./mockData";
+import { Github, Globe, MessageCircle, Send, Users, Code2, DollarSign, MoreVertical, Edit, Trash2, CheckCircle } from "lucide-react";
 import { PublicGood } from "@/services/ecosystem/publicgood";
 import { User } from "@/services/auth/types";
 import { hasRole } from "@/lib/roleHelpers";
@@ -17,11 +16,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface PublicGoodsCardProps {
-  project: PublicGood | PublicGoodsProject;
+  project: PublicGood;
   currentUser?: User | null;
-  onEdit?: (project: PublicGood | PublicGoodsProject) => void;
-  onDelete?: (project: PublicGood | PublicGoodsProject) => void;
-  onReview?: (project: PublicGood | PublicGoodsProject) => void;
+  onEdit?: (project: PublicGood) => void;
+  onDelete?: (project: PublicGood) => void;
+  onReview?: (project: PublicGood) => void;
 }
 
 export const PublicGoodsCard = memo(function PublicGoodsCard({ 
@@ -221,8 +220,6 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
         {(() => {
           const supportTypes = 'supportTypes' in project ? project.supportTypes : 
                               'supportRequested' in project ? project.supportRequested?.types : [];
-          const timeline = 'timeline' in project ? project.timeline :
-                          'supportRequested' in project ? project.supportRequested?.timeline : null;
           
           if (!supportTypes || supportTypes.length === 0) return null;
           
@@ -233,15 +230,10 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-[#F9E370]" />}
                   {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-[#83E9FF]" />}
                   {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
+                  {(type === 'contributors' || type === 'CONTRIBUTORS') && <Users className="w-3 h-3 text-green-400" />}
                   <span className="text-xs text-gray-400">{type.toLowerCase()}</span>
                 </div>
               ))}
-              {timeline && (
-                <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-gray-400" />
-                  <span className="text-xs text-gray-400">{timeline}</span>
-                </div>
-              )}
             </div>
           );
         })()}
