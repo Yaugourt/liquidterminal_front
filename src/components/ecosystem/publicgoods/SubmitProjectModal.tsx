@@ -39,6 +39,7 @@ interface FormData {
   experienceLevel: string;
   technologies: string[];
   supportTypes: string[];
+  contributorTypes: string[];
   budgetRange: string;
   timeline: string;
 }
@@ -66,6 +67,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
     experienceLevel: "",
     technologies: [],
     supportTypes: [],
+    contributorTypes: [],
     budgetRange: "",
     timeline: ""
   });
@@ -170,6 +172,14 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
     }
   };
   
+  const toggleContributorType = (type: string) => {
+    if (formData.contributorTypes.includes(type)) {
+      updateField('contributorTypes', formData.contributorTypes.filter(t => t !== type));
+    } else {
+      updateField('contributorTypes', [...formData.contributorTypes, type]);
+    }
+  };
+  
   const handleSubmit = async () => {
     const validation = validatePublicGoodForm({
       name: formData.name,
@@ -215,7 +225,8 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
         experienceLevel: formData.experienceLevel as 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT',
         technologies: formData.technologies,
         // Section 4
-        supportTypes: formData.supportTypes.length > 0 ? formData.supportTypes as ('PROMOTION' | 'SERVICES' | 'FUNDING')[] : undefined,
+        supportTypes: formData.supportTypes.length > 0 ? formData.supportTypes as ('PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTORS')[] : undefined,
+        contributorTypes: formData.contributorTypes.length > 0 ? formData.contributorTypes as ('DEVELOPERS' | 'DESIGNERS' | 'MARKETING' | 'WRITERS' | 'QA')[] : undefined,
         budgetRange: formData.budgetRange ? formData.budgetRange as 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS' : undefined,
         timeline: formData.timeline ? formData.timeline as 'THREE_MONTHS' | 'SIX_MONTHS' | 'TWELVE_MONTHS' : undefined,
         // Files
@@ -253,6 +264,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       experienceLevel: "",
       technologies: [],
       supportTypes: [],
+      contributorTypes: [],
       budgetRange: "",
       timeline: ""
     });
@@ -349,6 +361,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               formData={formData}
               updateField={updateField}
               toggleSupportType={toggleSupportType}
+              toggleContributorType={toggleContributorType}
             />
           </TabsContent>
           

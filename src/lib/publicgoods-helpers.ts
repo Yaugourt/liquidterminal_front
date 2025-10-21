@@ -51,7 +51,21 @@ export const SUPPORT_TYPES = [
     label: 'Funding', 
     description: 'Financial support',
     icon: '💰'
+  },
+  { 
+    value: 'CONTRIBUTORS', 
+    label: 'Contributors', 
+    description: 'Looking for people to help build the project',
+    icon: '👥'
   }
+] as const;
+
+export const CONTRIBUTOR_TYPES = [
+  { value: 'DEVELOPERS', label: 'Developers', icon: '👨‍💻' },
+  { value: 'DESIGNERS', label: 'Designers', icon: '🎨' },
+  { value: 'MARKETING', label: 'Marketing/Community', icon: '📢' },
+  { value: 'WRITERS', label: 'Technical Writers', icon: '📝' },
+  { value: 'QA', label: 'QA/Testers', icon: '🧪' }
 ] as const;
 
 export const BUDGET_RANGES = [
@@ -227,6 +241,7 @@ export const buildPublicGoodFormData = (data: {
   
   // Section 4: Support (optional)
   supportTypes?: string[];
+  contributorTypes?: string[];
   budgetRange?: string;
   timeline?: string;
   
@@ -263,6 +278,9 @@ export const buildPublicGoodFormData = (data: {
   // Section 4 (optional)
   if (data.supportTypes && data.supportTypes.length > 0) {
     formData.append('supportTypes', JSON.stringify(data.supportTypes));
+  }
+  if (data.contributorTypes && data.contributorTypes.length > 0) {
+    formData.append('contributorTypes', JSON.stringify(data.contributorTypes));
   }
   if (data.budgetRange) {
     formData.append('budgetRange', data.budgetRange);

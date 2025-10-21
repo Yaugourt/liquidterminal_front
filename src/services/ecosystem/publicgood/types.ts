@@ -3,7 +3,8 @@ export type ProjectStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export type DevelopmentStatus = 'IDEA' | 'DEVELOPMENT' | 'BETA' | 'PRODUCTION';
 export type TeamSize = 'SOLO' | 'SMALL' | 'LARGE';
 export type ExperienceLevel = 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
-export type SupportType = 'PROMOTION' | 'SERVICES' | 'FUNDING';
+export type SupportType = 'PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTORS';
+export type ContributorType = 'DEVELOPERS' | 'DESIGNERS' | 'MARKETING' | 'WRITERS' | 'QA';
 export type BudgetRange = 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS';
 export type Timeline = 'THREE_MONTHS' | 'SIX_MONTHS' | 'TWELVE_MONTHS';
 
@@ -43,6 +44,7 @@ export interface PublicGood {
   
   // Section 4: Support requested
   supportTypes: SupportType[];
+  contributorTypes: ContributorType[];
   budgetRange: BudgetRange | null;
   timeline: Timeline | null;
   
@@ -131,6 +133,7 @@ export interface CreatePublicGoodInput {
   
   // Section 4: Support (OPTIONAL)
   supportTypes?: SupportType[];
+  contributorTypes?: ContributorType[];
   budgetRange?: BudgetRange;
   timeline?: Timeline;
   
@@ -159,6 +162,7 @@ export interface UpdatePublicGoodInput {
   experienceLevel?: ExperienceLevel;
   technologies?: string[];
   supportTypes?: SupportType[];
+  contributorTypes?: ContributorType[];
   budgetRange?: BudgetRange;
   timeline?: Timeline;
   logo?: File;

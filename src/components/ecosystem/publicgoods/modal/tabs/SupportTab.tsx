@@ -1,19 +1,21 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SUPPORT_TYPES, BUDGET_RANGES, TIMELINES } from "@/lib/publicgoods-helpers";
+import { SUPPORT_TYPES, CONTRIBUTOR_TYPES, BUDGET_RANGES, TIMELINES } from "@/lib/publicgoods-helpers";
 
 interface SupportTabProps {
   formData: {
     supportTypes: string[];
+    contributorTypes: string[];
     budgetRange: string;
     timeline: string;
   };
   updateField: (field: string, value: string) => void;
   toggleSupportType: (type: string) => void;
+  toggleContributorType: (type: string) => void;
 }
 
-export function SupportTab({ formData, updateField, toggleSupportType }: SupportTabProps) {
+export function SupportTab({ formData, updateField, toggleSupportType, toggleContributorType }: SupportTabProps) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-400">This section is optional. Let us know what kind of support would help your project.</p>
@@ -40,6 +42,28 @@ export function SupportTab({ formData, updateField, toggleSupportType }: Support
           ))}
         </div>
       </div>
+      
+      {formData.supportTypes.includes('CONTRIBUTORS') && (
+        <div>
+          <Label className="text-white">What type of contributors are you looking for?</Label>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {CONTRIBUTOR_TYPES.map(type => (
+              <div key={type.value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`contributor-${type.value}`}
+                  checked={formData.contributorTypes.includes(type.value)}
+                  onCheckedChange={() => toggleContributorType(type.value)}
+                  className="border-[#1E3851] data-[state=checked]:bg-[#83E9FF] data-[state=checked]:text-black data-[state=checked]:border-[#83E9FF]"
+                />
+                <label htmlFor={`contributor-${type.value}`} className="text-sm text-gray-300 cursor-pointer flex items-center gap-1">
+                  <span>{type.icon}</span>
+                  <span>{type.label}</span>
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       
       {formData.supportTypes.includes('FUNDING') && (
         <div>

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { DEVELOPMENT_STATUSES, TEAM_SIZES, SUPPORT_TYPES } from "@/lib/publicgoods-helpers";
+import { DEVELOPMENT_STATUSES, TEAM_SIZES, SUPPORT_TYPES, CONTRIBUTOR_TYPES } from "@/lib/publicgoods-helpers";
 
 interface PreviewTabProps {
   formData: {
@@ -11,6 +11,7 @@ interface PreviewTabProps {
     technologies: string[];
     targetUsers: string[];
     supportTypes: string[];
+    contributorTypes: string[];
   };
 }
 
@@ -89,6 +90,22 @@ export function PreviewTab({ formData }: PreviewTabProps) {
                   return (
                     <Badge key={type} variant="outline" className="border-[#1E3851] text-gray-300">
                       {supportType?.icon} {supportType?.label}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          {formData.supportTypes.includes('CONTRIBUTORS') && formData.contributorTypes.length > 0 && (
+            <div>
+              <p className="text-sm text-gray-400">Looking for Contributors</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {formData.contributorTypes.map(type => {
+                  const contributorType = CONTRIBUTOR_TYPES.find(c => c.value === type);
+                  return (
+                    <Badge key={type} variant="outline" className="border-[#1E3851] text-gray-300">
+                      {contributorType?.icon} {contributorType?.label}
                     </Badge>
                   );
                 })}
