@@ -59,7 +59,7 @@ export function ProjectTab({
       </div>
       
       <div>
-        <Label htmlFor="description" className="text-white">Description * (min 100 chars)</Label>
+        <Label htmlFor="description" className="text-white">Description *</Label>
         <Textarea
           id="description"
           value={formData.description}
@@ -68,7 +68,12 @@ export function ProjectTab({
           rows={4}
           className="bg-[#112941] border-[#1E3851] text-white mt-1"
         />
-        <p className="text-xs text-gray-400 mt-1">{formData.description.length}/100</p>
+        <p className={`text-xs mt-1 ${formData.description.length >= 100 ? 'text-green-400' : 'text-red-400'}`}>
+          {formData.description.length >= 100 
+            ? `✓ ${formData.description.length} characters`
+            : `⚠️ Minimum 100 characters required (currently: ${formData.description.length})`
+          }
+        </p>
       </div>
       
       <div>

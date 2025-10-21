@@ -30,7 +30,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="problemSolved" className="text-white">Problem Solved * (min 50 chars)</Label>
+        <Label htmlFor="problemSolved" className="text-white">Problem Solved *</Label>
         <Textarea
           id="problemSolved"
           value={formData.problemSolved}
@@ -39,7 +39,12 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           rows={4}
           className="bg-[#112941] border-[#1E3851] text-white mt-1"
         />
-        <p className="text-xs text-gray-400 mt-1">{formData.problemSolved.length}/50</p>
+        <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-green-400' : 'text-red-400'}`}>
+          {formData.problemSolved.length >= 50 
+            ? `✓ ${formData.problemSolved.length} characters`
+            : `⚠️ Minimum 50 characters required (currently: ${formData.problemSolved.length})`
+          }
+        </p>
       </div>
       
       <div>
@@ -62,7 +67,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
       </div>
       
       <div>
-        <Label htmlFor="hlIntegration" className="text-white">HyperLiquid Integration * (min 50 chars)</Label>
+        <Label htmlFor="hlIntegration" className="text-white">HyperLiquid Integration *</Label>
         <Textarea
           id="hlIntegration"
           value={formData.hlIntegration}
@@ -71,7 +76,12 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           rows={4}
           className="bg-[#112941] border-[#1E3851] text-white mt-1"
         />
-        <p className="text-xs text-gray-400 mt-1">{formData.hlIntegration.length}/50</p>
+        <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-green-400' : 'text-red-400'}`}>
+          {formData.hlIntegration.length >= 50 
+            ? `✓ ${formData.hlIntegration.length} characters`
+            : `⚠️ Minimum 50 characters required (currently: ${formData.hlIntegration.length})`
+          }
+        </p>
       </div>
       
       <div>
