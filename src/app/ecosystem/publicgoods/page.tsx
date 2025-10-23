@@ -98,16 +98,38 @@ export default function PublicGoodsPage() {
         <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
           {/* Header section */}
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+              <div className="space-y-2">
                 <h1 className="text-2xl font-bold text-white">Public Goods Program</h1>
-                <p className="text-gray-400 mt-1">
-                  Supporting open source projects that benefit the HyperLiquid ecosystem
-                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                  <p className="text-gray-400">
+                    Supporting open source projects that benefit the HyperLiquid ecosystem
+                  </p>
+                  <div className="hidden sm:block w-px h-4 bg-[#1E3851]" />
+                  {/* Stats inline */}
+                  <div className="flex flex-wrap items-center gap-5 text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-500">Total:</span>
+                      <span className="text-[#83E9FF] font-semibold">{counts.all}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-500">Approved:</span>
+                      <span className="text-green-400 font-semibold">{counts.approved}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-500">Pending:</span>
+                      <span className="text-yellow-400 font-semibold">{counts.pending}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-500">Rejected:</span>
+                      <span className="text-red-400 font-semibold">{counts.rejected}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <Button 
                 onClick={handleSubmitClick}
-                className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90 flex items-center gap-2"
+                className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90 flex items-center gap-2 shrink-0"
               >
                 <Plus className="w-4 h-4" />
                 Submit Project
@@ -171,28 +193,6 @@ export default function PublicGoodsPage() {
               )}
             </div>
           )}
-
-          {/* Stats footer */}
-          <div className="border-t border-[#1E3851] pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-[#83E9FF]">{counts.all}</div>
-                <div className="text-sm text-gray-400">Total Projects</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-400">{counts.approved}</div>
-                <div className="text-sm text-gray-400">Approved</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-yellow-400">{counts.pending}</div>
-                <div className="text-sm text-gray-400">Pending</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-red-400">{counts.rejected}</div>
-                <div className="text-sm text-gray-400">Rejected</div>
-              </div>
-            </div>
-          </div>
         </main>
       </div>
       

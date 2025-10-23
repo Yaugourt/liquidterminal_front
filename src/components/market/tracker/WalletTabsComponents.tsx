@@ -165,14 +165,15 @@ export function WalletContentTabs({
   );
 
   return (
-    <div className="flex gap-2 items-center">
-      <div className="flex items-center gap-2">
+    <div className="flex gap-3 items-center">
+      {/* Scrollable tabs container */}
+      <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Tabs 
           value={activeWalletId?.toString() || ""} 
           onValueChange={onWalletChange}
-          className="w-auto"
+          className="w-full"
         >
-          <TabsList className="gap-3">
+          <TabsList className="gap-3 inline-flex w-auto min-w-full">
             {wallets.length > 0 ? (
               <DndContext
                 sensors={sensors}
@@ -199,16 +200,18 @@ export function WalletContentTabs({
             )}
           </TabsList>
         </Tabs>
-        
+      </div>
+      
+      {/* Info badge and action button */}
+      <div className="flex items-center gap-2 shrink-0">
         {wallets.length > 1 && (
-          <div className="flex items-center gap-1 text-xs text-[#FFFFFF60]">
+          <div className="hidden lg:flex items-center gap-1 text-xs text-[#FFFFFF60] bg-[#FFFFFF0A] px-2 py-1 rounded border border-[#83E9FF4D]">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>
         )}
+        <AddWalletButton onClick={onAddWallet} />
       </div>
-      
-      <AddWalletButton onClick={onAddWallet} />
     </div>
   );
 }

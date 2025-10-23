@@ -152,7 +152,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
             <Button
               variant="ghost"
               onClick={() => router.back()}
-              className="text-gray-400 hover:text-white"
+              className="text-[#83E9FF] hover:text-white"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to projects
@@ -241,11 +241,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               
               <div className="text-right">
                 <div className="text-sm text-gray-400 mb-1">Submitted</div>
-                <div className="text-white">{new Date(project.submittedAt).toLocaleDateString()}</div>
+                <div className="text-[#83E9FF] font-medium">{new Date(project.submittedAt).toLocaleDateString()}</div>
                 {project.reviewedAt && (
                   <>
                     <div className="text-sm text-gray-400 mb-1 mt-2">Reviewed</div>
-                    <div className="text-white">{new Date(project.reviewedAt).toLocaleDateString()}</div>
+                    <div className="text-[#83E9FF] font-medium">{new Date(project.reviewedAt).toLocaleDateString()}</div>
                   </>
                 )}
               </div>
@@ -313,9 +313,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                   <div>
                     <h3 className="text-sm font-medium text-[#F9E370] mb-2">Lead Developer</h3>
                     <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-400" />
+                      <User className="w-4 h-4 text-[#83E9FF]" />
                       <span className="text-white">{project.leadDeveloperName}</span>
-                      <Mail className="w-4 h-4 text-gray-400 ml-2" />
+                      <Mail className="w-4 h-4 text-[#83E9FF] ml-2" />
                       <span className="text-gray-300">{project.leadDeveloperContact}</span>
                     </div>
                   </div>
@@ -324,7 +324,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     <div>
                       <h3 className="text-sm font-medium text-[#F9E370] mb-2">Team Size</h3>
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-gray-400" />
+                        <Users className="w-4 h-4 text-[#83E9FF]" />
                         <span className="text-white">{project.teamSize}</span>
                       </div>
                     </div>
@@ -348,7 +348,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     <h3 className="text-sm font-medium text-[#F9E370] mb-2">Technologies Used</h3>
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map(tech => (
-                        <Badge key={tech} variant="outline" className="border-[#1E3851] text-gray-300">
+                        <Badge key={tech} variant="outline" className="border-[#83E9FF]/30 text-[#83E9FF]">
                           <Code2 className="w-3 h-3 mr-1" />
                           {tech}
                         </Badge>
@@ -373,7 +373,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                               {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
                               {type === 'PROMOTION' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
                               {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
-                              {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-green-400" />}
+                              {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-[#83E9FF]" />}
                               <span className="text-white capitalize">{type.toLowerCase()}</span>
                             </div>
                           ))}
@@ -387,7 +387,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                         <div className="flex flex-wrap gap-2">
                           {project.contributorTypes.map((type: string) => (
                             <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
-                              <Users className="w-4 h-4 text-green-400" />
+                              <Users className="w-4 h-4 text-[#83E9FF]" />
                               <span className="text-white capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
                             </div>
                           ))}
@@ -441,24 +441,24 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-400">Status</span>
                     <Badge className={getStatusColor(project.status)}>
-                      {project.status}
+                      <span className="lowercase first-letter:uppercase">{project.status.replace(/_/g, ' ')}</span>
                     </Badge>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Category</span>
-                    <span className="text-white">{project.category}</span>
+                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Team Size</span>
-                    <span className="text-white">{project.teamSize}</span>
+                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Experience</span>
-                    <span className="text-white">{project.experienceLevel}</span>
+                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Stage</span>
-                    <span className="text-white">{project.developmentStatus}</span>
+                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
                   </div>
                 </div>
               </Card>

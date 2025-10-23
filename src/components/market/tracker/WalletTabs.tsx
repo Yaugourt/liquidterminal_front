@@ -9,16 +9,16 @@ import { DeleteWalletDialog } from "./DeleteWalletDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
 import { DeleteWalletListDialog } from "./walletlists/DeleteWalletListDialog";
 import { WalletListContent } from "./walletlists/WalletListContent";
+import { WalletListSelector } from "./walletlists/WalletListSelector";
+import { WalletSelector } from "./walletlists/WalletSelector";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/toast-messages";
 import { DragEndEvent } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
-import { WalletListTabs, WalletContentTabs } from "./WalletTabsComponents";
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
-  const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [walletToDelete] = useState<{ id: number; name: string } | null>(null);
   const [isCreateListOpen, setIsCreateListOpen] = useState(false);
   const [isDeleteListOpen, setIsDeleteListOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<{ id: number; name: string } | null>(null);
@@ -32,7 +32,6 @@ export function WalletTabs() {
     error: storeError,
     initialize, 
     setActiveWallet,
-    reorderWallets,
   } = useWallets();
   
   const { userLists, loadUserLists, createList, setActiveList, refreshUserLists, loadListItems, activeListItems } = useWalletLists();
@@ -86,12 +85,6 @@ export function WalletTabs() {
     }
   }, [storeError]);
 
-  const handleDeleteClick = (id: number, walletName: string | undefined, e: React.MouseEvent) => {
-    e.stopPropagation(); // Empêcher le clic de sélectionner l'onglet
-    setWalletToDelete({ id, name: walletName || "Sans nom" });
-    setIsDeleteWalletOpen(true);
-  };
-
   const handleDeleteListClick = (id: number, listName: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Empêcher le clic de sélectionner l'onglet
     e.preventDefault(); // Empêcher complètement le comportement par défaut
@@ -115,26 +108,6 @@ export function WalletTabs() {
       }
     } catch (error) {
       console.error('Error reloading wallets:', error);
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      const oldIndex = wallets.findIndex(wallet => wallet.id === active.id);
-      const newIndex = wallets.findIndex(wallet => wallet.id === over?.id);
-      
-      if (oldIndex !== -1 && newIndex !== -1) {
-        try {
-          const newOrder = arrayMove(wallets, oldIndex, newIndex);
-          const newOrderIds = newOrder.map(wallet => wallet.id);
-          reorderWallets(newOrderIds);
-          walletReorderMessages.success();
-        } catch {
-          walletReorderMessages.error();
-        }
-      }
     }
   };
 
@@ -228,7 +201,7 @@ export function WalletTabs() {
 
   return (
     <>
-      <WalletListTabs
+      <WalletListSelector
         activeTab={activeTab}
         userLists={userLists}
         onTabChange={handleTabChange}
@@ -241,7 +214,7 @@ export function WalletTabs() {
         <div className="mt-4">
           {/* Séparateur entre les tabs des listes et les tabs des wallets */}
           <div className="w-full h-px bg-[#83E9FF4D] mb-4" />
-          <WalletContentTabs
+          <WalletSelector
             wallets={wallets}
             activeWalletId={activeWalletId}
             onWalletChange={(value) => {
@@ -252,9 +225,7 @@ export function WalletTabs() {
                 walletActiveMessages.success(wallet.name || 'Unnamed Wallet');
               }
             }}
-            onDragEnd={handleDragEnd}
             onAddWallet={() => setIsAddWalletOpen(true)}
-            onDeleteWallet={handleDeleteClick}
           />
         </div>
       )}

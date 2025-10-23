@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
 import { Menu } from "lucide-react"
-import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiChalkboardTeacherLight, PiGlobe, PiBooks } from "react-icons/pi";
+import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiGlobe, PiBooks, PiAppWindow } from "react-icons/pi";
 import { AiOutlineHome, AiOutlineSearch  } from "react-icons/ai";
 import { MdOutlineCandlestickChart } from "react-icons/md";
 import { cn } from "@/lib/utils"
@@ -143,24 +143,22 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
         groupName: 'Liquid Wiki',
         items: [
             {
-                name: 'Introduction',
+                name: 'App',
                 href: '/wiki',
                 icon: null,
-                IconComponent: PiChalkboardTeacherLight,
+                IconComponent: PiAppWindow,
             },
             {
                 name: 'Read List',
                 href: '/wiki/readlist',
                 icon: null,
                 IconComponent: PiBooks,
-                children: [
-                    {
-                        name: 'Public Read Lists',
-                        href: '/wiki/readlist/public-readlists',
-                        icon: null,
-                        IconComponent: PiGlobe
-                    }
-                ]
+            },
+            {
+                name: 'Public Read Lists',
+                href: '/wiki/readlist/public-readlists',
+                icon: null,
+                IconComponent: PiGlobe,
             }
         ]
     },
@@ -170,6 +168,7 @@ const socials = [
     { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
     { name: 'Twitter', href: 'https://x.com/liquidterminal', iconName: 'simple-icons:x' },
     { name: 'Github', href: 'https://github.com/Liquid-Terminal', iconName: 'mdi:github' },
+    { name: 'GitBook', href: 'https://liquid-terminal.gitbook.io/liquid-terminal', iconName: 'simple-icons:gitbook' },
 ]
 
 interface SidebarProps {
@@ -412,39 +411,35 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-2 bg-[#83E9FF0A] rounded-xl border border-[#83E9FF1A] backdrop-blur-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <div className="absolute -inset-1 bg-[#83E9FF] rounded-full blur opacity-20" />
-                                    <Avatar className="relative h-9 w-9 ring-2 ring-[#83E9FF1A] ring-offset-2 ring-offset-[#051728]">
-                                        {privyUser?.twitter?.profilePictureUrl ? (
-                                            <Image 
-                                                src={privyUser.twitter.profilePictureUrl}
-                                                alt="Avatar"
-                                                width={36}
-                                                height={36}
-                                                className="object-cover rounded-full"
-                                            />
-                                        ) : (
-                                            <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] font-medium">
-                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
-                                            </AvatarFallback>
-                                        )}
-                                    </Avatar>
-                                </div>
+                        <div className="p-1.5 bg-[#83E9FF05] rounded-lg">
+                            <div className="flex items-center gap-2">
+                                <Avatar className="h-7 w-7 ring-1 ring-[#83E9FF1A]">
+                                    {privyUser?.twitter?.profilePictureUrl ? (
+                                        <Image 
+                                            src={privyUser.twitter.profilePictureUrl}
+                                            alt="Avatar"
+                                            width={28}
+                                            height={28}
+                                            className="object-cover rounded-full"
+                                        />
+                                    ) : (
+                                        <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] text-xs font-medium">
+                                            {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
+                                        </AvatarFallback>
+                                    )}
+                                </Avatar>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-white font-medium truncate">
+                                    <p className="text-white text-sm font-medium truncate">
                                         {privyUser?.twitter?.username || "User"}
                                     </p>
-                                    <p className="text-[#FFFFFF80] text-xs truncate">Connected with Twitter</p>
                                 </div>
                                 <Button 
                                     variant="ghost" 
                                     size="icon" 
                                     onClick={() => logout()}
-                                    className="hover:bg-[#83E9FF1A] text-[#83E9FF]"
+                                    className="h-7 w-7 hover:bg-[#83E9FF1A] text-gray-400 hover:text-[#83E9FF]"
                                 >
-                                    <PiSignOut className="w-6 h-6" />
+                                    <PiSignOut className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>
@@ -452,19 +447,18 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center gap-3 py-2 px-2 border-t border-[#83E9FF1A] bg-[#83E9FF05]">
+                <div className="flex items-center justify-center gap-2 py-1.5 px-2 border-t border-[#83E9FF1A]">
                     {socials.map((item) => (
                         <a
                             key={item.name}
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group relative p-1.5"
+                            className="group relative p-1"
                         >
-                            <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
                             <Icon 
                                 icon={item.iconName} 
-                                className="h-4 w-4 text-[#83E9FFCC] group-hover:text-[#83E9FF] transition-colors relative z-10" 
+                                className="h-3.5 w-3.5 text-[#F9E370]/60 group-hover:text-[#F9E370] transition-colors" 
                             />
                         </a>
                     ))}
