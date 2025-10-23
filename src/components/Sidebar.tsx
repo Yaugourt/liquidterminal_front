@@ -84,7 +84,21 @@ const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] 
                 name: 'Tracker',
                 href: '/market/tracker',
                 icon: null,
-                IconComponent: PiWallet
+                IconComponent: PiWallet,
+                children: [
+                    {
+                        name: 'My Wallets',
+                        href: '/market/tracker',
+                        icon: null,
+                        IconComponent: PiWallet
+                    },
+                    {
+                        name: 'Public Lists',
+                        href: '/market/tracker/public-lists',
+                        icon: null,
+                        IconComponent: PiGlobe
+                    }
+                ]
             },
         ]
     },

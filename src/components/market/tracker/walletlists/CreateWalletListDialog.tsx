@@ -121,18 +121,20 @@ export function CreateWalletListDialog({
             />
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-[#0C2237] border-2 border-[#83E9FF4D] rounded-lg hover:border-[#83E9FF] transition-colors">
             <div className="flex items-center gap-3">
-              {isPublic ? (
-                <Users size={18} className="text-[#4ADE80]" />
-              ) : (
-                <Lock size={18} className="text-[#F9E370]" />
-              )}
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-[#4ADE80]/20' : 'bg-[#F9E370]/20'}`}>
+                {isPublic ? (
+                  <Users size={20} className="text-[#4ADE80]" />
+                ) : (
+                  <Lock size={20} className="text-[#F9E370]" />
+                )}
+              </div>
               <div>
-                <label className="text-sm font-medium text-white cursor-pointer">
-                  {isPublic ? 'Public List' : 'Private List'}
+                <label className="text-sm font-medium text-white cursor-pointer block">
+                  {isPublic ? '🌐 Public List' : '🔒 Private List'}
                 </label>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 mt-0.5">
                   {isPublic 
                     ? 'Anyone can view and copy this list'
                     : 'Only you can view this list'
@@ -143,6 +145,7 @@ export function CreateWalletListDialog({
             <Switch
               checked={isPublic}
               onCheckedChange={setIsPublic}
+              className="data-[state=checked]:bg-[#4ADE80] data-[state=unchecked]:bg-[#64748B]"
             />
           </div>
         </div>

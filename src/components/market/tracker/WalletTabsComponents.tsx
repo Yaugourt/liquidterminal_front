@@ -2,9 +2,10 @@
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Trash2, GripVertical, PlusCircle } from "lucide-react";
+import { Trash2, GripVertical, PlusCircle, Globe } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AddWalletButton } from "./AddWalletDialog";
+import { useRouter } from "next/navigation";
 import {
   DndContext,
   closestCenter,
@@ -58,8 +59,10 @@ export function WalletListTabs({
   onCreateList, 
   onDeleteList 
 }: WalletListTabsProps) {
+  const router = useRouter();
+  
   return (
-    <div className="flex gap-2 items-center justify-between">
+    <div className="flex gap-2 items-center justify-between flex-wrap">
       <div className="flex items-center gap-2">
         <Tabs 
           value={activeTab?.toString() || "all-wallets"} 
@@ -119,14 +122,24 @@ export function WalletListTabs({
         </Tabs>
       </div>
       
-      {/* Bouton Create List sur la même ligne que les tabs */}
-      <Button 
-        onClick={onCreateList}
-        className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
-      >
-        <PlusCircle className="mr-2 h-4 w-4" />
-        Create List
-      </Button>
+      {/* Boutons sur la même ligne que les tabs */}
+      <div className="flex gap-2">
+        <Button 
+          onClick={() => router.push('/market/tracker/public-lists')}
+          variant="outline"
+          className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+        >
+          <Globe className="mr-2 h-4 w-4" />
+          Browse Public Lists
+        </Button>
+        <Button 
+          onClick={onCreateList}
+          className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Create List
+        </Button>
+      </div>
     </div>
   );
 }

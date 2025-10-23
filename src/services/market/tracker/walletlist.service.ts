@@ -58,15 +58,15 @@ export const getUserWalletLists = async (params?: {
  */
 export const getWalletListById = async (id: number): Promise<WalletList> => {
   return withErrorHandling(async () => {
-    const response = await get<WalletList>(
+    const response = await get<{ success: boolean; data: WalletList }>(
       `${BASE_URL}/${id}`,
       {},
       { useCache: false }
     );
-    if (!response) {
+    if (!response || !response.data) {
       throw new Error('Wallet list not found');
     }
-    return response;
+    return response.data;
   }, 'fetching wallet list');
 };
 
@@ -75,11 +75,11 @@ export const getWalletListById = async (id: number): Promise<WalletList> => {
  */
 export const createWalletList = async (data: CreateWalletListInput): Promise<WalletList> => {
   return withErrorHandling(async () => {
-    const response = await post<WalletList>(BASE_URL, data);
-    if (!response) {
+    const response = await post<{ success: boolean; data: WalletList }>(BASE_URL, data);
+    if (!response || !response.data) {
       throw new Error('Failed to create wallet list');
     }
-    return response;
+    return response.data;
   }, 'creating wallet list');
 };
 
@@ -91,11 +91,11 @@ export const updateWalletList = async (
   data: UpdateWalletListInput
 ): Promise<WalletList> => {
   return withErrorHandling(async () => {
-    const response = await put<WalletList>(`${BASE_URL}/${id}`, data);
-    if (!response) {
+    const response = await put<{ success: boolean; data: WalletList }>(`${BASE_URL}/${id}`, data);
+    if (!response || !response.data) {
       throw new Error('Failed to update wallet list');
     }
-    return response;
+    return response.data;
   }, 'updating wallet list');
 };
 
@@ -113,11 +113,11 @@ export const deleteWalletList = async (id: number): Promise<void> => {
  */
 export const copyWalletList = async (id: number): Promise<WalletList> => {
   return withErrorHandling(async () => {
-    const response = await post<WalletList>(`${BASE_URL}/${id}/copy`);
-    if (!response) {
+    const response = await post<{ success: boolean; data: WalletList }>(`${BASE_URL}/${id}/copy`);
+    if (!response || !response.data) {
       throw new Error('Failed to copy wallet list');
     }
-    return response;
+    return response.data;
   }, 'copying wallet list');
 };
 
@@ -149,11 +149,11 @@ export const addWalletToList = async (
   data: CreateWalletListItemInput
 ): Promise<WalletListItem> => {
   return withErrorHandling(async () => {
-    const response = await post<WalletListItem>(`${BASE_URL}/${listId}/items`, data);
-    if (!response) {
+    const response = await post<{ success: boolean; data: WalletListItem }>(`${BASE_URL}/${listId}/items`, data);
+    if (!response || !response.data) {
       throw new Error('Failed to add wallet to list');
     }
-    return response;
+    return response.data;
   }, 'adding wallet to list');
 };
 
@@ -165,11 +165,11 @@ export const updateWalletListItem = async (
   data: UpdateWalletListItemInput
 ): Promise<WalletListItem> => {
   return withErrorHandling(async () => {
-    const response = await put<WalletListItem>(`${BASE_URL}/items/${itemId}`, data);
-    if (!response) {
+    const response = await put<{ success: boolean; data: WalletListItem }>(`${BASE_URL}/items/${itemId}`, data);
+    if (!response || !response.data) {
       throw new Error('Failed to update wallet list item');
     }
-    return response;
+    return response.data;
   }, 'updating wallet list item');
 };
 
