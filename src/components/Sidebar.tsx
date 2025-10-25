@@ -1,168 +1,27 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
-import { Menu } from "lucide-react"
-import { PiShareNetworkBold, PiVault, PiListMagnifyingGlass, PiInfinity, PiWallet, PiSignIn, PiSignOut, PiGlobe, PiBooks, PiAppWindow } from "react-icons/pi";
-import { AiOutlineHome, AiOutlineSearch  } from "react-icons/ai";
-import { MdOutlineCandlestickChart } from "react-icons/md";
+import { Menu, Settings, Shield } from "lucide-react"
+import { PiSignIn, PiSignOut } from "react-icons/pi";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
-import { Gavel, Shield, Heart, ClipboardList, Clock } from "lucide-react"
 import { hasRole } from "@/lib/roleHelpers"
-import { ComponentType } from "react"
+import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
+import { 
+  defaultNavigationGroups, 
+  getDefaultSidebarPreferences,
+  applyPreferencesToNavigation,
+  type NavigationGroup,
+  type NavigationItem
+} from "@/lib/sidebar-config"
+import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
 
-// Define navigation groups
-interface NavigationItem {
-    name: string;
-    href: string;
-    icon?: string | null;
-    IconComponent?: ComponentType<{ className?: string }>;
-    children?: NavigationItem[];
-}
+// Social links
 
-const navigationGroups: { groupName: string | null, items: NavigationItem[] }[] = [
-    {
-        groupName: null, // No group title for Home
-        items: [
-            {
-                name: 'Home',
-                href: '/dashboard',
-                icon: null,
-                IconComponent: AiOutlineHome
-            },
-        ]
-    },
-    {
-        groupName: 'Liquid Explorer',
-        items: [
-            {
-                name: 'Dashboard',
-                href: '/explorer',
-                icon: null,
-                IconComponent: AiOutlineSearch
-            },
-            {
-                name: 'Validator',
-                href: '/explorer/validator',
-                icon: null,
-                IconComponent: PiShareNetworkBold
-            },
-            {
-                name: 'Vaults',
-                href: '/explorer/vaults',
-                icon: null,
-                IconComponent: PiVault
-            },
-        ]
-    },
-    {
-        groupName: 'Liquid Market',
-        items: [
-            {
-                name: 'Spot',
-                href: '/market/spot',
-                icon: null,
-                IconComponent: MdOutlineCandlestickChart
-            },
-            {
-                name: 'Perpetual',
-                href: '/market/perp',
-                icon: null,
-                IconComponent: PiInfinity
-            },
-            {
-                name: 'Auction',
-                href: '/market/auction',
-                icon: null,
-                IconComponent: Gavel
-            },
-            {
-                name: 'Tracker',
-                href: '/market/tracker',
-                icon: null,
-                IconComponent: PiWallet,
-                children: [
-                    {
-                        name: 'My Wallets',
-                        href: '/market/tracker',
-                        icon: null,
-                        IconComponent: PiWallet
-                    },
-                    {
-                        name: 'Public Lists',
-                        href: '/market/tracker/public-lists',
-                        icon: null,
-                        IconComponent: PiGlobe
-                    }
-                ]
-            },
-        ]
-    },
-    {
-        groupName: 'Liquid Ecosystem',
-        items: [
-            {
-                name: 'Project',
-                href: '/ecosystem/project',
-                icon: null,
-                IconComponent: PiListMagnifyingGlass
-            },
-            {
-                name: 'Public Goods',
-                href: '/ecosystem/publicgoods',
-                icon: null,
-                IconComponent: Heart,
-                children: [
-                    {
-                        name: 'All Projects',
-                        href: '/ecosystem/publicgoods',
-                        icon: null,
-                        IconComponent: Heart
-                    },
-                    {
-                        name: 'My Submissions',
-                        href: '/ecosystem/publicgoods/my-submissions',
-                        icon: null,
-                        IconComponent: ClipboardList
-                    },
-                    {
-                        name: 'Pending Review',
-                        href: '/ecosystem/publicgoods/pending',
-                        icon: null,
-                        IconComponent: Clock
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        groupName: 'Liquid Wiki',
-        items: [
-            {
-                name: 'App',
-                href: '/wiki',
-                icon: null,
-                IconComponent: PiAppWindow,
-            },
-            {
-                name: 'Read List',
-                href: '/wiki/readlist',
-                icon: null,
-                IconComponent: PiBooks,
-            },
-            {
-                name: 'Public Read Lists',
-                href: '/wiki/readlist/public-readlists',
-                icon: null,
-                IconComponent: PiGlobe,
-            }
-        ]
-    },
-]
 
 const socials = [
     { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
@@ -178,8 +37,28 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+    const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
+    
+    // Sidebar preferences
+    const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
+    const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
+
+    // Initialize preferences on mount
+    useEffect(() => {
+        const defaultPrefs = getDefaultSidebarPreferences();
+        initializePreferences(defaultPrefs);
+    }, [initializePreferences]);
+
+    // Apply preferences to navigation when they change
+    useEffect(() => {
+        const prefs = getPreferences();
+        if (prefs) {
+            const filteredGroups = applyPreferencesToNavigation(defaultNavigationGroups, prefs);
+            setNavigationGroups(filteredGroups);
+        }
+    }, [preferences, getPreferences]);
 
     const toggleSubmenu = (name: string) => {
         setOpenSubmenu(prev => prev === name ? null : name);
@@ -446,6 +325,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     )}
                 </div>
 
+                {/* Customize Button */}
+                <div className="px-2 py-2 border-t border-[#83E9FF1A]">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsCustomizeOpen(true)}
+                        className="w-full border-[#83E9FF4D] text-white hover:bg-[#83E9FF20] justify-start gap-2"
+                    >
+                        <Settings className="w-4 h-4" />
+                        <span className="text-xs">Customize Sidebar</span>
+                    </Button>
+                </div>
+
                 {/* Social Links */}
                 <div className="flex items-center justify-center gap-2 py-1.5 px-2 border-t border-[#83E9FF1A]">
                     {socials.map((item) => (
@@ -464,6 +356,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     ))}
                 </div>
             </div>
+
+            {/* Customize Modal */}
+            <CustomizeSidebarModal
+                isOpen={isCustomizeOpen}
+                onClose={() => setIsCustomizeOpen(false)}
+            />
         </>
     )
 }
