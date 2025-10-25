@@ -124,4 +124,48 @@ export const removeWalletFromUser = async (walletId: number): Promise<void> => {
     // NOUVEAU: utiliser /:id au lieu de /user/:userId/wallet/:walletId
     await del(`/wallet/${walletId}`);
   }, 'removing wallet from user');
+};
+
+/**
+ * Bulk add wallets via CSV import
+ * @param wallets Array of wallets to add
+ * @param walletListId Optional ID of the wallet list to add all wallets to
+ * @returns Response with success stats (total, added, skipped, errors)
+ */
+export const bulkAddWallets = async (
+  wallets: Array<{ address: string; name?: string }>,
+  walletListId?: number
+): Promise<{
+  success: boolean;
+  data?: {
+    total: number;
+    added: number;
+    skipped: number;
+    errors: Array<{ address: string; reason: string }>;
+  };
+  message?: string;
+}> => {
+  return withErrorHandling(async () => {
+    const payload: {
+      wallets: Array<{ address: string; name?: string }>;
+      walletListId?: number;
+    } = { wallets };
+    
+    if (walletListId !== undefined) {
+      payload.walletListId = walletListId;
+    }
+    
+    const response = await post<{
+      success: boolean;
+      data?: {
+        total: number;
+        added: number;
+        skipped: number;
+        errors: Array<{ address: string; reason: string }>;
+      };
+      message?: string;
+    }>('/wallet/bulk-add', payload);
+    
+    return response;
+  }, 'bulk adding wallets');
 }; 

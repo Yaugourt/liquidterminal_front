@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Wallet, UserWallet, WalletsState } from "../services/market/tracker/types";
-import { addWallet, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
+import { addWallet, bulkAddWallets as apiBulkAddWallets, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
 import { AuthService } from "../services/auth";
 import { handleApiError, createOrderManager, validateWalletAddress, validateName, processWalletsResponse } from './utils';
 import { handleWalletApiError } from '../lib/toast-messages/wallet';
 import { InitializeParams } from './types';
+import { toast } from 'sonner';
 
 
 
@@ -101,6 +102,59 @@ export const useWallets = create<WalletsState>()(
             // Utiliser handleWalletApiError pour gérer les erreurs spécifiques aux wallets
             handleWalletApiError(error);
             throw error; // Re-throw pour que le composant puisse gérer l'erreur
+          } finally {
+            actions.setLoading(false);
+          }
+        },
+        
+        bulkAddWallets: async (
+          wallets: Array<{ address: string; name?: string }>,
+          walletListId?: number
+        ): Promise<{ total: number; added: number; skipped: number; errors: Array<{ address: string; reason: string }> }> => {
+          try {
+            actions.setLoading(true);
+            
+            // Validate all addresses
+            const validatedWallets: Array<{ address: string; name?: string }> = [];
+            
+            for (const w of wallets) {
+              try {
+                const validatedAddress = validateWalletAddress(w.address);
+                validatedWallets.push({
+                  address: validatedAddress,
+                  name: w.name
+                });
+              } catch {
+                // Skip invalid addresses
+              }
+            }
+            
+            if (validatedWallets.length === 0) {
+              throw new Error("No valid wallets to import");
+            }
+            
+            const response = await apiBulkAddWallets(validatedWallets, walletListId);
+            
+            if (response.success && response.data) {
+              // Reload wallets to reflect the new additions
+              await get().reloadWallets();
+              
+              // Show success toast
+              const { added, skipped, errors } = response.data;
+              if (added > 0) {
+                toast.success(`Successfully imported ${added} wallet${added !== 1 ? 's' : ''}${skipped > 0 ? ` (${skipped} skipped)` : ''}`);
+              }
+              if (errors.length > 0) {
+                toast.error(`${errors.length} wallet${errors.length !== 1 ? 's' : ''} failed to import`);
+              }
+              
+              return response.data;
+            }
+            
+            throw new Error(response.message || "Failed to bulk add wallets");
+          } catch (error) {
+            handleWalletApiError(error);
+            throw error;
           } finally {
             actions.setLoading(false);
           }

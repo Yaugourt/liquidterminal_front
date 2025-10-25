@@ -60,6 +60,7 @@ export interface WalletsState {
   initialize: (params: InitializeParams) => Promise<void>;
   reloadWallets: () => Promise<void>;
   addWallet: (address: string, name?: string, walletListId?: number) => Promise<Wallet | void>;
+  bulkAddWallets: (wallets: Array<{ address: string; name?: string }>, walletListId?: number) => Promise<{ total: number; added: number; skipped: number; errors: Array<{ address: string; reason: string }> }>;
   removeWallet: (id: number) => Promise<void>;
   setActiveWallet: (id: number | null) => void;
   reorderWallets: (newOrder: number[]) => void;

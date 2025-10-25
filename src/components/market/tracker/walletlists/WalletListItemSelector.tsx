@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, Wallet, Trash2 } from "lucide-react";
+import { PlusCircle, Search, Wallet, Trash2, FileUp, Download } from "lucide-react";
 import { WalletListItem } from "@/services/market/tracker/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -20,6 +20,8 @@ interface WalletListItemSelectorProps {
   onWalletChange: (value: string) => void;
   onAddWallet: () => void;
   onDeleteWallet: (walletId: number, walletName: string | null) => void;
+  onImportCSV?: () => void;
+  onExportCSV?: () => void;
 }
 
 export function WalletListItemSelector({
@@ -28,6 +30,8 @@ export function WalletListItemSelector({
   onWalletChange,
   onAddWallet,
   onDeleteWallet,
+  onImportCSV,
+  onExportCSV,
 }: WalletListItemSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -187,6 +191,34 @@ export function WalletListItemSelector({
           <span className="text-gray-400">wallet{items.length !== 1 ? "s" : ""}</span>
         </div>
       </div>
+
+      {/* Export CSV button */}
+      {onExportCSV && items.length > 0 && (
+        <Button
+          onClick={onExportCSV}
+          size="sm"
+          variant="outline"
+          className="w-full sm:w-auto border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+        >
+          <Download className="mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Export CSV</span>
+          <span className="sm:hidden">Export</span>
+        </Button>
+      )}
+
+      {/* Import CSV button */}
+      {onImportCSV && (
+        <Button
+          onClick={onImportCSV}
+          size="sm"
+          variant="outline"
+          className="w-full sm:w-auto border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+        >
+          <FileUp className="mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Import CSV</span>
+          <span className="sm:hidden">Import</span>
+        </Button>
+      )}
 
       {/* Add wallet button */}
       <Button

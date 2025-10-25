@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, Wallet } from "lucide-react";
+import { PlusCircle, Search, Wallet, FileUp, Download } from "lucide-react";
 import { Wallet as WalletType } from "@/services/market/tracker/types";
 
 interface WalletSelectorProps {
@@ -18,6 +18,8 @@ interface WalletSelectorProps {
   activeWalletId: number | null;
   onWalletChange: (value: string) => void;
   onAddWallet: () => void;
+  onImportCSV?: () => void;
+  onExportCSV?: () => void;
 }
 
 export function WalletSelector({
@@ -25,6 +27,8 @@ export function WalletSelector({
   activeWalletId,
   onWalletChange,
   onAddWallet,
+  onImportCSV,
+  onExportCSV,
 }: WalletSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -145,6 +149,34 @@ export function WalletSelector({
           <span className="text-gray-400">wallet{wallets.length !== 1 ? "s" : ""}</span>
         </div>
       </div>
+
+      {/* Export CSV button */}
+      {onExportCSV && wallets.length > 0 && (
+        <Button
+          onClick={onExportCSV}
+          size="sm"
+          variant="outline"
+          className="w-full sm:w-auto border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+        >
+          <Download className="mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Export CSV</span>
+          <span className="sm:hidden">Export</span>
+        </Button>
+      )}
+
+      {/* Import CSV button */}
+      {onImportCSV && (
+        <Button
+          onClick={onImportCSV}
+          size="sm"
+          variant="outline"
+          className="w-full sm:w-auto border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+        >
+          <FileUp className="mr-2 h-4 w-4" />
+          <span className="hidden sm:inline">Import CSV</span>
+          <span className="sm:hidden">Import</span>
+        </Button>
+      )}
 
       {/* Add wallet button */}
       <Button

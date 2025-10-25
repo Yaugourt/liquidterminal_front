@@ -8,14 +8,18 @@ import { walletActiveMessages } from "@/lib/toast-messages";
 import { DeleteWalletDialog } from "../DeleteWalletDialog";
 import { WalletListItemSelector } from "./WalletListItemSelector";
 import { DragEndEvent } from '@dnd-kit/core';
+import { exportWalletsToCSV } from "@/lib/csv-utils";
+import { toast } from "sonner";
 
 interface WalletListContentProps {
   listId: number;
+  listName?: string;
   onAddWallet?: () => void;
+  onImportCSV?: () => void;
   onDragEnd?: (event: DragEndEvent) => void;
 }
 
-export function WalletListContent({ listId, onAddWallet }: WalletListContentProps) {
+export function WalletListContent({ listId, listName, onAddWallet, onImportCSV }: WalletListContentProps) {
   const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
@@ -80,7 +84,7 @@ export function WalletListContent({ listId, onAddWallet }: WalletListContentProp
     setIsDeleteDialogOpen(true);
   };
 
-    const handleDeleteSuccess = async () => {
+  const handleDeleteSuccess = async () => {
     // Le DeleteWalletDialog gère déjà la suppression avec removeWallet
     // On n'a rien à faire de plus, le wallet sera supprimé de partout
     setIsDeleteDialogOpen(false);
@@ -88,6 +92,33 @@ export function WalletListContent({ listId, onAddWallet }: WalletListContentProp
     // Assurer la mise à jour immédiate de la liste active
     await refreshUserLists();
     await loadListItems(listId);
+  };
+
+  // Handle CSV export for list
+  const handleExportList = () => {
+    try {
+      if (validItems.length === 0) {
+        toast.error("No wallets to export");
+        return;
+      }
+
+      const walletsToExport = validItems.map(item => ({
+        address: item.userWallet?.Wallet?.address || "",
+        name: item.userWallet?.name || undefined
+      }));
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = listName 
+        ? `${listName.toLowerCase().replace(/\s+/g, '_')}_${timestamp}.csv`
+        : `wallet_list_${listId}_${timestamp}.csv`;
+      
+      exportWalletsToCSV(walletsToExport, filename);
+      
+      toast.success(`Exported ${validItems.length} wallet${validItems.length !== 1 ? 's' : ''}`);
+    } catch (error) {
+      console.error('Error exporting list:', error);
+      toast.error("Failed to export list");
+    }
   };
 
   if (loading) {
@@ -127,6 +158,8 @@ export function WalletListContent({ listId, onAddWallet }: WalletListContentProp
         }}
         onAddWallet={() => onAddWallet?.()}
         onDeleteWallet={handleDeleteClick}
+        onImportCSV={onImportCSV}
+        onExportCSV={handleExportList}
       />
       
       <DeleteWalletDialog

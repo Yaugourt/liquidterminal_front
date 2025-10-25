@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
+import { ImportWalletsCSVDialog } from "./ImportWalletsCSVDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
 import { DeleteWalletListDialog } from "./walletlists/DeleteWalletListDialog";
 import { WalletListContent } from "./walletlists/WalletListContent";
@@ -14,9 +15,12 @@ import { WalletSelector } from "./walletlists/WalletSelector";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/toast-messages";
 import { DragEndEvent } from '@dnd-kit/core';
+import { exportWalletsToCSV } from "@/lib/csv-utils";
+import { toast } from "sonner";
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
+  const [isImportCSVOpen, setIsImportCSVOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
   const [walletToDelete] = useState<{ id: number; name: string } | null>(null);
   const [isCreateListOpen, setIsCreateListOpen] = useState(false);
@@ -32,6 +36,7 @@ export function WalletTabs() {
     error: storeError,
     initialize, 
     setActiveWallet,
+    bulkAddWallets,
   } = useWallets();
   
   const { userLists, loadUserLists, createList, setActiveList, refreshUserLists, loadListItems, activeListItems } = useWalletLists();
@@ -197,6 +202,40 @@ export function WalletTabs() {
     return null;
   };
 
+  // Handle CSV import
+  const handleImportCSV = async (walletsToImport: Array<{ address: string; name?: string }>) => {
+    try {
+      const listId = activeTab !== "all-wallets" ? Number(activeTab) : undefined;
+      await bulkAddWallets(walletsToImport, listId);
+      await handleWalletActionSuccess();
+    } catch (error) {
+      console.error('Error importing wallets:', error);
+    }
+  };
+
+  // Handle CSV export for "All Wallets"
+  const handleExportAllWallets = () => {
+    try {
+      if (wallets.length === 0) {
+        toast.error("No wallets to export");
+        return;
+      }
+
+      const walletsToExport = wallets.map(w => ({
+        address: w.address,
+        name: w.name || undefined
+      }));
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      exportWalletsToCSV(walletsToExport, `all_wallets_${timestamp}.csv`);
+      
+      toast.success(`Exported ${wallets.length} wallet${wallets.length !== 1 ? 's' : ''}`);
+    } catch (error) {
+      console.error('Error exporting wallets:', error);
+      toast.error("Failed to export wallets");
+    }
+  };
+
 
 
   return (
@@ -226,6 +265,8 @@ export function WalletTabs() {
               }
             }}
             onAddWallet={() => setIsAddWalletOpen(true)}
+            onImportCSV={() => setIsImportCSVOpen(true)}
+            onExportCSV={handleExportAllWallets}
           />
         </div>
       )}
@@ -238,7 +279,9 @@ export function WalletTabs() {
             <WalletListContent 
               key={`list-${getActiveListInfo()!.id}-${listContentKey}`}
               listId={getActiveListInfo()!.id}
+              listName={getActiveListInfo()!.name}
               onAddWallet={() => setIsAddWalletOpen(true)}
+              onImportCSV={() => setIsImportCSVOpen(true)}
               onDragEnd={handleListDragEnd}
             />
           )}
@@ -251,6 +294,13 @@ export function WalletTabs() {
         onOpenChange={setIsAddWalletOpen}
         onSuccess={handleWalletActionSuccess}
         walletListId={activeTab !== "all-wallets" ? Number(activeTab) : undefined}
+        walletListName={activeTab !== "all-wallets" ? getActiveListInfo()?.name : undefined}
+      />
+
+      <ImportWalletsCSVDialog
+        isOpen={isImportCSVOpen}
+        onOpenChange={setIsImportCSVOpen}
+        onImport={handleImportCSV}
         walletListName={activeTab !== "all-wallets" ? getActiveListInfo()?.name : undefined}
       />
 
