@@ -37,8 +37,8 @@ apiClient.interceptors.request.use(
       if (config.data instanceof FormData) {
         delete config.headers['Content-Type'];
       }
-    } catch (error) {
-      console.warn('Error adding token to request:', error);
+    } catch {
+      // Token addition failed, continue without it
     }
     
     return config;

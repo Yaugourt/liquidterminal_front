@@ -116,8 +116,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
       exportWalletsToCSV(walletsToExport, filename);
       
       toast.success(`Exported ${validItems.length} wallet${validItems.length !== 1 ? 's' : ''}`);
-    } catch (error) {
-      console.error('Error exporting list:', error);
+    } catch {
       toast.error("Failed to export list");
     }
   };

@@ -39,8 +39,8 @@ export function PublicReadListDetails({
           if (response.success && response.data) {
             setItems(response.data);
           }
-        } catch (error) {
-          console.error('Error fetching read list items:', error);
+        } catch {
+          // Error handled silently
         } finally {
           setLoading(false);
         }

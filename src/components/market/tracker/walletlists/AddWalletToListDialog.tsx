@@ -64,8 +64,7 @@ export function AddWalletToListDialog({
       if (onSuccess) {
         onSuccess();
       }
-    } catch (err) {
-      console.error('Error adding wallet to list:', err);
+    } catch {
       toast.error("Failed to add wallet to list");
     } finally {
       setIsLoading(false);

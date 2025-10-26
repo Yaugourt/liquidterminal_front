@@ -55,8 +55,7 @@ export function PublicWalletListPreviewDialog({
       setLoading(true);
       const data = await getWalletListById(id);
       setFullList(data);
-    } catch (error) {
-      console.error('Error loading list details:', error);
+    } catch {
       toast.error('Failed to load list details');
     } finally {
       setLoading(false);
@@ -76,8 +75,7 @@ export function PublicWalletListPreviewDialog({
       setTimeout(() => {
         router.push('/market/tracker');
       }, 1000);
-    } catch (error) {
-      console.error('Error copying list:', error);
+    } catch {
       toast.error('Failed to copy list');
     } finally {
       setCopying(false);
@@ -169,7 +167,7 @@ export function PublicWalletListPreviewDialog({
               </span>
             </div>
             <div className="text-gray-400 text-sm">
-              By <span className="text-white font-medium">{list.creator?.name || list.creator?.username || 'Anonymous'}</span>
+              By <span className="text-white font-medium">{list.creator?.name || 'Anonymous'}</span>
             </div>
           </div>
 

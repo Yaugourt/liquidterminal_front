@@ -112,8 +112,8 @@ export function WalletTabs() {
       if (typeof activeTab === 'number') {
         await loadListItems(activeTab);
       }
-    } catch (error) {
-      console.error('Error reloading wallets:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -178,8 +178,8 @@ export function WalletTabs() {
         // Garder l'onglet actuel actif, ne pas changer vers la nouvelle liste
         setIsCreateListOpen(false);
       }
-    } catch (error) {
-      console.error('Error creating list:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -189,8 +189,8 @@ export function WalletTabs() {
       await loadUserLists({ limit: 20 });
       // Toujours revenir à "All Wallets" après suppression d'une liste
       setActiveTab("all-wallets");
-    } catch (error) {
-      console.error('Error reloading lists:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -209,8 +209,8 @@ export function WalletTabs() {
       const listId = activeTab !== "all-wallets" ? Number(activeTab) : undefined;
       await bulkAddWallets(walletsToImport, listId);
       await handleWalletActionSuccess();
-    } catch (error) {
-      console.error('Error importing wallets:', error);
+    } catch {
+      // Error handled by bulkAddWallets
     }
   };
 
@@ -231,8 +231,7 @@ export function WalletTabs() {
       exportWalletsToCSV(walletsToExport, `all_wallets_${timestamp}.csv`);
       
       toast.success(`Exported ${wallets.length} wallet${wallets.length !== 1 ? 's' : ''}`);
-    } catch (error) {
-      console.error('Error exporting wallets:', error);
+    } catch {
       toast.error("Failed to export wallets");
     }
   };
@@ -246,18 +245,10 @@ export function WalletTabs() {
   // Handle bulk delete
   const handleBulkDelete = async (walletIds: number[]) => {
     try {
-      console.log('🗑️ Starting bulk delete for wallet IDs:', walletIds);
-      const result = await bulkDeleteWallets(walletIds);
-      console.log('✅ Bulk delete result:', result);
+      await bulkDeleteWallets(walletIds);
       await handleWalletActionSuccess();
-    } catch (error) {
-      console.error('❌ Error bulk deleting wallets:', {
-        error,
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        walletIds
-      });
-      // Don't throw - error already handled by store
+    } catch {
+      // Error already handled by store
     }
   };
 

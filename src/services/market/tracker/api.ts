@@ -188,8 +188,6 @@ export const bulkDeleteWallets = async (
   message?: string;
 }> => {
   return withErrorHandling(async () => {
-    console.log('🌐 API Call: POST /wallet/bulk-delete', { walletIds });
-    
     const response = await post<{
       success: boolean;
       data?: {
@@ -201,7 +199,6 @@ export const bulkDeleteWallets = async (
       message?: string;
     }>('/wallet/bulk-delete', { walletIds });
     
-    console.log('🌐 API Response:', response);
     return response;
   }, 'bulk deleting wallets');
 }; 

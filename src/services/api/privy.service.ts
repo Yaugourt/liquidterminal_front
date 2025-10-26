@@ -61,8 +61,7 @@ export const getPrivyToken = async (): Promise<string | null> => {
 
     // Last resort: localStorage
     return getTokenFromStorage();
-  } catch (error) {
-    console.warn('Error getting Privy token:', error);
+  } catch {
     return getTokenFromStorage();
   }
 };

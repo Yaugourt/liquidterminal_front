@@ -108,8 +108,7 @@ export function ImportWalletsCSVDialog({
           toast.success(`Parsed ${validCount} valid wallet${validCount !== 1 ? "s" : ""}${invalidCount > 0 ? ` (${invalidCount} invalid)` : ""}`);
         }
       },
-      error: (error) => {
-        console.error("CSV parsing error:", error);
+      error: () => {
         toast.error("Failed to parse CSV file");
       },
     });
@@ -157,8 +156,8 @@ export function ImportWalletsCSVDialog({
     try {
       await onImport(validWallets);
       handleOpenChange(false);
-    } catch (error) {
-      console.error("Import error:", error);
+    } catch {
+      // Error handled by onImport
     } finally {
       setIsImporting(false);
     }

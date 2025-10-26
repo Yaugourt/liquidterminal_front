@@ -31,8 +31,7 @@ export const refreshToken = async (): Promise<string | null> => {
   try {
     const token = await getPrivyToken();
     return token && isValidJWT(token) ? token : null;
-  } catch (error) {
-    console.error('Token refresh failed:', error);
+  } catch {
     return null;
   }
 };

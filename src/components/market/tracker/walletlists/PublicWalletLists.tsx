@@ -58,8 +58,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
         setHasMore(response.pagination?.hasNext ?? false);
         setPage(pageNum);
       }
-    } catch (error) {
-      console.error('Error loading public lists:', error);
+    } catch {
       toast.error('Failed to load public lists');
     } finally {
       setLoading(false);

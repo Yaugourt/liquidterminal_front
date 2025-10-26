@@ -170,9 +170,7 @@ export const useWallets = create<WalletsState>()(
               throw new Error("No wallets selected for deletion");
             }
             
-            console.log('🔄 Calling API bulkDeleteWallets with:', walletIds);
             const response = await apiBulkDeleteWallets(walletIds);
-            console.log('📥 API Response:', response);
             
             if (response.success && response.data) {
               // Reload wallets to reflect the deletions
@@ -192,7 +190,6 @@ export const useWallets = create<WalletsState>()(
             
             throw new Error(response.message || "Failed to bulk delete wallets");
           } catch (error) {
-            console.error('❌ Store error:', error);
             handleWalletApiError(error);
             throw error;
           } finally {
