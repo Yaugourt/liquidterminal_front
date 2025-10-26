@@ -22,7 +22,7 @@ export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
   const [isImportCSVOpen, setIsImportCSVOpen] = useState(false);
   const [isDeleteWalletOpen, setIsDeleteWalletOpen] = useState(false);
-  const [walletToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
   const [isCreateListOpen, setIsCreateListOpen] = useState(false);
   const [isDeleteListOpen, setIsDeleteListOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<{ id: number; name: string } | null>(null);
@@ -37,6 +37,7 @@ export function WalletTabs() {
     initialize, 
     setActiveWallet,
     bulkAddWallets,
+    bulkDeleteWallets,
   } = useWallets();
   
   const { userLists, loadUserLists, createList, setActiveList, refreshUserLists, loadListItems, activeListItems } = useWalletLists();
@@ -236,6 +237,30 @@ export function WalletTabs() {
     }
   };
 
+  // Handle individual wallet delete
+  const handleDeleteWalletClick = (walletId: number, walletName: string | null) => {
+    setWalletToDelete({ id: walletId, name: walletName || 'Unnamed Wallet' });
+    setIsDeleteWalletOpen(true);
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = async (walletIds: number[]) => {
+    try {
+      console.log('🗑️ Starting bulk delete for wallet IDs:', walletIds);
+      const result = await bulkDeleteWallets(walletIds);
+      console.log('✅ Bulk delete result:', result);
+      await handleWalletActionSuccess();
+    } catch (error) {
+      console.error('❌ Error bulk deleting wallets:', {
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        walletIds
+      });
+      // Don't throw - error already handled by store
+    }
+  };
+
 
 
   return (
@@ -265,6 +290,8 @@ export function WalletTabs() {
               }
             }}
             onAddWallet={() => setIsAddWalletOpen(true)}
+            onDeleteWallet={handleDeleteWalletClick}
+            onBulkDelete={handleBulkDelete}
             onImportCSV={() => setIsImportCSVOpen(true)}
             onExportCSV={handleExportAllWallets}
           />
@@ -281,6 +308,7 @@ export function WalletTabs() {
               listId={getActiveListInfo()!.id}
               listName={getActiveListInfo()!.name}
               onAddWallet={() => setIsAddWalletOpen(true)}
+              onBulkDelete={handleBulkDelete}
               onImportCSV={() => setIsImportCSVOpen(true)}
               onDragEnd={handleListDragEnd}
             />

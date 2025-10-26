@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Wallet, UserWallet, WalletsState } from "../services/market/tracker/types";
-import { addWallet, bulkAddWallets as apiBulkAddWallets, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
+import { addWallet, bulkAddWallets as apiBulkAddWallets, bulkDeleteWallets as apiBulkDeleteWallets, getWalletsByUser, removeWalletFromUser } from "../services/market/tracker/api";
 import { AuthService } from "../services/auth";
 import { handleApiError, createOrderManager, validateWalletAddress, validateName, processWalletsResponse } from './utils';
 import { handleWalletApiError } from '../lib/toast-messages/wallet';
@@ -153,6 +153,46 @@ export const useWallets = create<WalletsState>()(
             
             throw new Error(response.message || "Failed to bulk add wallets");
           } catch (error) {
+            handleWalletApiError(error);
+            throw error;
+          } finally {
+            actions.setLoading(false);
+          }
+        },
+        
+        bulkDeleteWallets: async (
+          walletIds: number[]
+        ): Promise<{ total: number; deleted: number; failed: number; errors: Array<{ walletId: number; reason: string }> }> => {
+          try {
+            actions.setLoading(true);
+            
+            if (walletIds.length === 0) {
+              throw new Error("No wallets selected for deletion");
+            }
+            
+            console.log('🔄 Calling API bulkDeleteWallets with:', walletIds);
+            const response = await apiBulkDeleteWallets(walletIds);
+            console.log('📥 API Response:', response);
+            
+            if (response.success && response.data) {
+              // Reload wallets to reflect the deletions
+              await get().reloadWallets();
+              
+              // Show success toast
+              const { deleted, failed, errors } = response.data;
+              if (deleted > 0) {
+                toast.success(`Successfully deleted ${deleted} wallet${deleted !== 1 ? 's' : ''}`);
+              }
+              if (failed > 0 || errors.length > 0) {
+                toast.error(`${failed} wallet${failed !== 1 ? 's' : ''} failed to delete`);
+              }
+              
+              return response.data;
+            }
+            
+            throw new Error(response.message || "Failed to bulk delete wallets");
+          } catch (error) {
+            console.error('❌ Store error:', error);
             handleWalletApiError(error);
             throw error;
           } finally {

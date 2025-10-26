@@ -15,11 +15,12 @@ interface WalletListContentProps {
   listId: number;
   listName?: string;
   onAddWallet?: () => void;
+  onBulkDelete?: (walletIds: number[]) => Promise<void>;
   onImportCSV?: () => void;
   onDragEnd?: (event: DragEndEvent) => void;
 }
 
-export function WalletListContent({ listId, listName, onAddWallet, onImportCSV }: WalletListContentProps) {
+export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete, onImportCSV }: WalletListContentProps) {
   const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
@@ -158,6 +159,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onImportCSV }
         }}
         onAddWallet={() => onAddWallet?.()}
         onDeleteWallet={handleDeleteClick}
+        onBulkDelete={onBulkDelete || (async () => {})}
         onImportCSV={onImportCSV}
         onExportCSV={handleExportList}
       />

@@ -168,4 +168,40 @@ export const bulkAddWallets = async (
     
     return response;
   }, 'bulk adding wallets');
+};
+
+/**
+ * Bulk delete wallets
+ * @param walletIds Array of wallet IDs to delete
+ * @returns Response with success stats (total, deleted, failed, errors)
+ */
+export const bulkDeleteWallets = async (
+  walletIds: number[]
+): Promise<{
+  success: boolean;
+  data?: {
+    total: number;
+    deleted: number;
+    failed: number;
+    errors: Array<{ walletId: number; reason: string }>;
+  };
+  message?: string;
+}> => {
+  return withErrorHandling(async () => {
+    console.log('🌐 API Call: POST /wallet/bulk-delete', { walletIds });
+    
+    const response = await post<{
+      success: boolean;
+      data?: {
+        total: number;
+        deleted: number;
+        failed: number;
+        errors: Array<{ walletId: number; reason: string }>;
+      };
+      message?: string;
+    }>('/wallet/bulk-delete', { walletIds });
+    
+    console.log('🌐 API Response:', response);
+    return response;
+  }, 'bulk deleting wallets');
 }; 
