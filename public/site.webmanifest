@@ -1,0 +1,17 @@
+{
+  "name": "Liquid Terminal",
+  "short_name": "Liquid Terminal",
+  "description": "HyperLiquid Data Platform & Services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#051728",
+  "theme_color": "#83E9FF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+

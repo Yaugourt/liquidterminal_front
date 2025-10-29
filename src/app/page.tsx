@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon } from '@iconify/react';
 import Image from "next/image";
+import { JsonLd, organizationSchema, softwareApplicationSchema, websiteSchema } from "@/components/JsonLd";
 
 function HomePageContent() {
   const [displayText, setDisplayText] = useState("");
@@ -243,12 +244,17 @@ function HomePageContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#051728] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
-      </div>
-    }>
-      <HomePageContent />
-    </Suspense>
+    <>
+      <JsonLd data={organizationSchema} />
+      <JsonLd data={softwareApplicationSchema} />
+      <JsonLd data={websiteSchema} />
+      <Suspense fallback={
+        <div className="min-h-screen bg-[#051728] flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+        </div>
+      }>
+        <HomePageContent />
+      </Suspense>
+    </>
   );
 }

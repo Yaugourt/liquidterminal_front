@@ -1,0 +1,25 @@
+# Liquid Terminal - Robots.txt
+User-agent: *
+Allow: /
+
+# Disallow auth/admin pages
+Disallow: /api/
+Disallow: /user/
+Disallow: /dashboard
+
+# Sitemap
+Sitemap: https://liquidterminal.xyz/sitemap.xml
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1
+
+# Popular bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
