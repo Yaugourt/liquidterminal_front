@@ -6,13 +6,14 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
 import { Toaster } from "@/components/ui/sonner";
 import { usePathname } from "next/navigation";
+import { env } from "@/lib/env";
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  const privyAppId = process.env.NEXT_PUBLIC_PRIVY_AUDIENCE || "";
+  const privyAppId = env.NEXT_PUBLIC_PRIVY_AUDIENCE;
 
   return (
     <PrivyProvider
