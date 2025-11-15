@@ -24,16 +24,20 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
     title: "",
     desc: "",
     logo: "",
+    banner: "",
     twitter: "",
     discord: "",
     telegram: "",
     website: "",
+    token: "",
     categoryIds: [] as number[]
   });
   
   // File upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
+  const [selectedBannerFile, setSelectedBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
   
   const [categoryForm, setCategoryForm] = useState({
     name: "",
@@ -64,6 +68,23 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
     }
   };
 
+  const handleBannerFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedBannerFile(file);
+      setBannerPreview(URL.createObjectURL(file));
+      setProjectForm(prev => ({ ...prev, banner: "" })); // Clear URL if file is selected
+    }
+  };
+
+  const handleRemoveBannerFile = () => {
+    setSelectedBannerFile(null);
+    setBannerPreview("");
+    if (selectedBannerFile) {
+      URL.revokeObjectURL(bannerPreview);
+    }
+  };
+
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -91,11 +112,13 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           title: projectForm.title,
           desc: projectForm.desc,
           logo: selectedFile,
+          banner: selectedBannerFile || undefined,
           categoryIds: projectForm.categoryIds.length > 0 ? projectForm.categoryIds : undefined,
           twitter: projectForm.twitter || undefined,
           discord: projectForm.discord || undefined,
           telegram: projectForm.telegram || undefined,
-          website: projectForm.website || undefined
+          website: projectForm.website || undefined,
+          token: projectForm.token || undefined
         };
         
         newProject = await createProjectWithUpload(uploadData);
@@ -104,6 +127,8 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
 
         const projectData = {
           ...projectForm,
+          banner: projectForm.banner || undefined,
+          token: projectForm.token || undefined,
           categoryIds: projectForm.categoryIds.length > 0 ? projectForm.categoryIds : undefined
         };
         
@@ -115,14 +140,18 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
         title: "",
         desc: "",
         logo: "",
+        banner: "",
         twitter: "",
         discord: "",
         telegram: "",
         website: "",
+        token: "",
         categoryIds: []
       });
       setSelectedFile(null);
       setLogoPreview("");
+      setSelectedBannerFile(null);
+      setBannerPreview("");
       setOpen(false);
       onSuccess?.(newProject || undefined);
     } catch {
@@ -198,6 +227,10 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
               logoPreview={logoPreview}
               handleFileSelect={handleFileSelect}
               handleRemoveFile={handleRemoveFile}
+              selectedBannerFile={selectedBannerFile}
+              bannerPreview={bannerPreview}
+              handleBannerFileSelect={handleBannerFileSelect}
+              handleRemoveBannerFile={handleRemoveBannerFile}
               handleProjectSubmit={handleProjectSubmit}
               creatingProject={creatingProject}
               onCancel={() => setOpen(false)}

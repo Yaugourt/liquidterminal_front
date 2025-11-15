@@ -12,10 +12,12 @@ interface ProjectFormData {
   title: string;
   desc: string;
   logo: string;
+  banner: string;
   twitter: string;
   discord: string;
   telegram: string;
   website: string;
+  token: string;
   categoryIds: number[];
 }
 
@@ -27,6 +29,10 @@ interface ProjectFormProps {
   logoPreview: string;
   handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleRemoveFile: () => void;
+  selectedBannerFile: File | null;
+  bannerPreview: string;
+  handleBannerFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemoveBannerFile: () => void;
   handleProjectSubmit: (e: React.FormEvent) => void;
   creatingProject: boolean;
   onCancel: () => void;
@@ -40,6 +46,10 @@ export function ProjectForm({
   logoPreview,
   handleFileSelect,
   handleRemoveFile,
+  selectedBannerFile,
+  bannerPreview,
+  handleBannerFileSelect,
+  handleRemoveBannerFile,
   handleProjectSubmit,
   creatingProject,
   onCancel
@@ -175,6 +185,80 @@ export function ProjectForm({
         </div>
       </div>
       
+      {/* Banner (optional) */}
+      <div className="space-y-2">
+        <label className="text-white text-sm font-medium">Banner (optional)</label>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <label htmlFor="banner-file-upload" className="cursor-pointer">
+              <div className="flex items-center gap-2 px-4 py-2 border border-[#1E3851] rounded-lg bg-[#112941] text-white hover:bg-[#1E3851] transition-colors">
+                <PiUpload className="h-4 w-4" />
+                <span>Upload Banner</span>
+              </div>
+              <input
+                id="banner-file-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleBannerFileSelect}
+                className="hidden"
+              />
+            </label>
+            
+            {selectedBannerFile && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRemoveBannerFile}
+                className="border-red-500 text-red-400 hover:bg-red-500/10"
+              >
+                <PiX className="h-4 w-4 mr-1" />
+                Remove
+              </Button>
+            )}
+          </div>
+          
+          {/* Preview */}
+          {bannerPreview && (
+            <div className="relative w-full max-w-md h-24 border border-[#1E3851] rounded-lg overflow-hidden">
+              <Image
+                src={bannerPreview}
+                alt="Banner preview"
+                width={640}
+                height={128}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          
+          {/* OR separator */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-px bg-[#1E3851]"></div>
+            <span className="text-gray-400 text-sm">OR</span>
+            <div className="flex-1 h-px bg-[#1E3851]"></div>
+          </div>
+          
+          {/* URL Input */}
+          <div>
+            <label htmlFor="banner-url" className="text-white text-sm font-medium">Banner URL</label>
+            <Input
+              id="banner-url"
+              type="url"
+              value={projectForm.banner}
+              onChange={(e) => {
+                setProjectForm(prev => ({ ...prev, banner: e.target.value }));
+                if (selectedBannerFile) {
+                  handleRemoveBannerFile();
+                }
+              }}
+              className="bg-[#112941] border-[#1E3851] text-white"
+              placeholder="https://example.com/banner.png"
+              disabled={!!selectedBannerFile}
+            />
+          </div>
+        </div>
+      </div>
+      
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="website" className="text-white text-sm font-medium">Website</label>
@@ -225,6 +309,19 @@ export function ProjectForm({
             placeholder="https://t.me/project"
           />
         </div>
+      </div>
+      
+      {/* Token Address (optional) */}
+      <div className="space-y-2">
+        <label htmlFor="token" className="text-white text-sm font-medium">Token Address (optional)</label>
+        <Input
+          id="token"
+          type="text"
+          value={projectForm.token}
+          onChange={(e) => setProjectForm(prev => ({ ...prev, token: e.target.value }))}
+          className="bg-[#112941] border-[#1E3851] text-white"
+          placeholder="0x..."
+        />
       </div>
       
       <div className="flex justify-end gap-3 pt-4">

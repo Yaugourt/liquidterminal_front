@@ -26,10 +26,16 @@ const EmptyState = memo(() => (
 EmptyState.displayName = 'EmptyState';
 
 // Format court pour l'adresse
-const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
+const formatAddress = (address?: string | null) => {
+  if (!address || typeof address !== 'string') return '-';
+  const start = address.slice(0, 6);
+  const end = address.slice(-4);
+  return `${start}...${end}`;
+};
 
 // Mapping temporaire des deployers vers leurs noms (en attendant l'API backend)
-const getDeployerName = (address: string): string => {
+const getDeployerName = (address?: string | null): string => {
+  if (!address || typeof address !== 'string') return '-';
   const deployerNames: Record<string, string> = {
     '0x88806a71d74ad0a510b350545c9ae490912f0888': 'Unit',
     // Ajouter d'autres mappings ici si nécessaire
@@ -135,19 +141,23 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
                   {/* Oracle Updater */}
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[#83E9FF] font-inter">{formatAddress(dex.oracleUpdater)}</span>
-                      <button 
-                        onClick={e => { e.preventDefault(); handleCopy(dex.oracleUpdater); }} 
-                        className="group p-1 rounded transition-colors"
-                      >
-                        {copiedAddress === dex.oracleUpdater ? (
-                          <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
-                        ) : (
-                          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
-                        )}
-                      </button>
-                    </div>
+                    {dex.oracleUpdater ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[#83E9FF] font-inter">{formatAddress(dex.oracleUpdater)}</span>
+                        <button 
+                          onClick={e => { e.preventDefault(); handleCopy(dex.oracleUpdater!); }} 
+                          className="group p-1 rounded transition-colors"
+                        >
+                          {copiedAddress === dex.oracleUpdater ? (
+                            <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-[#FFFFFF80] text-xs">-</span>
+                    )}
                   </TableCell>
 
                   {/* Fee Recipient */}

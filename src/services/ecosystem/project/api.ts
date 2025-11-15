@@ -100,6 +100,7 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
     if (data.discord) formData.append('discord', data.discord);
     if (data.telegram) formData.append('telegram', data.telegram);
     if (data.website) formData.append('website', data.website);
+    if (data.token) formData.append('token', data.token);
     if (data.categoryIds && data.categoryIds.length > 0) {
       // Envoyer comme JSON string - le backend devra parser
       formData.append('categoryIds', JSON.stringify(data.categoryIds));
@@ -108,6 +109,9 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
     // Ajouter le fichier si présent
     if (data.logo) {
       formData.append('logo', data.logo);
+    }
+    if (data.banner) {
+      formData.append('banner', data.banner);
     }
 
     // Utiliser axios avec FormData - l'intercepteur gère l'auth automatiquement

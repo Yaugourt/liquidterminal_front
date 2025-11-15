@@ -3,10 +3,12 @@ export interface Project {
   title: string;
   desc: string;
   logo: string;
+  banner?: string;
   twitter?: string;
   discord?: string;
   telegram?: string;
   website?: string;
+  token?: string;
   createdAt: string;
   updatedAt: string;
   categories?: Category[];
@@ -88,10 +90,12 @@ export interface CreateProjectInput {
   title: string;
   desc: string;
   logo: string;
+  banner?: string;
   twitter?: string;
   discord?: string;
   telegram?: string;
   website?: string;
+  token?: string;
   categoryIds?: number[];
 }
 
@@ -100,10 +104,12 @@ export interface CreateProjectWithUploadInput {
   title: string;
   desc: string;
   logo?: File; // Fichier uploadé
+  banner?: File; // Fichier uploadé
   twitter?: string;
   discord?: string;
   telegram?: string;
   website?: string;
+  token?: string;
   categoryIds?: number[];
 }
 
