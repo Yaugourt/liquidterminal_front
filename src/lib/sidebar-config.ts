@@ -93,19 +93,41 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Spot',
         href: '/market/spot',
         icon: null,
-        IconComponent: MdOutlineCandlestickChart
+        IconComponent: MdOutlineCandlestickChart,
+        children: [
+          {
+            name: 'Market',
+            href: '/market/spot',
+            icon: null,
+            IconComponent: MdOutlineCandlestickChart
+          },
+          {
+            name: 'Auction',
+            href: '/market/spot/auction',
+            icon: null,
+            IconComponent: Gavel
+          }
+        ]
       },
       {
         name: 'Perpetual',
         href: '/market/perp',
         icon: null,
-        IconComponent: PiInfinity
-      },
-      {
-        name: 'Auction',
-        href: '/market/auction',
-        icon: null,
-        IconComponent: Gavel
+        IconComponent: PiInfinity,
+        children: [
+          {
+            name: 'Market',
+            href: '/market/perp',
+            icon: null,
+            IconComponent: PiInfinity
+          },
+          {
+            name: 'Auction',
+            href: '/market/perp/auction',
+            icon: null,
+            IconComponent: Gavel
+          }
+        ]
       },
       {
         name: 'Tracker',

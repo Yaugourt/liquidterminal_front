@@ -50,7 +50,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/market/auction`,
+      url: `${baseUrl}/market/spot/auction`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/market/perp/auction`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.7,

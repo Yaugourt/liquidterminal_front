@@ -173,11 +173,17 @@ export const seoConfig = {
     path: "/market/perp",
   },
 
-  auction: {
-    title: "Auctions - HyperLiquid Token Auctions",
-    description: "Monitor ongoing and upcoming token auctions on HyperLiquid. Participate in fair launches and token distributions.",
-    keywords: ["token auctions", "fair launch", "HyperLiquid auctions", "token distribution", "IDO"],
-    path: "/market/auction",
+  spotAuction: {
+    title: "Spot Auctions - HyperLiquid Token Auctions",
+    description: "Monitor ongoing and upcoming spot token auctions on HyperLiquid. Participate in fair launches and token distributions.",
+    keywords: ["token auctions", "fair launch", "HyperLiquid auctions", "token distribution", "IDO", "spot auction"],
+    path: "/market/spot/auction",
+  },
+  perpAuction: {
+    title: "Perpetual Auctions - HyperLiquid DEXs",
+    description: "Monitor HyperLiquid Perpetual DEX auctions. Track new perpetual listings and participate in the ecosystem.",
+    keywords: ["perp auctions", "HyperLiquid perps", "new listings", "DEX auctions"],
+    path: "/market/perp/auction",
   },
 
   dashboard: {
