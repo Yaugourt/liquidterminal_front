@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
+import {
   WalletList,
   WalletListItem,
   WalletListResponse,
@@ -25,9 +25,9 @@ import {
 /**
  * Hook pour récupérer les listes publiques
  */
-export const usePublicWalletLists = (params?: { 
-  page?: number; 
-  limit?: number; 
+export const usePublicWalletLists = (params?: {
+  page?: number;
+  limit?: number;
   search?: string;
   enabled?: boolean;
 }) => {
@@ -37,7 +37,7 @@ export const usePublicWalletLists = (params?: {
 
   const fetchData = useCallback(async () => {
     if (params?.enabled === false) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -48,13 +48,13 @@ export const usePublicWalletLists = (params?: {
     } finally {
       setIsLoading(false);
     }
-  }, [params]);
+  }, [params?.enabled, params?.page, params?.limit, params?.search]);
 
   useEffect(() => {
     if (params?.enabled !== false) {
       fetchData();
     }
-  }, [fetchData, params?.enabled]);
+  }, [fetchData]);
 
   return {
     data: data.data,
@@ -68,9 +68,9 @@ export const usePublicWalletLists = (params?: {
 /**
  * Hook pour récupérer les listes de l'utilisateur
  */
-export const useUserWalletLists = (params?: { 
-  page?: number; 
-  limit?: number; 
+export const useUserWalletLists = (params?: {
+  page?: number;
+  limit?: number;
   search?: string;
   enabled?: boolean;
 }) => {
@@ -80,7 +80,7 @@ export const useUserWalletLists = (params?: {
 
   const fetchData = useCallback(async () => {
     if (params?.enabled === false) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -91,13 +91,13 @@ export const useUserWalletLists = (params?: {
     } finally {
       setIsLoading(false);
     }
-  }, [params]);
+  }, [params?.enabled, params?.page, params?.limit, params?.search]);
 
   useEffect(() => {
     if (params?.enabled !== false) {
       fetchData();
     }
-  }, [fetchData, params?.enabled]);
+  }, [fetchData]);
 
   return {
     data: data.data,
@@ -118,7 +118,7 @@ export const useWalletList = (id: number | null) => {
 
   const fetchData = useCallback(async () => {
     if (!id) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -157,7 +157,7 @@ export const useWalletListItems = (
 
   const fetchData = useCallback(async () => {
     if (!listId) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -177,7 +177,7 @@ export const useWalletListItems = (
     } finally {
       setIsLoading(false);
     }
-  }, [listId, params]);
+  }, [listId, params?.page, params?.limit, params?.search]);
 
   useEffect(() => {
     fetchData();

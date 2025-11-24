@@ -11,12 +11,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
-import { 
-  defaultNavigationGroups, 
-  getDefaultSidebarPreferences,
-  applyPreferencesToNavigation,
-  type NavigationGroup,
-  type NavigationItem
+import {
+    defaultNavigationGroups,
+    getDefaultSidebarPreferences,
+    applyPreferencesToNavigation,
+    type NavigationGroup,
+    type NavigationItem
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
 
@@ -40,7 +40,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
-    
+
     // Sidebar preferences
     const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
     const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
@@ -97,12 +97,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         <Menu className="h-5 w-5 text-[#83E9FF]" />
                     </Button>
                     <div className="flex items-center gap-2">
-                        <Image 
-                            src="/logo.svg" 
-                            alt="Logo" 
-                            width={24} 
+                        <Image
+                            src="/logo.svg"
+                            alt="Logo"
+                            width={24}
                             height={24}
-                            className="h-6 w-6" 
+                            className="h-6 w-6"
                         />
                         <h1 className="hidden lg:block text-sm font-bold">
                             <span className="text-[#83E9FF] font-higuen">Liquid </span>
@@ -138,8 +138,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             href={item.href}
                                                             className={cn(
                                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
-                                                                isActive 
-                                                                    ? "bg-[#83E9FF0A] text-[#83E9FF]" 
+                                                                isActive
+                                                                    ? "bg-[#83E9FF0A] text-[#83E9FF]"
                                                                     : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
                                                             )}
                                                             onClick={() => setIsOpen(false)}
@@ -168,8 +168,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             }}
                                                             className={cn(
                                                                 "p-1 rounded transition-all",
-                                                                isActive 
-                                                                    ? "text-[#83E9FF] hover:bg-[#83E9FF1A]" 
+                                                                isActive
+                                                                    ? "text-[#83E9FF] hover:bg-[#83E9FF1A]"
                                                                     : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
                                                             )}
                                                         >
@@ -181,8 +181,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                         href={item.href}
                                                         className={cn(
                                                             "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
-                                                            isActive 
-                                                                ? "bg-[#83E9FF0A] text-[#83E9FF]" 
+                                                            isActive
+                                                                ? "bg-[#83E9FF0A] text-[#83E9FF]"
                                                                 : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
                                                         )}
                                                         onClick={() => setIsOpen(false)}
@@ -236,7 +236,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 </ul>
                             </li>
                         ))}
-                        
+
                         {/* Admin Section - Only visible to admins */}
                         {isAdmin && (
                             <li className="space-y-1">
@@ -253,7 +253,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             className={cn(
                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
                                                 pathname === '/user'
-                                                    ? "bg-[#f9e3700A] text-[#f9e370]" 
+                                                    ? "bg-[#f9e3700A] text-[#f9e370]"
                                                     : "text-[#FFFFFFCC] hover:bg-[#f9e3700A] hover:text-[#f9e370]"
                                             )}
                                             onClick={() => setIsOpen(false)}
@@ -276,7 +276,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Account Section */}
                 <div className="p-3">
                     {!authenticated ? (
-                        <Button 
+                        <Button
                             onClick={() => login()}
                             className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
                         >
@@ -292,29 +292,35 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     ) : (
                         <div className="p-1.5 bg-[#83E9FF05] rounded-lg">
                             <div className="flex items-center gap-2">
-                                <Avatar className="h-7 w-7 ring-1 ring-[#83E9FF1A]">
-                                    {privyUser?.twitter?.profilePictureUrl ? (
-                                        <Image 
-                                            src={privyUser.twitter.profilePictureUrl}
-                                            alt="Avatar"
-                                            width={28}
-                                            height={28}
-                                            className="object-cover rounded-full"
-                                        />
-                                    ) : (
-                                        <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] text-xs font-medium">
-                                            {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
-                                        </AvatarFallback>
-                                    )}
-                                </Avatar>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-white text-sm font-medium truncate">
-                                        {privyUser?.twitter?.username || "User"}
-                                    </p>
-                                </div>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Link
+                                    href="/profile"
+                                    className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <Avatar className="h-7 w-7 ring-1 ring-[#83E9FF1A]">
+                                        {privyUser?.twitter?.profilePictureUrl ? (
+                                            <Image
+                                                src={privyUser.twitter.profilePictureUrl}
+                                                alt="Avatar"
+                                                width={28}
+                                                height={28}
+                                                className="object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] text-xs font-medium">
+                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
+                                            </AvatarFallback>
+                                        )}
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-white text-sm font-medium truncate">
+                                            {privyUser?.twitter?.username || "User"}
+                                        </p>
+                                    </div>
+                                </Link>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => logout()}
                                     className="h-7 w-7 hover:bg-[#83E9FF1A] text-gray-400 hover:text-[#83E9FF]"
                                 >
@@ -348,9 +354,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             rel="noopener noreferrer"
                             className="group relative p-1"
                         >
-                            <Icon 
-                                icon={item.iconName} 
-                                className="h-3.5 w-3.5 text-[#F9E370]/60 group-hover:text-[#F9E370] transition-colors" 
+                            <Icon
+                                icon={item.iconName}
+                                className="h-3.5 w-3.5 text-[#F9E370]/60 group-hover:text-[#F9E370] transition-colors"
                             />
                         </a>
                     ))}
