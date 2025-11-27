@@ -5,7 +5,11 @@ import {
   PerpDexApiResponse, 
   PerpDex, 
   PerpDexRaw,
-  PerpDexGlobalStats 
+  PerpDexGlobalStats,
+  AllPerpMetasResponse,
+  PerpMetaAsset,
+  CollateralToken,
+  COLLATERAL_TOKEN_MAP
 } from './types';
 
 /**
@@ -82,5 +86,89 @@ export const calculateGlobalStats = (dexs: PerpDex[]): PerpDexGlobalStats => {
 export const fetchPerpDexByName = async (name: string): Promise<PerpDex | null> => {
   const dexs = await fetchPerpDexs();
   return dexs.find(dex => dex.name.toLowerCase() === name.toLowerCase()) || null;
+};
+
+// ============================================
+// allPerpMetas API
+// ============================================
+
+/**
+ * Asset with collateral token info
+ */
+export interface PerpMetaAssetWithCollateral extends PerpMetaAsset {
+  collateralToken: CollateralToken;
+}
+
+/**
+ * Parsed metadata for all DEXs
+ */
+export interface ParsedPerpMetas {
+  dexMetas: Map<string, PerpMetaAssetWithCollateral[]>;
+  dexCollateral: Map<string, CollateralToken>; // Map of dexName -> collateral token
+  allAssets: PerpMetaAssetWithCollateral[];
+}
+
+/**
+ * Extract DEX name from asset name (e.g., "xyz:AAPL" -> "xyz")
+ */
+const extractDexName = (assetName: string): string => {
+  const parts = assetName.split(':');
+  return parts.length > 1 ? parts[0] : '';
+};
+
+/**
+ * Récupère les métadonnées de tous les perps (allPerpMetas)
+ * Note: Index 0 is native perps, indices 1+ are HIP-3 DEXs
+ */
+export const fetchAllPerpMetas = async (): Promise<ParsedPerpMetas> => {
+  return withErrorHandling(async () => {
+    const url = `${API_URLS.HYPERLIQUID_UI_API}/info`;
+    const response = await postExternal<AllPerpMetasResponse>(url, { type: 'allPerpMetas' });
+    
+    const dexMetas = new Map<string, PerpMetaAssetWithCollateral[]>();
+    const dexCollateral = new Map<string, CollateralToken>();
+    const allAssets: PerpMetaAssetWithCollateral[] = [];
+    
+    // Process each DEX entry (skip index 0 which is native perps)
+    response.forEach((dex, index) => {
+      if (!dex || index === 0) return; // Skip native perps
+      
+      const dexAssets = dex.universe || [];
+      // Get collateral token (0 = USDC, 360 = USDH)
+      const collateralToken = COLLATERAL_TOKEN_MAP[dex.collateralToken ?? 0] || 'USDC';
+      
+      // Group assets by DEX name
+      dexAssets.forEach((asset: PerpMetaAsset) => {
+        const dexName = extractDexName(asset.name);
+        if (!dexName) return;
+        
+        // Store collateral for this DEX
+        if (!dexCollateral.has(dexName)) {
+          dexCollateral.set(dexName, collateralToken);
+        }
+        
+        const assetWithCollateral: PerpMetaAssetWithCollateral = {
+          ...asset,
+          collateralToken
+        };
+        
+        if (!dexMetas.has(dexName)) {
+          dexMetas.set(dexName, []);
+        }
+        dexMetas.get(dexName)!.push(assetWithCollateral);
+        allAssets.push(assetWithCollateral);
+      });
+    });
+    
+    return { dexMetas, dexCollateral, allAssets };
+  }, 'fetching all perp metas');
+};
+
+/**
+ * Get metadata for a specific DEX
+ */
+export const fetchPerpMetasByDex = async (dexName: string): Promise<PerpMetaAsset[]> => {
+  const { dexMetas } = await fetchAllPerpMetas();
+  return dexMetas.get(dexName.toLowerCase()) || [];
 };
 

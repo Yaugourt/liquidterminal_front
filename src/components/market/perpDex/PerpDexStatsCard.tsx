@@ -3,15 +3,15 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { usePerpDexGlobalStats } from "@/services/market/perpDex/hooks";
-import { Loader2, BarChart3, Layers, Building2, TrendingUp } from "lucide-react";
+import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
+import { Loader2, BarChart3, Layers, Building2, TrendingUp, Activity, Wifi, WifiOff } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 
 /**
- * Carte affichant les statistiques globales des PerpDexs (HIP-3)
+ * Carte affichant les statistiques globales des PerpDexs (HIP-3) avec données live
  */
 export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
-  const { stats, isLoading, error } = usePerpDexGlobalStats();
+  const { globalStats, isLoading, error, wsConnected } = usePerpDexMarketData();
   const { format } = useNumberFormat();
 
   if (error) {
@@ -32,9 +32,16 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
           <BarChart3 size={18} className="text-[#f9e370]" />
           <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">HIP-3 OVERVIEW</h3>
         </div>
-        <span className="text-[10px] px-2 py-0.5 bg-[#f9e37020] text-[#f9e370] rounded-full font-medium">
-          BUILDER PERPS
-        </span>
+        <div className="flex items-center gap-2">
+          {wsConnected ? (
+            <Wifi className="h-3 w-3 text-[#52C41A]" />
+          ) : (
+            <WifiOff className="h-3 w-3 text-[#FF4D4F]" />
+          )}
+          <span className="text-[10px] px-2 py-0.5 bg-[#f9e37020] text-[#f9e370] rounded-full font-medium">
+            LIVE
+          </span>
+        </div>
       </div>
 
       {/* Stats */}
@@ -51,45 +58,82 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
               Active DEXs
             </div>
             <div className="text-white font-medium text-xs pl-5">
-              {stats?.totalDexs || 0}
+              {globalStats?.totalDexs || 0}
             </div>
           </div>
 
-          {/* Total Assets */}
+          {/* Active Markets */}
           <div>
             <div className="text-white mb-2 flex items-center font-medium">
               <Layers className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
-              Total Markets
+              Active Markets
             </div>
             <div className="text-white font-medium text-xs pl-5">
-              {stats?.totalAssets || 0}
+              {globalStats?.activeMarkets || 0}
+              <span className="text-[#FFFFFF60] ml-1">
+                / {globalStats?.totalAssets || 0}
+              </span>
             </div>
           </div>
 
-          {/* Total OI Cap */}
+          {/* 24h Volume */}
           <div>
             <div className="text-white mb-2 flex items-center font-medium">
-              <TrendingUp className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
-              Total OI Cap
+              <Activity className="h-3.5 w-3.5 text-[#52C41A] mr-1.5" />
+              24h Volume
             </div>
-            <div className="text-white font-medium text-xs pl-5">
-              {stats ? formatNumber(stats.totalOiCap, format, {
+            <div className="text-[#52C41A] font-medium text-xs pl-5">
+              {globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, {
                 minimumFractionDigits: 0,
-                maximumFractionDigits: 1,
+                maximumFractionDigits: 0,
                 currency: '$',
                 showCurrency: true
               }) : '$0'}
             </div>
           </div>
 
-          {/* Avg Assets per DEX */}
+          {/* Open Interest */}
+          <div>
+            <div className="text-white mb-2 flex items-center font-medium">
+              <TrendingUp className="h-3.5 w-3.5 text-[#83E9FF] mr-1.5" />
+              Open Interest
+            </div>
+            <div className="text-[#83E9FF] font-medium text-xs pl-5">
+              {globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
+            </div>
+          </div>
+
+          {/* Total OI Cap */}
           <div>
             <div className="text-white mb-2 flex items-center font-medium">
               <BarChart3 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
-              Avg Markets/DEX
+              Total OI Cap
             </div>
             <div className="text-white font-medium text-xs pl-5">
-              {stats?.avgAssetsPerDex?.toFixed(1) || 0}
+              {globalStats?.totalOiCap ? formatNumber(globalStats.totalOiCap, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+                currency: '$',
+                showCurrency: true
+              }) : '$0'}
+            </div>
+          </div>
+
+          {/* Avg Funding */}
+          <div>
+            <div className="text-white mb-2 flex items-center font-medium">
+              <Activity className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              Avg Funding
+            </div>
+            <div className={`font-medium text-xs pl-5 ${(globalStats?.avgFunding || 0) >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
+              {globalStats?.avgFunding 
+                ? `${(globalStats.avgFunding * 100).toFixed(4)}%`
+                : '0.0000%'}
             </div>
           </div>
         </div>

@@ -1,11 +1,54 @@
 // Types pour les PerpDex (HIP-3)
 
+// ============================================
+// Basic Types
+// ============================================
+
 /**
  * Asset avec son cap de streaming OI
  */
 export interface PerpDexAsset {
   name: string; // e.g., "xyz:AAPL"
   streamingOiCap: number; // Parsed from string like "25000000.0"
+}
+
+/**
+ * Collateral token mapping
+ * 0 = USDC, 360 = USDH
+ */
+export type CollateralToken = 'USDC' | 'USDH';
+
+export const COLLATERAL_TOKEN_MAP: Record<number, CollateralToken> = {
+  0: 'USDC',
+  360: 'USDH',
+};
+
+/**
+ * Asset avec données de marché enrichies
+ */
+export interface PerpDexAssetWithMarketData extends PerpDexAsset {
+  // Metadata from allPerpMetas
+  szDecimals: number;
+  maxLeverage: number;
+  marginTableId: number;
+  onlyIsolated: boolean;
+  marginMode?: string;
+  isDelisted?: boolean;
+  growthMode?: string;
+  lastGrowthModeChangeTime?: string;
+  collateralToken: CollateralToken; // USDC or USDH
+  
+  // Market data from WebSocket
+  markPx?: number;
+  midPx?: number;
+  oraclePx?: number;
+  funding?: number;
+  openInterest?: number;
+  prevDayPx?: number;
+  dayNtlVlm?: number; // Daily notional volume
+  dayBaseVlm?: number;
+  premium?: number;
+  priceChange24h?: number; // Calculated from prevDayPx
 }
 
 /**
@@ -78,5 +121,156 @@ export interface PerpDexParams {
 export interface UsePerpDexsOptions {
   defaultParams?: Partial<PerpDexParams>;
   refreshInterval?: number;
+}
+
+// ============================================
+// allPerpMetas API Types
+// ============================================
+
+/**
+ * Asset metadata from allPerpMetas
+ */
+export interface PerpMetaAsset {
+  name: string; // e.g., "xyz:XYZ100"
+  szDecimals: number;
+  maxLeverage: number;
+  marginTableId: number;
+  onlyIsolated?: boolean;
+  marginMode?: string;
+  isDelisted?: boolean;
+  growthMode?: string;
+  lastGrowthModeChangeTime?: string;
+}
+
+/**
+ * Margin tier definition
+ */
+export interface MarginTier {
+  lowerBound: string;
+  maxLeverage: number;
+}
+
+/**
+ * Margin table definition
+ */
+export interface MarginTable {
+  description: string;
+  marginTiers: MarginTier[];
+}
+
+/**
+ * DEX entry from allPerpMetas response
+ */
+export interface PerpMetaDex {
+  universe: PerpMetaAsset[];
+  collateralToken?: number;
+  marginTables?: [number, MarginTable][];
+}
+
+/**
+ * Full allPerpMetas API response
+ */
+export type AllPerpMetasResponse = (PerpMetaDex | null)[];
+
+// ============================================
+// WebSocket Market Data Types
+// ============================================
+
+/**
+ * Single asset market context from WebSocket
+ */
+export interface AssetMarketCtx {
+  funding: string;
+  openInterest: string;
+  prevDayPx: string;
+  dayNtlVlm: string;
+  dayBaseVlm: string;
+  markPx: string;
+  midPx: string | null;
+  oraclePx: string;
+  premium: string | null;
+  impactPxs: [string, string] | null;
+}
+
+/**
+ * DEX context from WebSocket - tuple of [dexName, assets[]]
+ */
+export type DexAssetCtx = [string, AssetMarketCtx[]];
+
+/**
+ * WebSocket message for allDexsAssetCtxs
+ */
+export interface AllDexsAssetCtxsMessage {
+  channel: 'allDexsAssetCtxs';
+  data: {
+    ctxs: DexAssetCtx[];
+  };
+}
+
+/**
+ * Parsed market data for a DEX
+ */
+export interface DexMarketData {
+  dexName: string;
+  assets: AssetMarketData[];
+  totalVolume24h: number;
+  totalOpenInterest: number;
+}
+
+/**
+ * Parsed market data for an asset
+ */
+export interface AssetMarketData {
+  assetName: string;
+  markPx: number;
+  midPx: number | null;
+  oraclePx: number;
+  funding: number;
+  openInterest: number;
+  prevDayPx: number;
+  dayNtlVlm: number;
+  dayBaseVlm: number;
+  premium: number | null;
+  priceChange24h: number;
+}
+
+// ============================================
+// Combined/Enhanced Types
+// ============================================
+
+/**
+ * PerpDex with full market data
+ */
+export interface PerpDexWithMarketData extends PerpDex {
+  // Enhanced assets with market data
+  assetsWithMarketData: PerpDexAssetWithMarketData[];
+  
+  // Aggregated market stats
+  totalVolume24h: number;
+  totalOpenInterest: number;
+  avgFunding: number;
+  activeAssets: number; // Non-delisted assets
+}
+
+/**
+ * Enhanced global stats
+ */
+export interface PerpDexEnhancedGlobalStats extends PerpDexGlobalStats {
+  totalVolume24h: number;
+  totalOpenInterest: number;
+  avgFunding: number;
+  activeMarkets: number;
+}
+
+/**
+ * WebSocket store state
+ */
+export interface PerpDexMarketDataStore {
+  marketData: Map<string, DexMarketData>;
+  isConnected: boolean;
+  error: string | null;
+  lastUpdate: Date | null;
+  connect: () => void;
+  disconnect: () => void;
 }
 
