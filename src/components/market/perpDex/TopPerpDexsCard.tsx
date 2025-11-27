@@ -94,7 +94,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                       <ChevronRight className="h-3 w-3 text-[#83E9FF40] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </TableCell>
-                  <TableCell className="text-left text-[#52C41A] text-xs py-1.5">
+                  <TableCell className="text-left text-white text-xs py-1.5">
                     {dex.totalVolume24h > 0 
                       ? formatNumber(dex.totalVolume24h, format, {
                           minimumFractionDigits: 0,
@@ -104,7 +104,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                         })
                       : '-'}
                   </TableCell>
-                  <TableCell className="text-left text-[#83E9FF] text-xs py-1.5 pr-4">
+                  <TableCell className="text-left text-white text-xs py-1.5 pr-4">
                     {dex.totalOpenInterest > 0 
                       ? formatNumber(dex.totalOpenInterest, format, {
                           minimumFractionDigits: 0,

@@ -79,10 +79,10 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
           {/* 24h Volume */}
           <div>
             <div className="text-white mb-2 flex items-center font-medium">
-              <Activity className="h-3.5 w-3.5 text-[#52C41A] mr-1.5" />
+              <Activity className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
               24h Volume
             </div>
-            <div className="text-[#52C41A] font-medium text-xs pl-5">
+            <div className="text-white font-medium text-xs pl-5">
               {globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
@@ -95,10 +95,10 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
           {/* Open Interest */}
           <div>
             <div className="text-white mb-2 flex items-center font-medium">
-              <TrendingUp className="h-3.5 w-3.5 text-[#83E9FF] mr-1.5" />
+              <TrendingUp className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
               Open Interest
             </div>
-            <div className="text-[#83E9FF] font-medium text-xs pl-5">
+            <div className="text-white font-medium text-xs pl-5">
               {globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,

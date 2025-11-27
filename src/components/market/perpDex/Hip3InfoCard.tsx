@@ -13,7 +13,7 @@ export const Hip3InfoCard = memo(function Hip3InfoCard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-1.5">
-          <Info size={18} className="text-[#83E9FF]" />
+          <Info size={18} className="text-[#f9e370]" />
           <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">ABOUT HIP-3</h3>
         </div>
       </div>

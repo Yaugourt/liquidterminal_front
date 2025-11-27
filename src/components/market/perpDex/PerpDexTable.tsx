@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Database, Loader2, TrendingUp, Activity, Zap } from "lucide-react";
+import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
@@ -30,18 +30,12 @@ interface TableHeaderCellProps {
 
 // Header cell component
 const TableHeaderCell = memo(({ label, onClick, className, isActive, icon }: TableHeaderCellProps) => {
-  // Determine justify alignment from className
-  const isRight = className?.includes('text-right');
-  const isCenter = className?.includes('text-center');
-  const justifyClass = isRight ? 'justify-end' : isCenter ? 'justify-center' : 'justify-start';
-  
   return (
     <TableHead className={className}>
       <Button
         variant="ghost"
         onClick={onClick}
-        className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center ${justifyClass} w-full`}
-        style={{ fontWeight: 400, fontSize: '0.875rem' }}
+        className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
       >
         {icon}
         {label}
@@ -102,8 +96,8 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Active Markets */}
-      <TableCell className="py-3 text-center">
-        <div className="flex flex-col items-center">
+      <TableCell className="py-3 text-left">
+        <div className="flex flex-col items-start">
           <span className="text-white text-sm">{dex.activeAssets}</span>
           {dex.activeAssets !== dex.totalAssets && (
             <span className="text-[#FF4D4F] text-[10px]">
@@ -114,8 +108,8 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* 24h Volume */}
-      <TableCell className="py-3 text-right">
-        <span className="text-[#52C41A] text-sm font-medium">
+      <TableCell className="py-3 text-left">
+        <span className="text-white text-sm">
           {dex.totalVolume24h > 0 
             ? formatNumber(dex.totalVolume24h, format, {
                 minimumFractionDigits: 0,
@@ -128,8 +122,8 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Open Interest */}
-      <TableCell className="py-3 text-right">
-        <span className="text-[#83E9FF] text-sm">
+      <TableCell className="py-3 text-left">
+        <span className="text-white text-sm">
           {dex.totalOpenInterest > 0 
             ? formatNumber(dex.totalOpenInterest, format, {
                 minimumFractionDigits: 0,
@@ -142,15 +136,15 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Avg Funding */}
-      <TableCell className="py-3 text-right">
+      <TableCell className="py-3 text-left">
         <span className={`text-sm ${dex.avgFunding >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
           {dex.avgFunding !== 0 ? formatFunding(dex.avgFunding) : '-'}
         </span>
       </TableCell>
 
       {/* OI Cap Utilization */}
-      <TableCell className="py-3 pr-4 text-right">
-        <div className="flex flex-col items-end">
+      <TableCell className="py-3 pr-4 text-left">
+        <div className="flex flex-col items-start">
           <span className="text-white text-sm">
             {formatNumber(dex.totalOiCap, format, {
               minimumFractionDigits: 0,
@@ -185,7 +179,7 @@ PerpDexRow.displayName = 'PerpDexRow';
 export function PerpDexTable() {
   const router = useRouter();
   const { format } = useNumberFormat();
-  const { dexs, isLoading, wsConnected } = usePerpDexMarketData();
+  const { dexs, isLoading } = usePerpDexMarketData();
   
   const [sortField, setSortField] = useState<SortField>('totalVolume24h');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -239,7 +233,7 @@ export function PerpDexTable() {
   }
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg relative">
+    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
@@ -248,38 +242,35 @@ export function PerpDexTable() {
                 label="Name"
                 onClick={() => handleSort('name')}
                 isActive={sortField === 'name'}
-                className="text-white font-normal py-3 bg-[#051728] pl-4 w-[22%] text-left"
+                className="text-white text-sm py-3 bg-[#051728] pl-4 w-[22%]"
               />
               <TableHeaderCell
                 label="Markets"
                 onClick={() => handleSort('activeAssets')}
                 isActive={sortField === 'activeAssets'}
-                className="text-white font-normal py-3 bg-[#051728] text-center w-[12%]"
+                className="text-white text-sm py-3 bg-[#051728] w-[12%]"
               />
               <TableHeaderCell
                 label="24h Volume"
                 onClick={() => handleSort('totalVolume24h')}
                 isActive={sortField === 'totalVolume24h'}
-                icon={<Activity className="h-3 w-3 mr-1 text-[#52C41A]" />}
-                className="text-white font-normal py-3 bg-[#051728] w-[18%] text-right"
+                className="text-white text-sm py-3 bg-[#051728] w-[18%]"
               />
               <TableHeaderCell
                 label="Open Interest"
                 onClick={() => handleSort('totalOpenInterest')}
                 isActive={sortField === 'totalOpenInterest'}
-                icon={<TrendingUp className="h-3 w-3 mr-1 text-[#83E9FF]" />}
-                className="text-white font-normal py-3 bg-[#051728] w-[18%] text-right"
+                className="text-white text-sm py-3 bg-[#051728] w-[18%]"
               />
               <TableHeaderCell
                 label="Avg Funding"
                 onClick={() => handleSort('avgFunding')}
                 isActive={sortField === 'avgFunding'}
-                icon={<Zap className="h-3 w-3 mr-1 text-[#f9e370]" />}
-                className="text-white font-normal py-3 bg-[#051728] w-[15%] text-right"
+                className="text-white text-sm py-3 bg-[#051728] w-[15%]"
               />
               <TableHeaderCell
                 label="OI Cap"
-                className="text-white font-normal py-3 bg-[#051728] pr-4 w-[15%] text-right"
+                className="text-white text-sm py-3 bg-[#051728] pr-4 w-[15%]"
               />
             </TableRow>
           </TableHeader>
@@ -299,14 +290,6 @@ export function PerpDexTable() {
           </TableBody>
         </Table>
       </div>
-      
-      {/* Live indicator */}
-      {wsConnected && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 bg-[#52C41A20] rounded-full">
-          <div className="w-1.5 h-1.5 bg-[#52C41A] rounded-full animate-pulse" />
-          <span className="text-[#52C41A] text-[10px] font-medium">LIVE</span>
-        </div>
-      )}
     </Card>
   );
 }
