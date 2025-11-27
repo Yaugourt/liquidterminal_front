@@ -28,6 +28,11 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
     error: null,
 
     connect: (coinId: string) => {
+      // SSR protection - WebSocket only works in browser
+      if (typeof window === 'undefined') {
+        return;
+      }
+
       // Validate coinId
       if (!coinId || coinId.trim() === '') {
         set({ error: 'Invalid coin ID' });
@@ -136,6 +141,10 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
         };
 
 
+        ws.onerror = () => {
+          // Silent error handling - onclose will handle the reconnection
+        };
+
         ws.onclose = (event) => {
           isConnecting = false;
           set({ 
@@ -154,6 +163,10 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
                 get().connect(currentCoinId);
               }
             }, delay);
+          } else if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+            set({ error: 'WebSocket connection failed after multiple attempts' });
+            currentCoinId = null;
+            reconnectAttempts = 0;
           } else {
             currentCoinId = null;
             reconnectAttempts = 0;

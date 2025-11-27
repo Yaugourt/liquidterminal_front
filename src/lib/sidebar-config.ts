@@ -11,7 +11,7 @@ import {
 } from "react-icons/pi";
 import { AiOutlineHome, AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineCandlestickChart } from "react-icons/md";
-import { Gavel, Heart, ClipboardList, Clock } from "lucide-react";
+import { Gavel, Heart, ClipboardList, Clock, Building2 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
 /**
@@ -128,6 +128,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
             IconComponent: Gavel
           }
         ]
+      },
+      {
+        name: 'PerpDexs (HIP-3)',
+        href: '/market/perpdex',
+        icon: null,
+        IconComponent: Building2
       },
       {
         name: 'Tracker',

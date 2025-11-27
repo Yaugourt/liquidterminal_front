@@ -41,24 +41,36 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
     
+    // Hydration fix: track if component has mounted
+    const [hasMounted, setHasMounted] = useState(false);
+    
     // Sidebar preferences
     const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
+    
+    // Always use defaultNavigationGroups for SSR, only apply preferences after mount
     const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
+
+    // Mark as mounted after first render (hydration complete)
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     // Initialize preferences on mount
     useEffect(() => {
+        if (!hasMounted) return;
         const defaultPrefs = getDefaultSidebarPreferences();
         initializePreferences(defaultPrefs);
-    }, [initializePreferences]);
+    }, [initializePreferences, hasMounted]);
 
-    // Apply preferences to navigation when they change
+    // Apply preferences to navigation only after mount (prevents hydration mismatch)
     useEffect(() => {
+        if (!hasMounted) return;
         const prefs = getPreferences();
         if (prefs) {
             const filteredGroups = applyPreferencesToNavigation(defaultNavigationGroups, prefs);
             setNavigationGroups(filteredGroups);
         }
-    }, [preferences, getPreferences]);
+    }, [preferences, getPreferences, hasMounted]);
 
     const toggleSubmenu = (name: string) => {
         setOpenSubmenu(prev => prev === name ? null : name);
