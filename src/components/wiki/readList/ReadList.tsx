@@ -8,6 +8,7 @@ import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";
 import { CreateListModal } from "./CreateListModal";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
+import { showXpGainToast } from "@/components/xp";
 
 // Custom hook for initialization
 const useReadListInitialization = () => {
@@ -136,9 +137,13 @@ export function ReadList() {
 
   const handleToggleRead = useCallback(async (itemId: number, isRead: boolean) => {
     try {
-      await toggleReadStatus(itemId, isRead);
+      const result = await toggleReadStatus(itemId, isRead);
       if (isRead) {
         readListMessages.success.itemMarkedAsRead();
+        // Show XP toast if XP was granted (only on first read)
+        if (result.xpGranted && result.xpGranted > 0) {
+          showXpGainToast(result.xpGranted, "Resource read");
+        }
       } else {
         readListMessages.success.itemMarkedAsUnread();
       }

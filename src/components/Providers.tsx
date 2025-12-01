@@ -7,6 +7,8 @@ import { AuthProvider } from "@/contexts/auth.context";
 import { Toaster } from "@/components/ui/sonner";
 import { usePathname } from "next/navigation";
 import { env } from "@/lib/env";
+import { XpNotificationProvider } from "@/components/xp";
+import { XpProvider } from "@/services/xp";
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -33,9 +35,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <AuthProvider>
-        {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
-        {children}
-        <Toaster />
+        <XpProvider>
+          <XpNotificationProvider>
+            {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
+            {children}
+            <Toaster />
+          </XpNotificationProvider>
+        </XpProvider>
       </AuthProvider>
     </PrivyProvider>
   );

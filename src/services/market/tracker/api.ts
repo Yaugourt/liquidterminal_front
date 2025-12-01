@@ -46,14 +46,16 @@ export const addWallet = async (
       if (response.userWallet) {
         return {
           success: true,
-          userWallet: response.userWallet
+          userWallet: response.userWallet,
+          xpGranted: response.xpGranted // Pass through XP if backend sends it
         };
       }
       
       // Si la réponse contient seulement un message de succès
       return {
         success: true,
-        message: response.message || "Wallet ajouté avec succès"
+        message: response.message || "Wallet ajouté avec succès",
+        xpGranted: response.xpGranted
       };
     }
     

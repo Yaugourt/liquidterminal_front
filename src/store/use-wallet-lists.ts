@@ -78,21 +78,23 @@ export const useWalletLists = create<WalletListsState>()(
           }
         },
         
-        createList: async (data: CreateWalletListInput): Promise<WalletList> => {
+        createList: async (data: CreateWalletListInput): Promise<WalletList & { xpGranted?: number }> => {
           try {
             actions.setLoading(true);
             
             const newList = await createWalletList(data);
             
-            // Ajouter à la liste des user lists
+            // Ajouter à la liste des user lists (sans xpGranted)
+            const { xpGranted, ...listData } = newList;
             const currentUserLists = get().userLists;
-            actions.setUserLists([newList, ...currentUserLists]);
+            actions.setUserLists([listData, ...currentUserLists]);
             // Optionnel: définir activeListId si aucune sélection encore
             if (!get().activeListId) {
-              actions.setActiveList(newList.id);
+              actions.setActiveList(listData.id);
             }
             
-            return newList;
+            // Retourner avec xpGranted pour les notifications
+            return { ...listData, xpGranted };
           } catch (err) {
             actions.setError(handleApiError(err, 'Failed to create wallet list'));
             throw err;
@@ -192,7 +194,7 @@ export const useWalletLists = create<WalletListsState>()(
         },
 
         // Ajouter un wallet à une liste (comme les readlists)
-        addWalletToList: async (listId: number, data: CreateWalletListItemInput): Promise<WalletListItem | void> => {
+        addWalletToList: async (listId: number, data: CreateWalletListItemInput): Promise<(WalletListItem & { xpGranted?: number }) | void> => {
           try {
             actions.setLoading(true);
             
@@ -202,10 +204,11 @@ export const useWalletLists = create<WalletListsState>()(
               actions.setLoading(false);
               
               const currentActiveId = get().activeListId;
+              const { xpGranted, ...itemData } = response;
               
               // Optimistic UI: mettre à jour immédiatement les items de la liste active
               if (currentActiveId === listId) {
-                actions.updateActiveItems(items => [response, ...items]);
+                actions.updateActiveItems(items => [itemData as WalletListItem, ...items]);
               }
               // Mettre à jour le compteur d'items de la liste côté userLists
               const currentUserLists = get().userLists;
@@ -220,7 +223,8 @@ export const useWalletLists = create<WalletListsState>()(
                 await get().loadListItems(listId);
               }
               
-              return response;
+              // Retourner avec xpGranted pour les notifications
+              return { ...itemData, xpGranted } as WalletListItem & { xpGranted?: number };
             }
             
             throw new Error("Failed to add wallet to list");

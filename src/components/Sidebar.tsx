@@ -19,6 +19,7 @@ import {
     type NavigationItem
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
+import { XpBadge } from "@/components/xp"
 
 // Social links
 
@@ -316,6 +317,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                         <p className="text-white text-sm font-medium truncate">
                                             {privyUser?.twitter?.username || "User"}
                                         </p>
+                                        <XpBadge compact showStreak className="mt-1" />
                                     </div>
                                 </Link>
                                 <Button

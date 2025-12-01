@@ -158,6 +158,9 @@ export const put = <T>(url: string, data?: unknown, options?: RequestOptions): P
 export const del = <T>(url: string, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(apiClient, { method: 'DELETE', url }, options);
 
+export const patch = <T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> =>
+  axiosWithConfig<T>(apiClient, { method: 'PATCH', url, data }, options);
+
 export const getExternal = <T>(url: string, params?: Record<string, unknown>, options?: RequestOptions): Promise<T> =>
   axiosWithConfig<T>(externalApiClient, { method: 'GET', url, params }, options);
 

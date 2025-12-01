@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { addWallet } from "@/services/market/tracker/api";
 import { useWallets } from "@/store/use-wallets";
+import { showXpGainToast } from "@/components/xp";
 
 interface AddWalletToListDialogProps {
   isOpen: boolean;
@@ -59,6 +60,11 @@ export function AddWalletToListDialog({
 
       // Show success toast
       toast.success(`Wallet "${walletName || walletAddress}" added to "${listName}"`);
+
+      // Show XP toast if XP was granted
+      if (response.xpGranted && response.xpGranted > 0) {
+        showXpGainToast(response.xpGranted, "Wallet added to list");
+      }
 
       // Notify parent component of success
       if (onSuccess) {

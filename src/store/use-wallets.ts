@@ -82,7 +82,7 @@ export const useWallets = create<WalletsState>()(
           }
         },
         
-        addWallet: async (address: string, name?: string, walletListId?: number): Promise<Wallet | void> => {
+        addWallet: async (address: string, name?: string, walletListId?: number): Promise<{ xpGranted?: number } | void> => {
           try {
             actions.setLoading(true);
             
@@ -94,7 +94,9 @@ export const useWallets = create<WalletsState>()(
             
             if (response.success === true) {
               await get().reloadWallets();
-              return;
+              
+              // Return XP granted if any
+              return { xpGranted: response.xpGranted };
             }
             
             throw new Error("Failed to add wallet");

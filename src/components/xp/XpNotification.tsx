@@ -1,0 +1,155 @@
+"use client";
+
+import { useEffect, useRef, createContext, useContext, useCallback, ReactNode } from "react";
+import { usePrivy } from "@privy-io/react-auth";
+import { useXp } from "@/services/xp";
+import { toast } from "sonner";
+import { Star, Flame, TrendingUp } from "lucide-react";
+
+// Context for XP refetch callback
+interface XpRefetchContextValue {
+  refetch: () => Promise<void>;
+}
+
+const XpRefetchContext = createContext<XpRefetchContextValue | null>(null);
+
+// Global refetch function that can be called from anywhere
+let globalRefetch: (() => Promise<void>) | null = null;
+
+export function XpNotificationProvider({ children }: { children?: ReactNode }) {
+  const { ready, authenticated } = usePrivy();
+  const { lastLoginResult, stats, refetch } = useXp();
+  const previousLevel = useRef<number | null>(null);
+  const hasShownLoginToast = useRef(false);
+
+  // Register global refetch
+  useEffect(() => {
+    globalRefetch = refetch;
+    return () => {
+      globalRefetch = null;
+    };
+  }, [refetch]);
+
+  // Don't do anything until Privy is ready and user is authenticated
+  const shouldShowNotifications = ready && authenticated;
+
+  // Show notification when daily login XP is granted
+  useEffect(() => {
+    if (!shouldShowNotifications) return;
+    if (lastLoginResult && lastLoginResult.xpGranted > 0 && !hasShownLoginToast.current) {
+      hasShownLoginToast.current = true;
+
+      // Calculate total XP gained (base + streak bonus)
+      const totalXp = lastLoginResult.xpGranted + lastLoginResult.streakBonus;
+
+      toast.custom(
+        () => (
+          <div className="flex items-center gap-3 bg-gradient-to-r from-[#051728] to-[#0a1f35] border border-[#f9e370]/30 rounded-lg p-4 shadow-lg shadow-[#f9e370]/10">
+            <div className="h-10 w-10 rounded-full bg-[#f9e370]/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-[#f9e370]" />
+            </div>
+            <div>
+              <p className="font-bold text-white">
+                +{totalXp} XP
+              </p>
+              <p className="text-sm text-gray-400">
+                Daily login bonus
+                {lastLoginResult.streakBonus > 0 && (
+                  <span className="text-orange-400">
+                    {" "}(+{lastLoginResult.streakBonus} streak bonus!)
+                  </span>
+                )}
+              </p>
+            </div>
+            {lastLoginResult.newStreak > 1 && (
+              <div className="flex items-center gap-1 ml-auto">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <span className="text-sm font-bold text-orange-400">
+                  {lastLoginResult.newStreak}
+                </span>
+              </div>
+            )}
+          </div>
+        ),
+        {
+          duration: 4000,
+          position: "bottom-right",
+        }
+      );
+    }
+  }, [lastLoginResult, shouldShowNotifications]);
+
+  // Show level up notification
+  useEffect(() => {
+    if (!shouldShowNotifications) return;
+    if (stats && previousLevel.current !== null && stats.level > previousLevel.current) {
+      toast.custom(
+        () => (
+          <div className="flex items-center gap-3 bg-gradient-to-r from-[#9b59b6]/20 to-[#f9e370]/20 border border-[#f9e370]/50 rounded-lg p-4 shadow-lg shadow-[#f9e370]/20 animate-pulse">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#f9e370] to-[#9b59b6] flex items-center justify-center">
+              <Star className="h-6 w-6 text-[#051728] fill-[#051728]" />
+            </div>
+            <div>
+              <p className="font-bold text-[#f9e370] text-lg">
+                Level Up! 🎉
+              </p>
+              <p className="text-sm text-white">
+                You reached level {stats.level}
+              </p>
+            </div>
+          </div>
+        ),
+        {
+          duration: 5000,
+          position: "bottom-right",
+        }
+      );
+    }
+    
+    if (stats) {
+      previousLevel.current = stats.level;
+    }
+  }, [stats?.level, stats, shouldShowNotifications]);
+
+  const contextValue = useCallback(() => refetch(), [refetch]);
+
+  return (
+    <XpRefetchContext.Provider value={{ refetch: contextValue }}>
+      {children}
+    </XpRefetchContext.Provider>
+  );
+}
+
+// Hook to get refetch function
+export function useXpRefetch() {
+  const context = useContext(XpRefetchContext);
+  return context?.refetch || null;
+}
+
+// Utility function to show XP gain toast from anywhere and refresh stats
+export function showXpGainToast(amount: number, action: string) {
+  toast.custom(
+    () => (
+      <div className="flex items-center gap-3 bg-gradient-to-r from-[#051728] to-[#0a1f35] border border-[#f9e370]/20 rounded-lg p-3 shadow-lg">
+        <div className="h-8 w-8 rounded-full bg-[#f9e370]/10 flex items-center justify-center">
+          <Star className="h-4 w-4 text-[#f9e370]" />
+        </div>
+        <div>
+          <p className="font-bold text-[#f9e370]">+{amount} XP</p>
+          <p className="text-xs text-gray-400">{action}</p>
+        </div>
+      </div>
+    ),
+    {
+      duration: 3000,
+      position: "bottom-right",
+    }
+  );
+
+  // Trigger refetch of XP stats after a short delay to let backend update
+  setTimeout(() => {
+    if (globalRefetch) {
+      globalRefetch().catch(console.error);
+    }
+  }, 500);
+}

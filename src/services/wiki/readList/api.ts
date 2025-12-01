@@ -1,4 +1,4 @@
-import { get, post, put, del } from '../../api/axios-config';
+import { get, post, put, del, patch } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { 
   ReadList, 
@@ -23,11 +23,11 @@ export const getMyReadLists = async (): Promise<{success: boolean, data: ReadLis
 
 
 // Create a new read list - NOUVEAU: utiliser JWT
-export const createReadList = async (data: ReadListCreateInput): Promise<ReadList> => {
+export const createReadList = async (data: ReadListCreateInput): Promise<ReadList & { xpGranted?: number }> => {
   return withErrorHandling(async () => {
-    const response = await post<{success: boolean, data: ReadList, message: string}>('/readlists', data);
+    const response = await post<{success: boolean, data: ReadList, message: string, xpGranted?: number}>('/readlists', data);
     if (!response || !response.data) throw new Error('Failed to create read list');
-    return response.data;
+    return { ...response.data, xpGranted: response.xpGranted };
   }, 'creating read list');
 };
 
@@ -99,6 +99,21 @@ export const updateReadListItem = async (
   }, 'updating read list item');
 };
 
+// Toggle read status - Uses PATCH endpoint that grants XP on first read
+export const toggleItemReadStatus = async (
+  itemId: number,
+  isRead: boolean
+): Promise<ReadListItem & { xpGranted?: number }> => {
+  return withErrorHandling(async () => {
+    const response = await patch<{ success: boolean; data: ReadListItem; xpGranted?: number }>(
+      `/readlists/items/${itemId}/read-status`,
+      { isRead }
+    );
+    if (!response || !response.data) throw new Error('Failed to update read status');
+    return { ...response.data, xpGranted: response.xpGranted };
+  }, 'toggling read status');
+};
+
 // Delete a read list item - NOUVEAU: utiliser JWT
 export const deleteReadListItem = async (itemId: number): Promise<void> => {
   return withErrorHandling(async () => {
@@ -131,8 +146,9 @@ export const getPublicReadListsPaginated = async (params?: PublicReadListQueryPa
 };
 
 // Copy a public read list
-export const copyPublicReadList = async (readListId: number): Promise<ReadListCopyResponse> => {
+export const copyPublicReadList = async (readListId: number): Promise<ReadListCopyResponse & { xpGranted?: number }> => {
   return withErrorHandling(async () => {
-    return await post<ReadListCopyResponse>(`/readlists/copy/${readListId}`, {});
+    const response = await post<ReadListCopyResponse & { xpGranted?: number }>(`/readlists/copy/${readListId}`, {});
+    return response;
   }, 'copying public read list');
 }; 

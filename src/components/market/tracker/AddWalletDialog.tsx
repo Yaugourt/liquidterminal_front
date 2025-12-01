@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
+import { showXpGainToast } from "@/components/xp";
 
 import { walletAddMessages } from "@/lib/toast-messages";
 
@@ -47,7 +48,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
       const walletName = name.trim() || undefined;
       
       // NOUVEAU: pas besoin de privyUserId, et support pour walletListId
-      await addWallet(address, walletName, walletListId);
+      const result = await addWallet(address, walletName, walletListId);
       
       // Clear form and close dialog
       setAddress("");
@@ -59,6 +60,11 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
         walletAddMessages.success(`Wallet "${walletName || address}" added to "${walletListName}"`);
       } else {
         walletAddMessages.success(walletName || 'Nouveau wallet');
+      }
+      
+      // Show XP toast if XP was granted
+      if (result?.xpGranted && result.xpGranted > 0) {
+        showXpGainToast(result.xpGranted, "Wallet added");
       }
       
       // Notify parent component of success

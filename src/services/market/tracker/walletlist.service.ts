@@ -73,13 +73,13 @@ export const getWalletListById = async (id: number): Promise<WalletList> => {
 /**
  * Crée une nouvelle liste de wallets
  */
-export const createWalletList = async (data: CreateWalletListInput): Promise<WalletList> => {
+export const createWalletList = async (data: CreateWalletListInput): Promise<WalletList & { xpGranted?: number }> => {
   return withErrorHandling(async () => {
-    const response = await post<{ success: boolean; data: WalletList }>(BASE_URL, data);
+    const response = await post<{ success: boolean; data: WalletList; xpGranted?: number }>(BASE_URL, data);
     if (!response || !response.data) {
       throw new Error('Failed to create wallet list');
     }
-    return response.data;
+    return { ...response.data, xpGranted: response.xpGranted };
   }, 'creating wallet list');
 };
 
@@ -147,13 +147,13 @@ export const getWalletListItems = async (
 export const addWalletToList = async (
   listId: number, 
   data: CreateWalletListItemInput
-): Promise<WalletListItem> => {
+): Promise<WalletListItem & { xpGranted?: number }> => {
   return withErrorHandling(async () => {
-    const response = await post<{ success: boolean; data: WalletListItem }>(`${BASE_URL}/${listId}/items`, data);
+    const response = await post<{ success: boolean; data: WalletListItem; xpGranted?: number }>(`${BASE_URL}/${listId}/items`, data);
     if (!response || !response.data) {
       throw new Error('Failed to add wallet to list');
     }
-    return response.data;
+    return { ...response.data, xpGranted: response.xpGranted };
   }, 'adding wallet to list');
 };
 

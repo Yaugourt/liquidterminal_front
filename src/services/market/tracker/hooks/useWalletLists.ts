@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
+import { 
   WalletList,
   WalletListItem,
   WalletListResponse,
@@ -25,9 +25,9 @@ import {
 /**
  * Hook pour récupérer les listes publiques
  */
-export const usePublicWalletLists = (params?: {
-  page?: number;
-  limit?: number;
+export const usePublicWalletLists = (params?: { 
+  page?: number; 
+  limit?: number; 
   search?: string;
   enabled?: boolean;
 }) => {
@@ -35,26 +35,31 @@ export const usePublicWalletLists = (params?: {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = useCallback(async () => {
-    if (params?.enabled === false) return;
+  const enabled = params?.enabled;
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
 
+  const fetchData = useCallback(async () => {
+    if (enabled === false) return;
+    
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getPublicWalletLists(params);
+      const response = await getPublicWalletLists({ page, limit, search });
       setData(response);
     } catch (err) {
       setError(err as Error);
     } finally {
       setIsLoading(false);
     }
-  }, [params?.enabled, params?.page, params?.limit, params?.search]);
+  }, [enabled, page, limit, search]);
 
   useEffect(() => {
-    if (params?.enabled !== false) {
+    if (enabled !== false) {
       fetchData();
     }
-  }, [fetchData]);
+  }, [fetchData, enabled]);
 
   return {
     data: data.data,
@@ -68,9 +73,9 @@ export const usePublicWalletLists = (params?: {
 /**
  * Hook pour récupérer les listes de l'utilisateur
  */
-export const useUserWalletLists = (params?: {
-  page?: number;
-  limit?: number;
+export const useUserWalletLists = (params?: { 
+  page?: number; 
+  limit?: number; 
   search?: string;
   enabled?: boolean;
 }) => {
@@ -78,26 +83,31 @@ export const useUserWalletLists = (params?: {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = useCallback(async () => {
-    if (params?.enabled === false) return;
+  const enabled = params?.enabled;
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
 
+  const fetchData = useCallback(async () => {
+    if (enabled === false) return;
+    
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getUserWalletLists(params);
+      const response = await getUserWalletLists({ page, limit, search });
       setData(response);
     } catch (err) {
       setError(err as Error);
     } finally {
       setIsLoading(false);
     }
-  }, [params?.enabled, params?.page, params?.limit, params?.search]);
+  }, [enabled, page, limit, search]);
 
   useEffect(() => {
-    if (params?.enabled !== false) {
+    if (enabled !== false) {
       fetchData();
     }
-  }, [fetchData]);
+  }, [fetchData, enabled]);
 
   return {
     data: data.data,
@@ -118,7 +128,7 @@ export const useWalletList = (id: number | null) => {
 
   const fetchData = useCallback(async () => {
     if (!id) return;
-
+    
     try {
       setIsLoading(true);
       setError(null);
@@ -155,13 +165,17 @@ export const useWalletListItems = (
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
+
   const fetchData = useCallback(async () => {
     if (!listId) return;
-
+    
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getWalletListItems(listId, params);
+      const response = await getWalletListItems(listId, { page, limit, search });
       setData(response.data);
       setPagination(response.pagination || null);
     } catch (err) {
@@ -177,7 +191,7 @@ export const useWalletListItems = (
     } finally {
       setIsLoading(false);
     }
-  }, [listId, params?.page, params?.limit, params?.search]);
+  }, [listId, page, limit, search]);
 
   useEffect(() => {
     fetchData();

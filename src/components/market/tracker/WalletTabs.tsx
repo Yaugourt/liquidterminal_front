@@ -17,6 +17,7 @@ import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handl
 import { DragEndEvent } from '@dnd-kit/core';
 import { exportWalletsToCSV } from "@/lib/csv-utils";
 import { toast } from "sonner";
+import { showXpGainToast } from "@/components/xp";
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
@@ -177,6 +178,11 @@ export function WalletTabs() {
         await refreshUserLists();
         // Garder l'onglet actuel actif, ne pas changer vers la nouvelle liste
         setIsCreateListOpen(false);
+        
+        // Afficher le toast XP si XP accordé
+        if (newList.xpGranted && newList.xpGranted > 0) {
+          showXpGainToast(newList.xpGranted, "Wallet list created");
+        }
       }
     } catch {
       // Error handled silently
