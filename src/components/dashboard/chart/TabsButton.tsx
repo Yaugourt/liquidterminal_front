@@ -6,26 +6,24 @@ export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsP
   const tabs: { key: "bridge" | "gas" | "fees"; label: string }[] = [
     { key: 'bridge', label: 'Bridge TVL' },
     { key: 'gas', label: 'Auction' },
-    { key: 'fees', label: 'Total fees' }
+    { key: 'fees', label: 'Total Fees' }
   ];
 
   return (
-    <div className="flex justify-start items-center">
-      <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => onFilterChange(tab.key)}
-            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              selectedFilter === tab.key
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+      {tabs.map(tab => (
+        <button
+          key={tab.key}
+          onClick={() => onFilterChange(tab.key)}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+            selectedFilter === tab.key
+              ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+          }`}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
-}; 
+};

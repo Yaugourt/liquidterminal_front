@@ -22,22 +22,22 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
     { key: 'perp', label: 'Perpetual' },
     { key: 'spot', label: 'Spot' },
     { key: 'auction', label: 'Auction' },
-    { key: 'past-auction', label: 'Past auction' }
+    { key: 'past-auction', label: 'Past Auction' }
   ];
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Header avec TabSelector */}
-      <div className="flex justify-start items-center mb-4">
-        <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+      {/* Header avec TabSelector - Style V2 Pills */}
+      <div className="flex items-center gap-2 p-3 pb-0 border-b border-white/5 bg-black/20">
+        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                  : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
               {tab.label}
@@ -47,7 +47,7 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
       </div>
 
       {/* Contenu de l'onglet actif */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col p-2">
         {activeTab === "auction" ? (
           <AuctionSection />
         ) : activeTab === "past-auction" ? (
@@ -55,10 +55,10 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
         ) : (
           <TrendingTokens 
             type={activeTab} 
-            title={activeTab === "perp" ? "Trending perpetual" : "Trending spot"} 
+            title={activeTab === "perp" ? "Trending Perpetual" : "Trending Spot"} 
           />
         )}
       </div>
     </div>
   );
-}; 
+};

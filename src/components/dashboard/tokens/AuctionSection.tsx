@@ -11,38 +11,33 @@ export const AuctionSection = () => {
     { key: 'perp', label: 'Perp' }
   ];
 
-  // Simple tab change handler
   const handleTabChange = (newTab: "spot" | "perp") => {
     setActiveSubTab(newTab);
   };
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Header avec sous-tabs */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 w-fit">
+      <div className="flex items-center justify-between mb-4 px-2">
+        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
           {subTabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${
                 activeSubTab === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                  : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
               {tab.label}
             </button>
           ))}
         </div>
-
-
       </div>
 
-      {/* Contenu de l'onglet actif */}
       <div className="flex-1 flex flex-col">
         <AuctionCard key={activeSubTab} marketType={activeSubTab} />
       </div>
     </div>
   );
-}; 
+};

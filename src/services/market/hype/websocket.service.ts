@@ -97,7 +97,7 @@ export const useHypePriceStore = create<HypePriceStore>((set, get) => {
               if ((window as HypeWebSocketWindow).hypePriceWs === ws || 
                   !(window as HypeWebSocketWindow).hypePriceWs) {
                 get().connect();
-              }
+            }
             }, delay);
           } else if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
             set({ error: 'WebSocket connection failed after multiple attempts' });

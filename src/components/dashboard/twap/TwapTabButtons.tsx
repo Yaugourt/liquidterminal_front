@@ -1,5 +1,5 @@
 import { memo, useRef, useState, useEffect, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Zap } from "lucide-react";
 import { TwapTabButtonsProps } from "./types";
 
 const TwapTabButtonsComponent = ({ 
@@ -8,7 +8,7 @@ const TwapTabButtonsComponent = ({
   availableTokens 
 }: TwapTabButtonsProps) => {
   const tabs = useMemo(() => [
-    { key: 'ALL', label: 'All' },
+    { key: 'ALL', label: 'All Tokens' },
     ...availableTokens.map(token => ({ key: token, label: token }))
   ], [availableTokens]);
 
@@ -71,61 +71,51 @@ const TwapTabButtonsComponent = ({
   };
 
   return (
-    <div className="flex items-center mb-4 w-full max-w-full overflow-hidden">
-      {/* Section tabs avec défilement - prend maximum d'espace disponible */}
-      <div className="flex items-center gap-1 flex-1 min-w-0 mr-4">
-        {/* Bouton scroll gauche */}
+    <div className="flex items-center p-4 border-b border-white/5 bg-black/20 w-full overflow-hidden">
+      {/* Header Title */}
+      <div className="flex items-center gap-2 mr-4 flex-shrink-0">
+        <Zap size={16} className="text-[#83E9FF]" />
+        <span className="text-sm font-semibold text-white">Active Twaps</span>
+      </div>
+
+      {/* Scrollable Tabs */}
+      <div className="flex-1 min-w-0 flex items-center gap-2 overflow-hidden">
         {canScrollLeft && (
           <button
             onClick={scrollLeft}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
-            title="Défiler vers la gauche"
+            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-white bg-white/5 rounded-full transition-colors"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={14} />
           </button>
         )}
         
-        {/* Container des tabs avec défilement */}
-        <div className="flex-1 min-w-0 max-w-[600px]">
-          <div
-            ref={scrollContainerRef}
-            className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 max-w-full"
-            style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
-          >
-            {tabs.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex-shrink-0 px-3 py-1 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                  activeTab === tab.key
-                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+        <div
+          ref={scrollContainerRef}
+          className="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth"
+        >
+          {tabs.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-md text-[10px] font-medium transition-all whitespace-nowrap border ${
+                activeTab === tab.key
+                  ? 'bg-[#83E9FF]/10 border-[#83E9FF]/20 text-[#83E9FF] shadow-sm'
+                  : 'bg-white/5 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/10'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Bouton scroll droite */}
         {canScrollRight && (
           <button
             onClick={scrollRight}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
-            title="Défiler vers la droite"
+            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-zinc-400 hover:text-white bg-white/5 rounded-full transition-colors"
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={14} />
           </button>
         )}
-      </div>
-      
-      {/* Label "Active Orders" - largeur fixe */}
-      <div className="flex items-center gap-1 px-3 py-1 text-sm text-white flex-shrink-0 whitespace-nowrap">
-        Active Twaps
       </div>
     </div>
   );

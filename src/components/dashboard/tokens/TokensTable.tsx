@@ -1,5 +1,4 @@
 import { memo, useCallback } from "react";
-import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
@@ -18,10 +17,10 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
         <Button
             variant="ghost"
             onClick={onClick}
-            className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+            className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-zinc-400 hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
         >
             {label}
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown className="ml-1 h-3 w-3 opacity-50" />
         </Button>
     </TableHead>
 ));
@@ -30,12 +29,11 @@ TableHeaderCell.displayName = 'TableHeaderCell';
 
 // Composant pour l'état vide
 const EmptyState = memo(() => (
-    <TableRow>
+    <TableRow className="hover:bg-transparent border-none">
         <TableCell colSpan={4} className="text-center py-8">
             <div className="flex flex-col items-center justify-center">
-                <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-                <p className="text-white text-lg">Aucun token disponible</p>
-                <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
+                <Database className="w-10 h-10 mb-4 text-zinc-600" />
+                <p className="text-zinc-400 text-sm">No tokens available</p>
             </div>
         </TableCell>
     </TableRow>
@@ -45,15 +43,19 @@ EmptyState.displayName = 'EmptyState';
 
 // Composant pour une ligne de token
 const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
-    <TableRow className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors">
-        <TableCell className="py-2 pl-4">
-            <div className="flex items-center gap-2">
-                <TokenIcon src={token.logo || null} name={token.name} size="sm" />
-                <span className="text-white text-sm">{token.name}</span>
+    <TableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group cursor-pointer">
+        <TableCell className="py-3 pl-4">
+            <div className="flex items-center gap-3">
+                <div className="relative">
+                    <div className="w-8 h-8 rounded-full bg-[#1A1F2A] p-1 border border-white/10 group-hover:scale-110 transition-transform">
+                        <TokenIcon src={token.logo || null} name={token.name} size="sm" />
+                    </div>
+                </div>
+                <span className="text-white text-sm font-medium">{token.name}</span>
             </div>
         </TableCell>
-        <TableCell className="py-2 pl-4">
-            <div className="text-white text-sm">
+        <TableCell className="py-3 pl-4">
+            <div className="text-white text-sm font-medium">
                 {token.price >= 1000000 
                     ? formatLargeNumber(token.price, { prefix: '$', decimals: 2, forceDecimals: true })
                     : type === "spot"
@@ -72,13 +74,13 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
                 }
             </div>
         </TableCell>
-        <TableCell className="py-2 pl-4">
-            <div className="text-white text-sm">
+        <TableCell className="py-3 pl-4">
+            <div className="text-zinc-400 text-sm">
                 {formatLargeNumber(token.volume, { prefix: '$', decimals: 1, forceDecimals: true })}
             </div>
         </TableCell>
-        <TableCell className="py-2 pl-4 pr-4">
-            <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+        <TableCell className="py-3 pl-4 pr-4">
+            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-[#83e9ff]/10 text-[#83e9ff]' : 'bg-rose-500/20 text-rose-400'}`}>
                 {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
             </div>
         </TableCell>
@@ -112,38 +114,38 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
     }
 
     return (
-        <Card className="w-full h-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg flex flex-col">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1">
-                <Table className="h-full">
+        <div className="w-full h-full flex flex-col">
+            <div className="overflow-x-auto custom-scrollbar flex-1">
+                <Table>
                     <TableHeader>
-                        <TableRow className="border-none bg-[#051728]">
+                        <TableRow className="border-b border-white/5 hover:bg-transparent">
                             <TableHeaderCell
                                 label="Name"
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[30%]"
+                                className="pl-4 w-[35%]"
                             />
                             <TableHeaderCell
                                 label="Price"
                                 onClick={handleSort("price")}
                                 isActive={activeSort === "price"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[20%]"
+                                className="pl-4 w-[25%]"
                             />
                             <TableHeaderCell
-                                label="Volume"
+                                label="Vol"
                                 onClick={handleSort("volume")}
                                 isActive={activeSort === "volume"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[25%]"
+                                className="pl-4 w-[20%]"
                             />
                             <TableHeaderCell
                                 label="24h"
                                 onClick={handleSort("change24h")}
                                 isActive={activeSort === "change24h"}
-                                className="text-white font-normal py-1 bg-[#051728] pl-4 w-[15%]"
+                                className="pl-4 w-[20%]"
                             />
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="bg-[#051728]">
+                    <TableBody>
                         {data && data.length > 0 ? (
                             data.map((token) => (
                                 <TokenRow
@@ -160,8 +162,8 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                     </TableBody>
                 </Table>
             </div>
-        </Card>
+        </div>
     );
 });
 
-TokensTable.displayName = 'TokensTable'; 
+TokensTable.displayName = 'TokensTable';
