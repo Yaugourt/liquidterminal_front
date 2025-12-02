@@ -4,7 +4,6 @@ import { useXpLeaderboard } from "@/services/xp";
 import { cn } from "@/lib/utils";
 import { Trophy, Medal, Crown, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface XpLeaderboardProps {
   limit?: number;
@@ -29,14 +28,14 @@ export function XpLeaderboard({
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-5 w-5 text-yellow-400" />;
+        return <Crown className="h-5 w-5 text-amber-400" />;
       case 2:
-        return <Medal className="h-5 w-5 text-gray-300" />;
+        return <Medal className="h-5 w-5 text-zinc-300" />;
       case 3:
         return <Medal className="h-5 w-5 text-amber-600" />;
       default:
         return (
-          <span className="w-5 text-center text-sm font-bold text-gray-500">
+          <span className="w-5 text-center text-sm font-bold text-zinc-500">
             {rank}
           </span>
         );
@@ -46,33 +45,33 @@ export function XpLeaderboard({
   const getRankBg = (rank: number) => {
     switch (rank) {
       case 1:
-        return "bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border-yellow-500/30";
+        return "bg-gradient-to-r from-amber-500/10 to-amber-400/10 border-amber-500/30";
       case 2:
-        return "bg-gradient-to-r from-gray-400/10 to-gray-300/10 border-gray-400/30";
+        return "bg-gradient-to-r from-zinc-400/10 to-zinc-300/10 border-zinc-400/30";
       case 3:
         return "bg-gradient-to-r from-amber-600/10 to-orange-500/10 border-amber-600/30";
       default:
-        return "bg-[#0b1d30] border-[#1e293b50]";
+        return "bg-[#0A0D12] border-white/5";
     }
   };
 
   return (
-    <Card className={cn("bg-[#051728] border-[#1e293b] text-white", className)}>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-[#f9e370]" />
+    <div className={cn("bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+      <div className="p-4 border-b border-white/5">
+        <div className="flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-white font-semibold">
+            <Trophy className="h-5 w-5 text-[#F9E370]" />
             Leaderboard
-          </div>
-          <span className="text-sm font-normal text-gray-400">
+          </h3>
+          <span className="text-sm font-normal text-zinc-400">
             {total} players
           </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </div>
+      </div>
+      <div className="p-4">
         {isLoading && leaderboard.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#f9e370]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
           </div>
         ) : (
           <div className="space-y-4">
@@ -82,26 +81,26 @@ export function XpLeaderboard({
                 <div
                   key={entry.userId}
                   className={cn(
-                    "flex items-center justify-between p-3 rounded-lg border transition-all",
+                    "flex items-center justify-between p-3 rounded-xl border transition-all",
                     getRankBg(entry.rank),
                     entry.rank <= 3 && "hover:scale-[1.02]"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     {getRankIcon(entry.rank)}
-                    <div className="h-8 w-8 rounded-full bg-[#1e293b] flex items-center justify-center">
-                      <User className="h-4 w-4 text-gray-400" />
+                    <div className="h-8 w-8 rounded-lg bg-[#151A25] border border-white/5 flex items-center justify-center">
+                      <User className="h-4 w-4 text-zinc-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{entry.name}</p>
-                      <p className="text-xs text-gray-500">Level {entry.level}</p>
+                      <p className="font-medium text-sm text-white">{entry.name}</p>
+                      <p className="text-xs text-zinc-500">Level {entry.level}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[#f9e370]">
+                    <p className="font-bold text-[#F9E370]">
                       {entry.totalXp.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-500">XP</p>
+                    <p className="text-xs text-zinc-500">XP</p>
                   </div>
                 </div>
               ))}
@@ -109,14 +108,14 @@ export function XpLeaderboard({
 
             {/* Current user rank (if not in visible list) */}
             {showCurrentUser && userRank && userRank > leaderboard.length && (
-              <div className="pt-4 border-t border-[#1e293b]">
-                <p className="text-xs text-gray-500 mb-2">Your position</p>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-[#83E9FF10] border border-[#83E9FF30]">
+              <div className="pt-4 border-t border-white/5">
+                <p className="text-xs text-zinc-500 mb-2">Your position</p>
+                <div className="flex items-center justify-between p-3 rounded-xl bg-[#83E9FF]/10 border border-[#83E9FF]/30">
                   <div className="flex items-center gap-3">
                     <span className="w-5 text-center text-sm font-bold text-[#83E9FF]">
                       #{userRank}
                     </span>
-                    <div className="h-8 w-8 rounded-full bg-[#83E9FF20] flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-lg bg-[#83E9FF]/20 flex items-center justify-center">
                       <User className="h-4 w-4 text-[#83E9FF]" />
                     </div>
                     <span className="font-medium text-sm text-[#83E9FF]">You</span>
@@ -129,7 +128,7 @@ export function XpLeaderboard({
             {hasMore && (
               <Button
                 variant="outline"
-                className="w-full border-[#1e293b] hover:bg-[#0b1d30] text-gray-300"
+                className="w-full border-white/5 hover:bg-white/5 text-zinc-300 rounded-lg"
                 onClick={loadMore}
                 disabled={isLoading}
               >
@@ -141,8 +140,7 @@ export function XpLeaderboard({
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
-

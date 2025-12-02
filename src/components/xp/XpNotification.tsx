@@ -44,15 +44,15 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
 
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-[#051728] to-[#0a1f35] border border-[#f9e370]/30 rounded-lg p-4 shadow-lg shadow-[#f9e370]/10">
-            <div className="h-10 w-10 rounded-full bg-[#f9e370]/10 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-[#f9e370]" />
+          <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-4 shadow-xl shadow-black/20">
+            <div className="h-10 w-10 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-[#F9E370]" />
             </div>
             <div>
               <p className="font-bold text-white">
                 +{totalXp} XP
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-zinc-400">
                 Daily login bonus
                 {lastLoginResult.streakBonus > 0 && (
                   <span className="text-orange-400">
@@ -85,12 +85,12 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
     if (stats && previousLevel.current !== null && stats.level > previousLevel.current) {
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-[#9b59b6]/20 to-[#f9e370]/20 border border-[#f9e370]/50 rounded-lg p-4 shadow-lg shadow-[#f9e370]/20 animate-pulse">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#f9e370] to-[#9b59b6] flex items-center justify-center">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-[#F9E370]/20 border border-[#F9E370]/50 rounded-xl p-4 shadow-xl shadow-[#F9E370]/10 animate-pulse">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#F9E370] to-purple-500 flex items-center justify-center">
               <Star className="h-6 w-6 text-[#051728] fill-[#051728]" />
             </div>
             <div>
-              <p className="font-bold text-[#f9e370] text-lg">
+              <p className="font-bold text-[#F9E370] text-lg">
                 Level Up! 🎉
               </p>
               <p className="text-sm text-white">
@@ -130,13 +130,13 @@ export function useXpRefetch() {
 export function showXpGainToast(amount: number, action: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-gradient-to-r from-[#051728] to-[#0a1f35] border border-[#f9e370]/20 rounded-lg p-3 shadow-lg">
-        <div className="h-8 w-8 rounded-full bg-[#f9e370]/10 flex items-center justify-center">
-          <Star className="h-4 w-4 text-[#f9e370]" />
+      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
+          <Star className="h-4 w-4 text-[#F9E370]" />
         </div>
         <div>
-          <p className="font-bold text-[#f9e370]">+{amount} XP</p>
-          <p className="text-xs text-gray-400">{action}</p>
+          <p className="font-bold text-[#F9E370]">+{amount} XP</p>
+          <p className="text-xs text-zinc-400">{action}</p>
         </div>
       </div>
     ),

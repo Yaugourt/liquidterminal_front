@@ -17,7 +17,6 @@ import {
   Loader2,
   History,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface XpHistoryListProps {
@@ -43,7 +42,7 @@ const ACTION_ICONS: Record<string, React.ElementType> = {
 
 const ACTION_COLORS: Record<string, string> = {
   REGISTRATION: "text-purple-400 bg-purple-400/10",
-  DAILY_LOGIN: "text-green-400 bg-green-400/10",
+  DAILY_LOGIN: "text-emerald-400 bg-emerald-400/10",
   LOGIN_STREAK_7: "text-orange-400 bg-orange-400/10",
   LOGIN_STREAK_30: "text-orange-500 bg-orange-500/10",
   REFERRAL_SUCCESS: "text-blue-400 bg-blue-400/10",
@@ -52,8 +51,8 @@ const ACTION_COLORS: Record<string, string> = {
   COPY_PUBLIC_READLIST: "text-indigo-400 bg-indigo-400/10",
   CREATE_WALLETLIST: "text-[#83E9FF] bg-[#83E9FF]/10",
   ADD_WALLET_TO_LIST: "text-[#83E9FF] bg-[#83E9FF]/10",
-  SUBMIT_PUBLIC_GOOD: "text-yellow-400 bg-yellow-400/10",
-  PUBLIC_GOOD_APPROVED: "text-[#f9e370] bg-[#f9e370]/10",
+  SUBMIT_PUBLIC_GOOD: "text-amber-400 bg-amber-400/10",
+  PUBLIC_GOOD_APPROVED: "text-[#F9E370] bg-[#F9E370]/10",
 };
 
 function formatRelativeTime(dateString: string): string {
@@ -103,36 +102,36 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <Card className={cn("bg-[#051728] border-[#1e293b] text-white", className)}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <History className="h-5 w-5 text-[#f9e370]" />
+    <div className={cn("bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+      <div className="p-4 border-b border-white/5">
+        <h3 className="flex items-center gap-2 text-white font-semibold">
+          <History className="h-5 w-5 text-[#F9E370]" />
           XP History
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </h3>
+      </div>
+      <div className="p-4">
         {isLoadingHistory && transactions.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#f9e370]" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
           </div>
         ) : transactions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <History className="h-12 w-12 mx-auto mb-3 opacity-30" />
-            <p>No XP activity yet</p>
-            <p className="text-sm mt-1">Start earning XP by using the platform!</p>
+          <div className="text-center py-8">
+            <History className="h-12 w-12 mx-auto mb-3 text-zinc-600" />
+            <p className="text-zinc-400">No XP activity yet</p>
+            <p className="text-sm mt-1 text-zinc-600">Start earning XP by using the platform!</p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
               {displayTransactions.map((tx) => {
                 const Icon = ACTION_ICONS[tx.actionType] || Gift;
-                const colorClass = ACTION_COLORS[tx.actionType] || "text-gray-400 bg-gray-400/10";
+                const colorClass = ACTION_COLORS[tx.actionType] || "text-zinc-400 bg-zinc-400/10";
                 const [textColor, bgColor] = colorClass.split(" ");
 
                 return (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-3 bg-[#0b1d30] rounded-lg border border-[#1e293b50] hover:border-[#1e293b] transition-colors"
+                    className="flex items-center justify-between p-3 bg-[#0A0D12] rounded-xl border border-white/5 hover:border-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -144,24 +143,24 @@ export function XpHistoryList({
                         <Icon className={cn("h-4 w-4", textColor)} />
                       </div>
                       <div>
-                        <p className="font-medium text-sm">
+                        <p className="font-medium text-sm text-white">
                           {XP_ACTION_LABELS[tx.actionType] || tx.actionType}
                         </p>
                         {tx.description && (
-                          <p className="text-xs text-gray-500 truncate max-w-[200px]">
+                          <p className="text-xs text-zinc-500 truncate max-w-[200px]">
                             {tx.description}
                           </p>
                         )}
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-zinc-500">
                           {formatRelativeTime(tx.createdAt)}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-[#f9e370]">
+                      <span className="font-bold text-[#F9E370]">
                         +{tx.xpAmount}
                       </span>
-                      <span className="text-xs text-gray-500 ml-1">XP</span>
+                      <span className="text-xs text-zinc-500 ml-1">XP</span>
                     </div>
                   </div>
                 );
@@ -174,7 +173,7 @@ export function XpHistoryList({
               historyPagination.page < historyPagination.totalPages && (
                 <Button
                   variant="outline"
-                  className="w-full border-[#1e293b] hover:bg-[#0b1d30] text-gray-300"
+                  className="w-full border-white/5 hover:bg-white/5 text-zinc-300 rounded-lg"
                   onClick={() => refetchHistory(historyPagination.page + 1)}
                   disabled={isLoadingHistory}
                 >
@@ -186,8 +185,7 @@ export function XpHistoryList({
               )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
-
