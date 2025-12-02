@@ -306,7 +306,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                     className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80 transition-opacity"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <Avatar className="h-7 w-7 ring-1 ring-white/10">
+                                    <Avatar className="h-7 w-7 ring-1 ring-white/10 shrink-0">
                                         {privyUser?.twitter?.profilePictureUrl ? (
                                             <Image 
                                                 src={privyUser.twitter.profilePictureUrl}
@@ -321,21 +321,22 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             </AvatarFallback>
                                         )}
                                     </Avatar>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-white text-sm font-medium truncate">
-                                            {privyUser?.twitter?.username || "User"}
-                                        </p>
-                                        <XpBadge compact showStreak className="mt-1" />
-                                    </div>
+                                    <p className="text-white text-sm font-medium truncate flex-1 min-w-0">
+                                        {privyUser?.twitter?.username || "User"}
+                                    </p>
                                 </Link>
                                 <Button 
                                     variant="ghost" 
                                     size="icon" 
                                     onClick={() => logout()}
-                                    className="h-7 w-7 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
+                                    className="h-7 w-7 shrink-0 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
                                 >
                                     <PiSignOut className="w-4 h-4" />
                                 </Button>
+                            </div>
+                            {/* XP Badge - séparé du lien profil pour éviter la redirection */}
+                            <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                                <XpBadge compact showStreak />
                             </div>
                         </div>
                     )}
