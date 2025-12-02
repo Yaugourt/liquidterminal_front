@@ -91,19 +91,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
             <div
                 className={cn(
-                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-[#051728] flex flex-col",
-                    "border-r border-[#83E9FF1A]",
+                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-[#0B0E14] flex flex-col",
+                    "border-r border-white/5",
                     "transition-transform duration-300 ease-in-out z-50",
                     "lg:translate-x-0",
                     isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-3 border-b border-[#83E9FF1A]">
+                <div className="flex items-center justify-between p-3 border-b border-white/5">
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="lg:hidden hover:bg-[#83E9FF1A]"
+                        className="lg:hidden hover:bg-white/5"
                         onClick={() => setIsOpen(false)}
                     >
                         <Menu className="h-5 w-5 text-[#83E9FF]" />
@@ -124,14 +124,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#83E9FF1A] scrollbar-track-transparent">
+                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <ul className="space-y-4">
                         {navigationGroups.map((group, groupIndex) => (
                             <li key={groupIndex} className="space-y-1">
                                 {group.groupName && (
-                                    <div className="px-3 text-xs">
-                                        <span className="text-[#83E9FFCC] font-higuen">{group.groupName.split(' ')[0]} </span>
-                                        <span className="text-[#FFFFFFCC] font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
+                                    <div className="px-3 text-[10px] font-semibold uppercase tracking-wider">
+                                        <span className="text-[#83E9FF] font-higuen">{group.groupName.split(' ')[0]} </span>
+                                        <span className="text-zinc-400 font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
                                     </div>
                                 )}
                                 <ul className="space-y-[2px]">
@@ -142,7 +142,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             <li key={item.name} className="relative">
                                                 {/* Barre verticale active */}
                                                 {isActive && (
-                                                    <div className="absolute left-0 top-1/2 h-5 bg-[#83E9FF] rounded-r shadow-[0_0_8px_0_rgba(131,233,255,0.3)]" />
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-[#83E9FF] rounded-r" />
                                                 )}
                                                 {item.children ? (
                                                     <div className="flex items-center">
@@ -151,8 +151,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             className={cn(
                                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
                                                                 isActive 
-                                                                    ? "bg-[#83E9FF0A] text-[#83E9FF]" 
-                                                                    : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                                    ? "bg-[#83E9FF]/10 text-[#83E9FF]" 
+                                                                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
                                                             )}
                                                             onClick={() => setIsOpen(false)}
                                                         >
@@ -181,8 +181,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             className={cn(
                                                                 "p-1 rounded transition-all",
                                                                 isActive 
-                                                                    ? "text-[#83E9FF] hover:bg-[#83E9FF1A]" 
-                                                                    : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                                    ? "text-[#83E9FF] hover:bg-white/5" 
+                                                                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
                                                             )}
                                                         >
                                                             <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
@@ -194,8 +194,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                         className={cn(
                                                             "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
                                                             isActive 
-                                                                ? "bg-[#83E9FF0A] text-[#83E9FF]" 
-                                                                : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                                ? "bg-[#83E9FF]/10 text-[#83E9FF]" 
+                                                                : "text-zinc-300 hover:bg-white/5 hover:text-white"
                                                         )}
                                                         onClick={() => setIsOpen(false)}
                                                     >
@@ -219,7 +219,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                 )}
                                                 {/* Sous-menu */}
                                                 {item.children && isOpen && (
-                                                    <ul className="ml-7 mt-1 space-y-1">
+                                                    <ul className="ml-7 mt-1 space-y-1 border-l border-white/5 pl-2">
                                                         {item.children.map((child: NavigationItem) => {
                                                             const isChildActive = pathname === child.href;
                                                             return (
@@ -227,10 +227,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                     <Link
                                                                         href={child.href}
                                                                         className={cn(
-                                                                            "flex items-center gap-2 px-2 py-1 rounded transition-all",
+                                                                            "flex items-center gap-2 px-2 py-1 rounded-md transition-all",
                                                                             isChildActive
-                                                                                ? "bg-[#83E9FF1A] text-[#83E9FF] font-semibold"
-                                                                                : "text-[#FFFFFFCC] hover:bg-[#83E9FF0A] hover:text-[#83E9FF]"
+                                                                                ? "bg-[#83E9FF]/10 text-[#83E9FF] font-medium"
+                                                                                : "text-zinc-400 hover:bg-white/5 hover:text-white"
                                                                         )}
                                                                         onClick={() => setIsOpen(false)}
                                                                     >
@@ -252,21 +252,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         {/* Admin Section - Only visible to admins */}
                         {isAdmin && (
                             <li className="space-y-1">
-                                <div className="px-3 text-xs">
-                                    <span className="text-[#f9e370CC] font-higuen">Administration</span>
+                                <div className="px-3 text-[10px] font-semibold uppercase tracking-wider">
+                                    <span className="text-[#f9e370] font-higuen">Administration</span>
                                 </div>
                                 <ul className="space-y-[2px]">
                                     <li className="relative">
                                         {pathname === '/user' && (
-                                            <div className="absolute left-0 top-1/2 h-5 bg-[#f9e370] rounded-r shadow-[0_0_8px_0_rgba(249,227,112,0.3)]" />
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-[#f9e370] rounded-r" />
                                         )}
                                         <Link
                                             href="/user"
                                             className={cn(
                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
                                                 pathname === '/user'
-                                                    ? "bg-[#f9e3700A] text-[#f9e370]" 
-                                                    : "text-[#FFFFFFCC] hover:bg-[#f9e3700A] hover:text-[#f9e370]"
+                                                    ? "bg-[#f9e370]/10 text-[#f9e370]" 
+                                                    : "text-zinc-300 hover:bg-white/5 hover:text-[#f9e370]"
                                             )}
                                             onClick={() => setIsOpen(false)}
                                         >
@@ -286,25 +286,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </nav>
 
                 {/* Account Section */}
-                <div className="p-3">
+                <div className="p-3 border-t border-white/5">
                     {!authenticated ? (
                         <Button 
                             onClick={() => login()}
-                            className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
+                            className="group relative w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] rounded-lg overflow-hidden font-bold"
                         >
-                            <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
-                            <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
-                            <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
-                                <PiSignIn className="w-6 h-6 brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
-                                <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
-                                    Login
-                                </span>
+                            <div className="flex items-center justify-center gap-2 py-1">
+                                <PiSignIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                <span className="text-sm">Login</span>
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-1.5 bg-[#83E9FF05] rounded-lg">
+                        <div className="p-2 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-xl">
                             <div className="flex items-center gap-2">
-                                <Avatar className="h-7 w-7 ring-1 ring-[#83E9FF1A]">
+                                <Avatar className="h-7 w-7 ring-1 ring-white/10">
                                     {privyUser?.twitter?.profilePictureUrl ? (
                                         <Image 
                                             src={privyUser.twitter.profilePictureUrl}
@@ -314,7 +310,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             className="object-cover rounded-full"
                                         />
                                     ) : (
-                                        <AvatarFallback className="bg-[#1a2c38] text-[#83E9FF] text-xs font-medium">
+                                        <AvatarFallback className="bg-[#151A25] text-[#83E9FF] text-xs font-medium">
                                             {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
                                         </AvatarFallback>
                                     )}
@@ -328,7 +324,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                     variant="ghost" 
                                     size="icon" 
                                     onClick={() => logout()}
-                                    className="h-7 w-7 hover:bg-[#83E9FF1A] text-gray-400 hover:text-[#83E9FF]"
+                                    className="h-7 w-7 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
                                 >
                                     <PiSignOut className="w-4 h-4" />
                                 </Button>
@@ -338,12 +334,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Customize Button */}
-                <div className="px-2 py-2 border-t border-[#83E9FF1A]">
+                <div className="px-3 py-2">
                     <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => setIsCustomizeOpen(true)}
-                        className="w-full border-[#83E9FF4D] text-white hover:bg-[#83E9FF20] justify-start gap-2"
+                        className="w-full text-zinc-400 hover:text-white hover:bg-white/5 justify-start gap-2 transition-colors"
                     >
                         <Settings className="w-4 h-4" />
                         <span className="text-xs">Customize Sidebar</span>
@@ -351,18 +347,18 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center gap-2 py-1.5 px-2 border-t border-[#83E9FF1A]">
+                <div className="flex items-center justify-center gap-3 py-3 px-3 border-t border-white/5">
                     {socials.map((item) => (
                         <a
                             key={item.name}
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group relative p-1"
+                            className="group p-1.5 rounded-lg hover:bg-white/5 transition-colors"
                         >
                             <Icon 
                                 icon={item.iconName} 
-                                className="h-3.5 w-3.5 text-[#F9E370]/60 group-hover:text-[#F9E370] transition-colors" 
+                                className="h-4 w-4 text-zinc-500 group-hover:text-[#83E9FF] transition-colors" 
                             />
                         </a>
                     ))}

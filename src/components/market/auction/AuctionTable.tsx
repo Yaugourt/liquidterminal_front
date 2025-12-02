@@ -1,6 +1,5 @@
 import { useState, memo, useCallback } from 'react';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
-import { Card } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -20,29 +19,29 @@ interface AuctionTableProps {
   marketType: "spot" | "perp";
 }
 
-// TableHeaderCell strictement identique à SpotTokenTable
+// TableHeaderCell
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: string; onClick?: () => void; className?: string; isActive?: boolean }) => (
   <TableHead className={className}>
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+      className={`${isActive ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
     >
       {label}
-      {onClick && <ArrowUpDown className="ml-2 h-4 w-4" />}
+      {onClick && <ArrowUpDown className="h-3 w-3" />}
     </Button>
   </TableHead>
 ));
 TableHeaderCell.displayName = 'TableHeaderCell';
 
-// EmptyState strictement identique
+// EmptyState
 const EmptyState = memo(() => (
   <TableRow>
-    <TableCell colSpan={5} className="text-center py-8">
+    <TableCell colSpan={7} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg">Aucune auction disponible</p>
-        <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
+        <Database className="w-10 h-10 mb-3 text-zinc-600" />
+        <p className="text-zinc-400 text-sm mb-1">No auctions available</p>
+        <p className="text-zinc-600 text-xs">Check back later</p>
       </div>
     </TableCell>
   </TableRow>
@@ -53,9 +52,9 @@ EmptyState.displayName = 'EmptyState';
 const ComingSoonState = memo(() => (
   <div className="flex items-center justify-center h-[400px]">
     <div className="flex flex-col items-center text-center px-4">
-      <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-      <p className="text-white text-lg mb-2">Coming Soon</p>
-      <p className="text-[#FFFFFF80] text-sm">Perpetual auctions table will be available soon.</p>
+      <Database className="w-10 h-10 mb-3 text-zinc-600" />
+      <p className="text-zinc-400 text-sm mb-1">Coming Soon</p>
+      <p className="text-zinc-600 text-xs">Perpetual auctions table will be available soon.</p>
     </div>
   </div>
 ));
@@ -148,37 +147,37 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <ComingSoonState />
-      </Card>
+      </div>
     );
   }
 
   if (isLoading) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
         </div>
-      </Card>
+      </div>
     );
   }
   if (error) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#FF4D4F] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="w-full bg-rose-500/5 border border-rose-500/20 rounded-2xl backdrop-blur-md overflow-hidden">
         <div className="flex justify-center items-center h-[200px]">
-          <span className="text-red-500 text-lg">Erreur lors du chargement des auctions</span>
+          <span className="text-rose-400 text-sm">Error loading auctions</span>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
               {columns.map(col => (
                 col.sortable ? (
                   <TableHeaderCell
@@ -186,42 +185,42 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                     label={col.label}
                     onClick={() => handleSort(col.key)}
                     isActive={sortField === col.key}
-                    className={`text-white font-normal py-1 bg-[#051728] text-sm ${col.className}`}
+                    className={`py-3 px-3 ${col.className}`}
                   />
                 ) : (
                   <TableHead
                     key={col.key}
-                    className={`text-white font-normal py-1 bg-[#051728] text-sm ${col.className}`}
+                    className={`py-3 px-3 ${col.className}`}
                   >
-                    {col.label}
+                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">{col.label}</span>
                   </TableHead>
                 )
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {auctions.length === 0 ? (
               <EmptyState />
             ) : (
               auctions.map((auction) => (
-                <TableRow key={auction.tokenId} className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer">
-                  <TableCell className="py-2 pl-4 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
-                  <TableCell className="py-2 pl-2 text-white text-sm text-left">{auction.name}</TableCell>
-                  <TableCell className="py-2 pl-2 text-white text-sm text-left">
+                <TableRow key={auction.tokenId} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer">
+                  <TableCell className="py-3 px-3 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
+                  <TableCell className="py-3 px-3 text-white text-sm font-medium text-left">{auction.name}</TableCell>
+                  <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors">{formatAddress(auction.deployer)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />) : (<Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
+                      <Link href={`/explorer/address/${auction.deployer}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2 pl-2 text-white text-sm text-left">
+                  <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors">{formatAddress(auction.tokenId)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />) : (<Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
+                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2 pl-2 pr-4 text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
-                  <TableCell className="py-2 pl-4 pr-2 text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
-                  <TableCell className="py-2 pl-4 pr-4 text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="py-3 px-3 text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
+                  <TableCell className="py-3 px-3 text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="py-3 px-3 text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
                 </TableRow>
               ))
             )}
@@ -230,7 +229,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
       </div>
       
       {/* Pagination intégrée */}
-      <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
+      <div className="border-t border-white/5 px-4 py-3">
         <Pagination
           total={total}
           page={currentPage - 1}
@@ -240,6 +239,6 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
           rowsPerPageOptions={[5, 10, 15, 20]}
         />
       </div>
-    </Card>
+    </div>
   );
 }

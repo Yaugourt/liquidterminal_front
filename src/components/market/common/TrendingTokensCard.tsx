@@ -1,5 +1,4 @@
 import { memo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { Loader2, Database, ArrowUpDown } from "lucide-react";
@@ -82,130 +81,114 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
 
   if (isLoading) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full">
+      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-full">
         <div className="flex justify-center items-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+        </div>
       </div>
-      </Card>
     );
   }
 
   if (error) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full">
+      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-full">
         <div className="flex justify-center items-center h-full">
-          <p className="text-red-500 text-sm">Une erreur est survenue</p>
+          <p className="text-rose-400 text-sm">Une erreur est survenue</p>
+        </div>
       </div>
-      </Card>
     );
   }
 
   return (
-    <Card className="w-full p-0 bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg h-full flex flex-col">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1">
+    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full flex flex-col">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
         <Table className="h-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[35%]">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-white p-0 flex items-center justify-start w-full"
-                  style={{fontWeight: 400, fontSize: '0.875rem'}}
-                >
-                  Name
-                </Button>
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
+              <TableHead className="py-3 px-3 w-[35%]">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span>
               </TableHead>
-              <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-white p-0 flex items-center justify-start w-full"
-                  style={{fontWeight: 400, fontSize: '0.875rem'}}
-                >
-                  Price
-                </Button>
+              <TableHead className="py-3 px-3 w-[20%]">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span>
               </TableHead>
               
               {/* Colonne conditionnelle : Volume pour spot, 24h pour perp */}
               {market === 'spot' ? (
-                <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
+                <TableHead className="py-3 px-3 w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("volume")}
-                    className={`${sortField === "volume" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center justify-start w-full`}
-                    style={{fontWeight: 400, fontSize: '0.875rem'}}
+                    className={`${sortField === "volume" ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
                   >
                     Volume
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="h-3 w-3" />
                   </Button>
                 </TableHead>
               ) : (
-                <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
+                <TableHead className="py-3 px-3 w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("change24h")}
-                    className={`${sortField === "change24h" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center justify-start w-full`}
-                    style={{fontWeight: 400, fontSize: '0.875rem'}}
+                    className={`${sortField === "change24h" ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
                   >
                     24h
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="h-3 w-3" />
                   </Button>
                 </TableHead>
               )}
               
               {/* Dernière colonne : 24h pour spot, Open Interest pour perp */}
               {market === 'spot' ? (
-                <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 w-[20%]">
+                <TableHead className="py-3 px-3 w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("change24h")}
-                    className={`${sortField === "change24h" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center justify-start w-full`}
-                    style={{fontWeight: 400, fontSize: '0.875rem'}}
+                    className={`${sortField === "change24h" ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
                   >
                     24h
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="h-3 w-3" />
                   </Button>
                 </TableHead>
               ) : (
-                <TableHead className="text-white text-sm py-1.5 bg-[#051728] pl-4 pr-4 w-[20%]">
+                <TableHead className="py-3 px-3 w-[20%]">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort("openInterest")}
-                    className={`${sortField === "openInterest" ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} p-0 flex items-center justify-start w-full`}
-                    style={{fontWeight: 400, fontSize: '0.875rem'}}
+                    className={`${sortField === "openInterest" ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
                   >
                     Open Interest
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="h-3 w-3" />
                   </Button>
                 </TableHead>
               )}
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {trendingTokens && trendingTokens.length > 0 ? (
               trendingTokens.map((token) => (
                 <TableRow
                   key={token.name}
-                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors h-[1fr]"
+                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                   style={{ height: `${100 / trendingTokens.length}%` }}
                 >
-                  <TableCell className="py-1.5 pl-4">
-                    <div className="flex items-center gap-1.5">
+                  <TableCell className="py-2 px-3">
+                    <div className="flex items-center gap-2">
                       <TokenIcon src={token.logo} name={token.name} size="sm" />
-                      <span className="text-white text-xs">{token.name}</span>
+                      <span className="text-white text-sm font-medium">{token.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-left text-white text-xs py-1.5 pl-4">
+                  <TableCell className="text-left text-white text-sm py-2 px-3">
                     {formatValue(token.price)}
                   </TableCell>
                   
                   {/* Colonne conditionnelle */}
                   {market === 'spot' ? (
-                    <TableCell className="text-left text-white text-xs py-1.5 pl-4">
+                    <TableCell className="text-left text-white text-sm py-2 px-3">
                       {formatVolume(token.volume)}
                     </TableCell>
                   ) : (
-                    <TableCell className="text-left text-xs py-1.5 pl-4">
-                      <span style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+                    <TableCell className="text-left text-sm py-2 px-3">
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                         {formatPriceChange(token.change24h)}
                       </span>
                     </TableCell>
@@ -213,13 +196,13 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
                   
                   {/* Dernière colonne */}
                   {market === 'spot' ? (
-                    <TableCell className="text-left text-xs py-1.5 pl-4">
-                      <span style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+                    <TableCell className="text-left text-sm py-2 px-3">
+                      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                         {formatPriceChange(token.change24h)}
                       </span>
                     </TableCell>
                   ) : (
-                    <TableCell className="text-left text-white text-xs py-1.5 pl-4 pr-4">
+                    <TableCell className="text-left text-white text-sm py-2 px-3">
                       {'$' + formatNumber((token as PerpMarketData).openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </TableCell>
                   )}
@@ -229,9 +212,9 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8">
                   <div className="flex flex-col items-center justify-center">
-                    <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-                    <p className="text-white text-lg">Aucun token disponible</p>
-                    <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
+                    <Database className="w-10 h-10 mb-3 text-zinc-600" />
+                    <p className="text-zinc-400 text-sm mb-1">Aucun token disponible</p>
+                    <p className="text-zinc-600 text-xs">Vérifiez plus tard</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -239,6 +222,6 @@ export const TrendingTokensCard = memo(function TrendingTokensCard({ market }: T
           </TableBody>
         </Table>
       </div>
-    </Card>
+    </div>
   );
 }); 

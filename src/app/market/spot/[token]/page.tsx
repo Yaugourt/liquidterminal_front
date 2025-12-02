@@ -57,16 +57,16 @@ export default function TokenPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
                 {/* Mobile menu button */}
                 <div className="fixed top-4 left-4 z-50 lg:hidden">
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="bg-[#051728] hover:bg-[#112941]"
+                        className="text-white hover:bg-white/10"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     >
-                        <Menu className="h-6 w-6 text-white" />
+                        <Menu className="h-6 w-6" />
                     </Button>
                 </div>
 
@@ -74,12 +74,19 @@ export default function TokenPage() {
                 <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
                 <div className="">
-                    <Header customTitle={`${tokenName} - Market`} showFees={true} />
+                    <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+                        <Header customTitle={`${tokenName} - Market`} showFees={true} />
+                    </div>
                     <div className="p-2 lg:hidden">
                         <SearchBar placeholder="Search tokens..." />
                     </div>
-                    <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-                        <div className="text-white">Chargement...</div>
+                    <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
+                        <div className="flex justify-center items-center h-[200px]">
+                            <div className="flex flex-col items-center">
+                                <div className="h-6 w-6 border-2 border-[#83E9FF] border-t-transparent rounded-full animate-spin mb-2" />
+                                <span className="text-zinc-500 text-sm">Loading...</span>
+                            </div>
+                        </div>
                     </main>
                 </div>
             </div>
@@ -88,16 +95,16 @@ export default function TokenPage() {
 
     if (error || !token) {
         return (
-            <div className="min-h-screen">
+            <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
                 {/* Mobile menu button */}
                 <div className="fixed top-4 left-4 z-50 lg:hidden">
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="bg-[#051728] hover:bg-[#112941]"
+                        className="text-white hover:bg-white/10"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     >
-                        <Menu className="h-6 w-6 text-white" />
+                        <Menu className="h-6 w-6" />
                     </Button>
                 </div>
 
@@ -105,17 +112,19 @@ export default function TokenPage() {
                 <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
                 <div className="">
-                    <Header customTitle="Token Not Found" showFees={true} />
+                    <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+                        <Header customTitle="Token Not Found" showFees={true} />
+                    </div>
                     <div className="p-2 lg:hidden">
                         <SearchBar placeholder="Search tokens..." />
                     </div>
-                    <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-                        <div className="text-white flex flex-col items-center justify-center min-h-[50vh]">
-                            <div className="text-xl mb-4">Token not found</div>
-                            <div className="text-white mb-6">{error}</div>
+                    <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
+                        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center min-h-[50vh]">
+                            <div className="text-xl font-bold text-white mb-4">Token not found</div>
+                            <div className="text-zinc-400 mb-6 text-center">{error}</div>
                             <Button
                                 onClick={handleBackToList}
-                                className="bg-[#83E9FF4D] hover:bg-[#83E9FF80] text-white"
+                                className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-bold"
                             >
                                 Back to tokens list
                             </Button>
@@ -127,16 +136,16 @@ export default function TokenPage() {
     }
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
             {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="bg-[#051728] hover:bg-[#112941]"
+                    className="text-white hover:bg-white/10"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 >
-                    <Menu className="h-6 w-6 text-white" />
+                    <Menu className="h-6 w-6" />
                 </Button>
             </div>
 
@@ -144,12 +153,14 @@ export default function TokenPage() {
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
             <div className="">
-                <Header customTitle={`${tokenName} - Market`} showFees={true} />
+                <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+                    <Header customTitle={`${tokenName} - Market`} showFees={true} />
+                </div>
                 <div className="p-2 lg:hidden">
                     <SearchBar placeholder="Search tokens..." />
                 </div>
 
-                <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+                <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
                     {/* Token Overview Card */}
                     <TokenCard
                         token={{
@@ -180,21 +191,21 @@ export default function TokenPage() {
                             {/* Tabs dans l'espace vide */}
                             <div className="mt-4">
                                 <div className="flex justify-start items-center">
-                                    <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 w-fit">
+                                    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
                                         <button
                                             onClick={() => setActiveTab('twap')}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${activeTab === 'twap'
-                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                                                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
+                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                                                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                                                 }`}
                                         >
                                             TWAP
                                         </button>
                                         <button
                                             onClick={() => setActiveTab('holders')}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${activeTab === 'holders'
-                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                                                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                                            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
+                                                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                                                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                                                 }`}
                                         >
                                             Holders

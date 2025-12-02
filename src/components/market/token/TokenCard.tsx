@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { TokenCardProps } from "./types";
 import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -44,11 +43,11 @@ export function TokenCard({ token, className }: TokenCardProps) {
   };
 
   return (
-    <Card className={cn(
-      "w-fit p-3 bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]",
+    <div className={cn(
+      "w-fit p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20",
       className
     )}>
-      <div className="flex flex-wrap items-center gap-8 w-fit">
+      <div className="flex flex-wrap items-center gap-6 w-fit">
         {/* Token Info */}
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
@@ -79,12 +78,12 @@ export function TokenCard({ token, className }: TokenCardProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white text-sm">{token.symbol}</span>
+            <span className="text-white text-sm font-medium">{token.symbol}</span>
             <span className={cn(
-              "px-1.5 py-0.5 rounded text-xs ",
+              "px-2 py-0.5 rounded-md text-xs font-medium",
               token.type === 'spot' 
-                ? "bg-[#1E4620] text-[#4ADE80]" 
-                : "bg-[#4A1E20] text-[#F87171]"
+                ? "bg-emerald-500/10 text-emerald-400" 
+                : "bg-rose-500/10 text-rose-400"
             )}>
               {token.type === 'spot' ? 'Spot' : 'Perp'}
             </span>
@@ -92,10 +91,10 @@ export function TokenCard({ token, className }: TokenCardProps) {
         </div>
 
         {/* Price Data */}
-        <div className="flex flex-wrap gap-6 lg:gap-8">
+        <div className="flex flex-wrap gap-6">
           {/* Mark/Price */}
           <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wide">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">
               {token.type === 'perpetual' ? 'Mark' : 'Price'}
             </span>
             <span className={cn(
@@ -111,8 +110,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
           {/* Oracle (Perpetual only) */}
           {token.type === 'perpetual' && token.oracle && (
             <div className="flex flex-col">
-              <span className="text-gray-400 text-[10px] uppercase tracking-wide">Oracle</span>
-              <span className="text-white text-sm">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Oracle</span>
+              <span className="text-white text-sm font-medium">
                 {formatPriceValue(token.oracle)}
               </span>
             </div>
@@ -120,10 +119,10 @@ export function TokenCard({ token, className }: TokenCardProps) {
 
           {/* 24h Change */}
           <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wide">24h Change</span>
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Change</span>
             <span className={cn(
-              "text-sm",
-              token.change24h >= 0 ? "text-[#4ADE80]" : "text-[#F87171]"
+              "text-sm font-medium px-2 py-0.5 rounded-md w-fit",
+              token.change24h >= 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
             )}>
               {formatPercentage(token.change24h)}
             </span>
@@ -131,8 +130,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
 
           {/* 24h Volume */}
           <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wide">24h Volume</span>
-            <span className="text-white text-sm">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
+            <span className="text-white text-sm font-medium">
               {formatVolumeValue(token.volume24h)}
             </span>
           </div>
@@ -140,8 +139,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
           {/* Market Cap (Spot) or Open Interest (Perpetual) */}
           {token.type === 'spot' && token.marketCap && (
             <div className="flex flex-col">
-              <span className="text-gray-400 text-[10px] uppercase tracking-wide">Market Cap</span>
-              <span className="text-white text-sm">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Market Cap</span>
+              <span className="text-white text-sm font-medium">
                 {formatMarketCapValue(token.marketCap)}
               </span>
             </div>
@@ -149,8 +148,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
 
           {token.type === 'perpetual' && token.openInterest && (
             <div className="flex flex-col">
-              <span className="text-gray-400 text-[10px] uppercase tracking-wide">Open Interest</span>
-              <span className="text-white text-sm">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
+              <span className="text-white text-sm font-medium">
                 {formatVolumeValue(token.openInterest)}
               </span>
             </div>
@@ -159,14 +158,14 @@ export function TokenCard({ token, className }: TokenCardProps) {
           {/* Contract */}
           {token.contract && (
             <div className="flex flex-col">
-              <span className="text-gray-400 text-[10px] uppercase tracking-wide">Contract</span>
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Contract</span>
               <div className="flex items-center gap-2">
-                <span className="text-[#83E9FF] text-sm font-medium">
+                <span className="text-[#83E9FF] text-xs font-mono">
                   {truncateAddress(token.contract)}
                 </span>
                 <Copy 
-                  size={14} 
-                  className="text-[#83E9FF] cursor-pointer hover:text-white transition-colors"
+                  size={12} 
+                  className="text-zinc-500 cursor-pointer hover:text-white transition-colors"
                   onClick={() => copyToClipboard(token.contract!)}
                 />
               </div>
@@ -176,20 +175,20 @@ export function TokenCard({ token, className }: TokenCardProps) {
           {/* Funding Rate / Countdown (Perpetual only) */}
           {token.type === 'perpetual' && (
             <div className="flex flex-col">
-              <span className="text-gray-400 text-xs uppercase tracking-wide">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">
                 Funding / Countdown
               </span>
               <div className="flex flex-col">
                 {token.fundingRate && (
                   <span className={cn(
                     "text-sm font-medium",
-                    token.fundingRate >= 0 ? "text-[#4ADE80]" : "text-[#F87171]"
+                    token.fundingRate >= 0 ? "text-emerald-400" : "text-rose-400"
                   )}>
                     {formatPercentage(token.fundingRate)}
                   </span>
                 )}
                 {token.countdown && (
-                  <span className="text-gray-300 text-xs">
+                  <span className="text-zinc-300 text-xs">
                     {token.countdown}
                   </span>
                 )}
@@ -198,6 +197,6 @@ export function TokenCard({ token, className }: TokenCardProps) {
           )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

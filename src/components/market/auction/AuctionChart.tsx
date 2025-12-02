@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Loader2, Database } from "lucide-react";
 import { useChartData, ChartPeriod } from '@/components/common/charts';
 import {
@@ -12,7 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Button } from "@/components/ui/button";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { useState, useRef, useEffect } from 'react';
@@ -73,10 +71,10 @@ const AnimatedPeriodSelector = ({
   return (
     <div 
       ref={containerRef}
-      className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]"
+      className="relative flex bg-[#0A0D12] rounded-lg p-1 border border-white/5"
     >
       <div
-        className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-sm transition-all duration-300 ease-out opacity-80"
+        className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-md transition-all duration-300 ease-out"
         style={{
           left: indicatorStyle.left + 2,
           width: indicatorStyle.width - 4,
@@ -89,7 +87,9 @@ const AnimatedPeriodSelector = ({
             buttonRefs.current[period] = el; 
           }}
           onClick={() => onPeriodChange(period)}
-          className="relative z-10 px-2 py-1 text-xs font-medium text-white transition-colors duration-200 whitespace-nowrap hover:text-[#83E9FF]"
+          className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${
+            selectedPeriod === period ? 'text-[#051728] font-bold' : 'text-zinc-400 hover:text-zinc-200'
+          }`}
         >
           {period}
         </button>
@@ -121,18 +121,18 @@ export const AuctionChart = ({
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <Card 
-        className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg"
+      <div 
+        className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden"
         style={{ height: chartHeight }}
       >
         <div className="flex items-center justify-center h-full">
           <div className="flex flex-col items-center text-center px-4">
-            <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-            <p className="text-white text-lg mb-2">Coming Soon</p>
-            <p className="text-[#FFFFFF80] text-sm">Perpetual auctions chart will be available soon.</p>
+            <Database className="w-10 h-10 mb-3 text-zinc-600" />
+            <p className="text-zinc-400 text-sm mb-1">Coming Soon</p>
+            <p className="text-zinc-600 text-xs">Perpetual auctions chart will be available soon.</p>
           </div>
         </div>
-      </Card>
+      </div>
     );
   }
 
@@ -150,11 +150,11 @@ export const AuctionChart = ({
         ? formatLargeNumber(value, { prefix: '$', decimals: 2 })
         : formatNumber(value, format);
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
-          <p className="text-white text-xs">
+        <div className="bg-[#151A25] border border-white/10 p-2 rounded-lg shadow-lg">
+          <p className="text-zinc-400 text-xs">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
-          <p className="text-[#83E9FF] font-medium">
+          <p className="text-white font-bold">
             {formattedValue} {selectedCurrency}
           </p>
         </div>
@@ -164,38 +164,34 @@ export const AuctionChart = ({
   };
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg" style={{ height: chartHeight }}>
-      <div className="absolute top-2 left-3 sm:left-6 right-3 sm:right-6 z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm text-white font-medium">
-              Auction Price Evolution ({selectedCurrency})
+    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden relative" style={{ height: chartHeight }}>
+      <div className="absolute top-4 left-4 right-4 z-10">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+              Auction Price ({selectedCurrency})
             </h2>
-            <div className="flex items-center bg-[#051728] rounded-md p-0.5">
-              <Button
-                variant={selectedCurrency === "USDC" ? "default" : "ghost"}
-                size="sm"
+            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+              <button
                 onClick={() => onCurrencyChange("USDC")}
-                className={`text-[10px] h-5 px-2 transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   selectedCurrency === "USDC"
-                    ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
-                    : "text-[#f9e370] hover:text-white"
+                    ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
                 }`}
               >
                 USDC
-              </Button>
-              <Button
-                variant={selectedCurrency === "HYPE" ? "default" : "ghost"}
-                size="sm"
+              </button>
+              <button
                 onClick={() => onCurrencyChange("HYPE")}
-                className={`text-[10px] h-5 px-2 transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   selectedCurrency === "HYPE"
-                    ? "bg-[#1692AD] text-white hover:bg-[#127d95]"
-                    : "text-[#f9e370] hover:text-white"
+                    ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
                 }`}
               >
                 HYPE
-              </Button>
+              </button>
             </div>
           </div>
           
@@ -207,19 +203,19 @@ export const AuctionChart = ({
         </div>
       </div>
 
-      <div className="absolute inset-0 p-4 pt-12">
+      <div className="absolute inset-0 p-4 pt-16">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
           </div>
         ) : chartData.data.length === 0 ? (
           <div className="flex justify-center items-center h-full">
-            <p className="text-[#FFFFFF80]">Aucune donnée disponible</p>
+            <p className="text-zinc-500">No data available</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#83E9FF1A" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
               <XAxis
                 dataKey="timestamp"
                 tickFormatter={(time) => {
@@ -229,12 +225,12 @@ export const AuctionChart = ({
                   }
                   return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
                 }}
-                stroke="#FFFFFF99"
-                fontSize={12}
+                stroke="#71717a"
+                fontSize={10}
               />
               <YAxis
-                stroke="#FFFFFF99"
-                fontSize={12}
+                stroke="#71717a"
+                fontSize={10}
                 tickFormatter={formatYAxisValue}
                 domain={['dataMin', 'dataMax']}
                 padding={{ top: 20, bottom: 20 }}
@@ -252,6 +248,6 @@ export const AuctionChart = ({
           </ResponsiveContainer>
         )}
       </div>
-    </Card>
+    </div>
   );
 };

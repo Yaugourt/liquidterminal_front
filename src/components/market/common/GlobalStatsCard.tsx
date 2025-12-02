@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
@@ -41,39 +40,39 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
 
   if (error) {
     return (
-      <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full">
+      <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 h-full">
         <div className="flex justify-center items-center h-full">
-          <p className="text-red-500 text-sm">Une erreur est survenue</p>
+          <p className="text-rose-400 text-sm">Une erreur est survenue</p>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full flex flex-col">
+    <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
       {/* Header avec icône et titre */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5">
-          <BarChart2 size={18} className="text-[#f9e370]" />
-          <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">GLOBAL STATS</h3>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 rounded-xl bg-[#f9e370]/10 flex items-center justify-center">
+          <BarChart2 size={16} className="text-[#f9e370]" />
         </div>
+        <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">Global Stats</h3>
       </div>
 
       {/* Statistiques détaillées - flex-1 pour occuper l'espace restant */}
       {isLoading || feesLoading ? (
         <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm flex-1 content-center">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Première stat - conditionnelle selon le marché */}
           {market === 'spot' ? (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <CalendarDays className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <CalendarDays className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 Daily Fees
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {feesStats ? formatNumber(feesStats.dailySpotFees, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -84,11 +83,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
             </div>
           ) : (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <Scale className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <Scale className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 Open Interest
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {stats && isPerpStats(stats) ? formatNumber(stats.totalOpenInterest, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -102,11 +101,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {/* Deuxième stat - conditionnelle selon le marché */}
           {market === 'spot' ? (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <Clock className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 Hourly Fees
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {feesStats ? formatNumber(feesStats.hourlySpotFees, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -117,11 +116,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
             </div>
           ) : (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <BarChart2 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <BarChart2 className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 24h Volume
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {stats ? formatNumber((stats as GlobalStats).totalVolume24h, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -135,11 +134,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {/* Troisième stat - conditionnelle selon le marché */}
           {market === 'spot' ? (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <Wallet className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <Wallet className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 Total USDC
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {stats && isSpotStats(stats) ? formatNumber(stats.totalSpotUSDC, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -150,11 +149,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
             </div>
           ) : (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <Clock className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 Daily Fees
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {feesStats ? formatNumber(feesStats.dailyFees, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -168,11 +167,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {/* Quatrième stat - conditionnelle selon le marché */}
           {market === 'spot' ? (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <BarChart2 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <BarChart2 className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 24h Volume
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {stats ? formatNumber((stats as GlobalStats).totalVolume24h, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -183,11 +182,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
             </div>
           ) : (
             <div>
-              <div className="text-white mb-2 flex items-center font-medium">
-                <Wallet className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+              <div className="text-zinc-400 mb-1 flex items-center text-xs">
+                <Wallet className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
                 HLP TVL
               </div>
-              <div className="text-white font-medium text-xs pl-5">
+              <div className="text-white font-bold text-sm pl-5">
                 {stats && isPerpStats(stats) ? formatNumber(stats.hlpTvl, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 1,
@@ -199,6 +198,6 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           )}
         </div>
       )}
-    </Card>
+    </div>
   );
 }); 

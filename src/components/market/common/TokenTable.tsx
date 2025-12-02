@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, memo, useCallback } from "react";
-import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -47,10 +46,10 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-white hover:text-white"} font-normal p-0 flex items-center justify-start w-full`}
+      className={`${isActive ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
     >
       {label}
-      {onClick && <ArrowUpDown className="ml-2 h-4 w-4" />}
+      {onClick && <ArrowUpDown className="h-3 w-3" />}
     </Button>
   </TableHead>
 ));
@@ -62,9 +61,9 @@ const EmptyState = memo(() => (
   <TableRow>
     <TableCell colSpan={6} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg">Aucun token disponible</p>
-        <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
+        <Database className="w-10 h-10 mb-3 text-zinc-600" />
+        <p className="text-zinc-400 text-sm mb-1">Aucun token disponible</p>
+        <p className="text-zinc-600 text-xs">Vérifiez plus tard</p>
       </div>
     </TableCell>
   </TableRow>
@@ -75,36 +74,36 @@ EmptyState.displayName = 'EmptyState';
 // Composant pour une ligne de token spot
 const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onClick: () => void; format: NumberFormatType }) => (
   <TableRow
-    className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
+    className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer"
     onClick={onClick}
   >
-    <TableCell className="py-4 pl-4">
+    <TableCell className="py-3 px-3">
       <div className="flex items-center gap-2">
         <TokenIcon src={token.logo} name={token.name} size="sm" />
-        <span className="text-white text-sm">{token.name}</span>
+        <span className="text-white text-sm font-medium">{token.name}</span>
       </div>
     </TableCell>
-    <TableCell className="py-4 pl-0 w-[10%]">
+    <TableCell className="py-3 px-3 w-[10%]">
       <div className="text-white text-sm">
         {formatPrice(token.price, format)}
       </div>
     </TableCell>
-    <TableCell className="py-4 pl-4 pr-10 w-[10%]">
-      <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+    <TableCell className="py-3 px-3 w-[10%]">
+      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
         {formatPriceChange(token.change24h)}
-      </div>
+      </span>
     </TableCell>
-    <TableCell className="py-4 pl-0 pr-2 w-[12%]">
+    <TableCell className="py-3 px-3 w-[12%]">
       <div className="text-white text-sm">
         ${formatNumber(token.volume, format)}
       </div>
     </TableCell>
-    <TableCell className="py-4 pl-10 pr-10 w-[20%]">
+    <TableCell className="py-3 px-3 w-[20%]">
       <div className="text-white text-sm">
         ${formatNumber(token.marketCap, format)}
       </div>
     </TableCell>
-    <TableCell className="py-4 pl-0 w-[12%]">
+    <TableCell className="py-3 px-3 w-[12%]">
       <div className="text-white text-sm">
         {formatMetricValue(token.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </div>
@@ -123,39 +122,39 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
 
   return (
     <TableRow
-      className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
+      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer"
       onClick={onClick}
     >
-      <TableCell className="py-4 pl-4 w-[17%]">
+      <TableCell className="py-3 px-3 w-[17%]">
         <div className="flex items-center gap-2">
           <TokenIcon src={token.logo} name={token.name} size="sm" />
-          <span className="text-white text-sm">{token.name}</span>
+          <span className="text-white text-sm font-medium">{token.name}</span>
         </div>
       </TableCell>
-      <TableCell className="py-4 pl-0 pr-8 w-[10%]">
+      <TableCell className="py-3 px-3 w-[10%]">
         <div className="text-white text-sm">
           {formatPrice(token.price, format)}
         </div>
       </TableCell>
-      <TableCell className="py-4 pl-4 pr-20 w-[10%]">
-        <div className="text-sm" style={{color: token.change24h < 0 ? '#FF4D4F' : '#52C41A'}}>
+      <TableCell className="py-3 px-3 w-[10%]">
+        <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
           {formatPriceChange(token.change24h)}
-        </div>
+        </span>
       </TableCell>
-      <TableCell className="py-4 pl-0 w-[20%]">
+      <TableCell className="py-3 px-3 w-[20%]">
         <div className="text-white text-sm">
           ${formatNumber(token.volume, format)}
         </div>
       </TableCell>
-      <TableCell className="py-4 pl-4 pr-12 w-[20%]">
+      <TableCell className="py-3 px-3 w-[20%]">
         <div className="text-white text-sm">
           ${formatNumber(token.openInterest, format)}
         </div>
       </TableCell>
-      <TableCell className="py-4 pr-0 w-[11%]">
-        <div className="text-sm" style={{color: token.funding >= 0 ? '#52C41A' : '#FF4D4F'}}>
+      <TableCell className="py-3 px-3 w-[11%]">
+        <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.funding >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
           {formatFunding(token.funding)}
-        </div>
+        </span>
       </TableCell>
     </TableRow>
   );
@@ -283,41 +282,41 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
 
   if (isLoading && !tokens.length) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
               <TableHeaderCell
                 label="Name"
-                className={`text-white font-normal py-1 bg-[#051728] pl-4 ${market === 'spot' ? 'w-[16.66%]' : 'w-[17%]'}`}
+                className={`py-3 px-3 ${market === 'spot' ? 'w-[16.66%]' : 'w-[17%]'}`}
               />
               <TableHeaderCell
                 label="Price"
                 onClick={market === 'perp' ? () => handleSort("price") : undefined}
                 isActive={market === 'perp' && sortField === "price"}
-                className={`text-white font-normal py-1 bg-[#051728] ${market === 'spot' ? 'pl-0 w-[10%]' : 'pl-0 pr-8 w-[10%]'}`}
+                className={`py-3 px-3 ${market === 'spot' ? 'w-[10%]' : 'w-[10%]'}`}
               />
               <TableHeaderCell
                 label="24h"
                 onClick={() => handleSort("change24h")}
                 isActive={sortField === "change24h"}
-                className={`text-white font-normal py-1 bg-[#051728] ${market === 'spot' ? 'pl-4 pr-10 w-[10%]' : 'pl-4 pr-20 w-[10%]'}`}
+                className={`py-3 px-3 ${market === 'spot' ? 'w-[10%]' : 'w-[10%]'}`}
               />
               <TableHeaderCell
                 label="Volume"
                 onClick={() => handleSort("volume")}
                 isActive={sortField === "volume"}
-                className={`text-white font-normal py-1 bg-[#051728] ${market === 'spot' ? 'pl-0 pr-2 w-[12%]' : 'pl-0 w-[20%]'}`}
+                className={`py-3 px-3 ${market === 'spot' ? 'w-[12%]' : 'w-[20%]'}`}
               />
               
               {/* Colonnes conditionnelles selon le marché */}
@@ -327,11 +326,11 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
                     label="Market Cap"
                     onClick={() => handleSort("marketCap")}
                     isActive={sortField === "marketCap"}
-                    className="text-white font-normal py-1 bg-[#051728] pl-10 pr-10 w-[20%]"
+                    className="py-3 px-3 w-[20%]"
                   />
                   <TableHeaderCell
                     label="Supply"
-                    className="text-white font-normal py-1 bg-[#051728] pl-0 w-[12%]"
+                    className="py-3 px-3 w-[12%]"
                   />
                 </>
               ) : (
@@ -340,17 +339,17 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
                     label="Open Interest"
                     onClick={() => handleSort("openInterest")}
                     isActive={sortField === "openInterest"}
-                    className="text-white font-normal py-1 bg-[#051728] pl-4 pr-12 w-[20%]"
+                    className="py-3 px-3 w-[20%]"
                   />
                   <TableHeaderCell
                     label="Funding Rate"
-                    className="text-white font-normal py-1 bg-[#051728] pr-0 w-[11%]"
+                    className="py-3 px-3 w-[11%]"
                   />
                 </>
               )}
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {tokens && tokens.length > 0 ? (
               tokens.map((token) => (
                 market === 'spot' ? (
@@ -377,7 +376,7 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
       </div>
       
       {/* Pagination intégrée */}
-      <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
+      <div className="border-t border-white/5 px-4 py-3">
         <Pagination
           total={total}
           page={currentPage - 1}
@@ -387,6 +386,6 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
           rowsPerPageOptions={[5, 10, 15, 20]}
         />
       </div>
-    </Card>
+    </div>
   );
 } 

@@ -32,7 +32,7 @@ interface DataTableWithPaginationProps<T> extends DataTableProps<T> {
 
 // Optimisation des composants répétés
 const TableHeaderButtonComponent = ({ header, align }: TableHeaderButtonProps & { align?: string }) => (
-  <span className={`text-[#83e9ff] text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className={`text-zinc-400 text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
     {header}
   </span>
 );
@@ -68,8 +68,8 @@ export function DataTable<T>({
       ) : error ? (
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center text-center px-4">
-            <Database className="w-8 h-8 mb-3 text-red-400" />
-            <p className="text-red-400 text-sm mb-1">Une erreur est survenue</p>
+            <Database className="w-8 h-8 mb-3 text-rose-400" />
+            <p className="text-rose-400 text-sm mb-1">Une erreur est survenue</p>
             <p className="text-zinc-500 text-xs">Veuillez réessayer plus tard</p>
           </div>
         </div>
@@ -78,7 +78,7 @@ export function DataTable<T>({
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-[#1692ad]/20 hover:bg-transparent">
+                <TableRow className="border-b border-white/5 hover:bg-transparent">
                   {columns.map((column, index) => (
                     <TableHead
                       key={index}
@@ -94,7 +94,7 @@ export function DataTable<T>({
                   data.map((item, rowIndex) => (
                     <TableRow
                       key={rowIndex}
-                      className="border-b border-[#1692ad]/20 hover:bg-[#1692ad]/10 transition-colors"
+                      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                     >
                       {columns.map((column, colIndex) => (
                         <TableCell
@@ -115,8 +115,8 @@ export function DataTable<T>({
                       className="py-8 border-none"
                     >
                       <div className="flex flex-col items-center justify-center text-center">
-                        <Database className="w-10 h-10 mb-3 text-[#1692ad]/50" />
-                        <p className="text-[#83e9ff] text-sm mb-1">{emptyMessage}</p>
+                        <Database className="w-10 h-10 mb-3 text-zinc-600" />
+                        <p className="text-zinc-400 text-sm mb-1">{emptyMessage}</p>
                         <p className="text-zinc-600 text-xs">Come later</p>
                       </div>
                     </TableCell>
@@ -127,7 +127,7 @@ export function DataTable<T>({
           </div>
 
           {showPagination && total > 0 && onPageChange && onRowsPerPageChange && (
-            <div className="border-t border-[#1692ad]/20 px-4 py-3">
+            <div className="border-t border-white/5 px-4 py-3">
               <Pagination
                 total={total}
                 page={page}
