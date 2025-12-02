@@ -1,5 +1,4 @@
 import { AlertCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface ErrorCardProps {
   message: string;
@@ -8,19 +7,19 @@ interface ErrorCardProps {
 
 export function ErrorCard({ message, variant = 'info' }: ErrorCardProps) {
   const colors = {
-    error: 'text-red-500',
-    warning: 'text-yellow-500',
-    info: 'text-white'
+    error: 'text-rose-400',
+    warning: 'text-amber-400',
+    info: 'text-zinc-400'
   };
 
   return (
-    <Card className="bg-transparent border-0 shadow-none overflow-hidden rounded-lg">
-      <CardContent className="p-4">
+    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="p-6">
         <div className={`flex items-center justify-center ${colors[variant]} space-x-2`}>
           <AlertCircle className="h-5 w-5" />
-          <span>{message}</span>
+          <span className="text-sm">{message}</span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 } 

@@ -41,10 +41,10 @@ export function AssetsTable({
   isRefreshing
 }: AssetsTableProps) {
   return (
-    <div className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] rounded-lg overflow-hidden">
+    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
       {/* Header avec tabs et stats */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#051728]">
-        <div className="flex items-center bg-[#FFFFFF0A] rounded-md p-0.5 w-fit">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
           {[
             { key: 'spot', label: 'Spot' },
             { key: 'perp', label: 'Perps' }
@@ -52,10 +52,10 @@ export function AssetsTable({
             <button
               key={tab.key}
               onClick={() => onViewTypeChange(tab.key as "spot" | "perp")}
-              className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 type === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                  : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
               {tab.label}
@@ -63,25 +63,25 @@ export function AssetsTable({
           ))}
         </div>
         
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium">Total assets:</span>
-            <span className="text-[#83E9FF] text-sm font-semibold">{totalAssets}</span>
+            <span className="text-zinc-400 text-xs">Total assets:</span>
+            <span className="text-[#83E9FF] text-sm font-bold">{totalAssets}</span>
           </div>
           {walletDisplay && (
             <>
-              <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+              <div className="w-px h-4 bg-white/10"></div>
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Wallet:</span>
-                <span className="text-[#F9E370] text-sm font-semibold">({walletDisplay})</span>
+                <span className="text-zinc-400 text-xs">Wallet:</span>
+                <span className="text-[#83E9FF] text-sm font-medium">({walletDisplay})</span>
               </div>
             </>
           )}
-          <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+          <div className="w-px h-4 bg-white/10"></div>
           <button
             onClick={onRefresh}
             disabled={isRefreshing || isLoading}
-            className={`p-2 text-white hover:text-white transition-colors ${
+            className={`p-2 text-zinc-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 ${
               isRefreshing ? 'animate-spin' : ''
             }`}
           >
@@ -96,7 +96,7 @@ export function AssetsTable({
       </div>
 
       {/* Table */}
-      <div className="bg-[#051728]">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeaderComponent 
             type={type} 

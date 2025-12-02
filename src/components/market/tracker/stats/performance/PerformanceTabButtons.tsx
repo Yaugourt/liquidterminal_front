@@ -12,16 +12,16 @@ export function PerformanceTabButtons({ activeTab, onTabChange }: PerformanceTab
   ];
 
   return (
-    <div className="absolute top-2 left-3 sm:left-6 z-10">
-      <div className="flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]">
+    <div className="absolute top-3 left-4 z-10">
+      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === tab.key
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             {tab.label}

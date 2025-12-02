@@ -1,7 +1,6 @@
 "use client";
 
 import { memo } from "react";
-import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { Loader2, BarChart3, Layers, Building2, TrendingUp, Activity, Wifi, WifiOff } from "lucide-react";
@@ -16,29 +15,31 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
   if (error) {
     return (
-      <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full">
+      <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full">
         <div className="flex justify-center items-center h-full">
-          <p className="text-red-500 text-sm">Failed to load stats</p>
+          <p className="text-rose-400 text-sm">Failed to load stats</p>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full flex flex-col">
+    <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5">
-          <BarChart3 size={18} className="text-[#f9e370]" />
-          <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">HIP-3 OVERVIEW</h3>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+            <BarChart3 size={16} className="text-[#83e9ff]" />
+          </div>
+          <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">HIP-3 Overview</h3>
         </div>
         <div className="flex items-center gap-2">
           {wsConnected ? (
-            <Wifi className="h-3 w-3 text-[#52C41A]" />
+            <Wifi className="h-3 w-3 text-emerald-400" />
           ) : (
-            <WifiOff className="h-3 w-3 text-[#FF4D4F]" />
+            <WifiOff className="h-3 w-3 text-rose-400" />
           )}
-          <span className="text-[10px] px-2 py-0.5 bg-[#f9e37020] text-[#f9e370] rounded-full font-medium">
+          <span className="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full font-medium">
             LIVE
           </span>
         </div>
@@ -47,30 +48,30 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
       {/* Stats */}
       {isLoading ? (
         <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-5 h-5 text-[#83E9FF] animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm flex-1 content-center">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Dexs */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <Building2 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Building2 className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               Active DEXs
             </div>
-            <div className="text-white font-medium text-xs pl-5">
+            <div className="text-white font-bold text-lg">
               {globalStats?.totalDexs || 0}
             </div>
           </div>
 
           {/* Active Markets */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <Layers className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Layers className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               Active Markets
             </div>
-            <div className="text-white font-medium text-xs pl-5">
+            <div className="text-white font-bold text-lg">
               {globalStats?.activeMarkets || 0}
-              <span className="text-[#FFFFFF60] ml-1">
+              <span className="text-zinc-500 text-xs font-normal ml-1">
                 / {globalStats?.totalAssets || 0}
               </span>
             </div>
@@ -78,11 +79,11 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* 24h Volume */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <Activity className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Activity className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               24h Volume
             </div>
-            <div className="text-white font-medium text-xs pl-5">
+            <div className="text-white font-bold text-lg">
               {globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
@@ -94,11 +95,11 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Open Interest */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <TrendingUp className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <TrendingUp className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               Open Interest
             </div>
-            <div className="text-white font-medium text-xs pl-5">
+            <div className="text-white font-bold text-lg">
               {globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
@@ -110,11 +111,11 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Total OI Cap */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <BarChart3 className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <BarChart3 className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               Total OI Cap
             </div>
-            <div className="text-white font-medium text-xs pl-5">
+            <div className="text-white font-bold text-lg">
               {globalStats?.totalOiCap ? formatNumber(globalStats.totalOiCap, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
@@ -126,11 +127,11 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Avg Funding */}
           <div>
-            <div className="text-white mb-2 flex items-center font-medium">
-              <Activity className="h-3.5 w-3.5 text-[#f9e370] mr-1.5" />
+            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Activity className="h-3 w-3 text-[#83e9ff] mr-1.5" />
               Avg Funding
             </div>
-            <div className={`font-medium text-xs pl-5 ${(globalStats?.avgFunding || 0) >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
+            <div className={`font-bold text-lg ${(globalStats?.avgFunding || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {globalStats?.avgFunding 
                 ? `${(globalStats.avgFunding * 100).toFixed(4)}%`
                 : '0.0000%'}
@@ -138,7 +139,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 });
 

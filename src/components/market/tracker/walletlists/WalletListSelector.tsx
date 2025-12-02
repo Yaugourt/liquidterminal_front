@@ -77,19 +77,19 @@ export function WalletListSelector({
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
       {/* Select List Dropdown */}
       <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-zinc-400">
           <List className="w-4 h-4" />
           <span>List:</span>
         </div>
         
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
-          <SelectTrigger className="w-full sm:w-[320px] bg-[#0C2237] border-[#83E9FF4D] text-white">
+          <SelectTrigger className="w-full sm:w-[320px] bg-[#0A0D12] border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
             <div className="flex items-center gap-2 truncate">
-              <List className="w-4 h-4 shrink-0 text-[#F9E370]" />
+              <List className="w-4 h-4 shrink-0 text-[#83E9FF]" />
               <SelectValue>
                 <span className="font-medium">{activeListInfo.name}</span>
                 {activeListInfo.count !== null && (
-                  <span className="text-xs text-gray-400 ml-2">
+                  <span className="text-xs text-zinc-500 ml-2">
                     ({activeListInfo.count} wallet{activeListInfo.count !== 1 ? "s" : ""})
                   </span>
                 )}
@@ -97,17 +97,17 @@ export function WalletListSelector({
             </div>
           </SelectTrigger>
           
-          <SelectContent className="bg-[#051728] border-[#83E9FF4D] text-white max-h-[400px]">
+          <SelectContent className="bg-[#151A25] border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
             {/* Search input */}
             {userLists.length > 5 && (
-              <div className="p-2 sticky top-0 bg-[#051728] z-10">
+              <div className="p-2 sticky top-0 bg-[#151A25] z-10 border-b border-white/5">
                 <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
                     placeholder="Search lists..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 bg-[#0C2237] border-[#83E9FF4D] text-white h-8"
+                    className="pl-8 bg-[#0A0D12] border-white/5 text-white h-8 rounded-lg"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
@@ -117,16 +117,16 @@ export function WalletListSelector({
             {/* All Wallets */}
             <SelectItem
               value="all-wallets"
-              className="focus:bg-[#83E9FF20] focus:text-white cursor-pointer"
+              className="focus:bg-white/5 focus:text-white cursor-pointer rounded-lg"
             >
               <div className="flex items-center gap-2">
-                <List className="w-4 h-4 text-[#F9E370]" />
+                <List className="w-4 h-4 text-[#83E9FF]" />
                 <span className="font-medium">All Wallets</span>
               </div>
             </SelectItem>
 
             {/* Separator */}
-            {filteredLists.length > 0 && <SelectSeparator className="bg-[#83E9FF4D]" />}
+            {filteredLists.length > 0 && <SelectSeparator className="bg-white/5" />}
 
             {/* User lists */}
             {filteredLists.length > 0 ? (
@@ -134,33 +134,33 @@ export function WalletListSelector({
                 <SelectItem
                   key={list.id}
                   value={list.id.toString()}
-                  className="focus:bg-[#83E9FF20] focus:text-white cursor-pointer"
+                  className="focus:bg-white/5 focus:text-white cursor-pointer rounded-lg"
                 >
                   <div className="flex flex-col gap-1 w-full py-1">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <List className="w-4 h-4 text-[#F9E370] shrink-0" />
+                        <List className="w-4 h-4 text-[#83E9FF] shrink-0" />
                         <span className="font-medium truncate">{list.name}</span>
                       </div>
-                      <span className="text-xs text-gray-500 shrink-0">
+                      <span className="text-xs text-zinc-600 shrink-0">
                         {new Date(list.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-400 pl-6">
+                    <div className="text-xs text-zinc-500 pl-6">
                       {list.itemsCount || 0} wallet{list.itemsCount !== 1 ? "s" : ""}
                     </div>
                   </div>
                 </SelectItem>
               ))
             ) : searchQuery ? (
-              <div className="p-4 text-center text-sm text-gray-400">
+              <div className="p-4 text-center text-sm text-zinc-500">
                 No lists found for &quot;{searchQuery}&quot;
               </div>
             ) : null}
 
             {/* Empty state */}
             {userLists.length === 0 && (
-              <div className="p-4 text-center text-sm text-gray-400">
+              <div className="p-4 text-center text-sm text-zinc-500">
                 No lists yet. Create your first one!
               </div>
             )}
@@ -176,7 +176,7 @@ export function WalletListSelector({
                   variant="ghost"
                   size="icon"
                   onClick={handleDeleteClick}
-                  className="h-9 w-9 shrink-0 text-red-400 hover:text-red-300 hover:bg-red-950/30"
+                  className="h-9 w-9 shrink-0 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -187,9 +187,9 @@ export function WalletListSelector({
         )}
 
         {/* List count badge */}
-        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF20] border border-[#83E9FF4D] rounded-lg text-xs text-[#83E9FF]">
+        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF]/10 border border-white/5 rounded-lg text-xs text-[#83E9FF]">
           <span className="font-medium">{userLists.length}</span>
-          <span className="text-gray-400">list{userLists.length !== 1 ? "s" : ""}</span>
+          <span className="text-zinc-500">list{userLists.length !== 1 ? "s" : ""}</span>
         </div>
       </div>
 
@@ -199,7 +199,7 @@ export function WalletListSelector({
           onClick={() => router.push("/market/tracker/public-lists")}
           variant="outline"
           size="sm"
-          className="flex-1 sm:flex-none border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+          className="flex-1 sm:flex-none border-white/5 text-white hover:bg-white/5 rounded-lg"
         >
           <Globe className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Browse Public</span>
@@ -208,7 +208,7 @@ export function WalletListSelector({
         <Button
           onClick={onCreateList}
           size="sm"
-          className="flex-1 sm:flex-none bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+          className="flex-1 sm:flex-none bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Create List</span>

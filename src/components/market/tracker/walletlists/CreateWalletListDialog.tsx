@@ -75,17 +75,17 @@ export function CreateWalletListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="bg-[#151A25] border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
-          <DialogTitle>Create Wallet List</DialogTitle>
-          <DialogDescription className="text-white">
+          <DialogTitle className="text-white">Create Wallet List</DialogTitle>
+          <DialogDescription className="text-zinc-400">
             Create a new list to organize and track interesting wallets ({userLists.length} list{userLists.length !== 1 ? 's' : ''})
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm text-white">
+            <label htmlFor="name" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
               List Name (required)
             </label>
             <Input
@@ -93,12 +93,12 @@ export function CreateWalletListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., DeFi Whales, Interesting Traders..."
-              className="bg-[#0C2237] border-[#83E9FF4D]"
+              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-[#83E9FF]/50"
             />
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="description" className="text-sm text-white">
+            <label htmlFor="description" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
               Description (optional)
             </label>
             <Textarea
@@ -106,15 +106,15 @@ export function CreateWalletListDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description..."
-              className="bg-[#0C2237] border-[#83E9FF4D] min-h-[80px]"
+              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 min-h-[80px] rounded-lg focus:border-[#83E9FF]/50"
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-[#0C2237] border-2 border-[#83E9FF4D] rounded-lg hover:border-[#83E9FF] transition-colors">
+          <div className="flex items-center justify-between p-4 bg-[#0A0D12] border border-white/5 rounded-xl hover:border-white/10 transition-all">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${isPublic ? 'bg-[#4ADE80]/20' : 'bg-[#F9E370]/20'}`}>
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-[#F9E370]/10'}`}>
                 {isPublic ? (
-                  <Users size={20} className="text-[#4ADE80]" />
+                  <Users size={20} className="text-emerald-400" />
                 ) : (
                   <Lock size={20} className="text-[#F9E370]" />
                 )}
@@ -123,7 +123,7 @@ export function CreateWalletListDialog({
                 <label className="text-sm font-medium text-white cursor-pointer block">
                   {isPublic ? '🌐 Public List' : '🔒 Private List'}
                 </label>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-zinc-500 mt-0.5">
                   {isPublic 
                     ? 'Anyone can view and copy this list'
                     : 'Only you can view this list'
@@ -134,7 +134,7 @@ export function CreateWalletListDialog({
             <Switch
               checked={isPublic}
               onCheckedChange={setIsPublic}
-              className="data-[state=checked]:bg-[#4ADE80] data-[state=unchecked]:bg-[#64748B]"
+              className="data-[state=checked]:bg-emerald-400 data-[state=unchecked]:bg-zinc-600"
             />
           </div>
         </div>
@@ -143,14 +143,14 @@ export function CreateWalletListDialog({
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-[#83E9FF4D] text-white"
+            className="border-white/5 text-white hover:bg-white/5 rounded-lg"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleCreateList}
             disabled={isLoading || !name.trim()}
-            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90 disabled:opacity-50"
+            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg disabled:opacity-50"
           >
             {isLoading ? "Creating..." : "Create List"}
           </Button>

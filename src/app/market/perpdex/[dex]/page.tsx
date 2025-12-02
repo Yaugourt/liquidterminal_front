@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -38,6 +37,7 @@ import {
 import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { useWindowSize } from "@/hooks/use-window-size";
 import { toast } from "sonner";
 import { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
 
@@ -49,7 +49,7 @@ function AssetLogo({ assetName, isDelisted }: { assetName: string; isDelisted?: 
 
   if (hasError) {
     return (
-      <div className={`w-6 h-6 rounded-full bg-[#83E9FF20] flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
+      <div className={`w-6 h-6 rounded-full bg-[#83E9FF]/20 flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
         <span className="text-xs font-bold text-[#83E9FF]">{ticker.charAt(0)}</span>
       </div>
     );
@@ -73,8 +73,15 @@ export default function PerpDexDetailPage() {
   const dexName = typeof params.dex === 'string' ? decodeURIComponent(params.dex) : '';
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { format } = useNumberFormat();
+  const { width } = useWindowSize();
 
   const { dex, isLoading, error, wsConnected } = usePerpDexWithMarketData(dexName);
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -106,21 +113,21 @@ export default function PerpDexDetailPage() {
     <div className="flex items-center gap-2">
       <Link
         href={`/explorer/address/${address}`}
-        className="text-white font-mono text-sm hover:text-[#83E9FF] transition-colors"
+        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
       >
         {truncateAddress(address)}
       </Link>
       <button
         onClick={() => copyToClipboard(address, label)}
-        className="text-[#83E9FF40] hover:text-[#83E9FF] transition-colors"
+        className="text-zinc-500 hover:text-white transition-colors"
       >
-        <Copy className="h-3.5 w-3.5" />
+        <Copy className="h-3 w-3" />
       </button>
       <Link
         href={`/explorer/address/${address}`}
-        className="text-[#83E9FF40] hover:text-[#83E9FF] transition-colors"
+        className="text-zinc-500 hover:text-white transition-colors"
       >
-        <ExternalLink className="h-3.5 w-3.5" />
+        <ExternalLink className="h-3 w-3" />
       </Link>
     </div>
   );
@@ -130,14 +137,14 @@ export default function PerpDexDetailPage() {
     
     // Always show leverage
     badges.push(
-      <span key="leverage" className="text-[#FFFFFF60] text-[10px]">
+      <span key="leverage" className="text-zinc-500 text-[10px]">
         {asset.maxLeverage}x
       </span>
     );
     
     if (asset.growthMode === 'enabled') {
       badges.push(
-        <span key="growth" className="text-[#FFFFFF60] text-[10px] flex items-center gap-0.5">
+        <span key="growth" className="text-emerald-400 text-[10px] flex items-center gap-0.5">
           <Sprout className="h-2.5 w-2.5" />
           Growth
         </span>
@@ -146,7 +153,7 @@ export default function PerpDexDetailPage() {
     
     if (asset.isDelisted) {
       badges.push(
-        <span key="delisted" className="text-[#FF4D4F] text-[10px] flex items-center gap-0.5">
+        <span key="delisted" className="text-rose-400 text-[10px] flex items-center gap-0.5">
           <AlertCircle className="h-2.5 w-2.5" />
           Delisted
         </span>
@@ -158,40 +165,42 @@ export default function PerpDexDetailPage() {
 
   if (isLoading && !dex) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+      <div className="min-h-screen bg-[#0B0E14] flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
       </div>
     );
   }
 
   if (error || !dex) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
         <div className="fixed top-4 left-4 z-50 lg:hidden">
           <Button
             variant="ghost"
             size="icon"
-            className="bg-[#051728] hover:bg-[#112941]"
+            className="text-white hover:bg-white/10"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           >
-            <Menu className="h-6 w-6 text-white" />
+            <Menu className="h-6 w-6" />
           </Button>
         </div>
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         <div className="">
-          <Header customTitle="PerpDex Not Found" showFees={true} />
-          <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 max-w-[1920px] mx-auto">
-            <Card className="p-8 bg-[#051728E5] border border-[#83E9FF4D]">
+          <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+            <Header customTitle="PerpDex Not Found" showFees={true} />
+          </div>
+          <main className="px-6 py-8 max-w-[1920px] mx-auto">
+            <div className="p-8 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
               <div className="flex flex-col items-center justify-center text-center">
-                <Database className="w-16 h-16 mb-4 text-[#83E9FF4D]" />
+                <Database className="w-12 h-12 mb-4 text-zinc-600" />
                 <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
-                <p className="text-[#FFFFFF80] mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
-                <Button onClick={() => router.push('/market/perpdex')} variant="outline">
+                <p className="text-zinc-400 mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
+                <Button onClick={() => router.push('/market/perpdex')} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728]">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to PerpDexs
                 </Button>
               </div>
-            </Card>
+            </div>
           </main>
         </div>
       </div>
@@ -199,16 +208,16 @@ export default function PerpDexDetailPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
 
@@ -217,9 +226,11 @@ export default function PerpDexDetailPage() {
 
       {/* Main content */}
       <div className="">
-        <Header customTitle={dex.fullName} showFees={true} />
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle={dex.fullName} showFees={true} />
+        </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-6 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-6 max-w-[1920px] mx-auto">
           {/* Back button and title */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -227,31 +238,31 @@ export default function PerpDexDetailPage() {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => router.push('/market/perpdex')}
-                className="text-[#83E9FF] hover:text-[#83E9FF] hover:bg-[#83E9FF20]"
+                className="text-[#83E9FF] hover:text-white hover:bg-white/5"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#83E9FF20] to-[#f9e37020] flex items-center justify-center text-lg font-bold text-[#83E9FF]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#83E9FF]/20 to-[#f9e370]/20 flex items-center justify-center text-lg font-bold text-[#83E9FF]">
                   {dex.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h1 className="text-xl font-medium text-white">{dex.fullName}</h1>
+                  <h1 className="text-xl font-bold text-white">{dex.fullName}</h1>
                   <span className="text-[#83E9FF] text-sm">{dex.name}</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
               {wsConnected ? (
-                <div className="flex items-center gap-1 px-2 py-1 bg-[#52C41A20] rounded-full">
-                  <Wifi className="h-3 w-3 text-[#52C41A]" />
-                  <span className="text-[#52C41A] text-xs">LIVE</span>
+                <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 rounded-full">
+                  <Wifi className="h-3 w-3 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs font-medium">LIVE</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 px-2 py-1 bg-[#FF4D4F20] rounded-full">
-                  <WifiOff className="h-3 w-3 text-[#FF4D4F]" />
-                  <span className="text-[#FF4D4F] text-xs">OFFLINE</span>
+                <div className="flex items-center gap-1 px-2 py-1 bg-rose-500/10 rounded-full">
+                  <WifiOff className="h-3 w-3 text-rose-400" />
+                  <span className="text-rose-400 text-xs font-medium">OFFLINE</span>
                 </div>
               )}
             </div>
@@ -260,12 +271,14 @@ export default function PerpDexDetailPage() {
           {/* Stats cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {/* 24h Volume */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Activity className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">24h Volume</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Activity className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
               </div>
-              <span className="text-white font-medium text-xs pl-5">
+              <span className="text-white font-bold text-lg">
                 {dex.totalVolume24h > 0 
                   ? formatNumber(dex.totalVolume24h, format, {
                       minimumFractionDigits: 0,
@@ -275,15 +288,17 @@ export default function PerpDexDetailPage() {
                     })
                   : '-'}
               </span>
-            </Card>
+            </div>
 
             {/* Open Interest */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <TrendingUp className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">Open Interest</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <TrendingUp className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
               </div>
-              <span className="text-white font-medium text-xs pl-5">
+              <span className="text-white font-bold text-lg">
                 {dex.totalOpenInterest > 0 
                   ? formatNumber(dex.totalOpenInterest, format, {
                       minimumFractionDigits: 0,
@@ -293,42 +308,48 @@ export default function PerpDexDetailPage() {
                     })
                   : '-'}
               </span>
-            </Card>
+            </div>
 
             {/* Avg Funding */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Zap className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">Avg Funding</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Zap className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Avg Funding</span>
               </div>
-              <span className={`font-medium text-xs pl-5 ${dex.avgFunding >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
+              <span className={`font-bold text-lg ${dex.avgFunding >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {formatFunding(dex.avgFunding)}
               </span>
-            </Card>
+            </div>
 
             {/* Active Markets */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Scale className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">Active Markets</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Scale className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Active Markets</span>
               </div>
-              <span className="text-white font-medium text-xs pl-5">
+              <span className="text-white font-bold text-lg">
                 {dex.activeAssets}
                 {dex.activeAssets !== dex.totalAssets && (
-                  <span className="text-[#FFFFFF60] ml-1">
+                  <span className="text-zinc-500 text-sm font-normal ml-1">
                     / {dex.totalAssets}
                   </span>
                 )}
               </span>
-            </Card>
+            </div>
 
             {/* OI Cap */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <TrendingUp className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">OI Cap</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <TrendingUp className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
               </div>
-              <span className="text-white font-medium text-xs pl-5">
+              <span className="text-white font-bold text-lg">
                 {formatNumber(dex.totalOiCap, format, {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
@@ -336,56 +357,66 @@ export default function PerpDexDetailPage() {
                   showCurrency: true
                 })}
               </span>
-            </Card>
+            </div>
 
             {/* Fee Scale */}
-            <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Wallet className="h-3.5 w-3.5 text-[#f9e370]" />
-                <span className="text-white text-sm font-medium">Fee Scale</span>
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Wallet className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Scale</span>
               </div>
-              <span className="text-white font-medium text-xs pl-5">
+              <span className="text-white font-bold text-lg">
                 {(dex.deployerFeeScale * 100).toFixed(0)}%
               </span>
-            </Card>
+            </div>
           </div>
 
           {/* Addresses */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Deployer */}
-            <Card className="p-4 bg-[#051728E5] border border-[#83E9FF4D]">
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
               <div className="flex items-center gap-2 mb-3">
-                <Building2 className="h-4 w-4 text-[#f9e370]" />
-                <span className="text-[#FFFFFF80] text-sm">Deployer</span>
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
+                  <Building2 className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Deployer</span>
               </div>
               {renderAddressLink(dex.deployer, 'Deployer address')}
-            </Card>
+            </div>
 
             {/* Fee Recipient */}
-            <Card className="p-4 bg-[#051728E5] border border-[#83E9FF4D]">
+            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
               <div className="flex items-center gap-2 mb-3">
-                <Wallet className="h-4 w-4 text-[#f9e370]" />
-                <span className="text-[#FFFFFF80] text-sm">Fee Recipient</span>
+                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
+                  <Wallet className="h-3 w-3 text-[#83e9ff]" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span>
               </div>
               {renderAddressLink(dex.feeRecipient, 'Fee recipient address')}
-            </Card>
+            </div>
 
             {/* Oracle Updater or Sub Deployers */}
             {dex.oracleUpdater ? (
-              <Card className="p-4 bg-[#051728E5] border border-[#83E9FF4D]">
+              <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <Clock className="h-4 w-4 text-[#f9e370]" />
-                  <span className="text-[#FFFFFF80] text-sm">Oracle Updater</span>
+                  <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
+                    <Clock className="h-3 w-3 text-[#83e9ff]" />
+                  </div>
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span>
                 </div>
                 {renderAddressLink(dex.oracleUpdater, 'Oracle updater address')}
-              </Card>
+              </div>
             ) : dex.subDeployers.length > 0 ? (
-              <Card className="p-4 bg-[#051728E5] border border-[#83E9FF4D]">
+              <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <Users className="h-4 w-4 text-[#f9e370]" />
-                  <span className="text-[#FFFFFF80] text-sm">Sub-Deployers ({dex.subDeployers.length})</span>
+                  <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
+                    <Users className="h-3 w-3 text-[#83e9ff]" />
+                  </div>
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Sub-Deployers ({dex.subDeployers.length})</span>
                 </div>
-                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                   {dex.subDeployers.slice(0, 4).map((sub, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-xs">
                       <span className="text-[#83E9FF] shrink-0">{sub.permission}</span>
@@ -394,50 +425,64 @@ export default function PerpDexDetailPage() {
                           <Link
                             key={addrIdx}
                             href={`/explorer/address/${addr}`}
-                            className="text-[#FFFFFF80] font-mono text-[10px] hover:text-[#83E9FF] transition-colors bg-[#FFFFFF10] px-1.5 py-0.5 rounded"
+                            className="text-zinc-400 font-mono text-[10px] hover:text-[#83E9FF] transition-colors bg-white/5 px-1.5 py-0.5 rounded"
                           >
                             {truncateAddress(addr)}
                           </Link>
                         ))}
                         {sub.addresses.length > 2 && (
-                          <span className="text-[#FFFFFF40] text-[10px]">+{sub.addresses.length - 2}</span>
+                          <span className="text-zinc-600 text-[10px]">+{sub.addresses.length - 2}</span>
                         )}
                       </div>
                     </div>
                   ))}
                   {dex.subDeployers.length > 4 && (
-                    <span className="text-[#FFFFFF40] text-xs">+{dex.subDeployers.length - 4} more permissions</span>
+                    <span className="text-zinc-600 text-xs">+{dex.subDeployers.length - 4} more permissions</span>
                   )}
                 </div>
-              </Card>
+              </div>
             ) : null}
           </div>
 
           {/* Markets table with live data */}
           <div>
-            <h2 className="text-lg font-medium text-white mb-4">
+            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
               Markets ({dex.activeAssets} active / {dex.totalAssets} total)
             </h2>
-            <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-              <div className="overflow-x-auto">
+            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                 <Table className="table-fixed w-full">
                   <TableHeader>
-                    <TableRow className="border-none bg-[#051728]">
-                      <TableHead className="text-white text-sm font-normal py-3 pl-4 w-[22%]">Asset</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 w-[12%]">Price</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 w-[10%]">24h</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 w-[14%]">Volume</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 w-[14%]">OI</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 w-[12%]">Funding</TableHead>
-                      <TableHead className="text-white text-sm font-normal py-3 pr-4 w-[16%]">OI Cap</TableHead>
+                    <TableRow className="border-b border-white/5 hover:bg-transparent">
+                      <TableHead className="py-3 pl-4 w-[22%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Asset</span>
+                      </TableHead>
+                      <TableHead className="py-3 w-[12%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span>
+                      </TableHead>
+                      <TableHead className="py-3 w-[10%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h</span>
+                      </TableHead>
+                      <TableHead className="py-3 w-[14%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</span>
+                      </TableHead>
+                      <TableHead className="py-3 w-[14%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI</span>
+                      </TableHead>
+                      <TableHead className="py-3 w-[12%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Funding</span>
+                      </TableHead>
+                      <TableHead className="py-3 pr-4 w-[16%]">
+                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody className="bg-[#051728]">
+                  <TableBody>
                     {dex.assetsWithMarketData.length > 0 ? (
                       dex.assetsWithMarketData.map((asset) => (
                         <TableRow 
                           key={asset.name}
-                          className={`border-b border-[#FFFFFF1A] hover:bg-[#0a2035] ${asset.isDelisted ? 'opacity-50' : ''}`}
+                          className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
                         >
                           {/* Asset */}
                           <TableCell className="py-3 pl-4 text-left">
@@ -446,8 +491,8 @@ export default function PerpDexDetailPage() {
                               <div>
                                 <div className="flex items-center gap-1">
                                   <span className="text-white text-sm font-medium">{getTicker(asset.name)}</span>
-                                  <span className="text-[#FFFFFF40] text-sm">/</span>
-                                  <span className="text-[#FFFFFF60] text-xs">
+                                  <span className="text-zinc-600 text-sm">/</span>
+                                  <span className="text-zinc-500 text-xs">
                                     {asset.collateralToken}
                                   </span>
                                 </div>
@@ -458,7 +503,7 @@ export default function PerpDexDetailPage() {
 
                           {/* Price */}
                           <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm">
+                            <span className="text-white text-sm font-medium">
                               {asset.markPx 
                                 ? `$${formatNumber(asset.markPx, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                                 : '-'}
@@ -467,14 +512,14 @@ export default function PerpDexDetailPage() {
 
                           {/* 24h Change */}
                           <TableCell className="py-3 text-left">
-                            <span className={`text-sm ${(asset.priceChange24h ?? 0) >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
+                            <span className={`text-sm font-medium ${(asset.priceChange24h ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                               {formatPriceChange(asset.priceChange24h)}
                             </span>
                           </TableCell>
 
                           {/* Volume */}
                           <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm">
+                            <span className="text-white text-sm font-medium">
                               {asset.dayNtlVlm && asset.dayNtlVlm > 0
                                 ? formatNumber(asset.dayNtlVlm, format, {
                                     minimumFractionDigits: 0,
@@ -488,7 +533,7 @@ export default function PerpDexDetailPage() {
 
                           {/* Open Interest */}
                           <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm">
+                            <span className="text-white text-sm font-medium">
                               {asset.openInterest && asset.openInterest > 0
                                 ? formatNumber(asset.openInterest, format, {
                                     minimumFractionDigits: 0,
@@ -502,14 +547,14 @@ export default function PerpDexDetailPage() {
 
                           {/* Funding */}
                           <TableCell className="py-3 text-left">
-                            <span className={`text-sm ${(asset.funding ?? 0) >= 0 ? 'text-[#52C41A]' : 'text-[#FF4D4F]'}`}>
+                            <span className={`text-sm font-medium ${(asset.funding ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                               {formatFunding(asset.funding)}
                             </span>
                           </TableCell>
 
                           {/* OI Cap */}
                           <TableCell className="py-3 pr-4 text-left">
-                            <span className="text-white text-sm">
+                            <span className="text-white text-sm font-medium">
                               {formatNumber(asset.streamingOiCap, format, {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
@@ -524,8 +569,8 @@ export default function PerpDexDetailPage() {
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8">
                           <div className="flex flex-col items-center justify-center">
-                            <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-                            <p className="text-white text-lg">No markets available</p>
+                            <Database className="w-10 h-10 mb-3 text-zinc-600" />
+                            <p className="text-zinc-400 text-sm mb-1">No markets available</p>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -533,7 +578,7 @@ export default function PerpDexDetailPage() {
                   </TableBody>
                 </Table>
               </div>
-            </Card>
+            </div>
           </div>
         </main>
       </div>

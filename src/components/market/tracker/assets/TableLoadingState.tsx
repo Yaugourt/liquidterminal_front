@@ -16,19 +16,19 @@ export function TableLoadingState({
   type
 }: TableLoadingStateProps) {
   return (
-    <TableRow>
-      <TableCell colSpan={type === 'perp' ? 7 : 5} className="text-center py-8">
+    <TableRow className="hover:bg-transparent">
+      <TableCell colSpan={type === 'perp' ? 8 : 5} className="text-center py-8">
         <div className="flex flex-col items-center justify-center">
           {isLoading ? (
             <>
-              <Loader2 className="w-10 h-10 mb-4 text-[#83E9FF4D] animate-spin" />
-              <p className="text-white text-lg">Loading...</p>
+              <Loader2 className="w-8 h-8 mb-3 text-[#83E9FF] animate-spin" />
+              <p className="text-zinc-400 text-sm">Loading...</p>
             </>
           ) : isEmpty ? (
             <>
-              <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-              <p className="text-white text-lg">No positions found</p>
-              <p className="text-[#FFFFFF80] text-sm mt-2">Add a position or check back later</p>
+              <Database className="w-10 h-10 mb-3 text-zinc-600" />
+              <p className="text-zinc-400 text-sm mb-1">No positions found</p>
+              <p className="text-zinc-600 text-xs">Add a position or check back later</p>
             </>
           ) : null}
         </div>

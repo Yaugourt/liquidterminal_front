@@ -1,7 +1,6 @@
 "use client";
 
 import { memo } from "react";
-import { Card } from "@/components/ui/card";
 import { Info, Shield, Coins, Scale } from "lucide-react";
 
 /**
@@ -9,42 +8,50 @@ import { Info, Shield, Coins, Scale } from "lucide-react";
  */
 export const Hip3InfoCard = memo(function Hip3InfoCard() {
   return (
-    <Card className="p-3 bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md h-full flex flex-col">
+    <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5">
-          <Info size={18} className="text-[#f9e370]" />
-          <h3 className="text-sm text-[#FFFFFF] font-medium tracking-wide">ABOUT HIP-3</h3>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+            <Info size={16} className="text-[#83e9ff]" />
+          </div>
+          <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">About HIP-3</h3>
         </div>
       </div>
 
       {/* Info content */}
       <div className="space-y-4 flex-1">
-        <div className="flex items-start gap-2.5">
-          <Shield className="h-3.5 w-3.5 text-[#f9e370] mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3">
+          <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Shield className="h-3 w-3 text-[#83e9ff]" />
+          </div>
           <div>
             <p className="text-white text-sm font-medium">Permissionless Perps</p>
-            <p className="text-[#FFFFFF80] text-xs">
+            <p className="text-zinc-500 text-xs">
               Builders can deploy their own perpetual markets
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5">
-          <Coins className="h-3.5 w-3.5 text-[#f9e370] mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3">
+          <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Coins className="h-3 w-3 text-[#83e9ff]" />
+          </div>
           <div>
             <p className="text-white text-sm font-medium">500k HYPE Stake</p>
-            <p className="text-[#FFFFFF80] text-xs">
+            <p className="text-zinc-500 text-xs">
               Required stake to deploy a perp dex
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-2.5">
-          <Scale className="h-3.5 w-3.5 text-[#f9e370] mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3">
+          <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Scale className="h-3 w-3 text-[#83e9ff]" />
+          </div>
           <div>
             <p className="text-white text-sm font-medium">50% Fee Share</p>
-            <p className="text-[#FFFFFF80] text-xs">
+            <p className="text-zinc-500 text-xs">
               Deployers receive 50% of trading fees
             </p>
           </div>
@@ -52,17 +59,17 @@ export const Hip3InfoCard = memo(function Hip3InfoCard() {
       </div>
 
       {/* Link */}
-      <div className="mt-4 pt-3 border-t border-[#83E9FF1A]">
+      <div className="mt-4 pt-3 border-t border-white/5">
         <a 
           href="https://hyperliquid.gitbook.io/hyperliquid-docs/technical-docs/hips/hip-3" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-[#83E9FF] text-xs hover:text-[#83E9FF] hover:underline flex items-center gap-1"
+          className="text-[#83E9FF] text-xs hover:text-white transition-colors flex items-center gap-1"
         >
           Read full HIP-3 documentation →
         </a>
       </div>
-    </Card>
+    </div>
   );
 });
 

@@ -22,7 +22,6 @@ export default function Wallets() {
   const { isAuthenticated, login } = useAuthContext();
   const { width } = useWindowSize();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // Plus besoin de activeMainTab, tout est géré dans WalletTabs
   const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
 
   useEffect(() => {
@@ -33,60 +32,57 @@ export default function Wallets() {
   }, [setTitle, width]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
       
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
       <div className="">
-        <Header customTitle="Wallets" showFees={true} />
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="Wallets" showFees={true} />
+        </div>
         
-        {/* Barre de recherche mobile */}
+        {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-6 max-w-[1920px] mx-auto">
           {!isAuthenticated && (
-            <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-              <div className="bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md p-6 max-w-md w-full mx-4">
+            <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
+              <div className="bg-[#151A25]/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
                 <div className="text-center mb-6">
                   <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
-                  <p className="text-[#83E9FF]/60 text-sm">You need to login to access your wallet data</p>
+                  <p className="text-zinc-400 text-sm">You need to login to access your wallet data</p>
                 </div>
                 <Button 
                   onClick={() => login()}
-                  className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
+                  className="w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg py-2.5"
                 >
-                  <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
-                  <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
-                  <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
-                    <PiSignIn className="w-5 h-5 brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
-                    <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
-                      Login
-                    </span>
-                  </div>
+                  <PiSignIn className="w-5 h-5 mr-2" />
+                  Login
                 </Button>
               </div>
             </div>
           )}
           
           <div className={isAuthenticated ? "" : "filter blur-[5px] pointer-events-none select-none"}>
-            {/* Navigation principale - maintenant intégrée dans WalletTabs */}
+            {/* Navigation principale */}
             <div className="mb-8">
               <WalletTabs />
             </div>
             
-            {/* Stats et graphiques - toujours affichés */}
+            {/* Stats et graphiques */}
             <div className="mb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                 <div className="lg:col-span-5">

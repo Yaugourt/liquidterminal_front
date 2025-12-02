@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { Card } from "@/components/ui/card";
 import { Loader2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
@@ -134,21 +133,21 @@ export function PortfolioStats() {
 
   if (!isMounted) {
     return (
-      <Card className="h-full bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 rounded-lg">
-        <div className="absolute inset-0 flex items-center justify-center bg-[#051728CC] z-10">
-          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
+      <div className="h-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
     <div className="h-full space-y-4">
-      {/* Adresse du wallet - libre sans card */}
+      {/* Wallet address header */}
       {activeWallet && (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-[#FFFFFF] text-xs">
+            <span className="text-white text-xs font-mono">
               {activeWallet.address}
             </span>
             <TooltipProvider>
@@ -157,7 +156,7 @@ export function PortfolioStats() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-6 w-6 p-0 text-[#F9E370] hover:text-white hover:bg-[#1692ADB2]"
+                    className="h-6 w-6 p-0 text-zinc-500 hover:text-white hover:bg-white/5"
                     onClick={copyToClipboard}
                   >
                     {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -169,16 +168,16 @@ export function PortfolioStats() {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <span className="text-[#F9E370] text-xs">Last tx: 1h ago</span>
+          <span className="text-[#83E9FF] text-xs">Last tx: 1h ago</span>
         </div>
       )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-32">
-          <Loader2 className="w-8 h-8 text-[#83E9FF4D] animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
         </div>
       ) : error ? (
-        <div className="text-red-500 text-center py-4">
+        <div className="text-rose-400 text-center py-4">
           Error loading portfolio data
         </div>
       ) : (
@@ -187,44 +186,44 @@ export function PortfolioStats() {
           <div className="grid grid-cols-2 gap-4">
             {/* Colonne gauche : Balances */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center bg-[#051728] border-2 border-[#83E9FF4D] p-3 rounded-lg">
-                <p className="text-white text-xs">Spot Balance</p>
-                <p className="text-white text-sm font-medium">{formatCurrency(balances.spotBalance)}</p>
+              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+                <p className="text-zinc-400 text-xs">Spot Balance</p>
+                <p className="text-white text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#051728] border-2 border-[#83E9FF4D] p-3 rounded-lg">
-                <p className="text-white text-xs">Perp Balance</p>
-                <p className="text-white text-sm font-medium">{formatCurrency(balances.perpBalance)}</p>
+              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+                <p className="text-zinc-400 text-xs">Perp Balance</p>
+                <p className="text-white text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#051728] border-2 border-[#83E9FF4D] p-3 rounded-lg">
-                <p className="text-white text-xs">Vault Balance</p>
-                <p className="text-white text-sm font-medium">{formatCurrency(balances.vaultBalance)}</p>
+              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+                <p className="text-zinc-400 text-xs">Vault Balance</p>
+                <p className="text-white text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#051728] border-2 border-[#83E9FF4D] p-3 rounded-lg">
-                <p className="text-white text-xs">Staked Balance</p>
-                <p className="text-white text-sm font-medium">{formatCurrency(balances.stakedBalance)}</p>
+              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+                <p className="text-zinc-400 text-xs">Staked Balance</p>
+                <p className="text-white text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#051728] border-2 border-[#83E9FF4D] p-3 rounded-lg">
-                <p className="text-white text-xs">Total Balance</p>
-                <p className="text-white text-sm font-medium">{formatCurrency(balances.totalBalance)}</p>
+              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+                <p className="text-zinc-400 text-xs">Total Balance</p>
+                <p className="text-white text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
               </div>
             </div>
 
-                        {/* Colonne droite : Long/Short Ratio */}
-            <Card className="bg-[#051728] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-3 rounded-lg h-full">
+            {/* Colonne droite : Long/Short Ratio */}
+            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-white text-xs font-medium">Volume</p>
-                    <div className="flex gap-1">
+                    <p className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</p>
+                    <div className="flex bg-[#0A0D12] rounded-lg p-0.5 border border-white/5">
                       {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
                         <button
                           key={timeframe}
                           onClick={() => setVolumeTimeframe(timeframe)}
-                          className={`px-2 py-1 text-xs rounded ${
+                          className={`px-2 py-1 text-[10px] rounded-md transition-all ${
                             volumeTimeframe === timeframe
-                              ? 'bg-[#83E9FF] text-[#051728] font-medium'
-                              : 'text-[#FFFFFF80] hover:text-white'
+                              ? 'bg-[#83E9FF] text-[#051728] font-bold'
+                              : 'text-zinc-400 hover:text-zinc-200'
                           }`}
                         >
                           {timeframe}
@@ -232,46 +231,46 @@ export function PortfolioStats() {
                       ))}
                     </div>
                   </div>
-                  <div className="space-y-5">
+                  <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <p className="text-white text-xs">Perp:</p>
-                      <p className="text-white text-sm font-medium">{formatCurrency(volumeData.perpVolume)}</p>
+                      <p className="text-zinc-400 text-xs">Perp:</p>
+                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-white text-xs">Spot + Vault:</p>
-                      <p className="text-white text-sm font-medium">{formatCurrency(volumeData.spotVaultVolume)}</p>
+                      <p className="text-zinc-400 text-xs">Spot + Vault:</p>
+                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-white text-xs">Total:</p>
-                      <p className="text-white text-sm font-medium">{formatCurrency(volumeData.totalVolume)}</p>
+                      <p className="text-zinc-400 text-xs">Total:</p>
+                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Section 2: Long/Short Ratio */}
-                <div className="space-y-2 pt-2 border-t border-[#FFFFFF0A] mt-auto">
+                <div className="space-y-2 pt-3 border-t border-white/5 mt-auto">
                   <div className="flex justify-between items-center">
-                    <span className="text-[#4ADE80] text-xs font-medium">
+                    <span className="text-emerald-400 text-xs font-medium">
                       Long: {formatAbbreviated(longShortData.longValue)}
                     </span>
-                    <span className="text-[#FF5757] text-xs font-medium">
+                    <span className="text-rose-400 text-xs font-medium">
                       Short: {formatAbbreviated(longShortData.shortValue)}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    <div className="h-1 bg-[#FFFFFF0A] rounded-full overflow-hidden relative">
+                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden relative">
                       {longShortData.totalValue > 0 && (
                         <>
-                          {/* Barre pour les positions longues */}
+                          {/* Long positions bar */}
                           <div
-                            className="h-full bg-[#4ADE80] transition-all duration-500 absolute left-0"
+                            className="h-full bg-emerald-400 transition-all duration-500 absolute left-0"
                             style={{
                               width: `${longShortData.longPercentage}%`
                             }}
                           />
-                          {/* Barre pour les positions courtes */}
+                          {/* Short positions bar */}
                           <div
-                            className="h-full bg-[#FF5757] transition-all duration-500 absolute right-0"
+                            className="h-full bg-rose-400 transition-all duration-500 absolute right-0"
                             style={{
                               width: `${100 - longShortData.longPercentage}%`
                             }}
@@ -279,20 +278,20 @@ export function PortfolioStats() {
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between text-xs text-[#FFFFFF80]">
+                    <div className="flex justify-between text-[10px] text-zinc-500">
                       <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
                       <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
                     </div>
                   </div>
                   
-                  {/* Withdrawable en bas */}
-                  <div className="flex justify-between items-center pt-2 border-t border-[#FFFFFF0A]">
-                    <p className="text-white text-xs">Withdrawable:</p>
-                    <p className="text-white text-sm font-medium">{formatCurrency(0)}</p>
+                  {/* Withdrawable */}
+                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                    <p className="text-zinc-400 text-xs">Withdrawable:</p>
+                    <p className="text-white text-sm font-bold">{formatCurrency(0)}</p>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
 
           </div>
 

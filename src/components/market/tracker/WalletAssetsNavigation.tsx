@@ -17,14 +17,14 @@ export function WalletAssetsNavigation({ activeTab, onChange }: WalletAssetsNavi
 
   return (
     <div className="flex justify-start items-center mb-4">
-      <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? "bg-[#83E9FF] text-[#051728] shadow-sm"
-                : "text-white hover:text-white hover:bg-[#FFFFFF0A]"
+                ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
             }`}
             onClick={() => onChange(tab.id)}
           >

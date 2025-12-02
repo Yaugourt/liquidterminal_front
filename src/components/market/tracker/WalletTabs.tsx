@@ -267,8 +267,8 @@ export function WalletTabs() {
       {/* Affichage conditionnel selon l'onglet actif */}
       {activeTab === "all-wallets" && (
         <div className="mt-4">
-          {/* Séparateur entre les tabs des listes et les tabs des wallets */}
-          <div className="w-full h-px bg-[#83E9FF4D] mb-4" />
+          {/* Separator between list tabs and wallet tabs */}
+          <div className="w-full h-px bg-white/5 mb-4" />
           <WalletSelector
             wallets={wallets}
             activeWalletId={activeWalletId}
@@ -291,8 +291,8 @@ export function WalletTabs() {
       
       {activeTab !== "all-wallets" && (
         <div className="mt-4">
-          {/* Séparateur entre les tabs des listes et les tabs des wallets */}
-          <div className="w-full h-px bg-[#83E9FF4D] mb-4" />
+          {/* Separator between list tabs and wallet tabs */}
+          <div className="w-full h-px bg-white/5 mb-4" />
           {getActiveListInfo() && (
             <WalletListContent 
               key={`list-${getActiveListInfo()!.id}-${listContentKey}`}

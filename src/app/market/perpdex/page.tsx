@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
+import { useWindowSize } from "@/hooks/use-window-size";
 import { 
   PerpDexStatsCard, 
   PerpDexTable, 
@@ -15,18 +16,25 @@ import {
 
 export default function PerpDexsPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
 
@@ -35,14 +43,17 @@ export default function PerpDexsPage() {
 
       {/* Main content */}
       <div className="">
-        <Header customTitle="PerpDexs (HIP-3)" showFees={true} />
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="PerpDexs (HIP-3)" showFees={true} />
+        </div>
         
         {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search DEX..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           {/* Overview cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <PerpDexStatsCard />
@@ -52,11 +63,9 @@ export default function PerpDexsPage() {
 
           {/* DEX Table */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-white">
-                All Builder DEXs
-              </h2>
-            </div>
+            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
+              All Builder DEXs
+            </h2>
             <PerpDexTable />
           </div>
         </main>
