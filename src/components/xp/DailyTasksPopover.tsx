@@ -120,7 +120,6 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         {/* Tasks list */}
         <div className="p-2 space-y-1">
           {dailyTasks.map((task) => {
-            const Icon = TASK_ICONS[task.type];
             return (
               <div
                 key={task.type}
