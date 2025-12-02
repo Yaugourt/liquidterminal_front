@@ -50,7 +50,11 @@ export const isValidJWT = (token: string): boolean => {
 
 /**
  * Format token for Authorization header
+ * Always returns "Bearer <token>" format as required by backend
  */
 export const formatAuthHeader = (token: string): string => {
-  return token.startsWith('did:privy:') ? token : `Bearer ${token}`;
+  // If already has Bearer prefix, return as is
+  if (token.startsWith('Bearer ')) return token;
+  // Always add Bearer prefix
+  return `Bearer ${token}`;
 };
