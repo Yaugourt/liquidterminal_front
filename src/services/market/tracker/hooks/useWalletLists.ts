@@ -35,26 +35,31 @@ export const usePublicWalletLists = (params?: {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const enabled = params?.enabled;
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
+
   const fetchData = useCallback(async () => {
-    if (params?.enabled === false) return;
+    if (enabled === false) return;
     
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getPublicWalletLists(params);
+      const response = await getPublicWalletLists({ page, limit, search });
       setData(response);
     } catch (err) {
       setError(err as Error);
     } finally {
       setIsLoading(false);
     }
-  }, [params]);
+  }, [enabled, page, limit, search]);
 
   useEffect(() => {
-    if (params?.enabled !== false) {
+    if (enabled !== false) {
       fetchData();
     }
-  }, [fetchData, params?.enabled]);
+  }, [fetchData, enabled]);
 
   return {
     data: data.data,
@@ -78,26 +83,31 @@ export const useUserWalletLists = (params?: {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const enabled = params?.enabled;
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
+
   const fetchData = useCallback(async () => {
-    if (params?.enabled === false) return;
+    if (enabled === false) return;
     
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getUserWalletLists(params);
+      const response = await getUserWalletLists({ page, limit, search });
       setData(response);
     } catch (err) {
       setError(err as Error);
     } finally {
       setIsLoading(false);
     }
-  }, [params]);
+  }, [enabled, page, limit, search]);
 
   useEffect(() => {
-    if (params?.enabled !== false) {
+    if (enabled !== false) {
       fetchData();
     }
-  }, [fetchData, params?.enabled]);
+  }, [fetchData, enabled]);
 
   return {
     data: data.data,
@@ -155,13 +165,17 @@ export const useWalletListItems = (
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const page = params?.page;
+  const limit = params?.limit;
+  const search = params?.search;
+
   const fetchData = useCallback(async () => {
     if (!listId) return;
     
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getWalletListItems(listId, params);
+      const response = await getWalletListItems(listId, { page, limit, search });
       setData(response.data);
       setPagination(response.pagination || null);
     } catch (err) {
@@ -177,7 +191,7 @@ export const useWalletListItems = (
     } finally {
       setIsLoading(false);
     }
-  }, [listId, params]);
+  }, [listId, page, limit, search]);
 
   useEffect(() => {
     fetchData();

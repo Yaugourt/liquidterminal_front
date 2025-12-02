@@ -41,6 +41,7 @@ export interface AddWalletResponse {
   success: boolean;
   userWallet?: UserWallet;
   message?: string;
+  xpGranted?: number; // XP granted for this action (if any)
 }
 
 export interface InitializeParams {

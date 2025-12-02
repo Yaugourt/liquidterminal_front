@@ -9,7 +9,8 @@ import {
   getReadListItems,
   addItemToReadList,
   updateReadListItem as apiUpdateReadListItem,
-  deleteReadListItem as apiDeleteReadListItem
+  deleteReadListItem as apiDeleteReadListItem,
+  toggleItemReadStatus as apiToggleItemReadStatus
 } from "../services/wiki/readList/api";
 import { AuthService } from "../services/auth";
 import { handleApiError, createOrderManager, validateName } from './utils';
@@ -43,7 +44,7 @@ interface ReadListsState {
   addItemToReadList: (listId: number, item: AddItemData) => Promise<ReadListItem | void>;
   updateReadListItem: (itemId: number, data: UpdateItemData) => Promise<ReadListItem | void>;
   deleteReadListItem: (itemId: number) => Promise<void>;
-  toggleReadStatus: (itemId: number, isRead: boolean) => Promise<void>;
+  toggleReadStatus: (itemId: number, isRead: boolean) => Promise<{ xpGranted?: number }>;
 } 
 
 
@@ -287,20 +288,24 @@ export const useReadLists = create<ReadListsState>()(
           }
         },
         
-        toggleReadStatus: async (itemId: number, isRead: boolean): Promise<void> => {
+        toggleReadStatus: async (itemId: number, isRead: boolean): Promise<{ xpGranted?: number }> => {
           try {
             actions.setLoading(true);
             
-            const response = await apiUpdateReadListItem(itemId, { isRead });
+            // Use the dedicated read-status endpoint that grants XP
+            const response = await apiToggleItemReadStatus(itemId, isRead);
             
             if (response) {
               actions.updateActiveItems(items => 
                 items.map(item => item.id === itemId ? { ...item, isRead } : item)
               );
               actions.setLoading(false);
+              return { xpGranted: response.xpGranted };
             }
+            return {};
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to toggle read status'));
+            return {};
           }
         },
         

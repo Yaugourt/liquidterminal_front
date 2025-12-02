@@ -11,14 +11,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { usePathname } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
-import { 
-  defaultNavigationGroups, 
-  getDefaultSidebarPreferences,
-  applyPreferencesToNavigation,
-  type NavigationGroup,
-  type NavigationItem
+import {
+    defaultNavigationGroups,
+    getDefaultSidebarPreferences,
+    applyPreferencesToNavigation,
+    type NavigationGroup,
+    type NavigationItem
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
+import { XpBadge } from "@/components/xp"
 
 // Social links
 
@@ -109,12 +110,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         <Menu className="h-5 w-5 text-[#83E9FF]" />
                     </Button>
                     <div className="flex items-center gap-2">
-                        <Image 
-                            src="/logo.svg" 
-                            alt="Logo" 
-                            width={24} 
+                        <Image
+                            src="/logo.svg"
+                            alt="Logo"
+                            width={24}
                             height={24}
-                            className="h-6 w-6" 
+                            className="h-6 w-6"
                         />
                         <h1 className="hidden lg:block text-sm font-bold">
                             <span className="text-[#83E9FF] font-higuen">Liquid </span>
@@ -248,7 +249,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 </ul>
                             </li>
                         ))}
-                        
+
                         {/* Admin Section - Only visible to admins */}
                         {isAdmin && (
                             <li className="space-y-1">
@@ -288,7 +289,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Account Section */}
                 <div className="p-3 border-t border-white/5">
                     {!authenticated ? (
-                        <Button 
+                        <Button
                             onClick={() => login()}
                             className="group relative w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] rounded-lg overflow-hidden font-bold"
                         >
@@ -300,26 +301,33 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     ) : (
                         <div className="p-2 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-xl">
                             <div className="flex items-center gap-2">
-                                <Avatar className="h-7 w-7 ring-1 ring-white/10">
-                                    {privyUser?.twitter?.profilePictureUrl ? (
-                                        <Image 
-                                            src={privyUser.twitter.profilePictureUrl}
-                                            alt="Avatar"
-                                            width={28}
-                                            height={28}
-                                            className="object-cover rounded-full"
-                                        />
-                                    ) : (
-                                        <AvatarFallback className="bg-[#151A25] text-[#83E9FF] text-xs font-medium">
-                                            {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
-                                        </AvatarFallback>
-                                    )}
-                                </Avatar>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-white text-sm font-medium truncate">
-                                        {privyUser?.twitter?.username || "User"}
-                                    </p>
-                                </div>
+                                <Link
+                                    href="/profile"
+                                    className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <Avatar className="h-7 w-7 ring-1 ring-white/10">
+                                        {privyUser?.twitter?.profilePictureUrl ? (
+                                            <Image 
+                                                src={privyUser.twitter.profilePictureUrl}
+                                                alt="Avatar"
+                                                width={28}
+                                                height={28}
+                                                className="object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <AvatarFallback className="bg-[#151A25] text-[#83E9FF] text-xs font-medium">
+                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
+                                            </AvatarFallback>
+                                        )}
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-white text-sm font-medium truncate">
+                                            {privyUser?.twitter?.username || "User"}
+                                        </p>
+                                        <XpBadge compact showStreak className="mt-1" />
+                                    </div>
+                                </Link>
                                 <Button 
                                     variant="ghost" 
                                     size="icon" 
