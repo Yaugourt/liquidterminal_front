@@ -5,15 +5,10 @@ import { cn } from "@/lib/utils";
 import { 
   CheckCircle2, 
   Circle, 
-  LogIn, 
-  BookOpen, 
-  Wallet, 
-  Trophy,
   Gift,
   ChevronRight,
   Loader2
 } from "lucide-react";
-import { DailyTaskType } from "@/services/xp/types";
 import {
   Popover,
   PopoverContent,
@@ -24,13 +19,6 @@ import Link from "next/link";
 interface DailyTasksPopoverProps {
   className?: string;
 }
-
-const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
-  LOGIN: LogIn,
-  READ_RESOURCE: BookOpen,
-  ADD_WALLET: Wallet,
-  EXPLORE_LEADERBOARD: Trophy,
-};
 
 export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
   const {
