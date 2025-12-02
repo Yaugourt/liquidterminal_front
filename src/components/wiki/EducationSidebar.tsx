@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { FileText, Twitter, Globe, MessageCircle, Send, Github, Layers, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
