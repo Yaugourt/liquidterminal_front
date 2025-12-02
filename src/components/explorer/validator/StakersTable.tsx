@@ -147,7 +147,7 @@ export const StakersTable = memo(function StakersTable() {
               holders.map((holder, index) => {
                 const rank = (currentPage * rowsPerPage) + index + 1;
                 const value = hypePrice ? holder.amount * hypePrice : 0;
-                
+
                 return (
                   <TableRow
                     key={holder.address}
@@ -177,7 +177,7 @@ export const StakersTable = memo(function StakersTable() {
                             <Copy className="h-3 w-3 text-zinc-500" />
                           )}
                         </Button>
-            
+
                       </div>
                     </TableCell>
                     <TableCell className="py-3 px-4 text-left text-white text-sm">
