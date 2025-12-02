@@ -106,15 +106,17 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       {projectsLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-32 bg-[#112941]" />
+            <Skeleton key={i} className="h-32 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl" />
           ))}
         </div>
       ) : projectsError ? (
-        <div className="text-center py-16">
-          <p className="text-red-400 text-lg">Failed to load projects</p>
-          <p className="text-gray-500 text-sm mt-2">
-            {projectsError.message || "Please try again later."}
-          </p>
+        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+          <div className="text-center py-8">
+            <p className="text-rose-400 text-lg font-medium">Failed to load projects</p>
+            <p className="text-zinc-500 text-sm mt-2">
+              {projectsError.message || "Please try again later."}
+            </p>
+          </div>
         </div>
       ) : projects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -126,13 +128,15 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
-          <p className="text-gray-400 text-lg">No projects found</p>
-          <p className="text-gray-500 text-sm mt-2">
-            {activeTab === 'all' 
-              ? "No projects have been added yet."
-              : "No projects in this category yet."}
-          </p>
+        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+          <div className="text-center py-8">
+            <p className="text-zinc-400 text-lg">No projects found</p>
+            <p className="text-zinc-500 text-sm mt-2">
+              {activeTab === 'all' 
+                ? "No projects have been added yet."
+                : "No projects in this category yet."}
+            </p>
+          </div>
         </div>
       )}
 

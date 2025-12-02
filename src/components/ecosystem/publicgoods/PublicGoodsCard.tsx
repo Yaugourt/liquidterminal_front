@@ -1,5 +1,4 @@
 import { memo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,13 +44,13 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
     const normalizedStatus = status.toLowerCase();
     switch (normalizedStatus) {
       case 'approved':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
       case 'pending':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
       case 'rejected':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
     }
   };
 
@@ -59,15 +58,15 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
     const normalizedStatus = status.toLowerCase();
     switch (normalizedStatus) {
       case 'production':
-        return 'bg-[#83E9FF]/20 text-[#83E9FF]';
+        return 'bg-[#83E9FF]/10 text-[#83E9FF]';
       case 'beta':
-        return 'bg-blue-500/20 text-blue-400';
+        return 'bg-blue-500/10 text-blue-400';
       case 'development':
-        return 'bg-purple-500/20 text-purple-400';
+        return 'bg-purple-500/10 text-purple-400';
       case 'idea':
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-zinc-500/10 text-zinc-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-zinc-500/10 text-zinc-400';
     }
   };
 
@@ -86,7 +85,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
   };
 
   return (
-    <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group relative">
+    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-6 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative">
       <Link href={`/ecosystem/publicgoods/${project.id}`} className="cursor-pointer">
         {/* Header with logo and status badge */}
         <div className="flex justify-between items-start mb-4">
@@ -98,12 +97,12 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   src={project.logo}
                   alt={project.name}
                   fill
-                  className="rounded-lg object-cover"
+                  className="rounded-xl object-cover"
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full rounded-lg bg-[#112941] flex items-center justify-center">
-                  <span className="text-[#83E9FF] text-lg font-medium">
+                <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+                  <span className="text-[#83E9FF] text-lg font-bold">
                     {project.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -115,11 +114,11 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
               <h3 className="text-lg font-semibold text-white group-hover:text-[#83E9FF] transition-colors">
                 {project.name}
               </h3>
-              <p className="text-sm text-gray-400 mt-1">{project.category}</p>
+              <p className="text-sm text-zinc-500 mt-1">{project.category}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge className={`${getStatusColor(project.status)}`}>
+            <Badge className={`${getStatusColor(project.status)} border`}>
               {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
             </Badge>
             
@@ -130,7 +129,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    className="h-8 w-8 text-gray-400 hover:text-white hover:bg-[#112941]"
+                    className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -140,13 +139,13 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
-                  className="bg-[#0A1F32] border-[#1E3851]" 
+                  className="bg-[#151A25] border-white/10 rounded-xl shadow-xl shadow-black/20" 
                   align="end"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {canEdit && onEdit && (
                     <DropdownMenuItem 
-                      className="text-gray-300 hover:text-white hover:bg-[#112941] cursor-pointer"
+                      className="text-zinc-400 hover:text-white hover:bg-white/5 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -159,7 +158,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   )}
                   {canReview && onReview && (
                     <DropdownMenuItem 
-                      className="text-[#83E9FF] hover:text-white hover:bg-[#112941] cursor-pointer"
+                      className="text-[#83E9FF] hover:text-white hover:bg-white/5 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -172,7 +171,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   )}
                   {canDelete && onDelete && (
                     <DropdownMenuItem 
-                      className="text-red-400 hover:text-white hover:bg-red-500/20 cursor-pointer"
+                      className="text-rose-400 hover:text-white hover:bg-rose-500/10 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -190,28 +189,28 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
         </div>
 
         {/* Description */}
-        <p className="text-sm text-gray-300 mb-4 line-clamp-2">
+        <p className="text-sm text-zinc-400 mb-4 line-clamp-2">
           {project.description}
         </p>
 
         {/* Problem solved */}
         <div className="mb-4">
-          <p className="text-xs text-[#F9E370] mb-1">Problem Solved:</p>
-          <p className="text-sm text-gray-300 line-clamp-2">
+          <p className="text-[10px] text-[#83E9FF] uppercase tracking-wider font-semibold mb-1">Problem Solved:</p>
+          <p className="text-sm text-zinc-400 line-clamp-2">
             {project.problemSolved}
           </p>
         </div>
 
         {/* Tags and info */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <Badge className={getDevelopmentStatusColor(project.developmentStatus)}>
+          <Badge className={`${getDevelopmentStatusColor(project.developmentStatus)} border-0`}>
             {project.developmentStatus}
           </Badge>
-          <div className="flex items-center gap-1 text-gray-400">
+          <div className="flex items-center gap-1 text-zinc-500">
             {getTeamSizeIcon()}
             <span className="text-xs">{project.teamSize} team</span>
           </div>
-          <Badge variant="outline" className="text-xs border-[#1E3851] text-gray-400">
+          <Badge variant="outline" className="text-xs border-white/10 text-zinc-400">
             {project.experienceLevel}
           </Badge>
         </div>
@@ -227,11 +226,11 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
             <div className="flex flex-wrap gap-2 mb-4">
               {supportTypes.map((type: string) => (
                 <div key={type} className="flex items-center gap-1">
-                  {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-[#F9E370]" />}
+                  {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-amber-400" />}
                   {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-[#83E9FF]" />}
                   {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
-                  {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-green-400" />}
-                  <span className="text-xs text-gray-400">{type.toLowerCase()}</span>
+                  {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-emerald-400" />}
+                  <span className="text-xs text-zinc-500">{type.toLowerCase()}</span>
                 </div>
               ))}
             </div>
@@ -239,32 +238,32 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
         })()}
 
         {/* Links */}
-        <div className="flex items-center gap-3 pt-3 border-t border-[#1E3851]">
+        <div className="flex items-center gap-3 pt-3 border-t border-white/5">
           {project.githubUrl && (
-            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+            <div className="text-zinc-500 hover:text-[#83E9FF] transition-colors cursor-pointer">
               <Github className="w-4 h-4" />
             </div>
           )}
           {project.websiteUrl && (
-            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+            <div className="text-zinc-500 hover:text-[#83E9FF] transition-colors cursor-pointer">
               <Globe className="w-4 h-4" />
             </div>
           )}
           {project.discordContact && (
-            <div className="text-gray-400">
+            <div className="text-zinc-500">
               <MessageCircle className="w-4 h-4" />
             </div>
           )}
           {project.telegramContact && (
-            <div className="text-gray-400">
+            <div className="text-zinc-500">
               <Send className="w-4 h-4" />
             </div>
           )}
-          <div className="ml-auto text-xs text-gray-500">
+          <div className="ml-auto text-xs text-zinc-600">
             {new Date(project.submittedAt).toLocaleDateString()}
           </div>
         </div>
       </Link>
-    </Card>
+    </div>
   );
 });

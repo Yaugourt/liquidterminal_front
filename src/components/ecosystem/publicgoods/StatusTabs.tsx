@@ -28,45 +28,44 @@ export const StatusTabs = memo(function StatusTabs({
       id: 'approved', 
       label: 'Approved',
       count: counts.approved,
-      color: 'text-green-400'
+      color: 'text-emerald-400'
     },
     { 
       id: 'pending', 
       label: 'Pending Review',
       count: counts.pending,
-      color: 'text-yellow-400'
+      color: 'text-amber-400'
     },
     { 
       id: 'rejected', 
       label: 'Rejected',
       count: counts.rejected,
-      color: 'text-red-400'
+      color: 'text-rose-400'
     }
   ];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 w-fit">
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "px-4 py-2 rounded-lg transition-all flex items-center gap-2",
-            "border border-[#1E3851] hover:border-[#83E9FF40]",
+            "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
             activeTab === tab.id
-              ? "bg-[#112941] border-[#83E9FF] text-[#83E9FF]"
-              : "bg-[#0A1F32]/50 text-gray-400 hover:text-white"
+              ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+              : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
           )}
         >
-          <span className={activeTab === tab.id ? '' : tab.color}>
+          <span>
             {tab.label}
           </span>
           {tab.count > 0 && (
             <span className={cn(
-              "px-2 py-0.5 text-xs rounded-full",
+              "px-1.5 py-0.5 text-[10px] rounded-md font-medium",
               activeTab === tab.id
-                ? "bg-[#83E9FF]/20 text-[#83E9FF]"
-                : "bg-[#1E3851] text-gray-400"
+                ? "bg-[#051728]/20 text-[#051728]"
+                : `bg-white/5 ${tab.color}`
             )}>
               {tab.count}
             </span>

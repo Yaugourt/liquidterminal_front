@@ -276,18 +276,18 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#0A1F32] border-[#1E3851]">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white">Edit Project</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-white">Edit Project</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-[#112941]">
+          <TabsList className="grid w-full grid-cols-5 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
             {tabs.map(tab => (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="data-[state=active]:bg-[#83E9FF] data-[state=active]:text-black"
+                className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all"
               >
                 {tab.label}
               </TabsTrigger>
@@ -349,7 +349,7 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
         </Tabs>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between pt-6 border-t border-[#1E3851]">
+        <div className="flex justify-between pt-6 border-t border-white/5">
           <Button
             variant="outline"
             onClick={() => {
@@ -359,7 +359,7 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
                 setActiveTab(tabs[currentTabIndex - 1].id);
               }
             }}
-            className="border-[#1E3851] text-gray-300"
+            className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {isFirstTab ? "Cancel" : "Previous"}
@@ -374,7 +374,7 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
               }
             }}
             disabled={isSubmitting}
-            className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90"
+            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
           >
             {isSubmitting ? (
               "Updating..."

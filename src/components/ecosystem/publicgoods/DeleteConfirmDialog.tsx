@@ -29,17 +29,17 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-[#0A1F32] border-[#1E3851]">
+      <AlertDialogContent className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20">
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-red-500" />
+            <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-rose-400" />
             </div>
-            <AlertDialogTitle className="text-white text-xl">
+            <AlertDialogTitle className="text-white text-xl font-bold">
               Delete Project
             </AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="text-gray-300">
+          <AlertDialogDescription className="text-zinc-400">
             Are you sure you want to delete <span className="font-semibold text-white">{projectName}</span>?
             <br />
             <br />
@@ -48,7 +48,7 @@ export function DeleteConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel 
-            className="bg-[#112941] border-[#1E3851] text-gray-300 hover:bg-[#1E3851] hover:text-white"
+            className="bg-transparent border-white/5 text-zinc-400 hover:bg-white/5 hover:text-white rounded-lg"
             disabled={isDeleting}
           >
             Cancel
@@ -59,7 +59,7 @@ export function DeleteConfirmDialog({
               onConfirm();
             }}
             disabled={isDeleting}
-            className="bg-red-500 text-white hover:bg-red-600"
+            className="bg-rose-500 text-white hover:bg-rose-600 rounded-lg"
           >
             {isDeleting ? "Deleting..." : "Delete Project"}
           </AlertDialogAction>

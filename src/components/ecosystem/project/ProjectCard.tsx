@@ -1,5 +1,4 @@
 import { memo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { PiTwitterLogo, PiDiscordLogo, PiTelegramLogo, PiGlobeBold } from "react-icons/pi";
 import { Trash2 } from "lucide-react";
@@ -51,8 +50,8 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <Card className={`bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-5 rounded-xl shadow-md hover:border-[#83E9FF40] transition-all group relative ${
-      isSelected ? 'border-[#F9E370] bg-[#F9E37010]' : ''
+    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-5 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative ${
+      isSelected ? 'border-[#83E9FF] bg-[#83E9FF]/5' : ''
     }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
@@ -62,7 +61,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-[#0A1F32] border-[#F9E370] data-[state=checked]:bg-[#F9E370] data-[state=checked]:border-[#F9E370]"
+              className="bg-[#0A0D12] border-white/20 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:border-[#83E9FF]"
             />
           </div>
         </ProtectedAction>
@@ -76,7 +75,7 @@ export const ProjectCard = memo(function ProjectCard({
             size="sm"
             variant="ghost"
             disabled={isDeleting}
-            className="p-1 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
+            className="p-1 h-auto text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
             title="Delete project"
           >
             <Trash2 className="w-3 h-3" />
@@ -91,12 +90,12 @@ export const ProjectCard = memo(function ProjectCard({
               src={project.logo}
               alt={project.title}
               fill
-              className="rounded-lg object-cover"
+              className="rounded-xl object-cover"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-lg bg-[#112941] flex items-center justify-center">
-              <span className="text-[#83E9FF] text-lg font-medium">
+            <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+              <span className="text-[#83E9FF] text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -105,13 +104,13 @@ export const ProjectCard = memo(function ProjectCard({
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <h3 className="text-[16px] text-white font-medium truncate">
+            <h3 className="text-base text-white font-semibold truncate">
               {project.title}
             </h3>
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-xs text-[#83E9FF] bg-[#83E9FF20] px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                  <span key={category.id} className="text-[10px] text-[#83E9FF] bg-[#83E9FF]/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}
@@ -119,7 +118,7 @@ export const ProjectCard = memo(function ProjectCard({
             )}
           </div>
           
-          <p className="text-sm text-gray-300 mb-3 line-clamp-2">
+          <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
             {project.desc}
           </p>
           
@@ -133,7 +132,7 @@ export const ProjectCard = memo(function ProjectCard({
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#F9E370] hover:text-white transition-colors"
+                    className="text-zinc-500 hover:text-[#83E9FF] transition-colors"
                     aria-label={link.label}
                   >
                     <Icon size={16} />
@@ -144,6 +143,6 @@ export const ProjectCard = memo(function ProjectCard({
           )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }); 

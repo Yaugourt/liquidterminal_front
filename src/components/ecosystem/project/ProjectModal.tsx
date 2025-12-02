@@ -198,26 +198,26 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-black font-medium">
+        <Button className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg">
           <PiPlus className="mr-2 h-4 w-4" />
           Add Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-[#0A1F32] border-[#1E3851] flex flex-col">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-white">Add Project</DialogTitle>
+          <DialogTitle className="text-white text-lg font-bold">Add Project</DialogTitle>
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-3 bg-[#112941]">
-            <TabsTrigger value="project" className="text-white data-[state=active]:text-[#F9E370]">Add Project</TabsTrigger>
-            <TabsTrigger value="category" className="text-white data-[state=active]:text-[#F9E370]">Add Category</TabsTrigger>
-            <TabsTrigger value="csv" className="text-white data-[state=active]:text-[#F9E370]">CSV Upload</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
+            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">Add Project</TabsTrigger>
+            <TabsTrigger value="category" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">Add Category</TabsTrigger>
+            <TabsTrigger value="csv" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">CSV Upload</TabsTrigger>
           </TabsList>
           
           <TabsContent value="project" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{
             scrollbarWidth: 'thin',
-            scrollbarColor: '#83E9FF #112941'
+            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
             <ProjectForm
               projectForm={projectForm}
@@ -239,7 +239,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           
           <TabsContent value="category" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{
             scrollbarWidth: 'thin',
-            scrollbarColor: '#83E9FF #112941'
+            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
             <CategoryForm
               categoryForm={categoryForm}
@@ -252,7 +252,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
 
           <TabsContent value="csv" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{
             scrollbarWidth: 'thin',
-            scrollbarColor: '#83E9FF #112941'
+            scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
             <CsvUpload
               uploadingCsv={uploadingCsv}

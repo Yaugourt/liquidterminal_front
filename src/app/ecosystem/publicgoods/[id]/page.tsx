@@ -1,11 +1,10 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Menu, ArrowLeft, Github, Globe, MessageCircle, Send, Users, Code2, DollarSign, User, Mail, ExternalLink, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Loader2 } from "lucide-react";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
 import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
@@ -17,6 +16,7 @@ import { usePublicGood, useDeletePublicGood } from "@/services/ecosystem/publicg
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
+import { useWindowSize } from "@/hooks/use-window-size";
 
 interface ProjectDetailPageProps {
   params: Promise<{
@@ -30,10 +30,17 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { width } = useWindowSize();
   
   const router = useRouter();
   const resolvedParams = use(params);
   const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
   
   // Fetch project from API
   const { publicGood: project, isLoading, refetch } = usePublicGood(parseInt(resolvedParams.id));
@@ -83,18 +90,25 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-[#83E9FF] animate-spin" />
+      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin mb-2" />
+          <span className="text-zinc-500 text-sm">Loading project...</span>
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Project not found</h1>
-          <Button onClick={() => router.back()}>Go back</Button>
+      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
+        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-white mb-4">Project not found</h1>
+            <Button onClick={() => router.back()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg">
+              Go back
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -103,13 +117,13 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
       case 'PENDING':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
       case 'REJECTED':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
+        return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
     }
   };
 
@@ -127,32 +141,34 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Bouton menu mobile */}
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+      {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
 
-      {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="">
-        <Header customTitle="Public Goods" showFees={true} />
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="Public Goods" showFees={true} />
+        </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           {/* Back button */}
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               onClick={() => router.back()}
-              className="text-[#83E9FF] hover:text-white"
+              className="text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to projects
@@ -175,8 +191,8 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                         onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="w-full h-full rounded-xl bg-[#112941] flex items-center justify-center">
-                        <span className="text-[#83E9FF] text-2xl font-medium">
+                      <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+                        <span className="text-[#83E9FF] text-2xl font-bold">
                           {project.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
@@ -271,20 +287,20 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
             {/* Main content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Section 2: Impact HyperLiquid */}
-              <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                <h2 className="text-xl font-semibold text-white mb-4">Impact on HyperLiquid</h2>
+              <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <h2 className="text-lg font-bold text-white mb-4">Impact on HyperLiquid</h2>
                 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">Problem Solved</h3>
-                    <p className="text-gray-300">{project.problemSolved}</p>
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Problem Solved</h3>
+                    <p className="text-zinc-400 text-sm">{project.problemSolved}</p>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">Target Users</h3>
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Target Users</h3>
                     <div className="flex flex-wrap gap-2">
                       {project.targetUsers.map(user => (
-                        <Badge key={user} variant="outline" className="border-[#1E3851] text-gray-300">
+                        <Badge key={user} variant="outline" className="border-white/10 text-zinc-400 text-xs">
                           {user}
                         </Badge>
                       ))}
@@ -292,63 +308,63 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">HyperLiquid Integration</h3>
-                    <p className="text-gray-300">{project.hlIntegration}</p>
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">HyperLiquid Integration</h3>
+                    <p className="text-zinc-400 text-sm">{project.hlIntegration}</p>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">Development Status</h3>
-                    <Badge className="bg-[#83E9FF]/20 text-[#83E9FF]">
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Development Status</h3>
+                    <Badge className="bg-[#83E9FF]/10 text-[#83E9FF] text-xs">
                       {project.developmentStatus}
                     </Badge>
                   </div>
                 </div>
-              </Card>
+              </div>
 
               {/* Section 3: Team & Technical */}
-              <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                <h2 className="text-xl font-semibold text-white mb-4">Team & Technical Details</h2>
+              <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <h2 className="text-lg font-bold text-white mb-4">Team & Technical Details</h2>
                 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">Lead Developer</h3>
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Lead Developer</h3>
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-[#83E9FF]" />
-                      <span className="text-white">{project.leadDeveloperName}</span>
-                      <Mail className="w-4 h-4 text-[#83E9FF] ml-2" />
-                      <span className="text-gray-300">{project.leadDeveloperContact}</span>
+                      <span className="text-white text-sm">{project.leadDeveloperName}</span>
+                      <Mail className="w-4 h-4 text-zinc-500 ml-2" />
+                      <span className="text-zinc-400 text-sm">{project.leadDeveloperContact}</span>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-[#F9E370] mb-2">Team Size</h3>
+                      <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Team Size</h3>
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-[#83E9FF]" />
-                        <span className="text-white">{project.teamSize}</span>
+                        <span className="text-white text-sm">{project.teamSize}</span>
                       </div>
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-[#F9E370] mb-2">Experience Level</h3>
-                      <Badge variant="outline" className="border-[#1E3851] text-gray-300">
+                      <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Experience Level</h3>
+                      <Badge variant="outline" className="border-white/10 text-zinc-400 text-xs">
                         {project.experienceLevel}
                       </Badge>
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-[#F9E370] mb-2">Category</h3>
-                      <Badge className="bg-[#112941] text-[#83E9FF]">
+                      <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Category</h3>
+                      <Badge className="bg-[#83E9FF]/10 text-[#83E9FF] text-xs">
                         {project.category}
                       </Badge>
                     </div>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-[#F9E370] mb-2">Technologies Used</h3>
+                    <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Technologies Used</h3>
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map(tech => (
-                        <Badge key={tech} variant="outline" className="border-[#83E9FF]/30 text-[#83E9FF]">
+                        <Badge key={tech} variant="outline" className="border-[#83E9FF]/20 text-[#83E9FF] text-xs">
                           <Code2 className="w-3 h-3 mr-1" />
                           {tech}
                         </Badge>
@@ -356,25 +372,25 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
 
               {/* Section 4: Support Requested */}
               {(project.supportTypes.length > 0 || project.budgetRange) && (
-                <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                  <h2 className="text-xl font-semibold text-white mb-4">Support Requested</h2>
+                <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                  <h2 className="text-lg font-bold text-white mb-4">Support Requested</h2>
                   
                   <div className="space-y-4">
                     {project.supportTypes.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Types of Support</h3>
+                        <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Types of Support</h3>
                         <div className="flex flex-wrap gap-2">
                           {project.supportTypes.map((type: string) => (
-                            <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
-                              {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-[#F9E370]" />}
+                            <div key={type} className="flex items-center gap-2 bg-[#0A0D12] border border-white/5 px-3 py-1.5 rounded-lg">
+                              {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-amber-400" />}
                               {type === 'PROMOTION' && <Globe className="w-4 h-4 text-[#83E9FF]" />}
                               {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
-                              {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-[#83E9FF]" />}
-                              <span className="text-white capitalize">{type.toLowerCase()}</span>
+                              {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-emerald-400" />}
+                              <span className="text-white text-xs capitalize">{type.toLowerCase()}</span>
                             </div>
                           ))}
                         </div>
@@ -383,12 +399,12 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     
                     {project.supportTypes.includes('CONTRIBUTOR') && project.contributorTypes.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Looking for Contributors</h3>
+                        <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Looking for Contributors</h3>
                         <div className="flex flex-wrap gap-2">
                           {project.contributorTypes.map((type: string) => (
-                            <div key={type} className="flex items-center gap-2 bg-[#112941] px-3 py-1 rounded-lg">
-                              <Users className="w-4 h-4 text-[#83E9FF]" />
-                              <span className="text-white capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
+                            <div key={type} className="flex items-center gap-2 bg-[#0A0D12] border border-white/5 px-3 py-1.5 rounded-lg">
+                              <Users className="w-4 h-4 text-emerald-400" />
+                              <span className="text-white text-xs capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
                             </div>
                           ))}
                         </div>
@@ -397,81 +413,81 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                     
                     {project.budgetRange && (
                       <div>
-                        <h3 className="text-sm font-medium text-[#F9E370] mb-2">Budget Range</h3>
+                        <h3 className="text-[10px] font-semibold text-[#83E9FF] uppercase tracking-wider mb-2">Budget Range</h3>
                         <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4 text-[#F9E370]" />
-                          <span className="text-white">{project.budgetRange.replace(/_/g, ' ')}</span>
+                          <DollarSign className="w-4 h-4 text-amber-400" />
+                          <span className="text-white text-sm">{project.budgetRange.replace(/_/g, ' ')}</span>
                         </div>
                       </div>
                     )}
                   </div>
-                </Card>
+                </div>
               )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Contact */}
-              <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Contact</h3>
+              <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <h3 className="text-sm font-bold text-white mb-4">Contact</h3>
                 <div className="space-y-3">
                   {project.discordContact && (
                     <div className="flex items-center gap-2">
                       <MessageCircle className="w-4 h-4 text-[#5865F2]" />
-                      <span className="text-gray-300">{project.discordContact}</span>
+                      <span className="text-zinc-400 text-sm">{project.discordContact}</span>
                     </div>
                   )}
                   {project.telegramContact && (
                     <div className="flex items-center gap-2">
                       <Send className="w-4 h-4 text-[#0088CC]" />
-                      <span className="text-gray-300">{project.telegramContact}</span>
+                      <span className="text-zinc-400 text-sm">{project.telegramContact}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-300">{project.leadDeveloperContact}</span>
+                    <Mail className="w-4 h-4 text-zinc-500" />
+                    <span className="text-zinc-400 text-sm">{project.leadDeveloperContact}</span>
                   </div>
                 </div>
-              </Card>
+              </div>
 
               {/* Quick Stats */}
-              <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Project Info</h3>
+              <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Status</span>
-                    <Badge className={getStatusColor(project.status)}>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 text-xs">Status</span>
+                    <Badge className={`${getStatusColor(project.status)} border text-xs`}>
                       <span className="lowercase first-letter:uppercase">{project.status.replace(/_/g, ' ')}</span>
                     </Badge>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Category</span>
-                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 text-xs">Category</span>
+                    <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Team Size</span>
-                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 text-xs">Team Size</span>
+                    <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Experience</span>
-                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 text-xs">Experience</span>
+                    <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Stage</span>
-                    <span className="text-[#83E9FF] font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-500 text-xs">Stage</span>
+                    <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
                   </div>
                 </div>
-              </Card>
+              </div>
 
               {/* Actions */}
               {(canEdit || canDelete || canReview) && (
-                <Card className="bg-[#0A1F32]/80 backdrop-blur-sm border border-[#1E3851] p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Manage Project</h3>
+                <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                  <h3 className="text-sm font-bold text-white mb-4">Manage Project</h3>
                   <div className="space-y-3">
                     {canReview && (
                       <Button 
                         onClick={handleReview}
-                        className="w-full bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90"
+                        className="w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
                         Review Project
@@ -481,7 +497,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                       <Button 
                         onClick={handleEdit}
                         variant="outline"
-                        className="w-full border-[#1E3851] text-gray-300 hover:text-white"
+                        className="w-full border-white/5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg"
                       >
                         <Edit className="w-4 h-4 mr-2" />
                         Edit Project
@@ -491,14 +507,14 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
                       <Button 
                         onClick={handleDelete}
                         variant="outline"
-                        className="w-full border-red-500/30 text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                        className="w-full border-rose-500/20 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete Project
                       </Button>
                     )}
                   </div>
-                </Card>
+                </div>
               )}
             </div>
           </div>

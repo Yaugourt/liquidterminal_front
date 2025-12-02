@@ -287,34 +287,34 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-[#0A1F32] border-[#1E3851] flex flex-col">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-white text-2xl">Submit Your Project</DialogTitle>
-          <p className="text-gray-400 text-sm">
+          <DialogTitle className="text-white text-xl font-bold">Submit Your Project</DialogTitle>
+          <p className="text-zinc-400 text-sm">
             Submit your project to the HyperLiquid Public Goods program
           </p>
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-5 bg-[#112941]">
-            <TabsTrigger value="project" className="text-white data-[state=active]:text-[#83E9FF]">
+          <TabsList className="grid w-full grid-cols-5 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
+            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
               1. Project
             </TabsTrigger>
-            <TabsTrigger value="impact" className="text-white data-[state=active]:text-[#83E9FF]">
+            <TabsTrigger value="impact" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
               2. Impact
             </TabsTrigger>
-            <TabsTrigger value="team" className="text-white data-[state=active]:text-[#83E9FF]">
+            <TabsTrigger value="team" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
               3. Team
             </TabsTrigger>
-            <TabsTrigger value="support" className="text-white data-[state=active]:text-[#83E9FF]">
+            <TabsTrigger value="support" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
               4. Support
             </TabsTrigger>
-            <TabsTrigger value="preview" className="text-white data-[state=active]:text-[#83E9FF]">
+            <TabsTrigger value="preview" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
               5. Preview
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="project" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6">
+          <TabsContent value="project" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <ProjectTab
               formData={formData}
               updateField={updateField}
@@ -333,7 +333,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             />
           </TabsContent>
           
-          <TabsContent value="impact" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6">
+          <TabsContent value="impact" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <ImpactTab
               formData={formData}
               updateField={updateField}
@@ -341,7 +341,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             />
           </TabsContent>
           
-          <TabsContent value="team" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6">
+          <TabsContent value="team" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <TeamTab
               formData={formData}
               updateField={updateField}
@@ -352,7 +352,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             />
           </TabsContent>
           
-          <TabsContent value="support" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6">
+          <TabsContent value="support" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <SupportTab
               formData={formData}
               updateField={updateField}
@@ -361,17 +361,17 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             />
           </TabsContent>
           
-          <TabsContent value="preview" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6">
+          <TabsContent value="preview" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <PreviewTab formData={formData} />
           </TabsContent>
         </Tabs>
         
-        <div className="flex justify-between pt-4 border-t border-[#1E3851]">
+        <div className="flex justify-between pt-4 border-t border-white/5">
           <Button
             variant="outline"
             onClick={goPrevious}
             disabled={currentIndex === 0}
-            className="border-[#1E3851] text-gray-300"
+            className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Previous
@@ -380,7 +380,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
           {currentIndex < tabs.length - 1 ? (
             <Button
               onClick={goNext}
-              className="bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90"
+              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
             >
               Next
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -389,7 +389,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90"
+              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
             >
               {isSubmitting ? "Submitting..." : "Submit Project"}
               <Check className="h-4 w-4 ml-2" />

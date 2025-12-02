@@ -74,9 +74,9 @@ export function CategoryTabs({
       <div className="flex items-center w-full max-w-full overflow-hidden">
         <div className="flex items-center gap-1 flex-1 min-w-0">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 gap-1">
+            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 gap-1">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-8 w-20 bg-[#112941] rounded animate-pulse" />
+                <div key={i} className="h-8 w-20 bg-white/5 rounded-md animate-pulse" />
               ))}
             </div>
           </div>
@@ -88,7 +88,7 @@ export function CategoryTabs({
   if (error) {
     return (
       <div className="flex items-center w-full">
-        <div className="text-red-400 text-sm py-2 px-3">
+        <div className="text-rose-400 text-sm py-2 px-3">
           Failed to load categories: {error.message}
         </div>
       </div>
@@ -98,22 +98,22 @@ export function CategoryTabs({
   return (
     <div className="flex items-center w-full max-w-full overflow-hidden">
       <div className="flex items-center gap-1 flex-1 min-w-0 mr-4">
-        {/* Bouton scroll gauche */}
+        {/* Left scroll button */}
         {canScrollLeft && (
           <button
             onClick={scrollLeft}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-[#83E9FF] hover:bg-white/5 rounded-lg transition-colors"
             title="Scroll left"
           >
             <ChevronLeft size={16} />
           </button>
         )}
         
-        {/* Container des tabs avec défilement */}
+        {/* Tabs container with scroll */}
         <div className="flex-1 min-w-0 max-w-[800px]">
           <div
             ref={scrollContainerRef}
-            className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1 overflow-x-auto gap-1 max-w-full"
+            className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 overflow-x-auto gap-1 max-w-full"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
@@ -122,24 +122,24 @@ export function CategoryTabs({
             {/* Tab "All" */}
             <button
               onClick={() => onTabChange('all')}
-              className={`flex-shrink-0 px-5 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`flex-shrink-0 px-4 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === 'all'
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                  : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
               All Projects
             </button>
             
-            {/* Tabs par catégorie */}
+            {/* Category tabs */}
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => onTabChange(category.id.toString())}
-                className={`flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   activeTab === category.id.toString()
-                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                 }`}
               >
                 {category.name}
@@ -148,11 +148,11 @@ export function CategoryTabs({
           </div>
         </div>
         
-        {/* Bouton scroll droite */}
+        {/* Right scroll button */}
         {canScrollRight && (
           <button
             onClick={scrollRight}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white hover:text-[#83E9FF] hover:bg-[#FFFFFF0A] rounded-md transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-[#83E9FF] hover:bg-white/5 rounded-lg transition-colors"
             title="Scroll right"
           >
             <ChevronRight size={16} />

@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu, ArrowLeft, AlertCircle, Loader2 } from "lucide-react";
@@ -13,15 +13,23 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
 import { hasRole } from "@/lib/roleHelpers";
+import { useWindowSize } from "@/hooks/use-window-size";
 
 export default function PendingReviewPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [projectToReview, setProjectToReview] = useState<PublicGood | null>(null);
+  const { width } = useWindowSize();
   
   const { user, login } = useAuthContext();
   const router = useRouter();
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
   // Check if user is moderator or admin
   const canReview = user ? hasRole(user, 'MODERATOR') : false;
@@ -55,13 +63,15 @@ export default function PendingReviewPage() {
   // Redirect if not logged in
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-white">Authentication Required</h2>
-          <p className="text-gray-400">Please login to access this page</p>
-          <Button onClick={() => login()} className="bg-[#F9E370] text-black hover:bg-[#F9E370]/90">
-            Login
-          </Button>
+      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
+        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+          <div className="text-center space-y-4">
+            <h2 className="text-xl font-bold text-white">Authentication Required</h2>
+            <p className="text-zinc-400">Please login to access this page</p>
+            <Button onClick={() => login()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full">
+              Login
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -70,55 +80,61 @@ export default function PendingReviewPage() {
   // Check permissions
   if (!canReview) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto mb-4 bg-red-500/20 rounded-full flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-red-400" />
+      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
+        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 mx-auto mb-4 bg-rose-500/10 rounded-2xl flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-rose-400" />
+            </div>
+            <h2 className="text-xl font-bold text-white">Access Denied</h2>
+            <p className="text-zinc-400">You don&apos;t have permission to access this page</p>
+            <p className="text-xs text-zinc-500">Moderator or Admin role required</p>
+            <Button 
+              onClick={() => router.push('/ecosystem/publicgoods')}
+              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full"
+            >
+              Go to Public Goods
+            </Button>
           </div>
-          <h2 className="text-2xl font-bold text-white">Access Denied</h2>
-          <p className="text-gray-400">You don&apos;t have permission to access this page</p>
-          <p className="text-sm text-gray-500">Moderator or Admin role required</p>
-          <Button 
-            onClick={() => router.push('/ecosystem/publicgoods')}
-            className="bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90"
-          >
-            Go to Public Goods
-          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Bouton menu mobile en position fixe */}
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+      {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
 
-      {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       <div className="">
-        <Header customTitle="Pending Review" showFees={true} />
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="Pending Review" showFees={true} />
+        </div>
+        
+        {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search pending projects..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           {/* Header section */}
           <div className="space-y-4">
             <Button
               variant="ghost"
               onClick={() => router.push('/ecosystem/publicgoods')}
-              className="text-gray-400 hover:text-white -ml-2 mb-2"
+              className="text-zinc-400 hover:text-white hover:bg-white/5 -ml-2 mb-2 rounded-lg"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to all projects
@@ -127,13 +143,13 @@ export default function PendingReviewPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-white">Pending Review</h1>
-                <p className="text-gray-400 mt-1">
+                <p className="text-zinc-400 mt-1">
                   Projects waiting for moderator approval
                 </p>
               </div>
               {pendingPublicGoods.length > 0 && (
-                <div className="bg-yellow-500/20 border border-yellow-500/30 px-4 py-2 rounded-lg">
-                  <p className="text-yellow-400 text-sm font-medium">
+                <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-lg">
+                  <p className="text-amber-400 text-sm font-medium">
                     {pendingPublicGoods.length} project{pendingPublicGoods.length !== 1 ? 's' : ''} pending
                   </p>
                 </div>
@@ -155,7 +171,10 @@ export default function PendingReviewPage() {
           {/* Projects Grid */}
           {isLoading ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 text-[#83E9FF] animate-spin" />
+              <div className="flex flex-col items-center">
+                <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin mb-2" />
+                <span className="text-zinc-500 text-sm">Loading projects...</span>
+              </div>
             </div>
           ) : filteredProjects.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -169,40 +188,57 @@ export default function PendingReviewPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto mb-4 bg-[#112941] rounded-full flex items-center justify-center">
-                <AlertCircle className="w-8 h-8 text-[#83E9FF]" />
+            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+              <div className="text-center py-8">
+                <div className="w-16 h-16 mx-auto mb-4 bg-[#83e9ff]/10 rounded-2xl flex items-center justify-center">
+                  <AlertCircle className="w-8 h-8 text-[#83E9FF]" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {searchQuery.trim() ? "No projects found" : "All caught up!"}
+                </h3>
+                <p className="text-zinc-400 mb-4">
+                  {searchQuery.trim() 
+                    ? "Try adjusting your search criteria"
+                    : "There are no projects pending review at the moment"
+                  }
+                </p>
+                {!searchQuery.trim() && (
+                  <Button 
+                    onClick={() => router.push('/ecosystem/publicgoods')}
+                    className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+                  >
+                    View All Projects
+                  </Button>
+                )}
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {searchQuery.trim() ? "No projects found" : "All caught up!"}
-              </h3>
-              <p className="text-gray-400 mb-4">
-                {searchQuery.trim() 
-                  ? "Try adjusting your search criteria"
-                  : "There are no projects pending review at the moment"
-                }
-              </p>
-              {!searchQuery.trim() && (
-                <Button 
-                  onClick={() => router.push('/ecosystem/publicgoods')}
-                  className="bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90"
-                >
-                  View All Projects
-                </Button>
-              )}
             </div>
           )}
 
           {/* Info Banner */}
           {pendingPublicGoods.length > 0 && (
-            <div className="bg-[#112941] border border-[#1E3851] p-6 rounded-lg">
-              <h3 className="text-white font-semibold mb-2">Review Guidelines</h3>
-              <ul className="text-gray-300 text-sm space-y-2">
-                <li>• Check that the project has a valid GitHub repository</li>
-                <li>• Verify the project integrates with HyperLiquid</li>
-                <li>• Ensure the description clearly explains the project&apos;s purpose</li>
-                <li>• Confirm the project benefits the HyperLiquid ecosystem</li>
-                <li>• Provide constructive feedback in review notes if rejecting</li>
+            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+              <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
+              <ul className="text-zinc-400 text-sm space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#83E9FF]">•</span>
+                  Check that the project has a valid GitHub repository
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#83E9FF]">•</span>
+                  Verify the project integrates with HyperLiquid
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#83E9FF]">•</span>
+                  Ensure the description clearly explains the project&apos;s purpose
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#83E9FF]">•</span>
+                  Confirm the project benefits the HyperLiquid ecosystem
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#83E9FF]">•</span>
+                  Provide constructive feedback in review notes if rejecting
+                </li>
               </ul>
             </div>
           )}
