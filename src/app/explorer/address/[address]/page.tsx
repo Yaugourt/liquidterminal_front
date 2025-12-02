@@ -2,15 +2,18 @@
 
 import { useParams } from "next/navigation";
 import { useTransactions, usePortfolio } from "@/services/explorer/address";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/Sidebar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Menu } from "lucide-react";
 import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OrdersTable } from "@/components/explorer";
 import { TwapSection } from "@/components/explorer/address/orders";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
+import { SearchBar } from "@/components/SearchBar";
+import { useWindowSize } from "@/hooks/use-window-size";
 
 export default function AddressPage() {
   const params = useParams();
@@ -19,10 +22,18 @@ export default function AddressPage() {
   const { data: portfolio, isLoading: loadingPortfolio } = usePortfolio(address);
 
   const { isAuthenticated, login } = useAuthContext();
+  const { width } = useWindowSize();
   
   // States for dialogs
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("transactions");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
   // Handler for add wallet button click
   const handleAddWalletClick = () => {
@@ -40,114 +51,138 @@ export default function AddressPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header customTitle="Explorer" showFees={true} />
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+      {/* Mobile menu button */}
+      <div className="fixed top-4 left-4 z-50 lg:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/10"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+      </div>
+
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+
+      <div className="">
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="Explorer" showFees={true} />
+        </div>
+
+        {/* Mobile SearchBar */}
+        <div className="p-2 lg:hidden">
+          <SearchBar placeholder="Search..." />
+        </div>
       
-      <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-        {/* Address Header */}
-        <AddressHeader address={address} />
+        <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
+          {/* Address Header */}
+          <AddressHeader address={address} />
 
-        {/* Address Cards */}
-        <AddressCards 
-          portfolio={portfolio || []} 
-          loadingPortfolio={loadingPortfolio}
-          onAddClick={handleAddWalletClick}
-          address={address}
-          transactions={transactions}
-          isLoadingTransactions={isLoading}
-        />
-
-        {/* Tab Navigation */}
-        <TabNavigation 
-          activeTab={activeTab}
-          onChange={handleTabChange}
-          tabs={ADDRESS_TABS}
-        />
-
-        {/* Content based on active tab */}
-        {activeTab === "vaults" && (
-          <VaultDepositList address={address} />
-        )}
-
-        {activeTab === "transactions" && (
-          <TransactionList 
-            transactions={transactions || []}
-            isLoading={isLoading}
-            error={error}
-            currentAddress={address}
-          />
-        )}
-
-        {activeTab === "holdings" && (
-          <HoldingTabs 
+          {/* Address Cards */}
+          <AddressCards 
+            portfolio={portfolio || []} 
+            loadingPortfolio={loadingPortfolio}
+            onAddClick={handleAddWalletClick}
             address={address}
-            viewType="spot" 
+            transactions={transactions}
+            isLoadingTransactions={isLoading}
           />
-        )}
 
-        {activeTab === "orders" && (
-          <OrdersTable 
-            address={address}
+          {/* Tab Navigation */}
+          <TabNavigation 
+            activeTab={activeTab}
+            onChange={handleTabChange}
+            tabs={ADDRESS_TABS}
           />
-        )}
 
-        {activeTab === "twap" && (
-          <TwapSection 
-            address={address}
-          />
-        )}
+          {/* Content based on active tab */}
+          {activeTab === "vaults" && (
+            <VaultDepositList address={address} />
+          )}
 
-        {activeTab === "perps" && (
-          <HoldingTabs 
-            address={address}
-            viewType="perp" 
-          />
-        )}
+          {activeTab === "transactions" && (
+            <TransactionList 
+              transactions={transactions || []}
+              isLoading={isLoading}
+              error={error}
+              currentAddress={address}
+            />
+          )}
 
-        {activeTab === "staking" && (
-          <StakingTable address={address} />
-        )}
+          {activeTab === "holdings" && (
+            <HoldingTabs 
+              address={address}
+              viewType="spot" 
+            />
+          )}
 
-        {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "twap" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
-          <div className="bg-[#0A1F32] h-[400px] border border-[#1E3851] rounded-xl flex items-center justify-center">
-            <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
-          </div>
-        )}
-      </main>
+          {activeTab === "orders" && (
+            <OrdersTable 
+              address={address}
+            />
+          )}
 
-      {/* Authentication Warning Dialog */}
-      <Dialog open={isAuthWarningOpen} onOpenChange={setIsAuthWarningOpen}>
-        <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
-          <DialogHeader>
-            <DialogTitle>Authentication Required</DialogTitle>
-            <DialogDescription className="text-white">
-              You need to be logged in to add this wallet to your list.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4 flex items-center gap-3 text-[#FF5252]">
-            <AlertCircle className="h-5 w-5" />
-            <p>Please log in to access this feature.</p>
-          </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsAuthWarningOpen(false)}
-              className="border-[#83E9FF4D] text-white"
-            >
-              Cancel
-            </Button>
-            <Button 
-              onClick={() => {
-                setIsAuthWarningOpen(false);
-                login();
-              }}
-              className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
-            >
-              Login
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          {activeTab === "twap" && (
+            <TwapSection 
+              address={address}
+            />
+          )}
+
+          {activeTab === "perps" && (
+            <HoldingTabs 
+              address={address}
+              viewType="perp" 
+            />
+          )}
+
+          {activeTab === "staking" && (
+            <StakingTable address={address} />
+          )}
+
+          {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "twap" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
+            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl h-[400px] flex items-center justify-center shadow-xl shadow-black/20">
+              <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
+            </div>
+          )}
+        </main>
+
+        {/* Authentication Warning Dialog */}
+        <Dialog open={isAuthWarningOpen} onOpenChange={setIsAuthWarningOpen}>
+          <DialogContent className="bg-[#151A25] border border-white/10 text-white">
+            <DialogHeader>
+              <DialogTitle>Authentication Required</DialogTitle>
+              <DialogDescription className="text-zinc-400">
+                You need to be logged in to add this wallet to your list.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4 flex items-center gap-3 text-rose-400">
+              <AlertCircle className="h-5 w-5" />
+              <p>Please log in to access this feature.</p>
+            </div>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsAuthWarningOpen(false)}
+                className="border-white/10 text-white hover:bg-white/5"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  setIsAuthWarningOpen(false);
+                  login();
+                }}
+                className="bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/90 font-bold"
+              >
+                Login
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 } 

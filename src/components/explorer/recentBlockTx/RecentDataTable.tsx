@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { Card } from "@/components/ui/card";
 import { useExplorerStore } from "@/services/explorer";
 import { Button } from "@/components/ui/button";
 import { PiPause, PiPlay } from "react-icons/pi";
@@ -117,9 +116,9 @@ export function RecentDataTable() {
   };
 
   return (
-    <div className="w-full">
-      {/* Header avec TabSelector et Controls */}
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full h-full flex flex-col">
+      {/* Header with Tabs and Controls */}
+      <div className="flex justify-between items-center p-4 border-b border-white/5">
         <TabSelector activeTab={activeTab} onTabChange={setActiveTab} />
         
         {/* Controls */}
@@ -129,7 +128,7 @@ export function RecentDataTable() {
             variant="ghost"
             size="sm"
             onClick={handlePauseToggle}
-            className="text-white hover:bg-[#FFFFFF0A] p-2"
+            className="text-zinc-400 hover:text-white hover:bg-white/5 p-2"
           >
             {isPaused ? <PiPlay className="h-4 w-4" /> : <PiPause className="h-4 w-4" />}
           </Button>
@@ -137,17 +136,17 @@ export function RecentDataTable() {
       </div>
 
       {/* Content */}
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-xl mx-auto">
+      <div className="flex-1">
         {showLoading ? (
           <div className="flex justify-center items-center h-[200px]">
             <div className="flex flex-col items-center">
               <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-              <span className="text-[#FFFFFF80] text-sm">Connecting...</span>
+              <span className="text-zinc-500 text-sm">Connecting...</span>
             </div>
           </div>
         ) : (
           <div className="space-y-0">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               <DataTable 
                 type={activeTab}
                 data={currentData.data}
@@ -156,7 +155,7 @@ export function RecentDataTable() {
             </div>
             
             {currentData.total > 0 && (
-              <div className="px-4 py-2 bg-[#051728] border-t border-[#FFFFFF1A]">
+              <div className="px-4 py-3 border-t border-white/5">
                 <Pagination
                   total={currentData.total}
                   page={currentData.page}
@@ -170,7 +169,7 @@ export function RecentDataTable() {
             )}
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 } 

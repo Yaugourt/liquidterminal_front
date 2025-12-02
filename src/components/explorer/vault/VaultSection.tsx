@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useState, useCallback } from "react";
@@ -32,31 +31,27 @@ export function VaultSection() {
   }, [updateParams]);
 
   return (
-    <div className="w-full">
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
-
-        
-        <div className="flex flex-col flex-1">
-          <div className="flex-1">
-            <VaultTableContent
-              vaults={vaults}
-              isLoading={isLoading}
-              error={error}
-              format={format}
-            />
-          </div>
-          <div className="mt-4">
-            <Pagination
-              total={totalCount}
-              page={currentPage}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </div>
+    <div className="w-full h-full flex flex-col p-4">
+      <div className="flex flex-col flex-1">
+        <div className="flex-1">
+          <VaultTableContent
+            vaults={vaults}
+            isLoading={isLoading}
+            error={error}
+            format={format}
+          />
         </div>
-      </Card>
+        <div className="mt-4 pt-4 border-t border-white/5">
+          <Pagination
+            total={totalCount}
+            page={currentPage}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        </div>
+      </div>
     </div>
   );
 } 

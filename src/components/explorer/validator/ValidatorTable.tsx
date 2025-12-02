@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { useValidators } from "@/services/explorer/validator";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -108,59 +107,55 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   const totalItems = getTotalItems();
 
   return (
-    <div className="w-full">
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col rounded-lg">
-
-        
-        <div className="flex flex-col flex-1">
-          <div className="flex-1">
-            {validatorSubTab === 'stakers' ? (
-              <StakersTable />
-            ) : (
-              <TableContent
-                activeTab="validators"
-                validatorSubTab={validatorSubTab}
-                onValidatorSubTabChange={() => {}} // No-op function since this component doesn't handle sub-tab changes
-                validatorsData={{
-                  validators,
-                  loading: validatorsLoading,
-                  error: validatorsError
-                }}
-                vaultsData={{
-                  vaults: [],
-                  loading: false,
-                  error: null
-                }}
-                stakingData={{
-                  validations: stakingValidations,
-                  loading: stakingLoading,
-                  error: stakingError
-                }}
-                unstakingData={{
-                  unstakingQueue,
-                  loading: unstakingLoading,
-                  error: unstakingError
-                }}
-                format={format}
-                startIndex={validatorSubTab === 'all' ? startIndex : 0}
-                endIndex={validatorSubTab === 'all' ? endIndex : 0}
-              />
-            )}
-          </div>
-          {validatorSubTab !== 'stakers' && (
-            <div className="mt-4">
-              <Pagination
-                total={totalItems}
-                page={currentPage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[10, 25, 50, 100]}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-              />
-            </div>
+    <div className="w-full p-4">
+      <div className="flex flex-col flex-1">
+        <div className="flex-1">
+          {validatorSubTab === 'stakers' ? (
+            <StakersTable />
+          ) : (
+            <TableContent
+              activeTab="validators"
+              validatorSubTab={validatorSubTab}
+              onValidatorSubTabChange={() => {}} // No-op function since this component doesn't handle sub-tab changes
+              validatorsData={{
+                validators,
+                loading: validatorsLoading,
+                error: validatorsError
+              }}
+              vaultsData={{
+                vaults: [],
+                loading: false,
+                error: null
+              }}
+              stakingData={{
+                validations: stakingValidations,
+                loading: stakingLoading,
+                error: stakingError
+              }}
+              unstakingData={{
+                unstakingQueue,
+                loading: unstakingLoading,
+                error: unstakingError
+              }}
+              format={format}
+              startIndex={validatorSubTab === 'all' ? startIndex : 0}
+              endIndex={validatorSubTab === 'all' ? endIndex : 0}
+            />
           )}
         </div>
-      </Card>
+        {validatorSubTab !== 'stakers' && (
+          <div className="mt-4 pt-4 border-t border-white/5">
+            <Pagination
+              total={totalItems}
+              page={currentPage}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[10, 25, 50, 100]}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 } 

@@ -1,5 +1,4 @@
 import { memo, useState, useRef, useEffect } from "react";
-import { Card } from "@/components/ui/card";
 import { TrendingUp, BarChart3 } from "lucide-react";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
 import { ValidatorChartTabs, ChartTabType } from "./ValidatorChartTabs";
@@ -64,10 +63,10 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     return (
       <div 
         ref={containerRef}
-        className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]"
+        className="relative flex bg-[#0A0D12] rounded-lg p-1 border border-white/5"
       >
         <div
-          className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-sm transition-all duration-300 ease-out opacity-80"
+          className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-md transition-all duration-300 ease-out"
           style={{
             left: indicatorStyle.left + 2,
             width: indicatorStyle.width - 4,
@@ -80,7 +79,9 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
               buttonRefs.current[period] = el; 
             }}
             onClick={() => onPeriodChange(period)}
-            className="relative z-10 px-2 py-1 text-xs font-medium text-white transition-colors duration-200 whitespace-nowrap hover:text-[#83E9FF]"
+            className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${
+              selectedPeriod === period ? 'text-[#051728] font-bold' : 'text-zinc-400 hover:text-zinc-200'
+            }`}
           >
             {period === '1y' ? 'All Time' : period}
           </button>
@@ -93,15 +94,15 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     const barCounts = [7, 10, 15, 30, 60, 90];
     
     return (
-      <div className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]">
+      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
         {barCounts.map((count) => (
           <button
             key={count}
             onClick={() => setBarCount(count)}
-            className={`px-2 py-1 text-xs font-medium transition-colors rounded-sm ${
+            className={`px-2 py-1 text-xs font-medium transition-all rounded-md ${
               barCount === count
-                ? 'bg-[#83E9FF] text-[#051728]'
-                : 'text-white hover:text-[#83E9FF]'
+                ? 'bg-[#83E9FF] text-[#051728] font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             {count}
@@ -116,13 +117,13 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]">
+        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
           <button
             onClick={() => setChartType('line')}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors rounded-sm ${
+            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'line'
-                ? 'bg-[#83E9FF] text-[#051728]'
-                : 'text-white hover:text-[#83E9FF]'
+                ? 'bg-[#83E9FF] text-[#051728] font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             <TrendingUp size={12} />
@@ -130,10 +131,10 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
           </button>
           <button
             onClick={() => setChartType('bar')}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors rounded-sm ${
+            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'bar'
-                ? 'bg-[#83E9FF] text-[#051728]'
-                : 'text-white hover:text-[#83E9FF]'
+                ? 'bg-[#83E9FF] text-[#051728] font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             <BarChart3 size={12} />
@@ -157,10 +158,10 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
   };
 
   return (
-    <Card className="w-full max-w-none bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="p-2">
-        {/* Header avec tabs alignés */}
-        <div className="flex items-center justify-between mb-1 pl-2">
+    <div className="w-full h-full flex flex-col">
+      <div className="p-4">
+        {/* Header with tabs */}
+        <div className="flex items-center justify-between mb-4">
           <ValidatorChartTabs 
             activeTab={activeChart} 
             onTabChange={setActiveChart} 
@@ -169,10 +170,10 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
         </div>
 
         {/* Chart Container */}
-        <div style={{ height: chartHeight }} className="relative -mx-1">
+        <div style={{ height: chartHeight }} className="relative">
           {renderChart()}
         </div>
       </div>
-    </Card>
+    </div>
   );
 }); 

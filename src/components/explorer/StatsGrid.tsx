@@ -102,8 +102,8 @@ export function StatsGrid() {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 flex items-center justify-center">
-            <Loader2 className="w-4 h-4 text-[#83E9FF4D] animate-spin" />
+          <div key={index} className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-black/20">
+            <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
           </div>
         ))}
       </div>

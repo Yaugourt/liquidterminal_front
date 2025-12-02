@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { useValidators } from "@/services/explorer/validator";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator/hooks/staking";
@@ -148,26 +147,26 @@ export function ValidatorsTable() {
   const totalItems = getTotalItems();
 
   return (
-    <div className="w-full">
-      {/* Header avec TabButtons */}
-      <div className="flex justify-start items-center mb-4">
+    <div className="w-full h-full flex flex-col">
+      {/* Header with Tabs */}
+      <div className="flex justify-between items-center p-4 border-b border-white/5">
         <TabButtons
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />
       </div>
 
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
+      <div className="p-4 flex flex-col flex-1">
         <div className="flex items-center justify-between mb-6 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-4">
           {activeTab === 'validators' && (
-            <div className="flex items-center bg-[#FFFFFF0A] rounded-md p-0.5 w-fit">
+            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
               {['all', 'transactions', 'unstaking'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => handleValidatorSubTabChange(tab as ValidatorSubTab)}
-                  className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${validatorSubTab === tab
-                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
-                    : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${validatorSubTab === tab
+                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                     }`}
                 >
                   {tab === 'all' ? 'All' : tab === 'transactions' ? 'Transactions' : 'Unstaking Queue'}
@@ -176,25 +175,25 @@ export function ValidatorsTable() {
             </div>
           )}
           {activeTab === 'validators' ? (
-            <div className="flex items-center gap-8 max-[720px]:flex-wrap max-[720px]:gap-4">
+            <div className="flex items-center gap-6 max-[720px]:flex-wrap max-[720px]:gap-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-semibold">{stats.total}</span>
+                <span className="text-zinc-400 text-xs font-medium">Total:</span>
+                <span className="text-white text-sm font-bold">{stats.total}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
+              <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Active:</span>
-                <span className="text-[#83E9FF] text-sm font-semibold">{stats.active}</span>
+                <span className="text-zinc-400 text-xs font-medium">Active:</span>
+                <span className="text-[#83E9FF] text-sm font-bold">{stats.active}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
+              <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">HYPE Staked:</span>
+                <span className="text-zinc-400 text-xs font-medium">HYPE Staked:</span>
                 <div className="flex flex-col">
-                  <span className="text-[#F9E370] text-sm font-semibold">
+                  <span className="text-[#f9e370] text-sm font-bold">
                     {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
                   </span>
                   {hypePrice && (
-                    <span className="text-white text-xs">
+                    <span className="text-zinc-500 text-xs">
                       (${formatNumber(stats.totalHypeStaked * hypePrice, format, { maximumFractionDigits: 0 })})
                     </span>
                   )}
@@ -202,15 +201,15 @@ export function ValidatorsTable() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-8 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
+            <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-semibold">{vaultsTotalCount}</span>
+                <span className="text-zinc-400 text-xs font-medium">Total:</span>
+                <span className="text-white text-sm font-bold">{vaultsTotalCount}</span>
               </div>
-              <div className="w-px h-4 bg-[#FFFFFF20] max-[720px]:hidden"></div>
+              <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
-                <span className="text-white text-xs font-medium">Total TVL:</span>
-                <span className="text-[#F9E370] text-sm font-semibold">
+                <span className="text-zinc-400 text-xs font-medium">Total TVL:</span>
+                <span className="text-[#f9e370] text-sm font-bold">
                   ${formatNumber(totalTvl, format, { maximumFractionDigits: 0 })}
                 </span>
               </div>
@@ -249,18 +248,18 @@ export function ValidatorsTable() {
               endIndex={activeTab === 'validators' && validatorSubTab === 'all' ? endIndex : 0}
             />
           </div>
-          <div className="mt-4">
+          <div className="mt-4 pt-4 border-t border-white/5">
             <Pagination
               total={totalItems}
-              page={currentPage} // 0-based page for the component
+              page={currentPage}
               rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[10, 25, 50, 100]} // Normal options
-              onPageChange={handlePageChange} // Receives 0-based page
+              rowsPerPageOptions={[10, 25, 50, 100]}
+              onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
             />
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

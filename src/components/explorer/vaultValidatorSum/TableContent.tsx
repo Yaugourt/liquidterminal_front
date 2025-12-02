@@ -20,9 +20,9 @@ const CopyButton = ({ text }: { text: string }) => {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -34,9 +34,9 @@ const CopyButton = ({ text }: { text: string }) => {
       className="group p-1 rounded transition-colors"
     >
       {copiedAddress === text ? (
-        <Check className="h-3.5 w-3.5 text-green-500" />
+        <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
       ) : (
-        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
       )}
     </button>
   );
@@ -102,45 +102,59 @@ export function TableContent({
           <DataTable 
             isLoading={validatorsLoading} 
             error={validatorsError}
-            emptyMessage="Aucun validator disponible"
+            emptyMessage="No validators available"
           >
-            <TableHeader className="text-white">
-              <TableRow>
-                <TableHead className="text-left py-3 px-4 font-normal">Name</TableHead>
-                <TableHead className="text-left py-3 px-4 font-normal">Status</TableHead>
-                <TableHead className="text-right py-3 px-4 font-normal">Staked HYPE</TableHead>
-                <TableHead className="text-right py-3 px-4 font-normal">APR</TableHead>
-                <TableHead className="text-right py-3 px-4 font-normal">Commission</TableHead>
-                <TableHead className="text-right py-3 px-4 font-normal">Uptime</TableHead>
-                <TableHead className="text-right py-3 px-4 font-normal">Recent Blocks</TableHead>
+            <TableHeader>
+              <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Status</span>
+                </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Staked HYPE</span>
+                </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">APR</span>
+                </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Commission</span>
+                </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Uptime</span>
+                </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Recent Blocks</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {validators.slice(startIndex, endIndex).map((validator: Validator) => (
-                <TableRow key={validator.name} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <TableCell className="py-3 px-4 text-[#83E9FF] font-medium">{validator.name}</TableCell>
-                  <TableCell className="py-3 px-4">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                <TableRow key={validator.name} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <TableCell className="py-3 px-3 text-[#83E9FF] font-medium">{validator.name}</TableCell>
+                  <TableCell className="py-3 px-3">
+                    <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                       validator.isActive 
-                        ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
-                        : 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
+                        ? 'bg-emerald-500/10 text-emerald-400' 
+                        : 'bg-rose-500/10 text-rose-400'
                     }`}>
                       {validator.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-right">
+                  <TableCell className="py-3 px-3 text-right text-white font-medium">
                     {formatNumber(validator.stake, format, { maximumFractionDigits: 2 })}
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-right text-[#4ADE80]">
+                  <TableCell className="py-3 px-3 text-right text-emerald-400 font-medium">
                     {formatNumber(validator.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-right">
+                  <TableCell className="py-3 px-3 text-right text-white font-medium">
                     {formatNumber(validator.commission, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-right">
+                  <TableCell className="py-3 px-3 text-right text-white font-medium">
                     {formatNumber(validator.uptime, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-right text-[#83E9FF]">
+                  <TableCell className="py-3 px-3 text-right text-[#83E9FF] font-medium">
                     {formatNumber(validator.nRecentBlocks, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </TableCell>
                 </TableRow>
@@ -153,60 +167,70 @@ export function TableContent({
           <DataTable 
             isLoading={stakingLoading} 
             error={stakingError}
-            emptyMessage="Aucune transaction disponible"
+            emptyMessage="No transactions available"
           >
-            <TableHeader className="text-white">
-              <TableRow>
-                <TableHead className="text-left py-3 px-4 font-normal">Time</TableHead>
-                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">User</TableHead>
-                <TableHead className="text-left py-3 pl-6 pr-4 font-normal">Type</TableHead>
-                <TableHead className="text-left py-3 px-4 font-normal w-48">Amount</TableHead>
-                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Validator</TableHead>
-                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">Hash</TableHead>
+            <TableHeader>
+              <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Type</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Validator</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {stakingValidations?.map((tx: FormattedStakingValidation) => (
-                <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <TableCell className="py-3 px-4 text-white">
+                <TableRow key={tx.hash} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <TableCell className="py-3 px-3 text-white font-medium">
                     {formatDateTime(tx.timestamp, dateFormat)}
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                  <TableCell className="py-3 px-3">
+                    <div className="flex items-center gap-1.5">
                       <Link 
                         href={`/explorer/address/${tx.user}`}
-                        className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
                       >
                         {tx.user.slice(0, 6)}...{tx.user.slice(-4)}
                       </Link>
                       <CopyButton text={tx.user} />
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                  <TableCell className="py-3 px-3">
+                    <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                       tx.type === 'Undelegate'
-                        ? 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
-                        : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
+                        ? 'bg-rose-500/10 text-rose-400'
+                        : 'bg-emerald-500/10 text-emerald-400'
                     }`}>
                       {tx.type}
                     </span>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-left w-48">
-                    <span className="inline-block">
-                      {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
-                    </span>
+                  <TableCell className="py-3 px-3 text-white font-medium">
+                    {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF] font-inter text-sm">
+                  <TableCell className="py-3 px-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#83E9FF] font-mono text-xs">
                         {getValidatorName(tx.validator)}
                       </span>
                       <CopyButton text={tx.validator} />
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#83E9FF]  font-inter text-sm">
+                  <TableCell className="py-3 px-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[#83E9FF] font-mono text-xs">
                         {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
                       </span>
                       <CopyButton text={tx.hash} />
@@ -222,36 +246,40 @@ export function TableContent({
           <DataTable 
             isLoading={unstakingLoading} 
             error={unstakingError}
-            emptyMessage="Aucune demande d'unstaking en attente"
+            emptyMessage="No pending unstaking requests"
           >
-            <TableHeader className="text-white">
-              <TableRow>
-                <TableHead className="text-left py-3 px-4 font-normal">Time</TableHead>
-                <TableHead className="text-left py-3 pl-4 pr-4 font-normal">User</TableHead>
-                <TableHead className="text-left py-3 px-4 font-normal w-48">Amount</TableHead>
+            <TableHeader>
+              <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
+                </TableHead>
+                <TableHead className="py-3 px-3">
+                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {unstakingQueue?.map((item: FormattedUnstakingQueueItem, index: number) => (
-                <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-                  <TableCell className="py-3 px-4 text-white">
+                <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <TableCell className="py-3 px-3 text-white font-medium">
                     {formatDateTime(item.timestamp, dateFormat)}
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <div className="flex items-center gap-2">
+                  <TableCell className="py-3 px-3">
+                    <div className="flex items-center gap-1.5">
                       <Link 
                         href={`/explorer/address/${item.user}`}
-                        className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
                       >
                         {item.user.slice(0, 6)}...{item.user.slice(-4)}
                       </Link>
                       <CopyButton text={item.user} />
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-left text-white w-48">
-                    <span className="inline-block">
-                      {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
-                    </span>
+                  <TableCell className="py-3 px-3 text-white font-medium">
+                    {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
                   </TableCell>
                 </TableRow>
               ))}
@@ -266,49 +294,61 @@ export function TableContent({
     <DataTable 
       isLoading={vaultsLoading} 
       error={vaultsError}
-      emptyMessage="Aucun vault disponible"
+      emptyMessage="No vaults available"
     >
-      <TableHeader className="text-white">
-        <TableRow>
-          <TableHead className="text-left py-3 px-6 font-normal">Name</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Status</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">TVL</TableHead>
-          <TableHead className="text-right py-3 px-6 font-normal">APR</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Leader</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Created</TableHead>
+      <TableHeader>
+        <TableRow className="border-b border-white/5 hover:bg-transparent">
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Status</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">TVL</span>
+          </TableHead>
+          <TableHead className="py-3 px-3 text-right">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">APR</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Leader</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Created</span>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {vaults.map((vault: VaultSummary) => (
-          <TableRow key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-            <TableCell className="py-3 px-6 text-white font-medium">{vault.summary.name}</TableCell>
-            <TableCell className="py-3 px-6">
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+          <TableRow key={vault.summary.vaultAddress} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+            <TableCell className="py-3 px-3 text-white font-medium">{vault.summary.name}</TableCell>
+            <TableCell className="py-3 px-3">
+              <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                 !vault.summary.isClosed 
-                  ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
-                  : 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
+                  ? 'bg-emerald-500/10 text-emerald-400' 
+                  : 'bg-rose-500/10 text-rose-400'
               }`}>
                 {!vault.summary.isClosed ? 'Open' : 'Closed'}
               </span>
             </TableCell>
-            <TableCell className="py-3 px-6 text-left">
+            <TableCell className="py-3 px-3 text-white font-medium">
               ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
             </TableCell>
-            <TableCell className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
+            <TableCell className={`py-3 px-3 text-right font-medium ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
             </TableCell>
-            <TableCell className="py-3 px-6">
-              <div className="flex items-center gap-2">
+            <TableCell className="py-3 px-3">
+              <div className="flex items-center gap-1.5">
                 <Link 
                   href={`/explorer/address/${vault.summary.leader}`}
-                  className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                  className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
                 >
-              {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
+                  {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
                 </Link>
                 <CopyButton text={vault.summary.leader} />
               </div>
             </TableCell>
-            <TableCell className="py-3 px-6 text-white">
+            <TableCell className="py-3 px-3 text-white font-medium">
               {formatDate(vault.summary.createTimeMillis, dateFormat)}
             </TableCell>
           </TableRow>

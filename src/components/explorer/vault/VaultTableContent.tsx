@@ -26,9 +26,9 @@ const CopyButton = ({ text }: { text: string }) => {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -40,9 +40,9 @@ const CopyButton = ({ text }: { text: string }) => {
       className="group p-1 rounded transition-colors"
     >
       {copiedAddress === text ? (
-        <Check className="h-3.5 w-3.5 text-green-500" />
+        <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
       ) : (
-        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
       )}
     </button>
   );
@@ -59,56 +59,70 @@ export function VaultTableContent({ vaults, isLoading, error, format }: VaultTab
     <DataTable 
       isLoading={isLoading} 
       error={error}
-      emptyMessage="Aucun vault disponible"
+      emptyMessage="No vaults available"
     >
-      <TableHeader className="text-white">
-        <TableRow>
-          <TableHead className="text-left py-3 px-6 font-normal">Name</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Status</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">TVL</TableHead>
-          <TableHead className="text-right py-3 px-6 font-normal">APR</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Leader</TableHead>
-          <TableHead className="text-left py-3 px-6 font-normal">Created</TableHead>
-          <TableHead className="text-center py-3 px-6 font-normal">Action</TableHead>
+      <TableHeader>
+        <TableRow className="border-b border-white/5 hover:bg-transparent">
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Status</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">TVL</span>
+          </TableHead>
+          <TableHead className="py-3 px-3 text-right">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">APR</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Leader</span>
+          </TableHead>
+          <TableHead className="py-3 px-3">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Created</span>
+          </TableHead>
+          <TableHead className="py-3 px-3 text-center">
+            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {vaults.map((vault: VaultSummary) => (
-          <TableRow key={vault.summary.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-            <TableCell className="py-3 px-6 text-white font-medium">{vault.summary.name}</TableCell>
-            <TableCell className="py-3 px-6">
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+          <TableRow key={vault.summary.vaultAddress} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+            <TableCell className="py-3 px-3 text-white font-medium">{vault.summary.name}</TableCell>
+            <TableCell className="py-3 px-3">
+              <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                 !vault.summary.isClosed 
-                  ? 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]' 
-                  : 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
+                  ? 'bg-emerald-500/10 text-emerald-400' 
+                  : 'bg-rose-500/10 text-rose-400'
               }`}>
                 {!vault.summary.isClosed ? 'Open' : 'Closed'}
               </span>
             </TableCell>
-            <TableCell className="py-3 px-6 text-left text-white">
+            <TableCell className="py-3 px-3 text-white font-medium">
               ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
             </TableCell>
-            <TableCell className={`py-3 px-6 text-right ${vault.apr >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
+            <TableCell className={`py-3 px-3 text-right font-medium ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
             </TableCell>
-            <TableCell className="py-3 px-6">
-              <div className="flex items-center gap-2">
+            <TableCell className="py-3 px-3">
+              <div className="flex items-center gap-1.5">
                 <Link 
                   href={`/explorer/address/${vault.summary.leader}`}
-                  className="text-[#83E9FF] font-inter text-sm hover:text-[#83E9FF]/80 transition-colors"
+                  className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
                 >
                   {vault.summary.leader.slice(0, 6)}...{vault.summary.leader.slice(-4)}
                 </Link>
                 <CopyButton text={vault.summary.leader} />
               </div>
             </TableCell>
-            <TableCell className="py-3 px-6 text-white">
+            <TableCell className="py-3 px-3 text-white font-medium">
               {formatDate(vault.summary.createTimeMillis, dateFormat)}
             </TableCell>
-            <TableCell className="py-3 px-6 text-center">
+            <TableCell className="py-3 px-3 text-center">
               <Button
                 onClick={() => handleDepositClick(vault.summary.vaultAddress)}
-                className="bg-[#F9E370] hover:bg-[#F9E370]/90 text-black font-medium px-3 py-1 text-xs flex items-center gap-1 mx-auto"
+                className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-bold px-3 py-1 text-xs flex items-center gap-1 mx-auto"
                 disabled={vault.summary.isClosed}
               >
                 Deposit
