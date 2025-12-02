@@ -1,9 +1,12 @@
 "use client";
 
-import { useXpLeaderboard } from "@/services/xp";
+import { useEffect, useRef } from "react";
+import { useXpLeaderboard, useXpContext, xpService } from "@/services/xp";
 import { cn } from "@/lib/utils";
 import { Trophy, Medal, Crown, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePrivy } from "@privy-io/react-auth";
+import { showXpGainToast } from "./XpNotification";
 
 interface XpLeaderboardProps {
   limit?: number;
@@ -16,6 +19,8 @@ export function XpLeaderboard({
   showCurrentUser = true,
   className,
 }: XpLeaderboardProps) {
+  const { authenticated } = usePrivy();
+  const { refetchDailyTasks, refetchAll } = useXpContext();
   const {
     leaderboard,
     userRank,
@@ -24,6 +29,41 @@ export function XpLeaderboard({
     loadMore,
     hasMore,
   } = useXpLeaderboard(limit);
+
+  // Track if we've already triggered the daily task this session
+  const hasTriggeredExplore = useRef(false);
+
+  // Trigger EXPLORE_LEADERBOARD daily task when authenticated user views leaderboard
+  useEffect(() => {
+    if (!authenticated || hasTriggeredExplore.current) return;
+    
+    hasTriggeredExplore.current = true;
+
+    const triggerExploreTask = async () => {
+      try {
+        const result = await xpService.completeDailyTask('EXPLORE_LEADERBOARD');
+        
+        // Show notification if XP was granted
+        if (result.xpGranted > 0) {
+          showXpGainToast(result.xpGranted, 'Explored leaderboard');
+        }
+        
+        // Show bonus notification if all tasks completed
+        if (result.bonusGranted > 0) {
+          setTimeout(() => {
+            showXpGainToast(result.bonusGranted, 'All daily tasks completed!');
+          }, 500);
+        }
+
+        // Refetch XP data
+        await refetchAll();
+      } catch (err) {
+        console.error('Failed to trigger explore leaderboard task:', err);
+      }
+    };
+
+    triggerExploreTask();
+  }, [authenticated, refetchDailyTasks, refetchAll]);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {

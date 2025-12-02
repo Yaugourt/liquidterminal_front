@@ -153,3 +153,82 @@ export function showXpGainToast(amount: number, action: string) {
     }
   }, 500);
 }
+
+// Show daily task completed toast
+export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGranted?: number) {
+  toast.custom(
+    () => (
+      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+          <Star className="h-4 w-4 text-emerald-400" />
+        </div>
+        <div>
+          <p className="font-bold text-emerald-400">Daily Task Completed!</p>
+          <p className="text-xs text-zinc-400">{taskName} +{xpGranted} XP</p>
+          {bonusGranted && bonusGranted > 0 && (
+            <p className="text-xs text-[#F9E370]">All tasks bonus: +{bonusGranted} XP!</p>
+          )}
+        </div>
+      </div>
+    ),
+    {
+      duration: 4000,
+      position: "bottom-right",
+    }
+  );
+
+  setTimeout(() => {
+    if (globalRefetch) {
+      globalRefetch().catch(console.error);
+    }
+  }, 500);
+}
+
+// Show weekly challenge completed toast
+export function showWeeklyChallengeToast(xpReward: number, challengeName: string) {
+  toast.custom(
+    () => (
+      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-[#F9E370]/20 border border-[#F9E370]/30 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
+          <TrendingUp className="h-4 w-4 text-[#F9E370]" />
+        </div>
+        <div>
+          <p className="font-bold text-[#F9E370]">Weekly Challenge Complete!</p>
+          <p className="text-xs text-zinc-400">{challengeName}</p>
+          <p className="text-xs text-[#F9E370]">+{xpReward} XP</p>
+        </div>
+      </div>
+    ),
+    {
+      duration: 5000,
+      position: "bottom-right",
+    }
+  );
+
+  setTimeout(() => {
+    if (globalRefetch) {
+      globalRefetch().catch(console.error);
+    }
+  }, 500);
+}
+
+// Show daily limit reached warning toast
+export function showDailyLimitToast(actionName: string) {
+  toast.custom(
+    () => (
+      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+          <Flame className="h-4 w-4 text-orange-400" />
+        </div>
+        <div>
+          <p className="font-bold text-orange-400">Daily Limit Reached</p>
+          <p className="text-xs text-zinc-400">{actionName} - No XP until tomorrow</p>
+        </div>
+      </div>
+    ),
+    {
+      duration: 4000,
+      position: "bottom-right",
+    }
+  );
+}
