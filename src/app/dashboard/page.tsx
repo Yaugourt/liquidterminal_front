@@ -65,13 +65,13 @@ export default function Home() {
 
           {/* Tokens + Chart */}
           <div className={`flex flex-col md:flex-row gap-8 w-full ${activeTokenTab === "auction" || activeTokenTab === "past-auction" ? "md:items-stretch" : "md:items-start"}`}>
-            <div className="w-full md:w-[35%] flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 p-1">
+            <div className="w-full md:w-[35%] flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <TrendingTokensTabs 
                 onTabChange={setActiveTokenTab} 
                 onPastAuctionHeightChange={setPastAuctionHeight}
               />
             </div>
-            <div className="flex-1 flex flex-col justify-start bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 p-1">
+            <div className="flex-1 flex flex-col justify-start bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <ChartSection 
                 chartHeight={activeTokenTab === "past-auction" ? pastAuctionHeight : chartHeight} 
                 isAuctionTabActive={activeTokenTab === "auction"} 

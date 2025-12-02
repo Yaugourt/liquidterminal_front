@@ -34,7 +34,7 @@ export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAu
 
   return (
     <div className={isAuctionTabActive || isPastAuctionTabActive ? "flex flex-col h-full" : "flex flex-col"}>
-      <div className="flex flex-row mb-4 justify-start items-start">
+      <div className="flex flex-row p-4 pb-0 justify-start items-start border-b border-white/5">
         <FilterButtons
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}

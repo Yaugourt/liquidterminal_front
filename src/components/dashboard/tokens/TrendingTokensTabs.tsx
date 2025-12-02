@@ -28,7 +28,7 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector - Style V2 Pills */}
-      <div className="flex items-center gap-2 p-3 pb-0 border-b border-white/5 bg-black/20">
+      <div className="flex items-center gap-2 p-4 border-b border-white/5">
         <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
           {tabs.map(tab => (
             <button
