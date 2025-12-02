@@ -83,7 +83,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
   };
 
   return (
-    <Card className="bg-[#051728E5] border border-[#83E9FF4D] hover:border-[#83E9FF80] transition-all shadow-sm hover:shadow-lg group overflow-hidden rounded-lg relative">
+    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
       {/* Delete button for admins */}
       <ProtectedAction requiredRole="ADMIN" user={user}>
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -92,7 +92,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
             size="sm"
             variant="ghost"
             disabled={isDeleting}
-            className="p-1 h-auto text-red-400 hover:text-red-300 hover:bg-red-400/10"
+            className="p-1 h-auto text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 rounded-lg"
             title="Delete resource"
           >
             <Trash2 className="w-3 h-3" />
@@ -100,7 +100,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
         </div>
       </ProtectedAction>
       
-      <CardContent className="p-0">
+      <div className="p-0">
         <a 
           href={resource.url} 
           target="_blank" 
@@ -108,7 +108,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           className="block"
         >
           {/* Image section */}
-          <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#112941] to-[#1a3a5a]" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0A0D12] to-[#151A25]" style={{ aspectRatio: '16/9' }}>
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
               <Image
                 src={preview.image}
@@ -137,26 +137,26 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           {/* Content section */}
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-[#F9E370] transition-colors">
+              <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-[#83E9FF] transition-colors">
                 {preview?.title || resource.title}
               </h3>
-              <ExternalLink size={14} className="text-[#F9E370] mt-0.5 flex-shrink-0" />
+              <ExternalLink size={14} className="text-[#83E9FF] mt-0.5 flex-shrink-0" />
             </div>
 
-            <p className="text-xs text-gray-400 line-clamp-2">
+            <p className="text-xs text-zinc-400 line-clamp-2">
               {preview?.description || resource.description}
             </p>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-2 border-t border-white/5">
               <Badge 
                 variant="secondary" 
-                className="bg-[#112941] text-gray-300 border-none text-xs"
+                className="bg-[#0A0D12] text-zinc-400 border border-white/5 text-xs rounded-md"
               >
                 {preview?.siteName || 'Article'}
               </Badge>
               <div className="flex items-center gap-2">
                 {previewLoading && (
-                  <span className="text-xs text-[#FFFFFF60]">Loading preview...</span>
+                  <span className="text-xs text-zinc-500">Loading...</span>
                 )}
              
                 <Button
@@ -170,39 +170,39 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                       setShowReadLists(!showReadLists);
                     }
                   }}
-                  className={`p-1 h-auto ${
+                  className={`p-1.5 h-auto rounded-lg ${
                     authenticated 
-                      ? "text-[#83E9FF] hover:text-[#F9E370] hover:bg-[#83E9FF1A]" 
-                      : "text-[#83E9FF]/40 cursor-not-allowed"
+                      ? "text-[#83E9FF] hover:bg-[#83E9FF]/10" 
+                      : "text-zinc-600 cursor-not-allowed"
                   }`}
                   title={authenticated ? "Add to read list" : "Login required to add to read list"}
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-3.5 h-3.5" />
                 </Button>
               </div>
             </div>
           </div>
         </a>
 
-        {/* Read Lists Modal - EN DEHORS du lien */}
+        {/* Read Lists Modal */}
         {showReadLists && authenticated && (
           <div 
             ref={dropdownRef} 
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setShowReadLists(false);
               }
             }}
           >
-            <div className="bg-[#051728] border-2 border-[#83E9FF] rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">
-              <div className="text-lg text-[#83E9FF] font-medium mb-4">Add to read list:</div>
+            <div className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-sm w-full mx-4">
+              <div className="text-sm font-bold text-white mb-4">Add to read list:</div>
               {readLists.length === 0 ? (
-                <div className="text-sm text-[#FFFFFF60] py-4 text-center">
+                <div className="text-sm text-zinc-500 py-4 text-center">
                   No read lists available
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {readLists.map((readList) => (
                     <button
                       key={`readlist-${readList.id}`}
@@ -212,27 +212,27 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                         handleAddToReadList(readList.id);
                       }}
                       disabled={isAddingToList}
-                      className="w-full text-left px-4 py-3 text-sm text-white hover:bg-[#83E9FF1A] rounded-md flex items-center gap-3 disabled:opacity-50 transition-colors border border-[#83E9FF4D]"
+                      className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-colors border border-white/5 hover:border-white/10"
                     >
                       <BookOpen className="w-5 h-5 text-[#83E9FF] flex-shrink-0" />
                       <div className="flex-1">
                         <div className="font-medium">{readList.name}</div>
                         {readList.description && (
-                          <div className="text-xs text-[#FFFFFF80] mt-1">{readList.description}</div>
+                          <div className="text-xs text-zinc-500 mt-1">{readList.description}</div>
                         )}
                       </div>
                     </button>
                   ))}
                 </div>
               )}
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     setShowReadLists(false);
                   }}
-                  className="px-4 py-2 text-sm text-[#FFFFFF80] hover:text-white transition-colors"
+                  className="px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -240,7 +240,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 } 

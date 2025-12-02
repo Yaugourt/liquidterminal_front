@@ -66,8 +66,8 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   if (isLoading) {
     return (
       <div className="relative w-full md:w-80">
-        <div className="w-full px-4 py-3 bg-[#051728E5] border border-[#83E9FF4D] rounded-lg text-white">
-          <span className="text-sm text-gray-400">Loading categories...</span>
+        <div className="w-full px-4 py-3 bg-[#0A0D12] border border-white/5 rounded-lg text-white">
+          <span className="text-sm text-zinc-500">Loading categories...</span>
         </div>
       </div>
     );
@@ -77,22 +77,22 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
     <div className="relative w-full md:w-80" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-[#051728E5] border border-[#83E9FF4D] hover:border-[#83E9FF80] rounded-lg flex items-center justify-between text-white transition-all"
+        className="w-full px-4 py-2.5 bg-[#0A0D12] border border-white/5 hover:border-white/10 rounded-lg flex items-center justify-between text-white transition-all"
       >
         <span className="text-sm font-medium">{getButtonText()}</span>
         <ChevronDown 
           size={16} 
-          className={`text-[#F9E370] transition-transform ${isOpen ? "rotate-180" : ""}`} 
+          className={`text-[#83E9FF] transition-transform ${isOpen ? "rotate-180" : ""}`} 
         />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full bg-[#051728] border border-[#83E9FF4D] rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full mt-2 w-full bg-[#151A25] border border-white/10 rounded-xl shadow-xl shadow-black/20 z-50 overflow-hidden">
           {/* Select All option */}
-          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#112941] transition-colors border-b border-[#83E9FF1A]">
+          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5">
             <button
               onClick={handleSelectAll}
-              className="text-sm text-white font-medium hover:text-[#83E9FF] transition-colors"
+              className="text-sm text-zinc-300 font-medium hover:text-[#83E9FF] transition-colors"
             >
               Select All
             </button>
@@ -100,8 +100,8 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
               onClick={handleSelectAll}
               className={`w-4 h-4 rounded border cursor-pointer transition-colors ${
                 categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id))
-                  ? "bg-[#F9E370] border-[#F9E370] hover:bg-[#F9E370]/80" 
-                  : "border-gray-500 hover:border-[#83E9FF]"
+                  ? "bg-[#83E9FF] border-[#83E9FF]" 
+                  : "border-zinc-600 hover:border-[#83E9FF]"
               } flex items-center justify-center`}
             >
               {categories.length > 0 && categories.every(cat => selectedCategories.includes(cat.id)) && (
@@ -113,7 +113,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
           {/* Category options */}
           <div className="max-h-64 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-center text-gray-400">
+              <div className="p-4 text-center text-zinc-500">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#83E9FF] mx-auto mb-2"></div>
                 <span className="text-sm">Chargement des catégories...</span>
               </div>
@@ -122,15 +122,15 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
               <button
                 key={category.id}
                 onClick={() => handleToggleCategory(category.id)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#112941] transition-colors"
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-white">{category.name}</span>
+                  <span className="text-sm text-zinc-300">{category.name}</span>
                 </div>
                 <div className={`w-4 h-4 rounded border ${
                   selectedCategories.includes(category.id) 
-                    ? "bg-[#F9E370] border-[#F9E370]" 
-                    : "border-gray-500"
+                    ? "bg-[#83E9FF] border-[#83E9FF]" 
+                    : "border-zinc-600"
                 } flex items-center justify-center`}>
                   {selectedCategories.includes(category.id) && (
                     <Check size={12} className="text-[#051728]" />

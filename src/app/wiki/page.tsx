@@ -17,6 +17,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
 import { useEducationalCategories } from "@/services/wiki";
+import { useWindowSize } from "@/hooks/use-window-size";
 
 // Using education service hooks instead of mock data
 
@@ -26,6 +27,13 @@ export default function EducationPage() {
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
+  const { width } = useWindowSize();
+
+  useEffect(() => {
+    if (width && width >= 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [width]);
 
 
   const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
@@ -78,31 +86,33 @@ export default function EducationPage() {
   } : null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6" />
         </Button>
       </div>
 
-      {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-      {/* Main content */}
       <div className="">
-        <Header customTitle="Introduction" showFees={true} />
+        {/* Header with glass effect */}
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <Header customTitle="Introduction" showFees={true} />
+        </div>
 
+        {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search educational content..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-1 max-w-[1920px] mx-auto">
+        <main className="px-6 py-8 space-y-6 max-w-[1920px] mx-auto">
           {/* Main content area */}
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">

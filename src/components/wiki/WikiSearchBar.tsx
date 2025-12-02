@@ -30,18 +30,16 @@ export function WikiSearchBar({ onSearch, placeholder = "Search in resources..."
 
   return (
     <div className={`relative w-full max-w-sm ${className}`}>
-      <div className={`relative flex items-center w-full px-4 py-3 bg-[#051728E5] border rounded-lg transition-all ${
-        isFocused 
-          ? "border-[#83E9FF80] shadow-lg shadow-[#83E9FF20]" 
-          : "border-[#83E9FF4D] hover:border-[#83E9FF80]"
-      }`}>
-        <Search 
-          size={18} 
-          className={`mr-3 transition-colors ${
-            isFocused ? "text-[#83E9FF]" : "text-gray-400"
-          }`} 
+      <div className={`relative flex items-center w-full px-4 py-2.5 bg-[#151A25]/40 backdrop-blur-sm border rounded-lg transition-all ${isFocused
+        ? "border-[#83E9FF]/50"
+        : "border-white/5 hover:border-white/10"
+        }`}>
+        <Search
+          size={18}
+          className={`mr-3 transition-colors ${isFocused ? "text-[#83E9FF]" : "text-zinc-500"
+            }`}
         />
-        
+
         <input
           type="text"
           value={query}
@@ -49,15 +47,15 @@ export function WikiSearchBar({ onSearch, placeholder = "Search in resources..."
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-white placeholder-gray-400 text-sm outline-none"
+          className="flex-1 bg-transparent text-white placeholder:text-zinc-500 text-sm outline-none"
         />
-        
+
         {query && (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleClear}
-            className="ml-2 h-6 w-6 text-gray-400 hover:text-white hover:bg-[#83E9FF20]"
+            className="ml-2 h-6 w-6 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg"
           >
             <X size={14} />
           </Button>

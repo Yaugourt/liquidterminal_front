@@ -59,22 +59,16 @@ const useReadListInitialization = () => {
 // Simple state components
 const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-    <div className="bg-[#051728E5] border border-[#83E9FF4D] shadow-sm backdrop-blur-sm hover:border-[#83E9FF66] transition-all rounded-md p-6 max-w-md w-full mx-4">
+    <div className="bg-[#151A25]/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-8 max-w-md w-full mx-4">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
-        <p className="text-[#83E9FF]/60 text-sm">You need to login to access your read lists</p>
+        <h2 className="text-lg font-bold text-white mb-2">Authentication Required</h2>
+        <p className="text-zinc-400 text-sm">You need to login to access your read lists</p>
       </div>
       <button
         onClick={onLogin}
-        className="group relative w-full bg-[#051728] rounded-lg overflow-hidden"
+        className="w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold py-2.5 rounded-lg transition-colors"
       >
-        <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
-        <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
-        <div className="relative z-20 flex items-center justify-center gap-2 py-2.5">
-          <span className="font-semibold text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
-            Login
-          </span>
-        </div>
+        Login
       </button>
     </div>
   </div>
@@ -83,13 +77,13 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
 const Error = ({ error }: { error: string }) => (
   <div className="flex items-center justify-center h-96">
     <div className="text-center">
-      <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg className="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
       </div>
-      <h3 className="text-red-400 text-lg mb-2">Error</h3>
-      <p className="text-[#FFFFFF80] max-w-md">{error}</p>
+      <h3 className="text-rose-400 text-lg font-semibold mb-2">Error</h3>
+      <p className="text-zinc-400 max-w-md">{error}</p>
     </div>
   </div>
 );

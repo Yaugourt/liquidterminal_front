@@ -53,44 +53,44 @@ export function PublicReadListCard({
   };
 
   return (
-    <Card 
-      className={`bg-[#051728E5] border transition-all duration-200 cursor-pointer group ${
+    <div 
+      className={`bg-[#151A25]/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
         isSelected 
-          ? 'border-[#83E9FF] shadow-lg shadow-[#83E9FF]/20' 
-          : 'border-[#83E9FF4D] hover:border-[#83E9FF80] hover:shadow-lg'
+          ? 'border-[#83E9FF]/50' 
+          : 'border-white/5 hover:border-white/10'
       }`}
       onClick={handleSelect}
     >
-      <CardHeader className="pb-3">
+      <div className="p-4 pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-white truncate group-hover:text-[#83E9FF] transition-colors">
+            <h3 className="text-base font-semibold text-white truncate group-hover:text-[#83E9FF] transition-colors">
               {readList.name}
             </h3>
             {readList.description && (
-              <p className="text-sm text-[#FFFFFF80] mt-1 line-clamp-2">
+              <p className="text-sm text-zinc-400 mt-1 line-clamp-2">
                 {readList.description}
               </p>
             )}
           </div>
           <Badge 
             variant="secondary" 
-            className="ml-2 bg-[#f9e370]/20 text-[#f9e370] border-[#f9e370]/30"
+            className="ml-2 bg-[#F9E370]/10 text-[#F9E370] border-none text-xs"
           >
             {readList.itemsCount} items
           </Badge>
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="pt-0">
+      <div className="px-4 pb-4">
         {/* Creator Info */}
-        <div className="flex items-center text-sm text-[#FFFFFF] mb-3">
-          <User className="w-4 h-4 mr-2" />
+        <div className="flex items-center text-sm text-zinc-300 mb-3">
+          <User className="w-4 h-4 mr-2 text-zinc-500" />
           <span className="truncate">{readList.creator.name}</span>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between text-xs text-[#f9e370] mb-4">
+        <div className="flex items-center justify-between text-xs text-zinc-500 mb-4 py-2 border-t border-white/5">
           <div className="flex items-center">
             <Calendar className="w-3 h-3 mr-1" />
             <span>
@@ -111,7 +111,7 @@ export function PublicReadListCard({
               handleCopy();
             }}
             disabled={isCopying}
-            className="flex-1 bg-[#83E9FF] text-black hover:bg-[#83E9FF]/90 transition-colors"
+            className="flex-1 bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg transition-colors"
             size="sm"
           >
             {isCopying ? (
@@ -132,7 +132,7 @@ export function PublicReadListCard({
             )}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 } 
