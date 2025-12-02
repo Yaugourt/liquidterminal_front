@@ -21,11 +21,10 @@ const TableHeaderCell = memo(({ label, className, align = "left" }: { label: str
   <TableHead className={className}>
     <Button
       variant="ghost"
-      className={`text-white hover:text-white font-inter font-normal p-0 flex items-center w-full ${
-        align === 'right' ? 'justify-end text-right' : 
-        align === 'center' ? 'justify-center text-center' : 
-        'justify-start text-left'
-      }`}
+      className={`text-white hover:text-white font-inter font-normal p-0 flex items-center w-full ${align === 'right' ? 'justify-end text-right' :
+        align === 'center' ? 'justify-center text-center' :
+          'justify-start text-left'
+        }`}
     >
       {label}
     </Button>
@@ -74,12 +73,12 @@ export const StakersTable = memo(function StakersTable() {
   const { format } = useNumberFormat();
   const { price: hypePrice } = useHypePrice();
 
-  const { 
-    holders, 
-    total, 
-    isLoading, 
+  const {
+    holders,
+    total,
+    isLoading,
     error,
-    updateParams 
+    updateParams
   } = useStakingHoldersPaginated({
     limit: rowsPerPage,
     defaultParams: { page: currentPage + 1 }
@@ -101,9 +100,9 @@ export const StakersTable = memo(function StakersTable() {
       await navigator.clipboard.writeText(address);
       setCopiedAddress(address);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   const formatAddress = (address: string) => {
@@ -112,8 +111,8 @@ export const StakersTable = memo(function StakersTable() {
 
   if (error) {
     return (
-      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
-        <div className="flex flex-col items-center text-center">
+      <div className="flex justify-center items-center h-[300px]">
+        <div className="flex flex-col items-center text-center px-4">
           <Database className="w-12 h-12 mb-4 text-zinc-600" />
           <p className="text-rose-400 text-lg font-medium mb-2">Error loading stakers</p>
           <p className="text-zinc-400 text-sm">{error.message}</p>
@@ -123,18 +122,18 @@ export const StakersTable = memo(function StakersTable() {
   }
 
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-full">
+    <div className="flex flex-col h-full">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-white/5 hover:bg-transparent">
-              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60">
+              <TableHead className="text-left py-3 px-4">
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Address</span>
               </TableHead>
-              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60">
+              <TableHead className="text-left py-3 px-4">
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
               </TableHead>
-              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60 w-48">
+              <TableHead className="text-left py-3 px-4 w-48">
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span>
               </TableHead>
             </TableRow>
@@ -201,7 +200,7 @@ export const StakersTable = memo(function StakersTable() {
 
       {/* Pagination */}
       {!isLoading && holders.length > 0 && (
-        <div className="border-t border-white/5 px-4 py-3">
+        <div className="mt-4 pt-4 border-t border-white/5">
           <Pagination
             total={total}
             page={currentPage}
@@ -214,4 +213,4 @@ export const StakersTable = memo(function StakersTable() {
       )}
     </div>
   );
-}); 
+});
