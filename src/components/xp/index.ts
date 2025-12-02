@@ -12,4 +12,5 @@ export {
 export { DailyTasksWidget } from './DailyTasksWidget';
 export { WeeklyChallengesCard } from './WeeklyChallengesCard';
 export { DailyLimitsWarning, useCanEarnXp } from './DailyLimitsWarning';
+export { DailyTasksPopover } from './DailyTasksPopover';
 

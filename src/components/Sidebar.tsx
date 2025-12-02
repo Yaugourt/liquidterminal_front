@@ -19,7 +19,7 @@ import {
     type NavigationItem
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
-import { XpBadge } from "@/components/xp"
+import { XpBadge, DailyTasksPopover } from "@/components/xp"
 
 // Social links
 
@@ -335,8 +335,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 </Button>
                             </div>
                             {/* XP Badge - séparé du lien profil pour éviter la redirection */}
-                            <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                            <div className="mt-2 space-y-1.5" onClick={(e) => e.stopPropagation()}>
                                 <XpBadge compact showStreak />
+                                <DailyTasksPopover />
                             </div>
                         </div>
                     )}

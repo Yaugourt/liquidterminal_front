@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
-import { XpBadge, XpHistoryList, XpLeaderboard } from "@/components/xp";
+import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard } from "@/components/xp";
 import { Shield, Users, Wallet, BookOpen, Copy, Activity, Menu, List, LucideIcon, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { usePrivy } from "@privy-io/react-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWindowSize } from "@/hooks/use-window-size";
+import { useSearchParams } from "next/navigation";
 
 export default function ProfilePage() {
     const { user: privyUser } = usePrivy();
@@ -30,6 +31,10 @@ export default function ProfilePage() {
     const { data: walletLists } = useUserWalletLists({ enabled: !!currentUser });
     const { stats: xpStats, isLoading: isLoadingXp } = useXp();
     const { width } = useWindowSize();
+    const searchParams = useSearchParams();
+    
+    // Get initial tab from URL query param
+    const initialTab = searchParams.get('tab') || 'activity';
 
     // State pour la sélection de liste (null = "All Wallets")
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
@@ -234,7 +239,7 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Tabs for different sections */}
-                    <Tabs defaultValue="activity" className="space-y-6">
+                    <Tabs defaultValue={initialTab} className="space-y-6">
                         <TabsList className="bg-[#0A0D12] border border-white/5 rounded-lg p-1">
                             <TabsTrigger 
                                 value="activity" 
@@ -253,6 +258,12 @@ export default function ProfilePage() {
                                 className="text-zinc-400 data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
                             >
                                 Leaderboard
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="missions" 
+                                className="text-zinc-400 data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
+                            >
+                                Missions
                             </TabsTrigger>
                         </TabsList>
 
@@ -420,6 +431,13 @@ export default function ProfilePage() {
 
                         <TabsContent value="leaderboard">
                             <XpLeaderboard limit={20} showCurrentUser />
+                        </TabsContent>
+
+                        <TabsContent value="missions" className="space-y-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <DailyTasksWidget />
+                                <WeeklyChallengesCard />
+                            </div>
                         </TabsContent>
                     </Tabs>
 
