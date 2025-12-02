@@ -35,12 +35,12 @@ TableHeaderCell.displayName = 'TableHeaderCell';
 
 // Composant pour l'état vide
 const EmptyState = memo(() => (
-  <TableRow>
+  <TableRow className="hover:bg-transparent">
     <TableCell colSpan={3} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
-        <p className="text-white text-lg font-inter">No stakers found</p>
-        <p className="text-[#FFFFFF80] text-sm font-inter mt-2">Check back later</p>
+        <Database className="w-10 h-10 mb-3 text-zinc-600" />
+        <p className="text-zinc-400 text-sm mb-1">No stakers found</p>
+        <p className="text-zinc-600 text-xs">Check back later</p>
       </div>
     </TableCell>
   </TableRow>
@@ -51,15 +51,15 @@ EmptyState.displayName = 'EmptyState';
 const LoadingState = memo(() => (
   <>
     {Array.from({ length: 5 }).map((_, i) => (
-      <TableRow key={i} className="border-b border-[#FFFFFF1A]">
+      <TableRow key={i} className="border-b border-white/5 hover:bg-transparent">
         <TableCell className="py-3 px-4">
-          <div className="h-4 bg-[#FFFFFF1A] rounded animate-pulse"></div>
+          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
         </TableCell>
         <TableCell className="py-3 px-4">
-          <div className="h-4 bg-[#FFFFFF1A] rounded animate-pulse"></div>
+          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
         </TableCell>
         <TableCell className="py-3 px-4">
-          <div className="h-4 bg-[#FFFFFF1A] rounded animate-pulse"></div>
+          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
         </TableCell>
       </TableRow>
     ))}
@@ -112,28 +112,34 @@ export const StakersTable = memo(function StakersTable() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-[300px]">
-        <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-          <p className="text-[#FF5757] text-lg font-inter mb-2">Error loading stakers</p>
-          <p className="text-[#FFFFFF80] text-sm font-inter">{error.message}</p>
+      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+        <div className="flex flex-col items-center text-center">
+          <Database className="w-12 h-12 mb-4 text-zinc-600" />
+          <p className="text-rose-400 text-lg font-medium mb-2">Error loading stakers</p>
+          <p className="text-zinc-400 text-sm">{error.message}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1">
+    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-full">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
         <Table>
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-left py-3 px-4 font-normal text-white text-sm font-inter">Address</TableHead>
-              <TableHead className="text-left py-3 pl-4 pr-4 font-normal text-white text-sm font-inter">Amount</TableHead>
-              <TableHead className="text-left py-3 px-4 font-normal text-white w-48 text-sm font-inter">Value</TableHead>
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
+              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Address</span>
+              </TableHead>
+              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+              </TableHead>
+              <TableHead className="text-left py-3 px-4 bg-[#151A25]/60 w-48">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {isLoading ? (
               <LoadingState />
             ) : holders.length === 0 ? (
@@ -146,16 +152,16 @@ export const StakersTable = memo(function StakersTable() {
                 return (
                   <TableRow
                     key={holder.address}
-                    className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+                    className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                   >
                     <TableCell className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-inter font-medium text-sm">
+                        <span className="text-white font-medium text-sm">
                           {rank}.
                         </span>
                         <Link
                           href={`/explorer/address/${holder.address}`}
-                          className="text-[#83E9FF] hover:text-white transition-colors text-sm font-inter"
+                          className="text-[#83E9FF] hover:text-white transition-colors text-sm font-mono"
                           title="View address details"
                         >
                           {formatAddress(holder.address)}
@@ -164,23 +170,23 @@ export const StakersTable = memo(function StakersTable() {
                           variant="ghost"
                           size="sm"
                           onClick={() => copyToClipboard(holder.address)}
-                          className="h-6 w-6 p-0 hover:bg-[#FFFFFF1A]"
+                          className="h-6 w-6 p-0 hover:bg-white/5 text-zinc-400 hover:text-white"
                         >
                           {copiedAddress === holder.address ? (
-                            <Check className="h-3 w-3 text-green-500" />
+                            <Check className="h-3 w-3 text-emerald-400" />
                           ) : (
-                            <Copy className="h-3 w-3 text-[#f9e370]" />
+                            <Copy className="h-3 w-3 text-zinc-500" />
                           )}
                         </Button>
             
                       </div>
                     </TableCell>
-                    <TableCell className="py-3 px-4 text-left text-white text-sm font-inter">
+                    <TableCell className="py-3 px-4 text-left text-white text-sm">
                       <span className="inline-block">
                         {formatNumber(holder.amount, format)} HYPE
                       </span>
                     </TableCell>
-                    <TableCell className="py-3 px-4 text-left text-white w-48 text-sm font-inter">
+                    <TableCell className="py-3 px-4 text-left text-white w-48 text-sm">
                       <span className="inline-block">
                         {hypePrice ? `$${formatNumber(value, format)}` : '-'}
                       </span>
@@ -195,7 +201,7 @@ export const StakersTable = memo(function StakersTable() {
 
       {/* Pagination */}
       {!isLoading && holders.length > 0 && (
-        <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
+        <div className="border-t border-white/5 px-4 py-3">
           <Pagination
             total={total}
             page={currentPage}
