@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useWallets } from "@/store/use-wallets";
 import { useReadLists } from "@/store/use-readlists";
@@ -23,7 +23,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSearchParams } from "next/navigation";
 
-export default function ProfilePage() {
+function ProfileTabs() {
+    const searchParams = useSearchParams();
+    const initialTab = searchParams.get('tab') || 'activity';
+    
+    return <ProfileContent initialTab={initialTab} />;
+}
+
+function ProfileContent({ initialTab }: { initialTab: string }) {
     const { user: privyUser } = usePrivy();
     const { user: currentUser } = useAuthContext();
     const { wallets } = useWallets();
@@ -31,10 +38,6 @@ export default function ProfilePage() {
     const { data: walletLists } = useUserWalletLists({ enabled: !!currentUser });
     const { stats: xpStats, isLoading: isLoadingXp } = useXp();
     const { width } = useWindowSize();
-    const searchParams = useSearchParams();
-    
-    // Get initial tab from URL query param
-    const initialTab = searchParams.get('tab') || 'activity';
 
     // State pour la sélection de liste (null = "All Wallets")
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
@@ -444,6 +447,18 @@ export default function ProfilePage() {
                 </main>
             </div>
         </div>
+    );
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#0B0E14] flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            </div>
+        }>
+            <ProfileTabs />
+        </Suspense>
     );
 }
 
