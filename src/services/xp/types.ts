@@ -170,10 +170,10 @@ export interface CompleteDailyTaskResponse {
 
 // Daily task labels for display
 export const DAILY_TASK_LABELS: Record<DailyTaskType, string> = {
-  LOGIN: 'Se connecter',
-  READ_RESOURCE: 'Lire une ressource',
-  ADD_WALLET: 'Ajouter un wallet',
-  EXPLORE_LEADERBOARD: 'Explorer le leaderboard',
+  LOGIN: 'Log in',
+  READ_RESOURCE: 'Read a resource',
+  ADD_WALLET: 'Add a wallet',
+  EXPLORE_LEADERBOARD: 'Explore the leaderboard',
 };
 
 // Daily task icons (lucide icon names)
@@ -216,10 +216,10 @@ export interface WeeklyChallengesResponse {
 
 // Weekly challenge labels for display
 export const WEEKLY_CHALLENGE_LABELS: Record<WeeklyChallengeType, string> = {
-  READ_20_RESOURCES: 'Lire 20 ressources',
-  CREATE_5_READLISTS: 'Créer 5 readlists',
-  LOGIN_7_DAYS: 'Se connecter 7 jours',
-  ADD_15_WALLETS: 'Ajouter 15 wallets',
+  READ_20_RESOURCES: 'Read 20 resources',
+  CREATE_5_READLISTS: 'Create 5 readlists',
+  LOGIN_7_DAYS: 'Log in 7 days in a row',
+  ADD_15_WALLETS: 'Add 15 wallets',
 };
 
 // Weekly challenge icons (lucide icon names)
@@ -260,12 +260,12 @@ export interface DailyLimitsResponse {
 
 // Daily limit labels for display
 export const DAILY_LIMIT_LABELS: Record<LimitedActionType, string> = {
-  CREATE_READLIST: 'Création de readlist',
-  MARK_RESOURCE_READ: 'Ressources lues',
-  CREATE_WALLETLIST: 'Création de wallet list',
-  ADD_WALLET_TO_LIST: 'Wallets ajoutés',
-  COPY_PUBLIC_READLIST: 'Copie de readlist',
-  CREATE_EDUCATIONAL_CATEGORY: 'Catégories éducatives',
-  ADD_EDUCATIONAL_RESOURCE: 'Ressources éducatives',
+  CREATE_READLIST: 'Create readlist',
+  MARK_RESOURCE_READ: 'Resources read',
+  CREATE_WALLETLIST: 'Create wallet list',
+  ADD_WALLET_TO_LIST: 'Wallets added',
+  COPY_PUBLIC_READLIST: 'Copy readlist',
+  CREATE_EDUCATIONAL_CATEGORY: 'Educational categories',
+  ADD_EDUCATIONAL_RESOURCE: 'Educational resources',
 };
 
