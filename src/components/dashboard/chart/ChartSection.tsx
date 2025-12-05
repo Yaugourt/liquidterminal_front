@@ -7,17 +7,7 @@ import { FilterButtons } from "./TabsButton";
 import { useChartPeriod } from '@/components/common/charts';
 import { useChartTimeSeriesData, useFeesChartData } from "@/services/dashboard";
 
-interface ChartSectionProps {
-  chartHeight: number;
-}
-
-interface ChartSectionProps {
-  chartHeight: number;
-  isAuctionTabActive?: boolean;
-  isPastAuctionTabActive?: boolean;
-}
-
-export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAuctionTabActive = false }: ChartSectionProps) => {
+export const ChartSection = () => {
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("bridge");
   const [selectedCurrency, setSelectedCurrency] = useState<"HYPE" | "USDC">("USDC");
   const [selectedFeeType, setSelectedFeeType] = useState<"all" | "spot">("all");
@@ -33,7 +23,7 @@ export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAu
   const { data, isLoading } = selectedFilter === "fees" ? feesData : normalData;
 
   return (
-    <div className={isAuctionTabActive || isPastAuctionTabActive ? "flex flex-col h-full" : "flex flex-col"}>
+    <div className="flex flex-col h-full">
       <div className="flex flex-row p-4 pb-0 justify-start items-start border-b border-white/5">
         <FilterButtons
           selectedFilter={selectedFilter}
@@ -41,9 +31,7 @@ export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAu
         />
       </div>
 
-
-
-      <div className={isAuctionTabActive || isPastAuctionTabActive ? "flex-1 flex flex-col" : ""}>
+      <div className="flex-1 min-h-0">
         <ChartDisplay
           data={data}
           isLoading={isLoading}
@@ -53,9 +41,6 @@ export const ChartSection = ({ chartHeight, isAuctionTabActive = false, isPastAu
           onCurrencyChange={setSelectedCurrency}
           onPeriodChange={handlePeriodChange}
           availablePeriods={availablePeriods}
-          chartHeight={chartHeight}
-          isAuctionTabActive={isAuctionTabActive}
-          isPastAuctionTabActive={isPastAuctionTabActive}
           selectedFeeType={selectedFeeType}
           onFeeTypeChange={setSelectedFeeType}
         />

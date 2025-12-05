@@ -178,14 +178,14 @@ export default function TokenPage() {
                     />
 
                     {/* Trading Interface Layout */}
-                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
-                        {/* Chart - Fixed height */}
-                        <div className="xl:col-span-7">
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 xl:items-stretch">
+                        {/* Chart */}
+                        <div className="xl:col-span-7 flex flex-col">
                             <TradingViewChart
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for API
                                 tokenName={token.name} // Pass token name for special cases like PURR
-                                className="h-[450px]"
+                                className="flex-1 min-h-[450px]"
                             />
 
                             {/* Tabs dans l'espace vide */}
@@ -215,17 +215,16 @@ export default function TokenPage() {
                             </div>
                         </div>
 
-                        {/* Order Book - Fixed height */}
+                        {/* Order Book */}
                         <div className="xl:col-span-3">
                             <OrderBook
                                 symbol={`${token.name}/USDC`}
                                 marketIndex={token.marketIndex} // Pass marketIndex for WebSocket
                                 tokenNameProp={token.name} // Pass token name for special cases like PURR
-                                className="h-[510px]"
                             />
                         </div>
 
-                        {/* Token Info Sidebar - Adapts to available space */}
+                        {/* Token Info Sidebar */}
                         <div className="xl:col-span-2">
                             <TokenInfoSidebar
                                 token={{
@@ -239,7 +238,6 @@ export default function TokenPage() {
                                     marketIndex: token.marketIndex, // Pass marketIndex for consistency
                                     contract: token.tokenId // Pass tokenId for token details API
                                 } as TokenData}
-                                className="min-h-[500px]"
                             />
                         </div>
                     </div>
