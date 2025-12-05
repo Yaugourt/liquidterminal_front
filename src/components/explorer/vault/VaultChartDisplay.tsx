@@ -2,23 +2,10 @@
 
 import { Loader2 } from "lucide-react";
 import { VaultChartData, VaultChartTimeframe } from "@/services/explorer/vault/types";
-import { Chart } from '@/components/common/charts';
-import { formatLargeNumber } from '@/lib/formatters/numberFormatting';
-
+import { LightweightChart } from '@/components/common/charts/LightweightChart';
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDate } from '@/lib/formatters/dateFormatting';
-import { useState, useRef, useEffect } from 'react';
-
-// Types pour le tooltip
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
-    payload: {
-      timestamp: number;
-    };
-    value: number;
-  }>;
-}
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
 type VaultChartType = "accountValue" | "pnl";
 
@@ -31,7 +18,6 @@ interface VaultChartDisplayProps {
   selectedTimeframe: VaultChartTimeframe;
   onTimeframeChange: (timeframe: VaultChartTimeframe) => void;
   availableTimeframes: { value: VaultChartTimeframe; label: string }[];
-  chartHeight: number;
 }
 
 const AnimatedTimeframeSelector = ({
@@ -97,18 +83,19 @@ export const VaultChartDisplay = ({
   onChartChange,
   selectedTimeframe,
   onTimeframeChange,
-  availableTimeframes,
-  chartHeight
+  availableTimeframes
 }: VaultChartDisplayProps) => {
   const { format: dateFormat } = useDateFormat();
+  const [hoverValue, setHoverValue] = useState<number | null>(null);
+  const [hoverTime, setHoverTime] = useState<number | null>(null);
 
   // Transform data for the selected chart type
-  const transformedData = data.map(item => ({
-    timestamp: item.timestamp,
-    value: selectedChart === 'accountValue' ? item.accountValue : item.pnl,
-    accountValue: item.accountValue,
-    pnl: item.pnl
-  }));
+  const chartData = useMemo(() => {
+    return data.map(item => ({
+      time: item.timestamp,
+      value: selectedChart === 'accountValue' ? item.accountValue : item.pnl,
+    }));
+  }, [data, selectedChart]);
 
   // Tabs pour sélectionner le type de chart
   const chartTabs: { key: VaultChartType; label: string }[] = [
@@ -120,7 +107,7 @@ export const VaultChartDisplay = ({
     return selectedChart === 'accountValue' ? '#83E9FF' : '#f9e370';
   };
 
-  const formatYAxisValue = (value: number) => {
+  const formatYAxisValue = useCallback((value: number) => {
     if (value >= 1000000000) {
       return `$${(value / 1000000000).toFixed(1)}B`;
     }
@@ -131,44 +118,37 @@ export const VaultChartDisplay = ({
       return `$${(value / 1000).toFixed(1)}K`;
     }
     return `$${value.toFixed(0)}`;
-  };
+  }, []);
 
-  const CustomTooltip = ({ active, payload }: TooltipProps) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const value = payload[0].value;
+  const handleCrosshairMove = useCallback((value: number | null, time: number | null) => {
+    setHoverValue(value);
+    setHoverTime(time);
+  }, []);
 
-      return (
-        <div className="bg-[#151A25] border border-white/10 p-2 rounded-lg shadow-lg">
-          <p className="text-zinc-400 text-xs">
-            {formatDate(new Date(data.timestamp), dateFormat)}
-          </p>
-          <p className="text-white font-bold">
-            {selectedChart === 'accountValue'
-              ? `Account Value: ${formatLargeNumber(value, { prefix: '$', decimals: 2 })}`
-              : `PnL: ${value >= 0 ? '+' : ''}${formatLargeNumber(value, { prefix: '$', decimals: 2 })}`
-            }
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  // Get latest value for display
+  const latestValue = useMemo(() => {
+    if (chartData.length === 0) return null;
+    return chartData[chartData.length - 1].value;
+  }, [chartData]);
+
+  const displayValue = hoverValue ?? latestValue;
 
   if (error) {
     return (
-      <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 flex items-center justify-center" style={{ height: chartHeight }}>
-        <div className="flex items-center gap-2 text-rose-400">
-          <span className="text-sm">Failed to load vault chart</span>
+      <div className="w-full h-full flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        <div className="flex-1 flex items-center justify-center min-h-[300px]">
+          <div className="flex items-center gap-2 text-rose-400">
+            <span className="text-sm">Failed to load vault chart</span>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col" style={{ height: chartHeight }}>
+    <div className="w-full h-full flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
       {/* Header avec tabs et timeframe selector */}
-      <div className="p-4 pb-0">
+      <div className="flex-shrink-0 p-4 pb-0">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4 flex-wrap">
             {/* Titre */}
@@ -191,6 +171,20 @@ export const VaultChartDisplay = ({
                 </button>
               ))}
             </div>
+
+            {/* Value Display */}
+            {displayValue !== null && (
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-white tracking-tight">
+                  {formatYAxisValue(displayValue)}
+                </span>
+                {hoverTime && (
+                  <span className="text-[10px] text-zinc-500">
+                    {formatDate(new Date(hoverTime), dateFormat)}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Sélecteur de timeframe */}
@@ -203,67 +197,24 @@ export const VaultChartDisplay = ({
       </div>
 
       {/* Chart */}
-      <div className="flex-1 p-4 min-h-0">
-        <Chart
-          data={transformedData}
-          isLoading={isLoading}
-          error={error}
-          height="100%"
-          width="100%"
-          formatValue={formatYAxisValue}
-          formatTime={(time: string | number) => {
-            const date = new Date(time);
-            if (selectedTimeframe === "day") {
-              return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } else if (selectedTimeframe === "week") {
-              return date.toLocaleDateString([], { weekday: 'short', day: 'numeric' });
-            } else if (selectedTimeframe === "month") {
-              return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-            } else if (selectedTimeframe === "allTime") {
-              return date.toLocaleDateString([], { month: 'short', year: '2-digit' });
-            }
-            return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-          }}
-          xAxisProps={{
-            stroke: "#71717a",
-            fontSize: 10
-          }}
-          yAxisProps={{
-            stroke: "#71717a",
-            fontSize: 10,
-            domain: ['dataMin', 'dataMax'],
-            padding: { top: 20, bottom: 20 }
-          }}
-          gridProps={{
-            stroke: "rgba(255,255,255,0.05)"
-          }}
-          lineProps={{
-            stroke: getColor(),
-            strokeWidth: 2,
-            dot: false,
-            activeDot: { r: 4, fill: getColor() }
-          }}
-        >
-          {{
-            loading: (
-              <div className="flex justify-center items-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
-              </div>
-            ),
-            empty: (
-              <div className="flex justify-center items-center h-full">
-                <p className="text-zinc-500">No data available</p>
-              </div>
-            ),
-            error: (
-              <div className="flex justify-center items-center h-full">
-                <p className="text-rose-400">Error loading data</p>
-              </div>
-            ),
-            tooltip: CustomTooltip
-          }}
-        </Chart>
+      <div className="flex-1 min-h-0 p-4">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full min-h-[200px]">
+            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+          </div>
+        ) : chartData.length === 0 ? (
+          <div className="flex justify-center items-center h-full min-h-[200px]">
+            <p className="text-zinc-500">No data available</p>
+          </div>
+        ) : (
+          <LightweightChart
+            data={chartData}
+            lineColor={getColor()}
+            formatValue={formatYAxisValue}
+            onCrosshairMove={handleCrosshairMove}
+          />
+        )}
       </div>
     </div>
   );
-}; 
+};

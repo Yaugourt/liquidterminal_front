@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Loader2, Database, Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -68,10 +67,12 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-          <span className="text-[#FFFFFF80] text-sm">Loading holders...</span>
+      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center">
+            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+            <span className="text-zinc-500 text-sm">Loading holders...</span>
+          </div>
         </div>
       </div>
     );
@@ -79,77 +80,87 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
-          <p className="text-white text-sm mb-1">Error loading holders</p>
-          <p className="text-[#FFFFFF80] text-xs">{error.message}</p>
+      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        <div className="flex justify-center items-center h-[200px]">
+          <div className="flex flex-col items-center">
+            <Database className="w-10 h-10 mb-3 text-zinc-600" />
+            <p className="text-zinc-400 text-sm mb-1">Error loading holders</p>
+            <p className="text-zinc-500 text-xs">{error.message}</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-white/10 transition-all">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="py-3 px-3 w-[170px] text-white font-normal text-sm text-left">Address</TableHead>
-              <TableHead className="py-3 px-3 w-[120px] text-white font-normal text-sm text-left">Amount</TableHead>
-              <TableHead className="py-3 px-3 w-[120px] text-white font-normal text-sm text-left">Value</TableHead>
-              <TableHead className="py-3 px-3 w-[80px] text-white font-normal text-sm text-left">Percentage</TableHead>
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Address</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Percentage</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {paginatedHolders.length > 0 ? (
               paginatedHolders.map((holder, index) => (
                 <TableRow
                   key={holder.address}
-                  className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                 >
-                  <TableCell className="py-3 px-3 w-[170px] text-white text-sm text-left">
+                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
                     <div className="flex items-center gap-1">
-                      <span className="text-white text-sm">{startIndex + index + 1}.</span>
+                      <span className="text-zinc-500 text-xs">{startIndex + index + 1}.</span>
                       <div className="flex items-center gap-1">
                         <Link 
                           href={`/explorer/address/${holder.address}`} 
-                          className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
+                          className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
                         >
                           {formatAddress(holder.address)}
                         </Link>
                         {getAlias(holder.address) && (
-                          <span className="text-gray-400 text-xs ml-1">
+                          <span className="text-zinc-500 text-xs ml-1">
                             ({getAlias(holder.address)})
                           </span>
                         )}
                         <button 
                           onClick={() => copyToClipboard(holder.address)}
-                          className="group p-1 rounded transition-colors"
+                          className="group p-1 rounded transition-colors hover:bg-white/5"
                         >
                           {copiedAddress === holder.address ? (
-                            <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                            <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
                           ) : (
-                            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3.5 w-3.5 text-zinc-500 group-hover:text-white transition-all duration-200" />
                           )}
                         </button>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-3 w-[120px] text-white text-sm text-left">
+                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
                     <div className="flex items-center gap-1">
                       <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
                       {stakedHolders && stakedHolders[holder.address] && (
-                        <span className="text-[#f9e370] text-xs">
+                        <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-[#f9e370]/10 text-[#f9e370]">
                           (staked)
                         </span>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-3 w-[120px] text-white text-sm text-left">
+                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
                     {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
                   </TableCell>
-                  <TableCell className="py-3 px-3 w-[80px] text-white text-sm text-left">
+                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
                     {formatPercentage(holder.amount, supplyForCalculation, format)}
                   </TableCell>
                 </TableRow>
@@ -161,9 +172,9 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                   className="py-8"
                 >
                   <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
-                    <p className="text-white text-sm mb-1">No holders found</p>
-                    <p className="text-[#FFFFFF80] text-xs">No data available</p>
+                    <Database className="w-10 h-10 mb-3 text-zinc-600" />
+                    <p className="text-zinc-400 text-sm mb-1">No holders found</p>
+                    <p className="text-zinc-500 text-xs">No data available</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -173,7 +184,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
       </div>
 
       {holdersArray.length > 0 && (
-        <div className="border-t border-[#FFFFFF1A] px-4 py-3 bg-[#051728]">
+        <div className="border-t border-white/5 px-4 py-3">
           <Pagination
             total={holdersArray.length}
             page={currentPage}
@@ -184,7 +195,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
           />
         </div>
       )}
-    </Card>
+    </div>
   );
 });
 

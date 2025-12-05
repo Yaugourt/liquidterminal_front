@@ -15,16 +15,9 @@ import { Menu } from "lucide-react";
 
 export default function Home() {
   const { width } = useWindowSize();
-  const chartHeight = 270;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTokenTab, setActiveTokenTab] = useState<"perp" | "spot" | "auction" | "past-auction">("perp");
-  const [pastAuctionHeight, setPastAuctionHeight] = useState<number>(chartHeight);
-
-  useEffect(() => {
-    if (activeTokenTab !== "past-auction") {
-      setPastAuctionHeight(chartHeight);
-    }
-  }, [activeTokenTab, chartHeight]);
+  const [, setActiveTokenTab] = useState<"perp" | "spot" | "auction" | "past-auction">("perp");
+  const [, setPastAuctionHeight] = useState<number>(270);
 
   useEffect(() => {
     if (width && width >= 1024) {
@@ -64,19 +57,15 @@ export default function Home() {
           <StatsGrid />
 
           {/* Tokens + Chart */}
-          <div className={`flex flex-col md:flex-row gap-8 w-full ${activeTokenTab === "auction" || activeTokenTab === "past-auction" ? "md:items-stretch" : "md:items-start"}`}>
+          <div className="flex flex-col md:flex-row gap-8 w-full md:items-stretch">
             <div className="w-full md:w-[35%] flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <TrendingTokensTabs 
                 onTabChange={setActiveTokenTab} 
                 onPastAuctionHeightChange={setPastAuctionHeight}
               />
             </div>
-            <div className="flex-1 flex flex-col justify-start bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
-              <ChartSection 
-                chartHeight={activeTokenTab === "past-auction" ? pastAuctionHeight : chartHeight} 
-                isAuctionTabActive={activeTokenTab === "auction"} 
-                isPastAuctionTabActive={activeTokenTab === "past-auction"}
-              />
+            <div className="flex-1 flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+              <ChartSection />
             </div>
           </div>
 
