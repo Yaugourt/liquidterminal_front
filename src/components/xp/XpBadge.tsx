@@ -87,7 +87,7 @@ export function XpBadge({
             {/* Mini progress */}
             <div className="w-12 h-1.5 bg-[#0A0D12] rounded-full overflow-hidden border border-white/5">
               <div
-                className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all duration-500"
+                className="h-full bg-gradient-to-r from-[#83E9FF] to-cyan-400 transition-all duration-500"
                 style={{ width: `${displayStats.progressPercent}%` }}
               />
             </div>

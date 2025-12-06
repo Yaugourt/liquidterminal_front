@@ -4,31 +4,205 @@
 
 ## 🎨 Palette de Couleurs
 
-### Couleurs Principales
-| Variable | Valeur | Usage |
-|----------|--------|-------|
-| `#0B0E14` | Background principal | Body, main containers |
-| `#151A25` | Cards/Sections | Avec `/60` pour transparence |
-| `#051728` | Sidebar, Header elements | Background secondaire |
-| `#0A0D12` | Tabs container | Pills background |
+### 📦 1. Backgrounds & Surfaces
 
-### Couleurs Accent
-| Variable | Valeur | Usage |
-|----------|--------|-------|
-| `#83E9FF` | Cyan principal | Accent, active states, hover, icons |
-| `#f9e370` | Gold/Jaune | Secondary accent, admin, warnings |
-| `#00ff88` | Vert | Success, positive values |
-| `emerald-400/500` | Vert | Buy actions, progression |
-| `rose-400/500` | Rouge | Sell actions, errors, negative values |
+#### Backgrounds Principaux
+| Couleur | Hex | RGB | Usage | Exemple |
+|---------|-----|-----|-------|---------|
+| **Background Principal** | `#0B0E14` | `rgb(11, 14, 20)` | Body, main containers, base layer | `bg-[#0B0E14]` |
+| **Background Gradient Start** | `#1a2c38` | `rgb(26, 44, 56)` | Gradient radial (from) | `from-[#1a2c38]` |
+| **Background Gradient End** | `#050505` | `rgb(5, 5, 5)` | Gradient radial (to) | `to-[#050505]` |
 
-### Opacités Standards
+#### Surfaces (Cards & Containers)
+| Couleur | Hex | RGB | Usage | Opacité | Exemple |
+|---------|-----|-----|-------|---------|---------|
+| **Card Background** | `#151A25` | `rgb(21, 26, 37)` | Cards, sections, modals | `/60` (transparent) | `bg-[#151A25]/60` |
+| **Sidebar/Header** | `#051728` | `rgb(5, 23, 40)` | Sidebar, header elements | `100%` | `bg-[#051728]` |
+| **Tabs Container** | `#0A0D12` | `rgb(10, 13, 18)` | Tabs pills background | `100%` | `bg-[#0A0D12]` |
+| **Input/Field** | `#0A0D12` | `rgb(10, 13, 18)` | Input fields, nested cards | `100%` | `bg-[#0A0D12]` |
+
+---
+
+### 🎯 2. Couleurs Accent (Primaires)
+
+| Couleur | Hex | RGB | Usage | Variantes |
+|---------|-----|-----|-------|-----------|
+| **Cyan Principal** | `#83E9FF` | `rgb(131, 233, 255)` | Accent principal, active states, hover, icons, links | `/10`, `/20`, `/30` |
+| **Gold/Jaune** | `#F9E370` | `rgb(249, 227, 112)` | Accent secondaire, admin, warnings, badges premium | `/10`, `/20`, `/30` |
+
+**Usages spécifiques Cyan (`#83E9FF`):**
+- Tabs actives: `bg-[#83E9FF] text-[#051728]`
+- Icônes actives: `text-[#83E9FF]`
+- Hover states: `hover:text-[#83E9FF]`
+- Background accent: `bg-[#83E9FF]/10`
+- Borders accent: `border-[#83E9FF]/30`
+
+**Usages spécifiques Gold (`#F9E370`):**
+- Badges admin/premium: `bg-[#F9E370]/10 text-[#F9E370]`
+- Icônes warnings: `text-[#F9E370]`
+- Tabs secondaires: `bg-[#F9E370] text-[#051728]`
+
+---
+
+### ✅ 3. Couleurs Sémantiques (Actions & États)
+
+#### Success & Positive
+| Couleur | Hex/RGB | Usage | Variantes |
+|---------|---------|-------|-----------|
+| **Emerald 400** | `rgb(52, 211, 153)` | Buy actions, success states | `/10`, `/20` |
+| **Emerald 500** | `rgb(16, 185, 129)` | Buy badges, positive values | `/10`, `/20` |
+| **Vert Success** | `#00ff88` | Success messages | `/10`, `/20` |
+
+**Exemples:**
+- Buy badge: `bg-emerald-500/10 text-emerald-400`
+- Positive change: `bg-emerald-500/20 text-emerald-400`
+- Success state: `bg-[#00ff88]/10 text-[#00ff88]`
+
+#### Error & Negative
+| Couleur | Hex/RGB | Usage | Variantes |
+|---------|---------|-------|-----------|
+| **Rose 400** | `rgb(251, 113, 133)` | Sell actions, errors | `/10`, `/20` |
+| **Rose 500** | `rgb(244, 63, 94)` | Sell badges, negative values | `/10`, `/20` |
+
+**Exemples:**
+- Sell badge: `bg-rose-500/10 text-rose-400`
+- Negative change: `bg-rose-500/20 text-rose-400`
+- Error state: `bg-rose-500/5 border-rose-500/20 text-rose-400`
+
+---
+
+### 🎨 4. Couleurs Neutres (Text & Borders)
+
+#### Text Colors (Zinc Scale)
+| Couleur | Hex | Usage | Exemple |
+|---------|-----|-------|---------|
+| **White** | `#FFFFFF` | Texte principal, valeurs importantes | `text-white` |
+| **Zinc 100** | `rgb(244, 244, 245)` | Body text principal | `text-zinc-100` |
+| **Zinc 300** | `rgb(212, 212, 216)` | Texte secondaire | `text-zinc-300` |
+| **Zinc 400** | `rgb(161, 161, 170)` | Labels, headers, texte discret | `text-zinc-400` |
+| **Zinc 500** | `rgb(113, 113, 122)` | Texte très discret, placeholders | `text-zinc-500` |
+| **Zinc 600** | `rgb(82, 82, 91)` | Placeholder, disabled, empty states | `text-zinc-600` |
+
+#### Borders & Dividers
+| Couleur | Opacité | Usage | Exemple |
+|---------|---------|-------|---------|
+| **White** | `/5` | Bordures subtiles (default) | `border-white/5` |
+| **White** | `/10` | Bordures hover, accentuées | `border-white/10` |
+| **Cyan** | `/30` | Bordures accent actives | `border-[#83E9FF]/30` |
+| **Gold** | `/20` | Bordures premium/admin | `border-[#F9E370]/20` |
+| **Emerald** | `/20` | Bordures success | `border-emerald-500/20` |
+| **Rose** | `/20` | Bordures erreur | `border-rose-500/20` |
+
+---
+
+### 📊 5. Système d'Opacité
+
+| Opacité | Valeur | Usage Principal | Exemples |
+|---------|--------|-----------------|----------|
+| `/5` | `5%` | Bordures subtiles, backgrounds très légers | `border-white/5`, `bg-white/5` |
+| `/10` | `10%` | Backgrounds hover, badges légers | `bg-white/10`, `bg-[#83E9FF]/10`, `hover:bg-white/10` |
+| `/20` | `20%` | Backgrounds accentués, badges | `bg-emerald-500/20`, `bg-rose-500/20`, `border-[#F9E370]/20` |
+| `/30` | `30%` | Borders accent actives | `border-[#83E9FF]/30` |
+| `/60` | `60%` | Cards transparentes (glassmorphism) | `bg-[#151A25]/60` |
+| `/80` | `80%` | Header backdrop, overlays | `bg-[#0B0E14]/80` |
+| `/90` | `90%` | Hover states buttons | `hover:bg-[#83E9FF]/90` |
+| `100%` | `100%` | Surfaces opaques | `bg-[#051728]`, `bg-[#0A0D12]` |
+
+---
+
+### 🎭 6. Gradient System
+
+#### Background Gradient (Radial)
+```tsx
+bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
+from-[#1a2c38] 
+via-[#0B0E14] 
+to-[#050505]
 ```
-/5   → borders subtils (border-white/5)
-/10  → backgrounds légers hover (bg-white/10, bg-[#83e9ff]/10)
-/20  → backgrounds accentués
-/60  → cards transparentes (bg-[#151A25]/60)
-/80  → header backdrop (bg-[#0B0E14]/80)
+
+**Structure:**
+- **Type**: Radial (ellipse at top)
+- **Start**: `#1a2c38` (bleu-gris foncé)
+- **Middle**: `#0B0E14` (background principal)
+- **End**: `#050505` (noir profond)
+
+---
+
+### 🎨 7. Combinaisons de Couleurs (Patterns)
+
+#### Card Standard
+```tsx
+bg-[#151A25]/60 
+backdrop-blur-md 
+border border-white/5 
+rounded-2xl 
+shadow-xl shadow-black/20
 ```
+
+#### Card Hover
+```tsx
+hover:border-white/10 
+transition-all
+```
+
+#### Tab Active (Cyan)
+```tsx
+bg-[#83E9FF] 
+text-[#051728] 
+font-bold
+```
+
+#### Tab Active (Gold)
+```tsx
+bg-[#F9E370] 
+text-[#051728] 
+font-bold
+```
+
+#### Badge Buy
+```tsx
+bg-emerald-500/10 
+text-emerald-400 
+border border-emerald-500/20
+```
+
+#### Badge Sell
+```tsx
+bg-rose-500/10 
+text-rose-400 
+border border-rose-500/20
+```
+
+#### Badge Accent (Cyan)
+```tsx
+bg-[#83E9FF]/10 
+text-[#83E9FF] 
+border border-[#83E9FF]/20
+```
+
+#### Badge Premium (Gold)
+```tsx
+bg-[#F9E370]/10 
+text-[#F9E370] 
+border border-[#F9E370]/20
+```
+
+---
+
+### 📋 8. Référence Rapide par Usage
+
+| Usage | Couleur | Classe Tailwind |
+|-------|---------|----------------|
+| **Background principal** | `#0B0E14` | `bg-[#0B0E14]` |
+| **Card background** | `#151A25/60` | `bg-[#151A25]/60` |
+| **Accent principal** | `#83E9FF` | `text-[#83E9FF]` ou `bg-[#83E9FF]` |
+| **Accent secondaire** | `#F9E370` | `text-[#F9E370]` ou `bg-[#F9E370]` |
+| **Buy/Success** | `emerald-400/500` | `text-emerald-400` ou `bg-emerald-500/10` |
+| **Sell/Error** | `rose-400/500` | `text-rose-400` ou `bg-rose-500/10` |
+| **Texte principal** | `white` | `text-white` |
+| **Texte secondaire** | `zinc-400` | `text-zinc-400` |
+| **Bordure default** | `white/5` | `border-white/5` |
+| **Bordure hover** | `white/10` | `border-white/10` |
 
 ---
 
