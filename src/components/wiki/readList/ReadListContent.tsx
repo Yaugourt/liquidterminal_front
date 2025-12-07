@@ -1,4 +1,4 @@
-import { Plus, BookOpen, Search } from "lucide-react";
+import { Plus, BookOpen, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ReadList, ReadListItem } from "@/services/wiki";
@@ -10,9 +10,11 @@ interface ReadListContentProps {
   activeList?: ReadList;
   items?: ReadListItem[];
   itemsLoading: boolean;
+  itemsPagination?: { page: number; limit: number; total: number; hasNext: boolean } | null;
   onRemoveItem: (itemId: number) => void;
   onToggleRead: (itemId: number, isRead: boolean) => void;
   onCreateList: () => void;
+  onLoadMore?: () => void;
   isMounted?: boolean;
 }
 
@@ -40,9 +42,11 @@ export function ReadListContent({
   activeList,
   items,
   itemsLoading,
+  itemsPagination,
   onRemoveItem,
   onToggleRead,
   onCreateList,
+  onLoadMore,
   isMounted = false,
 }: ReadListContentProps) {
   const [enrichedItems, setEnrichedItems] = useState<ReadListItem[]>([]);
@@ -194,24 +198,53 @@ export function ReadListContent({
 
       {/* Items Grid */}
       <div className="flex-1 overflow-auto p-6">
-        {itemsLoading ? (
+        {itemsLoading && filteredItems.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, index) => (
               <ReadListItemSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         ) : filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.map((item) => (
-              <ReadListItemCard
-                key={`item-${item.id}`}
-                item={item}
-                preview={getPreview(item.resource?.url || '')}
-                onRemoveItem={onRemoveItem}
-                onToggleRead={onToggleRead}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredItems.map((item) => (
+                <ReadListItemCard
+                  key={`item-${item.id}`}
+                  item={item}
+                  preview={getPreview(item.resource?.url || '')}
+                  onRemoveItem={onRemoveItem}
+                  onToggleRead={onToggleRead}
+                />
+              ))}
+            </div>
+            
+            {/* Load More Button */}
+            {itemsPagination?.hasNext && onLoadMore && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={onLoadMore}
+                  disabled={itemsLoading}
+                  className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg px-6 py-2"
+                >
+                  {itemsLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    `Load More (${itemsPagination.total - filteredItems.length} remaining)`
+                  )}
+                </Button>
+              </div>
+            )}
+            
+            {/* Loading indicator when loading more */}
+            {itemsLoading && filteredItems.length > 0 && (
+              <div className="flex justify-center mt-4">
+                <Loader2 className="w-5 h-5 animate-spin text-[#83E9FF]" />
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-16">
             <div className="w-16 h-16 mx-auto mb-4 bg-[#83e9ff]/10 rounded-2xl flex items-center justify-center">

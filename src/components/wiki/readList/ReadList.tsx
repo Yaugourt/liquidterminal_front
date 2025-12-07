@@ -91,7 +91,7 @@ const Error = ({ error }: { error: string }) => (
 
 export function ReadList() {
   const { authenticated, login } = useAuthContext();
-  const { readLists, activeReadListId, activeReadListItems, loading: storeLoading, error: storeError, createReadList, deleteReadList, setActiveReadList, deleteReadListItem, toggleReadStatus, reorderReadLists } = useReadLists();
+  const { readLists, activeReadListId, activeReadListItems, itemsPagination, loading: storeLoading, error: storeError, createReadList, deleteReadList, setActiveReadList, deleteReadListItem, toggleReadStatus, reorderReadLists, loadMoreItems } = useReadLists();
   const { isInitializing, initError, isMounted } = useReadListInitialization();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -175,9 +175,11 @@ export function ReadList() {
           activeList={activeList}
           items={activeReadListItems}
           itemsLoading={storeLoading}
+          itemsPagination={itemsPagination}
           onRemoveItem={handleRemoveItem}
           onToggleRead={handleToggleRead}
           onCreateList={handleOpenCreateModal}
+          onLoadMore={activeReadListId ? () => loadMoreItems(activeReadListId) : undefined}
           isMounted={isMounted}
         />
       </div>

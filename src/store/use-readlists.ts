@@ -26,6 +26,7 @@ interface ReadListsState {
   readLists: ReadList[];
   activeReadListId: number | null;
   activeReadListItems: ReadListItem[];
+  itemsPagination: { page: number; limit: number; total: number; hasNext: boolean } | null;
   loading: boolean;
   error: string | null;
   
@@ -39,7 +40,8 @@ interface ReadListsState {
   refreshReadLists: () => Promise<void>;
   
   // Items management
-  loadReadListItems: (listId: number) => Promise<void>;
+  loadReadListItems: (listId: number, page?: number, limit?: number) => Promise<void>;
+  loadMoreItems: (listId: number) => Promise<void>;
   
   addItemToReadList: (listId: number, item: AddItemData) => Promise<ReadListItem | void>;
   updateReadListItem: (itemId: number, data: UpdateItemData) => Promise<ReadListItem | void>;
@@ -61,7 +63,7 @@ const createActionCreators = (set: (fn: (state: ReadListsState) => Partial<ReadL
   updateActiveItems: (updater: (items: ReadListItem[]) => ReadListItem[]) => 
     set((state: ReadListsState) => ({ activeReadListItems: updater(state.activeReadListItems) })),
   setActiveList: (id: number | null) => 
-    set(() => ({ activeReadListId: id, activeReadListItems: [] }))
+    set(() => ({ activeReadListId: id, activeReadListItems: [], itemsPagination: null }))
 });
 
 export const useReadLists = create<ReadListsState>()(
@@ -74,6 +76,7 @@ export const useReadLists = create<ReadListsState>()(
         readLists: [],
         activeReadListId: null,
         activeReadListItems: [],
+        itemsPagination: null,
         loading: false,
         error: null,
         
@@ -108,6 +111,7 @@ export const useReadLists = create<ReadListsState>()(
             actions.updateReadLists(() => orderedReadLists);
             actions.setActiveList(newActiveId);
             actions.updateActiveItems(() => []);
+            set(() => ({ itemsPagination: null }));
             actions.setLoading(false);
             
             if (newActiveId) {
@@ -204,26 +208,66 @@ export const useReadLists = create<ReadListsState>()(
           return readLists.find(readList => readList.id === activeReadListId);
         },
         
-        loadReadListItems: async (listId: number): Promise<void> => {
+        loadReadListItems: async (listId: number, page: number = 1, limit: number = 100): Promise<void> => {
           try {
             if (!listId || isNaN(listId)) {
               actions.updateActiveItems(() => []);
+              set(() => ({ itemsPagination: null }));
               actions.setLoading(false);
               return;
             }
             
             actions.setLoading(true);
             
-            const response = await getReadListItems(listId);
+            const response = await getReadListItems(listId, { page, limit });
             const itemsArray = response?.data || [];
             
-            actions.updateActiveItems(() => itemsArray);
+            // Si c'est la première page, remplacer les items, sinon ajouter
+            if (page === 1) {
+              actions.updateActiveItems(() => itemsArray);
+            } else {
+              actions.updateActiveItems((prev) => [...prev, ...itemsArray]);
+            }
+            
+            // Mettre à jour la pagination
+            if (response?.pagination) {
+              set(() => ({ 
+                itemsPagination: {
+                  page: response.pagination!.page,
+                  limit: response.pagination!.limit,
+                  total: response.pagination!.total,
+                  hasNext: response.pagination!.hasNext
+                }
+              }));
+            } else {
+              // Si pas de pagination dans la réponse, on assume qu'on a tout chargé
+              set(() => ({ 
+                itemsPagination: {
+                  page: 1,
+                  limit: itemsArray.length,
+                  total: itemsArray.length,
+                  hasNext: false
+                }
+              }));
+            }
+            
             actions.setLoading(false);
             
           } catch (error) {
             actions.setError(handleApiError(error, 'Failed to load read list items'));
             actions.updateActiveItems(() => []);
+            set(() => ({ itemsPagination: null }));
           }
+        },
+        
+        loadMoreItems: async (listId: number): Promise<void> => {
+          const state = get();
+          if (!state.itemsPagination || !state.itemsPagination.hasNext) {
+            return;
+          }
+          
+          const nextPage = state.itemsPagination.page + 1;
+          await get().loadReadListItems(listId, nextPage, state.itemsPagination.limit);
         },
         
         addItemToReadList: async (listId: number, item: AddItemData): Promise<ReadListItem | void> => {

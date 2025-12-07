@@ -68,9 +68,15 @@ export const deleteReadList = async (id: number): Promise<void> => {
 };
 
 // Get items from a read list
-export const getReadListItems = async (listId: number): Promise<{success: boolean, data: ReadListItem[], message?: string}> => {
+export const getReadListItems = async (
+  listId: number, 
+  params?: { page?: number; limit?: number }
+): Promise<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}> => {
   return withErrorHandling(async () => {
-    const response = await get<{success: boolean, data: ReadListItem[], message?: string}>(`/readlists/${listId}/items`);
+    const response = await get<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}>(
+      `/readlists/${listId}/items`,
+      params as Record<string, unknown>
+    );
     return response || {success: true, data: []};
   }, 'fetching read list items');
 };
