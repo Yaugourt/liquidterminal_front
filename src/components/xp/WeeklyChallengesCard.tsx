@@ -11,10 +11,13 @@ import {
   Clock,
   Trophy,
   Loader2,
-  Star
+  Star,
+  ExternalLink
 } from "lucide-react";
 import { WeeklyChallengeType } from "@/services/xp/types";
 import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+import { getWeeklyChallengeRoute } from "@/services/xp/taskRoutes";
 
 interface WeeklyChallengesCardProps {
   compact?: boolean;
@@ -143,28 +146,23 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
         {weeklyChallenges.map((challenge) => {
           const Icon = CHALLENGE_ICONS[challenge.type];
           const colors = CHALLENGE_COLORS[challenge.type];
+          const challengeRoute = getWeeklyChallengeRoute(challenge.type);
           
-          return (
-            <div
-              key={challenge.type}
-              className={cn(
-                "p-4 rounded-xl transition-all",
-                challenge.completed 
-                  ? "bg-emerald-500/10 border border-emerald-500/20" 
-                  : "bg-white/5 border border-white/5"
-              )}
-            >
+          const challengeContent = (
+            <>
               <div className="flex items-center gap-3 mb-3">
                 {/* Icon */}
                 <div className={cn(
-                  "h-10 w-10 rounded-lg flex items-center justify-center shrink-0",
+                  "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
                   challenge.completed ? "bg-emerald-500/20" : colors.bg,
                   "border",
-                  challenge.completed ? "border-emerald-500/30" : colors.border
+                  challenge.completed ? "border-emerald-500/30" : colors.border,
+                  !challenge.completed && "group-hover:border-[#83E9FF]/50"
                 )}>
                   <Icon className={cn(
-                    "h-5 w-5",
-                    challenge.completed ? "text-emerald-400" : colors.text
+                    "h-5 w-5 transition-colors",
+                    challenge.completed ? "text-emerald-400" : colors.text,
+                    !challenge.completed && "group-hover:text-[#83E9FF]"
                   )} />
                 </div>
 
@@ -172,18 +170,25 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <p className={cn(
-                      "text-sm font-medium",
-                      challenge.completed ? "text-emerald-300" : "text-white"
+                      "text-sm font-medium transition-colors",
+                      challenge.completed 
+                        ? "text-emerald-300" 
+                        : "text-white group-hover:text-[#83E9FF]"
                     )}>
                       {challenge.description}
                     </p>
-                    {challenge.completed ? (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-                    ) : (
-                      <span className="text-xs font-bold text-[#F9E370] shrink-0">
-                        +{challenge.xpReward} XP
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {challenge.completed ? (
+                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                      ) : (
+                        <>
+                          <span className="text-xs font-bold text-[#F9E370]">
+                            +{challenge.xpReward} XP
+                          </span>
+                          <ExternalLink className="h-3.5 w-3.5 text-zinc-500 group-hover:text-[#83E9FF] opacity-0 group-hover:opacity-100 transition-all" />
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-zinc-500">
                     <span>{challenge.progress}/{challenge.target}</span>
@@ -197,10 +202,38 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                 value={challenge.progressPercent}
                 className={cn(
                   "h-2 bg-[#0A0D12] border border-white/5",
-                  challenge.completed && "[&>div]:bg-emerald-500"
+                  challenge.completed && "[&>div]:bg-emerald-500",
+                  !challenge.completed && "group-hover:border-[#83E9FF]/30"
                 )}
               />
-            </div>
+            </>
+          );
+
+          if (challenge.completed) {
+            return (
+              <div
+                key={challenge.type}
+                className={cn(
+                  "p-4 rounded-xl transition-all",
+                  "bg-emerald-500/10 border border-emerald-500/20 cursor-default"
+                )}
+              >
+                {challengeContent}
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={challenge.type}
+              href={challengeRoute}
+              className={cn(
+                "p-4 rounded-xl transition-all block",
+                "bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[#83E9FF]/30 cursor-pointer group"
+              )}
+            >
+              {challengeContent}
+            </Link>
           );
         })}
       </div>

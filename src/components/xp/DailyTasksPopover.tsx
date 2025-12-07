@@ -7,7 +7,8 @@ import {
   Circle, 
   Gift,
   ChevronRight,
-  Loader2
+  Loader2,
+  ExternalLink
 } from "lucide-react";
 import {
   Popover,
@@ -15,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
+import { getDailyTaskRoute } from "@/services/xp/taskRoutes";
 
 interface DailyTasksPopoverProps {
   className?: string;
@@ -108,41 +110,68 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         {/* Tasks list */}
         <div className="p-2 space-y-1">
           {dailyTasks.map((task) => {
-            return (
-              <div
-                key={task.type}
-                className={cn(
-                  "flex items-center gap-2.5 p-2 rounded-lg transition-colors",
-                  task.completed 
-                    ? "bg-emerald-500/10" 
-                    : "bg-white/5"
-                )}
-              >
+            const taskRoute = getDailyTaskRoute(task.type);
+            const taskContent = (
+              <>
                 {/* Status icon */}
                 {task.completed ? (
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                 ) : (
-                  <Circle className="h-4 w-4 text-zinc-500 shrink-0" />
+                  <Circle className="h-4 w-4 text-zinc-500 group-hover:text-[#83E9FF] shrink-0 transition-colors" />
                 )}
 
                 {/* Task info */}
                 <div className="flex-1 min-w-0">
                   <p className={cn(
                     "text-xs",
-                    task.completed ? "text-emerald-300" : "text-zinc-300"
+                    task.completed 
+                      ? "text-emerald-300" 
+                      : "text-zinc-300 group-hover:text-white transition-colors"
                   )}>
                     {task.description}
                   </p>
                 </div>
 
-                {/* XP */}
-                <span className={cn(
-                  "text-[10px] font-medium shrink-0",
-                  task.completed ? "text-emerald-400" : "text-zinc-500"
-                )}>
-                  +{task.xp}
-                </span>
-              </div>
+                {/* XP and link indicator */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className={cn(
+                    "text-[10px] font-medium",
+                    task.completed ? "text-emerald-400" : "text-zinc-500 group-hover:text-[#83E9FF] transition-colors"
+                  )}>
+                    +{task.xp}
+                  </span>
+                  {!task.completed && (
+                    <ExternalLink className="h-3 w-3 text-zinc-500 group-hover:text-[#83E9FF] opacity-0 group-hover:opacity-100 transition-all" />
+                  )}
+                </div>
+              </>
+            );
+
+            if (task.completed) {
+              return (
+                <div
+                  key={task.type}
+                  className={cn(
+                    "flex items-center gap-2.5 p-2 rounded-lg transition-colors",
+                    "bg-emerald-500/10 cursor-default"
+                  )}
+                >
+                  {taskContent}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={task.type}
+                href={taskRoute}
+                className={cn(
+                  "flex items-center gap-2.5 p-2 rounded-lg transition-colors",
+                  "bg-white/5 hover:bg-white/10 cursor-pointer group"
+                )}
+              >
+                {taskContent}
+              </Link>
             );
           })}
         </div>
