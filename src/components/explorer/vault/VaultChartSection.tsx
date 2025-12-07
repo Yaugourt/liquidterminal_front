@@ -7,12 +7,11 @@ import { VaultChartTimeframe } from "@/services/explorer/vault/types";
 
 interface VaultChartSectionProps {
   vaultAddress: string;
-  chartHeight?: number;
 }
 
 type VaultChartType = "accountValue" | "pnl";
 
-export const VaultChartSection = ({ vaultAddress, chartHeight = 320 }: VaultChartSectionProps) => {
+export const VaultChartSection = ({ vaultAddress }: VaultChartSectionProps) => {
   const [selectedChart, setSelectedChart] = useState<VaultChartType>("accountValue");
   const [selectedTimeframe, setSelectedTimeframe] = useState<VaultChartTimeframe>("day");
 
@@ -28,19 +27,16 @@ export const VaultChartSection = ({ vaultAddress, chartHeight = 320 }: VaultChar
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 flex flex-col">
-        <VaultChartDisplay
-          data={chartData}
-          isLoading={isLoading}
-          error={error}
-          selectedChart={selectedChart}
-          onChartChange={setSelectedChart}
-          selectedTimeframe={selectedTimeframe}
-          onTimeframeChange={setSelectedTimeframe}
-          availableTimeframes={availableTimeframes}
-          chartHeight={chartHeight}
-        />
-      </div>
+      <VaultChartDisplay
+        data={chartData}
+        isLoading={isLoading}
+        error={error}
+        selectedChart={selectedChart}
+        onChartChange={setSelectedChart}
+        selectedTimeframe={selectedTimeframe}
+        onTimeframeChange={setSelectedTimeframe}
+        availableTimeframes={availableTimeframes}
+      />
     </div>
   );
-}; 
+};

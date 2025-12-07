@@ -25,8 +25,6 @@ const convertToCandlestickData = (candle: TokenCandle): CandlestickData<Time> =>
   };
 };
 
-
-
 type TimeframeType = "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "2h" | "4h" | "8h" | "12h" | "1d" | "3d" | "1w" | "1M";
 
 const TIMEFRAMES: { label: string; value: TimeframeType }[] = [
@@ -69,37 +67,38 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       return;
     }
 
-
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: '#051728' },
-        textColor: '#83E9FF',
+        background: { type: ColorType.Solid, color: 'transparent' },
+        textColor: '#525252',
+        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        fontSize: 10,
       },
       grid: {
-        vertLines: { color: '#1E385160' },
-        horzLines: { color: '#1E385160' },
+        vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+        horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
       },
       crosshair: {
         mode: 1,
         vertLine: {
-          color: '#83E9FF80',
+          color: 'rgba(255, 255, 255, 0.1)',
           width: 1,
           style: 2,
-          labelBackgroundColor: '#051728',
+          labelBackgroundColor: '#0B0E14',
         },
         horzLine: {
-          color: '#83E9FF80',
+          color: 'rgba(255, 255, 255, 0.1)',
           width: 1,
           style: 2,
-          labelBackgroundColor: '#051728',
+          labelBackgroundColor: '#0B0E14',
         },
       },
       rightPriceScale: {
-        borderColor: '#83E9FF40',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
         textColor: '#FFFFFF',
       },
       timeScale: {
-        borderColor: '#83E9FF40',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
         timeVisible: true,
         secondsVisible: false,
         rightOffset: 24,
@@ -109,7 +108,6 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
         rightBarStaysOnScroll: true,
         minBarSpacing: 1,
       },
-      // Watermark not supported in this version
     });
 
     // Add candlestick series
@@ -122,12 +120,8 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       wickUpColor: '#4ADE80',
     });
 
-
     chartRef.current = chart;
     seriesRef.current = candlestickSeries;
-
-
-
 
     // Auto-resize chart
     const handleResize = () => {
@@ -176,11 +170,9 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
     }
 
     try {
-
       const chartData = candles
         .map(convertToCandlestickData)
         .sort((a, b) => (a.time as number) - (b.time as number));
-
 
       seriesRef.current.setData(chartData);
 
@@ -202,24 +194,24 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
           }
         }, 100);
       }
-
     } catch {
     }
   }, [candles]);
 
   return (
-    <div className={`w-full ${className} relative`}>
+    <div className={`w-full h-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col relative ${className}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
-      <div className="absolute top-2 left-2 z-20 hidden min-[620px]:flex gap-1 bg-[#051728]/90 rounded-lg p-1 border border-[#83E9FF40]">
+      <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-[#0A0D12] rounded-lg p-1 border border-white/5">
         {TIMEFRAMES.map((timeframe) => (
           <button
             key={timeframe.value}
             onClick={() => setSelectedTimeframe(timeframe.value)}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
-              ? 'bg-[#83E9FF] text-[#051728]'
-              : 'text-[#83E9FF] hover:bg-[#83E9FF20]'
-              }`}
+            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${
+              selectedTimeframe === timeframe.value
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+            }`}
           >
             {timeframe.label}
           </button>
@@ -227,17 +219,17 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       </div>
 
       {/* Mobile version - Dropdown for screens < 620px */}
-      <div className="absolute top-2 left-2 z-20 max-[619px]:block hidden">
+      <div className="absolute top-4 left-4 z-20 max-[619px]:block hidden">
         <select
           value={selectedTimeframe}
           onChange={(e) => setSelectedTimeframe(e.target.value as TimeframeType)}
-          className="bg-[#051728]/90 border border-[#83E9FF40] rounded-lg px-3 py-2 text-xs font-medium text-[#83E9FF] focus:outline-none focus:border-[#83E9FF] focus:bg-[#051728]"
+          className="bg-[#0A0D12] border border-white/5 rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 focus:outline-none focus:border-[#83E9FF] focus:bg-[#0A0D12]"
         >
           {TIMEFRAMES.map((timeframe) => (
             <option
               key={timeframe.value}
               value={timeframe.value}
-              className="bg-[#051728] text-[#83E9FF]"
+              className="bg-[#0A0D12] text-zinc-400"
             >
               {timeframe.label}
             </option>
@@ -246,21 +238,21 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       </div>
 
       {(isLoading || (!candles || candles.length === 0)) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#051728] rounded-lg border-2 border-[#83E9FF4D] z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-[#151A25]/60 backdrop-blur-md z-10">
           <div className="flex flex-col items-center">
             <div className="w-8 h-8 border-2 border-[#83E9FF] border-t-transparent rounded-full animate-spin mb-2"></div>
-            <span className="text-[#83E9FF] text-sm">
+            <span className="text-zinc-400 text-sm">
               {isLoading ? 'Loading chart data...' : 'No data available'}
             </span>
             {error && (
-              <span className="text-red-400 text-xs mt-1">Error: {error}</span>
+              <span className="text-rose-400 text-xs mt-1">Error: {error}</span>
             )}
           </div>
         </div>
       )}
       <div
         ref={containerRef}
-        className="w-full h-full rounded-lg overflow-hidden bg-[#051728] border-2 border-[#83E9FF4D]"
+        className="w-full flex-1 min-h-0 rounded-lg overflow-hidden"
       />
     </div>
   );

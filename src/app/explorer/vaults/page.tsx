@@ -47,14 +47,13 @@ export default function VaultsPage() {
         </div>
 
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:items-stretch">
             <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <VaultStatsCard />
             </div>
             <div className="md:col-span-3 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <VaultChartSection 
                 vaultAddress="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303" 
-                chartHeight={320} 
               />
             </div>
           </div>

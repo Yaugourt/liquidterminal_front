@@ -1,7 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
@@ -13,18 +12,17 @@ interface OrderBookProps {
   className?: string;
 }
 
-
-
 export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: OrderBookProps) {
+  const [activeTab, setActiveTab] = useState<'orderbook' | 'trades'>('orderbook');
+
   // Connect to WebSocket for real-time order book and trades
   const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
   const { orderBook, trades } = useTokenWebSocket(coinId);
-  
+
   // Use only real data from WebSocket
   const displayBids = orderBook.bids || [];
   const displayAsks = orderBook.asks || [];
   const displayTrades = trades || [];
-
 
   const formatPrice = (price: string | number) => {
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
@@ -63,150 +61,165 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
   };
 
   const bidsCumulative = calculateCumulativeTotals(displayBids);
-  
+
   // For asks: calculate cumulative from lowest to highest price, but display from highest to lowest
   const calculateAsksCumulative = () => {
     const sortedAsks = [...displayAsks].sort((a, b) => parseFloat(a.px) - parseFloat(b.px)); // Sort from lowest to highest price
     let cumulative = 0;
     const cumulativeMap = new Map();
-    
+
     sortedAsks.forEach(ask => {
       cumulative += parseFloat(ask.sz);
       cumulativeMap.set(ask.px, cumulative);
     });
-    
+
     return cumulativeMap;
   };
-  
+
   const asksCumulativeMap = calculateAsksCumulative();
 
   // Extract token name from symbol (e.g., "HYPE/USDC" -> "HYPE")
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <Card className={`bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] ${className}`}>
-      <div className="p-3">
-        <Tabs defaultValue="orderbook" className="w-full">
-          <TabsList className="grid grid-cols-2 mb-1 bg-[#112941] border border-[#83E9FF33] h-6">
-            <TabsTrigger value="orderbook" className="text-white text-xs data-[state=active]:bg-[#83E9FF4D] py-0">Order Book</TabsTrigger>
-            <TabsTrigger value="trades" className="text-white text-xs data-[state=active]:bg-[#83E9FF4D] py-0">Trades</TabsTrigger>
-          </TabsList>
+    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col h-full ${className}`}>
+      <div className="p-4 flex-shrink-0 border-b border-white/5">
+        {/* Tabs Pills Style */}
+        <div className="flex items-center gap-2">
+          <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+            <button
+              onClick={() => setActiveTab('orderbook')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'orderbook'
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                }`}
+            >
+              Order Book
+            </button>
+            <button
+              onClick={() => setActiveTab('trades')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'trades'
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                }`}
+            >
+              Trades
+            </button>
+          </div>
+        </div>
+      </div>
 
-          <TabsContent value="orderbook" className="mt-2">
-            <div className="space-y-2">
-              {/* Header */}
-              <div className="grid grid-cols-3 gap-2 text-xs text-gray-400">
-                <span>Price</span>
-                <span className="text-right">Size ({tokenName})</span>
-                <span className="text-right">Total ({tokenName})</span>
+      <div className="p-4 flex-1 flex flex-col min-h-0">
+        {activeTab === 'orderbook' ? (
+          <div className="flex flex-col flex-1 min-h-0">
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-2 text-[10px] text-zinc-400 font-semibold uppercase tracking-wider flex-shrink-0 mb-2">
+              <span>Price</span>
+              <span className="text-right">Size ({tokenName})</span>
+              <span className="text-right">Total ({tokenName})</span>
+            </div>
+
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent min-h-0">
+
+              {/* Asks (Sell orders) - 7 ordres */}
+              <div className="space-y-1 mb-3">
+                {displayAsks.slice(0, 7).reverse().map((ask, index) => {
+                  const cumulativeTotal = asksCumulativeMap.get(ask.px) || 0;
+                  const maxCumulative = Math.max(...Array.from(asksCumulativeMap.values()));
+                  const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
+
+                  return (
+                    <div key={`ask-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded relative transition-colors">
+                      <div
+                        className="absolute inset-0 bg-rose-500/20 rounded"
+                        style={{
+                          width: `${Math.min(depthPercentage * 1.5, 100)}%`,
+                          right: 0
+                        }}
+                      />
+                      <span className="text-rose-400 relative z-10 font-medium">${formatPrice(ask.px)}</span>
+                      <span className="text-white text-right relative z-10">{formatSize(ask.sz)}</span>
+                      <span className="text-zinc-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Scrollable content - Hauteur calculée: 500px - padding(24px) - tabs(32px) - header(30px) - spacing(12px) = ~402px */}
-              <div className="h-[440px] overflow-y-auto pr-1 scrollbar-thin">
-                
-                {/* Asks (Sell orders) - 7 ordres */}
-                <div className="space-y-1 mb-3">
-                  {displayAsks.slice(0, 7).reverse().map((ask, index) => {
-                    const cumulativeTotal = asksCumulativeMap.get(ask.px) || 0;
-                    const maxCumulative = Math.max(...Array.from(asksCumulativeMap.values()));
-                    const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
-                    
-                    return (
-                      <div key={`ask-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-[#83E9FF10] py-1 rounded relative">
-                        <div 
-                          className="absolute inset-0 bg-red-500/25 rounded"
-                          style={{ 
-                            width: `${Math.min(depthPercentage * 1.5, 100)}%`,
-                            right: 0
-                          }}
-                        />
-                        <span className="text-[#F87171] relative z-10">${formatPrice(ask.px)}</span>
-                        <span className="text-white text-right relative z-10">{formatSize(ask.sz)}</span>
-                        <span className="text-gray-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+              {/* Spread */}
+              <div className="border-y border-white/5 py-2 text-center mb-2 mx-1 flex items-center justify-center gap-5">
+                <span className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider">Spread</span>
+                <span className="text-xs text-white font-medium">
+                  {spread.absolute > 0 ? (
+                    `${spread.absolute.toFixed(3)} (${spread.percentage.toFixed(6)}%)`
+                  ) : (
+                    'N/A'
+                  )}
+                </span>
+              </div>
 
-                {/* Spread */}
-                <div className="border-y border-[#83E9FF33] py-0.5 text-center mb-2 mx-1 h-6 flex items-center justify-center gap-5">
-                  <span className="text-xs text-gray-400">Spread</span>
-                  <span className="text-xs text-white">
-                    {spread.absolute > 0 ? (
-                      `${spread.absolute.toFixed(3)} (${spread.percentage.toFixed(6)}%)`
-                    ) : (
-                      'N/A'
-                    )}
-                  </span>
-                </div>
+              {/* Bids (Buy orders) - 7 ordres */}
+              <div className="space-y-1">
+                {displayBids.slice(0, 7).map((bid, index) => {
+                  const cumulativeTotal = bidsCumulative[index];
+                  const maxCumulative = Math.max(...bidsCumulative);
+                  const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
 
-                {/* Bids (Buy orders) - 7 ordres */}
-                <div className="space-y-1">
-                  {displayBids.slice(0, 7).map((bid, index) => {
-                    const cumulativeTotal = bidsCumulative[index];
-                    const maxCumulative = Math.max(...bidsCumulative);
-                    const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
-                    
-                    return (
-                      <div key={`bid-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-[#83E9FF10] py-1 rounded relative">
-                        <div 
-                          className="absolute inset-0 bg-green-500/25 rounded"
-                          style={{ 
-                            width: `${Math.min(depthPercentage * 1.7, 100)}%`,
-                            left: 0
-                          }}
-                        />
-                        <span className="text-[#4ADE80] relative z-10">${formatPrice(bid.px)}</span>
-                        <span className="text-white text-right relative z-10">{formatSize(bid.sz)}</span>
-                        <span className="text-gray-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
-                      </div>
-                    );
-                  })}
-                </div>
+                  return (
+                    <div key={`bid-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded relative transition-colors">
+                      <div
+                        className="absolute inset-0 bg-emerald-500/20 rounded"
+                        style={{
+                          width: `${Math.min(depthPercentage * 1.7, 100)}%`,
+                          left: 0
+                        }}
+                      />
+                      <span className="text-emerald-400 relative z-10 font-medium">${formatPrice(bid.px)}</span>
+                      <span className="text-white text-right relative z-10">{formatSize(bid.sz)}</span>
+                      <span className="text-zinc-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          </TabsContent>
+          </div>
+        ) : (
+          <div className="flex flex-col flex-1 min-h-0">
+            {/* Header */}
+            <div className="grid grid-cols-3 gap-2 text-[10px] text-zinc-400 font-semibold uppercase tracking-wider border-b border-white/5 pb-2 flex-shrink-0 mb-2">
+              <span>Price</span>
+              <span className="text-right">Size (token)</span>
+              <span className="text-right">Time</span>
+            </div>
 
-          <TabsContent value="trades" className="mt-2">
-            <div className="space-y-2">
-              {/* Header */}
-              <div className="grid grid-cols-3 gap-2 text-xs text-gray-400 border-b border-[#83E9FF33] pb-2">
-                <span>Price</span>
-                <span className="text-right">Size (token)</span>
-                <span className="text-right">Time</span>
-              </div>
-
-              {/* Trades - Scrollable - Même hauteur que orderbook */}
-              <div className="h-[402px] overflow-y-auto pr-1 scrollbar-thin">
-                <div className="space-y-1">
-                {displayTrades.map((trade, index) => {
+            {/* Trades - Scrollable */}
+            <div className="h-[402px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div className="space-y-1">
+                {displayTrades.slice(0, 50).map((trade, index) => {
                   // Handle real trades from WebSocket
                   const tradeType = trade.side === 'B' ? 'Buy' : 'Sell';
                   const tradePrice = parseFloat(trade.px);
                   const tradeSize = parseFloat(trade.sz);
                   const tradeTime = new Date(trade.time).toLocaleTimeString();
-                  
+
                   return (
-                    <div key={index} className="grid grid-cols-3 gap-2 text-xs hover:bg-[#83E9FF10] py-1 rounded px-1">
+                    <div key={index} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded px-1 transition-colors">
                       <span className={cn(
                         "font-medium",
-                        tradeType === 'Buy' ? 'text-[#4ADE80]' : 'text-[#F87171]'
+                        tradeType === 'Buy' ? 'text-emerald-400' : 'text-rose-400'
                       )}>
                         ${formatPrice(tradePrice)}
                       </span>
                       <span className="text-white text-right">{formatSize(tradeSize)}</span>
-                      <span className="text-gray-400 text-right text-xs">{tradeTime}</span>
+                      <span className="text-zinc-400 text-right text-xs">{tradeTime}</span>
                     </div>
                   );
                 })}
-                </div>
               </div>
             </div>
-          </TabsContent>
-
-
-        </Tabs>
+          </div>
+        )}
       </div>
-    </Card>
+    </div>
   );
 }
