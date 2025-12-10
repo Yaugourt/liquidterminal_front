@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Database } from "lucide-react";
-import { TradingLayout } from "@/components/market/layout/TradingLayout";
+import { TradingLayout } from "@/layouts/TradingLayout";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { TokenCard, TokenData, TradingViewChart, OrderBook, TokenInfoSidebar } from "@/components/market/token";
 

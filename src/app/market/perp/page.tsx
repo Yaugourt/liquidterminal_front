@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { AuctionCard } from "@/components/market/auction";
-import { TrendingTokensCard, GlobalStatsCard, TokensSection } from "@/components/market/common";
+import { GlobalStatsCard, TokensSection, UniversalTokenTable } from "@/components/market/common";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
@@ -35,7 +35,7 @@ export default function MarketPerp() {
         <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Market Perpetual" showFees={true} />
         </div>
-      
+
         {/* Barre de recherche mobile */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
@@ -44,7 +44,9 @@ export default function MarketPerp() {
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <GlobalStatsCard market="perp" />
-            <TrendingTokensCard market="perp" />
+            <div className="h-full">
+              <UniversalTokenTable market="perp" mode="compact" />
+            </div>
             <AuctionCard marketType="perp" />
           </div>
           <TokensSection market="perp" />

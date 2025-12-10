@@ -11,7 +11,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
 import { hasRole } from "@/lib/roleHelpers";
-import { ProjectsPageLayout } from "@/components/ecosystem/publicgoods/layout/ProjectsPageLayout";
+import { ProjectsLayout } from "@/layouts/ProjectsLayout";
 
 export default function PendingReviewPage() {
   const { user, login } = useAuthContext();
@@ -91,120 +91,102 @@ export default function PendingReviewPage() {
     );
   }
 
-  // Header Content
-  const pageHeader = (
-    <div className="space-y-4">
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/ecosystem/publicgoods')}
-        className="text-zinc-400 hover:text-white hover:bg-white/5 -ml-2 mb-2 rounded-lg"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to all projects
-      </Button>
-
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Pending Review</h1>
-          <p className="text-zinc-400 mt-1">
-            Projects waiting for moderator approval
+  return (
+    <ProjectsLayout
+      headerTitle="Pending Projects"
+      pageHeader={
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()}
+              className="text-zinc-400 hover:text-white hover:bg-white/5"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-3xl font-bold text-white">Pending Submissions</h1>
+          </div>
+          <p className="text-zinc-400 max-w-2xl ml-11">
+            Review and vote on new project submissions. Community approval is required before projects are listed.
           </p>
         </div>
-        {pendingPublicGoods.length > 0 && (
-          <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-lg">
-            <p className="text-amber-400 text-sm font-medium">
-              {pendingPublicGoods.length} project{pendingPublicGoods.length !== 1 ? 's' : ''} pending
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+      }
+    >
+      {pendingPublicGoods.length > 0 && (
+        <div className="flex justify-end w-full mb-6">
+          <SearchBar
+            onSearch={setSearchQuery}
+            placeholder="Search pending projects..."
+            className="max-w-sm"
+          />
+        </div>
+      )}
 
-  // Filters Content
-  const filters = pendingPublicGoods.length > 0 ? (
-    <div className="flex justify-end w-full">
-      <SearchBar
-        onSearch={setSearchQuery}
-        placeholder="Search pending projects..."
-        className="max-w-sm"
-      />
-    </div>
-  ) : null;
-
-  return (
-    <div className="">
-      <ProjectsPageLayout
-        headerTitle="Pending Review"
-        pageHeader={pageHeader}
-        filters={filters}
-      >
-        {/* Projects Grid */}
-        <PublicGoodsGrid
-          isLoading={isLoading}
-          items={filteredProjects}
-          renderItem={(project) => (
-            <PublicGoodsCard
-              key={project.id}
-              project={project}
-              currentUser={user}
-              onReview={handleReview}
-            />
-          )}
-          emptyState={{
-            title: searchQuery.trim() ? "No projects found" : "All caught up!",
-            description: searchQuery.trim()
-              ? "Try adjusting your search criteria"
-              : "There are no projects pending review at the moment",
-            icon: <AlertCircle className="w-8 h-8 text-brand-accent" />,
-            actionLabel: !searchQuery.trim() ? "View All Projects" : undefined,
-            onAction: !searchQuery.trim() ? () => router.push('/ecosystem/publicgoods') : undefined
-          }}
-        />
-
-        {/* Info Banner */}
-        {pendingPublicGoods.length > 0 && (
-          <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
-            <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
-            <ul className="text-zinc-400 text-sm space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-brand-accent">•</span>
-                Check that the project has a valid GitHub repository
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-accent">•</span>
-                Verify the project integrates with HyperLiquid
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-accent">•</span>
-                Ensure the description clearly explains the project&apos;s purpose
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-accent">•</span>
-                Confirm the project benefits the HyperLiquid ecosystem
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-accent">•</span>
-                Provide constructive feedback in review notes if rejecting
-              </li>
-            </ul>
-          </div>
-        )}
-
-        {/* Review Modal */}
-        {projectToReview && (
-          <ReviewModal
-            isOpen={isReviewModalOpen}
-            onClose={() => {
-              setIsReviewModalOpen(false);
-              setProjectToReview(null);
-            }}
-            onSuccess={handleReviewSuccess}
-            project={projectToReview}
+      <PublicGoodsGrid
+        isLoading={isLoading}
+        items={filteredProjects}
+        renderItem={(project) => (
+          <PublicGoodsCard
+            key={project.id}
+            project={project}
+            currentUser={user}
+            onReview={handleReview}
           />
         )}
-      </ProjectsPageLayout>
-    </div>
+        emptyState={{
+          title: searchQuery.trim() ? "No projects found" : "All caught up!",
+          description: searchQuery.trim()
+            ? "Try adjusting your search criteria"
+            : "There are no projects pending review at the moment",
+          icon: <AlertCircle className="w-8 h-8 text-brand-accent" />,
+          actionLabel: !searchQuery.trim() ? "View All Projects" : undefined,
+          onAction: !searchQuery.trim() ? () => router.push('/ecosystem/publicgoods') : undefined
+        }}
+      />
+
+      {/* Info Banner */}
+      {pendingPublicGoods.length > 0 && (
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+          <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
+          <ul className="text-zinc-400 text-sm space-y-2">
+            <li className="flex items-start gap-2">
+              <span className="text-brand-accent">•</span>
+              Check that the project has a valid GitHub repository
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-accent">•</span>
+              Verify the project integrates with HyperLiquid
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-accent">•</span>
+              Ensure the description clearly explains the project&apos;s purpose
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-accent">•</span>
+              Confirm the project benefits the HyperLiquid ecosystem
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-brand-accent">•</span>
+              Provide constructive feedback in review notes if rejecting
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {projectToReview && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => {
+            setIsReviewModalOpen(false);
+            setProjectToReview(null);
+          }}
+          onSuccess={handleReviewSuccess}
+          project={projectToReview}
+        />
+      )}
+    </ProjectsLayout>
   );
 }
 

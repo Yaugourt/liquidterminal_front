@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { TrendingTokensCard, GlobalStatsCard, TokensSection } from "@/components/market/common";
+import { GlobalStatsCard, TokensSection, UniversalTokenTable } from "@/components/market/common";
 import { AuctionCard } from "@/components/market/auction";
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
@@ -35,7 +35,7 @@ export default function Market() {
         <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Market Spot" showFees={true} />
         </div>
-      
+
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
         </div>
@@ -43,7 +43,9 @@ export default function Market() {
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             <GlobalStatsCard market="spot" />
-            <TrendingTokensCard market="spot" />
+            <div className="h-full">
+              <UniversalTokenTable market="spot" mode="compact" />
+            </div>
             <AuctionCard marketType="spot" />
           </div>
           <TokensSection market="spot" />

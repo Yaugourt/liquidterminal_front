@@ -2,11 +2,11 @@
 
 import { usePathname } from "next/navigation";
 
-interface LayoutWrapperProps {
+interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export function LayoutWrapper({ children }: LayoutWrapperProps) {
+export function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 

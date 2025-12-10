@@ -8,19 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useWindowSize } from "@/hooks/use-window-size";
 
-interface ProjectsPageLayoutProps {
+interface ProjectsLayoutProps {
     children: ReactNode;
     headerTitle?: string;
     pageHeader?: ReactNode; // Title, Description, Stats, Action Button
     filters?: ReactNode;    // Tabs, Search Input
 }
 
-export function ProjectsPageLayout({
+export function ProjectsLayout({
     children,
     headerTitle = "Public Goods",
     pageHeader,
     filters
-}: ProjectsPageLayoutProps) {
+}: ProjectsLayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { width } = useWindowSize();
 

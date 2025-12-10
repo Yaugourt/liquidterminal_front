@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { useWindowSize } from "@/hooks/use-window-size";
+import { useWallets } from "@/store/use-wallets"; // Added import
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { WalletTabs } from "@/components/market/tracker";
 import { PortfolioStats, PerformanceChart } from "@/components/market/tracker/stats";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletAssetsNavigation } from "@/components/market/tracker/WalletAssetsNavigation";
-import { WalletOrdersSection, WalletTwapSection } from "@/components/market/tracker/orders";
+import { OrdersSection, TwapSection } from "@/components/explorer/address/orders";
 import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ export default function Wallets() {
   const { setTitle } = usePageTitle();
   const { isAuthenticated, login } = useAuthContext();
   const { width } = useWindowSize();
+  const { getActiveWallet } = useWallets(); // Added hook
+  const activeWallet = getActiveWallet(); // Added value
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
 
@@ -43,15 +46,15 @@ export default function Wallets() {
           <Menu className="h-6 w-6" />
         </Button>
       </div>
-      
+
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      
+
       <div className="">
         {/* Header with glass effect */}
         <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Wallets" showFees={true} />
         </div>
-        
+
         {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
@@ -65,7 +68,7 @@ export default function Wallets() {
                   <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
                   <p className="text-zinc-400 text-sm">You need to login to access your wallet data</p>
                 </div>
-                <Button 
+                <Button
                   onClick={() => login()}
                   className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg py-2.5"
                 >
@@ -75,13 +78,13 @@ export default function Wallets() {
               </div>
             </div>
           )}
-          
+
           <div className={isAuthenticated ? "" : "filter blur-[5px] pointer-events-none select-none"}>
             {/* Navigation principale */}
             <div className="mb-8">
               <WalletTabs />
             </div>
-            
+
             {/* Stats et graphiques */}
             <div className="mb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
@@ -93,17 +96,37 @@ export default function Wallets() {
                 </div>
               </div>
             </div>
-            
+
             {/* Navigation des assets */}
-            <WalletAssetsNavigation 
+            <WalletAssetsNavigation
               activeTab={activeAssetsTab}
               onChange={setActiveAssetsTab}
             />
-            
+
             {/* Contenu selon l'onglet des assets */}
             {activeAssetsTab === "holdings" && <AssetsSection />}
-            {activeAssetsTab === "orders" && <WalletOrdersSection />}
-            {activeAssetsTab === "twap" && <WalletTwapSection />}
+
+            {activeAssetsTab === "orders" && (
+              activeWallet?.address ? (
+                <OrdersSection address={activeWallet.address} />
+              ) : (
+                <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+                  <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
+                  <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
+                </div>
+              )
+            )}
+
+            {activeAssetsTab === "twap" && (
+              activeWallet?.address ? (
+                <TwapSection address={activeWallet.address} />
+              ) : (
+                <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+                  <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
+                  <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
+                </div>
+              )
+            )}
             {activeAssetsTab === "recent-fills" && <WalletRecentFillsSection />}
           </div>
         </main>

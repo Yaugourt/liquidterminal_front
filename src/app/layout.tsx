@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { LayoutWrapper } from "@/components/common/LayoutWrapper";
+import { MainLayout } from "@/layouts/MainLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   description: "Comprehensive data processing platform for the HyperLiquid ecosystem. Free tools for HyperCore & HyperEVM: Explorer, Market tracking, Ecosystem overview, Wiki. Premium products: API, RPC, Tracker, DCA.",
   keywords: [
     "HyperLiquid",
-    "HyperCore", 
+    "HyperCore",
     "HyperEVM",
     "crypto explorer",
     "blockchain data",
@@ -105,11 +105,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#112941]`}>
         <Providers>
-          <LayoutWrapper>
+          <MainLayout>
             {children}
             <SpeedInsights />
             <Analytics />
-          </LayoutWrapper>
+          </MainLayout>
         </Providers>
       </body>
     </html>

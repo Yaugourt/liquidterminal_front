@@ -11,7 +11,7 @@ import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
 import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
 import { useTokenDetails } from "@/services/market/token";
-import { TradingLayout } from "@/components/market/layout/TradingLayout";
+import { TradingLayout } from "@/layouts/TradingLayout";
 
 // Composant HoldersSection
 function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {

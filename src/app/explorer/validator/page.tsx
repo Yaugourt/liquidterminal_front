@@ -9,7 +9,8 @@ import { SearchBar } from "@/components/SearchBar";
 import { ValidatorStatsCard } from "@/components/explorer/validator/ValidatorStatsCard";
 import { ValidatorTable } from "@/components/explorer/validator/ValidatorTable";
 import { ValidatorChartSection } from "@/components/explorer/validator/chart/ValidatorChartSection";
-import { ValidatorTabButtons } from "@/components/explorer/validator/ValidatorTabButtons";
+// import { ValidatorTabButtons } from "@/components/explorer/validator/ValidatorTabButtons"; // Inlined
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { ValidatorSubTab } from "@/components/explorer/validator/types";
 import { useWindowSize } from "@/hooks/use-window-size";
 
@@ -60,13 +61,23 @@ export default function ValidatorPage() {
               <ValidatorChartSection />
             </div>
           </div>
-          
+
+
           {/* Tabs above table */}
-          <ValidatorTabButtons 
-            activeTab={validatorSubTab}
-            onTabChange={setValidatorSubTab}
-          />
-          
+          <div className="flex justify-start items-center">
+            <PillTabs
+              tabs={[
+                { value: 'all', label: 'All Validators' },
+                { value: 'transactions', label: 'Staking Transactions' },
+                { value: 'unstaking', label: 'Unstaking Queue' },
+                { value: 'stakers', label: 'Stakers' }
+              ]}
+              activeTab={validatorSubTab}
+              onTabChange={(val) => setValidatorSubTab(val as ValidatorSubTab)}
+              className="bg-brand-dark border border-white/5"
+            />
+          </div>
+
           <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
             <ValidatorTable activeTab={validatorSubTab} />
           </div>

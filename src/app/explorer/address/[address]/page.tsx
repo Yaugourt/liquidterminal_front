@@ -9,8 +9,9 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Menu } from "lucide-react";
-import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, HoldingTabs, ADDRESS_TABS, StakingTable, OrdersTable } from "@/components/explorer";
-import { TwapSection } from "@/components/explorer/address/orders";
+import { AddressHeader, AddressCards, AddressTransactionList as TransactionList, TabNavigation, ADDRESS_TABS, StakingTable } from "@/components/explorer";
+import { AssetsSection } from "@/components/market/tracker/assets";
+import { OrdersSection, TwapSection } from "@/components/explorer/address/orders";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 import { SearchBar } from "@/components/SearchBar";
 import { useWindowSize } from "@/hooks/use-window-size";
@@ -23,7 +24,7 @@ export default function AddressPage() {
 
   const { isAuthenticated, login } = useAuthContext();
   const { width } = useWindowSize();
-  
+
   // States for dialogs
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("transactions");
@@ -76,14 +77,14 @@ export default function AddressPage() {
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
         </div>
-      
+
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           {/* Address Header */}
           <AddressHeader address={address} />
 
           {/* Address Cards */}
-          <AddressCards 
-            portfolio={portfolio || []} 
+          <AddressCards
+            portfolio={portfolio || []}
             loadingPortfolio={loadingPortfolio}
             onAddClick={handleAddWalletClick}
             address={address}
@@ -92,7 +93,7 @@ export default function AddressPage() {
           />
 
           {/* Tab Navigation */}
-          <TabNavigation 
+          <TabNavigation
             activeTab={activeTab}
             onChange={handleTabChange}
             tabs={ADDRESS_TABS}
@@ -104,7 +105,7 @@ export default function AddressPage() {
           )}
 
           {activeTab === "transactions" && (
-            <TransactionList 
+            <TransactionList
               transactions={transactions || []}
               isLoading={isLoading}
               error={error}
@@ -113,29 +114,33 @@ export default function AddressPage() {
           )}
 
           {activeTab === "holdings" && (
-            <HoldingTabs 
-              address={address}
-              viewType="spot" 
-            />
+            <div className="mt-6">
+              <AssetsSection
+                initialViewType="spot"
+                addressOverride={address}
+              />
+            </div>
           )}
 
           {activeTab === "orders" && (
-            <OrdersTable 
+            <OrdersSection
               address={address}
             />
           )}
 
           {activeTab === "twap" && (
-            <TwapSection 
+            <TwapSection
               address={address}
             />
           )}
 
           {activeTab === "perps" && (
-            <HoldingTabs 
-              address={address}
-              viewType="perp" 
-            />
+            <div className="mt-6">
+              <AssetsSection
+                initialViewType="perp"
+                addressOverride={address}
+              />
+            </div>
           )}
 
           {activeTab === "staking" && (
@@ -163,14 +168,14 @@ export default function AddressPage() {
               <p>Please log in to access this feature.</p>
             </div>
             <DialogFooter>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsAuthWarningOpen(false)}
                 className="border-white/10 text-white hover:bg-white/5"
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   setIsAuthWarningOpen(false);
                   login();

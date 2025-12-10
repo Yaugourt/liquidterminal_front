@@ -2,10 +2,10 @@
 export { TransactionList as AddressTransactionList } from './address/TransactionList';
 export { AddressBalance } from './address/AddressBalance';
 export { AddressHeader } from './address/AddressHeader';
-export { HoldingTabs } from './address/HoldingTabs';
+// export { HoldingTabs } from './address/HoldingTabs'; // Removed
 export { TabNavigation, ADDRESS_TABS } from './address/TabNavigation';
 export { StakingTable } from './address/StakingTable';
-export { OrdersTable } from './address/OrdersTable';
+// export { OrdersTable } from './address/OrdersTable'; // Removed
 export * from './address/cards';
 
 // Block exports
