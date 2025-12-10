@@ -60,15 +60,15 @@ export default function PerpDexDetailPage() {
 
   if (isLoading && !dex) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+      <div className="min-h-screen bg-brand-main flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
       </div>
     );
   }
 
   if (error || !dex) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
         <div className="fixed top-4 left-4 z-50 lg:hidden">
           <Button
             variant="ghost"
@@ -81,16 +81,16 @@ export default function PerpDexDetailPage() {
         </div>
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
         <div className="">
-          <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+          <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
             <Header customTitle="PerpDex Not Found" showFees={true} />
           </div>
           <main className="px-6 py-8 max-w-[1920px] mx-auto">
-            <div className="p-8 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
+            <div className="p-8 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
               <div className="flex flex-col items-center justify-center text-center">
                 <Database className="w-12 h-12 mb-4 text-zinc-600" />
                 <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
                 <p className="text-zinc-400 mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
-                <Button onClick={() => router.push('/market/perpdex')} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728]">
+                <Button onClick={() => router.push('/market/perpdex')} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to PerpDexs
                 </Button>
@@ -103,7 +103,7 @@ export default function PerpDexDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+    <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
@@ -121,7 +121,7 @@ export default function PerpDexDetailPage() {
 
       {/* Main content */}
       <div className="">
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle={dex.fullName} showFees={true} />
         </div>
 
@@ -133,18 +133,18 @@ export default function PerpDexDetailPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => router.push('/market/perpdex')}
-                className="text-[#83E9FF] hover:text-white hover:bg-white/5"
+                className="text-brand-accent hover:text-white hover:bg-white/5"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#83E9FF]/20 to-[#f9e370]/20 flex items-center justify-center text-lg font-bold text-[#83E9FF]">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-lg font-bold text-brand-accent">
                   {dex.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">{dex.fullName}</h1>
-                  <span className="text-[#83E9FF] text-sm">{dex.name}</span>
+                  <span className="text-brand-accent text-sm">{dex.name}</span>
                 </div>
               </div>
             </div>
@@ -166,10 +166,10 @@ export default function PerpDexDetailPage() {
           {/* Stats cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {/* 24h Volume */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Activity className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Activity className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
               </div>
@@ -186,10 +186,10 @@ export default function PerpDexDetailPage() {
             </div>
 
             {/* Open Interest */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <TrendingUp className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <TrendingUp className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
               </div>
@@ -206,10 +206,10 @@ export default function PerpDexDetailPage() {
             </div>
 
             {/* Avg Funding */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Zap className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Zap className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Avg Funding</span>
               </div>
@@ -219,10 +219,10 @@ export default function PerpDexDetailPage() {
             </div>
 
             {/* Active Markets */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Scale className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Scale className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Active Markets</span>
               </div>
@@ -237,10 +237,10 @@ export default function PerpDexDetailPage() {
             </div>
 
             {/* OI Cap */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <TrendingUp className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <TrendingUp className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
               </div>
@@ -255,10 +255,10 @@ export default function PerpDexDetailPage() {
             </div>
 
             {/* Fee Scale */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Wallet className="h-3 w-3 text-[#83e9ff]" />
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Wallet className="h-3 w-3 text-brand-accent" />
                 </div>
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Scale</span>
               </div>
@@ -292,17 +292,17 @@ export default function PerpDexDetailPage() {
                 className="text-zinc-400 font-mono text-sm"
               />
             ) : dex.subDeployers.length > 0 ? (
-              <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
+              <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                    <Wallet className="h-3 w-3 text-[#83e9ff]" />
+                  <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
+                    <Wallet className="h-3 w-3 text-brand-accent" />
                   </div>
                   <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Sub-Deployers ({dex.subDeployers.length})</span>
                 </div>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                   {dex.subDeployers.slice(0, 4).map((sub, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-xs">
-                      <span className="text-[#83E9FF] shrink-0">{sub.permission}</span>
+                      <span className="text-brand-accent shrink-0">{sub.permission}</span>
                       <div className="flex items-center gap-1 flex-wrap">
                         {sub.addresses.slice(0, 2).map((addr, addrIdx) => (
                           <div
@@ -310,7 +310,7 @@ export default function PerpDexDetailPage() {
                             className="cursor-pointer"
                             onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                           >
-                            <span className="text-zinc-400 font-mono text-[10px] hover:text-[#83E9FF] transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                            <span className="text-zinc-400 font-mono text-[10px] hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                               {truncateAddress(addr)}
                             </span>
                           </div>

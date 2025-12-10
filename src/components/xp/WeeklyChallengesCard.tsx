@@ -45,9 +45,9 @@ const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; 
     border: "border-emerald-500/30" 
   },
   ADD_15_WALLETS: { 
-    text: "text-[#83E9FF]", 
-    bg: "bg-[#83E9FF]/20", 
-    border: "border-[#83E9FF]/30" 
+    text: "text-brand-accent", 
+    bg: "bg-brand-accent/20", 
+    border: "border-brand-accent/30" 
   },
 };
 
@@ -75,7 +75,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
     return (
       <div className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg",
-        "bg-[#151A25]/60 border border-white/5",
+        "bg-brand-secondary/60 border border-white/5",
         className
       )}>
         <Trophy className="h-4 w-4 text-[#F9E370]" />
@@ -84,7 +84,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
             <span className="text-xs text-zinc-400">Weekly</span>
             <span className="text-xs text-[#F9E370] font-medium">{completedCount}/{weeklyChallenges.length}</span>
           </div>
-          <div className="h-1.5 bg-[#0A0D12] rounded-full overflow-hidden mt-1">
+          <div className="h-1.5 bg-brand-dark rounded-full overflow-hidden mt-1">
             <div
               className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all"
               style={{ width: `${(completedCount / Math.max(weeklyChallenges.length, 1)) * 100}%` }}
@@ -105,7 +105,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-[#151A25]/60 backdrop-blur-md",
+      "bg-brand-secondary/60 backdrop-blur-md",
       "border border-white/5",
       className
     )}>
@@ -131,7 +131,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
       </div>
 
       {/* XP Summary */}
-      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-[#0A0D12] border border-white/5">
+      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-white/5">
         <Star className="h-4 w-4 text-[#F9E370]" />
         <span className="text-sm text-zinc-400">XP Earned:</span>
         <span className="text-sm font-bold text-[#F9E370]">{totalXpEarned}</span>
@@ -196,7 +196,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
               <Progress
                 value={challenge.progressPercent}
                 className={cn(
-                  "h-2 bg-[#0A0D12] border border-white/5",
+                  "h-2 bg-brand-dark border border-white/5",
                   challenge.completed && "[&>div]:bg-emerald-500"
                 )}
               />

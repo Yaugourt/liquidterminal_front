@@ -89,9 +89,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin mb-2" />
+          <Loader2 className="w-6 h-6 text-brand-accent animate-spin mb-2" />
           <span className="text-zinc-500 text-sm">Loading project...</span>
         </div>
       </div>
@@ -100,11 +100,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center">
             <h1 className="text-xl font-bold text-white mb-4">Project not found</h1>
-            <Button onClick={() => router.back()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg">
+            <Button onClick={() => router.back()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg">
               Go back
             </Button>
           </div>
@@ -114,7 +114,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+    <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
@@ -131,7 +131,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
       <div className="">
         {/* Header with glass effect */}
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Public Goods" showFees={true} />
         </div>
 

@@ -29,7 +29,7 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20">
+      <AlertDialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20">
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">

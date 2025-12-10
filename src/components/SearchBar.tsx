@@ -176,7 +176,7 @@ export function SearchBar({
         <Input
           ref={inputRef}
           placeholder={placeholder}
-          className="w-full pr-10 p-5 bg-[#051728]/60 backdrop-blur-sm border-none text-white placeholder:text-[#ffffffb1] text-sm transition-all focus:ring-1 focus:ring-[#83E9FF] rounded-xl"
+          className="w-full pr-10 p-5 bg-brand-tertiary/60 backdrop-blur-sm border-none text-white placeholder:text-[#ffffffb1] text-sm transition-all focus:ring-1 focus:ring-brand-accent rounded-xl"
           value={searchValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -184,7 +184,7 @@ export function SearchBar({
         />
         <button 
           type="submit"
-          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-[#f9e370] hover:text-[#83E9FF] transition-colors cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-brand-gold hover:text-brand-accent transition-colors cursor-pointer"
         >
           <Search className="h-4 w-4" />
         </button>
@@ -194,7 +194,7 @@ export function SearchBar({
       {showSuggestions && suggestions.length > 0 && (
         <div 
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-[#051728]/95 backdrop-blur-sm border border-[#83E9FF33] rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
+          className="absolute top-full left-0 right-0 mt-1 bg-brand-tertiary/95 backdrop-blur-sm border border-[#83E9FF33] rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <button
@@ -209,10 +209,10 @@ export function SearchBar({
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[#f9e370] text-sm font-medium">
+                  <div className="text-brand-gold text-sm font-medium">
                     {suggestion.alias}
                   </div>
-                  <div className="text-[#83E9FF] text-xs font-mono">
+                  <div className="text-brand-accent text-xs font-mono">
                     {suggestion.address.substring(0, 10)}...{suggestion.address.substring(suggestion.address.length - 8)}
                   </div>
                 </div>

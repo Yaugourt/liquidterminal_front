@@ -18,12 +18,12 @@ const OverviewCardComponent = ({ balances, isLoading, formatCurrency }: Overview
             {/* Header avec total balance rapproché */}
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
-                    <Wallet size={16} className="text-[#f9e370]" />
+                    <Wallet size={16} className="text-brand-gold" />
                     <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">OVERVIEW</h3>
                 </div>
                 <span className="text-[16px] text-white font-medium font-inter mr-4">
                     {isLoading ? (
-                        <Loader2 className="w-4 h-4 text-[#83E9FF] animate-spin" />
+                        <Loader2 className="w-4 h-4 text-brand-accent animate-spin" />
                     ) : (
                         formatCurrency(balances.totalBalance)
                     )}

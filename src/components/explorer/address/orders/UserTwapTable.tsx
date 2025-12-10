@@ -106,7 +106,7 @@ const HashCellComponent = ({ twap, copiedHash, copyToClipboard }: {
       <div className="flex items-center gap-1.5">
         <Link 
           href={`/explorer/transaction/${twap.hash}`}
-          className="text-[#83E9FF] font-inter hover:text-[#83E9FF]/80 transition-colors"
+          className="text-brand-accent font-inter hover:text-brand-accent/80 transition-colors"
         >
           {formatHash(twap.hash)}
         </Link>
@@ -120,7 +120,7 @@ const HashCellComponent = ({ twap, copiedHash, copyToClipboard }: {
           {copiedHash === twap.hash ? (
             <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
           ) : (
-            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+            <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
           )}
         </button>
       </div>
@@ -262,7 +262,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
     return (
       <div className="flex justify-center items-center h-[200px]">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
           <span className="text-[#FFFFFF80] text-sm">Loading...</span>
         </div>
       </div>
@@ -286,7 +286,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
+            <TableRow className="border-none bg-brand-tertiary">
               <TableHead className="py-3 px-4 w-[80px]">
                 <TableHeaderButton header="Type" align="left" />
               </TableHead>
@@ -304,7 +304,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody className="bg-brand-tertiary">
             {twaps.length > 0 ? (
               twaps.map((twap) => (
                 <TableRow

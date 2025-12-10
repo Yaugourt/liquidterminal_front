@@ -62,7 +62,7 @@ export function CategoryForm({
         <Button
           type="submit"
           disabled={creatingCategory}
-          className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-black"
+          className="bg-brand-accent hover:bg-brand-accent/90 text-black"
         >
           {creatingCategory ? "Creating..." : "Create Category"}
         </Button>

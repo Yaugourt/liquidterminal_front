@@ -91,12 +91,12 @@ export function XpLeaderboard({
       case 3:
         return "bg-gradient-to-r from-amber-600/10 to-orange-500/10 border-amber-600/30";
       default:
-        return "bg-[#0A0D12] border-white/5";
+        return "bg-brand-dark border-white/5";
     }
   };
 
   return (
-    <div className={cn("bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
       <div className="p-4 border-b border-white/5">
         <div className="flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-white font-semibold">
@@ -111,7 +111,7 @@ export function XpLeaderboard({
       <div className="p-4">
         {isLoading && leaderboard.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
           </div>
         ) : (
           <div className="space-y-4">
@@ -128,7 +128,7 @@ export function XpLeaderboard({
                 >
                   <div className="flex items-center gap-3">
                     {getRankIcon(entry.rank)}
-                    <div className="h-8 w-8 rounded-lg bg-[#151A25] border border-white/5 flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-lg bg-brand-secondary border border-white/5 flex items-center justify-center">
                       <User className="h-4 w-4 text-zinc-400" />
                     </div>
                     <div>
@@ -150,15 +150,15 @@ export function XpLeaderboard({
             {showCurrentUser && userRank && userRank > leaderboard.length && (
               <div className="pt-4 border-t border-white/5">
                 <p className="text-xs text-zinc-500 mb-2">Your position</p>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-[#83E9FF]/10 border border-[#83E9FF]/30">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-brand-accent/10 border border-brand-accent/30">
                   <div className="flex items-center gap-3">
-                    <span className="w-5 text-center text-sm font-bold text-[#83E9FF]">
+                    <span className="w-5 text-center text-sm font-bold text-brand-accent">
                       #{userRank}
                     </span>
-                    <div className="h-8 w-8 rounded-lg bg-[#83E9FF]/20 flex items-center justify-center">
-                      <User className="h-4 w-4 text-[#83E9FF]" />
+                    <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center">
+                      <User className="h-4 w-4 text-brand-accent" />
                     </div>
-                    <span className="font-medium text-sm text-[#83E9FF]">You</span>
+                    <span className="font-medium text-sm text-brand-accent">You</span>
                   </div>
                 </div>
               </div>

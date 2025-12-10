@@ -1,5 +1,5 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { NumberFormatType } from "@/store/number-format.store";
@@ -10,6 +10,7 @@ import { VaultSummary } from "@/services/explorer/vault/types";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/formatters/dateFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { PaginationProps } from "@/components/common/pagination";
 
 
 interface TableContentProps {
@@ -39,6 +40,7 @@ interface TableContentProps {
   format: NumberFormatType;
   startIndex: number;
   endIndex: number;
+  pagination?: PaginationProps;
 }
 
 export function TableContent({
@@ -50,7 +52,8 @@ export function TableContent({
   unstakingData,
   format,
   startIndex,
-  endIndex
+  endIndex,
+  pagination
 }: TableContentProps) {
   const { validators, loading: validatorsLoading, error: validatorsError } = validatorsData;
   const { vaults, loading: vaultsLoading, error: vaultsError } = vaultsData;
@@ -76,6 +79,7 @@ export function TableContent({
             emptyState={{
               title: "No validators available"
             }}
+            pagination={pagination}
           >
             <Table className="w-full">
               <TableHeader>
@@ -106,7 +110,7 @@ export function TableContent({
               <TableBody>
                 {validators.slice(startIndex, endIndex).map((validator: Validator) => (
                   <TableRow key={validator.name} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <TableCell className="py-3 px-3 text-[#83E9FF] font-medium">{validator.name}</TableCell>
+                    <TableCell className="py-3 px-3 text-brand-accent font-medium">{validator.name}</TableCell>
                     <TableCell className="py-3 px-3">
                       <StatusBadge variant={validator.isActive ? 'success' : 'error'}>
                         {validator.isActive ? 'Active' : 'Inactive'}
@@ -124,7 +128,7 @@ export function TableContent({
                     <TableCell className="py-3 px-3 text-right text-white font-medium">
                       {formatNumber(validator.uptime, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right text-[#83E9FF] font-medium">
+                    <TableCell className="py-3 px-3 text-right text-brand-accent font-medium">
                       {formatNumber(validator.nRecentBlocks, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </TableCell>
                   </TableRow>
@@ -142,6 +146,7 @@ export function TableContent({
             emptyState={{
               title: "No transactions available"
             }}
+            pagination={pagination}
           >
             <Table className="w-full">
               <TableHeader>
@@ -204,6 +209,7 @@ export function TableContent({
             emptyState={{
               title: "No pending unstaking requests"
             }}
+            pagination={pagination}
           >
             <Table className="w-full">
               <TableHeader>
@@ -249,6 +255,7 @@ export function TableContent({
       emptyState={{
         title: "No vaults available"
       }}
+      pagination={pagination}
     >
       <Table className="w-full">
         <TableHeader>

@@ -100,7 +100,7 @@ const ValidatorsTableComponent = ({
       accessor: (item: ExtendedValidator) => {
         const address = item.validator || item.address || item.name;
         return (
-          <AddressDisplay address={address} truncate={false} className="text-white hover:text-[#83E9FF]" />
+          <AddressDisplay address={address} truncate={false} className="text-white hover:text-brand-accent" />
         );
       },
       align: "left",

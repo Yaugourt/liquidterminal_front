@@ -49,7 +49,7 @@ export function DeleteWalletDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
           <DialogTitle>Delete Wallet</DialogTitle>
           <DialogDescription className="text-white">

@@ -35,7 +35,7 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
             tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
             activeTab={activeTab}
             onTabChange={(val) => handleTabChange(val as "spot" | "perp" | "auction" | "past-auction")}
-            className="bg-[#0A0D12] border border-white/5"
+            className="bg-brand-dark border border-white/5"
           />
         </div>
       </div>

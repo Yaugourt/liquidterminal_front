@@ -109,7 +109,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           <div>
             <span className="text-zinc-400 text-xs block mb-2">Deployer</span>
             <div className="flex items-center justify-between">
-              <span className="text-[#83E9FF] text-xs flex-1 truncate mr-1 font-mono">
+              <span className="text-brand-accent text-xs flex-1 truncate mr-1 font-mono">
                 {isLoading ? "Loading..." : tokenDetails ? truncateAddress(tokenDetails.deployer) : "N/A"}
               </span>
               {tokenDetails?.deployer && (
@@ -130,7 +130,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           <div>
             <span className="text-zinc-400 text-xs block mb-2">Token address</span>
             <div className="flex items-center justify-between">
-              <span className="text-[#83E9FF] text-xs flex-1 truncate mr-1 font-mono">
+              <span className="text-brand-accent text-xs flex-1 truncate mr-1 font-mono">
                 {token.contract ? truncateAddress(token.contract) : "N/A"}
               </span>
               {token.contract && (

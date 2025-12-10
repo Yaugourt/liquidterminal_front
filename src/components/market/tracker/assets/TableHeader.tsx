@@ -29,10 +29,10 @@ const SortableColumnHeader = ({
   <Button
     variant="ghost"
     onClick={() => onSort(sortKey)}
-    className={`text-[10px] font-semibold uppercase tracking-wider hover:text-zinc-200 p-0 h-auto flex items-center ${isActive ? 'text-[#83E9FF]' : 'text-zinc-400'} ${className}`}
+    className={`text-[10px] font-semibold uppercase tracking-wider hover:text-zinc-200 p-0 h-auto flex items-center ${isActive ? 'text-brand-accent' : 'text-zinc-400'} ${className}`}
   >
     {label}
-    <ArrowUpDown className={`ml-1.5 h-3 w-3 ${isActive ? 'text-[#83E9FF]' : ''}`} />
+    <ArrowUpDown className={`ml-1.5 h-3 w-3 ${isActive ? 'text-brand-accent' : ''}`} />
   </Button>
 );
 

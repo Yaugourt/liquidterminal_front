@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { TokenTabs } from "./TokenTabs";
-import { TokenTable } from "./TokenTable";
+import { UniversalTokenTable } from "./UniversalTokenTable";
 
 interface TokensSectionProps {
   market: 'spot' | 'perp';
@@ -15,18 +15,19 @@ export function TokensSection({ market }: TokensSectionProps) {
 
   return (
     <div>
-      <TokenTabs 
+      <TokenTabs
         market={market}
-        activeTab={activeTab} 
+        activeTab={activeTab}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      
-      <TokenTable 
+
+      <UniversalTokenTable
         market={market}
         strict={market === 'spot' ? activeTab === "strict" : false}
         searchQuery={searchQuery}
+        mode="full"
       />
     </div>
   );

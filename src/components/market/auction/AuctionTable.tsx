@@ -25,7 +25,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: 
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`${isActive ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
+      className={`${isActive ? "text-brand-accent" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
     >
       {label}
       {onClick && <ArrowUpDown className="h-3 w-3" />}
@@ -147,7 +147,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <ComingSoonState />
       </div>
     );
@@ -155,9 +155,9 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
 
   if (isLoading) {
     return (
-      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
         </div>
       </div>
     );
@@ -173,7 +173,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
@@ -208,13 +208,13 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                   <TableCell className="py-3 px-3 text-white text-sm font-medium text-left">{auction.name}</TableCell>
                   <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
+                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
                   <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
+                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>

@@ -31,14 +31,14 @@ const AnimatedPeriodSelector = ({
   availablePeriods: ChartPeriod[]; 
 }) => {
   return (
-    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
       {availablePeriods.map((period) => (
         <button
           key={period}
           onClick={() => onPeriodChange(period)}
           className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${
             selectedPeriod === period
-              ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
               : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
           }`}
         >
@@ -157,7 +157,7 @@ export const ChartDisplay = ({
             )}
 
             {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
-              <div className="flex items-center bg-[#0A0D12] rounded-md p-0.5 border border-white/5">
+              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-white/5">
                 <button
                   onClick={() => onCurrencyChange("USDC")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${
@@ -178,7 +178,7 @@ export const ChartDisplay = ({
             )}
             
             {selectedFilter === "fees" && onFeeTypeChange && (
-              <div className="flex items-center bg-[#0A0D12] rounded-md p-0.5 border border-white/5">
+              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-white/5">
                 <button
                   onClick={() => onFeeTypeChange("all")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${

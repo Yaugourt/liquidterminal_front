@@ -169,7 +169,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
     <div className="flex items-center gap-1.5">
       <Link
         href={`/explorer/address/${twap.user}`}
-        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
+        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
       >
         {formatAddress(twap.user)}
       </Link>
@@ -248,7 +248,7 @@ export const TwapTable = memo(({
       {isLoading ? (
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
             <span className="text-zinc-500 text-sm">Chargement...</span>
           </div>
         </div>

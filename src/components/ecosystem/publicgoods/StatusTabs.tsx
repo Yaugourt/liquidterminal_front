@@ -45,7 +45,7 @@ export const StatusTabs = memo(function StatusTabs({
   ];
 
   return (
-    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 w-fit">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5 w-fit">
       {tabs.map(tab => (
         <button
           key={tab.id}
@@ -53,7 +53,7 @@ export const StatusTabs = memo(function StatusTabs({
           className={cn(
             "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
             activeTab === tab.id
-              ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+              ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
               : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
           )}
         >
@@ -64,7 +64,7 @@ export const StatusTabs = memo(function StatusTabs({
             <span className={cn(
               "px-1.5 py-0.5 text-[10px] rounded-md font-medium",
               activeTab === tab.id
-                ? "bg-[#051728]/20 text-[#051728]"
+                ? "bg-brand-tertiary/20 text-brand-tertiary"
                 : `bg-white/5 ${tab.color}`
             )}>
               {tab.count}

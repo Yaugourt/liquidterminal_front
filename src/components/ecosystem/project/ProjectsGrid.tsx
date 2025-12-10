@@ -8,7 +8,8 @@ import { useProjects, useCategories } from "@/services/ecosystem/project";
 import { useAuthContext } from "@/contexts/auth.context";
 import { canCreateProject } from "@/lib/roleHelpers";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination, SimpleSearchBar } from "@/components/common";
+import { Pagination } from "@/components/common";
+import { SearchBar } from "@/components/common/SearchBar";
 
 interface ProjectsGridProps {
   activeTab?: string;
@@ -17,8 +18,8 @@ interface ProjectsGridProps {
   onPageChange?: (page: number) => void;
 }
 
-export const ProjectsGrid = memo(function ProjectsGrid({ 
-  activeTab = 'all', 
+export const ProjectsGrid = memo(function ProjectsGrid({
+  activeTab = 'all',
   currentPage = 1,
   onTabChange,
   onPageChange
@@ -26,18 +27,18 @@ export const ProjectsGrid = memo(function ProjectsGrid({
   const [rowsPerPage, setRowsPerPage] = useState(50);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
-  
+
   // Récupérer les catégories pour les tabs
   const { categories, isLoading: categoriesLoading, error: categoriesError, refetch: refetchCategories } = useCategories();
-  
+
   // Construire les paramètres pour les projets selon le tab actif
   const projectParams = useMemo(() => {
-    const baseParams = { 
-      page: currentPage, 
+    const baseParams = {
+      page: currentPage,
       limit: rowsPerPage,
       ...(searchQuery && { search: searchQuery })
     };
-    
+
     if (activeTab === 'all') {
       return baseParams; // Pas de categoryIds = tous les projets
     } else {
@@ -47,7 +48,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       };
     }
   }, [activeTab, currentPage, rowsPerPage, searchQuery]);
-  
+
   const { projects, isLoading: projectsLoading, error: projectsError, refetch, pagination } = useProjects(projectParams);
 
   // Vérification des rôles
@@ -94,7 +95,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           />
         </div>
         <div className="flex-shrink-0">
-          <SimpleSearchBar
+          <SearchBar
             onSearch={setSearchQuery}
             placeholder="Search projects..."
             className="max-w-sm"
@@ -106,11 +107,11 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       {projectsLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-32 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl" />
+            <Skeleton key={i} className="h-32 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl" />
           ))}
         </div>
       ) : projectsError ? (
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
           <div className="text-center py-8">
             <p className="text-rose-400 text-lg font-medium">Failed to load projects</p>
             <p className="text-zinc-500 text-sm mt-2">
@@ -121,18 +122,18 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       ) : projects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <ProjectCard 
-              key={project.id} 
+            <ProjectCard
+              key={project.id}
               project={project}
             />
           ))}
         </div>
       ) : (
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
           <div className="text-center py-8">
             <p className="text-zinc-400 text-lg">No projects found</p>
             <p className="text-zinc-500 text-sm mt-2">
-              {activeTab === 'all' 
+              {activeTab === 'all'
                 ? "No projects have been added yet."
                 : "No projects in this category yet."}
             </p>

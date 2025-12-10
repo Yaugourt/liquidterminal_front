@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { SearchBar } from "@/components/SearchBar";
+
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { EducationContent } from "@/components/wiki/EducationContent";
@@ -11,7 +11,7 @@ import { EducationSidebar } from "@/components/wiki/EducationSidebar";
 import { ResourcesSection } from "@/components/wiki/ResourcesSection";
 import { CategoryFilter } from "@/components/wiki/CategoryFilter";
 import { EducationModal } from "@/components/wiki/EducationModal";
-import { WikiSearchBar } from "@/components/wiki/WikiSearchBar";
+import { SearchBar } from "@/components/common/SearchBar";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
@@ -59,10 +59,7 @@ export default function EducationPage() {
     setSelectedCategories(categories);
   };
 
-  // Handle search query changes
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+
 
   // Transform data for the sidebar
   const sidebarInfo = hyperliquidInfo ? {
@@ -86,7 +83,7 @@ export default function EducationPage() {
   } : null;
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+    <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
@@ -103,13 +100,13 @@ export default function EducationPage() {
 
       <div className="">
         {/* Header with glass effect */}
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Introduction" showFees={true} />
         </div>
 
         {/* Mobile search bar */}
         <div className="p-2 lg:hidden">
-          <SearchBar placeholder="Search educational content..." />
+          <SearchBar onSearch={setSearchQuery} placeholder="Search educational content..." />
         </div>
 
         <main className="px-6 py-8 space-y-6 max-w-[1920px] mx-auto">
@@ -132,9 +129,10 @@ export default function EducationPage() {
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
               />
-              <WikiSearchBar
-                onSearch={handleSearch}
-                placeholder="Search in titles, categories, links..."
+              <SearchBar
+                onSearch={setSearchQuery}
+                placeholder="Search in resources..."
+                className="w-full sm:w-[320px]"
               />
             </div>
             <ProtectedAction requiredRole="ADMIN" user={user}>

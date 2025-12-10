@@ -43,7 +43,7 @@ export default function TransactionPage() {
         <Header customTitle="Explorer" showFees={true} />
         <div className="flex justify-center items-center min-h-[400px]">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
             <span className="text-white font-inter">Loading transaction details...</span>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function TransactionPage() {
         {/* Back Button */}
         <button
           onClick={() => router.push('/explorer')}
-          className="flex items-center gap-2 text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors font-inter"
+          className="flex items-center gap-2 text-brand-accent hover:text-brand-accent/80 transition-colors font-inter"
         >
           <ArrowLeft size={20} />
           Back
@@ -105,7 +105,7 @@ export default function TransactionPage() {
         <div className="flex items-center gap-3 bg-[#051728E5] border border-[#83E9FF4D] rounded-lg p-4">
           <span className="text-[#FFFFFF80] text-sm font-inter">Hash:</span>
           <div className="flex items-center gap-2 flex-1">
-            <span className="text-[#83E9FF] font-inter break-all">
+            <span className="text-brand-accent font-inter break-all">
               <span className="md:hidden">{truncateHash(txHash)}</span>
               <span className="hidden md:inline">{txHash}</span>
             </span>
@@ -116,7 +116,7 @@ export default function TransactionPage() {
               {copiedHash ? (
                 <Check className="h-4 w-4 text-green-500" />
               ) : (
-                <Copy className="h-4 w-4 text-[#f9e370] opacity-60 hover:opacity-100" />
+                <Copy className="h-4 w-4 text-brand-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>

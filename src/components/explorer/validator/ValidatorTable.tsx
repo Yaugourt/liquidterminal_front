@@ -2,7 +2,6 @@ import { useValidators } from "@/services/explorer/validator";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useCallback, useEffect } from "react";
-import { Pagination } from "@/components/common/pagination";
 import { usePagination } from "@/hooks/core/usePagination";
 import { TableContent } from "@/components/explorer/vaultValidatorSum";
 import { ValidatorSubTab } from "./types";
@@ -108,6 +107,15 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
 
   const totalItems = getTotalItems();
 
+  const paginationProps = validatorSubTab !== 'stakers' ? {
+    total: totalItems,
+    page: currentPage,
+    rowsPerPage: rowsPerPage,
+    rowsPerPageOptions: [10, 25, 50, 100],
+    onPageChange: handlePageChange,
+    onRowsPerPageChange: handleRowsPerPageChange,
+  } : undefined;
+
   return (
     <div className="w-full p-4">
       <div className="flex flex-col flex-1">
@@ -118,7 +126,7 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
             <TableContent
               activeTab="validators"
               validatorSubTab={validatorSubTab}
-              onValidatorSubTabChange={() => { }} // No-op function since this component doesn't handle sub-tab changes
+              onValidatorSubTabChange={() => { }}
               validatorsData={{
                 validators,
                 loading: validatorsLoading,
@@ -142,21 +150,10 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
               format={format}
               startIndex={validatorSubTab === 'all' ? startIndex : 0}
               endIndex={validatorSubTab === 'all' ? endIndex : 0}
+              pagination={paginationProps}
             />
           )}
         </div>
-        {validatorSubTab !== 'stakers' && (
-          <div className="mt-4 pt-4 border-t border-white/5">
-            <Pagination
-              total={totalItems}
-              page={currentPage}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

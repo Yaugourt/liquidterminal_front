@@ -16,7 +16,7 @@ const statusBadgeVariants = cva(
                 warning:
                     "bg-amber-500/10 text-amber-400 ring-amber-500/20",
                 info:
-                    "bg-[#83e9ff]/10 text-[#83e9ff] ring-[#83e9ff]/20",
+                    "bg-brand-accent/10 text-brand-accent ring-brand-accent/20",
                 buy:
                     "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
                 sell:
@@ -24,7 +24,7 @@ const statusBadgeVariants = cva(
                 neutral:
                     "bg-zinc-500/10 text-zinc-400 ring-zinc-500/20",
                 active:
-                    "bg-[#83e9ff]/10 text-[#83e9ff] ring-[#83e9ff]/20",
+                    "bg-brand-accent/10 text-brand-accent ring-brand-accent/20",
                 inactive:
                     "bg-zinc-500/10 text-zinc-500 ring-zinc-500/20",
             },

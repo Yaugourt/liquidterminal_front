@@ -54,7 +54,7 @@ export function ProjectTab({
           value={formData.name}
           onChange={(e) => updateField('name', e.target.value)}
           placeholder="My Awesome HyperLiquid Tool"
-          className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
         />
       </div>
       
@@ -66,7 +66,7 @@ export function ProjectTab({
           onChange={(e) => updateField('description', e.target.value)}
           placeholder="Describe your project..."
           rows={4}
-          className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.description.length >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.description.length >= 100 
@@ -79,10 +79,10 @@ export function ProjectTab({
       <div>
         <Label htmlFor="category" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Category *</Label>
         <Select value={formData.category} onValueChange={(val) => updateField('category', val)}>
-          <SelectTrigger className="bg-[#0A0D12] border-white/5 text-white rounded-lg mt-1">
+          <SelectTrigger className="bg-brand-dark border-white/5 text-white rounded-lg mt-1">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
-          <SelectContent className="bg-[#151A25] border-white/10 rounded-xl">
+          <SelectContent className="bg-brand-secondary border-white/10 rounded-xl">
             {CATEGORIES.map(cat => (
               <SelectItem key={cat} value={cat} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                 {cat}
@@ -100,7 +100,7 @@ export function ProjectTab({
             value={formData.githubUrl}
             onChange={(e) => updateField('githubUrl', e.target.value)}
             placeholder="https://github.com/username/repo"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
           />
         </div>
         
@@ -111,7 +111,7 @@ export function ProjectTab({
             value={formData.websiteUrl}
             onChange={(e) => updateField('websiteUrl', e.target.value)}
             placeholder="https://example.com"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ export function ProjectTab({
           value={formData.demoUrl}
           onChange={(e) => updateField('demoUrl', e.target.value)}
           placeholder="https://demo.example.com"
-          className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
         />
       </div>
       
@@ -135,7 +135,7 @@ export function ProjectTab({
             value={formData.discordContact}
             onChange={(e) => updateField('discordContact', e.target.value)}
             placeholder="username#1234"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
           />
         </div>
         
@@ -146,7 +146,7 @@ export function ProjectTab({
             value={formData.telegramContact}
             onChange={(e) => updateField('telegramContact', e.target.value)}
             placeholder="@username"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
@@ -158,8 +158,8 @@ export function ProjectTab({
         {/* Logo */}
         <div>
           <label htmlFor="logo-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-[#0A0D12] text-white hover:bg-white/5 transition-colors w-fit">
-              <Upload className="h-4 w-4 text-[#83E9FF]" />
+            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+              <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Logo (max 2MB)</span>
             </div>
             <input
@@ -186,8 +186,8 @@ export function ProjectTab({
         {/* Banner */}
         <div>
           <label htmlFor="banner-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-[#0A0D12] text-white hover:bg-white/5 transition-colors w-fit">
-              <Upload className="h-4 w-4 text-[#83E9FF]" />
+            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+              <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Banner (max 5MB)</span>
             </div>
             <input
@@ -214,8 +214,8 @@ export function ProjectTab({
         {/* Screenshots */}
         <div>
           <label htmlFor="screenshots-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-[#0A0D12] text-white hover:bg-white/5 transition-colors w-fit">
-              <Upload className="h-4 w-4 text-[#83E9FF]" />
+            <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+              <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Screenshots (max 5, 2MB each)</span>
             </div>
             <input

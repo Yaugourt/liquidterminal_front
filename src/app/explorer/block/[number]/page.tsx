@@ -34,7 +34,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
                 <Header customTitle="Explorer" showFees={true} />
                 <div className="flex justify-center items-center h-[400px]">
                     <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+                        <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
                         <p className="text-white text-lg">Loading block details...</p>
                     </div>
                 </div>

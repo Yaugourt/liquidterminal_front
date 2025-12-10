@@ -27,7 +27,7 @@ export function ProjectInfoSidebar({
     return (
         <div className="space-y-6">
             {/* Contact */}
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Contact</h3>
                 <div className="space-y-3">
                     {project.discordContact && (
@@ -50,7 +50,7 @@ export function ProjectInfoSidebar({
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -59,32 +59,32 @@ export function ProjectInfoSidebar({
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-zinc-500 text-xs">Category</span>
-                        <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
+                        <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-zinc-500 text-xs">Team Size</span>
-                        <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
+                        <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-zinc-500 text-xs">Experience</span>
-                        <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
+                        <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-zinc-500 text-xs">Stage</span>
-                        <span className="text-[#83E9FF] text-xs font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
+                        <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Actions */}
             {(canEdit || canDelete || canReview) && (
-                <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
                     <h3 className="text-sm font-bold text-white mb-4">Manage Project</h3>
                     <div className="space-y-3">
                         {canReview && onReview && (
                             <Button
                                 onClick={onReview}
-                                className="w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+                                className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
                             >
                                 <CheckCircle className="w-4 h-4 mr-2" />
                                 Review Project

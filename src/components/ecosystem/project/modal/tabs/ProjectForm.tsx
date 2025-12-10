@@ -63,14 +63,14 @@ export function ProjectForm({
             id="title"
             value={projectForm.title}
             onChange={(e) => setProjectForm(prev => ({ ...prev, title: e.target.value }))}
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             required
           />
         </div>
         
         <div className="space-y-2">
           <label htmlFor="categories" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Categories</label>
-          <div className="space-y-2 max-h-32 overflow-y-auto bg-[#0A0D12] border border-white/5 rounded-lg p-2">
+          <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-white/5 rounded-lg p-2">
             {categories.map((category) => (
               <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 p-1 rounded">
                 <input
@@ -89,7 +89,7 @@ export function ProjectForm({
                       }));
                     }
                   }}
-                  className="rounded border-white/10 bg-[#0A0D12] text-[#83E9FF] focus:ring-[#83E9FF]"
+                  className="rounded border-white/10 bg-brand-dark text-brand-accent focus:ring-brand-accent"
                 />
                 <span className="text-zinc-300 text-sm">{category.name}</span>
               </label>
@@ -104,7 +104,7 @@ export function ProjectForm({
           id="desc"
           value={projectForm.desc}
           onChange={(e) => setProjectForm(prev => ({ ...prev, desc: e.target.value }))}
-          className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
           rows={3}
           required
         />
@@ -117,8 +117,8 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-[#0A0D12] text-white hover:bg-white/5 transition-colors">
-                <PiUpload className="h-4 w-4 text-[#83E9FF]" />
+              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+                <PiUpload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Image</span>
               </div>
               <input
@@ -177,7 +177,7 @@ export function ProjectForm({
                   handleRemoveFile();
                 }
               }}
-              className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+              className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
               placeholder="https://example.com/logo.png"
               disabled={!!selectedFile}
             />
@@ -191,8 +191,8 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="banner-file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-[#0A0D12] text-white hover:bg-white/5 transition-colors">
-                <PiUpload className="h-4 w-4 text-[#83E9FF]" />
+              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+                <PiUpload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Banner</span>
               </div>
               <input
@@ -251,7 +251,7 @@ export function ProjectForm({
                   handleRemoveBannerFile();
                 }
               }}
-              className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+              className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
               placeholder="https://example.com/banner.png"
               disabled={!!selectedBannerFile}
             />
@@ -267,7 +267,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.website}
             onChange={(e) => setProjectForm(prev => ({ ...prev, website: e.target.value }))}
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             placeholder="https://example.com"
           />
         </div>
@@ -279,7 +279,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.twitter}
             onChange={(e) => setProjectForm(prev => ({ ...prev, twitter: e.target.value }))}
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             placeholder="https://twitter.com/project"
           />
         </div>
@@ -293,7 +293,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.discord}
             onChange={(e) => setProjectForm(prev => ({ ...prev, discord: e.target.value }))}
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             placeholder="https://discord.gg/project"
           />
         </div>
@@ -305,7 +305,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.telegram}
             onChange={(e) => setProjectForm(prev => ({ ...prev, telegram: e.target.value }))}
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             placeholder="https://t.me/project"
           />
         </div>
@@ -319,7 +319,7 @@ export function ProjectForm({
           type="text"
           value={projectForm.token}
           onChange={(e) => setProjectForm(prev => ({ ...prev, token: e.target.value }))}
-          className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
           placeholder="0x..."
         />
       </div>
@@ -336,7 +336,7 @@ export function ProjectForm({
         <Button
           type="submit"
           disabled={creatingProject}
-          className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
         >
           {creatingProject ? "Creating..." : "Create Project"}
         </Button>

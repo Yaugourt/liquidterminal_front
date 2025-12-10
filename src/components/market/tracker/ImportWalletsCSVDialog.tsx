@@ -185,7 +185,7 @@ export function ImportWalletsCSVDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <DialogTitle>Import Wallets from CSV</DialogTitle>
           <DialogDescription className="text-white">
@@ -201,7 +201,7 @@ export function ImportWalletsCSVDialog({
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 isDragging
-                  ? "border-[#83E9FF] bg-[#83E9FF10]"
+                  ? "border-brand-accent bg-[#83E9FF10]"
                   : "border-[#83E9FF4D] hover:border-[#83E9FF80]"
               }`}
               onDragOver={(e) => {
@@ -211,7 +211,7 @@ export function ImportWalletsCSVDialog({
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
             >
-              <Upload className="w-12 h-12 mx-auto mb-4 text-[#83E9FF]" />
+              <Upload className="w-12 h-12 mx-auto mb-4 text-brand-accent" />
               <p className="text-white mb-2">Drag & drop your CSV file here</p>
               <p className="text-gray-400 text-sm mb-4">or</p>
               <Button
@@ -310,7 +310,7 @@ export function ImportWalletsCSVDialog({
 
           {/* Help Text */}
           <div className="flex items-start gap-2 p-3 bg-[#0C2237] rounded-lg">
-            <AlertCircle className="w-4 h-4 text-[#83E9FF] mt-0.5 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-brand-accent mt-0.5 shrink-0" />
             <div className="flex-1">
               <p className="text-xs text-gray-400">
                 CSV must have <span className="text-white font-medium">address</span> column (required) and optional <span className="text-white font-medium">name</span> column.
@@ -319,7 +319,7 @@ export function ImportWalletsCSVDialog({
                 variant="link"
                 size="sm"
                 onClick={handleDownloadSample}
-                className="text-[#83E9FF] hover:text-[#83E9FF] p-0 h-auto mt-1"
+                className="text-brand-accent hover:text-brand-accent p-0 h-auto mt-1"
               >
                 <Download className="w-3 h-3 mr-1" />
                 Download sample CSV

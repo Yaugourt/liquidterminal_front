@@ -73,7 +73,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           <Switch
             checked={group.visible}
             onCheckedChange={() => onToggleGroup(group.id)}
-            className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#64748B]"
+            className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B]"
           />
         </div>
       </div>
@@ -91,7 +91,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
                 <Switch
                   checked={item.visible}
                   onCheckedChange={() => onToggleItem(group.id, item.id)}
-                  className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#64748B] scale-75"
+                  className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B] scale-75"
                 />
               </div>
             );
@@ -158,7 +158,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-[#83E9FF1A]">
           <div>

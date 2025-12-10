@@ -70,10 +70,10 @@ export function TokenCard({ token, className }: TokenCardProps) {
               />
             ) : null}
             <div className={cn(
-              "w-full h-full bg-gradient-to-br from-[#83E9FF] to-[#4ADE80] flex items-center justify-center",
+              "w-full h-full bg-gradient-to-br from-brand-accent to-[#4ADE80] flex items-center justify-center",
               token.logo ? "hidden" : ""
             )}>
-              <span className="text-[#051728] text-xs font-bold">
+              <span className="text-brand-tertiary text-xs font-bold">
                 {token.symbol.split('/')[0].charAt(0)}
               </span>
             </div>
@@ -161,7 +161,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
             <div className="flex flex-col">
               <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Contract</span>
               <div className="flex items-center gap-2">
-                <span className="text-[#83E9FF] text-xs font-mono">
+                <span className="text-brand-accent text-xs font-mono">
                   {truncateAddress(token.contract)}
                 </span>
                 <Copy

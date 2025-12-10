@@ -18,14 +18,14 @@ export const AuctionSection = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
           {subTabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${
                 activeSubTab === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >

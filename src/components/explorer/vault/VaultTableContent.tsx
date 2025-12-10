@@ -1,6 +1,6 @@
 "use client";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/common/DataTable";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -87,7 +87,7 @@ export function VaultTableContent({ vaults, isLoading, error, format }: VaultTab
               <TableCell className="py-3 px-3 text-center">
                 <Button
                   onClick={() => handleDepositClick(vault.summary.vaultAddress)}
-                  className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-bold px-3 py-1 text-xs flex items-center gap-1 mx-auto"
+                  className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold px-3 py-1 text-xs flex items-center gap-1 mx-auto"
                   disabled={vault.summary.isClosed}
                 >
                   Deposit

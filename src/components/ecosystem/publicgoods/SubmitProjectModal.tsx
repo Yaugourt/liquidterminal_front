@@ -287,7 +287,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Submit Your Project</DialogTitle>
           <p className="text-zinc-400 text-sm">
@@ -296,20 +296,20 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-5 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
-            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
+          <TabsList className="grid w-full grid-cols-5 bg-brand-dark border border-white/5 rounded-lg p-1">
+            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               1. Project
             </TabsTrigger>
-            <TabsTrigger value="impact" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="impact" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               2. Impact
             </TabsTrigger>
-            <TabsTrigger value="team" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="team" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               3. Team
             </TabsTrigger>
-            <TabsTrigger value="support" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="support" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               4. Support
             </TabsTrigger>
-            <TabsTrigger value="preview" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="preview" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               5. Preview
             </TabsTrigger>
           </TabsList>
@@ -380,7 +380,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
           {currentIndex < tabs.length - 1 ? (
             <Button
               onClick={goNext}
-              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
             >
               Next
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -389,7 +389,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
             >
               {isSubmitting ? "Submitting..." : "Submit Project"}
               <Check className="h-4 w-4 ml-2" />

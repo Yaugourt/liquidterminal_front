@@ -82,7 +82,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
   };
 
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
       {/* Delete button for admins */}
       <ProtectedAction requiredRole="ADMIN" user={user}>
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -107,7 +107,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           className="block"
         >
           {/* Image section */}
-          <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0A0D12] to-[#151A25]" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full overflow-hidden bg-gradient-to-br from-brand-dark to-brand-secondary" style={{ aspectRatio: '16/9' }}>
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
               <Image
                 src={preview.image}
@@ -126,7 +126,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <div className="text-[#83E9FF] opacity-20">
+                <div className="text-brand-accent opacity-20">
                   <ExternalLink size={48} />
                 </div>
               </div>
@@ -136,10 +136,10 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           {/* Content section */}
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-[#83E9FF] transition-colors">
+              <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-brand-accent transition-colors">
                 {preview?.title || resource.title}
               </h3>
-              <ExternalLink size={14} className="text-[#83E9FF] mt-0.5 flex-shrink-0" />
+              <ExternalLink size={14} className="text-brand-accent mt-0.5 flex-shrink-0" />
             </div>
 
             <p className="text-xs text-zinc-400 line-clamp-2">
@@ -149,7 +149,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
             <div className="flex items-center justify-between pt-2 border-t border-white/5">
               <Badge 
                 variant="secondary" 
-                className="bg-[#0A0D12] text-zinc-400 border border-white/5 text-xs rounded-md"
+                className="bg-brand-dark text-zinc-400 border border-white/5 text-xs rounded-md"
               >
                 {preview?.siteName || 'Article'}
               </Badge>
@@ -171,7 +171,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                   }}
                   className={`p-1.5 h-auto rounded-lg ${
                     authenticated 
-                      ? "text-[#83E9FF] hover:bg-[#83E9FF]/10" 
+                      ? "text-brand-accent hover:bg-brand-accent/10" 
                       : "text-zinc-600 cursor-not-allowed"
                   }`}
                   title={authenticated ? "Add to read list" : "Login required to add to read list"}
@@ -194,7 +194,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
               }
             }}
           >
-            <div className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-sm w-full mx-4">
+            <div className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-sm w-full mx-4">
               <div className="text-sm font-bold text-white mb-4">Add to read list:</div>
               {readLists.length === 0 ? (
                 <div className="text-sm text-zinc-500 py-4 text-center">
@@ -213,7 +213,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                       disabled={isAddingToList}
                       className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-colors border border-white/5 hover:border-white/10"
                     >
-                      <BookOpen className="w-5 h-5 text-[#83E9FF] flex-shrink-0" />
+                      <BookOpen className="w-5 h-5 text-brand-accent flex-shrink-0" />
                       <div className="flex-1">
                         <div className="font-medium">{readList.name}</div>
                         {readList.description && (

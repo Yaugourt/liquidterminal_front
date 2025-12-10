@@ -80,7 +80,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25] border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="bg-brand-secondary border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-white">
             {walletListName ? `Add wallet to "${walletListName}"` : "Add a new wallet"}
@@ -104,7 +104,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg font-mono focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 rounded-lg font-mono focus:border-brand-accent/50"
             />
           </div>
           <div className="space-y-2">
@@ -116,7 +116,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-brand-accent/50"
             />
           </div>
 

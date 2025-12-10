@@ -106,7 +106,7 @@ function HomePageContent() {
           priority
         />
         {/* Filtre sombre pour assurer la lisibilité */}
-        <div className="absolute inset-0 bg-[#051728]/95" />
+        <div className="absolute inset-0 bg-brand-tertiary/95" />
       </div>
 
       {/* Header */}
@@ -121,7 +121,7 @@ function HomePageContent() {
             className="h-6 w-6" 
           />
           <h1 className="text-sm">
-            <span className="text-[#83E9FF] font-higuen">{titleText.slice(0, 6)}</span>
+            <span className="text-brand-accent font-higuen">{titleText.slice(0, 6)}</span>
             <span className="text-white font-inter">{titleText.slice(6)}</span>
           </h1>
         </div>
@@ -136,10 +136,10 @@ function HomePageContent() {
               rel="noopener noreferrer"
               className="group relative p-2"
             >
-              <div className="absolute inset-0 bg-[#83E9FF] rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
+              <div className="absolute inset-0 bg-brand-accent rounded-lg opacity-0 group-hover:opacity-10 transition-opacity" />
               <Icon 
                 icon={item.iconName} 
-                className="h-5 w-5 text-[#f9e370] group-hover:text-[#83E9FF] transition-colors relative z-10" 
+                className="h-5 w-5 text-brand-gold group-hover:text-brand-accent transition-colors relative z-10" 
               />
             </a>
           ))}
@@ -151,22 +151,22 @@ function HomePageContent() {
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl lg:text-6xl font-inter font-normal text-white mb-6 md:mb-8 leading-tight">
             {displayText.slice(0, 4)}
-            <span className="text-[#83E9FF] font-higuen">{displayText.slice(4, 12)}</span>
+            <span className="text-brand-accent font-higuen">{displayText.slice(4, 12)}</span>
             {displayText.slice(12)}
             {currentIndex >= fullText.length && (
-              <span className="text-[#83E9FF] font-higuen">{liquidText}</span>
+              <span className="text-brand-accent font-higuen">{liquidText}</span>
             )}
-            {showCursor && <span className="text-[#83E9FF] animate-pulse">_</span>}
+            {showCursor && <span className="text-brand-accent animate-pulse">_</span>}
           </h2>
           
           <Button 
             onClick={handleOpenApp}
-            className="group relative bg-[#051728] rounded-lg overflow-hidden px-8 py-4 text-lg font-semibold"
+            className="group relative bg-brand-tertiary rounded-lg overflow-hidden px-8 py-4 text-lg font-semibold"
           >
-            <div className="absolute inset-[1px] bg-[#051728] rounded-lg z-10" />
-            <div className="absolute inset-0 bg-[#83E9FF] blur-[2px]" />
+            <div className="absolute inset-[1px] bg-brand-tertiary rounded-lg z-10" />
+            <div className="absolute inset-0 bg-brand-accent blur-[2px]" />
             <div className="relative z-20 flex items-center justify-center gap-3">
-              <span className="font-inter font-normal text-[#83E9FF] group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
+              <span className="font-inter font-normal text-brand-accent group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(131,233,255,0.6)] transition-all duration-300">
                 Open App
               </span>
             </div>
@@ -192,7 +192,7 @@ function HomePageContent() {
               href="https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
+              className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors group flex-shrink-0"
             >
               <Image 
                 src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg" 
@@ -208,7 +208,7 @@ function HomePageContent() {
               href="https://api.hypurrscan.io/ui/#/Experimental/hypurrscanAPI.get%20spotUSDC" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
+              className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors group flex-shrink-0"
             >
               <Image 
                 src="/hypurrscan.jpg" 
@@ -224,7 +224,7 @@ function HomePageContent() {
               href="https://api-docs.defillama.com/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white hover:text-[#83E9FF] transition-colors group flex-shrink-0"
+              className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors group flex-shrink-0"
             >
               <Image 
                 src="/defillama.jpg" 
@@ -249,8 +249,8 @@ export default function HomePage() {
       <JsonLd data={softwareApplicationSchema} />
       <JsonLd data={websiteSchema} />
       <Suspense fallback={
-        <div className="min-h-screen bg-[#051728] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+        <div className="min-h-screen bg-brand-tertiary flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
         </div>
       }>
         <HomePageContent />

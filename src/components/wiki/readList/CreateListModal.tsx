@@ -27,7 +27,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-md w-full mx-4">
+      <div className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-md w-full mx-4">
         <h2 className="text-white text-lg font-bold mb-4">Create Read List</h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -39,7 +39,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 required
                 minLength={2}
                 maxLength={255}
-                className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+                className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
               />
             </div>
             <div>
@@ -48,16 +48,16 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 name="description"
                 placeholder="Description (optional)"
                 maxLength={500}
-                className="w-full p-3 bg-[#0A0D12] border border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 focus:outline-none transition-colors"
+                className="w-full p-3 bg-brand-dark border border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 focus:outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="p-3 bg-[#0A0D12] border border-white/5 rounded-lg">
+            <div className="p-3 bg-brand-dark border border-white/5 rounded-lg">
               <label className="flex items-center gap-3 text-zinc-300 text-sm cursor-pointer">
                 <input
                   type="checkbox"
                   name="isPublic"
-                  className="w-4 h-4 rounded border-white/10 bg-[#0A0D12] text-[#83E9FF] focus:ring-[#83E9FF] focus:ring-offset-0"
+                  className="w-4 h-4 rounded border-white/10 bg-brand-dark text-brand-accent focus:ring-brand-accent focus:ring-offset-0"
                 />
                 <span>Make this list public</span>
               </label>
@@ -74,7 +74,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
             </Button>
             <Button
               type="submit"
-              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
               disabled={isLoading}
             >
               {isLoading ? 'Creating...' : 'Create'}

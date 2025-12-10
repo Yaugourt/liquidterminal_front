@@ -90,7 +90,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         side="right" 
         align="end"
         sideOffset={8}
-        className="w-72 p-0 bg-[#151A25] border border-white/10 rounded-xl shadow-xl shadow-black/40"
+        className="w-72 p-0 bg-brand-secondary border border-white/10 rounded-xl shadow-xl shadow-black/40"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-white/5">

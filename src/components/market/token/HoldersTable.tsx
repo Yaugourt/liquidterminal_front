@@ -67,10 +67,10 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (isLoading) {
     return (
-      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
             <span className="text-zinc-500 text-sm">Loading holders...</span>
           </div>
         </div>
@@ -80,7 +80,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (error) {
     return (
-      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
             <Database className="w-10 h-10 mb-3 text-zinc-600" />
@@ -93,7 +93,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-white/10 transition-all">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-white/10 transition-all">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
@@ -125,7 +125,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                       <div className="flex items-center gap-1">
                         <Link 
                           href={`/explorer/address/${holder.address}`} 
-                          className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
+                          className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
                         >
                           {formatAddress(holder.address)}
                         </Link>
@@ -151,7 +151,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                     <div className="flex items-center gap-1">
                       <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
                       {stakedHolders && stakedHolders[holder.address] && (
-                        <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-[#f9e370]/10 text-[#f9e370]">
+                        <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
                           (staked)
                         </span>
                       )}

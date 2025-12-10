@@ -62,7 +62,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             <div className="flex items-center gap-2">
               <Link 
                 href={`/explorer/address/${transaction.user}`}
-                className="text-[#83E9FF] text-base hover:text-[#83E9FF]/80 transition-colors font-inter"
+                className="text-brand-accent text-base hover:text-brand-accent/80 transition-colors font-inter"
               >
                 <span className="md:hidden">{truncateAddress(transaction.user)}</span>
                 <span className="hidden md:inline">{transaction.user}</span>
@@ -74,7 +74,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
                 {copiedValue === transaction.user ? (
                   <Check className="h-3 w-3 text-green-500" />
                 ) : (
-                  <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                  <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
                 )}
               </button>
             </div>

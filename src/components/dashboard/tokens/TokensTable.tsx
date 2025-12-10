@@ -17,7 +17,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
         <Button
             variant="ghost"
             onClick={onClick}
-            className={`${isActive ? "text-[#f9e370] hover:text-[#f9e370]" : "text-zinc-400 hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
+            className={`${isActive ? "text-brand-gold hover:text-brand-gold" : "text-zinc-400 hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
         >
             {label}
             <ArrowUpDown className="ml-1 h-3 w-3 opacity-50" />
@@ -80,7 +80,7 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
             </div>
         </TableCell>
         <TableCell className="py-3 pl-4 pr-4">
-            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-[#83e9ff]/10 text-[#83e9ff]' : 'bg-rose-500/20 text-rose-400'}`}>
+            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-brand-accent/10 text-brand-accent' : 'bg-rose-500/20 text-rose-400'}`}>
                 {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
             </div>
         </TableCell>
@@ -108,7 +108,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[200px]">
-                <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+                <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
             </div>
         );
     }

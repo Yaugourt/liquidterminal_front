@@ -49,8 +49,8 @@ const ACTION_COLORS: Record<string, string> = {
   CREATE_READLIST: "text-cyan-400 bg-cyan-400/10",
   MARK_RESOURCE_READ: "text-teal-400 bg-teal-400/10",
   COPY_PUBLIC_READLIST: "text-indigo-400 bg-indigo-400/10",
-  CREATE_WALLETLIST: "text-[#83E9FF] bg-[#83E9FF]/10",
-  ADD_WALLET_TO_LIST: "text-[#83E9FF] bg-[#83E9FF]/10",
+  CREATE_WALLETLIST: "text-brand-accent bg-brand-accent/10",
+  ADD_WALLET_TO_LIST: "text-brand-accent bg-brand-accent/10",
   SUBMIT_PUBLIC_GOOD: "text-amber-400 bg-amber-400/10",
   PUBLIC_GOOD_APPROVED: "text-[#F9E370] bg-[#F9E370]/10",
 };
@@ -102,7 +102,7 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <div className={cn("bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
       <div className="p-4 border-b border-white/5">
         <h3 className="flex items-center gap-2 text-white font-semibold">
           <History className="h-5 w-5 text-[#F9E370]" />
@@ -112,7 +112,7 @@ export function XpHistoryList({
       <div className="p-4">
         {isLoadingHistory && transactions.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-8">
@@ -131,7 +131,7 @@ export function XpHistoryList({
                 return (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-3 bg-[#0A0D12] rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+                    className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div

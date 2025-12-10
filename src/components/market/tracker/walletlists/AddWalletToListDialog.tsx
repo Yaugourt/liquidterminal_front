@@ -79,7 +79,7 @@ export function AddWalletToListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white">
         <DialogHeader>
           <DialogTitle>Add wallet to &quot;{listName}&quot;</DialogTitle>
           <DialogDescription className="text-white">
@@ -123,7 +123,7 @@ export function AddWalletToListDialog({
           <Button 
             onClick={handleAddWallet}
             disabled={isLoading}
-            className="bg-[#83E9FF] text-[#051728] hover:bg-[#6bd4f0] font-medium"
+            className="bg-brand-accent text-brand-tertiary hover:bg-[#6bd4f0] font-medium"
           >
             {isLoading ? "Adding..." : "Add to List"}
           </Button>

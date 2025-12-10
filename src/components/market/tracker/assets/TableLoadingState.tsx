@@ -21,7 +21,7 @@ export function TableLoadingState({
         <div className="flex flex-col items-center justify-center">
           {isLoading ? (
             <>
-              <Loader2 className="w-8 h-8 mb-3 text-[#83E9FF] animate-spin" />
+              <Loader2 className="w-8 h-8 mb-3 text-brand-accent animate-spin" />
               <p className="text-zinc-400 text-sm">Loading...</p>
             </>
           ) : isEmpty ? (

@@ -24,7 +24,7 @@ export const ValidatorTabButtons = memo(function ValidatorTabButtons({
         tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
         activeTab={activeTab}
         onTabChange={(val) => onTabChange(val as ValidatorSubTab)}
-        className="bg-[#0A0D12] border border-white/5"
+        className="bg-brand-dark border border-white/5"
       />
     </div>
   );

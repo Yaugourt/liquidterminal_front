@@ -32,7 +32,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
         {alias && !aliasLoading && (
           <div className="flex items-center gap-2">
             <span className="text-[#83E9FF33] text-xs">•</span>
-            <span className="text-[#f9e370] text-xs font-medium bg-[#f9e370]/10 px-2 py-0.5 rounded-md border border-[#f9e370]/20">
+            <span className="text-brand-gold text-xs font-medium bg-brand-gold/10 px-2 py-0.5 rounded-md border border-brand-gold/20">
               {alias}
             </span>
           </div>
@@ -40,16 +40,16 @@ export function AddressHeader({ address }: AddressHeaderProps) {
         {aliasLoading && (
           <div className="flex items-center gap-2">
             <span className="text-[#83E9FF33] text-xs">•</span>
-            <div className="h-4 w-20 bg-[#83E9FF]/20 rounded-md animate-pulse"></div>
+            <div className="h-4 w-20 bg-brand-accent/20 rounded-md animate-pulse"></div>
           </div>
         )}
       </div>
       <div className="flex items-center gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <div className="hidden sm:block">
-                      <code className="text-[#83E9FF] text-base font-medium font-inter">{address}</code>
+                      <code className="text-brand-accent text-base font-medium font-inter">{address}</code>
         </div>
         <div className="sm:hidden">
-                      <code className="text-[#83E9FF] text-sm font-medium font-inter">{formatAddress(address)}</code>
+                      <code className="text-brand-accent text-sm font-medium font-inter">{formatAddress(address)}</code>
         </div>
         <TooltipProvider>
           <Tooltip open={showCopied}>
@@ -59,10 +59,10 @@ export function AddressHeader({ address }: AddressHeaderProps) {
                 onClick={copyToClipboard}
                 title="Copy address to clipboard"
               >
-                <Copy size={16} className="text-[#83E9FF]" />
+                <Copy size={16} className="text-brand-accent" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right" className="bg-[#051728] border border-[#83E9FF] text-white">
+            <TooltipContent side="right" className="bg-brand-tertiary border border-brand-accent text-white">
               <p className="text-xs font-medium px-1">Copied!</p>
             </TooltipContent>
           </Tooltip>

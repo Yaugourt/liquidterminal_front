@@ -7,22 +7,22 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   const getIcon = () => {
     switch (title) {
       case "Users":
-        return <Users size={16} className="text-[#83e9ff]" />;
+        return <Users size={16} className="text-brand-accent" />;
       case "Daily Volume":
-        return <Activity size={16} className="text-[#83e9ff]" />;
+        return <Activity size={16} className="text-brand-accent" />;
       case "Bridged USDC":
-        return <Wallet size={16} className="text-[#83e9ff]" />;
+        return <Wallet size={16} className="text-brand-accent" />;
       case "HYPE Staked":
-        return <Shield size={16} className="text-[#83e9ff]" />;
+        return <Shield size={16} className="text-brand-accent" />;
       case "Vaults TVL":
-        return <Database size={16} className="text-[#83e9ff]" />;
+        return <Database size={16} className="text-brand-accent" />;
       default:
         return null;
     }
   };
 
   const getIconBg = () => {
-    return "bg-[#83e9ff]/10";
+    return "bg-brand-accent/10";
   };
 
   return (
@@ -43,7 +43,7 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
           </span>
           {change && (
             <span
-              className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${change >= 0 ? "bg-[#83e9ff]/10 text-[#83e9ff]" : "bg-rose-500/20 text-rose-400"
+              className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${change >= 0 ? "bg-brand-accent/10 text-brand-accent" : "bg-rose-500/20 text-rose-400"
                 }`}
             >
               {change >= 0 ? "+" : ""}

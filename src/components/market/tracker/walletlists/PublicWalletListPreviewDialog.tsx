@@ -130,7 +130,7 @@ export function PublicWalletListPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <div className="flex-1 space-y-2">
@@ -160,7 +160,7 @@ export function PublicWalletListPreviewDialog({
           {/* Stats */}
           <div className="flex items-center gap-4 p-3 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg">
             <div className="flex items-center gap-2">
-              <Wallet size={16} className="text-[#83E9FF]" />
+              <Wallet size={16} className="text-brand-accent" />
               <span className="text-white font-medium">{list.itemsCount || 0}</span>
               <span className="text-gray-400 text-sm">
                 wallet{list.itemsCount !== 1 ? 's' : ''}
@@ -174,7 +174,7 @@ export function PublicWalletListPreviewDialog({
           {/* Wallets list */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+              <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
             </div>
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
@@ -184,9 +184,9 @@ export function PublicWalletListPreviewDialog({
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg hover:border-[#83E9FF] transition-colors"
+                      className="flex items-start gap-3 p-2 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg hover:border-brand-accent transition-colors"
                     >
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#83E9FF]/20 text-[#83E9FF] text-xs font-medium shrink-0">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
@@ -249,7 +249,7 @@ export function PublicWalletListPreviewDialog({
             <Button
               onClick={handleCopyList}
               disabled={copying}
-              className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+              className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
             >
               {copying ? (
                 <>

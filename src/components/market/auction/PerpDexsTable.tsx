@@ -72,7 +72,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
     return (
       <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         </div>
       </Card>
     );
@@ -93,23 +93,23 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="pl-4 w-[12%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Name</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Full Name</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Deployer</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Oracle Updater</TableHead>
-              <TableHead className="pl-2 w-[18%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Fee Recipient</TableHead>
-              <TableHead className="pl-2 pr-4 w-[15%] text-left text-white font-normal py-1 bg-[#051728] text-sm">Gas (HYPE)</TableHead>
+            <TableRow className="border-none bg-brand-tertiary">
+              <TableHead className="pl-4 w-[12%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Name</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Full Name</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Deployer</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Oracle Updater</TableHead>
+              <TableHead className="pl-2 w-[18%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Fee Recipient</TableHead>
+              <TableHead className="pl-2 pr-4 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Gas (HYPE)</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody className="bg-brand-tertiary">
             {validPerpDexs.length === 0 ? (
               <EmptyState />
             ) : (
               validPerpDexs.map((dex) => (
                 <TableRow
                   key={dex.name}
-                  className="border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer"
+                  className="border-b border-[#FFFFFF1A] hover:bg-brand-tertiary transition-colors cursor-pointer"
                 >
                   {/* Name */}
                   <TableCell className="py-2 pl-4 text-white text-sm text-left">
@@ -124,7 +124,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                   {/* Deployer */}
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[#83E9FF] font-inter">{dex.deployerName || getDeployerName(dex.deployer)}</span>
+                      <span className="text-brand-accent font-inter">{dex.deployerName || getDeployerName(dex.deployer)}</span>
                       <button 
                         onClick={e => { e.preventDefault(); handleCopy(dex.deployer); }} 
                         className="group p-1 rounded transition-colors"
@@ -133,7 +133,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                         {copiedAddress === dex.deployer ? (
                           <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                         ) : (
-                          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                          <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                       </button>
                     </div>
@@ -143,7 +143,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">
                     {dex.oracleUpdater ? (
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[#83E9FF] font-inter">{formatAddress(dex.oracleUpdater)}</span>
+                        <span className="text-brand-accent font-inter">{formatAddress(dex.oracleUpdater)}</span>
                         <button 
                           onClick={e => { e.preventDefault(); handleCopy(dex.oracleUpdater!); }} 
                           className="group p-1 rounded transition-colors"
@@ -151,7 +151,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                           {copiedAddress === dex.oracleUpdater ? (
                             <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                           ) : (
-                            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                           )}
                         </button>
                       </div>
@@ -164,7 +164,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">
                     {dex.feeRecipient ? (
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[#83E9FF] font-inter">{formatAddress(dex.feeRecipient)}</span>
+                        <span className="text-brand-accent font-inter">{formatAddress(dex.feeRecipient)}</span>
                         <button 
                           onClick={e => { e.preventDefault(); handleCopy(dex.feeRecipient!); }} 
                           className="group p-1 rounded transition-colors"
@@ -172,7 +172,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                           {copiedAddress === dex.feeRecipient ? (
                             <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                           ) : (
-                            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                           )}
                         </button>
                       </div>

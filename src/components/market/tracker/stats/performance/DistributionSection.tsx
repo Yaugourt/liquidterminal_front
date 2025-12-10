@@ -103,7 +103,7 @@ export function DistributionSection() {
     return (
       <div className="absolute inset-0 p-4 pt-12">
         <div className="flex justify-center items-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         </div>
       </div>
     );
@@ -123,7 +123,7 @@ export function DistributionSection() {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] p-3 rounded-md shadow-lg">
+        <div className="bg-brand-tertiary border border-[#83E9FF4D] p-3 rounded-md shadow-lg">
           <div className="flex items-center gap-2 mb-2">
             <div 
               className="w-3 h-3 rounded-full"
@@ -131,7 +131,7 @@ export function DistributionSection() {
             />
             <span className="text-white font-medium">{data.name}</span>
           </div>
-          <div className="text-[#83E9FF] text-sm font-medium">
+          <div className="text-brand-accent text-sm font-medium">
             {data.percentage.toFixed(1)}%
           </div>
           <div className="text-[#FFFFFF80] text-xs">

@@ -61,9 +61,9 @@ export default function PerpTokenPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#0B0E14] text-zinc-100">
+      <div className="flex justify-center items-center h-screen bg-brand-main text-zinc-100">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
           <span className="text-zinc-500 text-sm">Loading...</span>
         </div>
       </div>
@@ -72,10 +72,10 @@ export default function PerpTokenPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter flex items-center justify-center">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter flex items-center justify-center">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
           <div className="text-xl font-bold text-white mb-4">Token not found</div>
-          <Button onClick={() => router.back()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-bold">
+          <Button onClick={() => router.back()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold">
             Go Back
           </Button>
         </div>
@@ -129,7 +129,7 @@ export default function PerpTokenPage() {
       }
       bottomSectionSlot={
         <GlassPanel className="p-8 flex flex-col items-center justify-center min-h-[200px] text-zinc-500">
-          <Database className="w-12 h-12 mb-4 text-[#83E9FF]/20" />
+          <Database className="w-12 h-12 mb-4 text-brand-accent/20" />
           <p>Recent Trades & Funding History coming soon for Perp</p>
         </GlassPanel>
       }

@@ -133,9 +133,9 @@ export function PortfolioStats() {
 
   if (!isMounted) {
     return (
-      <div className="h-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+      <div className="h-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
         <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
         </div>
       </div>
     );
@@ -168,13 +168,13 @@ export function PortfolioStats() {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <span className="text-[#83E9FF] text-xs">Last tx: 1h ago</span>
+          <span className="text-brand-accent text-xs">Last tx: 1h ago</span>
         </div>
       )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-32">
-          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
         </div>
       ) : error ? (
         <div className="text-rose-400 text-center py-4">
@@ -186,43 +186,43 @@ export function PortfolioStats() {
           <div className="grid grid-cols-2 gap-4">
             {/* Colonne gauche : Balances */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
                 <p className="text-zinc-400 text-xs">Spot Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
                 <p className="text-zinc-400 text-xs">Perp Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
                 <p className="text-zinc-400 text-xs">Vault Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
                 <p className="text-zinc-400 text-xs">Staked Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
                 <p className="text-zinc-400 text-xs">Total Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
               </div>
             </div>
 
             {/* Colonne droite : Long/Short Ratio */}
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</p>
-                    <div className="flex bg-[#0A0D12] rounded-lg p-0.5 border border-white/5">
+                    <div className="flex bg-brand-dark rounded-lg p-0.5 border border-white/5">
                       {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
                         <button
                           key={timeframe}
                           onClick={() => setVolumeTimeframe(timeframe)}
                           className={`px-2 py-1 text-[10px] rounded-md transition-all ${
                             volumeTimeframe === timeframe
-                              ? 'bg-[#83E9FF] text-[#051728] font-bold'
+                              ? 'bg-brand-accent text-brand-tertiary font-bold'
                               : 'text-zinc-400 hover:text-zinc-200'
                           }`}
                         >

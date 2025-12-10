@@ -21,11 +21,11 @@ export function BaseTooltip({
 }: BaseTooltipProps) {
   if (active && payload && payload.length > 0 && label) {
     return (
-      <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded">
+      <div className="bg-brand-tertiary border border-[#83E9FF4D] p-2 rounded">
         <p className="text-white text-xs">
           {formatTime(label)}
         </p>
-        <p className="text-[#83E9FF] font-medium">
+        <p className="text-brand-accent font-medium">
           {formatValue(payload[0].value)}{suffix}
         </p>
       </div>

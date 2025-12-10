@@ -61,7 +61,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-zinc-500">
@@ -75,7 +75,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
             <div>
               <Label className="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-3 block">Review Decision *</Label>
               <RadioGroup value={status} onValueChange={(val: string) => setStatus(val as ReviewStatus)} className="space-y-2">
-                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-emerald-500/30 transition-colors bg-[#0A0D12]">
+                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-emerald-500/30 transition-colors bg-brand-dark">
                   <RadioGroupItem value="APPROVED" id="approved" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="approved" className="text-white cursor-pointer flex items-center gap-2 font-medium">
@@ -88,7 +88,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-rose-500/30 transition-colors bg-[#0A0D12]">
+                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-rose-500/30 transition-colors bg-brand-dark">
                   <RadioGroupItem value="REJECTED" id="rejected" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="rejected" className="text-white cursor-pointer flex items-center gap-2 font-medium">
@@ -111,7 +111,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any comments or feedback for the submitter..."
                 rows={3}
-                className="bg-[#0A0D12] border-white/5 text-white mt-2 rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+                className="bg-brand-dark border-white/5 text-white mt-2 rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
               />
             </div>
           </div>
@@ -134,7 +134,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                   ? "bg-emerald-500 text-white hover:bg-emerald-600"
                   : status === 'REJECTED'
                   ? "bg-rose-500 text-white hover:bg-rose-600"
-                  : "bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/90"
+                  : "bg-brand-accent text-brand-tertiary hover:bg-brand-accent/90"
               }`}
             >
               {isSubmitting ? "Submitting..." : "Submit Review"}

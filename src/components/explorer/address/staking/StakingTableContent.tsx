@@ -1,5 +1,5 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/common/DataTable";
 import { Copy, Check } from "lucide-react";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
@@ -35,7 +35,7 @@ const CopyButton = ({ text }: { text: string }) => {
       {copiedAddress === text ? (
         <Check className="h-3.5 w-3.5 text-green-500" />
       ) : (
-        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100" />
       )}
     </button>
   );
@@ -101,7 +101,7 @@ export function StakingTableContent({
                         <>
                           <span className="text-white font-medium text-sm font-inter">{delegation.validatorName}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-[#83E9FF] font-inter text-xs">
+                            <span className="text-brand-accent font-inter text-xs">
                               {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
                             </span>
                             <CopyButton text={delegation.validator} />
@@ -109,7 +109,7 @@ export function StakingTableContent({
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-[#83E9FF] font-inter text-sm">
+                          <span className="text-brand-accent font-inter text-sm">
                             {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
                           </span>
                           <CopyButton text={delegation.validator} />
@@ -167,7 +167,7 @@ export function StakingTableContent({
               <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[#83E9FF] font-inter text-sm">
+                    <span className="text-brand-accent font-inter text-sm">
                       {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
                     </span>
                     <CopyButton text={tx.hash} />
@@ -197,7 +197,7 @@ export function StakingTableContent({
                         <>
                           <span className="text-white font-medium text-sm font-inter">{tx.validatorName}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-[#83E9FF]  font-inter text-xs">
+                            <span className="text-brand-accent  font-inter text-xs">
                               {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
                             </span>
                             <CopyButton text={tx.validator} />
@@ -205,7 +205,7 @@ export function StakingTableContent({
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-[#83E9FF]  font-inter text-sm">
+                          <span className="text-brand-accent  font-inter text-sm">
                             {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
                           </span>
                           <CopyButton text={tx.validator} />

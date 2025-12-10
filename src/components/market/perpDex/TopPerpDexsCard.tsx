@@ -32,9 +32,9 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
 
   if (isLoading && !topDexs.length) {
     return (
-      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
         <div className="flex justify-center items-center h-full py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
         </div>
       </div>
     );
@@ -42,7 +42,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
 
   if (error) {
     return (
-      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
         <div className="flex justify-center items-center h-full py-8">
           <p className="text-rose-400 text-sm">Failed to load data</p>
         </div>
@@ -51,15 +51,15 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full flex flex-col">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden h-full flex flex-col">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
         <Table className="h-full">
           <TableHeader>
             <TableRow className="border-b border-white/5 hover:bg-transparent">
               <TableHead className="py-3 pl-4 w-[40%]">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                    <Building2 size={12} className="text-[#83e9ff]" />
+                  <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
+                    <Building2 size={12} className="text-brand-accent" />
                   </div>
                   <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Top by Volume</span>
                 </div>
@@ -82,7 +82,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                 >
                   <TableCell className="py-2.5 pl-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#83E9FF]/20 to-[#f9e370]/20 flex items-center justify-center text-[10px] font-bold text-[#83E9FF]">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-[10px] font-bold text-brand-accent">
                         {dex.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex flex-col">

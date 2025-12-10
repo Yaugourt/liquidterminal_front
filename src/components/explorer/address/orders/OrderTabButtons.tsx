@@ -19,7 +19,7 @@ export function OrderTabButtons({ activeSubTab, onSubTabChange }: OrderTabButton
           onClick={() => onSubTabChange(tab.key)}
           className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
             activeSubTab === tab.key
-              ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+              ? 'bg-brand-accent text-brand-tertiary shadow-sm'
               : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
           }`}
         >

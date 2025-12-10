@@ -7,7 +7,7 @@ import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsC
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
 import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/SubmitProjectModal";
-import { SimpleSearchBar } from "@/components/common";
+import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
@@ -84,7 +84,7 @@ export default function PublicGoodsPage() {
           <div className="flex flex-wrap items-center gap-5 text-sm">
             <div className="flex items-center gap-1.5">
               <span className="text-zinc-500">Total:</span>
-              <span className="text-[#83E9FF] font-bold">{counts.all}</span>
+              <span className="text-brand-accent font-bold">{counts.all}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-zinc-500">Approved:</span>
@@ -103,7 +103,7 @@ export default function PublicGoodsPage() {
       </div>
       <Button
         onClick={handleSubmitClick}
-        className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg flex items-center gap-2 shrink-0"
+        className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg flex items-center gap-2 shrink-0"
       >
         <Plus className="w-4 h-4" />
         Submit Project
@@ -122,7 +122,7 @@ export default function PublicGoodsPage() {
         />
       </div>
       <div className="flex-shrink-0">
-        <SimpleSearchBar
+        <SearchBar
           onSearch={setSearchQuery}
           placeholder="Search projects..."
           className="max-w-sm"

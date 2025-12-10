@@ -101,7 +101,7 @@ export function WalletRecentFillsSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
       </div>
     );
   }
@@ -135,18 +135,18 @@ export function WalletRecentFillsSection() {
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Hash</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Asset</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Direction</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Age</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Size</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Price</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">PnL</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Fee</TableHead>
+            <TableRow className="border-none bg-brand-tertiary">
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Hash</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Asset</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Direction</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Age</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Size</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Price</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-right text-sm">PnL</TableHead>
+              <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-right text-sm">Fee</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody className="bg-brand-tertiary">
             {paginatedFills.map((fill) => (
               <TableRow 
                 key={`${fill.hash}-${fill.tid}`} 
@@ -154,7 +154,7 @@ export function WalletRecentFillsSection() {
               >
                 <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[#83E9FF]" title={fill.hash}>
+                    <span className="text-brand-accent" title={fill.hash}>
                       {formatHash(fill.hash)}
                     </span>
                     <button
@@ -167,7 +167,7 @@ export function WalletRecentFillsSection() {
                       {copiedHash === fill.hash ? (
                         <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                       ) : (
-                        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                       )}
                     </button>
                   </div>

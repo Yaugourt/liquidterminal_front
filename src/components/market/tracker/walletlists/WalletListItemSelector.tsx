@@ -147,10 +147,10 @@ export function WalletListItemSelector({
                 </div>
               </SelectTrigger>
 
-              <SelectContent className="bg-[#051728] border-[#83E9FF4D] text-white max-h-[400px]">
+              <SelectContent className="bg-brand-tertiary border-[#83E9FF4D] text-white max-h-[400px]">
                 {/* Search input */}
                 {items.length > 5 && (
-                  <div className="p-2 sticky top-0 bg-[#051728] z-10 border-b border-[#83E9FF4D]">
+                  <div className="p-2 sticky top-0 bg-brand-tertiary z-10 border-b border-[#83E9FF4D]">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -177,7 +177,7 @@ export function WalletListItemSelector({
                             checked={selectedWalletIds.has(item.userWallet.Wallet.id)}
                             onCheckedChange={() => toggleWalletSelection(item.userWallet!.Wallet!.id)}
                             onClick={(e) => e.stopPropagation()}
-                            className="border-[#83E9FF] data-[state=checked]:bg-[#83E9FF]"
+                            className="border-brand-accent data-[state=checked]:bg-brand-accent"
                           />
                           
                           {/* Wallet Item */}
@@ -244,7 +244,7 @@ export function WalletListItemSelector({
             </Select>
 
             {/* Wallet count badge */}
-            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF20] border border-[#83E9FF4D] rounded-lg text-xs text-[#83E9FF]">
+            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF20] border border-[#83E9FF4D] rounded-lg text-xs text-brand-accent">
               <span className="font-medium">{items.length}</span>
               <span className="text-gray-400">wallet{items.length !== 1 ? "s" : ""}</span>
             </div>
@@ -307,7 +307,7 @@ export function WalletListItemSelector({
 
       {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-[#051728] border-[#83E9FF4D]">
+        <AlertDialogContent className="bg-brand-tertiary border-[#83E9FF4D]">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Delete Multiple Wallets</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-400">

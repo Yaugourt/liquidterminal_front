@@ -12,8 +12,8 @@ export function VaultStatsCard() {
     <div className="p-4 h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-          <Database size={16} className="text-[#83e9ff]" />
+        <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center">
+          <Database size={16} className="text-brand-accent" />
         </div>
         <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">
           Vault Stats
@@ -25,7 +25,7 @@ export function VaultStatsCard() {
         {/* Total TVL */}
         <div>
           <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-            <BarChart2 className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <BarChart2 className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
             Total TVL
           </div>
           <div className="text-white font-bold text-xl pl-5">
@@ -40,7 +40,7 @@ export function VaultStatsCard() {
         {/* Open Vaults */}
         <div>
           <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-            <FolderOpen className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <FolderOpen className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
             Open Vaults
           </div>
           <div className="text-white font-bold text-xl pl-5">

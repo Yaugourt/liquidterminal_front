@@ -23,7 +23,7 @@ export function AssetsHeader({
         <Database size={16} className="mr-2" />
         Total assets: {totalAssets}
         {walletDisplay && (
-          <span className="ml-2 text-[#83E9FF]">
+          <span className="ml-2 text-brand-accent">
             ({walletDisplay})
           </span>
         )}

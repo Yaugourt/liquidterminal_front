@@ -40,7 +40,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
 
   if (error) {
     return (
-      <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 h-full">
+      <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 h-full">
         <div className="flex justify-center items-center h-full">
           <p className="text-rose-400 text-sm">Une erreur est survenue</p>
         </div>
@@ -49,11 +49,11 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
   }
 
   return (
-    <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
+    <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
       {/* Header avec icône et titre */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-8 h-8 rounded-xl bg-[#f9e370]/10 flex items-center justify-center">
-          <BarChart2 size={16} className="text-[#f9e370]" />
+        <div className="w-8 h-8 rounded-xl bg-brand-gold/10 flex items-center justify-center">
+          <BarChart2 size={16} className="text-brand-gold" />
         </div>
         <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">Global Stats</h3>
       </div>
@@ -61,7 +61,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
       {/* Statistiques détaillées - flex-1 pour occuper l'espace restant */}
       {isLoading || feesLoading ? (
         <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
@@ -69,7 +69,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {market === 'spot' ? (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <CalendarDays className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <CalendarDays className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 Daily Fees
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -84,7 +84,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           ) : (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <Scale className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <Scale className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 Open Interest
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -102,7 +102,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {market === 'spot' ? (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <Clock className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 Hourly Fees
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -117,7 +117,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           ) : (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <BarChart2 className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <BarChart2 className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 24h Volume
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -135,7 +135,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {market === 'spot' ? (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <Wallet className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <Wallet className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 Total USDC
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -150,7 +150,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           ) : (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <Clock className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 Daily Fees
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -168,7 +168,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           {market === 'spot' ? (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <BarChart2 className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <BarChart2 className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 24h Volume
               </div>
               <div className="text-white font-bold text-sm pl-5">
@@ -183,7 +183,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
           ) : (
             <div>
               <div className="text-zinc-400 mb-1 flex items-center text-xs">
-                <Wallet className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+                <Wallet className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
                 HLP TVL
               </div>
               <div className="text-white font-bold text-sm pl-5">

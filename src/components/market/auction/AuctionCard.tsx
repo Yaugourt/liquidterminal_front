@@ -31,7 +31,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden shadow-xl shadow-black/20">
+    <div className="flex flex-col h-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden shadow-xl shadow-black/20">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
@@ -55,7 +55,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             : "https://app.hyperliquid.xyz/deployPerp"}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#83E9FF] bg-[#83E9FF]/5 hover:bg-[#83E9FF]/10 rounded-lg border border-[#83E9FF]/10 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-accent bg-brand-accent/5 hover:bg-brand-accent/10 rounded-lg border border-brand-accent/10 transition-colors"
         >
           Participate
           <ExternalLink size={12} />
@@ -66,7 +66,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
       <div className="flex-1 flex flex-col justify-center px-4 pb-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#83E9FF]/50"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-accent/50"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -91,7 +91,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                   {auctionState.isActive ? "Time Remaining" : "Starts In"}
                 </p>
                 <div className="flex items-center justify-end gap-2 text-white">
-                  <Clock className="w-4 h-4 text-[#f9e370]" />
+                  <Clock className="w-4 h-4 text-brand-gold" />
                   <span className="text-xl font-mono font-medium tracking-tight">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
                   </span>
@@ -123,7 +123,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
               <div className="flex items-center justify-between text-xs">
                 <span className="text-zinc-500">Last Auction</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#f9e370] font-medium">{auctionState.lastAuctionName}</span>
+                  <span className="text-brand-gold font-medium">{auctionState.lastAuctionName}</span>
                   <span className="text-zinc-400">•</span>
                   <span className="text-white font-medium">{formatNumber(auctionState.lastAuctionPrice, format)} HYPE</span>
                 </div>

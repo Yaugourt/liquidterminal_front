@@ -97,8 +97,8 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
       const value = payload[0].value;
       
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
-          <p className="text-[#83E9FF] font-medium mb-1">
+        <div className="bg-brand-tertiary border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
+          <p className="text-brand-accent font-medium mb-1">
             {formatDate(new Date(data.timestamp), dateFormat)}
           </p>
           <p className="text-white text-sm">
@@ -135,15 +135,15 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
           </div>
           
           {/* Sélecteur de timeframe */}
-          <div className="flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]">
+          <div className="flex items-center bg-brand-tertiary rounded-md p-0.5 border border-[#83E9FF4D]">
             {timeframeOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => setSelectedTimeframe(option.value)}
                 className={`px-2 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
                   selectedTimeframe === option.value
-                    ? 'bg-[#83E9FF] text-[#051728]'
-                    : 'text-white hover:text-[#83E9FF]'
+                    ? 'bg-brand-accent text-brand-tertiary'
+                    : 'text-white hover:text-brand-accent'
                 }`}
               >
                 {option.label}
@@ -160,7 +160,7 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
               onClick={() => setSelectedChart(tab.key)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
                 selectedChart === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                  ? 'bg-brand-accent text-brand-tertiary shadow-sm'
                   : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
               }`}
             >
@@ -174,7 +174,7 @@ export const VaultChart = ({ vaultAddress, className = "" }: VaultChartProps) =>
       <div className="absolute inset-0 p-4 pt-20">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
           </div>
         ) : filteredData.length === 0 ? (
           <div className="flex justify-center items-center h-full">

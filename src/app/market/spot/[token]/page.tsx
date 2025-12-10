@@ -72,9 +72,9 @@ export default function TokenPage() {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen bg-[#0B0E14] text-zinc-100">
+            <div className="flex justify-center items-center h-screen bg-brand-main text-zinc-100">
                 <div className="flex flex-col items-center">
-                    <div className="h-6 w-6 border-2 border-[#83E9FF] border-t-transparent rounded-full animate-spin mb-2" />
+                    <div className="h-6 w-6 border-2 border-brand-accent border-t-transparent rounded-full animate-spin mb-2" />
                     <span className="text-zinc-500 text-sm">Loading...</span>
                 </div>
             </div>
@@ -83,13 +83,13 @@ export default function TokenPage() {
 
     if (error || !token) {
         return (
-            <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
-                <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+            <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
+                <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
                     <div className="text-xl font-bold text-white mb-4">Token not found</div>
                     <div className="text-zinc-400 mb-6 text-center">{error}</div>
                     <Button
                         onClick={handleBackToList}
-                        className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-bold"
+                        className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold"
                     >
                         Back to tokens list
                     </Button>
@@ -129,11 +129,11 @@ export default function TokenPage() {
                     {/* Tabs dans l'espace vide sous le chart */}
                     <div className="mt-4">
                         <div className="flex justify-start items-center">
-                            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+                            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
                                 <button
                                     onClick={() => setActiveTab('twap')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
-                                        ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                                        ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                                         }`}
                                 >
@@ -142,7 +142,7 @@ export default function TokenPage() {
                                 <button
                                     onClick={() => setActiveTab('holders')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
-                                        ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                                        ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                                         : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                                         }`}
                                 >

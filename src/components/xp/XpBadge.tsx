@@ -85,7 +85,7 @@ export function XpBadge({
             </div>
 
             {/* Mini progress */}
-            <div className="w-12 h-1.5 bg-[#0A0D12] rounded-full overflow-hidden border border-white/5">
+            <div className="w-12 h-1.5 bg-brand-dark rounded-full overflow-hidden border border-white/5">
               <div
                 className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all duration-500"
                 style={{ width: `${displayStats.progressPercent}%` }}
@@ -104,7 +104,7 @@ export function XpBadge({
           </button>
         </DialogTrigger>
 
-        <DialogContent className="bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+        <DialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               <Star className="h-5 w-5 text-[#F9E370] fill-[#F9E370]" />
@@ -122,7 +122,7 @@ export function XpBadge({
     <div
       className={cn(
         "p-6 rounded-2xl",
-        "bg-[#151A25]/60 backdrop-blur-md",
+        "bg-brand-secondary/60 backdrop-blur-md",
         "border border-white/5 hover:border-white/10 transition-all",
         "shadow-xl shadow-black/20",
         className
@@ -155,7 +155,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="h-14 w-14 rounded-full bg-gradient-to-br from-[#F9E370] to-purple-500 p-0.5">
-              <div className="h-full w-full rounded-full bg-[#151A25] flex items-center justify-center">
+              <div className="h-full w-full rounded-full bg-brand-secondary flex items-center justify-center">
                 <span className="text-xl font-bold text-[#F9E370]">
                   {stats.level}
                 </span>
@@ -206,7 +206,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
         </div>
         <Progress
           value={stats.progressPercent}
-          className="h-2 bg-[#0A0D12] border border-white/5"
+          className="h-2 bg-brand-dark border border-white/5"
         />
         <div className="flex justify-between text-xs text-zinc-500">
           <span>{stats.currentLevelXp.toLocaleString()} XP</span>
@@ -215,7 +215,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       </div>
 
       {/* XP to next level */}
-      <div className="flex items-center justify-between p-3 bg-[#0A0D12] rounded-xl border border-white/5">
+      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-white/5">
         <span className="text-sm text-zinc-400">XP to next level</span>
         <div className="flex items-center gap-1">
           <span className="text-sm font-bold text-[#F9E370]">

@@ -6,7 +6,7 @@ import { ArrowLeft, AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { SimpleSearchBar } from "@/components/common";
+import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
@@ -53,12 +53,12 @@ export default function PendingReviewPage() {
   // Redirect if not logged in
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <h2 className="text-xl font-bold text-white">Authentication Required</h2>
             <p className="text-zinc-400">Please login to access this page</p>
-            <Button onClick={() => login()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full">
+            <Button onClick={() => login()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg w-full">
               Login
             </Button>
           </div>
@@ -70,8 +70,8 @@ export default function PendingReviewPage() {
   // Check permissions
   if (!canReview) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 mx-auto mb-4 bg-rose-500/10 rounded-2xl flex items-center justify-center">
               <AlertCircle className="w-8 h-8 text-rose-400" />
@@ -81,7 +81,7 @@ export default function PendingReviewPage() {
             <p className="text-xs text-zinc-500">Moderator or Admin role required</p>
             <Button
               onClick={() => router.push('/ecosystem/publicgoods')}
-              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full"
+              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg w-full"
             >
               Go to Public Goods
             </Button>
@@ -124,7 +124,7 @@ export default function PendingReviewPage() {
   // Filters Content
   const filters = pendingPublicGoods.length > 0 ? (
     <div className="flex justify-end w-full">
-      <SimpleSearchBar
+      <SearchBar
         onSearch={setSearchQuery}
         placeholder="Search pending projects..."
         className="max-w-sm"
@@ -156,7 +156,7 @@ export default function PendingReviewPage() {
             description: searchQuery.trim()
               ? "Try adjusting your search criteria"
               : "There are no projects pending review at the moment",
-            icon: <AlertCircle className="w-8 h-8 text-[#83E9FF]" />,
+            icon: <AlertCircle className="w-8 h-8 text-brand-accent" />,
             actionLabel: !searchQuery.trim() ? "View All Projects" : undefined,
             onAction: !searchQuery.trim() ? () => router.push('/ecosystem/publicgoods') : undefined
           }}
@@ -164,27 +164,27 @@ export default function PendingReviewPage() {
 
         {/* Info Banner */}
         {pendingPublicGoods.length > 0 && (
-          <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+          <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
             <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
             <ul className="text-zinc-400 text-sm space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-[#83E9FF]">•</span>
+                <span className="text-brand-accent">•</span>
                 Check that the project has a valid GitHub repository
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#83E9FF]">•</span>
+                <span className="text-brand-accent">•</span>
                 Verify the project integrates with HyperLiquid
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#83E9FF]">•</span>
+                <span className="text-brand-accent">•</span>
                 Ensure the description clearly explains the project&apos;s purpose
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#83E9FF]">•</span>
+                <span className="text-brand-accent">•</span>
                 Confirm the project benefits the HyperLiquid ecosystem
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#83E9FF]">•</span>
+                <span className="text-brand-accent">•</span>
                 Provide constructive feedback in review notes if rejecting
               </li>
             </ul>

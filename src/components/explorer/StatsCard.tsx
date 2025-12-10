@@ -7,13 +7,13 @@ export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
   const getIcon = () => {
     switch (type) {
       case "block":
-        return <Activity size={16} className="text-[#83e9ff]" />;
+        return <Activity size={16} className="text-brand-accent" />;
       case "blockTime":
-        return <Timer size={16} className="text-[#83e9ff]" />;
+        return <Timer size={16} className="text-brand-accent" />;
       case "transactions":
-        return <Zap size={16} className="text-[#83e9ff]" />;
+        return <Zap size={16} className="text-brand-accent" />;
       case "users":
-        return <Users size={16} className="text-[#83e9ff]" />;
+        return <Users size={16} className="text-brand-accent" />;
       case "hypeStaked":
         return <Image
           src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg"
@@ -22,16 +22,16 @@ export function StatsCard({ title, value, type }: ExplorerStatsCardProps) {
           height={16}
         />;
       case "vaultsTvl":
-        return <Wallet size={16} className="text-[#83e9ff]" />;
+        return <Wallet size={16} className="text-brand-accent" />;
       default:
-        return <Activity size={16} className="text-[#83e9ff]" />;
+        return <Activity size={16} className="text-brand-accent" />;
     }
   };
 
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
+        <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
           {getIcon()}
         </div>
         <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">{title}</h3>

@@ -83,9 +83,9 @@ export function WalletListSelector({
         </div>
         
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
-          <SelectTrigger className="w-full sm:w-[320px] bg-[#0A0D12] border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
+          <SelectTrigger className="w-full sm:w-[320px] bg-brand-dark border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
             <div className="flex items-center gap-2 truncate">
-              <List className="w-4 h-4 shrink-0 text-[#83E9FF]" />
+              <List className="w-4 h-4 shrink-0 text-brand-accent" />
               <SelectValue>
                 <span className="font-medium">{activeListInfo.name}</span>
                 {activeListInfo.count !== null && (
@@ -97,17 +97,17 @@ export function WalletListSelector({
             </div>
           </SelectTrigger>
           
-          <SelectContent className="bg-[#151A25] border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
+          <SelectContent className="bg-brand-secondary border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
             {/* Search input */}
             {userLists.length > 5 && (
-              <div className="p-2 sticky top-0 bg-[#151A25] z-10 border-b border-white/5">
+              <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-white/5">
                 <div className="relative">
                   <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                   <Input
                     placeholder="Search lists..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 bg-[#0A0D12] border-white/5 text-white h-8 rounded-lg"
+                    className="pl-8 bg-brand-dark border-white/5 text-white h-8 rounded-lg"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
@@ -120,7 +120,7 @@ export function WalletListSelector({
               className="focus:bg-white/5 focus:text-white cursor-pointer rounded-lg"
             >
               <div className="flex items-center gap-2">
-                <List className="w-4 h-4 text-[#83E9FF]" />
+                <List className="w-4 h-4 text-brand-accent" />
                 <span className="font-medium">All Wallets</span>
               </div>
             </SelectItem>
@@ -139,7 +139,7 @@ export function WalletListSelector({
                   <div className="flex flex-col gap-1 w-full py-1">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <List className="w-4 h-4 text-[#83E9FF] shrink-0" />
+                        <List className="w-4 h-4 text-brand-accent shrink-0" />
                         <span className="font-medium truncate">{list.name}</span>
                       </div>
                       <span className="text-xs text-zinc-600 shrink-0">
@@ -187,7 +187,7 @@ export function WalletListSelector({
         )}
 
         {/* List count badge */}
-        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF]/10 border border-white/5 rounded-lg text-xs text-[#83E9FF]">
+        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-white/5 rounded-lg text-xs text-brand-accent">
           <span className="font-medium">{userLists.length}</span>
           <span className="text-zinc-500">list{userLists.length !== 1 ? "s" : ""}</span>
         </div>
@@ -208,7 +208,7 @@ export function WalletListSelector({
         <Button
           onClick={onCreateList}
           size="sm"
-          className="flex-1 sm:flex-none bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+          className="flex-1 sm:flex-none bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Create List</span>

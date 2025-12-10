@@ -30,8 +30,8 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                     onError={() => setImageError(true)}
                                 />
                             ) : (
-                                <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-                                    <span className="text-[#83E9FF] text-2xl font-bold">
+                                <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
+                                    <span className="text-brand-accent text-2xl font-bold">
                                         {project.name.charAt(0).toUpperCase()}
                                     </span>
                                 </div>
@@ -55,7 +55,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.githubUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-[#83E9FF] hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-brand-accent hover:text-white transition-colors"
                             >
                                 <Github className="w-5 h-5" />
                                 GitHub
@@ -67,7 +67,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.websiteUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-[#83E9FF] hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-brand-accent hover:text-white transition-colors"
                             >
                                 <Globe className="w-5 h-5" />
                                 Website
@@ -91,11 +91,11 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
 
                 <div className="text-right">
                     <div className="text-sm text-gray-400 mb-1">Submitted</div>
-                    <div className="text-[#83E9FF] font-medium">{new Date(project.submittedAt).toLocaleDateString()}</div>
+                    <div className="text-brand-accent font-medium">{new Date(project.submittedAt).toLocaleDateString()}</div>
                     {project.reviewedAt && (
                         <>
                             <div className="text-sm text-gray-400 mb-1 mt-2">Reviewed</div>
-                            <div className="text-[#83E9FF] font-medium">{new Date(project.reviewedAt).toLocaleDateString()}</div>
+                            <div className="text-brand-accent font-medium">{new Date(project.reviewedAt).toLocaleDateString()}</div>
                         </>
                     )}
                 </div>

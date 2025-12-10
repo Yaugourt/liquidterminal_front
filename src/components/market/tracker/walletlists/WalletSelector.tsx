@@ -117,9 +117,9 @@ export function WalletSelector({
               value={activeWalletId?.toString() || ""}
               onValueChange={onWalletChange}
             >
-              <SelectTrigger className="w-full sm:w-[400px] bg-[#0A0D12] border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
+              <SelectTrigger className="w-full sm:w-[400px] bg-brand-dark border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
                 <div className="flex items-center gap-2 truncate">
-                  <Wallet className="w-4 h-4 shrink-0 text-[#83E9FF]" />
+                  <Wallet className="w-4 h-4 shrink-0 text-brand-accent" />
                   <SelectValue>
                     {activeWallet ? (
                       <div className="flex items-center gap-2">
@@ -135,17 +135,17 @@ export function WalletSelector({
                 </div>
               </SelectTrigger>
 
-              <SelectContent className="bg-[#151A25] border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
+              <SelectContent className="bg-brand-secondary border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
                 {/* Search input */}
                 {wallets.length > 5 && (
-                  <div className="p-2 sticky top-0 bg-[#151A25] z-10 border-b border-white/5">
+                  <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-white/5">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
                       <Input
                         placeholder="Search wallets..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 bg-[#0A0D12] border-white/5 text-white h-8 rounded-lg"
+                        className="pl-8 bg-brand-dark border-white/5 text-white h-8 rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
@@ -162,7 +162,7 @@ export function WalletSelector({
                           checked={selectedWalletIds.has(wallet.id)}
                           onCheckedChange={() => toggleWalletSelection(wallet.id)}
                           onClick={(e) => e.stopPropagation()}
-                          className="border-white/20 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:border-[#83E9FF]"
+                          className="border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
                         />
                         
                         {/* Wallet Item */}
@@ -173,7 +173,7 @@ export function WalletSelector({
                           <div className="flex flex-col gap-1 w-full py-1">
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <Wallet className="w-4 h-4 text-[#83E9FF] shrink-0" />
+                                <Wallet className="w-4 h-4 text-brand-accent shrink-0" />
                                 <span className="font-medium truncate">
                                   {wallet.name || "Unnamed Wallet"}
                                 </span>
@@ -226,7 +226,7 @@ export function WalletSelector({
             </Select>
 
             {/* Wallet count badge */}
-            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-[#83E9FF]/10 border border-white/5 rounded-lg text-xs text-[#83E9FF]">
+            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-white/5 rounded-lg text-xs text-brand-accent">
               <span className="font-medium">{wallets.length}</span>
               <span className="text-zinc-500">wallet{wallets.length !== 1 ? "s" : ""}</span>
             </div>
@@ -289,7 +289,7 @@ export function WalletSelector({
 
       {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-[#151A25] border-white/10 rounded-2xl shadow-xl shadow-black/20">
+        <AlertDialogContent className="bg-brand-secondary border-white/10 rounded-2xl shadow-xl shadow-black/20">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Delete Multiple Wallets</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">

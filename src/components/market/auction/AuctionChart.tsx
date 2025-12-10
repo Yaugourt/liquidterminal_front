@@ -71,10 +71,10 @@ const AnimatedPeriodSelector = ({
   return (
     <div 
       ref={containerRef}
-      className="relative flex bg-[#0A0D12] rounded-lg p-1 border border-white/5"
+      className="relative flex bg-brand-dark rounded-lg p-1 border border-white/5"
     >
       <div
-        className="absolute top-1 bottom-1 bg-[#83E9FF] rounded-md transition-all duration-300 ease-out"
+        className="absolute top-1 bottom-1 bg-brand-accent rounded-md transition-all duration-300 ease-out"
         style={{
           left: indicatorStyle.left + 2,
           width: indicatorStyle.width - 4,
@@ -88,7 +88,7 @@ const AnimatedPeriodSelector = ({
           }}
           onClick={() => onPeriodChange(period)}
           className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${
-            selectedPeriod === period ? 'text-[#051728] font-bold' : 'text-zinc-400 hover:text-zinc-200'
+            selectedPeriod === period ? 'text-brand-tertiary font-bold' : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
           {period}
@@ -122,7 +122,7 @@ export const AuctionChart = ({
   if (marketType === "perp") {
     return (
       <div 
-        className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden"
+        className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden"
         style={{ height: chartHeight }}
       >
         <div className="flex items-center justify-center h-full">
@@ -150,7 +150,7 @@ export const AuctionChart = ({
         ? formatLargeNumber(value, { prefix: '$', decimals: 2 })
         : formatNumber(value, format);
       return (
-        <div className="bg-[#151A25] border border-white/10 p-2 rounded-lg shadow-lg">
+        <div className="bg-brand-secondary border border-white/10 p-2 rounded-lg shadow-lg">
           <p className="text-zinc-400 text-xs">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
@@ -164,19 +164,19 @@ export const AuctionChart = ({
   };
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden relative" style={{ height: chartHeight }}>
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden relative" style={{ height: chartHeight }}>
       <div className="absolute top-4 left-4 right-4 z-10">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
               Auction Price ({selectedCurrency})
             </h2>
-            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
               <button
                 onClick={() => onCurrencyChange("USDC")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   selectedCurrency === "USDC"
-                    ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                    ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
                     : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
                 }`}
               >
@@ -186,7 +186,7 @@ export const AuctionChart = ({
                 onClick={() => onCurrencyChange("HYPE")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   selectedCurrency === "HYPE"
-                    ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                    ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
                     : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
                 }`}
               >
@@ -206,7 +206,7 @@ export const AuctionChart = ({
       <div className="absolute inset-0 p-4 pt-16">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
           </div>
         ) : chartData.data.length === 0 ? (
           <div className="flex justify-center items-center h-full">

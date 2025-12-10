@@ -41,10 +41,10 @@ export function AssetsTable({
   isRefreshing
 }: AssetsTableProps) {
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
       {/* Header avec tabs et stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
           {[
             { key: 'spot', label: 'Spot' },
             { key: 'perp', label: 'Perps' }
@@ -54,7 +54,7 @@ export function AssetsTable({
               onClick={() => onViewTypeChange(tab.key as "spot" | "perp")}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 type === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
@@ -66,14 +66,14 @@ export function AssetsTable({
         <div className="flex items-center gap-6">
           <div className="flex items-baseline gap-2">
             <span className="text-zinc-400 text-xs">Total assets:</span>
-            <span className="text-[#83E9FF] text-sm font-bold">{totalAssets}</span>
+            <span className="text-brand-accent text-sm font-bold">{totalAssets}</span>
           </div>
           {walletDisplay && (
             <>
               <div className="w-px h-4 bg-white/10"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-zinc-400 text-xs">Wallet:</span>
-                <span className="text-[#83E9FF] text-sm font-medium">({walletDisplay})</span>
+                <span className="text-brand-accent text-sm font-medium">({walletDisplay})</span>
               </div>
             </>
           )}

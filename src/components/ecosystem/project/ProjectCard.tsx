@@ -50,8 +50,8 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-5 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative ${
-      isSelected ? 'border-[#83E9FF] bg-[#83E9FF]/5' : ''
+    <div className={`bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-5 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative ${
+      isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
     }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
@@ -61,7 +61,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-[#0A0D12] border-white/20 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:border-[#83E9FF]"
+              className="bg-brand-dark border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
             />
           </div>
         </ProtectedAction>
@@ -94,8 +94,8 @@ export const ProjectCard = memo(function ProjectCard({
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-              <span className="text-[#83E9FF] text-lg font-bold">
+            <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
+              <span className="text-brand-accent text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -110,7 +110,7 @@ export const ProjectCard = memo(function ProjectCard({
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-[10px] text-[#83E9FF] bg-[#83E9FF]/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
+                  <span key={category.id} className="text-[10px] text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}
@@ -132,7 +132,7 @@ export const ProjectCard = memo(function ProjectCard({
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-[#83E9FF] transition-colors"
+                    className="text-zinc-500 hover:text-brand-accent transition-colors"
                     aria-label={link.label}
                   >
                     <Icon size={16} />

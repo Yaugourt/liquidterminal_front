@@ -74,7 +74,7 @@ export function CategoryTabs({
       <div className="flex items-center w-full max-w-full overflow-hidden">
         <div className="flex items-center gap-1 flex-1 min-w-0">
           <div className="flex-1 min-w-0">
-            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 gap-1">
+            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5 gap-1">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="h-8 w-20 bg-white/5 rounded-md animate-pulse" />
               ))}
@@ -102,7 +102,7 @@ export function CategoryTabs({
         {canScrollLeft && (
           <button
             onClick={scrollLeft}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-[#83E9FF] hover:bg-white/5 rounded-lg transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-brand-accent hover:bg-white/5 rounded-lg transition-colors"
             title="Scroll left"
           >
             <ChevronLeft size={16} />
@@ -113,7 +113,7 @@ export function CategoryTabs({
         <div className="flex-1 min-w-0 max-w-[800px]">
           <div
             ref={scrollContainerRef}
-            className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5 overflow-x-auto gap-1 max-w-full"
+            className="flex bg-brand-dark rounded-lg p-1 border border-white/5 overflow-x-auto gap-1 max-w-full"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
@@ -124,7 +124,7 @@ export function CategoryTabs({
               onClick={() => onTabChange('all')}
               className={`flex-shrink-0 px-4 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === 'all'
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
@@ -138,7 +138,7 @@ export function CategoryTabs({
                 onClick={() => onTabChange(category.id.toString())}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   activeTab === category.id.toString()
-                    ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                    ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                 }`}
               >
@@ -152,7 +152,7 @@ export function CategoryTabs({
         {canScrollRight && (
           <button
             onClick={scrollRight}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-[#83E9FF] hover:bg-white/5 rounded-lg transition-colors"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-brand-accent hover:bg-white/5 rounded-lg transition-colors"
             title="Scroll right"
           >
             <ChevronRight size={16} />

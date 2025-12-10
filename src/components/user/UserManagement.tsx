@@ -127,7 +127,7 @@ export function UserManagement() {
       <div className="flex items-center justify-center h-48">
         <div className="text-center">
           <p className="text-red-400 mb-3 text-sm font-inter">Error loading users</p>
-          <Button onClick={handleRefresh} className="bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FFCC] font-inter text-sm">
+          <Button onClick={handleRefresh} className="bg-brand-accent text-brand-tertiary hover:bg-[#83E9FFCC] font-inter text-sm">
             Retry
           </Button>
         </div>
@@ -140,7 +140,7 @@ export function UserManagement() {
     return (
       <div className="flex items-center justify-center h-48">
         <div className="text-center">
-          <Shield className="w-8 h-8 text-[#f9e370] mx-auto mb-3" />
+          <Shield className="w-8 h-8 text-brand-gold mx-auto mb-3" />
           <p className="text-white font-inter text-sm">Loading user...</p>
         </div>
       </div>
@@ -154,7 +154,7 @@ export function UserManagement() {
       fallback={
         <div className="flex items-center justify-center h-48">
           <div className="text-center">
-            <Shield className="w-8 h-8 text-[#f9e370] mx-auto mb-3" />
+            <Shield className="w-8 h-8 text-brand-gold mx-auto mb-3" />
             <p className="text-white font-inter text-sm">Access restricted to administrators</p>
           </div>
         </div>
@@ -165,7 +165,7 @@ export function UserManagement() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="p-1.5 bg-[#f9e3701A] rounded-lg">
-              <Users className="w-4 h-4 text-[#f9e370]" />
+              <Users className="w-4 h-4 text-brand-gold" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white font-inter">User Management</h1>
@@ -175,7 +175,7 @@ export function UserManagement() {
           <Button
             onClick={handleRefresh}
             disabled={isLoading}
-            className="bg-[#f9e370] text-[#051728] hover:bg-[#f9e370CC] font-inter text-sm"
+            className="bg-brand-gold text-brand-tertiary hover:bg-[#f9e370CC] font-inter text-sm"
           >
             <RefreshCw className={`w-3 h-3 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh

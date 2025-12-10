@@ -49,11 +49,11 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
-          <p className="text-[#83E9FF] font-medium mb-1">{`Range: ${label} HYPE`}</p>
+        <div className="bg-brand-tertiary border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
+          <p className="text-brand-accent font-medium mb-1">{`Range: ${label} HYPE`}</p>
           <p className="text-white text-sm">{`Holders: ${formatNumber(data.holders, format)}`}</p>
           <p className="text-white text-sm">{`Staked: ${formatNumber(data.staked, format)} HYPE`}</p>
-          <p className="text-[#f9e370] text-sm">{`${formatNumber(data.percentage, format)}% of total`}</p>
+          <p className="text-brand-gold text-sm">{`${formatNumber(data.percentage, format)}% of total`}</p>
         </div>
       );
     }
@@ -64,7 +64,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF] mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
           <p className="text-white/60 text-sm">Loading distribution data...</p>
         </div>
       </div>

@@ -29,14 +29,14 @@ export function TokenTabs({ market, activeTab, setActiveTab, searchQuery, onSear
 
   return (
     <div className="flex justify-between items-center mb-4">
-      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+      <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => handleTabClick(tab.key)}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
               currentActiveTab === tab.key
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
@@ -53,7 +53,7 @@ export function TokenTabs({ market, activeTab, setActiveTab, searchQuery, onSear
           placeholder="Search tokens..."
           value={searchQuery || ''}
           onChange={(e) => onSearchChange?.(e.target.value)}
-          className="pr-10 bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 focus:border-[#83E9FF]/50 focus:ring-[#83E9FF]/20 h-8 text-sm rounded-lg"
+          className="pr-10 bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
         />
       </div>
     </div>

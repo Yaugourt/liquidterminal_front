@@ -10,14 +10,14 @@ export const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsP
   ];
 
   return (
-    <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
       {tabs.map(tab => (
         <button
           key={tab.key}
           onClick={() => onFilterChange(tab.key)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
             selectedFilter === tab.key
-              ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
               : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
           }`}
         >

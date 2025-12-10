@@ -66,7 +66,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
   if (isLoading || vaultsLoading) {
     return (
       <div className="flex items-center justify-center h-[400px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
       </div>
     );
   }
@@ -96,22 +96,22 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">Name</TableHead>
-              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">User deposits</TableHead>
-              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">APR</TableHead>
-              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">TVL</TableHead>
-              <TableHead className="text-white font-normal py-2 px-4 bg-[#051728] text-left text-xs">Time lock</TableHead>
+            <TableRow className="border-none bg-brand-tertiary">
+              <TableHead className="text-white font-normal py-2 px-4 bg-brand-tertiary text-left text-xs">Name</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-brand-tertiary text-left text-xs">User deposits</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-brand-tertiary text-left text-xs">APR</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-brand-tertiary text-left text-xs">TVL</TableHead>
+              <TableHead className="text-white font-normal py-2 px-4 bg-brand-tertiary text-left text-xs">Time lock</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody className="bg-brand-tertiary">
             {paginatedRows.map((row) => (
               <TableRow key={row.vaultAddress} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors">
                 <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
                     <Link
                       href={`/explorer/address/${row.vaultAddress}`}
-                      className="text-white font-inter hover:text-[#83E9FF] transition-colors"
+                      className="text-white font-inter hover:text-brand-accent transition-colors"
                       title={row.vaultAddress}
                     >
                       {row.name}
@@ -126,7 +126,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
                       {copiedAddress === row.vaultAddress ? (
                         <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                       ) : (
-                        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                       )}
                     </button>
                   </div>

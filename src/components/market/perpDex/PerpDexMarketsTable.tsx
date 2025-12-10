@@ -76,7 +76,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
             <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
                 Markets ({activeAssets} active / {totalAssets} total)
             </h2>
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
                 <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <Table className="table-fixed w-full">
                         <TableHeader>

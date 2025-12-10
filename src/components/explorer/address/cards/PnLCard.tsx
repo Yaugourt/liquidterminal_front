@@ -77,11 +77,11 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             {/* Header avec titre décalé et bouton à droite */}
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
-                    <TrendingUp size={16} className="text-[#f9e370]" />
+                    <TrendingUp size={16} className="text-brand-gold" />
                     <h3 className="text-white text-[16px] font-inter">PNL</h3>
                 </div>
                 <select
-                    className="bg-[#051728] text-[#f9e370] border border-[#83E9FF4D] rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#83E9FF] mr-4"
+                    className="bg-brand-tertiary text-brand-gold border border-[#83E9FF4D] rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-brand-accent mr-4"
                     value={pnlMode}
                     onChange={handlePnLModeChange}
                 >
@@ -94,7 +94,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {isLoading ? (
                     <div className="col-span-2 flex justify-center items-center p-4">
-                        <Loader2 className="w-5 h-5 text-[#83E9FF] animate-spin" />
+                        <Loader2 className="w-5 h-5 text-brand-accent animate-spin" />
                     </div>
                 ) : (
                     PERIODS.map(renderPeriod)

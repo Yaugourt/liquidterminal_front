@@ -4,7 +4,7 @@ import { Copy, Check } from "lucide-react";
 import { Block, Transaction } from "@/services/explorer/types";
 import Link from "next/link";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { DataTable as GenericDataTable } from "@/components/ui/data-table";
+import { DataTable as GenericDataTable } from "@/components/common/DataTable";
 
 type TabType = 'blocks' | 'transactions';
 
@@ -53,7 +53,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       <Link
         href={`/explorer/address/${address}`}
         prefetch={false}
-        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
+        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
       >
         {address.slice(0, 4)}..{address.slice(-3)}
       </Link>
@@ -111,7 +111,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                   <Link
                     href={`/explorer/block/${block.height}`}
                     prefetch={false}
-                    className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
+                    className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
                   >
                     {block.height}
                   </Link>
@@ -169,7 +169,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
               <TableCell className="py-3 px-3 text-sm text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
               <TableCell className="py-3 px-3 text-sm">
                 <div className="relative group">
-                  <span className="px-2 py-1 rounded-md text-xs font-bold bg-[#83e9ff]/10 text-[#83e9ff]">
+                  <span className="px-2 py-1 rounded-md text-xs font-bold bg-brand-accent/10 text-brand-accent">
                     {(tx.action?.type || 'Unknown').length > 7
                       ? `${(tx.action?.type || 'Unknown').substring(0, 7)}...`
                       : (tx.action?.type || 'Unknown')
@@ -177,7 +177,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                   </span>
                   {(tx.action?.type || 'Unknown').length > 7 && (
                     <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
-                      <div className="bg-[#151A25] border border-white/10 rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
+                      <div className="bg-brand-secondary border border-white/10 rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
                         {tx.action?.type || 'Unknown'}
                       </div>
                     </div>
@@ -194,7 +194,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 <Link
                   href={`/explorer/block/${tx.block}`}
                   prefetch={false}
-                  className="text-white font-mono text-xs hover:text-[#83E9FF] transition-colors"
+                  className="text-white font-mono text-xs hover:text-brand-accent transition-colors"
                 >
                   {tx.block}
                 </Link>

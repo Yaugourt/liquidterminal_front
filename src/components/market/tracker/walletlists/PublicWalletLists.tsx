@@ -90,7 +90,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
   if (initialLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         <p className="text-gray-400">Loading public lists...</p>
       </div>
     );
@@ -139,7 +139,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
             <Button
               onClick={handleLoadMore}
               disabled={loading}
-              className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+              className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
             >
               {loading ? (
                 <>

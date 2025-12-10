@@ -74,7 +74,7 @@ const TwapTabButtonsComponent = ({
     <div className="flex items-center p-4 border-b border-white/5 bg-black/20 w-full overflow-hidden">
       {/* Header Title */}
       <div className="flex items-center gap-2 mr-4 flex-shrink-0">
-        <Zap size={16} className="text-[#83E9FF]" />
+        <Zap size={16} className="text-brand-accent" />
         <span className="text-sm font-semibold text-white">Active Twaps</span>
       </div>
 
@@ -99,7 +99,7 @@ const TwapTabButtonsComponent = ({
               onClick={() => setActiveTab(tab.key)}
               className={`flex-shrink-0 px-3 py-1.5 rounded-md text-[10px] font-medium transition-all whitespace-nowrap border ${
                 activeTab === tab.key
-                  ? 'bg-[#83E9FF]/10 border-[#83E9FF]/20 text-[#83E9FF] shadow-sm'
+                  ? 'bg-brand-accent/10 border-brand-accent/20 text-brand-accent shadow-sm'
                   : 'bg-white/5 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/10'
               }`}
             >

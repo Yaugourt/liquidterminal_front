@@ -48,7 +48,7 @@ export function UserEditModal({
               id="name"
               value={editForm.name || ''}
               onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-              className="bg-[#051728] border-[#83E9FF4D] text-white focus:border-[#83E9FF] font-inter text-sm h-8"
+              className="bg-brand-tertiary border-[#83E9FF4D] text-white focus:border-brand-accent font-inter text-sm h-8"
             />
           </div>
           <div>
@@ -58,7 +58,7 @@ export function UserEditModal({
               type="email"
               value={editForm.email || ''}
               onChange={(e) => onFormChange({ ...editForm, email: e.target.value })}
-              className="bg-[#051728] border-[#83E9FF4D] text-white focus:border-[#83E9FF] font-inter text-sm h-8"
+              className="bg-brand-tertiary border-[#83E9FF4D] text-white focus:border-brand-accent font-inter text-sm h-8"
             />
           </div>
           <div>
@@ -67,10 +67,10 @@ export function UserEditModal({
               value={editForm.role || 'USER'}
               onValueChange={(value) => onFormChange({ ...editForm, role: value as "USER" | "MODERATOR" | "ADMIN"})}
             >
-              <SelectTrigger className="bg-[#051728] border-[#83E9FF4D] text-white font-inter text-sm h-8">
+              <SelectTrigger className="bg-brand-tertiary border-[#83E9FF4D] text-white font-inter text-sm h-8">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[#051728] border-[#83E9FF4D]">
+              <SelectContent className="bg-brand-tertiary border-[#83E9FF4D]">
                 <SelectItem value="USER" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">User</SelectItem>
                 <SelectItem value="MODERATOR" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">Moderator</SelectItem>
                 <SelectItem value="ADMIN" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">Administrator</SelectItem>
@@ -82,7 +82,7 @@ export function UserEditModal({
               id="verified"
               checked={editForm.verified || false}
               onCheckedChange={(checked) => onFormChange({ ...editForm, verified: checked })}
-              className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#83E9FF1A] scale-75"
+              className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#83E9FF1A] scale-75"
             />
             <Label htmlFor="verified" className="text-white font-inter text-sm">Verified</Label>
           </div>
@@ -90,14 +90,14 @@ export function UserEditModal({
             <Button
               onClick={onSave}
               disabled={isUpdating}
-              className="flex-1 bg-[#f9e370] text-[#051728] hover:bg-[#f9e370CC] font-inter text-sm h-8"
+              className="flex-1 bg-brand-gold text-brand-tertiary hover:bg-[#f9e370CC] font-inter text-sm h-8"
             >
               {isUpdating ? 'Updating...' : 'Update'}
             </Button>
             <Button
               variant="outline"
               onClick={onCancel}
-              className="border-[#83E9FF4D] text-[#83E9FF] hover:bg-[#83E9FF1A] font-inter text-sm h-8"
+              className="border-[#83E9FF4D] text-brand-accent hover:bg-[#83E9FF1A] font-inter text-sm h-8"
             >
               Cancel
             </Button>

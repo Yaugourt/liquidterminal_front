@@ -125,7 +125,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-20 bg-[#051728] border border-[#83E9FF4D] rounded-lg animate-pulse" />
+          <div key={i} className="h-20 bg-brand-tertiary border border-[#83E9FF4D] rounded-lg animate-pulse" />
         ))}
       </div>
     );

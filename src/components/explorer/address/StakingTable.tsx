@@ -161,7 +161,7 @@ export function StakingTable({ address }: StakingTableProps) {
           <div className="w-px h-4 bg-[#FFFFFF20]"></div>
           <div className="flex items-baseline gap-2">
             <span className="text-white text-xs font-medium font-inter">Undelegated:</span>
-            <span className="text-[#83E9FF] text-sm font-semibold font-inter">
+            <span className="text-brand-accent text-sm font-semibold font-inter">
               {formatNumber(undelegatedAmount, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">

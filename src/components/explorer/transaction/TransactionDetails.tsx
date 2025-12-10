@@ -41,7 +41,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
           <div className="flex items-center gap-2">
             <Link 
               href={`/explorer/address/${stringValue}`}
-              className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors font-inter"
+              className="text-brand-accent hover:text-brand-accent/80 transition-colors font-inter"
             >
               {stringValue.length > 20 
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
@@ -55,7 +55,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -64,7 +64,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       case 'hash':
         return (
           <div className="flex items-center gap-2">
-            <span className="text-[#83E9FF] font-inter">
+            <span className="text-brand-accent font-inter">
               {stringValue.length > 20 
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
                 : stringValue
@@ -77,7 +77,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -97,7 +97,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
         return (
           <Link 
             href={stringValue}
-            className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors underline font-inter"
+            className="text-brand-accent hover:text-brand-accent/80 transition-colors underline font-inter"
           >
             {stringValue}
           </Link>
@@ -126,7 +126,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
           key={sectionIndex}
           className="bg-[#051728CC] border-2 border-[#83E9FF4D] p-0 shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]"
         >
-          <h3 className="text-xl text-white font-medium p-6 bg-[#051728] border-b border-[#FFFFFF1A] rounded-t-xl font-inter">
+          <h3 className="text-xl text-white font-medium p-6 bg-brand-tertiary border-b border-[#FFFFFF1A] rounded-t-xl font-inter">
             {section.title}
           </h3>
           

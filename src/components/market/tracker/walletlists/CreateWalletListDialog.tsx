@@ -75,7 +75,7 @@ export function CreateWalletListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25] border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="bg-brand-secondary border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-white">Create Wallet List</DialogTitle>
           <DialogDescription className="text-zinc-400">
@@ -93,7 +93,7 @@ export function CreateWalletListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., DeFi Whales, Interesting Traders..."
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-brand-accent/50"
             />
           </div>
           
@@ -106,11 +106,11 @@ export function CreateWalletListDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description..."
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 min-h-[80px] rounded-lg focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 min-h-[80px] rounded-lg focus:border-brand-accent/50"
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-[#0A0D12] border border-white/5 rounded-xl hover:border-white/10 transition-all">
+          <div className="flex items-center justify-between p-4 bg-brand-dark border border-white/5 rounded-xl hover:border-white/10 transition-all">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-[#F9E370]/10'}`}>
                 {isPublic ? (
@@ -150,7 +150,7 @@ export function CreateWalletListDialog({
           <Button 
             onClick={handleCreateList}
             disabled={isLoading || !name.trim()}
-            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg disabled:opacity-50"
+            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg disabled:opacity-50"
           >
             {isLoading ? "Creating..." : "Create List"}
           </Button>

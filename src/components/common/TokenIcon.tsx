@@ -37,8 +37,8 @@ const variants = {
     border: "border-white/20"
   },
   dark: {
-    bg: "bg-[#051728]",
-    text: "text-[#83E9FF]",
+    bg: "bg-brand-tertiary",
+    text: "text-brand-accent",
     border: "border-[#83E9FF33]"
   }
 };

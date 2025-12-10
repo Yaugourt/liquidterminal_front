@@ -53,9 +53,9 @@ export function PublicReadListCard({
 
   return (
     <div 
-      className={`bg-[#151A25]/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
+      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
         isSelected 
-          ? 'border-[#83E9FF]/50' 
+          ? 'border-brand-accent/50' 
           : 'border-white/5 hover:border-white/10'
       }`}
       onClick={handleSelect}
@@ -63,7 +63,7 @@ export function PublicReadListCard({
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-semibold text-white truncate group-hover:text-[#83E9FF] transition-colors">
+            <h3 className="text-base font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
               {readList.name}
             </h3>
             {readList.description && (
@@ -110,7 +110,7 @@ export function PublicReadListCard({
               handleCopy();
             }}
             disabled={isCopying}
-            className="flex-1 bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg transition-colors"
+            className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg transition-colors"
             size="sm"
           >
             {isCopying ? (

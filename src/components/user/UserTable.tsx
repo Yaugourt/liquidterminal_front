@@ -56,7 +56,7 @@ export function UserTable({
         <CardContent className="p-0">
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#f9e370] mx-auto mb-3"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-gold mx-auto mb-3"></div>
               <p className="text-[#FFFFFF80] font-inter text-sm">Loading users...</p>
             </div>
           </div>
@@ -71,7 +71,7 @@ export function UserTable({
         <CardContent className="p-0">
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
-              <Users className="w-8 h-8 text-[#f9e370] mx-auto mb-3 opacity-50" />
+              <Users className="w-8 h-8 text-brand-gold mx-auto mb-3 opacity-50" />
               <p className="text-[#FFFFFF80] font-inter text-sm">No users found</p>
             </div>
           </div>
@@ -84,7 +84,7 @@ export function UserTable({
     <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
       <CardHeader className="border-b border-[#83E9FF1A] pb-3">
         <CardTitle className="text-white flex items-center space-x-2 font-inter text-base">
-          <Users className="w-4 h-4 text-[#f9e370]" />
+          <Users className="w-4 h-4 text-brand-gold" />
           <span>Users ({users.length})</span>
         </CardTitle>
       </CardHeader>
@@ -93,11 +93,11 @@ export function UserTable({
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#83E9FF1A]">
-                <th className="text-left p-3 text-[#f9e370] font-medium font-inter text-xs">User</th>
-                <th className="text-left p-3 text-[#f9e370] font-medium font-inter text-xs">Role</th>
-                <th className="text-left p-3 text-[#f9e370] font-medium font-inter text-xs">Status</th>
-                <th className="text-left p-3 text-[#f9e370] font-medium font-inter text-xs">Date</th>
-                <th className="text-right p-3 text-[#f9e370] font-medium font-inter text-xs">Actions</th>
+                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">User</th>
+                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Role</th>
+                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Status</th>
+                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Date</th>
+                <th className="text-right p-3 text-brand-gold font-medium font-inter text-xs">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -128,7 +128,7 @@ export function UserTable({
                         checked={user.verified}
                         onCheckedChange={(checked) => onVerifiedChange(user.id, checked)}
                         disabled={isUpdating}
-                        className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#83E9FF1A] scale-75"
+                        className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#83E9FF1A] scale-75"
                       />
                       <span className={`text-xs ${user.verified ? 'text-green-400' : 'text-red-400'} font-inter`}>
                         {user.verified ? 'Verified' : 'Not verified'}
@@ -146,7 +146,7 @@ export function UserTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEditUser(user)}
-                        className="text-[#f9e370] hover:bg-[#f9e3701A] hover:text-white font-inter h-7 w-7 p-0"
+                        className="text-brand-gold hover:bg-[#f9e3701A] hover:text-white font-inter h-7 w-7 p-0"
                       >
                         <Edit className="w-3 h-3" />
                       </Button>

@@ -11,7 +11,7 @@ const GlassPanel = React.forwardRef<HTMLDivElement, GlassPanelProps>(
             <div
                 ref={ref}
                 className={cn(
-                    "bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden",
+                    "bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden",
                     className
                 )}
                 {...props}

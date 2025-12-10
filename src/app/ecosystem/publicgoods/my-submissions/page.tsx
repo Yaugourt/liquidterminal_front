@@ -9,7 +9,7 @@ import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
 import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/SubmitProjectModal";
 import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
-import { SimpleSearchBar } from "@/components/common";
+import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
@@ -112,12 +112,12 @@ export default function MySubmissionsPage() {
   // Redirect if not logged in
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505] flex items-center justify-center">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+      <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505] flex items-center justify-center">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <h2 className="text-xl font-bold text-white">Authentication Required</h2>
             <p className="text-zinc-400">Please login to view your submissions</p>
-            <Button onClick={() => login()} className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full">
+            <Button onClick={() => login()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg w-full">
               Login
             </Button>
           </div>
@@ -147,7 +147,7 @@ export default function MySubmissionsPage() {
         </div>
         <Button
           onClick={handleSubmitClick}
-          className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg flex items-center gap-2"
+          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Submit New Project
@@ -167,9 +167,9 @@ export default function MySubmissionsPage() {
         />
       </div>
       <div className="flex-shrink-0">
-        <SimpleSearchBar
+        <SearchBar
           onSearch={setSearchQuery}
-          placeholder="Search your projects..."
+          placeholder="Search my submissions..."
           className="max-w-sm"
         />
       </div>
@@ -209,10 +209,10 @@ export default function MySubmissionsPage() {
         />
 
         {/* Stats footer */}
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-[#83E9FF]">{counts.all}</div>
+              <div className="text-2xl font-bold text-brand-accent">{counts.all}</div>
               <div className="text-xs text-zinc-400 uppercase tracking-wider">Total Submissions</div>
             </div>
             <div>

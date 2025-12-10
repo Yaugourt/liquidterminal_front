@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 
 import { Copy, Check } from "lucide-react";
 
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/common/DataTable";
 
 import { Pagination } from "@/components/common/pagination";
 import { usePagination } from "@/hooks/core/usePagination";
@@ -44,7 +44,7 @@ const CopyButton = ({ text }: { text: string }) => {
       {copiedAddress === text ? (
         <Check className="h-3.5 w-3.5 text-green-500" />
       ) : (
-        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
+        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100" />
       )}
     </button>
   );
@@ -104,7 +104,7 @@ export function TransactionList({
                         <TableCell className="py-3 pl-0 pr-4">
                           <div className="flex items-center gap-2">
                             <span
-                              className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
+                              className="text-brand-accent text-sm cursor-pointer hover:text-brand-accent/80 transition-colors"
                               onClick={() => onTransactionClick(tx.hash)}
                             >
                               {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
@@ -113,7 +113,7 @@ export function TransactionList({
                           </div>
                         </TableCell>
                         <TableCell className="py-3 px-4">
-                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-[#83E9FF] border border-[#83E9FF40]">
+                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-brand-accent border border-[#83E9FF40]">
                             {tx.action.type}
                           </span>
                         </TableCell>
@@ -124,7 +124,7 @@ export function TransactionList({
                         <TableCell className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <span
-                              className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
+                              className="text-brand-accent text-sm cursor-pointer hover:text-brand-accent/80 transition-colors"
                               onClick={() => onAddressClick(tx.user)}
                             >
                               {tx.user.slice(0, 12)}...{tx.user.slice(-8)}

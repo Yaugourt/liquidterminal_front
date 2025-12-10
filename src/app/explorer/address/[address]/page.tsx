@@ -51,7 +51,7 @@ export default function AddressPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+    <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
@@ -68,7 +68,7 @@ export default function AddressPage() {
 
       <div className="">
         {/* Header with glass effect */}
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Explorer" showFees={true} />
         </div>
 
@@ -143,15 +143,15 @@ export default function AddressPage() {
           )}
 
           {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "twap" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl h-[400px] flex items-center justify-center shadow-xl shadow-black/20">
-              <p className="text-[#83E9FF]">Coming soon: {activeTab} view</p>
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl h-[400px] flex items-center justify-center shadow-xl shadow-black/20">
+              <p className="text-brand-accent">Coming soon: {activeTab} view</p>
             </div>
           )}
         </main>
 
         {/* Authentication Warning Dialog */}
         <Dialog open={isAuthWarningOpen} onOpenChange={setIsAuthWarningOpen}>
-          <DialogContent className="bg-[#151A25] border border-white/10 text-white">
+          <DialogContent className="bg-brand-secondary border border-white/10 text-white">
             <DialogHeader>
               <DialogTitle>Authentication Required</DialogTitle>
               <DialogDescription className="text-zinc-400">
@@ -175,7 +175,7 @@ export default function AddressPage() {
                   setIsAuthWarningOpen(false);
                   login();
                 }}
-                className="bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/90 font-bold"
+                className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/90 font-bold"
               >
                 Login
               </Button>

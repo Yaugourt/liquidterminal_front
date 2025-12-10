@@ -22,7 +22,7 @@ export const VaultFilterButtons = ({ selectedChart, onChartChange }: VaultFilter
             onClick={() => onChartChange(tab.key)}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               selectedChart === tab.key
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm'
+                ? 'bg-brand-accent text-brand-tertiary shadow-sm'
                 : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
             }`}
           >

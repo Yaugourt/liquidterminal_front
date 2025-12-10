@@ -23,12 +23,12 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
         <Label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Types of Support Needed</Label>
         <div className="space-y-2 mt-2">
           {SUPPORT_TYPES.map(type => (
-            <div key={type.value} className="flex items-start space-x-3 p-3 bg-[#0A0D12] border border-white/5 rounded-lg hover:border-white/10 transition-colors">
+            <div key={type.value} className="flex items-start space-x-3 p-3 bg-brand-dark border border-white/5 rounded-lg hover:border-white/10 transition-colors">
               <Checkbox
                 id={type.value}
                 checked={formData.supportTypes.includes(type.value)}
                 onCheckedChange={() => toggleSupportType(type.value)}
-                className="border-white/10 mt-1 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:text-[#051728] data-[state=checked]:border-[#83E9FF]"
+                className="border-white/10 mt-1 data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
               />
               <div className="flex-1">
                 <label htmlFor={type.value} className="text-sm text-white cursor-pointer flex items-center gap-2">
@@ -47,12 +47,12 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
           <Label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">What type of contributors are you looking for?</Label>
           <div className="grid grid-cols-2 gap-2 mt-2">
             {CONTRIBUTOR_TYPES.map(type => (
-              <div key={type.value} className="flex items-center space-x-2 p-2 bg-[#0A0D12] border border-white/5 rounded-lg hover:border-white/10 transition-colors">
+              <div key={type.value} className="flex items-center space-x-2 p-2 bg-brand-dark border border-white/5 rounded-lg hover:border-white/10 transition-colors">
                 <Checkbox
                   id={`contributor-${type.value}`}
                   checked={formData.contributorTypes.includes(type.value)}
                   onCheckedChange={() => toggleContributorType(type.value)}
-                  className="border-white/10 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:text-[#051728] data-[state=checked]:border-[#83E9FF]"
+                  className="border-white/10 data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
                 />
                 <label htmlFor={`contributor-${type.value}`} className="text-sm text-zinc-300 cursor-pointer flex items-center gap-1">
                   <span>{type.icon}</span>
@@ -68,10 +68,10 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
         <div>
           <Label htmlFor="budgetRange" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Budget Range</Label>
           <Select value={formData.budgetRange} onValueChange={(val) => updateField('budgetRange', val)}>
-            <SelectTrigger className="bg-[#0A0D12] border-white/5 text-white rounded-lg mt-1">
+            <SelectTrigger className="bg-brand-dark border-white/5 text-white rounded-lg mt-1">
               <SelectValue placeholder="Select budget range" />
             </SelectTrigger>
-            <SelectContent className="bg-[#151A25] border-white/10 rounded-xl">
+            <SelectContent className="bg-brand-secondary border-white/10 rounded-xl">
               {BUDGET_RANGES.map(range => (
                 <SelectItem key={range.value} value={range.value} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                   {range.label}

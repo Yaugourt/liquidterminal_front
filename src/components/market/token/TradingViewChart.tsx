@@ -203,13 +203,13 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
     <GlassPanel className={`w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
-      <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+      <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-brand-dark rounded-lg p-1 border border-white/5">
         {TIMEFRAMES.map((timeframe) => (
           <button
             key={timeframe.value}
             onClick={() => setSelectedTimeframe(timeframe.value)}
             className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
-              ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
               : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
               }`}
           >
@@ -223,13 +223,13 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
         <select
           value={selectedTimeframe}
           onChange={(e) => setSelectedTimeframe(e.target.value as TimeframeType)}
-          className="bg-[#0A0D12] border border-white/5 rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 focus:outline-none focus:border-[#83E9FF] focus:bg-[#0A0D12]"
+          className="bg-brand-dark border border-white/5 rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 focus:outline-none focus:border-brand-accent focus:bg-brand-dark"
         >
           {TIMEFRAMES.map((timeframe) => (
             <option
               key={timeframe.value}
               value={timeframe.value}
-              className="bg-[#0A0D12] text-zinc-400"
+              className="bg-brand-dark text-zinc-400"
             >
               {timeframe.label}
             </option>
@@ -238,9 +238,9 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
       </div>
 
       {(isLoading || (!candles || candles.length === 0)) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#151A25]/60 backdrop-blur-md z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-brand-secondary/60 backdrop-blur-md z-10">
           <div className="flex flex-col items-center">
-            <div className="w-8 h-8 border-2 border-[#83E9FF] border-t-transparent rounded-full animate-spin mb-2"></div>
+            <div className="w-8 h-8 border-2 border-brand-accent border-t-transparent rounded-full animate-spin mb-2"></div>
             <span className="text-zinc-400 text-sm">
               {isLoading ? 'Loading chart data...' : 'No data available'}
             </span>

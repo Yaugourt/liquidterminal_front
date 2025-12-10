@@ -17,7 +17,7 @@ export default function UserPage() {
         <Button
           variant="ghost"
           size="icon"
-          className="bg-[#051728] hover:bg-[#112941]"
+          className="bg-brand-tertiary hover:bg-[#112941]"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <Menu className="h-6 w-6 text-white" />

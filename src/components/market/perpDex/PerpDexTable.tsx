@@ -34,7 +34,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
       <Button
         variant="ghost"
         onClick={onClick}
-        className={`${isActive ? "text-[#83E9FF] hover:text-[#83E9FF]" : "text-zinc-400 hover:text-zinc-200"} font-semibold text-[10px] uppercase tracking-wider p-0 flex items-center justify-start w-full h-auto`}
+        className={`${isActive ? "text-brand-accent hover:text-brand-accent" : "text-zinc-400 hover:text-zinc-200"} font-semibold text-[10px] uppercase tracking-wider p-0 flex items-center justify-start w-full h-auto`}
       >
         {label}
         {onClick && <ArrowUpDown className="ml-1.5 h-3 w-3" />}
@@ -83,12 +83,12 @@ const PerpDexRow = memo(({
       {/* Name */}
       <TableCell className="py-3 pl-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#83E9FF]/20 to-[#f9e370]/20 flex items-center justify-center text-sm font-bold text-[#83E9FF]">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-sm font-bold text-brand-accent">
             {dex.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col">
             <span className="text-white text-sm font-medium">{dex.fullName}</span>
-            <span className="text-[#83E9FF] text-xs">{dex.name}</span>
+            <span className="text-brand-accent text-xs">{dex.name}</span>
           </div>
         </div>
       </TableCell>
@@ -155,7 +155,7 @@ const PerpDexRow = memo(({
             <div className="flex items-center gap-1 mt-0.5">
               <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-[#83E9FF] rounded-full"
+                  className="h-full bg-brand-accent rounded-full"
                   style={{ 
                     width: `${Math.min((dex.totalOpenInterest / dex.totalOiCap) * 100, 100)}%` 
                   }}
@@ -222,16 +222,16 @@ export function PerpDexTable() {
 
   if (isLoading && !sortedDexs.length) {
     return (
-      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>

@@ -18,7 +18,7 @@ interface ReadListContentProps {
 
 // Skeleton component for loading state
 const ReadListItemSkeleton = () => (
-  <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-0 overflow-hidden h-full animate-pulse">
+  <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-0 overflow-hidden h-full animate-pulse">
     <div className="w-full h-40 bg-white/5 flex-shrink-0"></div>
     <div className="p-3 space-y-2">
       <div className="flex items-start justify-between gap-2">
@@ -114,14 +114,14 @@ export function ReadListContent({
   if (!activeList) {
     return (
       <div className="text-center py-16">
-        <div className="w-16 h-16 mx-auto mb-4 bg-[#83e9ff]/10 rounded-2xl flex items-center justify-center">
-          <BookOpen className="w-8 h-8 text-[#83E9FF]" />
+        <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
+          <BookOpen className="w-8 h-8 text-brand-accent" />
         </div>
         <h3 className="text-white font-semibold mb-2">No read list selected</h3>
         <p className="text-zinc-400">Create a read list to get started</p>
         <Button
           onClick={onCreateList}
-          className="mt-4 bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+          className="mt-4 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create Read List
@@ -146,7 +146,7 @@ export function ReadListContent({
               <span className="text-zinc-400"><span className="text-emerald-400 font-medium">{readItems}</span> read</span>
               <span className="text-zinc-400"><span className="text-[#F9E370] font-medium">{unreadItems}</span> unread</span>
               {activeList.isPublic && (
-                <span className="bg-[#83E9FF]/10 text-[#83E9FF] px-2 py-0.5 rounded-md text-[10px] font-medium">
+                <span className="bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md text-[10px] font-medium">
                   Public
                 </span>
               )}
@@ -162,12 +162,12 @@ export function ReadListContent({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search articles..."
-              className="pl-10 bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+              className="pl-10 bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
             />
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
               {[
                 { key: "all", label: "All" },
                 { key: "unread", label: "Unread" },
@@ -180,7 +180,7 @@ export function ReadListContent({
                   variant="ghost"
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                     activeTab === filter.key
-                      ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
+                      ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
                       : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
                   }`}
                 >
@@ -214,8 +214,8 @@ export function ReadListContent({
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#83e9ff]/10 rounded-2xl flex items-center justify-center">
-              <BookOpen className="w-8 h-8 text-[#83E9FF]" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
+              <BookOpen className="w-8 h-8 text-brand-accent" />
             </div>
             <h3 className="text-white text-lg font-semibold mb-2">No items found</h3>
             <p className="text-zinc-400">

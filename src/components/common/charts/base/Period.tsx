@@ -27,7 +27,7 @@ export function Period({
           className={`text-white px-3 sm:px-4 py-1 text-xs whitespace-nowrap ${
             selectedPeriod === period
               ? "bg-[#1692AD] hover:bg-[#1692AD] border-transparent"
-              : "bg-[#051728] hover:bg-[#051728] border border-[#83E9FF4D]"
+              : "bg-brand-tertiary hover:bg-brand-tertiary border border-[#83E9FF4D]"
           }`}
         >
           {period}

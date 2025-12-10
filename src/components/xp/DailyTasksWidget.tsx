@@ -29,7 +29,7 @@ const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
 const TASK_COLORS: Record<DailyTaskType, string> = {
   LOGIN: "text-emerald-400",
   READ_RESOURCE: "text-cyan-400",
-  ADD_WALLET: "text-[#83E9FF]",
+  ADD_WALLET: "text-brand-accent",
   EXPLORE_LEADERBOARD: "text-[#F9E370]",
 };
 
@@ -56,7 +56,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
     return (
       <div className={cn(
         "flex items-center gap-2 px-3 py-2 rounded-lg",
-        "bg-[#151A25]/60 border border-white/5",
+        "bg-brand-secondary/60 border border-white/5",
         className
       )}>
         <div className="flex items-center gap-1">
@@ -95,7 +95,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-[#151A25]/60 backdrop-blur-md",
+      "bg-brand-secondary/60 backdrop-blur-md",
       "border border-white/5",
       className
     )}>
@@ -188,7 +188,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             {Math.round((dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100)}%
           </span>
         </div>
-        <div className="h-2 bg-[#0A0D12] rounded-full overflow-hidden border border-white/5">
+        <div className="h-2 bg-brand-dark rounded-full overflow-hidden border border-white/5">
           <div
             className="h-full bg-gradient-to-r from-emerald-500 to-[#F9E370] transition-all duration-500"
             style={{ width: `${(dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100}%` }}

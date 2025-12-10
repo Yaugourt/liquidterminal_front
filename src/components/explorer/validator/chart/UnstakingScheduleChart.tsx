@@ -63,12 +63,12 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       const date = new Date(data.date);
       
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
-          <p className="text-[#83E9FF] font-medium mb-1">
+        <div className="bg-brand-tertiary border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
+          <p className="text-brand-accent font-medium mb-1">
             {formatDate(date, dateFormat)}
           </p>
           <p className="text-white text-sm">{`Tokens: ${formatNumber(data.totalTokens, format)} HYPE`}</p>
-          <p className="text-[#f9e370] text-sm">{`${Math.round(data.transactionCount)} transaction${data.transactionCount > 1 ? 's' : ''}`}</p>
+          <p className="text-brand-gold text-sm">{`${Math.round(data.transactionCount)} transaction${data.transactionCount > 1 ? 's' : ''}`}</p>
           <p className="text-white text-xs">{`${Math.round(data.uniqueUsers)} user${data.uniqueUsers > 1 ? 's' : ''}`}</p>
         </div>
       );
@@ -80,7 +80,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF] mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
           <p className="text-white/60 text-sm">Loading unstaking schedule...</p>
         </div>
       </div>

@@ -20,27 +20,27 @@ export function SettingsSelector() {
         <Button 
           variant="ghost" 
           size="icon"
-          className="hover:bg-[#83E9FF1A] text-[#f9e370]"
+          className="hover:bg-[#83E9FF1A] text-brand-gold"
         >
           <Settings className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[220px] bg-[#051728] border-[#83E9FF4D]">
+      <DropdownMenuContent align="end" className="w-[220px] bg-brand-tertiary border-[#83E9FF4D]">
         {/* Section Format des nombres */}
         <div className="px-2 py-1.5">
-          <h3 className="text-xs font-medium text-[#83E9FF] uppercase tracking-wide">Numbers</h3>
+          <h3 className="text-xs font-medium text-brand-accent uppercase tracking-wide">Numbers</h3>
         </div>
         {Object.entries(NUMBER_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
             className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-[#83E9FF1A] ${
-              numberFormat === key ? 'text-[#83E9FF]' : 'text-white'
+              numberFormat === key ? 'text-brand-accent' : 'text-white'
             }`}
             onClick={() => setNumberFormat(key as NumberFormatType)}
           >
             <span>{value.example}</span>
             {numberFormat === key && (
-              <span className="h-2 w-2 rounded-full bg-[#83E9FF]" />
+              <span className="h-2 w-2 rounded-full bg-brand-accent" />
             )}
           </DropdownMenuItem>
         ))}
@@ -49,13 +49,13 @@ export function SettingsSelector() {
         
         {/* Section Format des dates */}
         <div className="px-2 py-1.5">
-          <h3 className="text-xs font-medium text-[#83E9FF] uppercase tracking-wide">Dates</h3>
+          <h3 className="text-xs font-medium text-brand-accent uppercase tracking-wide">Dates</h3>
         </div>
         {Object.entries(DATE_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
             className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-[#83E9FF1A] ${
-              dateFormat === key ? 'text-[#83E9FF]' : 'text-white'
+              dateFormat === key ? 'text-brand-accent' : 'text-white'
             }`}
             onClick={() => setDateFormat(key as DateFormatType)}
           >
@@ -64,7 +64,7 @@ export function SettingsSelector() {
               <span className="text-xs text-[#FFFFFF80]">{value.description}</span>
             </div>
             {dateFormat === key && (
-              <span className="h-2 w-2 rounded-full bg-[#83E9FF]" />
+              <span className="h-2 w-2 rounded-full bg-brand-accent" />
             )}
           </DropdownMenuItem>
         ))}

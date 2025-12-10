@@ -106,9 +106,9 @@ export function WalletListTabs({
                         onClick={(e) => onDeleteList(list.id, list.name, e)}
                         onMouseDown={(e) => e.stopPropagation()}
                         onPointerDown={(e) => e.stopPropagation()}
-                        className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
+                        className="ml-2 p-1 rounded-full hover:bg-brand-gold/20 transition-colors cursor-pointer"
                       >
-                        <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
+                        <Trash2 className="h-3.5 w-3.5 text-brand-gold" />
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -134,7 +134,7 @@ export function WalletListTabs({
         </Button>
         <Button 
           onClick={onCreateList}
-          className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+          className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Create List
@@ -263,9 +263,9 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
           <TooltipTrigger asChild>
             <div
               onClick={(e) => onDelete(wallet.id, wallet.name, e)}
-              className="ml-2 p-1 rounded-full hover:bg-[#f9e370]/20 transition-colors cursor-pointer"
+              className="ml-2 p-1 rounded-full hover:bg-brand-gold/20 transition-colors cursor-pointer"
             >
-              <Trash2 className="h-3.5 w-3.5 text-[#f9e370]" />
+              <Trash2 className="h-3.5 w-3.5 text-brand-gold" />
             </div>
           </TooltipTrigger>
           <TooltipContent>

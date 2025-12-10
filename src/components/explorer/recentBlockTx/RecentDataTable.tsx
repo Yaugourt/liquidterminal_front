@@ -121,7 +121,7 @@ export function RecentDataTable() {
         {showLoading ? (
           <div className="flex justify-center items-center h-[200px]">
             <div className="flex flex-col items-center">
-              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+              <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
               <span className="text-zinc-500 text-sm">Connecting...</span>
             </div>
           </div>

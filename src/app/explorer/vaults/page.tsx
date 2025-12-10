@@ -20,7 +20,7 @@ export default function VaultsPage() {
   }, [width]);
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
+    <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">
       {/* Mobile menu button */}
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
@@ -37,7 +37,7 @@ export default function VaultsPage() {
 
       <div className="">
         {/* Header with glass effect */}
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
+        <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-main/80 border-b border-white/5">
           <Header customTitle="Vaults" showFees={true} />
         </div>
 
@@ -48,17 +48,17 @@ export default function VaultsPage() {
 
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:items-stretch">
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <VaultStatsCard />
             </div>
-            <div className="md:col-span-3 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+            <div className="md:col-span-3 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
               <VaultChartSection 
                 vaultAddress="0xdfc24b077bc1425ad1dea75bcb6f8158e10df303" 
               />
             </div>
           </div>
           
-          <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+          <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
             <VaultSection />
           </div>
         </main>

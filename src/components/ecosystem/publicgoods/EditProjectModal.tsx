@@ -276,18 +276,18 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-white">Edit Project</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-5 bg-brand-dark border border-white/5 rounded-lg p-1">
             {tabs.map(tab => (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all"
+                className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
               >
                 {tab.label}
               </TabsTrigger>
@@ -374,7 +374,7 @@ export function EditProjectModal({ isOpen, onClose, onSuccess, project }: EditPr
               }
             }}
             disabled={isSubmitting}
-            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
           >
             {isSubmitting ? (
               "Updating..."
