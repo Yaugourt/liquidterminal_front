@@ -1,35 +1,25 @@
 "use client";
 
-import { Header } from "@/components/Header";
-import { SearchBar } from "@/components/SearchBar";
-import { useState, useMemo, useEffect } from "react";
-import { Sidebar } from "@/components/Sidebar";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, ArrowLeft, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
+import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
 import { SimpleSearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
 import { hasRole } from "@/lib/roleHelpers";
-import { useWindowSize } from "@/hooks/use-window-size";
+import { ProjectsPageLayout } from "@/components/ecosystem/publicgoods/layout/ProjectsPageLayout";
 
 export default function PendingReviewPage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [projectToReview, setProjectToReview] = useState<PublicGood | null>(null);
-  const { width } = useWindowSize();
-  
   const { user, login } = useAuthContext();
   const router = useRouter();
 
-  useEffect(() => {
-    if (width && width >= 1024) {
-      setIsSidebarOpen(false);
-    }
-  }, [width]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [projectToReview, setProjectToReview] = useState<PublicGood | null>(null);
 
   // Check if user is moderator or admin
   const canReview = user ? hasRole(user, 'MODERATOR') : false;
@@ -89,7 +79,7 @@ export default function PendingReviewPage() {
             <h2 className="text-xl font-bold text-white">Access Denied</h2>
             <p className="text-zinc-400">You don&apos;t have permission to access this page</p>
             <p className="text-xs text-zinc-500">Moderator or Admin role required</p>
-            <Button 
+            <Button
               onClick={() => router.push('/ecosystem/publicgoods')}
               className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg w-full"
             >
@@ -101,162 +91,119 @@ export default function PendingReviewPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
-      {/* Mobile menu button */}
-      <div className="fixed top-4 left-4 z-50 lg:hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/10"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-      </div>
+  // Header Content
+  const pageHeader = (
+    <div className="space-y-4">
+      <Button
+        variant="ghost"
+        onClick={() => router.push('/ecosystem/publicgoods')}
+        className="text-zinc-400 hover:text-white hover:bg-white/5 -ml-2 mb-2 rounded-lg"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to all projects
+      </Button>
 
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-
-      <div className="">
-        {/* Header with glass effect */}
-        <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
-          <Header customTitle="Pending Review" showFees={true} />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Pending Review</h1>
+          <p className="text-zinc-400 mt-1">
+            Projects waiting for moderator approval
+          </p>
         </div>
-        
-        {/* Mobile search bar */}
-        <div className="p-2 lg:hidden">
-          <SearchBar placeholder="Search pending projects..." />
-        </div>
-
-        <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-          {/* Header section */}
-          <div className="space-y-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.push('/ecosystem/publicgoods')}
-              className="text-zinc-400 hover:text-white hover:bg-white/5 -ml-2 mb-2 rounded-lg"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to all projects
-            </Button>
-
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-white">Pending Review</h1>
-                <p className="text-zinc-400 mt-1">
-                  Projects waiting for moderator approval
-                </p>
-              </div>
-              {pendingPublicGoods.length > 0 && (
-                <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-lg">
-                  <p className="text-amber-400 text-sm font-medium">
-                    {pendingPublicGoods.length} project{pendingPublicGoods.length !== 1 ? 's' : ''} pending
-                  </p>
-                </div>
-              )}
-            </div>
+        {pendingPublicGoods.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-lg">
+            <p className="text-amber-400 text-sm font-medium">
+              {pendingPublicGoods.length} project{pendingPublicGoods.length !== 1 ? 's' : ''} pending
+            </p>
           </div>
-
-          {/* Search */}
-          {pendingPublicGoods.length > 0 && (
-            <div className="flex justify-end">
-              <SimpleSearchBar
-                onSearch={setSearchQuery}
-                placeholder="Search pending projects..."
-                className="max-w-sm"
-              />
-            </div>
-          )}
-
-          {/* Projects Grid */}
-          {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="flex flex-col items-center">
-                <Loader2 className="w-6 h-6 text-[#83E9FF] animate-spin mb-2" />
-                <span className="text-zinc-500 text-sm">Loading projects...</span>
-              </div>
-            </div>
-          ) : filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => (
-                <PublicGoodsCard 
-                  key={project.id} 
-                  project={project}
-                  currentUser={user}
-                  onReview={handleReview}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 bg-[#83e9ff]/10 rounded-2xl flex items-center justify-center">
-                  <AlertCircle className="w-8 h-8 text-[#83E9FF]" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {searchQuery.trim() ? "No projects found" : "All caught up!"}
-                </h3>
-                <p className="text-zinc-400 mb-4">
-                  {searchQuery.trim() 
-                    ? "Try adjusting your search criteria"
-                    : "There are no projects pending review at the moment"
-                  }
-                </p>
-                {!searchQuery.trim() && (
-                  <Button 
-                    onClick={() => router.push('/ecosystem/publicgoods')}
-                    className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
-                  >
-                    View All Projects
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Info Banner */}
-          {pendingPublicGoods.length > 0 && (
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
-              <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
-              <ul className="text-zinc-400 text-sm space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#83E9FF]">•</span>
-                  Check that the project has a valid GitHub repository
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#83E9FF]">•</span>
-                  Verify the project integrates with HyperLiquid
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#83E9FF]">•</span>
-                  Ensure the description clearly explains the project&apos;s purpose
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#83E9FF]">•</span>
-                  Confirm the project benefits the HyperLiquid ecosystem
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#83E9FF]">•</span>
-                  Provide constructive feedback in review notes if rejecting
-                </li>
-              </ul>
-            </div>
-          )}
-        </main>
+        )}
       </div>
-      
-      {/* Review Modal */}
-      {projectToReview && (
-        <ReviewModal
-          isOpen={isReviewModalOpen}
-          onClose={() => {
-            setIsReviewModalOpen(false);
-            setProjectToReview(null);
+    </div>
+  );
+
+  // Filters Content
+  const filters = pendingPublicGoods.length > 0 ? (
+    <div className="flex justify-end w-full">
+      <SimpleSearchBar
+        onSearch={setSearchQuery}
+        placeholder="Search pending projects..."
+        className="max-w-sm"
+      />
+    </div>
+  ) : null;
+
+  return (
+    <div className="">
+      <ProjectsPageLayout
+        headerTitle="Pending Review"
+        pageHeader={pageHeader}
+        filters={filters}
+      >
+        {/* Projects Grid */}
+        <PublicGoodsGrid
+          isLoading={isLoading}
+          items={filteredProjects}
+          renderItem={(project) => (
+            <PublicGoodsCard
+              key={project.id}
+              project={project}
+              currentUser={user}
+              onReview={handleReview}
+            />
+          )}
+          emptyState={{
+            title: searchQuery.trim() ? "No projects found" : "All caught up!",
+            description: searchQuery.trim()
+              ? "Try adjusting your search criteria"
+              : "There are no projects pending review at the moment",
+            icon: <AlertCircle className="w-8 h-8 text-[#83E9FF]" />,
+            actionLabel: !searchQuery.trim() ? "View All Projects" : undefined,
+            onAction: !searchQuery.trim() ? () => router.push('/ecosystem/publicgoods') : undefined
           }}
-          onSuccess={handleReviewSuccess}
-          project={projectToReview}
         />
-      )}
+
+        {/* Info Banner */}
+        {pendingPublicGoods.length > 0 && (
+          <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+            <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
+            <ul className="text-zinc-400 text-sm space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-[#83E9FF]">•</span>
+                Check that the project has a valid GitHub repository
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#83E9FF]">•</span>
+                Verify the project integrates with HyperLiquid
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#83E9FF]">•</span>
+                Ensure the description clearly explains the project&apos;s purpose
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#83E9FF]">•</span>
+                Confirm the project benefits the HyperLiquid ecosystem
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#83E9FF]">•</span>
+                Provide constructive feedback in review notes if rejecting
+              </li>
+            </ul>
+          </div>
+        )}
+
+        {/* Review Modal */}
+        {projectToReview && (
+          <ReviewModal
+            isOpen={isReviewModalOpen}
+            onClose={() => {
+              setIsReviewModalOpen(false);
+              setProjectToReview(null);
+            }}
+            onSuccess={handleReviewSuccess}
+            project={projectToReview}
+          />
+        )}
+      </ProjectsPageLayout>
     </div>
   );
 }

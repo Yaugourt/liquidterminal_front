@@ -1,6 +1,7 @@
 import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
 import { StatsCard } from "./StatsCard";
 import { Loader2 } from "lucide-react";
+import { GlassPanel } from "@/components/ui/glass-panel";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 
@@ -15,12 +16,12 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   // Fonction pour formater les statistiques
   const formatStat = (value: number | undefined | null, options?: { prefix?: string; decimals?: number }) => {
     const { prefix = '', decimals = 0 } = options || {};
-    
+
     // Handle undefined or null values
     if (value === undefined || value === null) {
       return `${prefix}0`;
     }
-    
+
     return formatNumber(value, format, {
       minimumFractionDigits: 0,
       maximumFractionDigits: decimals,
@@ -34,9 +35,9 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(5)].map((_, index) => (
-          <div key={index} className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-black/20">
+          <GlassPanel key={index} className="p-4 flex items-center justify-center">
             <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
-          </div>
+          </GlassPanel>
         ))}
       </div>
     );

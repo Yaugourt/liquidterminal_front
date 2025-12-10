@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 import Link from "next/link";
 
 // Composant pour l'en-tête de colonne
@@ -67,8 +68,12 @@ const LoadingState = memo(() => (
 LoadingState.displayName = 'LoadingState';
 
 export const StakersTable = memo(function StakersTable() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const {
+    page: currentPage,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange
+  } = usePagination({ initialRowsPerPage: 25 });
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();
   const { price: hypePrice } = useHypePrice();
@@ -85,15 +90,14 @@ export const StakersTable = memo(function StakersTable() {
   });
 
   const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
+    onPageChange(newPage);
     updateParams({ page: newPage + 1 });
-  }, [updateParams]);
+  }, [updateParams, onPageChange]);
 
   const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(0);
+    onRowsPerPageChange(newRowsPerPage);
     updateParams({ limit: newRowsPerPage, page: 1 });
-  }, [updateParams]);
+  }, [updateParams, onRowsPerPageChange]);
 
   const copyToClipboard = async (address: string) => {
     try {

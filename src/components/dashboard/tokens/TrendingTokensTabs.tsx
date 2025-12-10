@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TrendingTokens } from "./TrendingTokens";
 import { AuctionSection } from "./AuctionSection";
 import { PastAuctionSection } from "./PastAuctionSection";
+import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface TrendingTokensTabsProps {
   onTabChange?: (tab: "perp" | "spot" | "auction" | "past-auction") => void;
@@ -29,20 +30,13 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
     <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector - Style V2 Pills */}
       <div className="flex items-center gap-2 p-4 border-b border-white/5">
-        <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => handleTabChange(tab.key)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex">
+          <PillTabs
+            tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
+            activeTab={activeTab}
+            onTabChange={(val) => handleTabChange(val as "spot" | "perp" | "auction" | "past-auction")}
+            className="bg-[#0A0D12] border border-white/5"
+          />
         </div>
       </div>
 
@@ -53,9 +47,9 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
         ) : activeTab === "past-auction" ? (
           <PastAuctionSection onHeightChange={onPastAuctionHeightChange} />
         ) : (
-          <TrendingTokens 
-            type={activeTab} 
-            title={activeTab === "perp" ? "Trending Perpetual" : "Trending Spot"} 
+          <TrendingTokens
+            type={activeTab}
+            title={activeTab === "perp" ? "Trending Perpetual" : "Trending Spot"}
           />
         )}
       </div>

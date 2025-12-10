@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber, formatMetricValue, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
@@ -17,12 +18,12 @@ import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 import { NumberFormatType } from "@/store/number-format.store";
-import { Pagination, TokenIcon, formatPriceChange } from "@/components/common";
-import { 
-  SpotToken, 
+import { Pagination, TokenIcon } from "@/components/common";
+import {
+  SpotToken,
   PerpToken,
-  SpotSortableFields, 
-  BaseTableProps, 
+  SpotSortableFields,
+  BaseTableProps,
 } from "./types";
 import { PerpSortableFields, PerpMarketData } from "@/services/market/perp/types";
 import { SpotToken as SpotTokenService } from "@/services/market/spot/types";
@@ -89,9 +90,9 @@ const SpotTokenRow = memo(({ token, onClick, format }: { token: SpotToken; onCli
       </div>
     </TableCell>
     <TableCell className="py-3 px-3 w-[10%]">
-      <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-        {formatPriceChange(token.change24h)}
-      </span>
+      <StatusBadge variant={token.change24h < 0 ? 'error' : 'success'}>
+        {token.change24h > 0 ? '+' : ''}{token.change24h}%
+      </StatusBadge>
     </TableCell>
     <TableCell className="py-3 px-3 w-[12%]">
       <div className="text-white text-sm">
@@ -115,11 +116,6 @@ SpotTokenRow.displayName = 'SpotTokenRow';
 
 // Composant pour une ligne de token perp
 const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onClick: () => void; format: NumberFormatType }) => {
-  const formatFunding = (funding: number) => {
-    const percentage = funding * 100;
-    return `${percentage > 0 ? '+' : ''}${percentage.toFixed(4)}%`;
-  };
-
   return (
     <TableRow
       className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer"
@@ -137,9 +133,9 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
         </div>
       </TableCell>
       <TableCell className="py-3 px-3 w-[10%]">
-        <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-          {formatPriceChange(token.change24h)}
-        </span>
+        <StatusBadge variant={token.change24h < 0 ? 'error' : 'success'}>
+          {token.change24h > 0 ? '+' : ''}{token.change24h}%
+        </StatusBadge>
       </TableCell>
       <TableCell className="py-3 px-3 w-[20%]">
         <div className="text-white text-sm">
@@ -152,9 +148,9 @@ const PerpTokenRow = memo(({ token, onClick, format }: { token: PerpToken; onCli
         </div>
       </TableCell>
       <TableCell className="py-3 px-3 w-[11%]">
-        <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${token.funding >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-          {formatFunding(token.funding)}
-        </span>
+        <StatusBadge variant={token.funding >= 0 ? 'success' : 'error'}>
+          {token.funding > 0 ? '+' : ''}{token.funding}%
+        </StatusBadge>
       </TableCell>
     </TableRow>
   );
@@ -202,12 +198,12 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
 
   // Dédupliquer tous les tokens basé sur la clé unique
   const uniqueAllTokens = allTokens?.filter((token, index, self) => {
-    const key = market === 'spot' 
+    const key = market === 'spot'
       ? `${market}-${token.name}-${(token as SpotTokenService).tokenId}`
       : `${market}-${token.name}-${(token as PerpMarketData).index}`;
-    
+
     return self.findIndex(t => {
-      const tKey = market === 'spot' 
+      const tKey = market === 'spot'
         ? `${market}-${t.name}-${(t as SpotTokenService).tokenId}`
         : `${market}-${t.name}-${(t as PerpMarketData).index}`;
       return tKey === key;
@@ -215,7 +211,7 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
   }) || [];
 
   // Filtrer tous les tokens par recherche
-  const filteredTokens = uniqueAllTokens.filter(token => 
+  const filteredTokens = uniqueAllTokens.filter(token =>
     token.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -227,8 +223,6 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
   const handlePageChange = (newPage: number) => {
     if (market === 'spot') {
       setPage(newPage + 1);
-    } else if (perpResult.updateParams) {
-      perpResult.updateParams({ page: newPage + 1 });
     }
   };
 
@@ -237,9 +231,9 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
     if (market === 'spot') {
       setPage(1);
     } else if (perpResult.updateParams) {
-      perpResult.updateParams({ 
+      perpResult.updateParams({
         page: 1,
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     }
   };
@@ -258,16 +252,16 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
       if (sortField === field) {
         const newOrder = sortOrder === "asc" ? "desc" : "asc";
         setSortOrder(newOrder);
-        perpResult.updateParams({ 
-          sortBy: field as PerpSortableFields, 
+        perpResult.updateParams({
+          sortBy: field as PerpSortableFields,
           sortOrder: newOrder,
           page: 1
         });
       } else {
         setSortField(field);
         setSortOrder("desc");
-        perpResult.updateParams({ 
-          sortBy: field as PerpSortableFields, 
+        perpResult.updateParams({
+          sortBy: field as PerpSortableFields,
           sortOrder: "desc",
           page: 1
         });
@@ -318,7 +312,7 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
                 isActive={sortField === "volume"}
                 className={`py-3 px-3 ${market === 'spot' ? 'w-[12%]' : 'w-[20%]'}`}
               />
-              
+
               {/* Colonnes conditionnelles selon le marché */}
               {market === 'spot' ? (
                 <>
@@ -351,17 +345,17 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
           </TableHeader>
           <TableBody>
             {tokens && tokens.length > 0 ? (
-              tokens.map((token) => (
+              tokens.map((token, index) => (
                 market === 'spot' ? (
                   <SpotTokenRow
-                    key={`${market}-${token.name}-${(token as SpotTokenService).tokenId}`}
+                    key={`${market}-${token.name}-${(token as SpotTokenService).tokenId}-${index}`}
                     token={token as SpotToken}
                     onClick={() => handleTokenClick(token.name)}
                     format={format}
                   />
                 ) : (
                   <PerpTokenRow
-                    key={`${market}-${token.name}-${(token as PerpMarketData).index}`}
+                    key={`${market}-${token.name}-${(token as PerpMarketData).index}-${index}`}
                     token={token as PerpToken}
                     onClick={() => handleTokenClick(token.name)}
                     format={format}
@@ -374,7 +368,7 @@ export function TokenTable({ market, strict = false, searchQuery = '' }: TokenTa
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Pagination intégrée */}
       <div className="border-t border-white/5 px-4 py-3">
         <Pagination

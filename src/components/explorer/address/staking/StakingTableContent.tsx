@@ -1,10 +1,10 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "../../vaultValidatorSum/DataTable";
+import { DataTable } from "@/components/ui/data-table";
 import { Copy, Check } from "lucide-react";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useState } from "react";
-import { TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { NumberFormatType } from "@/store/number-format.store";
 import { ValidatorDelegation } from "@/services/explorer/validator/types/validators";
 import { FormattedDelegatorHistoryItem, FormattedDelegatorRewardItem } from "@/services/explorer/validator/types/delegator";
@@ -19,9 +19,9 @@ const CopyButton = ({ text }: { text: string }) => {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -62,202 +62,215 @@ interface StakingTableContentProps {
   hypePrice: number | null;
 }
 
-export function StakingTableContent({ 
-  activeSubTab, 
-  delegationsData, 
+export function StakingTableContent({
+  activeSubTab,
+  delegationsData,
   historyData,
   rewardsData,
   format,
-  hypePrice 
+  hypePrice
 }: StakingTableContentProps) {
   const { format: dateFormat } = useDateFormat();
 
   if (activeSubTab === 'delegations') {
     return (
-      <DataTable 
-        isLoading={delegationsData.loading} 
+      <DataTable
+        isLoading={delegationsData.loading}
         error={delegationsData.error}
-        emptyMessage="No active delegations found. Start delegating to validators to earn rewards."
+        isEmpty={delegationsData.delegations.length === 0}
+        emptyState={{
+          title: "No active delegations found. Start delegating to validators to earn rewards."
+        }}
       >
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Locked until</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {delegationsData.delegations.map((delegation: ValidatorDelegation, index: number) => (
-            <TableRow key={`${delegation.validator}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-              <TableCell className="py-3 px-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col">
-                    {delegation.validatorName && !delegation.validatorName.includes('...') ? (
-                      <>
-                        <span className="text-white font-medium text-sm font-inter">{delegation.validatorName}</span>
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Locked until</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {delegationsData.delegations.map((delegation: ValidatorDelegation, index: number) => (
+              <TableRow key={`${delegation.validator}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                <TableCell className="py-3 px-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col">
+                      {delegation.validatorName && !delegation.validatorName.includes('...') ? (
+                        <>
+                          <span className="text-white font-medium text-sm font-inter">{delegation.validatorName}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#83E9FF] font-inter text-xs">
+                              {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
+                            </span>
+                            <CopyButton text={delegation.validator} />
+                          </div>
+                        </>
+                      ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-[#83E9FF] font-inter text-xs">
+                          <span className="text-[#83E9FF] font-inter text-sm">
                             {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
                           </span>
                           <CopyButton text={delegation.validator} />
                         </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#83E9FF] font-inter text-sm">
-                          {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
-                        </span>
-                        <CopyButton text={delegation.validator} />
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {formatNumber(parseFloat(delegation.amount), format, { maximumFractionDigits: 2 })} HYPE
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {hypePrice 
-                  ? `$${formatNumber(parseFloat(delegation.amount) * hypePrice, format, { maximumFractionDigits: 2 })}`
-                  : '-'
-                }
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {delegation.lockedUntilTimestamp 
-                  ? formatDateTime(delegation.lockedUntilTimestamp * 1000, dateFormat)
-                  : '-'
-                }
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {formatNumber(parseFloat(delegation.amount), format, { maximumFractionDigits: 2 })} HYPE
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {hypePrice
+                    ? `$${formatNumber(parseFloat(delegation.amount) * hypePrice, format, { maximumFractionDigits: 2 })}`
+                    : '-'
+                  }
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {delegation.lockedUntilTimestamp
+                    ? formatDateTime(delegation.lockedUntilTimestamp * 1000, dateFormat)
+                    : '-'
+                  }
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </DataTable>
     );
   }
 
   if (activeSubTab === 'history') {
     return (
-      <DataTable 
-        isLoading={historyData.loading} 
+      <DataTable
+        isLoading={historyData.loading}
         error={historyData.error}
-        emptyMessage="No staking history found. Your delegation and undelegation transactions will appear here."
+        isEmpty={historyData.history.length === 0}
+        emptyState={{
+          title: "No staking history found. Your delegation and undelegation transactions will appear here."
+        }}
       >
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Hash</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Method</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {historyData.history.map((tx: FormattedDelegatorHistoryItem) => (
-            <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-              <TableCell className="py-3 px-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#83E9FF] font-inter text-sm">
-                    {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
-                  </span>
-                  <CopyButton text={tx.hash} />
-                </div>
-              </TableCell>
-              <TableCell className="py-3 px-4">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                  tx.type === 'Undelegate'
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Hash</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Method</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {historyData.history.map((tx: FormattedDelegatorHistoryItem) => (
+              <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                <TableCell className="py-3 px-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#83E9FF] font-inter text-sm">
+                      {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
+                    </span>
+                    <CopyButton text={tx.hash} />
+                  </div>
+                </TableCell>
+                <TableCell className="py-3 px-4">
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${tx.type === 'Undelegate'
                     ? 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
                     : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
-                }`}>
-                  {tx.type}
-                </span>
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {hypePrice 
-                  ? `$${formatNumber(tx.amount * hypePrice, format, { maximumFractionDigits: 2 })}`
-                  : '-'
-                }
-              </TableCell>
-              <TableCell className="py-3 px-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col">
-                    {tx.validatorName && !tx.validatorName.includes('...') ? (
-                      <>
-                        <span className="text-white font-medium text-sm font-inter">{tx.validatorName}</span>
+                    }`}>
+                    {tx.type}
+                  </span>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {hypePrice
+                    ? `$${formatNumber(tx.amount * hypePrice, format, { maximumFractionDigits: 2 })}`
+                    : '-'
+                  }
+                </TableCell>
+                <TableCell className="py-3 px-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col">
+                      {tx.validatorName && !tx.validatorName.includes('...') ? (
+                        <>
+                          <span className="text-white font-medium text-sm font-inter">{tx.validatorName}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#83E9FF]  font-inter text-xs">
+                              {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
+                            </span>
+                            <CopyButton text={tx.validator} />
+                          </div>
+                        </>
+                      ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-[#83E9FF]  font-inter text-xs">
+                          <span className="text-[#83E9FF]  font-inter text-sm">
                             {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
                           </span>
                           <CopyButton text={tx.validator} />
                         </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#83E9FF]  font-inter text-sm">
-                          {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
-                        </span>
-                        <CopyButton text={tx.validator} />
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {formatDateTime(tx.timestamp, dateFormat)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {formatDateTime(tx.timestamp, dateFormat)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </DataTable>
     );
   }
 
   if (activeSubTab === 'rewards') {
     return (
-      <DataTable 
-        isLoading={rewardsData.loading} 
+      <DataTable
+        isLoading={rewardsData.loading}
         error={rewardsData.error}
-        emptyMessage="No staking rewards found. Delegate to validators to start earning commission and delegation rewards."
+        isEmpty={rewardsData.rewards.length === 0}
+        emptyState={{
+          title: "No staking rewards found. Delegate to validators to start earning commission and delegation rewards."
+        }}
       >
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Source</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-            <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rewardsData.rewards.map((reward: FormattedDelegatorRewardItem, index: number) => (
-            <TableRow key={`${reward.source}-${reward.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
-              <TableCell className="py-3 px-4">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                  reward.source === 'commission'
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Source</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rewardsData.rewards.map((reward: FormattedDelegatorRewardItem, index: number) => (
+              <TableRow key={`${reward.source}-${reward.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                <TableCell className="py-3 px-4">
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${reward.source === 'commission'
                     ? 'bg-[#F9E37020] text-[#F9E370] border border-[#F9E37040]'
                     : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
-                }`}>
-                  {reward.source === 'commission' ? 'Commission' : 'Delegation'}
-                </span>
-              </TableCell>
-              <TableCell className="py-3 px-4 text-[#4ADE80]">
-                {formatNumber(reward.amount, format, { maximumFractionDigits: 6 })} HYPE
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {hypePrice 
-                  ? `$${formatNumber(reward.amount * hypePrice, format, { maximumFractionDigits: 6 })}`
-                  : '-'
-                }
-              </TableCell>
-              <TableCell className="py-3 px-4 text-white">
-                {formatDateTime(reward.timestamp, dateFormat)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+                    }`}>
+                    {reward.source === 'commission' ? 'Commission' : 'Delegation'}
+                  </span>
+                </TableCell>
+                <TableCell className="py-3 px-4 text-[#4ADE80]">
+                  {formatNumber(reward.amount, format, { maximumFractionDigits: 6 })} HYPE
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {hypePrice
+                    ? `$${formatNumber(reward.amount * hypePrice, format, { maximumFractionDigits: 6 })}`
+                    : '-'
+                  }
+                </TableCell>
+                <TableCell className="py-3 px-4 text-white">
+                  {formatDateTime(reward.timestamp, dateFormat)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </DataTable>
     );
   }

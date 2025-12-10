@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
-import { Copy, Check, Database } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { Block, Transaction } from "@/services/explorer/types";
 import Link from "next/link";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { DataTable as GenericDataTable } from "@/components/ui/data-table";
 
 type TabType = 'blocks' | 'transactions';
 
@@ -21,9 +22,9 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   const HashDisplay = ({ hash }: { hash: string }) => (
@@ -49,7 +50,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
 
   const AddressLink = ({ address }: { address: string }) => (
     <div className="flex items-center gap-1.5">
-      <Link 
+      <Link
         href={`/explorer/address/${address}`}
         prefetch={false}
         className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
@@ -75,32 +76,39 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
   if (type === 'blocks') {
     const blocks = data as Block[];
     return (
-      <Table className="w-full">
-        <TableHeader>
-          <TableRow className="border-b border-white/5 hover:bg-transparent">
-            <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Proposer</span>
-            </TableHead>
-            <TableHead className="py-3 px-3 text-right">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Txs</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {blocks.length > 0 ? (
-            blocks.map((block) => (
+      <GenericDataTable
+        isEmpty={blocks.length === 0}
+        emptyState={{
+          title: emptyMessage,
+          description: "Come back later"
+        }}
+        className="w-full"
+      >
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+              </TableHead>
+              <TableHead className="py-3 px-3">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Proposer</span>
+              </TableHead>
+              <TableHead className="py-3 px-3 text-right">
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Txs</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {blocks.map((block) => (
               <TableRow key={block.height} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                 <TableCell className="py-3 px-3 text-sm">
-                  <Link 
+                  <Link
                     href={`/explorer/block/${block.height}`}
                     prefetch={false}
                     className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
@@ -117,56 +125,53 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 </TableCell>
                 <TableCell className="py-3 px-3 text-sm text-white font-medium text-right">{block.numTxs}</TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} className="py-8 border-none">
-                <div className="flex flex-col items-center justify-center text-center">
-                  <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                  <p className="text-zinc-400 text-sm mb-1">{emptyMessage}</p>
-                  <p className="text-zinc-600 text-xs">Come back later</p>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableBody>
+        </Table>
+      </GenericDataTable>
     );
   }
 
   // Transactions table
   const transactions = data as Transaction[];
   return (
-    <Table className="w-full">
-      <TableHeader>
-        <TableRow className="border-b border-white/5 hover:bg-transparent">
-          <TableHead className="py-3 px-3">
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
-          </TableHead>
-          <TableHead className="py-3 px-3">
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
-          </TableHead>
-          <TableHead className="py-3 px-3">
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
-          </TableHead>
-          <TableHead className="py-3 px-3">
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
-          </TableHead>
-          <TableHead className="py-3 px-3 text-right">
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {transactions.length > 0 ? (
-          transactions.map((tx) => (
+    <GenericDataTable
+      isEmpty={transactions.length === 0}
+      emptyState={{
+        title: emptyMessage,
+        description: "Come back later"
+      }}
+      className="w-full"
+    >
+      <Table className="w-full">
+        <TableHeader>
+          <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableHead className="py-3 px-3">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+            </TableHead>
+            <TableHead className="py-3 px-3">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+            </TableHead>
+            <TableHead className="py-3 px-3">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
+            </TableHead>
+            <TableHead className="py-3 px-3">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+            </TableHead>
+            <TableHead className="py-3 px-3 text-right">
+              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transactions.map((tx) => (
             <TableRow key={tx.hash} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
               <TableCell className="py-3 px-3 text-sm text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
               <TableCell className="py-3 px-3 text-sm">
                 <div className="relative group">
                   <span className="px-2 py-1 rounded-md text-xs font-bold bg-[#83e9ff]/10 text-[#83e9ff]">
-                    {(tx.action?.type || 'Unknown').length > 7 
-                      ? `${(tx.action?.type || 'Unknown').substring(0, 7)}...` 
+                    {(tx.action?.type || 'Unknown').length > 7
+                      ? `${(tx.action?.type || 'Unknown').substring(0, 7)}...`
                       : (tx.action?.type || 'Unknown')
                     }
                   </span>
@@ -186,7 +191,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 <HashDisplay hash={tx.hash} />
               </TableCell>
               <TableCell className="py-3 px-3 text-sm text-right">
-                <Link 
+                <Link
                   href={`/explorer/block/${tx.block}`}
                   prefetch={false}
                   className="text-white font-mono text-xs hover:text-[#83E9FF] transition-colors"
@@ -195,19 +200,9 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 </Link>
               </TableCell>
             </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={5} className="py-8 border-none">
-              <div className="flex flex-col items-center justify-center text-center">
-                <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                <p className="text-zinc-400 text-sm mb-1">{emptyMessage}</p>
-                <p className="text-zinc-600 text-xs">Come back later</p>
-              </div>
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          ))}
+        </TableBody>
+      </Table>
+    </GenericDataTable>
   );
 } 

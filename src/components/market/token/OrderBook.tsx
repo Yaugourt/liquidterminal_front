@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
+import { GlassPanel } from "@/components/ui/glass-panel";
+import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface OrderBookProps {
   symbol?: string;
@@ -82,30 +84,19 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col h-full ${className}`}>
+    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
       <div className="p-4 flex-shrink-0 border-b border-white/5">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
-          <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
-            <button
-              onClick={() => setActiveTab('orderbook')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'orderbook'
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-                }`}
-            >
-              Order Book
-            </button>
-            <button
-              onClick={() => setActiveTab('trades')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'trades'
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-                }`}
-            >
-              Trades
-            </button>
-          </div>
+          <PillTabs
+            tabs={[
+              { value: 'orderbook', label: 'Order Book' },
+              { value: 'trades', label: 'Trades' }
+            ]}
+            activeTab={activeTab}
+            onTabChange={(val) => setActiveTab(val as 'orderbook' | 'trades')}
+            className="bg-[#0A0D12] border border-white/5"
+          />
         </div>
       </div>
 
@@ -220,6 +211,6 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
           </div>
         )}
       </div>
-    </div>
+    </GlassPanel>
   );
 }

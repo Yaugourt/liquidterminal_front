@@ -2,35 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { 
-  Menu, 
-  ArrowLeft, 
-  Building2, 
-  Wallet, 
-  Users, 
-  ExternalLink,
-  Copy,
-  Loader2,
+  Menu,
+  ArrowLeft,
   Database,
   TrendingUp,
   Scale,
-  Clock,
   Activity,
   Zap,
-  AlertCircle,
-  Sprout,
+  Wallet,
+  Loader2,
   Wifi,
   WifiOff
 } from "lucide-react";
@@ -38,34 +22,10 @@ import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useWindowSize } from "@/hooks/use-window-size";
+import { PerpDexMarketsTable } from "@/components/market/perpDex";
+import { AddressDisplay } from "@/components/ui/address-display";
+
 import { toast } from "sonner";
-import { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
-
-// Asset logo component with fallback
-function AssetLogo({ assetName, isDelisted }: { assetName: string; isDelisted?: boolean }) {
-  const [hasError, setHasError] = useState(false);
-  const ticker = assetName.split(':')[1] || assetName;
-  const logoUrl = `https://app.hyperliquid.xyz/coins/${assetName}.svg`;
-
-  if (hasError) {
-    return (
-      <div className={`w-6 h-6 rounded-full bg-[#83E9FF]/20 flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
-        <span className="text-xs font-bold text-[#83E9FF]">{ticker.charAt(0)}</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className={`w-6 h-6 rounded-full overflow-hidden flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
-      <img 
-        src={logoUrl} 
-        alt={assetName}
-        className="w-full h-full object-cover"
-        onError={() => setHasError(true)}
-      />
-    </div>
-  );
-}
 
 export default function PerpDexDetailPage() {
   const params = useParams();
@@ -83,84 +43,19 @@ export default function PerpDexDetailPage() {
     }
   }, [width]);
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success(`${label} copied to clipboard`);
-  };
-
-  const truncateAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
   const formatFunding = (funding: number | undefined) => {
     if (funding === undefined) return '-';
     const percentage = funding * 100;
     return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
   };
 
-  const formatPriceChange = (change: number | undefined) => {
-    if (change === undefined) return '-';
-    return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+  const truncateAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  // Extract ticker from full asset name (e.g., "xyz:NVDA" -> "NVDA")
-  const getTicker = (assetName: string) => {
-    const parts = assetName.split(':');
-    return parts.length > 1 ? parts[1] : assetName;
-  };
-
-  const renderAddressLink = (address: string, label: string) => (
-    <div className="flex items-center gap-2">
-      <Link
-        href={`/explorer/address/${address}`}
-        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
-      >
-        {truncateAddress(address)}
-      </Link>
-      <button
-        onClick={() => copyToClipboard(address, label)}
-        className="text-zinc-500 hover:text-white transition-colors"
-      >
-        <Copy className="h-3 w-3" />
-      </button>
-      <Link
-        href={`/explorer/address/${address}`}
-        className="text-zinc-500 hover:text-white transition-colors"
-      >
-        <ExternalLink className="h-3 w-3" />
-      </Link>
-    </div>
-  );
-
-  const renderAssetBadges = (asset: PerpDexAssetWithMarketData) => {
-    const badges = [];
-    
-    // Always show leverage
-    badges.push(
-      <span key="leverage" className="text-zinc-500 text-[10px]">
-        {asset.maxLeverage}x
-      </span>
-    );
-    
-    if (asset.growthMode === 'enabled') {
-      badges.push(
-        <span key="growth" className="text-emerald-400 text-[10px] flex items-center gap-0.5">
-          <Sprout className="h-2.5 w-2.5" />
-          Growth
-        </span>
-      );
-    }
-    
-    if (asset.isDelisted) {
-      badges.push(
-        <span key="delisted" className="text-rose-400 text-[10px] flex items-center gap-0.5">
-          <AlertCircle className="h-2.5 w-2.5" />
-          Delisted
-        </span>
-      );
-    }
-    
-    return <div className="flex items-center gap-2 mt-0.5">{badges}</div>;
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
   };
 
   if (isLoading && !dex) {
@@ -234,9 +129,9 @@ export default function PerpDexDetailPage() {
           {/* Back button and title */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => router.push('/market/perpdex')}
                 className="text-[#83E9FF] hover:text-white hover:bg-white/5"
               >
@@ -279,13 +174,13 @@ export default function PerpDexDetailPage() {
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
               </div>
               <span className="text-white font-bold text-lg">
-                {dex.totalVolume24h > 0 
+                {dex.totalVolume24h > 0
                   ? formatNumber(dex.totalVolume24h, format, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                      currency: '$',
-                      showCurrency: true
-                    })
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                    currency: '$',
+                    showCurrency: true
+                  })
                   : '-'}
               </span>
             </div>
@@ -299,13 +194,13 @@ export default function PerpDexDetailPage() {
                 <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
               </div>
               <span className="text-white font-bold text-lg">
-                {dex.totalOpenInterest > 0 
+                {dex.totalOpenInterest > 0
                   ? formatNumber(dex.totalOpenInterest, format, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                      currency: '$',
-                      showCurrency: true
-                    })
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                    currency: '$',
+                    showCurrency: true
+                  })
                   : '-'}
               </span>
             </div>
@@ -375,44 +270,32 @@ export default function PerpDexDetailPage() {
 
           {/* Addresses */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Deployer */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                  <Building2 className="h-3 w-3 text-[#83e9ff]" />
-                </div>
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Deployer</span>
-              </div>
-              {renderAddressLink(dex.deployer, 'Deployer address')}
-            </div>
-
-            {/* Fee Recipient */}
-            <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                  <Wallet className="h-3 w-3 text-[#83e9ff]" />
-                </div>
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span>
-              </div>
-              {renderAddressLink(dex.feeRecipient, 'Fee recipient address')}
-            </div>
+            <AddressDisplay
+              address={dex.deployer}
+              label="Deployer"
+              copyMessage="Deployer address copied"
+              className="text-zinc-400 font-mono text-sm"
+            />
+            <AddressDisplay
+              address={dex.feeRecipient}
+              label="Fee Recipient"
+              copyMessage="Fee recipient address copied"
+              className="text-zinc-400 font-mono text-sm"
+            />
 
             {/* Oracle Updater or Sub Deployers */}
             {dex.oracleUpdater ? (
-              <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                    <Clock className="h-3 w-3 text-[#83e9ff]" />
-                  </div>
-                  <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span>
-                </div>
-                {renderAddressLink(dex.oracleUpdater, 'Oracle updater address')}
-              </div>
+              <AddressDisplay
+                address={dex.oracleUpdater!}
+                label="Oracle Updater"
+                copyMessage="Oracle updater address copied"
+                className="text-zinc-400 font-mono text-sm"
+              />
             ) : dex.subDeployers.length > 0 ? (
               <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 rounded-lg bg-[#83e9ff]/10 flex items-center justify-center">
-                    <Users className="h-3 w-3 text-[#83e9ff]" />
+                    <Wallet className="h-3 w-3 text-[#83e9ff]" />
                   </div>
                   <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Sub-Deployers ({dex.subDeployers.length})</span>
                 </div>
@@ -422,13 +305,15 @@ export default function PerpDexDetailPage() {
                       <span className="text-[#83E9FF] shrink-0">{sub.permission}</span>
                       <div className="flex items-center gap-1 flex-wrap">
                         {sub.addresses.slice(0, 2).map((addr, addrIdx) => (
-                          <Link
+                          <div
                             key={addrIdx}
-                            href={`/explorer/address/${addr}`}
-                            className="text-zinc-400 font-mono text-[10px] hover:text-[#83E9FF] transition-colors bg-white/5 px-1.5 py-0.5 rounded"
+                            className="cursor-pointer"
+                            onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                           >
-                            {truncateAddress(addr)}
-                          </Link>
+                            <span className="text-zinc-400 font-mono text-[10px] hover:text-[#83E9FF] transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                              {truncateAddress(addr)}
+                            </span>
+                          </div>
                         ))}
                         {sub.addresses.length > 2 && (
                           <span className="text-zinc-600 text-[10px]">+{sub.addresses.length - 2}</span>
@@ -445,141 +330,11 @@ export default function PerpDexDetailPage() {
           </div>
 
           {/* Markets table with live data */}
-          <div>
-            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
-              Markets ({dex.activeAssets} active / {dex.totalAssets} total)
-            </h2>
-            <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                <Table className="table-fixed w-full">
-                  <TableHeader>
-                    <TableRow className="border-b border-white/5 hover:bg-transparent">
-                      <TableHead className="py-3 pl-4 w-[22%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Asset</span>
-                      </TableHead>
-                      <TableHead className="py-3 w-[12%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span>
-                      </TableHead>
-                      <TableHead className="py-3 w-[10%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h</span>
-                      </TableHead>
-                      <TableHead className="py-3 w-[14%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</span>
-                      </TableHead>
-                      <TableHead className="py-3 w-[14%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI</span>
-                      </TableHead>
-                      <TableHead className="py-3 w-[12%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Funding</span>
-                      </TableHead>
-                      <TableHead className="py-3 pr-4 w-[16%]">
-                        <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {dex.assetsWithMarketData.length > 0 ? (
-                      dex.assetsWithMarketData.map((asset) => (
-                        <TableRow 
-                          key={asset.name}
-                          className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
-                        >
-                          {/* Asset */}
-                          <TableCell className="py-3 pl-4 text-left">
-                            <div className="flex items-center gap-2">
-                              <AssetLogo assetName={asset.name} isDelisted={asset.isDelisted} />
-                              <div>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-white text-sm font-medium">{getTicker(asset.name)}</span>
-                                  <span className="text-zinc-600 text-sm">/</span>
-                                  <span className="text-zinc-500 text-xs">
-                                    {asset.collateralToken}
-                                  </span>
-                                </div>
-                                {renderAssetBadges(asset)}
-                              </div>
-                            </div>
-                          </TableCell>
-
-                          {/* Price */}
-                          <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm font-medium">
-                              {asset.markPx 
-                                ? `$${formatNumber(asset.markPx, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                                : '-'}
-                            </span>
-                          </TableCell>
-
-                          {/* 24h Change */}
-                          <TableCell className="py-3 text-left">
-                            <span className={`text-sm font-medium ${(asset.priceChange24h ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                              {formatPriceChange(asset.priceChange24h)}
-                            </span>
-                          </TableCell>
-
-                          {/* Volume */}
-                          <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm font-medium">
-                              {asset.dayNtlVlm && asset.dayNtlVlm > 0
-                                ? formatNumber(asset.dayNtlVlm, format, {
-                                    minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0,
-                                    currency: '$',
-                                    showCurrency: true
-                                  })
-                                : '-'}
-                            </span>
-                          </TableCell>
-
-                          {/* Open Interest */}
-                          <TableCell className="py-3 text-left">
-                            <span className="text-white text-sm font-medium">
-                              {asset.openInterest && asset.openInterest > 0
-                                ? formatNumber(asset.openInterest, format, {
-                                    minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0,
-                                    currency: '$',
-                                    showCurrency: true
-                                  })
-                                : '-'}
-                            </span>
-                          </TableCell>
-
-                          {/* Funding */}
-                          <TableCell className="py-3 text-left">
-                            <span className={`text-sm font-medium ${(asset.funding ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                              {formatFunding(asset.funding)}
-                            </span>
-                          </TableCell>
-
-                          {/* OI Cap */}
-                          <TableCell className="py-3 pr-4 text-left">
-                            <span className="text-white text-sm font-medium">
-                              {formatNumber(asset.streamingOiCap, format, {
-                                minimumFractionDigits: 0,
-                                maximumFractionDigits: 0,
-                                currency: '$',
-                                showCurrency: true
-                              })}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8">
-                          <div className="flex flex-col items-center justify-center">
-                            <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                            <p className="text-zinc-400 text-sm mb-1">No markets available</p>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </div>
+          <PerpDexMarketsTable
+            assets={dex.assetsWithMarketData}
+            totalAssets={dex.totalAssets}
+            activeAssets={dex.activeAssets}
+          />
         </main>
       </div>
     </div>

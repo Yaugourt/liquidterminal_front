@@ -8,6 +8,7 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { TokenData } from "./types";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 interface TokenInfoSidebarProps {
   token: TokenData;
@@ -33,16 +34,16 @@ const truncateAddress = (address: string) => {
 
 export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-  
+
   // Get user's number format preference
   const { format } = useNumberFormat();
-  
+
   // Get token details using the contract address (tokenId)
   const { data: tokenDetails, isLoading } = useTokenDetails(token.contract || null);
-  
+
   // Get auction info using token name from tokenDetails
   const { auctionInfo, isLoading: isAuctionLoading } = useTokenAuction(tokenDetails?.name || null);
-  
+
   // Get holders info
   const { holdersCount, isLoading: isHoldersLoading } = useTokenHolders(token.name);
 
@@ -58,7 +59,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
   };
 
   return (
-    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col h-full ${className}`}>
+    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
       <div className="p-4 space-y-4 flex-1">
         {/* Token Header */}
         <div className="text-center space-y-2">
@@ -73,28 +74,28 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.maxSupply, format) : "N/A"}
             </span>
           </div>
-          
+
           <div className="flex justify-between items-center">
             <span className="text-zinc-400 text-xs">Total supply</span>
             <span className="text-white text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.totalSupply, format) : "N/A"}
             </span>
           </div>
-          
+
           <div className="flex justify-between items-center">
             <span className="text-zinc-400 text-xs">Circulating</span>
             <span className="text-white text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.circulatingSupply, format) : "N/A"}
             </span>
           </div>
-          
+
           <div className="flex justify-between items-center">
             <span className="text-zinc-400 text-xs">Deploy gas</span>
             <span className="text-white text-xs font-medium text-right">
               {isAuctionLoading ? "Loading..." : auctionInfo ? `${formatNumber(parseFloat(auctionInfo.deployGas), format, { maximumFractionDigits: 2 })} ${auctionInfo.currency}` : "N/A"}
             </span>
           </div>
-          
+
           <div className="flex justify-between items-center">
             <span className="text-zinc-400 text-xs">Holders</span>
             <span className="text-white text-xs font-medium text-right">
@@ -112,7 +113,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
                 {isLoading ? "Loading..." : tokenDetails ? truncateAddress(tokenDetails.deployer) : "N/A"}
               </span>
               {tokenDetails?.deployer && (
-                <button 
+                <button
                   onClick={() => copyToClipboard(tokenDetails.deployer)}
                   className="group p-1 rounded transition-colors flex-shrink-0 hover:bg-white/5"
                 >
@@ -125,7 +126,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
               )}
             </div>
           </div>
-          
+
           <div>
             <span className="text-zinc-400 text-xs block mb-2">Token address</span>
             <div className="flex items-center justify-between">
@@ -133,7 +134,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
                 {token.contract ? truncateAddress(token.contract) : "N/A"}
               </span>
               {token.contract && (
-                <button 
+                <button
                   onClick={() => copyToClipboard(token.contract!)}
                   className="group p-1 rounded transition-colors flex-shrink-0 hover:bg-white/5"
                 >
@@ -157,6 +158,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           )}
         </div>
       </div>
-    </div>
+    </GlassPanel>
+
   );
 }

@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,37 +23,25 @@ interface PublicGoodsCardProps {
   onReview?: (project: PublicGood) => void;
 }
 
-export const PublicGoodsCard = memo(function PublicGoodsCard({ 
-  project, 
+export const PublicGoodsCard = memo(function PublicGoodsCard({
+  project,
   currentUser,
   onEdit,
   onDelete,
   onReview
 }: PublicGoodsCardProps) {
   const [imageError, setImageError] = useState(false);
-  
+
   // Check permissions
   const isOwner = currentUser && 'submitterId' in project ? Number(currentUser.id) === project.submitterId : false;
   const isAdmin = currentUser ? hasRole(currentUser, 'ADMIN') : false;
   const isModerator = currentUser ? hasRole(currentUser, 'MODERATOR') : false;
   const canEdit = isOwner || isAdmin;
   const canDelete = isOwner || isAdmin;
-  const canReview = (isModerator || isAdmin) && (project.status === 'pending' || project.status === 'PENDING');
+  const canReview = (isModerator || isAdmin) && (project.status === 'PENDING');
   const showActions = canEdit || canDelete || canReview;
-  
-  const getStatusColor = (status: string) => {
-    const normalizedStatus = status.toLowerCase();
-    switch (normalizedStatus) {
-      case 'approved':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-      case 'pending':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-      case 'rejected':
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-      default:
-        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
-    }
-  };
+
+
 
   const getDevelopmentStatusColor = (status: string) => {
     const normalizedStatus = status.toLowerCase();
@@ -108,7 +97,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                 </div>
               )}
             </div>
-            
+
             {/* Project info */}
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-white group-hover:text-[#83E9FF] transition-colors">
@@ -118,16 +107,20 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge className={`${getStatusColor(project.status)} border`}>
-              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-            </Badge>
-            
+            <StatusBadge variant={
+              project.status === 'APPROVED' ? 'success' :
+                project.status === 'REJECTED' ? 'error' :
+                  project.status === 'PENDING' ? 'warning' : 'neutral'
+            }>
+              {project.status.toLowerCase().charAt(0).toUpperCase() + project.status.toLowerCase().slice(1)}
+            </StatusBadge>
+
             {/* Actions Menu */}
             {showActions && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     className="h-8 w-8 text-zinc-500 hover:text-white hover:bg-white/5"
                     onClick={(e) => {
@@ -138,13 +131,13 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  className="bg-[#151A25] border-white/10 rounded-xl shadow-xl shadow-black/20" 
+                <DropdownMenuContent
+                  className="bg-[#151A25] border-white/10 rounded-xl shadow-xl shadow-black/20"
                   align="end"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {canEdit && onEdit && (
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-zinc-400 hover:text-white hover:bg-white/5 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
@@ -157,7 +150,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                     </DropdownMenuItem>
                   )}
                   {canReview && onReview && (
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-[#83E9FF] hover:text-white hover:bg-white/5 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
@@ -170,7 +163,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                     </DropdownMenuItem>
                   )}
                   {canDelete && onDelete && (
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-rose-400 hover:text-white hover:bg-rose-500/10 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
@@ -217,11 +210,10 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
 
         {/* Support requested */}
         {(() => {
-          const supportTypes = 'supportTypes' in project ? project.supportTypes : 
-                              'supportRequested' in project ? project.supportRequested?.types : [];
-          
+          const supportTypes = project.supportTypes || [];
+
           if (!supportTypes || supportTypes.length === 0) return null;
-          
+
           return (
             <div className="flex flex-wrap gap-2 mb-4">
               {supportTypes.map((type: string) => (

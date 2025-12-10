@@ -1,14 +1,12 @@
 import { create } from 'zustand';
-import { useState, useEffect } from 'react';
+
 import { Block, Transaction, ExplorerStore } from './types';
+
+import { WebSocketClient } from '../core/WebSocketClient';
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
 
-// Types pour les WebSockets
-interface WebSocketWindow extends Window {
-  explorerBlocksWs?: WebSocket;
-  explorerTransactionsWs?: WebSocket;
-}
+
 
 export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   blocks: [],
@@ -18,129 +16,83 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   error: null,
   currentBlockHeight: 0, // Ajout du compteur simple
 
+  blocksClient: null as WebSocketClient | null,
+  transactionsClient: null as WebSocketClient | null,
+
   connectBlocks: () => {
-    try {
-      // Disconnect existing blocks connection if any
-      const existingWs = (window as WebSocketWindow).explorerBlocksWs;
-      if (existingWs) {
-        existingWs.close();
-      }
+    // Avoid double connections
+    if (get().blocksClient?.isConnected()) return;
 
-      const ws = new WebSocket(WS_URL);
-
-      ws.onopen = () => {
+    const client = new WebSocketClient({
+      url: WS_URL,
+      onOpen: () => {
         set({ isBlocksConnected: true, error: null });
-        
-        // Subscribe to block updates only
-        ws.send(JSON.stringify({
+        client.send({
           method: "subscribe",
           subscription: { type: "explorerBlock" }
-        }));
-      };
+        });
+      },
+      onMessage: (data) => {
+        if (!Array.isArray(data) || data.length === 0) return;
+        const item = data[0];
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (!Array.isArray(data) || data.length === 0) return;
-
-          const item = data[0];
-          
-          // Only handle blocks
-          if ('blockTime' in item) {
-            get().addBlock(item);
-            // Incrémente directement le compteur
-            set((state) => ({
-              currentBlockHeight: Math.max(state.currentBlockHeight, item.height)
-            }));
-          }
-        } catch {
-          set({ error: 'Failed to parse blocks data' });
+        if ('blockTime' in item) {
+          get().addBlock(item);
+          set((state) => ({
+            currentBlockHeight: Math.max(state.currentBlockHeight, item.height)
+          }));
         }
-      };
+      },
+      onClose: () => set({ isBlocksConnected: false }),
+      onError: () => set({ error: 'Blocks WebSocket connection error' })
+    });
 
-      ws.onerror = () => {
-        set({ error: 'Blocks WebSocket connection error', isBlocksConnected: false });
-      };
-
-      ws.onclose = () => {
-        set({ isBlocksConnected: false });
-      };
-
-      // Store WebSocket instance
-      (window as WebSocketWindow).explorerBlocksWs = ws;
-    } catch {
-      set({ error: 'Failed to connect to Blocks WebSocket', isBlocksConnected: false });
-    }
+    set({ blocksClient: client });
+    client.connect();
   },
 
   disconnectBlocks: () => {
-    const ws = (window as WebSocketWindow).explorerBlocksWs;
-    if (ws) {
-      ws.close();
-      (window as WebSocketWindow).explorerBlocksWs = undefined;
-      set({ isBlocksConnected: false });
+    const { blocksClient } = get();
+    if (blocksClient) {
+      blocksClient.disconnect();
+      set({ blocksClient: null, isBlocksConnected: false });
     }
   },
 
   connectTransactions: () => {
-    try {
-      // Disconnect existing transactions connection if any
-      const existingWs = (window as WebSocketWindow).explorerTransactionsWs;
-      if (existingWs) {
-        existingWs.close();
-      }
+    // Avoid double connections
+    if (get().transactionsClient?.isConnected()) return;
 
-      const ws = new WebSocket(WS_URL);
-
-      ws.onopen = () => {
-
+    const client = new WebSocketClient({
+      url: WS_URL,
+      onOpen: () => {
         set({ isTransactionsConnected: true, error: null });
-        
-        // Subscribe to transaction updates only
-        ws.send(JSON.stringify({
+        client.send({
           method: "subscribe",
           subscription: { type: "explorerTxs" }
-        }));
-      };
+        });
+      },
+      onMessage: (data) => {
+        if (!Array.isArray(data) || data.length === 0) return;
+        const item = data[0];
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (!Array.isArray(data) || data.length === 0) return;
-
-          const item = data[0];
-          
-          // Only handle transactions
-          if ('time' in item && 'action' in item) {
-            get().addTransaction(item);
-          }
-        } catch {
-          set({ error: 'Failed to parse transactions data' });
+        if ('time' in item && 'action' in item) {
+          get().addTransaction(item);
         }
-      };
+      },
+      onClose: () => set({ isTransactionsConnected: false }),
+      onError: () => set({ error: 'Transactions WebSocket connection error' })
+    });
 
-      ws.onerror = () => {
-        set({ error: 'Transactions WebSocket connection error', isTransactionsConnected: false });
-      };
-
-      ws.onclose = () => {
-
-        set({ isTransactionsConnected: false });
-      };
-
-      // Store WebSocket instance
-      (window as WebSocketWindow).explorerTransactionsWs = ws;
-    } catch {
-      set({ error: 'Failed to connect to Transactions WebSocket', isTransactionsConnected: false });
-    }
+    set({ transactionsClient: client });
+    client.connect();
   },
 
   disconnectTransactions: () => {
-    const ws = (window as WebSocketWindow).explorerTransactionsWs;
-    if (ws) {
-      ws.close();
-      (window as WebSocketWindow).explorerTransactionsWs = undefined;
-      set({ isTransactionsConnected: false });
+    const { transactionsClient } = get();
+    if (transactionsClient) {
+      transactionsClient.disconnect();
+      set({ transactionsClient: null, isTransactionsConnected: false });
     }
   },
 
@@ -182,53 +134,3 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   setError: (error: string | null) => set({ error })
 }));
 
-interface WebSocketState {
-  lastBlock: number | null;
-}
-
-export function useWebSocket() {
-  const [state, setState] = useState<WebSocketState>({
-    lastBlock: null
-  });
-
-  useEffect(() => {
-    const ws = new WebSocket('wss://api.hyperliquid.xyz/ws');
-
-    ws.onopen = () => {
-
-      // Subscribe to block updates
-      ws.send(JSON.stringify({
-        method: "subscribe",
-        subscription: "blocks"
-      }));
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'block') {
-          setState(prev => ({
-            ...prev,
-            lastBlock: data.blockNumber
-          }));
-        }
-      } catch {
-        // Silent error handling
-      }
-    };
-
-    ws.onerror = () => {
-      // Silent error handling
-    };
-
-    ws.onclose = () => {
-
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-
-  return state;
-} 

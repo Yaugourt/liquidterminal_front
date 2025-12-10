@@ -1,8 +1,9 @@
 import { useValidators } from "@/services/explorer/validator";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator";
 import { useNumberFormat } from "@/store/number-format.store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 import { TableContent } from "@/components/explorer/vaultValidatorSum";
 import { ValidatorSubTab } from "./types";
 import { StakersTable } from "./StakersTable";
@@ -14,14 +15,20 @@ interface ValidatorTableProps {
 export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   const validatorSubTab = activeTab;
   const { validators, isLoading: validatorsLoading, error: validatorsError } = useValidators();
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10); 
-  
+  const {
+    page: currentPage,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange,
+    startIndex,
+    endIndex
+  } = usePagination();
+
   // Use paginated staking validations when on transactions tab
-  const { 
-    validations: stakingValidations, 
+  const {
+    validations: stakingValidations,
     total: stakingTotal,
-    isLoading: stakingLoading, 
+    isLoading: stakingLoading,
     error: stakingError,
     updateParams: updateStakingParams
   } = useStakingValidationsPaginated({
@@ -29,24 +36,24 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   });
 
   // Use paginated unstaking queue when on unstaking tab
-  const { 
-    unstakingQueue, 
+  const {
+    unstakingQueue,
     total: unstakingTotal,
-    isLoading: unstakingLoading, 
+    isLoading: unstakingLoading,
     error: unstakingError,
     updateParams: updateUnstakingParams
   } = useUnstakingQueuePaginated({
     limit: rowsPerPage
   });
-  
+
   const { format } = useNumberFormat();
 
   // Sync hooks pagination when switching to transactions tab
   useEffect(() => {
     if (validatorSubTab === 'transactions') {
-      updateStakingParams({ 
+      updateStakingParams({
         page: currentPage + 1,
-        limit: rowsPerPage 
+        limit: rowsPerPage
       });
     }
   }, [validatorSubTab, currentPage, rowsPerPage, updateStakingParams]);
@@ -54,46 +61,41 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
   // Sync hooks pagination when switching to unstaking tab
   useEffect(() => {
     if (validatorSubTab === 'unstaking') {
-      updateUnstakingParams({ 
+      updateUnstakingParams({
         page: currentPage + 1,
-        limit: rowsPerPage 
+        limit: rowsPerPage
       });
     }
   }, [validatorSubTab, currentPage, rowsPerPage, updateUnstakingParams]);
 
   // Handle page changes from Pagination component
   const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-    
+    onPageChange(newPage);
+
     if (validatorSubTab === 'transactions') {
       updateStakingParams({ page: newPage + 1 });
     } else if (validatorSubTab === 'unstaking') {
       updateUnstakingParams({ page: newPage + 1 });
     }
-  }, [validatorSubTab, updateStakingParams, updateUnstakingParams]);
+  }, [validatorSubTab, updateStakingParams, updateUnstakingParams, onPageChange]);
 
   // Handle rows per page changes from Pagination component
   const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(0);
-    
+    onRowsPerPageChange(newRowsPerPage);
+
     if (validatorSubTab === 'transactions') {
-      updateStakingParams({ 
+      updateStakingParams({
         page: 1,
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     } else if (validatorSubTab === 'unstaking') {
-      updateUnstakingParams({ 
+      updateUnstakingParams({
         page: 1,
-        limit: newRowsPerPage 
+        limit: newRowsPerPage
       });
     }
-  }, [validatorSubTab, updateStakingParams, updateUnstakingParams]);
+  }, [validatorSubTab, updateStakingParams, updateUnstakingParams, onRowsPerPageChange]);
 
-  // Calculate pagination for validators (client-side) - only for 'all' tab
-  const startIndex = currentPage * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  
   // Calculate total items based on validator sub-tab
   const getTotalItems = () => {
     if (validatorSubTab === 'transactions') {
@@ -103,7 +105,7 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
     }
     return validators.length;
   };
-  
+
   const totalItems = getTotalItems();
 
   return (
@@ -116,7 +118,7 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
             <TableContent
               activeTab="validators"
               validatorSubTab={validatorSubTab}
-              onValidatorSubTabChange={() => {}} // No-op function since this component doesn't handle sub-tab changes
+              onValidatorSubTabChange={() => { }} // No-op function since this component doesn't handle sub-tab changes
               validatorsData={{
                 validators,
                 loading: validatorsLoading,

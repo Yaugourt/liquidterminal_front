@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
 import { useTokenCandles, marketIndexToCoinId } from '@/services/market/token';
 import { TokenCandle } from '@/services/market/token/types';
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -199,7 +200,7 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
   }, [candles]);
 
   return (
-    <div className={`w-full h-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col relative ${className}`}>
+    <GlassPanel className={`w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
       <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-[#0A0D12] rounded-lg p-1 border border-white/5">
@@ -207,11 +208,10 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
           <button
             key={timeframe.value}
             onClick={() => setSelectedTimeframe(timeframe.value)}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${
-              selectedTimeframe === timeframe.value
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-            }`}
+            className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
+              ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+              }`}
           >
             {timeframe.label}
           </button>
@@ -254,6 +254,6 @@ export function TradingViewChart({ symbol, marketIndex, tokenName, className }: 
         ref={containerRef}
         className="w-full flex-1 min-h-0 rounded-lg overflow-hidden"
       />
-    </div>
+    </GlassPanel>
   );
 }

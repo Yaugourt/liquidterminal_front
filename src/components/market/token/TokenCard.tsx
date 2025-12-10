@@ -4,6 +4,7 @@ import { TokenCardProps } from "./types";
 import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
+import { GlassPanel } from "@/components/ui/glass-panel";
 import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
@@ -11,11 +12,11 @@ import Image from "next/image";
 export function TokenCard({ token, className }: TokenCardProps) {
   // Get user's number format preference
   const { format } = useNumberFormat();
-  
+
   // Connect to WebSocket for real-time data if marketIndex is available
   const coinId = token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '';
   const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
-  
+
   const formatPriceValue = (value: number) => {
     return formatPrice(value, format);
   };
@@ -43,8 +44,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
   };
 
   return (
-    <div className={cn(
-      "w-fit p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20",
+    <GlassPanel className={cn(
+      "w-fit p-4 hover:border-white/10 transition-all",
       className
     )}>
       <div className="flex flex-wrap items-center gap-6 w-fit">
@@ -52,8 +53,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
             {token.logo ? (
-              <Image 
-                src={token.logo} 
+              <Image
+                src={token.logo}
                 alt={token.symbol}
                 width={24}
                 height={24}
@@ -81,8 +82,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
             <span className="text-white text-sm font-medium">{token.symbol}</span>
             <span className={cn(
               "px-2 py-0.5 rounded-md text-xs font-medium",
-              token.type === 'spot' 
-                ? "bg-emerald-500/10 text-emerald-400" 
+              token.type === 'spot'
+                ? "bg-emerald-500/10 text-emerald-400"
                 : "bg-rose-500/10 text-rose-400"
             )}>
               {token.type === 'spot' ? 'Spot' : 'Perp'}
@@ -99,9 +100,9 @@ export function TokenCard({ token, className }: TokenCardProps) {
             </span>
             <span className={cn(
               "text-white text-sm transition-colors",
-              lastSide === "A" ? "text-red-400" : 
-              lastSide === "B" ? "text-green-400" : 
-              "text-white"
+              lastSide === "A" ? "text-red-400" :
+                lastSide === "B" ? "text-green-400" :
+                  "text-white"
             )}>
               {formatPriceValue(livePrice || token.mark || token.price || 0)}
             </span>
@@ -163,8 +164,8 @@ export function TokenCard({ token, className }: TokenCardProps) {
                 <span className="text-[#83E9FF] text-xs font-mono">
                   {truncateAddress(token.contract)}
                 </span>
-                <Copy 
-                  size={12} 
+                <Copy
+                  size={12}
                   className="text-zinc-500 cursor-pointer hover:text-white transition-colors"
                   onClick={() => copyToClipboard(token.contract!)}
                 />
@@ -197,6 +198,7 @@ export function TokenCard({ token, className }: TokenCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </GlassPanel>
+
   );
 }

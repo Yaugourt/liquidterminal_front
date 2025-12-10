@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Pagination } from "@/components/common/pagination";
 import { TwapTableProps, TwapTableData } from "./types";
 import Link from "next/link";
@@ -42,18 +43,18 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
   const durationMs = twap.duration * 60 * 1000; // minutes to ms
   const currentTime = Date.now();
   const elapsedTime = currentTime - startTime;
-  
+
   // Calculate smooth progression based on elapsed time (not suborders)
   const timeProgressionPercent = Math.min(100, Math.max(0, (elapsedTime / durationMs) * 100));
-  
+
   // Calculate remaining quantity and value based on smooth time progression
   const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
   const originalAmount = parseFloat(twap.amount);
   const remainingAmount = originalAmount * (remainingPercent / 100);
-  
+
   // For value calculation, use the remaining amount with current token price
   const remainingValue = remainingAmount * (twap.value / parseFloat(twap.amount));
-  
+
   return {
     progression: timeProgressionPercent,
     remainingValue: Math.max(0, remainingValue),
@@ -66,19 +67,13 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
 const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
-  
+
   return (
     <TableCell className="py-3 px-3 text-sm text-white font-medium w-[200px]">
       <div className="flex items-center gap-2">
-        <span
-          className={`px-2 py-1 rounded-md text-xs font-bold ${
-            twap.type === 'Buy'
-              ? 'bg-emerald-500/10 text-emerald-400'
-              : 'bg-rose-500/10 text-rose-400'
-          }`}
-        >
+        <StatusBadge variant={twap.type === 'Buy' ? 'success' : 'error'}>
           {twap.type}
-        </span>
+        </StatusBadge>
         <span className="text-white font-medium">
           ${formatNumber(value, format)}
         </span>
@@ -94,7 +89,7 @@ ValueCell.displayName = 'ValueCell';
 const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
-  
+
   return (
     <TableCell className="py-3 px-4 text-sm text-zinc-300 w-[180px]">
       <span className="text-white font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
@@ -110,20 +105,20 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
   const realTime = realTimeData.get(twap.id);
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
-  
+
   const getRemainingTime = () => {
     const startTime = twap.time;
     const durationMs = twap.duration * 60 * 1000;
     const currentTime = Date.now();
     const elapsedTime = currentTime - startTime;
     const remainingMs = Math.max(0, durationMs - elapsedTime);
-    
+
     if (remainingMs === 0) return "Completed";
-    
+
     const hours = Math.floor(remainingMs / (1000 * 60 * 60));
     const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     } else if (minutes > 0) {
@@ -138,7 +133,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
     if (progression < 70) return "bg-emerald-400";
     return "bg-emerald-300";
   };
-  
+
   return (
     <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1.5">
@@ -165,14 +160,14 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
 ProgressionCell.displayName = 'ProgressionCell';
 
 // Composant mémorisé pour la cellule User (statique)
-const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: { 
-  twap: TwapTableData, 
-  copiedAddress: string | null, 
-  copyToClipboard: (text: string) => void 
+const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
+  twap: TwapTableData,
+  copiedAddress: string | null,
+  copyToClipboard: (text: string) => void
 }) => (
   <TableCell className="py-3 px-3 text-sm w-[170px]">
     <div className="flex items-center gap-1.5">
-      <Link 
+      <Link
         href={`/explorer/address/${twap.user}`}
         className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
       >
@@ -217,7 +212,7 @@ export const TwapTable = memo(({
 
     const updateRealTimeData = () => {
       const newRealTimeData = new Map();
-      
+
       twaps.forEach(twap => {
         // Only update active TWAP orders (not completed, cancelled, or errored)
         if (!twap.ended && !twap.error) {
@@ -225,7 +220,7 @@ export const TwapTable = memo(({
           newRealTimeData.set(twap.id, realTimeCalc);
         }
       });
-      
+
       setRealTimeData(newRealTimeData);
     };
 
@@ -243,9 +238,9 @@ export const TwapTable = memo(({
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (

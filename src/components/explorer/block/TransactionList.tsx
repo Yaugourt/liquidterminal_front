@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 
-import { Copy, Check, Loader2, Database } from "lucide-react";
+import { Copy, Check } from "lucide-react";
+
+import { DataTable } from "@/components/ui/data-table";
 
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
 import { useDateFormat } from "@/store/date-format.store";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -13,58 +16,8 @@ import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
-// DataTable component similar to ValidatorsVaults
-interface DataTableProps {
-  isLoading: boolean;
-  error: Error | null;
-  emptyMessage: string;
-  children: React.ReactNode;
-}
+// Local DataTable removed, using strict generic component
 
-function DataTable({ isLoading, error, emptyMessage, children }: DataTableProps) {
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[300px]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF] mb-3" />
-          <span className="text-[#FFFFFF80] text-sm">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-[300px]">
-        <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-          <p className="text-[#FF5757] text-lg mb-2">Une erreur est survenue</p>
-          <p className="text-[#FFFFFF80] text-sm">{error.message || "Une erreur est survenue"}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!children) {
-    return (
-      <div className="flex justify-center items-center h-[300px]">
-        <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-[#83E9FF4D]" />
-          <p className="text-white text-lg mb-2">{emptyMessage}</p>
-          <p className="text-[#FFFFFF80] text-sm">Come later</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent -mx-4 px-4">
-      <Table className="w-full text-sm text-white font-inter table-fixed">
-        {children}
-      </Table>
-    </div>
-  );
-}
 
 // CopyButton component similar to ValidatorsVaults
 const CopyButton = ({ text }: { text: string }) => {
@@ -75,9 +28,9 @@ const CopyButton = ({ text }: { text: string }) => {
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -102,78 +55,89 @@ export function TransactionList({
   onTransactionClick,
   onAddressClick,
 }: BlockTransactionListProps) {
-  const [page, setPage] = useState(0); // 0-based for common pagination
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const {
+    page,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange,
+    startIndex,
+    endIndex
+  } = usePagination({ initialRowsPerPage: 15 });
   const { format: dateFormat } = useDateFormat();
   const { format: numberFormat } = useNumberFormat();
 
   // Calculate pagination
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   return (
     <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4 flex flex-col">
       <div className="flex flex-col flex-1">
         <div className="flex-1">
-          <DataTable 
-            isLoading={false} 
+          <DataTable
+            isLoading={false}
             error={null}
-            emptyMessage="Aucune transaction dans ce bloc"
+            isEmpty={transactions.length === 0}
+            emptyState={{
+              title: "Aucune transaction dans ce bloc",
+              description: "Come later"
+            }}
+            className="-mx-4 px-4"
           >
-            {transactions.length > 0 && (
-              <>
-                <TableHeader className="text-white">
-                  <TableRow>
-                    <TableHead className="text-left py-2 pl-0 pr-4 font-normal w-1/5">Hash</TableHead>
-                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Action</TableHead>
-                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Block</TableHead>
-                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">Time</TableHead>
-                    <TableHead className="text-left py-2 px-4 font-normal w-1/5">User</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedTransactions.map((tx) => (
-                    <TableRow
-                      key={tx.hash}
-                      className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
-                    >
-                      <TableCell className="py-3 pl-0 pr-4">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
-                            onClick={() => onTransactionClick(tx.hash)}
-                          >
-                            {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
-                          </span>
-                          <CopyButton text={tx.hash} />
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-3 px-4">
-                        <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-[#83E9FF] border border-[#83E9FF40]">
-                          {tx.action.type}
-                        </span>
-                      </TableCell>
-                      <TableCell className="py-3 px-4 text-white text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</TableCell>
-                      <TableCell className="py-3 px-4 text-white text-sm">
-                        {formatDateTime(tx.time, dateFormat)}
-                      </TableCell>
-                      <TableCell className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
-                            onClick={() => onAddressClick(tx.user)}
-                          >
-                            {tx.user.slice(0, 12)}...{tx.user.slice(-8)}
-                          </span>
-                          <CopyButton text={tx.user} />
-                        </div>
-                      </TableCell>
+            <Table className="w-full text-sm text-white font-inter table-fixed">
+              {transactions.length > 0 && (
+                <>
+                  <TableHeader className="text-white">
+                    <TableRow>
+                      <TableHead className="text-left py-2 pl-0 pr-4 font-normal w-1/5">Hash</TableHead>
+                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Action</TableHead>
+                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Block</TableHead>
+                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Time</TableHead>
+                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">User</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </>
-            )}
+                  </TableHeader>
+                  <TableBody>
+                    {displayedTransactions.map((tx) => (
+                      <TableRow
+                        key={tx.hash}
+                        className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
+                      >
+                        <TableCell className="py-3 pl-0 pr-4">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
+                              onClick={() => onTransactionClick(tx.hash)}
+                            >
+                              {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
+                            </span>
+                            <CopyButton text={tx.hash} />
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3 px-4">
+                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-[#83E9FF] border border-[#83E9FF40]">
+                            {tx.action.type}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-3 px-4 text-white text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</TableCell>
+                        <TableCell className="py-3 px-4 text-white text-sm">
+                          {formatDateTime(tx.time, dateFormat)}
+                        </TableCell>
+                        <TableCell className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="text-[#83E9FF] text-sm cursor-pointer hover:text-[#83E9FF]/80 transition-colors"
+                              onClick={() => onAddressClick(tx.user)}
+                            >
+                              {tx.user.slice(0, 12)}...{tx.user.slice(-8)}
+                            </span>
+                            <CopyButton text={tx.user} />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </>
+              )}
+            </Table>
           </DataTable>
         </div>
         {transactions.length > rowsPerPage && (
@@ -182,11 +146,8 @@ export function TransactionList({
               total={transactions.length}
               page={page}
               rowsPerPage={rowsPerPage}
-              onPageChange={setPage}
-              onRowsPerPageChange={(newRowsPerPage) => {
-                setRowsPerPage(newRowsPerPage);
-                setPage(0); // Reset to first page when changing rows per page
-              }}
+              onPageChange={onPageChange}
+              onRowsPerPageChange={onRowsPerPageChange}
               rowsPerPageOptions={[10, 15, 25, 50]}
             />
           </div>

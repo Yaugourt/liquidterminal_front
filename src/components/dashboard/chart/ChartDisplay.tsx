@@ -81,7 +81,7 @@ export const ChartDisplay = ({
       case "bridge":
         return "Bridge TVL";
       case "strict":
-        return "Fees";
+         return "Fees";
       case "fees":
         return "Total Fees";
       default:
@@ -139,7 +139,7 @@ export const ChartDisplay = ({
             {/* Value Display */}
             {displayValue !== null && (
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight">
+              <span className="text-lg font-bold text-white tracking-tight">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
@@ -151,7 +151,7 @@ export const ChartDisplay = ({
                       hour: '2-digit',
                       minute: '2-digit'
                     })}
-                  </span>
+              </span>
                 )}
               </div>
             )}
@@ -223,7 +223,7 @@ export const ChartDisplay = ({
             lineColor={mainColor}
             formatValue={formatYAxisValue}
             onCrosshairMove={handleCrosshairMove}
-          />
+              />
         )}
       </div>
     </div>

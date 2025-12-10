@@ -1,75 +1,36 @@
 import { useState } from "react";
-import { Copy, ExternalLink, Check, Loader2, Database } from "lucide-react";
+import { Loader2, Database } from "lucide-react";
 import { useTransfers, useDeploys } from "@/services/explorer";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { formatDistanceToNowStrict } from "date-fns";
-import Link from "next/link";
 import { ActivityTab } from "@/components/types/explorer.types";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
+import { AddressDisplay } from "@/components/ui/address-display";
+
 
 export function TransfersDeployTable() {
   const [activeTab, setActiveTab] = useState<ActivityTab>("transfers");
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-  const [transfersPage, setTransfersPage] = useState(0);
-  const [transfersRowsPerPage, setTransfersRowsPerPage] = useState(5);
-  const [deploysPage, setDeploysPage] = useState(0);
-  const [deploysRowsPerPage, setDeploysRowsPerPage] = useState(5);
+
+  const transfersPagination = usePagination({ initialRowsPerPage: 5 });
+  const deploysPagination = usePagination({ initialRowsPerPage: 5 });
+
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  
+
   const { transfers, isLoading: isLoadingTransfers, error: transfersError } = useTransfers();
   const { deploys, isLoading: isLoadingDeploys, error: deploysError } = useDeploys();
 
-  const truncateHash = (hash: string) => {
-    if (hash.length > 12) {
-      return `${hash.substring(0, 4)}..${hash.substring(hash.length - 3)}`;
-    }
-    return hash;
-  };
 
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedAddress(text);
-      setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
-  };
-
-  const AddressLink = ({ address }: { address: string }) => (
-    <div className="flex items-center gap-1.5">
-      <Link 
-        href={`/explorer/address/${address}`}
-        prefetch={false}
-        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
-      >
-        {truncateHash(address)}
-      </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          copyToClipboard(address);
-        }}
-        className="group p-1 rounded transition-colors"
-      >
-        {copiedAddress === address ? (
-          <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
-        ) : (
-          <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
-        )}
-      </button>
-    </div>
-  );
 
   const TransfersContent = () => {
     const allTransfers = transfers || [];
-    const startIndex = transfersPage * transfersRowsPerPage;
-    const paginatedTransfers = allTransfers.slice(startIndex, startIndex + transfersRowsPerPage);
+    const paginatedTransfers = allTransfers.slice(transfersPagination.startIndex, transfersPagination.endIndex);
 
     if (isLoadingTransfers) {
       return (
@@ -131,10 +92,10 @@ export function TransfersDeployTable() {
                       })()}
                     </TableCell>
                     <TableCell className="py-3 px-3 text-sm">
-                      <AddressLink address={transfer.from} />
+                      <AddressDisplay address={transfer.from} />
                     </TableCell>
                     <TableCell className="py-3 px-3 text-sm">
-                      <AddressLink address={transfer.to} />
+                      <AddressDisplay address={transfer.to} />
                     </TableCell>
                   </TableRow>
                 ))
@@ -152,19 +113,16 @@ export function TransfersDeployTable() {
             </TableBody>
           </Table>
         </div>
-        
+
         {allTransfers.length > 0 && (
           <div className="px-4 py-3 border-t border-white/5">
             <Pagination
               total={allTransfers.length}
-              page={transfersPage}
-              rowsPerPage={transfersRowsPerPage}
+              page={transfersPagination.page}
+              rowsPerPage={transfersPagination.rowsPerPage}
               rowsPerPageOptions={[5, 10, 25, 50]}
-              onPageChange={setTransfersPage}
-              onRowsPerPageChange={(newRowsPerPage) => {
-                setTransfersRowsPerPage(newRowsPerPage);
-                setTransfersPage(0);
-              }}
+              onPageChange={transfersPagination.onPageChange}
+              onRowsPerPageChange={transfersPagination.onRowsPerPageChange}
               disabled={isLoadingTransfers}
             />
           </div>
@@ -175,8 +133,7 @@ export function TransfersDeployTable() {
 
   const DeployContent = () => {
     const allDeploys = deploys || [];
-    const startIndex = deploysPage * deploysRowsPerPage;
-    const paginatedDeploys = allDeploys.slice(startIndex, startIndex + deploysRowsPerPage);
+    const paginatedDeploys = allDeploys.slice(deploysPagination.startIndex, deploysPagination.endIndex);
 
     if (isLoadingDeploys) {
       return (
@@ -229,22 +186,15 @@ export function TransfersDeployTable() {
                       {formatDateTime(deploy.timestamp, dateFormat)}
                     </TableCell>
                     <TableCell className="py-3 px-3 text-sm">
-                      <AddressLink address={deploy.user} />
+                      <AddressDisplay address={deploy.user} />
                     </TableCell>
                     <TableCell className="py-3 px-3 text-sm">
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${
-                        deploy.status === 'error' 
-                          ? 'bg-rose-500/10 text-rose-400' 
-                          : 'bg-[#83e9ff]/10 text-[#83e9ff]'
-                      }`}>
+                      <StatusBadge variant={deploy.status === 'error' ? 'error' : 'success'}>
                         {deploy.action}
-                      </span>
+                      </StatusBadge>
                     </TableCell>
                     <TableCell className="py-3 px-3 text-sm text-[#83E9FF]">
-                      <div className="flex items-center gap-1.5">
-                        {truncateHash(deploy.hash)}
-                        <ExternalLink className="text-zinc-500 h-3 w-3 hover:text-white transition-colors cursor-pointer" />
-                      </div>
+                      <AddressDisplay address={deploy.hash} showCopy={false} showExternalLink={true} className="text-[#83E9FF]" />
                     </TableCell>
                   </TableRow>
                 ))
@@ -262,19 +212,16 @@ export function TransfersDeployTable() {
             </TableBody>
           </Table>
         </div>
-        
+
         {allDeploys.length > 0 && (
           <div className="px-4 py-3 border-t border-white/5">
             <Pagination
               total={allDeploys.length}
-              page={deploysPage}
-              rowsPerPage={deploysRowsPerPage}
+              page={deploysPagination.page}
+              rowsPerPage={deploysPagination.rowsPerPage}
               rowsPerPageOptions={[5, 10, 25, 50]}
-              onPageChange={setDeploysPage}
-              onRowsPerPageChange={(newRowsPerPage) => {
-                setDeploysRowsPerPage(newRowsPerPage);
-                setDeploysPage(0);
-              }}
+              onPageChange={deploysPagination.onPageChange}
+              onRowsPerPageChange={deploysPagination.onRowsPerPageChange}
               disabled={isLoadingDeploys}
             />
           </div>
@@ -297,11 +244,10 @@ export function TransfersDeployTable() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-              }`}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === tab.key
+                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                }`}
             >
               {tab.label}
             </button>

@@ -21,38 +21,32 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
   const [initialLoading, setInitialLoading] = useState(true);
   const [selectedList, setSelectedList] = useState<WalletList | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  
+
   // Pour éviter les double-loads
   const isLoadingRef = useRef(false);
 
-  // Reset when search changes
-  useEffect(() => {
-    setLists([]);
-    setPage(1);
-    setHasMore(true);
-    loadLists(1, true);
-  }, [searchQuery]);
+
 
   const loadLists = useCallback(async (pageNum: number, isReset = false) => {
     if (isLoadingRef.current) return;
-    
+
     try {
       isLoadingRef.current = true;
       setLoading(true);
-      
+
       const params: Record<string, unknown> = {
         page: pageNum,
         limit: 20,
         sort: 'createdAt',
         order: 'desc'
       };
-      
+
       if (searchQuery.trim()) {
         params.search = searchQuery.trim();
       }
 
       const response = await getPublicWalletLists(params);
-      
+
       if (response.data) {
         setLists(prev => isReset ? response.data : [...prev, ...response.data]);
         setHasMore(response.pagination?.hasNext ?? false);
@@ -66,6 +60,14 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
       isLoadingRef.current = false;
     }
   }, [searchQuery]);
+
+  // Reset when search changes
+  useEffect(() => {
+    setLists([]);
+    setPage(1);
+    setHasMore(true);
+    loadLists(1, true);
+  }, [searchQuery, loadLists]);
 
   // Load more handler
   const handleLoadMore = () => {
@@ -83,7 +85,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
   // Initial load
   useEffect(() => {
     loadLists(1, true);
-  }, []);
+  }, [loadLists]);
 
   if (initialLoading) {
     return (
@@ -100,7 +102,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
         <div className="text-center">
           <h3 className="text-xl font-semibold text-white mb-2">No public lists found</h3>
           <p className="text-gray-400">
-            {searchQuery 
+            {searchQuery
               ? `No results for "${searchQuery}"`
               : "Be the first to create and share a public wallet list!"}
           </p>

@@ -12,6 +12,7 @@ import { TwapSection } from "@/components/dashboard/twap";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 export default function Home() {
   const { width } = useWindowSize();
@@ -38,45 +39,45 @@ export default function Home() {
           <Menu className="h-6 w-6" />
         </Button>
       </div>
-      
+
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      
+
       <div className="">
         {/* Header with glass effect */}
         <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
           <Header customTitle="Home" showFees={true} />
         </div>
-        
+
         <div className="p-2 lg:hidden">
           <SearchBar placeholder="Search..." />
         </div>
 
         <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-       
+
           {/* Stats Grid */}
           <StatsGrid />
 
           {/* Tokens + Chart */}
           <div className="flex flex-col md:flex-row gap-8 w-full md:items-stretch">
-            <div className="w-full md:w-[35%] flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
-              <TrendingTokensTabs 
-                onTabChange={setActiveTokenTab} 
+            <GlassPanel className="w-full md:w-[35%] flex flex-col">
+              <TrendingTokensTabs
+                onTabChange={setActiveTokenTab}
                 onPastAuctionHeightChange={setPastAuctionHeight}
               />
-            </div>
-            <div className="flex-1 flex flex-col bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+            </GlassPanel>
+            <GlassPanel className="flex-1 flex flex-col">
               <ChartSection />
-            </div>
+            </GlassPanel>
           </div>
 
           {/* Vaults/Validators + TWAP */}
           <div className="flex flex-col custom:flex-row custom:gap-8">
-            <div className="w-full custom:w-[35%] mb-6 custom:mb-0 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+            <GlassPanel className="w-full custom:w-[35%] mb-6 custom:mb-0">
               <TabSection />
-            </div>
-            <div className="w-full custom:w-[65%] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+            </GlassPanel>
+            <GlassPanel className="w-full custom:w-[65%]">
               <TwapSection />
-            </div>
+            </GlassPanel>
           </div>
         </main>
       </div>

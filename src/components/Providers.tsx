@@ -37,9 +37,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <XpProvider>
           <XpNotificationProvider>
-            {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
-            {children}
-            <Toaster />
+        {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
+        {children}
+        <Toaster />
           </XpNotificationProvider>
         </XpProvider>
       </AuthProvider>
