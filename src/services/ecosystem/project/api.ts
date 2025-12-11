@@ -1,10 +1,10 @@
 import { get, post, put, del, apiClient } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { 
-  Project, 
-  Category, 
-  ProjectsResponse, 
-  CategoriesResponse, 
+import {
+  Project,
+  Category,
+  ProjectsResponse,
+  CategoriesResponse,
   ProjectQueryParams,
   CreateProjectInput,
   CreateProjectWithUploadInput,
@@ -15,34 +15,22 @@ import {
   CategoryResponse,
   ProjectCsvUploadApiResponse,
 } from './types';
+import { buildQueryParams } from '../../common';
 
 /**
  * Récupère tous les projets avec pagination et filtres
  */
 export const fetchProjects = async (params?: ProjectQueryParams): Promise<ProjectsResponse> => {
   return withErrorHandling(async () => {
-    // Convertir categoryIds array en string AVANT de construire l'URL
-    const processedParams: Record<string, string | number> = {};
-    
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'categoryIds' && Array.isArray(value)) {
-            // Convertir array en string comma-separated
-            processedParams[key] = value.join(',');
-          } else {
-            processedParams[key] = value;
-          }
-        }
-      });
+    // Pre-process params for specific backend requirements (comma-separated arrays)
+    const processedParams: Record<string, any> = { ...params };
+
+    if (params?.categoryIds && Array.isArray(params.categoryIds)) {
+      processedParams.categoryIds = params.categoryIds.join(',');
     }
-    
-    const queryParams = new URLSearchParams();
-    Object.entries(processedParams).forEach(([key, value]) => {
-      queryParams.append(key, value.toString());
-    });
-    
-    const endpoint = `/project${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+    const queryParams = buildQueryParams(processedParams);
+    const endpoint = `/project?${queryParams.toString()}`;
     return await get<ProjectsResponse>(endpoint);
   }, 'fetching projects');
 };
@@ -92,7 +80,7 @@ export const createProject = async (data: CreateProjectInput): Promise<ProjectRe
 export const createProjectWithUpload = async (data: CreateProjectWithUploadInput): Promise<ProjectResponse> => {
   return withErrorHandling(async () => {
     const formData = new FormData();
-    
+
     // Ajouter les champs texte
     formData.append('title', data.title);
     formData.append('desc', data.desc);
@@ -105,7 +93,7 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
       // Envoyer comme JSON string - le backend devra parser
       formData.append('categoryIds', JSON.stringify(data.categoryIds));
     }
-    
+
     // Ajouter le fichier si présent
     if (data.logo) {
       formData.append('logo', data.logo);
@@ -116,7 +104,7 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
 
     // Utiliser axios avec FormData - l'intercepteur gère l'auth automatiquement
     const response = await apiClient.post<ProjectResponse>('/project/with-upload', formData);
-    
+
     return response.data;
   }, 'creating project with upload');
 };

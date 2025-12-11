@@ -1,4 +1,4 @@
-import { 
+import {
     UserTransactionsResponse,
     NonFundingLedgerUpdate,
     UserFill,
@@ -6,13 +6,13 @@ import {
     PortfolioApiResponse,
     OpenOrdersResponse,
 } from './types';
-import { postExternal } from '../../api/axios-config';
+import { postExternal, getExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
-import { 
-    processFillTransactions, 
-    processUserTransactions, 
-    processOrphanLedgerUpdates 
+import {
+    processFillTransactions,
+    processUserTransactions,
+    processOrphanLedgerUpdates
 } from './processors';
 
 export async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
@@ -31,7 +31,7 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
         return await postExternal<NonFundingLedgerUpdate[]>(url, {
             type: "userNonFundingLedgerUpdates",
             user: address,
-            startTime: 1640995200000 
+            startTime: 1640995200000
         });
     }, 'fetching ledger updates');
 }
@@ -55,14 +55,14 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
         ]);
 
         const fillTransactions = processFillTransactions(fills, address);
-        
+
         // Créer un Set des hashs déjà traités
         const processedHashes = new Set(fillTransactions.map(tx => tx.hash));
         const ledgerMap = new Map(ledgerUpdates.map(update => [update.hash, update]));
         const fillsMap = new Map(fills.map(fill => [fill.hash, fill]));
-        
+
         const userTransactions = processUserTransactions(rawTransactions.txs, address, processedHashes, ledgerMap, fillsMap);
-        
+
         // Ajout des ledgerUpdates orphelins (withdraw/deposit sans tx brute associée)
         const allHashes = new Set([
             ...fillTransactions.map(tx => tx.hash),
@@ -99,19 +99,10 @@ export async function getUserOpenOrders(address: string): Promise<OpenOrdersResp
  * Récupère les TWAP orders d'un utilisateur
  */
 export const getUserTwapOrders = async (address: string): Promise<unknown[]> => {
-  try {
-    const response = await fetch(`https://api.hypurrscan.io/twap/${address}`);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-            // Silent error handling
-    throw error;
-  }
+    return withErrorHandling(async () => {
+        const url = `https://api.hypurrscan.io/twap/${address}`;
+        const data = await getExternal<unknown[]>(url);
+        return Array.isArray(data) ? data : [];
+    }, 'fetching user TWAP orders');
 };
 
- 

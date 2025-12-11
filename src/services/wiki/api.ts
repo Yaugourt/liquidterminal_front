@@ -1,6 +1,6 @@
 import { get, post, del } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
-import { 
+import {
   EducationalResource,
   CategoriesResponse,
   ResourcesResponse,
@@ -12,20 +12,26 @@ import {
   CategoryParams
 } from './types';
 import { apiClient } from '../api/axios-config';
+import { buildQueryParams } from '../common';
 
 /**
  * Récupère toutes les catégories éducatives
  */
 export const fetchEducationalCategories = async (params?: CategoryParams): Promise<CategoriesResponse> => {
   return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
-    
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.sortBy) queryParams.append('sort', params.sortBy);
-    if (params?.sortOrder) queryParams.append('order', params.sortOrder);
-    
-    const endpoint = `/educational/categories${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    // Adapter les clés de paramètres pour correspondre à l'API (sortBy -> sort, sortOrder -> order)
+    const apiParams: Record<string, any> = { ...params };
+    if (params?.sortBy) {
+      apiParams.sort = params.sortBy;
+      delete apiParams.sortBy;
+    }
+    if (params?.sortOrder) {
+      apiParams.order = params.sortOrder;
+      delete apiParams.sortOrder;
+    }
+
+    const queryParams = buildQueryParams(apiParams);
+    const endpoint = `/educational/categories?${queryParams.toString()}`;
     return await get<CategoriesResponse>(endpoint);
   }, 'fetching educational categories');
 };
@@ -89,13 +95,13 @@ export const fetchResourcesByCategories = async (categoryIds: number[]): Promise
         return response.data;
       })
     );
-    
+
     // Fusionner et dédupliquer par ID
     const resourceMap = new Map();
     allResources.flat().forEach(resource => {
       resourceMap.set(resource.id, resource);
     });
-    
+
     return Array.from(resourceMap.values());
   }, 'fetching resources by multiple categories');
 };
