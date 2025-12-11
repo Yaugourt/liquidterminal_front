@@ -46,7 +46,7 @@ interface FormData {
 export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProjectModalProps) {
   const [activeTab, setActiveTab] = useState("project");
   const { createPublicGood, isLoading: isSubmitting } = useCreatePublicGood();
-  
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -69,7 +69,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
     contributorTypes: [],
     budgetRange: ""
   });
-  
+
   const [logo, setLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [banner, setBanner] = useState<File | null>(null);
@@ -77,11 +77,11 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
   const [screenshots, setScreenshots] = useState<File[]>([]);
   const [screenshotPreviews, setScreenshotPreviews] = useState<string[]>([]);
   const [techInput, setTechInput] = useState("");
-  
+
   const updateField = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-  
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -94,13 +94,13 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       setLogoPreview(URL.createObjectURL(file));
     }
   };
-  
+
   const removeLogo = () => {
     if (logoPreview) URL.revokeObjectURL(logoPreview);
     setLogo(null);
     setLogoPreview("");
   };
-  
+
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -113,47 +113,47 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       setBannerPreview(URL.createObjectURL(file));
     }
   };
-  
+
   const removeBanner = () => {
     if (bannerPreview) URL.revokeObjectURL(bannerPreview);
     setBanner(null);
     setBannerPreview("");
   };
-  
+
   const handleScreenshotsUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const newScreenshots = [...screenshots, ...files];
-    
+
     const validation = validateScreenshots(newScreenshots);
     if (!validation.valid) {
       toast.error(validation.errors.join(', '));
       return;
     }
-    
+
     setScreenshots(newScreenshots);
     setScreenshotPreviews([
       ...screenshotPreviews,
       ...files.map(f => URL.createObjectURL(f))
     ]);
   };
-  
+
   const removeScreenshot = (index: number) => {
     URL.revokeObjectURL(screenshotPreviews[index]);
     setScreenshots(prev => prev.filter((_, i) => i !== index));
     setScreenshotPreviews(prev => prev.filter((_, i) => i !== index));
   };
-  
+
   const addTechnology = () => {
     if (techInput.trim() && !formData.technologies.includes(techInput.trim())) {
       updateField('technologies', [...formData.technologies, techInput.trim()]);
       setTechInput("");
     }
   };
-  
+
   const removeTechnology = (tech: string) => {
     updateField('technologies', formData.technologies.filter(t => t !== tech));
   };
-  
+
   const toggleTargetUser = (user: string) => {
     if (formData.targetUsers.includes(user)) {
       updateField('targetUsers', formData.targetUsers.filter(u => u !== user));
@@ -161,7 +161,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       updateField('targetUsers', [...formData.targetUsers, user]);
     }
   };
-  
+
   const toggleSupportType = (type: string) => {
     if (formData.supportTypes.includes(type)) {
       updateField('supportTypes', formData.supportTypes.filter(t => t !== type));
@@ -169,7 +169,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       updateField('supportTypes', [...formData.supportTypes, type]);
     }
   };
-  
+
   const toggleContributorType = (type: string) => {
     if (formData.contributorTypes.includes(type)) {
       updateField('contributorTypes', formData.contributorTypes.filter(t => t !== type));
@@ -177,7 +177,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       updateField('contributorTypes', [...formData.contributorTypes, type]);
     }
   };
-  
+
   const handleSubmit = async () => {
     const validation = validatePublicGoodForm({
       name: formData.name,
@@ -194,12 +194,12 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       experienceLevel: formData.experienceLevel,
       technologies: formData.technologies
     });
-    
+
     if (!validation.valid) {
       toast.error(validation.errors[0]);
       return;
     }
-    
+
     try {
       await createPublicGood({
         // Section 1
@@ -231,7 +231,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
         banner: banner || undefined,
         screenshots: screenshots.length > 0 ? screenshots : undefined
       });
-      
+
       toast.success("Project submitted successfully! It will be reviewed by our team.");
       resetForm();
       onSuccess();
@@ -240,7 +240,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
       toast.error("Failed to submit project. Please try again.");
     }
   };
-  
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -273,30 +273,30 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
     setTechInput("");
     setActiveTab("project");
   };
-  
+
   const tabs = ["project", "impact", "team", "support", "preview"];
   const currentIndex = tabs.indexOf(activeTab);
-  
+
   const goNext = () => {
     if (currentIndex < tabs.length - 1) setActiveTab(tabs[currentIndex + 1]);
   };
-  
+
   const goPrevious = () => {
     if (currentIndex > 0) setActiveTab(tabs[currentIndex - 1]);
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] glass-card rounded-2xl border-none flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Submit Your Project</DialogTitle>
           <p className="text-zinc-400 text-sm">
             Submit your project to the HyperLiquid Public Goods program
           </p>
         </DialogHeader>
-        
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-5 bg-brand-dark border border-white/5 rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-5 bg-black/20 border border-white/5 rounded-lg p-1">
             <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               1. Project
             </TabsTrigger>
@@ -313,7 +313,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               5. Preview
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="project" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <ProjectTab
               formData={formData}
@@ -332,7 +332,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               removeScreenshot={removeScreenshot}
             />
           </TabsContent>
-          
+
           <TabsContent value="impact" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <ImpactTab
               formData={formData}
@@ -340,7 +340,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               toggleTargetUser={toggleTargetUser}
             />
           </TabsContent>
-          
+
           <TabsContent value="team" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <TeamTab
               formData={formData}
@@ -351,7 +351,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               removeTechnology={removeTechnology}
             />
           </TabsContent>
-          
+
           <TabsContent value="support" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <SupportTab
               formData={formData}
@@ -360,12 +360,12 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
               toggleContributorType={toggleContributorType}
             />
           </TabsContent>
-          
+
           <TabsContent value="preview" className="flex-1 overflow-y-auto space-y-4 pr-2 mt-6" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
             <PreviewTab formData={formData} />
           </TabsContent>
         </Tabs>
-        
+
         <div className="flex justify-between pt-4 border-t border-white/5">
           <Button
             variant="outline"
@@ -376,7 +376,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
             <ArrowLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
-          
+
           {currentIndex < tabs.length - 1 ? (
             <Button
               onClick={goNext}

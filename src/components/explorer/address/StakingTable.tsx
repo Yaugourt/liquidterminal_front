@@ -25,29 +25,29 @@ export function StakingTable({ address }: StakingTableProps) {
   const { format } = useNumberFormat();
 
   // Hook pour les délégations (avec logique métier intégrée)
-  const { 
-    delegations, 
-    totalStaked, 
-    isLoading: delegationsLoading, 
-    error: delegationsError 
+  const {
+    delegations,
+    totalStaked,
+    isLoading: delegationsLoading,
+    error: delegationsError
   } = useValidatorDelegations(address);
 
   // Hook pour l'historique des délégations de l'utilisateur
-  const { 
-    history: delegatorHistory, 
-    isLoading: delegatorHistoryLoading, 
-    error: delegatorHistoryError 
+  const {
+    history: delegatorHistory,
+    isLoading: delegatorHistoryLoading,
+    error: delegatorHistoryError
   } = useDelegatorHistory(address);
 
   // Hook pour les récompenses des délégations de l'utilisateur
-  const { 
-    rewards: delegatorRewards, 
-    isLoading: delegatorRewardsLoading, 
-    error: delegatorRewardsError 
+  const {
+    rewards: delegatorRewards,
+    isLoading: delegatorRewardsLoading,
+    error: delegatorRewardsError
   } = useDelegatorRewards(address);
 
   // Hook pour le résumé des délégations de l'utilisateur
-  const { 
+  const {
     summary: delegatorSummary
   } = useDelegatorSummary(address);
 
@@ -55,9 +55,9 @@ export function StakingTable({ address }: StakingTableProps) {
   const { price: hypePrice } = useHypePrice();
 
   // Hook pour l'historique des transactions de staking avec pagination (backup)
-  const { 
-    validations: allStakingHistory, 
-    isLoading: historyLoading, 
+  const {
+    validations: allStakingHistory,
+    isLoading: historyLoading,
     error: historyError,
     updateParams: updateHistoryParams
   } = useStakingValidationsPaginated({
@@ -82,9 +82,9 @@ export function StakingTable({ address }: StakingTableProps) {
 
   const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
-    
+
     if (activeSubTab === 'history') {
-      updateHistoryParams({ 
+      updateHistoryParams({
         page: newPage + 1 // Convert to 1-based for API
       });
     }
@@ -93,9 +93,9 @@ export function StakingTable({ address }: StakingTableProps) {
   const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(0);
-    
+
     if (activeSubTab === 'history') {
-      updateHistoryParams({ 
+      updateHistoryParams({
         page: 1,
         limit: newRowsPerPage
       });
@@ -105,7 +105,7 @@ export function StakingTable({ address }: StakingTableProps) {
   // Sync hooks pagination when switching to history tab
   useEffect(() => {
     if (activeSubTab === 'history') {
-      updateHistoryParams({ 
+      updateHistoryParams({
         page: currentPage + 1,
         limit: rowsPerPage
       });
@@ -130,17 +130,17 @@ export function StakingTable({ address }: StakingTableProps) {
   };
 
   const totalItems = getTotalItems();
-  
+
   // Utiliser les données du résumé si disponibles, sinon fallback sur les anciennes données
   const stakingBalance = delegatorSummary ? parseFloat(delegatorSummary.delegated) : finalTotalStaked;
   const pendingWithdrawal = delegatorSummary ? parseFloat(delegatorSummary.totalPendingWithdrawal) : 0;
   const undelegatedAmount = delegatorSummary ? parseFloat(delegatorSummary.undelegated) : 0;
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-6 flex flex-col">
+    <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 p-6 flex flex-col">
       <div className="flex items-center justify-between mb-6">
         {/* Sub-tabs */}
-        <StakingTabButtons 
+        <StakingTabButtons
           activeSubTab={activeSubTab}
           onSubTabChange={handleSubTabChange}
         />
@@ -158,7 +158,7 @@ export function StakingTable({ address }: StakingTableProps) {
               )}
             </span>
           </div>
-          <div className="w-px h-4 bg-[#FFFFFF20]"></div>
+          <div className="w-px h-4 bg-white/10"></div>
           <div className="flex items-baseline gap-2">
             <span className="text-white text-xs font-medium font-inter">Undelegated:</span>
             <span className="text-brand-accent text-sm font-semibold font-inter">
@@ -187,7 +187,7 @@ export function StakingTable({ address }: StakingTableProps) {
 
       {/* Table Content */}
       <div className="flex-1">
-        <StakingTableContent 
+        <StakingTableContent
           activeSubTab={activeSubTab}
           delegationsData={{
             delegations: finalDelegations.slice(startIndex, endIndex),
@@ -211,7 +211,7 @@ export function StakingTable({ address }: StakingTableProps) {
 
       {/* Pagination */}
       {totalItems > 10 && (
-        <div className="border-t border-[#FFFFFF1A] flex items-center mt-auto">
+        <div className="border-t border-white/5 flex items-center mt-auto">
           <div className="w-full px-4 py-3">
             <Pagination
               total={totalItems}

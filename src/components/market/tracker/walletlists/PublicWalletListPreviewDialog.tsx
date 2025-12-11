@@ -11,12 +11,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { 
-  Copy, 
-  Loader2, 
-  Users, 
-  Calendar, 
-  Wallet, 
+import {
+  Copy,
+  Loader2,
+  Users,
+  Calendar,
+  Wallet,
   Download,
   ClipboardCopy
 } from "lucide-react";
@@ -64,13 +64,13 @@ export function PublicWalletListPreviewDialog({
 
   const handleCopyList = async () => {
     if (!list?.id) return;
-    
+
     try {
       setCopying(true);
       await copyList(list.id);
       toast.success(`List "${list.name}" copied to your lists!`);
       onOpenChange(false);
-      
+
       // Redirect to tracker page
       setTimeout(() => {
         router.push('/market/tracker');
@@ -84,12 +84,12 @@ export function PublicWalletListPreviewDialog({
 
   const handleCopyAddresses = async () => {
     if (!fullList?.items) return;
-    
+
     const addresses = fullList.items
       .map(item => item.userWallet?.Wallet?.address)
       .filter(Boolean)
       .join('\n');
-    
+
     try {
       await navigator.clipboard.writeText(addresses);
       toast.success(`Copied ${fullList.items.length} addresses to clipboard`);
@@ -100,7 +100,7 @@ export function PublicWalletListPreviewDialog({
 
   const handleExportCSV = () => {
     if (!fullList?.items) return;
-    
+
     const rows = [
       'Address,Name,Notes',
       ...fullList.items.map(item => {
@@ -110,7 +110,7 @@ export function PublicWalletListPreviewDialog({
         return `${addr},${name},${notes}`;
       })
     ];
-    
+
     const csv = rows.join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -119,7 +119,7 @@ export function PublicWalletListPreviewDialog({
     a.download = `${fullList.name}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    
+
     toast.success('CSV exported successfully');
   };
 
@@ -130,7 +130,7 @@ export function PublicWalletListPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white max-w-3xl max-h-[85vh] shadow-2xl shadow-black/40">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <div className="flex-1 space-y-2">
@@ -147,7 +147,7 @@ export function PublicWalletListPreviewDialog({
               </div>
             </div>
           </div>
-          
+
           {list.description && (
             <DialogDescription className="text-gray-400 pt-2">
               {list.description}
@@ -158,7 +158,7 @@ export function PublicWalletListPreviewDialog({
         {/* Content */}
         <div className="space-y-4">
           {/* Stats */}
-          <div className="flex items-center gap-4 p-3 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg">
+          <div className="flex items-center gap-4 p-3 bg-black/20 border border-white/10 rounded-lg">
             <div className="flex items-center gap-2">
               <Wallet size={16} className="text-brand-accent" />
               <span className="text-white font-medium">{list.itemsCount || 0}</span>
@@ -179,12 +179,12 @@ export function PublicWalletListPreviewDialog({
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-gray-400">Wallets in this list:</h3>
-              <div className="h-[300px] border border-[#83E9FF4D] rounded-lg overflow-y-auto">
+              <div className="h-[300px] border border-white/10 rounded-lg overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                 <div className="p-3 space-y-2">
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-[#0C2237] border border-[#83E9FF4D] rounded-lg hover:border-brand-accent transition-colors"
+                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-white/5 rounded-lg hover:border-brand-accent transition-colors"
                     >
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-medium shrink-0">
                         {index + 1}
@@ -222,7 +222,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleCopyAddresses}
               disabled={!fullList?.items?.length}
-              className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+              className="border-white/10 text-white hover:bg-white/5"
             >
               <ClipboardCopy className="mr-2 h-4 w-4" />
               Copy Addresses
@@ -231,18 +231,18 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleExportCSV}
               disabled={!fullList?.items?.length}
-              className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+              className="border-white/10 text-white hover:bg-white/5"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
             </Button>
           </div>
-          
+
           <div className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-[#83E9FF4D] text-white"
+              className="border-white/10 text-white hover:bg-white/5"
             >
               Cancel
             </Button>

@@ -8,14 +8,14 @@ interface TwapSectionProps {
 
 export function TwapSection({ address }: TwapSectionProps) {
   // Hook pour récupérer les TWAP orders (logique métier intégrée)
-  const { 
-    orders: twapOrders, 
-    isLoading: twapLoading, 
-    error: twapError 
+  const {
+    orders: twapOrders,
+    isLoading: twapLoading,
+    error: twapError
   } = useUserTwapOrders(address);
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm rounded-lg">
+    <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
       <div className="p-4">
         <UserTwapTable
           twaps={twapOrders}

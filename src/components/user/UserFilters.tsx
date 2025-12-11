@@ -3,12 +3,12 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
 import { Search, Filter } from 'lucide-react';
 
@@ -19,14 +19,14 @@ interface UserFiltersProps {
   onRoleChange: (value: string) => void;
 }
 
-export function UserFilters({ 
-  searchTerm, 
-  selectedRole, 
-  onSearchChange, 
-  onRoleChange 
+export function UserFilters({
+  searchTerm,
+  selectedRole,
+  onSearchChange,
+  onRoleChange
 }: UserFiltersProps) {
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+    <Card className="glass-panel border-none shadow-none">
       <CardContent className="p-4">
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2 flex-1">
@@ -35,20 +35,20 @@ export function UserFilters({
               placeholder="Search for a user..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="bg-brand-tertiary border-[#83E9FF4D] text-white placeholder:text-[#FFFFFF60] focus:border-brand-accent font-inter text-sm h-8"
+              className="glass-input text-white placeholder:text-zinc-500 focus:border-brand-accent font-inter text-sm h-8"
             />
           </div>
           <div className="flex items-center space-x-2">
             <Filter className="w-3 h-3 text-brand-gold" />
             <Select value={selectedRole} onValueChange={onRoleChange}>
-              <SelectTrigger className="w-40 bg-brand-tertiary border-[#83E9FF4D] text-white font-inter text-sm h-8">
+              <SelectTrigger className="w-40 glass-input text-white font-inter text-sm h-8">
                 <SelectValue placeholder="All roles" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-tertiary border-[#83E9FF4D]">
-                <SelectItem value="all" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">All roles</SelectItem>
-                <SelectItem value="USER" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">User</SelectItem>
-                <SelectItem value="MODERATOR" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">Moderator</SelectItem>
-                <SelectItem value="ADMIN" className="text-white hover:bg-[#83E9FF1A] font-inter text-sm">Administrator</SelectItem>
+              <SelectContent className="glass-card border-white/10">
+                <SelectItem value="all" className="text-white hover:bg-white/10 font-inter text-sm">All roles</SelectItem>
+                <SelectItem value="USER" className="text-white hover:bg-white/10 font-inter text-sm">User</SelectItem>
+                <SelectItem value="MODERATOR" className="text-white hover:bg-white/10 font-inter text-sm">Moderator</SelectItem>
+                <SelectItem value="ADMIN" className="text-white hover:bg-white/10 font-inter text-sm">Administrator</SelectItem>
               </SelectContent>
             </Select>
           </div>

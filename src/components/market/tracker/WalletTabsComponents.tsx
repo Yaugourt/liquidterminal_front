@@ -52,43 +52,43 @@ interface SortableWalletTabProps {
 }
 
 // Composant pour les tabs des listes
-export function WalletListTabs({ 
-  activeTab, 
-  userLists, 
-  onTabChange, 
-  onCreateList, 
-  onDeleteList 
+export function WalletListTabs({
+  activeTab,
+  userLists,
+  onTabChange,
+  onCreateList,
+  onDeleteList
 }: WalletListTabsProps) {
   const router = useRouter();
-  
+
   return (
     <div className="flex gap-2 items-center justify-between flex-wrap">
       <div className="flex items-center gap-2">
-        <Tabs 
-          value={activeTab?.toString() || "all-wallets"} 
+        <Tabs
+          value={activeTab?.toString() || "all-wallets"}
           onValueChange={onTabChange}
           className="w-auto"
         >
           <TabsList className="gap-3">
             {/* Tab "All Wallets" */}
-            <TabsTrigger 
+            <TabsTrigger
               value="all-wallets"
-              className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg text-white font-medium"
+              className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg text-zinc-400 font-medium hover:text-white transition-colors"
             >
               All Wallets
             </TabsTrigger>
-            
+
             {/* Séparateur */}
             {userLists.length > 0 && (
-              <div className="w-px h-6 bg-[#83E9FF4D] mx-2" />
+              <div className="w-px h-6 bg-white/10 mx-2" />
             )}
-            
+
             {/* Tabs des listes */}
             {userLists.filter(list => list?.id).map((list, index) => (
-              <TabsTrigger 
+              <TabsTrigger
                 key={`list-${list.id || index}`}
                 value={(list.id || index).toString()}
-                className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
+                className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg flex items-center group text-zinc-400 hover:text-white transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-start">
@@ -98,7 +98,7 @@ export function WalletListTabs({
                     </span>
                   </div>
                 </div>
-                
+
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -121,18 +121,18 @@ export function WalletListTabs({
           </TabsList>
         </Tabs>
       </div>
-      
+
       {/* Boutons sur la même ligne que les tabs */}
       <div className="flex gap-2">
-        <Button 
+        <Button
           onClick={() => router.push('/market/tracker/public-lists')}
           variant="outline"
-          className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+          className="border-white/10 text-zinc-400 hover:text-white hover:bg-white/5"
         >
           <Globe className="mr-2 h-4 w-4" />
           Browse Public Lists
         </Button>
-        <Button 
+        <Button
           onClick={onCreateList}
           className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
         >
@@ -145,11 +145,11 @@ export function WalletListTabs({
 }
 
 // Composant pour les tabs des wallets (avec drag & drop)
-export function WalletContentTabs({ 
-  wallets, 
-  activeWalletId, 
-  onWalletChange, 
-  onDragEnd, 
+export function WalletContentTabs({
+  wallets,
+  activeWalletId,
+  onWalletChange,
+  onDragEnd,
   onAddWallet,
   onDeleteWallet
 }: WalletContentTabsProps) {
@@ -167,9 +167,9 @@ export function WalletContentTabs({
   return (
     <div className="flex gap-3 items-center">
       {/* Scrollable tabs container */}
-      <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
-        <Tabs 
-          value={activeWalletId?.toString() || ""} 
+      <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <Tabs
+          value={activeWalletId?.toString() || ""}
           onValueChange={onWalletChange}
           className="w-full"
         >
@@ -185,9 +185,9 @@ export function WalletContentTabs({
                   strategy={horizontalListSortingStrategy}
                 >
                   {wallets.map((wallet) => (
-                    <SortableWalletTab 
-                      key={wallet.id} 
-                      wallet={wallet} 
+                    <SortableWalletTab
+                      key={wallet.id}
+                      wallet={wallet}
                       onDelete={onDeleteWallet}
                     />
                   ))}
@@ -201,11 +201,11 @@ export function WalletContentTabs({
           </TabsList>
         </Tabs>
       </div>
-      
+
       {/* Info badge and action button */}
       <div className="flex items-center gap-2 shrink-0">
         {wallets.length > 1 && (
-          <div className="hidden lg:flex items-center gap-1 text-xs text-[#FFFFFF60] bg-[#FFFFFF0A] px-2 py-1 rounded border border-[#83E9FF4D]">
+          <div className="hidden lg:flex items-center gap-1 text-xs text-zinc-500 bg-white/5 px-2 py-1 rounded border border-white/5">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>
@@ -234,11 +234,11 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
   };
 
   return (
-    <TabsTrigger 
+    <TabsTrigger
       ref={setNodeRef}
       style={style}
       value={wallet.id.toString()}
-      className="bg-[#1692ADB2] data-[state=active]:bg-[#051728CC] data-[state=active]:text-white data-[state=active]:border-[1px] border-[#83E9FF4D] rounded-lg flex items-center group"
+      className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg flex items-center group text-zinc-400 hover:text-white transition-colors"
     >
       <div className="flex items-center gap-2">
         {/* Drag handle */}
@@ -249,7 +249,7 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
         >
           <GripVertical className="w-3 h-3 text-[#FFFFFF80]" />
         </div>
-        
+
         <div className="flex flex-col items-start">
           <span className="font-medium text-white">{wallet.name || 'Unnamed Wallet'}</span>
           <span className="text-xs text-white">
@@ -257,7 +257,7 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
           </span>
         </div>
       </div>
-      
+
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

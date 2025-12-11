@@ -70,7 +70,7 @@ export function TransactionList({
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] p-4 flex flex-col">
+    <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 p-4 flex flex-col">
       <div className="flex flex-col flex-1">
         <div className="flex-1">
           <DataTable
@@ -86,20 +86,20 @@ export function TransactionList({
             <Table className="w-full text-sm text-white font-inter table-fixed">
               {transactions.length > 0 && (
                 <>
-                  <TableHeader className="text-white">
-                    <TableRow>
-                      <TableHead className="text-left py-2 pl-0 pr-4 font-normal w-1/5">Hash</TableHead>
-                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Action</TableHead>
-                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Block</TableHead>
-                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">Time</TableHead>
-                      <TableHead className="text-left py-2 px-4 font-normal w-1/5">User</TableHead>
+                  <TableHeader>
+                    <TableRow className="border-b border-white/5 hover:bg-transparent">
+                      <TableHead className="text-left py-3 pl-0 pr-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {displayedTransactions.map((tx) => (
                       <TableRow
                         key={tx.hash}
-                        className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]"
+                        className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                       >
                         <TableCell className="py-3 pl-0 pr-4">
                           <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ export function TransactionList({
                           </div>
                         </TableCell>
                         <TableCell className="py-3 px-4">
-                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-[#83E9FF20] text-brand-accent border border-[#83E9FF40]">
+                          <span className="inline-block px-2 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400">
                             {tx.action.type}
                           </span>
                         </TableCell>

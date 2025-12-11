@@ -73,7 +73,7 @@ export function UserManagement() {
   // Handle user deletion
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
-    
+
     try {
       await deleteUser(parseInt(userId));
       toast.success('User deleted successfully');
@@ -127,7 +127,7 @@ export function UserManagement() {
       <div className="flex items-center justify-center h-48">
         <div className="text-center">
           <p className="text-red-400 mb-3 text-sm font-inter">Error loading users</p>
-          <Button onClick={handleRefresh} className="bg-brand-accent text-brand-tertiary hover:bg-[#83E9FFCC] font-inter text-sm">
+          <Button onClick={handleRefresh} className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 font-inter text-sm">
             Retry
           </Button>
         </div>
@@ -148,8 +148,8 @@ export function UserManagement() {
   }
 
   return (
-    <ProtectedAction 
-      requiredRole="ADMIN" 
+    <ProtectedAction
+      requiredRole="ADMIN"
       user={currentUser}
       fallback={
         <div className="flex items-center justify-center h-48">
@@ -164,18 +164,18 @@ export function UserManagement() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="p-1.5 bg-[#f9e3701A] rounded-lg">
+            <div className="p-1.5 bg-brand-gold/10 rounded-lg">
               <Users className="w-4 h-4 text-brand-gold" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white font-inter">User Management</h1>
-              <p className="text-[#FFFFFF80] text-xs font-inter">Administration of user accounts</p>
+              <p className="text-secondary text-xs font-inter">Administration of user accounts</p>
             </div>
           </div>
           <Button
             onClick={handleRefresh}
             disabled={isLoading}
-            className="bg-brand-gold text-brand-tertiary hover:bg-[#f9e370CC] font-inter text-sm"
+            className="bg-brand-gold text-brand-tertiary hover:bg-brand-gold/80 font-inter text-sm"
           >
             <RefreshCw className={`w-3 h-3 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh

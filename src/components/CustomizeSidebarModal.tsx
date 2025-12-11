@@ -61,7 +61,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-[#0C2237] border border-[#83E9FF4D] rounded-lg p-3 space-y-2"
+      className="glass-input p-3 space-y-2 border-white/10 bg-black/20"
     >
       {/* Group header */}
       <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           {group.items.map(item => {
             const navItem = navGroup.items.find(ni => getItemId(ni.name, ni.href) === item.id);
             if (!navItem) return null;
-            
+
             return (
               <div key={item.id} className="flex items-center justify-between py-1">
                 <span className="text-gray-300 text-xs">{navItem.name}</span>
@@ -158,9 +158,9 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="glass-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-[#83E9FF1A]">
+        <div className="flex justify-between items-center p-6 border-b border-white/5">
           <div>
             <h2 className="text-xl font-bold text-white">Customize Sidebar</h2>
             <p className="text-sm text-gray-400 mt-1">
@@ -171,7 +171,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="hover:bg-[#83E9FF20]"
+            className="hover:bg-white/10"
           >
             <X className="w-5 h-5 text-white" />
           </Button>
@@ -207,18 +207,18 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center p-6 border-t border-[#83E9FF1A]">
+        <div className="flex justify-between items-center p-6 border-t border-white/5">
           <Button
             variant="outline"
             onClick={handleReset}
-            className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20] gap-2"
+            className="border-white/10 text-white hover:bg-white/10 gap-2"
           >
             <RotateCcw className="w-4 h-4" />
             Reset to Default
           </Button>
           <Button
             onClick={onClose}
-            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
+            className="bg-brand-gold text-black hover:bg-brand-gold/90"
           >
             Done
           </Button>

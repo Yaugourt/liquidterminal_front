@@ -18,17 +18,17 @@ interface AddWalletToListDialogProps {
   onSuccess?: () => void;
 }
 
-export function AddWalletToListDialog({ 
-  isOpen, 
-  onOpenChange, 
-  listId, 
-  listName, 
-  onSuccess 
+export function AddWalletToListDialog({
+  isOpen,
+  onOpenChange,
+  listId,
+  listName,
+  onSuccess
 }: AddWalletToListDialogProps) {
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { reloadWallets } = useWallets();
 
   const handleAddWallet = async () => {
@@ -42,10 +42,10 @@ export function AddWalletToListDialog({
     try {
       const walletAddress = address.trim();
       const walletName = name.trim() || undefined;
-      
+
       // NOUVEAU: Utiliser la nouvelle API unifiée qui gère tout en une seule requête
       const response = await addWallet(walletAddress, walletName, listId);
-      
+
       if (!response.success) {
         throw new Error(response.message || "Failed to add wallet to list");
       }
@@ -79,7 +79,7 @@ export function AddWalletToListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl shadow-black/40">
         <DialogHeader>
           <DialogTitle>Add wallet to &quot;{listName}&quot;</DialogTitle>
           <DialogDescription className="text-white">
@@ -96,7 +96,7 @@ export function AddWalletToListDialog({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-[#0C2237] border-[#83E9FF4D] text-white"
+              className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50"
             />
           </div>
           <div className="space-y-2">
@@ -108,19 +108,19 @@ export function AddWalletToListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-[#0C2237] border-[#83E9FF4D] text-white"
+              className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50"
             />
           </div>
         </div>
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+            className="border-white/10 text-white hover:bg-white/5"
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleAddWallet}
             disabled={isLoading}
             className="bg-brand-accent text-brand-tertiary hover:bg-[#6bd4f0] font-medium"

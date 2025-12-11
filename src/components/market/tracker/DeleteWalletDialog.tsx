@@ -15,14 +15,14 @@ interface DeleteWalletDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeleteWalletDialog({ 
-  isOpen, 
-  onOpenChange, 
+export function DeleteWalletDialog({
+  isOpen,
+  onOpenChange,
   walletToDelete,
-  onSuccess 
+  onSuccess
 }: DeleteWalletDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { removeWallet } = useWallets();
 
   const handleConfirmDelete = async () => {
@@ -31,10 +31,10 @@ export function DeleteWalletDialog({
         setIsLoading(true);
         await removeWallet(walletToDelete.id);
         onOpenChange(false);
-        
+
         // Show success toast
         walletDeleteMessages.success(walletToDelete.name);
-        
+
         // Notify parent component of success
         if (onSuccess) {
           onSuccess();
@@ -49,7 +49,7 @@ export function DeleteWalletDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl shadow-black/40">
         <DialogHeader>
           <DialogTitle>Delete Wallet</DialogTitle>
           <DialogDescription className="text-white">
@@ -62,14 +62,14 @@ export function DeleteWalletDialog({
         </div>
 
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-[#83E9FF4D] text-white"
+            className="border-white/10 text-white hover:bg-white/5"
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleConfirmDelete}
             disabled={isLoading}
             className="bg-[#FF5252] text-white hover:bg-[#FF5252]/90"

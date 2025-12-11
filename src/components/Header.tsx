@@ -107,7 +107,7 @@ Source: @Liquidterminal`;
                     {/* <h2 className="text-xl text-white whitespace-nowrap !font-['Higuen_Elegant_Serif'] max-lg:pl-3">{displayTitle}</h2> */}
                     <SearchBar
                         placeholder={searchPlaceholder}
-                        className={`hidden lg:block border border-[#83E9FF33] rounded-xl shadow-sm ${searchWidth} transition-all hover:border-[#83E9FF66] focus-within:border-brand-accent`}
+                        className={`hidden lg:block border border-white/10 rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
                     />
                 </div>
 
@@ -117,10 +117,10 @@ Source: @Liquidterminal`;
                         <div className="flex items-center gap-2 lg:gap-3">
                             {/* HYPE Price Display */}
                             <div className={cn(
-                                "bg-brand-tertiary/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
+                                "bg-[#151A25]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all text-secondary",
                                 lastSide === "A" ? "border-red-500 animate-pulse" :
                                     lastSide === "B" ? "border-green-500 animate-pulse" :
-                                        "border-[#83E9FF33] hover:border-[#83E9FF66]",
+                                        "border-white/10 hover:border-white/20",
                                 "group"
                             )}>
                                 <div className="flex items-center gap-1.5">
@@ -131,7 +131,7 @@ Source: @Liquidterminal`;
                                         height={11}
                                         className="text-brand-accent"
                                     />
-                                    <span className="text-[#FFFFFF] text-[10px] font-medium">HYPE</span>
+                                    <span className="text-white text-[10px] font-medium">HYPE</span>
                                 </div>
                                 <div className={cn(
                                     "text-white text-xs lg:text-sm font-medium transition-colors",
@@ -145,10 +145,10 @@ Source: @Liquidterminal`;
 
                             {/* HYPE Buy Pressure Display */}
                             <div className={cn(
-                                "bg-brand-tertiary/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
+                                "bg-[#151A25]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
                                 buyPressure > 0 ? "border-green-500/50 hover:border-green-500" :
                                     buyPressure < 0 ? "border-red-500/50 hover:border-red-500" :
-                                        "border-[#83E9FF33] hover:border-[#83E9FF66]",
+                                        "border-white/10 hover:border-white/20",
                                 "group"
                             )}>
                                 <div className="flex items-center gap-1.5">
@@ -157,7 +157,7 @@ Source: @Liquidterminal`;
                                             buyPressure < 0 ? "text-red-400" :
                                                 "text-brand-accent"
                                     )} />
-                                    <span className="text-[#FFFFFF] text-[10px] font-medium">TWAPs HYPE buy</span>
+                                    <span className="text-white text-[10px] font-medium">TWAPs HYPE buy</span>
                                 </div>
                                 <div className={cn(
                                     "text-xs lg:text-sm font-medium transition-colors",
@@ -171,43 +171,43 @@ Source: @Liquidterminal`;
 
                             {/* Combined Fees and Assistance Fund Display with Share Button - Desktop only */}
                             {feesStats && assistanceFund && !feesLoading && !feesError && !assistanceFundLoading && !assistanceFundError && (
-                                <div className="hidden md:block bg-brand-tertiary/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-[#83E9FF66] group relative">
+                                <div className="hidden md:block bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-white/20 group relative">
                                     <div className="flex items-center gap-3">
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <Clock size={11} className="text-brand-gold" />
-                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Hourly fees</span>
+                                                <span className="text-white text-[10px] font-medium">Hourly fees</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatFee(feesStats.hourlyFees)}
                                             </div>
                                         </div>
 
-                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+                                        <div className="w-px h-8 bg-white/10"></div>
 
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <CalendarDays size={11} className="text-brand-gold" />
-                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Daily fees</span>
+                                                <span className="text-white text-[10px] font-medium">Daily fees</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatFee(feesStats.dailyFees)}
                                             </div>
                                         </div>
 
-                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+                                        <div className="w-px h-8 bg-white/10"></div>
 
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <Shield size={11} className="text-brand-success" />
-                                                <span className="text-[#FFFFFF] text-[10px] font-medium">Assistance Fund</span>
+                                                <span className="text-white text-[10px] font-medium">Assistance Fund</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatHypeBalance(assistanceFund.hypeBalance)} HYPE ({formatCompactUsd(assistanceFund.hypeValueUsd)})
                                             </div>
                                         </div>
 
-                                        <div className="w-px h-8 bg-[#83E9FF33]"></div>
+                                        <div className="w-px h-8 bg-white/10"></div>
 
                                         <a
                                             href={generateTwitterUrl()}
@@ -235,22 +235,22 @@ Source: @Liquidterminal`;
                     <div className="md:hidden w-full px-2 sm:px-4 py-2">
                         <div className="flex items-center gap-2 overflow-x-auto">
                             {/* Fees combined */}
-                            <div className="bg-brand-tertiary/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 py-1.5 transition-all hover:border-[#83E9FF66] group flex-shrink-0">
+                            <div className="bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-1.5 transition-all hover:border-white/20 group flex-shrink-0">
                                 <div className="flex items-center gap-2">
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-1">
                                             <Clock size={9} className="text-brand-gold" />
-                                            <span className="text-[#FFFFFF] text-[9px] font-medium">1H</span>
+                                            <span className="text-white text-[9px] font-medium">1H</span>
                                         </div>
                                         <div className="text-white text-xs font-medium group-hover:text-brand-accent transition-colors">
                                             {formatFee(feesStats.hourlyFees)}
                                         </div>
                                     </div>
-                                    <div className="w-px h-6 bg-[#83E9FF33]"></div>
+                                    <div className="w-px h-6 bg-white/10"></div>
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-1">
                                             <CalendarDays size={9} className="text-brand-gold" />
-                                            <span className="text-[#FFFFFF] text-[9px] font-medium">24H</span>
+                                            <span className="text-white text-[9px] font-medium">24H</span>
                                         </div>
                                         <div className="text-white text-xs font-medium group-hover:text-brand-accent transition-colors">
                                             {formatFee(feesStats.dailyFees)}
@@ -260,10 +260,10 @@ Source: @Liquidterminal`;
                             </div>
 
                             {/* Assistance Fund */}
-                            <div className="bg-brand-tertiary/40 backdrop-blur-sm border border-[#83E9FF33] rounded-lg px-2 py-1.5 transition-all hover:border-[#83E9FF66] group flex-shrink-0">
+                            <div className="bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-1.5 transition-all hover:border-white/20 group flex-shrink-0">
                                 <div className="flex items-center gap-1">
                                     <Shield size={9} className="text-brand-success" />
-                                    <span className="text-[#FFFFFF] text-[9px] font-medium">Fund</span>
+                                    <span className="text-white text-[9px] font-medium">Fund</span>
                                 </div>
                                 <div className="text-white text-xs font-medium group-hover:text-brand-accent transition-colors">
                                     {formatCompactUsd(assistanceFund.hypeValueUsd)}

@@ -27,7 +27,7 @@ export function ProjectInfoSidebar({
     return (
         <div className="space-y-6">
             {/* Contact */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="glass-panel p-6 rounded-2xl">
                 <h3 className="text-sm font-bold text-white mb-4">Contact</h3>
                 <div className="space-y-3">
                     {project.discordContact && (
@@ -50,7 +50,7 @@ export function ProjectInfoSidebar({
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="glass-panel p-6 rounded-2xl">
                 <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -78,7 +78,7 @@ export function ProjectInfoSidebar({
 
             {/* Actions */}
             {(canEdit || canDelete || canReview) && (
-                <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <div className="glass-panel p-6 rounded-2xl">
                     <h3 className="text-sm font-bold text-white mb-4">Manage Project</h3>
                     <div className="space-y-3">
                         {canReview && onReview && (

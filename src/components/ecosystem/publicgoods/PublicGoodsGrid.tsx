@@ -39,7 +39,7 @@ export function PublicGoodsGrid<T>({
 
     if (items.length === 0) {
         return (
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+            <div className="glass-panel p-8">
                 <div className="text-center py-8">
                     <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                         {emptyState.icon || <Plus className="w-8 h-8 text-brand-accent" />}

@@ -185,7 +185,7 @@ export function ImportWalletsCSVDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-brand-tertiary border-2 border-[#83E9FF4D] text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white max-w-3xl max-h-[85vh] shadow-2xl shadow-black/40">
         <DialogHeader>
           <DialogTitle>Import Wallets from CSV</DialogTitle>
           <DialogDescription className="text-white">
@@ -199,11 +199,10 @@ export function ImportWalletsCSVDialog({
           {/* Upload Area */}
           {!hasWallets && (
             <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                isDragging
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
                   ? "border-brand-accent bg-[#83E9FF10]"
-                  : "border-[#83E9FF4D] hover:border-[#83E9FF80]"
-              }`}
+                  : "border-white/10 hover:border-white/20 hover:bg-white/5"
+                }`}
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDragging(true);
@@ -217,7 +216,7 @@ export function ImportWalletsCSVDialog({
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+                className="border-white/10 text-white hover:bg-white/5"
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Choose File
@@ -236,7 +235,7 @@ export function ImportWalletsCSVDialog({
           {hasWallets && (
             <div className="space-y-3">
               {/* Stats */}
-              <div className="flex items-center justify-between p-3 bg-[#0C2237] rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
@@ -270,15 +269,14 @@ export function ImportWalletsCSVDialog({
               </div>
 
               {/* Wallet List */}
-              <div className="max-h-[300px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-[#0C2237]">
+              <div className="max-h-[300px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                 {parsedWallets.map((wallet, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg border ${
-                      wallet.isValid
-                        ? "bg-[#0C2237] border-[#83E9FF4D]"
+                    className={`p-3 rounded-lg border ${wallet.isValid
+                        ? "bg-zinc-800/50 border-white/10"
                         : "bg-red-950/20 border-red-900/30"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start gap-2">
                       {wallet.isValid ? (
@@ -309,7 +307,7 @@ export function ImportWalletsCSVDialog({
           )}
 
           {/* Help Text */}
-          <div className="flex items-start gap-2 p-3 bg-[#0C2237] rounded-lg">
+          <div className="flex items-start gap-2 p-3 bg-black/20 rounded-lg">
             <AlertCircle className="w-4 h-4 text-brand-accent mt-0.5 shrink-0" />
             <div className="flex-1">
               <p className="text-xs text-gray-400">
@@ -332,7 +330,7 @@ export function ImportWalletsCSVDialog({
           <Button
             variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20]"
+            className="border-white/10 text-white hover:bg-white/5"
           >
             Cancel
           </Button>

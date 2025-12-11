@@ -1,6 +1,6 @@
 import { StatusBadge } from "@/components/ui/status-badge";
 
-export function ProjectStatusBadge({ status }: { status: string }) {
+export function ProjectStatusBadge({ status, className }: { status: string, className?: string }) {
     const getVariant = (status: string) => {
         switch (status.toUpperCase()) {
             case 'APPROVED':
@@ -15,7 +15,7 @@ export function ProjectStatusBadge({ status }: { status: string }) {
     };
 
     return (
-        <StatusBadge variant={getVariant(status)}>
+        <StatusBadge variant={getVariant(status)} className={className}>
             {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
         </StatusBadge>
     );

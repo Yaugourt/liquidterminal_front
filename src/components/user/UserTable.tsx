@@ -17,14 +17,14 @@ interface UserTableProps {
   onVerifiedChange: (userId: string, verified: boolean) => void;
 }
 
-export function UserTable({ 
-  users, 
-  isLoading, 
-  currentUserId, 
-  isUpdating, 
-  onEditUser, 
-  onDeleteUser, 
-  onVerifiedChange 
+export function UserTable({
+  users,
+  isLoading,
+  currentUserId,
+  isUpdating,
+  onEditUser,
+  onDeleteUser,
+  onVerifiedChange
 }: UserTableProps) {
   // Function to get role icon
   const getRoleIcon = (role: string) => {
@@ -52,12 +52,12 @@ export function UserTable({
 
   if (isLoading) {
     return (
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+      <Card className="bg-[#151A25]/90 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20">
         <CardContent className="p-0">
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-gold mx-auto mb-3"></div>
-              <p className="text-[#FFFFFF80] font-inter text-sm">Loading users...</p>
+              <p className="text-zinc-500 font-inter text-sm">Loading users...</p>
             </div>
           </div>
         </CardContent>
@@ -67,12 +67,12 @@ export function UserTable({
 
   if (!users || users.length === 0) {
     return (
-      <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+      <Card className="bg-[#151A25]/90 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20">
         <CardContent className="p-0">
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <Users className="w-8 h-8 text-brand-gold mx-auto mb-3 opacity-50" />
-              <p className="text-[#FFFFFF80] font-inter text-sm">No users found</p>
+              <p className="text-zinc-500 font-inter text-sm">No users found</p>
             </div>
           </div>
         </CardContent>
@@ -81,8 +81,8 @@ export function UserTable({
   }
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
-      <CardHeader className="border-b border-[#83E9FF1A] pb-3">
+    <Card className="bg-[#151A25]/90 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20">
+      <CardHeader className="border-b border-white/5 pb-3">
         <CardTitle className="text-white flex items-center space-x-2 font-inter text-base">
           <Users className="w-4 h-4 text-brand-gold" />
           <span>Users ({users.length})</span>
@@ -92,26 +92,24 @@ export function UserTable({
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#83E9FF1A]">
-                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">User</th>
-                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Role</th>
-                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Status</th>
-                <th className="text-left p-3 text-brand-gold font-medium font-inter text-xs">Date</th>
-                <th className="text-right p-3 text-brand-gold font-medium font-inter text-xs">Actions</th>
+              <tr className="border-b border-white/5">
+                <th className="text-left p-3 text-zinc-400 font-semibold uppercase tracking-wider font-inter text-[10px]">User</th>
+                <th className="text-left p-3 text-zinc-400 font-semibold uppercase tracking-wider font-inter text-[10px]">Role</th>
+                <th className="text-left p-3 text-zinc-400 font-semibold uppercase tracking-wider font-inter text-[10px]">Status</th>
+                <th className="text-left p-3 text-zinc-400 font-semibold uppercase tracking-wider font-inter text-[10px]">Date</th>
+                <th className="text-right p-3 text-zinc-400 font-semibold uppercase tracking-wider font-inter text-[10px]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, index) => (
-                <tr 
-                  key={user.id} 
-                  className={`border-b border-[#83E9FF0A] hover:bg-[#83E9FF05] transition-colors ${
-                    index % 2 === 0 ? 'bg-[#0517281A]' : ''
-                  }`}
+                <tr
+                  key={user.id}
+                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
                 >
                   <td className="p-3">
                     <div>
                       <p className="font-medium text-white font-inter text-sm">{user.name}</p>
-                      <p className="text-xs text-[#FFFFFF80] font-inter">{user.email || 'No email'}</p>
+                      <p className="text-xs text-zinc-500 font-inter">{user.email || 'No email'}</p>
                     </div>
                   </td>
                   <td className="p-3">
@@ -128,7 +126,7 @@ export function UserTable({
                         checked={user.verified}
                         onCheckedChange={(checked) => onVerifiedChange(user.id, checked)}
                         disabled={isUpdating}
-                        className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#83E9FF1A] scale-75"
+                        className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-zinc-700 scale-75"
                       />
                       <span className={`text-xs ${user.verified ? 'text-green-400' : 'text-red-400'} font-inter`}>
                         {user.verified ? 'Verified' : 'Not verified'}
@@ -136,7 +134,7 @@ export function UserTable({
                     </div>
                   </td>
                   <td className="p-3">
-                    <span className="text-xs text-[#FFFFFF80] font-inter">
+                    <span className="text-xs text-zinc-500 font-inter">
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US') : 'N/A'}
                     </span>
                   </td>
@@ -146,7 +144,7 @@ export function UserTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEditUser(user)}
-                        className="text-brand-gold hover:bg-[#f9e3701A] hover:text-white font-inter h-7 w-7 p-0"
+                        className="text-zinc-400 hover:text-white hover:bg-white/5 font-inter h-7 w-7 p-0"
                       >
                         <Edit className="w-3 h-3" />
                       </Button>
@@ -155,7 +153,7 @@ export function UserTable({
                         size="sm"
                         disabled={user.id === currentUserId}
                         onClick={() => onDeleteUser(user.id)}
-                        className="text-red-400 hover:bg-red-400/10 hover:text-red-300 font-inter h-7 w-7 p-0"
+                        className="text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 font-inter h-7 w-7 p-0"
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>

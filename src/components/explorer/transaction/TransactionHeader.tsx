@@ -17,9 +17,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
       await navigator.clipboard.writeText(text);
       setCopiedValue(text);
       setTimeout(() => setCopiedValue(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   const truncateAddress = (address: string) => {
@@ -30,7 +30,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
   };
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] p-6 shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+    <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
@@ -46,11 +46,11 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             </p>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <p className="text-white text-sm mb-1 font-inter">Block:</p>
-            <Link 
+            <Link
               href={`/explorer/block/${transaction.block}`}
               className="text-[#F9E370] text-base hover:text-[#F9E370]/80 transition-colors font-inter"
             >
@@ -60,7 +60,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
           <div>
             <p className="text-white text-sm mb-1 font-inter">User:</p>
             <div className="flex items-center gap-2">
-              <Link 
+              <Link
                 href={`/explorer/address/${transaction.user}`}
                 className="text-brand-accent text-base hover:text-brand-accent/80 transition-colors font-inter"
               >
@@ -81,11 +81,11 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
           </div>
         </div>
       </div>
-      
+
       {transaction.error && (
-        <div className="mt-4 p-3 bg-[#FF000033] border border-[#FF000066] rounded-lg">
+        <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
           <p className="text-white text-sm mb-1 font-inter">Error:</p>
-          <p className="text-[#FF6B6B] text-sm font-inter">{transaction.error}</p>
+          <p className="text-rose-400 text-sm font-inter">{transaction.error}</p>
         </div>
       )}
     </Card>

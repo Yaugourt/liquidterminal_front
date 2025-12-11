@@ -25,9 +25,9 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
           setCopiedValues((prev) => ({ ...prev, [key]: false }));
         }, 2000);
       })
-              .catch(() => {
-          // Error handled silently
-        });
+      .catch(() => {
+        // Error handled silently
+      });
   }, []);
 
   return (
@@ -47,8 +47,8 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
           </button>
         </div>
       </div>
-      
-      <Card className="bg-[#051728E5]/80 backdrop-blur-sm border-2 border-[#83E9FF4D] p-5 shadow-md hover:border-[#83E9FF40] transition-all duration-300 mb-6">
+
+      <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-5 shadow-xl shadow-black/20 hover:border-white/10 transition-all duration-300 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
           <div className="space-y-5">
             <div>
@@ -66,7 +66,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Hash</p>
               </div>
               <div className="flex items-center gap-1.5 ml-6">
-                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent font-inter">
+                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent font-inter">
                   {blockDetails.hash}
                 </p>
                 <button
@@ -89,9 +89,9 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Proposer</p>
               </div>
               <div className="flex items-center gap-1.5 ml-6">
-                <Link 
+                <Link
                   href={`/explorer/address/${blockDetails.proposer}`}
-                  className="text-brand-accent break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent hover:text-brand-accent/80 transition-colors font-inter"
+                  className="text-brand-accent break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:text-brand-accent/80 transition-colors font-inter"
                 >
                   {blockDetails.proposer}
                 </Link>

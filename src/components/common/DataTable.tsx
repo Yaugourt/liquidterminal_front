@@ -33,10 +33,10 @@ export function DataTable({
 }: DataTableProps) {
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-[300px] w-full bg-brand-secondary/20 backdrop-blur-sm border border-white/5 rounded-2xl">
+            <div className="flex justify-center items-center h-[300px] w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl">
                 <div className="flex flex-col items-center">
                     <Loader2 className="h-8 w-8 animate-spin text-brand-accent mb-3" />
-                    <span className="text-[#FFFFFF80] text-sm">{loadingMessage}</span>
+                    <span className="text-zinc-500 text-sm">{loadingMessage}</span>
                 </div>
             </div>
         );
@@ -44,11 +44,11 @@ export function DataTable({
 
     if (error) {
         return (
-            <div className="flex justify-center items-center h-[300px] w-full bg-brand-secondary/20 backdrop-blur-sm border border-white/5 rounded-2xl">
+            <div className="flex justify-center items-center h-[300px] w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl">
                 <div className="flex flex-col items-center text-center px-4">
                     <AlertCircle className="w-12 h-12 mb-4 text-rose-500/50" />
                     <p className="text-rose-400 text-lg mb-2">{errorMessage}</p>
-                    <p className="text-[#FFFFFF80] text-sm">{error.message}</p>
+                    <p className="text-zinc-500 text-sm">{error.message}</p>
                 </div>
             </div>
         );
@@ -56,13 +56,13 @@ export function DataTable({
 
     if (isEmpty) {
         return (
-            <div className="flex justify-center items-center h-[300px] w-full bg-brand-secondary/20 backdrop-blur-sm border border-white/5 rounded-2xl">
+            <div className="flex justify-center items-center h-[300px] w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl">
                 <div className="flex flex-col items-center text-center px-4">
-                    <div className="w-16 h-16 mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-                        {emptyState?.icon || <Database className="w-8 h-8 text-brand-accent" />}
+                    <div className="w-16 h-16 mb-4 bg-white/5 rounded-2xl flex items-center justify-center">
+                        {emptyState?.icon || <Database className="w-8 h-8 text-zinc-600" />}
                     </div>
                     <p className="text-white text-lg mb-2">{emptyState?.title || "No data available"}</p>
-                    <p className="text-[#FFFFFF80] text-sm mb-4">{emptyState?.description || "There is no data to display at this time."}</p>
+                    <p className="text-zinc-500 text-sm mb-4">{emptyState?.description || "There is no data to display at this time."}</p>
                     {emptyState?.action}
                 </div>
             </div>
@@ -71,7 +71,7 @@ export function DataTable({
 
     return (
         <div className="space-y-4">
-            <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent rounded-lg border border-white/5 bg-brand-secondary/60", className)}>
+            <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent rounded-lg border border-white/5 bg-[#151A25]/60 backdrop-blur-md", className)}>
                 {children}
             </div>
 

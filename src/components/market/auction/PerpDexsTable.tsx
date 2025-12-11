@@ -16,7 +16,7 @@ const EmptyState = memo(() => (
   <TableRow>
     <TableCell colSpan={6} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-4 text-[#83E9FF4D]" />
+        <Database className="w-10 h-10 mb-4 text-white/20" />
         <p className="text-white text-lg">Aucun DEX perpétuel disponible</p>
         <p className="text-[#FFFFFF80] text-sm mt-2">Vérifiez plus tard</p>
       </div>
@@ -65,12 +65,12 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
       await navigator.clipboard.writeText(address);
       setCopiedAddress(address);
       setTimeout(() => setCopiedAddress(null), 1200);
-    } catch {}
+    } catch { }
   };
 
   if (isLoading) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
         <div className="flex justify-center items-center h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         </div>
@@ -80,7 +80,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
   if (error) {
     return (
-      <Card className="w-full bg-[#051728E5] border-2 border-[#FF4D4F] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
+      <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
         <div className="flex justify-center items-center h-[200px]">
           <span className="text-red-500 text-lg">Erreur lors du chargement des DEXs perpétuels</span>
         </div>
@@ -89,27 +89,27 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
   }
 
   return (
-    <Card className="w-full bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+    <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-none bg-brand-tertiary">
-              <TableHead className="pl-4 w-[12%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Name</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Full Name</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Deployer</TableHead>
-              <TableHead className="pl-2 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Oracle Updater</TableHead>
-              <TableHead className="pl-2 w-[18%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Fee Recipient</TableHead>
-              <TableHead className="pl-2 pr-4 w-[15%] text-left text-white font-normal py-1 bg-brand-tertiary text-sm">Gas (HYPE)</TableHead>
+            <TableRow className="border-b border-white/5 hover:bg-transparent bg-transparent">
+              <TableHead className="pl-4 w-[12%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Full Name</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Deployer</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span></TableHead>
+              <TableHead className="pl-2 w-[18%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span></TableHead>
+              <TableHead className="pl-2 pr-4 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Gas (HYPE)</span></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-brand-tertiary">
+          <TableBody className="bg-transparent">
             {validPerpDexs.length === 0 ? (
               <EmptyState />
             ) : (
               validPerpDexs.map((dex) => (
                 <TableRow
                   key={dex.name}
-                  className="border-b border-[#FFFFFF1A] hover:bg-brand-tertiary transition-colors cursor-pointer"
+                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer"
                 >
                   {/* Name */}
                   <TableCell className="py-2 pl-4 text-white text-sm text-left">
@@ -125,8 +125,8 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                   <TableCell className="py-2 pl-2 text-white text-sm text-left">
                     <div className="flex items-center gap-1.5">
                       <span className="text-brand-accent font-inter">{dex.deployerName || getDeployerName(dex.deployer)}</span>
-                      <button 
-                        onClick={e => { e.preventDefault(); handleCopy(dex.deployer); }} 
+                      <button
+                        onClick={e => { e.preventDefault(); handleCopy(dex.deployer); }}
                         className="group p-1 rounded transition-colors"
                         title={dex.deployer}
                       >
@@ -144,8 +144,8 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                     {dex.oracleUpdater ? (
                       <div className="flex items-center gap-1.5">
                         <span className="text-brand-accent font-inter">{formatAddress(dex.oracleUpdater)}</span>
-                        <button 
-                          onClick={e => { e.preventDefault(); handleCopy(dex.oracleUpdater!); }} 
+                        <button
+                          onClick={e => { e.preventDefault(); handleCopy(dex.oracleUpdater!); }}
                           className="group p-1 rounded transition-colors"
                         >
                           {copiedAddress === dex.oracleUpdater ? (
@@ -165,8 +165,8 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
                     {dex.feeRecipient ? (
                       <div className="flex items-center gap-1.5">
                         <span className="text-brand-accent font-inter">{formatAddress(dex.feeRecipient)}</span>
-                        <button 
-                          onClick={e => { e.preventDefault(); handleCopy(dex.feeRecipient!); }} 
+                        <button
+                          onClick={e => { e.preventDefault(); handleCopy(dex.feeRecipient!); }}
                           className="group p-1 rounded transition-colors"
                         >
                           {copiedAddress === dex.feeRecipient ? (

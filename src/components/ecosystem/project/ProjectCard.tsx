@@ -17,8 +17,8 @@ interface ProjectCardProps {
   showSelection?: boolean;
 }
 
-export const ProjectCard = memo(function ProjectCard({ 
-  project, 
+export const ProjectCard = memo(function ProjectCard({
+  project,
   onDelete,
   isDeleting = false,
   isSelected = false,
@@ -50,9 +50,8 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-5 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative ${
-      isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
-    }`}>
+    <div className={`glass-token-card p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
+      }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
         <ProtectedAction requiredRole="ADMIN" user={user}>
@@ -101,7 +100,7 @@ export const ProjectCard = memo(function ProjectCard({
             </div>
           )}
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
             <h3 className="text-base text-white font-semibold truncate">
@@ -117,11 +116,11 @@ export const ProjectCard = memo(function ProjectCard({
               </div>
             )}
           </div>
-          
+
           <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
             {project.desc}
           </p>
-          
+
           {socialLinks.length > 0 && (
             <div className="flex items-center gap-3">
               {socialLinks.map((link, index) => {

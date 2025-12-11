@@ -41,13 +41,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
-    
+
     // Hydration fix: track if component has mounted
     const [hasMounted, setHasMounted] = useState(false);
-    
+
     // Sidebar preferences
     const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
-    
+
     // Always use defaultNavigationGroups for SSR, only apply preferences after mount
     const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
 
@@ -151,8 +151,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             href={item.href}
                                                             className={cn(
                                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
-                                                                isActive 
-                                                                    ? "bg-brand-accent/10 text-brand-accent" 
+                                                                isActive
+                                                                    ? "bg-brand-accent/10 text-brand-accent"
                                                                     : "text-zinc-300 hover:bg-white/5 hover:text-white"
                                                             )}
                                                             onClick={() => setIsOpen(false)}
@@ -181,8 +181,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             }}
                                                             className={cn(
                                                                 "p-1 rounded transition-all",
-                                                                isActive 
-                                                                    ? "text-brand-accent hover:bg-white/5" 
+                                                                isActive
+                                                                    ? "text-brand-accent hover:bg-white/5"
                                                                     : "text-zinc-400 hover:bg-white/5 hover:text-white"
                                                             )}
                                                         >
@@ -194,8 +194,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                         href={item.href}
                                                         className={cn(
                                                             "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
-                                                            isActive 
-                                                                ? "bg-brand-accent/10 text-brand-accent" 
+                                                            isActive
+                                                                ? "bg-brand-accent/10 text-brand-accent"
                                                                 : "text-zinc-300 hover:bg-white/5 hover:text-white"
                                                         )}
                                                         onClick={() => setIsOpen(false)}
@@ -266,7 +266,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             className={cn(
                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
                                                 pathname === '/user'
-                                                    ? "bg-brand-gold/10 text-brand-gold" 
+                                                    ? "bg-brand-gold/10 text-brand-gold"
                                                     : "text-zinc-300 hover:bg-white/5 hover:text-brand-gold"
                                             )}
                                             onClick={() => setIsOpen(false)}
@@ -299,7 +299,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-2 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-xl">
+                        <div className="p-2 glass-card rounded-xl">
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/profile"
@@ -308,7 +308,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 >
                                     <Avatar className="h-7 w-7 ring-1 ring-white/10 shrink-0">
                                         {privyUser?.twitter?.profilePictureUrl ? (
-                                            <Image 
+                                            <Image
                                                 src={privyUser.twitter.profilePictureUrl}
                                                 alt="Avatar"
                                                 width={28}
@@ -325,9 +325,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                         {privyUser?.twitter?.username || "User"}
                                     </p>
                                 </Link>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => logout()}
                                     className="h-7 w-7 shrink-0 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
                                 >
@@ -366,9 +366,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             rel="noopener noreferrer"
                             className="group p-1.5 rounded-lg hover:bg-white/5 transition-colors"
                         >
-                            <Icon 
-                                icon={item.iconName} 
-                                className="h-4 w-4 text-zinc-500 group-hover:text-brand-accent transition-colors" 
+                            <Icon
+                                icon={item.iconName}
+                                className="h-4 w-4 text-zinc-500 group-hover:text-brand-accent transition-colors"
                             />
                         </a>
                     ))}
