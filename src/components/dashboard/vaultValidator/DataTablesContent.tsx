@@ -98,9 +98,14 @@ const ValidatorsTableComponent = ({
     {
       header: "Name",
       accessor: (item: ExtendedValidator) => {
-        const address = item.validator || item.address || item.name;
+        const address = item.validator || item.address || "";
         return (
-          <AddressDisplay address={address} truncate={false} className="text-white hover:text-brand-accent" />
+          <AddressDisplay
+            address={address}
+            label={<span className="text-white font-medium truncate block max-w-[200px]" title={item.name}>{item.name}</span>}
+            truncate={false}
+            className="text-white hover:text-brand-accent max-w-full"
+          />
         );
       },
       align: "left",
@@ -153,7 +158,12 @@ const VaultTableComponent = ({
     {
       header: "Name",
       accessor: (item: VaultTableProps["vaults"][0]) => (
-        <AddressDisplay address={item.vaultAddress || ""} truncate={true} />
+        <AddressDisplay
+          address={item.vaultAddress || ""}
+          label={<span className="text-white font-medium truncate block max-w-[150px]" title={item.name}>{item.name}</span>}
+          truncate={false}
+          className="max-w-full"
+        />
       ),
       align: "left",
       className: "w-[220px] px-4"

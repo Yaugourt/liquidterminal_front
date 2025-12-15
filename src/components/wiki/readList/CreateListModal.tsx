@@ -3,6 +3,12 @@
 import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CreateListModalProps {
   isOpen: boolean;
@@ -26,9 +32,11 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-md w-full mx-4">
-        <h2 className="text-white text-lg font-bold mb-4">Create Read List</h2>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="bg-brand-secondary border-white/10 sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-white">Create Read List</DialogTitle>
+        </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
@@ -48,7 +56,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 name="description"
                 placeholder="Description (optional)"
                 maxLength={500}
-                className="w-full p-3 bg-brand-dark border border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 focus:outline-none transition-colors"
+                className="w-full p-3 bg-brand-dark border border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px]"
                 rows={3}
               />
             </div>
@@ -84,7 +92,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
             <p className="text-rose-400 text-sm mt-2">{error}</p>
           )}
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 } 

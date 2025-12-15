@@ -80,6 +80,7 @@ export function TableContent({
               title: "No validators available"
             }}
             pagination={pagination}
+            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
           >
             <Table className="w-full">
               <TableHeader>
@@ -147,6 +148,7 @@ export function TableContent({
               title: "No transactions available"
             }}
             pagination={pagination}
+            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
           >
             <Table className="w-full">
               <TableHeader>
@@ -210,6 +212,7 @@ export function TableContent({
               title: "No pending unstaking requests"
             }}
             pagination={pagination}
+            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
           >
             <Table className="w-full">
               <TableHeader>

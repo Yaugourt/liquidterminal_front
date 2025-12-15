@@ -3,7 +3,14 @@
 import { ExternalLink, Plus, BookOpen, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
@@ -26,35 +33,17 @@ interface ResourceCardProps {
   isDeleting?: boolean;
 }
 
-export function ResourceCard({ resource,  onDelete, isDeleting = false }: ResourceCardProps) {
+export function ResourceCard({ resource, onDelete, isDeleting = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);
   const { readLists, addItemToReadList } = useReadLists();
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, authenticated } = useAuthContext();
-  
+
   // Load link preview
   const { data: preview, isLoading: previewLoading } = useLinkPreview(
     resource.url && resource.url.startsWith('http') ? resource.url : ''
   );
-
-  // Fermer le dropdown quand on clique ailleurs
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowReadLists(false);
-      }
-    };
-
-    if (showReadLists) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showReadLists]);
 
   const handleAddToReadList = async (readListId: number) => {
     try {
@@ -98,11 +87,11 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
           </Button>
         </div>
       </ProtectedAction>
-      
+
       <div className="p-0">
-        <a 
-          href={resource.url} 
-          target="_blank" 
+        <a
+          href={resource.url}
+          target="_blank"
           rel="noopener noreferrer"
           className="block"
         >
@@ -147,8 +136,8 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
             </p>
 
             <div className="flex items-center justify-between pt-2 border-t border-white/5">
-              <Badge 
-                variant="secondary" 
+              <Badge
+                variant="secondary"
                 className="bg-brand-dark text-zinc-400 border border-white/5 text-xs rounded-md"
               >
                 {preview?.siteName || 'Article'}
@@ -157,7 +146,7 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                 {previewLoading && (
                   <span className="text-xs text-zinc-500">Loading...</span>
                 )}
-             
+
                 <Button
                   size="sm"
                   variant="ghost"
@@ -169,11 +158,10 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                       setShowReadLists(!showReadLists);
                     }
                   }}
-                  className={`p-1.5 h-auto rounded-lg ${
-                    authenticated 
-                      ? "text-brand-accent hover:bg-brand-accent/10" 
-                      : "text-zinc-600 cursor-not-allowed"
-                  }`}
+                  className={`p-1.5 h-auto rounded-lg ${authenticated
+                    ? "text-brand-accent hover:bg-brand-accent/10"
+                    : "text-zinc-600 cursor-not-allowed"
+                    }`}
                   title={authenticated ? "Add to read list" : "Login required to add to read list"}
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -184,18 +172,13 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
         </a>
 
         {/* Read Lists Modal */}
-        {showReadLists && authenticated && (
-          <div 
-            ref={dropdownRef} 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowReadLists(false);
-              }
-            }}
-          >
-            <div className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-6 max-w-sm w-full mx-4">
-              <div className="text-sm font-bold text-white mb-4">Add to read list:</div>
+        {/* Read Lists Modal */}
+        <Dialog open={showReadLists && authenticated} onOpenChange={(open) => !open && setShowReadLists(false)}>
+          <DialogContent className="max-w-sm bg-brand-secondary border-white/10 p-6 z-[9999]">
+            <DialogHeader>
+              <DialogTitle className="text-sm font-bold text-white mb-4">Add to read list:</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
               {readLists.length === 0 ? (
                 <div className="text-sm text-zinc-500 py-4 text-center">
                   No read lists available
@@ -224,21 +207,21 @@ export function ResourceCard({ resource,  onDelete, isDeleting = false }: Resour
                   ))}
                 </div>
               )}
-              <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowReadLists(false);
-                  }}
-                  className="px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
-          </div>
-        )}
+            <DialogFooter className="mt-6 pt-4 border-t border-white/5 flex justify-end">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowReadLists(false);
+                }}
+                className="px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

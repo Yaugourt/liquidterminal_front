@@ -101,7 +101,7 @@ export function UserTable({
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+              {users.map((user) => (
                 <tr
                   key={user.id}
                   className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"

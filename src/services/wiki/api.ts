@@ -20,6 +20,7 @@ import { buildQueryParams } from '../common';
 export const fetchEducationalCategories = async (params?: CategoryParams): Promise<CategoriesResponse> => {
   return withErrorHandling(async () => {
     // Adapter les clés de paramètres pour correspondre à l'API (sortBy -> sort, sortOrder -> order)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const apiParams: Record<string, any> = { ...params };
     if (params?.sortBy) {
       apiParams.sort = params.sortBy;

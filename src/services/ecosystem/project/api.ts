@@ -23,6 +23,7 @@ import { buildQueryParams } from '../../common';
 export const fetchProjects = async (params?: ProjectQueryParams): Promise<ProjectsResponse> => {
   return withErrorHandling(async () => {
     // Pre-process params for specific backend requirements (comma-separated arrays)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const processedParams: Record<string, any> = { ...params };
 
     if (params?.categoryIds && Array.isArray(params.categoryIds)) {

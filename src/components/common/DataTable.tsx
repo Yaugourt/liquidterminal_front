@@ -71,7 +71,7 @@ export function DataTable({
 
     return (
         <div className="space-y-4">
-            <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent rounded-lg border border-white/5 bg-[#151A25]/60 backdrop-blur-md", className)}>
+            <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent rounded-lg", className)}>
                 {children}
             </div>
 

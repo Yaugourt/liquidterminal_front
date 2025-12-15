@@ -5,7 +5,7 @@
  * - arrays (repeated keys)
  * - booleans/numbers (converted to strings)
  */
-export const buildQueryParams = (params: Record<string, any>): URLSearchParams => {
+export const buildQueryParams = (params: Record<string, unknown>): URLSearchParams => {
     const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {

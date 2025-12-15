@@ -287,7 +287,7 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] glass-card rounded-2xl border-none flex flex-col">
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Submit Your Project</DialogTitle>
           <p className="text-zinc-400 text-sm">

@@ -49,7 +49,7 @@ export function AddressDisplay({
         <div className={cn("inline-flex items-center gap-1.5", className)} {...props}>
             <Link
                 href={linkHref}
-                className="font-mono text-xs text-brand-accent hover:text-white transition-colors"
+                className="font-sans text-sm font-bold text-brand-accent hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
             >
                 {label || displayAddress}
@@ -58,7 +58,7 @@ export function AddressDisplay({
             {showCopy && (
                 <button
                     onClick={handleCopy}
-                    className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                    className="text-brand-gold hover:text-[#fae88a] transition-colors p-0.5 rounded-md hover:bg-white/10"
                     aria-label="Copy address"
                 >
                     {copied ? (

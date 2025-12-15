@@ -11,15 +11,40 @@ interface UseTokenCandlesParams {
   refreshInterval?: number;
 }
 
+const getIntervalInMs = (interval: string): number => {
+  const value = parseInt(interval);
+  const unit = interval.slice(-1);
+
+  switch (unit) {
+    case 'm': return value * 60 * 1000;
+    case 'h': return value * 60 * 60 * 1000;
+    case 'd': return value * 24 * 60 * 60 * 1000;
+    case 'w': return value * 7 * 24 * 60 * 60 * 1000;
+    case 'M': return value * 30 * 24 * 60 * 60 * 1000; // Approx
+    default: return 24 * 60 * 60 * 1000; // Default 1d
+  }
+};
+
 export const useTokenCandles = ({
   coin,
-  interval = "1d", // Changed default to 15m
-  startTime = 1713225600000, // 16 avril 2024
-  endTime, // Remove default Date.now() to avoid constant changes
-  refreshInterval = 0 // Default 1 minute refresh
+  interval = "1d",
+  startTime,
+  endTime,
+  refreshInterval = 0
 }: UseTokenCandlesParams) => {
-  // Set endTime only once using useMemo to avoid constant changes
+
+  // Calculate dynamic start time if not provided (default to ~1000 candles back or appropriate history)
+  const calculatedStartTime = useMemo(() => {
+    if (startTime) return startTime;
+    const now = Date.now();
+    const intervalMs = getIntervalInMs(interval);
+    // Load 1000 candles by default for good history
+    return now - (1000 * intervalMs);
+  }, [startTime, interval]);
+
+  // Set endTime only once using useMemo or update when it changes effectively
   const fixedEndTime = useMemo(() => endTime || Date.now(), [endTime]);
+
   const {
     data,
     isLoading,
@@ -30,12 +55,12 @@ export const useTokenCandles = ({
       if (!coin) {
         return [];
       }
-      
-      const result = await fetchTokenCandles(coin, interval, startTime, fixedEndTime);
+
+      const result = await fetchTokenCandles(coin, interval, calculatedStartTime, fixedEndTime);
       return result;
     },
     refreshInterval,
-    dependencies: [coin, interval, startTime, fixedEndTime],
+    dependencies: [coin, interval, calculatedStartTime, fixedEndTime],
     maxRetries: 3,
     retryDelay: 1000
   });

@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { X, GripVertical, RotateCcw } from "lucide-react";
+import { GripVertical, RotateCcw } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   DndContext,
   closestCenter,
@@ -154,77 +161,70 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
     toast.success("Sidebar reset to default");
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="glass-card rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-white/5">
-          <div>
-            <h2 className="text-xl font-bold text-white">Customize Sidebar</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              Toggle visibility and drag to reorder sections
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="hover:bg-white/10"
-          >
-            <X className="w-5 h-5 text-white" />
-          </Button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
+        <div className="glass-card rounded-lg flex flex-col h-full max-h-[90vh]">
+          {/* Header */}
+          <DialogHeader className="p-6 border-b border-white/5 flex flex-row items-center justify-between space-y-0">
+            <div>
+              <DialogTitle className="text-xl font-bold text-white">Customize Sidebar</DialogTitle>
+              <DialogDescription className="text-sm text-gray-400 mt-1">
+                Toggle visibility and drag to reorder sections
+              </DialogDescription>
+            </div>
+            {/* Close button is handled by DialogContent's defaulting close button or we can keep this custom one if we hide the default */}
+          </DialogHeader>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={localGroups.map(g => g.id)}
-              strategy={verticalListSortingStrategy}
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              <div className="space-y-3">
-                {localGroups.map(group => {
-                  const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
-                  return (
-                    <SortableGroupItem
-                      key={group.id}
-                      group={group}
-                      groupName={navGroup?.groupName || null}
-                      onToggleGroup={handleToggleGroup}
-                      onToggleItem={handleToggleItem}
-                    />
-                  );
-                })}
-              </div>
-            </SortableContext>
-          </DndContext>
-        </div>
+              <SortableContext
+                items={localGroups.map(g => g.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {localGroups.map(group => {
+                    const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
+                    return (
+                      <SortableGroupItem
+                        key={group.id}
+                        group={group}
+                        groupName={navGroup?.groupName || null}
+                        onToggleGroup={handleToggleGroup}
+                        onToggleItem={handleToggleItem}
+                      />
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center p-6 border-t border-white/5">
-          <Button
-            variant="outline"
-            onClick={handleReset}
-            className="border-white/10 text-white hover:bg-white/10 gap-2"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset to Default
-          </Button>
-          <Button
-            onClick={onClose}
-            className="bg-brand-gold text-black hover:bg-brand-gold/90"
-          >
-            Done
-          </Button>
+          {/* Footer */}
+          <div className="flex justify-between items-center p-6 border-t border-white/5">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              className="border-white/10 text-white hover:bg-white/10 gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset to Default
+            </Button>
+            <Button
+              onClick={onClose}
+              className="bg-brand-gold text-black hover:bg-brand-gold/90"
+            >
+              Done
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
