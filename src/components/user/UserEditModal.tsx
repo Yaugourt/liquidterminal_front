@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +14,8 @@ import {
 } from '@/components/ui/select';
 import { User } from '@/services/auth/types';
 import { AdminUpdateUserInput } from '@/services/auth/user/types';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Edit } from 'lucide-react';
 
 interface UserEditModalProps {
   user: User | null;
@@ -38,75 +38,94 @@ export function UserEditModal({
 
   return (
     <Dialog open={!!user} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="sm:max-w-sm bg-[#151A25] border-white/5 p-0 gap-0 overflow-hidden">
-        <Card className="border-0 bg-transparent shadow-none">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-white font-inter text-base">Edit {user.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <Label htmlFor="name" className="text-white font-inter text-sm">Name</Label>
-              <Input
-                id="name"
-                value={editForm.name || ''}
-                onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-                className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50 font-inter text-sm h-8"
-              />
+      <DialogContent className="sm:max-w-md bg-[#151A25]/95 backdrop-blur-xl border-white/10 shadow-2xl shadow-black/50">
+        <DialogHeader className="pb-4 border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
+              <Edit className="w-5 h-5 text-[#83e9ff]" />
             </div>
             <div>
-              <Label htmlFor="email" className="text-white font-inter text-sm">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={editForm.email || ''}
-                onChange={(e) => onFormChange({ ...editForm, email: e.target.value })}
-                className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50 font-inter text-sm h-8"
-              />
+              <DialogTitle className="text-white text-lg font-bold">Edit User</DialogTitle>
+              <p className="text-zinc-400 text-xs mt-0.5">{user.name}</p>
             </div>
+          </div>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Name */}
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Name</Label>
+            <Input
+              id="name"
+              value={editForm.name || ''}
+              onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
+              className="bg-[#0A0D12] border-white/5 text-white focus:border-[#83E9FF]/50 text-sm h-9"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={editForm.email || ''}
+              onChange={(e) => onFormChange({ ...editForm, email: e.target.value })}
+              className="bg-[#0A0D12] border-white/5 text-white focus:border-[#83E9FF]/50 text-sm h-9"
+            />
+          </div>
+
+          {/* Role */}
+          <div className="space-y-2">
+            <Label htmlFor="role" className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Role</Label>
+            <Select
+              value={editForm.role || 'USER'}
+              onValueChange={(value) => onFormChange({ ...editForm, role: value as "USER" | "MODERATOR" | "ADMIN" })}
+            >
+              <SelectTrigger className="bg-[#0A0D12] border-white/5 text-white text-sm h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#151A25] border-white/10">
+                <SelectItem value="USER" className="text-white hover:bg-white/5 text-sm">User</SelectItem>
+                <SelectItem value="MODERATOR" className="text-white hover:bg-white/5 text-sm">Moderator</SelectItem>
+                <SelectItem value="ADMIN" className="text-white hover:bg-white/5 text-sm">Administrator</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Verified Toggle */}
+          <div className="flex items-center justify-between p-3 bg-[#0A0D12] rounded-xl border border-white/5">
             <div>
-              <Label htmlFor="role" className="text-white font-inter text-sm">Role</Label>
-              <Select
-                value={editForm.role || 'USER'}
-                onValueChange={(value) => onFormChange({ ...editForm, role: value as "USER" | "MODERATOR" | "ADMIN" })}
-              >
-                <SelectTrigger className="bg-black/20 border-white/10 text-white font-inter text-sm h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-[#151A25] border-white/10">
-                  <SelectItem value="USER" className="text-white hover:bg-white/5 font-inter text-sm">User</SelectItem>
-                  <SelectItem value="MODERATOR" className="text-white hover:bg-white/5 font-inter text-sm">Moderator</SelectItem>
-                  <SelectItem value="ADMIN" className="text-white hover:bg-white/5 font-inter text-sm">Administrator</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="verified" className="text-white text-sm font-medium">Verified</Label>
+              <p className="text-zinc-500 text-xs mt-0.5">User has verified their account</p>
             </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="verified"
-                checked={editForm.verified || false}
-                onCheckedChange={(checked) => onFormChange({ ...editForm, verified: checked })}
-                className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-zinc-700 scale-75"
-              />
-              <Label htmlFor="verified" className="text-white font-inter text-sm">Verified</Label>
-            </div>
-            <div className="flex space-x-2 pt-3">
-              <Button
-                onClick={onSave}
-                disabled={isUpdating}
-                className="flex-1 bg-brand-gold text-brand-tertiary hover:bg-[#f9e370CC] font-inter text-sm h-8 font-medium"
-              >
-                {isUpdating ? 'Updating...' : 'Update'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={onCancel}
-                className="border-white/10 text-zinc-300 hover:text-white hover:bg-white/5 font-inter text-sm h-8"
-              >
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            <Switch
+              id="verified"
+              checked={editForm.verified || false}
+              onCheckedChange={(checked) => onFormChange({ ...editForm, verified: checked })}
+              className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-zinc-700"
+            />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 pt-4 border-t border-white/5">
+          <Button
+            onClick={onSave}
+            disabled={isUpdating}
+            className="flex-1 bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/80 font-medium text-sm h-9"
+          >
+            {isUpdating ? 'Saving...' : 'Save Changes'}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={onCancel}
+            className="border border-white/10 text-zinc-300 hover:text-white hover:bg-white/5 text-sm h-9"
+          >
+            Cancel
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
-} 
+}
