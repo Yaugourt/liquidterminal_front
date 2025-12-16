@@ -46,10 +46,10 @@ export function AddressHeader({ address }: AddressHeaderProps) {
       </div>
       <div className="flex items-center gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
         <div className="hidden sm:block">
-                      <code className="text-brand-accent text-base font-medium font-inter">{address}</code>
+          <code className="text-brand-accent text-base font-medium font-mono">{address}</code>
         </div>
         <div className="sm:hidden">
-                      <code className="text-brand-accent text-sm font-medium font-inter">{formatAddress(address)}</code>
+          <code className="text-brand-accent text-sm font-medium font-mono">{formatAddress(address)}</code>
         </div>
         <TooltipProvider>
           <Tooltip open={showCopied}>

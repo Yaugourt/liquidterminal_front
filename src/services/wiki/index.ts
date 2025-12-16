@@ -1,13 +1,22 @@
 // API functions
-export { 
-  fetchEducationalCategories, 
-  fetchEducationalResources, 
-  fetchResourcesByCategory, 
+export {
+  fetchEducationalCategories,
+  fetchEducationalResources,
+  fetchResourcesByCategory,
   fetchResourcesByCategories,
   createEducationalCategory,
   createEducationalResource,
   deleteEducationalResource,
-  uploadCsvResources
+  uploadCsvResources,
+  // New submission/moderation API
+  submitResource,
+  fetchMySubmissions,
+  reportResource,
+  fetchPendingResources,
+  fetchPendingCount,
+  approveResource,
+  rejectResource,
+  fetchResourceReports
 } from './api';
 
 // Hooks
@@ -17,6 +26,13 @@ export { useCreateEducationalCategory } from './hooks/useCreateEducationalCatego
 export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
 export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
 export { useCsvUpload } from './hooks/useCsvUpload';
+// New submission/moderation hooks
+export { useSubmitResource } from './hooks/useSubmitResource';
+export { useMySubmissions } from './hooks/useMySubmissions';
+export { useReportResource } from './hooks/useReportResource';
+export { usePendingResources } from './hooks/usePendingResources';
+export { useModerationActions } from './hooks/useModerationActions';
+export { usePendingCount } from './hooks/usePendingCount';
 
 // Types
 export type {
@@ -40,7 +56,19 @@ export type {
   CsvUploadResult,
   CsvUploadResponse,
   CsvUploadErrorResponse,
-  CsvUploadApiResponse
+  CsvUploadApiResponse,
+  // New types
+  ResourceStatus,
+  ResourceReport,
+  ReportResourceInput,
+  ReportResourceResponse,
+  ApproveResourceInput,
+  RejectResourceInput,
+  PendingCountResponse,
+  ReportsResponse,
+  WikiErrorCode,
+  ContentFilterReason,
+  WikiApiError
 } from './types';
 
 // ReadList exports

@@ -270,18 +270,39 @@ export default function PerpDexDetailPage() {
 
           {/* Addresses */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AddressDisplay
-              address={dex.deployer}
-              label="Deployer"
-              copyMessage="Deployer address copied"
-              className="text-zinc-400 font-mono text-sm"
-            />
-            <AddressDisplay
-              address={dex.feeRecipient}
-              label="Fee Recipient"
-              copyMessage="Fee recipient address copied"
-              className="text-zinc-400 font-mono text-sm"
-            />
+            {/* Deployer Card */}
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Database className="h-3 w-3 text-brand-accent" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">DEPLOYER</span>
+              </div>
+              <AddressDisplay
+                address={dex.deployer}
+                showExternalLink={true}
+                externalLinkHref={`/explorer/address/${dex.deployer}`}
+                copyMessage="Deployer address copied"
+                className="text-brand-accent font-mono text-sm"
+              />
+            </div>
+
+            {/* Fee Recipient Card */}
+            <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+                  <Wallet className="h-3 w-3 text-brand-accent" />
+                </div>
+                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">FEE RECIPIENT</span>
+              </div>
+              <AddressDisplay
+                address={dex.feeRecipient}
+                showExternalLink={true}
+                externalLinkHref={`/explorer/address/${dex.feeRecipient}`}
+                copyMessage="Fee recipient address copied"
+                className="text-brand-accent font-mono text-sm"
+              />
+            </div>
 
             {/* Oracle Updater or Sub Deployers */}
             {dex.oracleUpdater ? (

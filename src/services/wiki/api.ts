@@ -1,4 +1,4 @@
-import { get, post, del } from '../api/axios-config';
+import { get, post, del, patch } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import {
   EducationalResource,
@@ -9,7 +9,13 @@ import {
   CategoryResponse,
   ResourceResponse,
   CsvUploadApiResponse,
-  CategoryParams
+  CategoryParams,
+  ReportResourceInput,
+  ReportResourceResponse,
+  ApproveResourceInput,
+  RejectResourceInput,
+  PendingCountResponse,
+  ReportsResponse
 } from './types';
 import { apiClient } from '../api/axios-config';
 import { buildQueryParams } from '../common';
@@ -123,4 +129,98 @@ export const uploadCsvResources = async (file: File): Promise<CsvUploadApiRespon
 
     return response.data;
   }, 'uploading CSV resources');
+};
+
+// ==================== SOUMISSION UTILISATEUR ====================
+
+/**
+ * Soumet une ressource (tous utilisateurs connectés)
+ * Retourne les headers X-RateLimit-* pour le rate limiting
+ */
+export interface SubmitResourceResult {
+  response: ResourceResponse;
+  rateLimitRemaining?: number;
+  rateLimitLimit?: number;
+}
+
+export const submitResource = async (data: CreateResourceInput): Promise<SubmitResourceResult> => {
+  const response = await apiClient.post<ResourceResponse>('/educational/resources', data);
+  return {
+    response: response.data,
+    rateLimitRemaining: response.headers['x-ratelimit-remaining']
+      ? parseInt(response.headers['x-ratelimit-remaining'])
+      : undefined,
+    rateLimitLimit: response.headers['x-ratelimit-limit']
+      ? parseInt(response.headers['x-ratelimit-limit'])
+      : undefined,
+  };
+};
+
+/**
+ * Récupère les soumissions de l'utilisateur connecté
+ */
+export const fetchMySubmissions = async (): Promise<ResourcesResponse> => {
+  return withErrorHandling(async () => {
+    return await get<ResourcesResponse>('/educational/resources/my-submissions');
+  }, 'fetching my submissions');
+};
+
+// ==================== SIGNALEMENTS ====================
+
+/**
+ * Signale une ressource
+ */
+export const reportResource = async (resourceId: number, data: ReportResourceInput): Promise<ReportResourceResponse> => {
+  return withErrorHandling(async () => {
+    return await post<ReportResourceResponse>(`/educational/resources/${resourceId}/report`, data);
+  }, 'reporting resource');
+};
+
+// ==================== MODÉRATION (MOD/ADMIN) ====================
+
+/**
+ * Récupère les ressources en attente de modération
+ */
+export const fetchPendingResources = async (page = 1, limit = 20): Promise<ResourcesResponse> => {
+  return withErrorHandling(async () => {
+    return await get<ResourcesResponse>(`/educational/resources/moderation/pending?page=${page}&limit=${limit}`);
+  }, 'fetching pending resources');
+};
+
+/**
+ * Récupère le nombre de ressources en attente
+ */
+export const fetchPendingCount = async (): Promise<PendingCountResponse> => {
+  return withErrorHandling(async () => {
+    return await get<PendingCountResponse>('/educational/resources/moderation/pending/count');
+  }, 'fetching pending count');
+};
+
+/**
+ * Approuve une ressource
+ */
+export const approveResource = async (resourceId: number, data?: ApproveResourceInput): Promise<ResourceResponse> => {
+  return withErrorHandling(async () => {
+    return await patch<ResourceResponse>(`/educational/resources/${resourceId}/approve`, data || {});
+  }, 'approving resource');
+};
+
+/**
+ * Rejette une ressource (raison obligatoire)
+ */
+export const rejectResource = async (resourceId: number, data: RejectResourceInput): Promise<ResourceResponse> => {
+  return withErrorHandling(async () => {
+    return await patch<ResourceResponse>(`/educational/resources/${resourceId}/reject`, data);
+  }, 'rejecting resource');
+};
+
+/**
+ * Récupère tous les signalements
+ */
+export const fetchResourceReports = async (page = 1, limit = 20, resourceId?: number): Promise<ReportsResponse> => {
+  return withErrorHandling(async () => {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (resourceId) params.append('resourceId', String(resourceId));
+    return await get<ReportsResponse>(`/educational/resources/moderation/reports?${params.toString()}`);
+  }, 'fetching resource reports');
 };

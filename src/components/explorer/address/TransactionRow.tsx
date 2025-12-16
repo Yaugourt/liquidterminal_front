@@ -128,14 +128,14 @@ export function TransactionRow({ tx, formatterConfig, currentAddress }: Transact
 
     return (
         <TableRow
-            className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+            className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
         >
             <TableCell className="py-3 px-4 text-sm">
                 <div className="flex items-center gap-1.5">
                     <Link
                         href={`/explorer/transaction/${tx.hash}`}
                         prefetch={false}
-                        className="text-brand-accent hover:text-brand-accent/80 transition-colors"
+                        className="text-brand-accent hover:text-white transition-colors font-mono"
                         title={tx.hash}
                     >
                         {formatHash(tx.hash)}
@@ -145,12 +145,12 @@ export function TransactionRow({ tx, formatterConfig, currentAddress }: Transact
                             e.preventDefault();
                             copyHashToClipboard(tx.hash);
                         }}
-                        className="group p-1 rounded transition-colors"
+                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                     >
                         {copiedHash === tx.hash ? (
-                            <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                            <Check className="h-3 w-3 text-emerald-400" />
                         ) : (
-                            <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3 w-3" />
                         )}
                     </button>
                 </div>

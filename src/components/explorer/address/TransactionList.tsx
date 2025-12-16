@@ -38,7 +38,7 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
       loadingMessage="Loading transactions..."
       errorMessage="Failed to load transactions"
       emptyState={{ title: "No transactions found" }}
-      className="max-h-[600px]"
+      className="max-h-[600px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20"
       pagination={{
         total: total,
         page: page,
@@ -53,18 +53,18 @@ export function TransactionList({ transactions, isLoading, error, currentAddress
     >
       <Table className="w-full">
         <TableHeader>
-          <TableRow className="border-none bg-brand-tertiary">
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Hash</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Method</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Age</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">From</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">To</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Token</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-left text-sm">Price</TableHead>
-            <TableHead className="text-white font-normal py-3 px-4 bg-brand-tertiary text-right text-sm">Value</TableHead>
+          <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Hash</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Method</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Age</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">From</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">To</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Token</TableHead>
+            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Price</TableHead>
+            <TableHead className="py-3 px-4 text-right text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Value</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="bg-brand-tertiary">
+        <TableBody>
           {paginatedTxs.map((tx) => (
             <TransactionRow
               key={tx.hash}

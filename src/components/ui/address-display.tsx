@@ -16,6 +16,7 @@ interface AddressDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
     copyMessage?: string;
     label?: React.ReactNode;
+    externalLinkHref?: string;
 }
 
 export function AddressDisplay({
@@ -27,6 +28,7 @@ export function AddressDisplay({
     className,
     copyMessage = "Address copied to clipboard",
     label,
+    externalLinkHref,
     ...props
 }: AddressDisplayProps) {
     const [copied, setCopied] = React.useState(false);
@@ -49,7 +51,7 @@ export function AddressDisplay({
         <div className={cn("inline-flex items-center gap-1.5", className)} {...props}>
             <Link
                 href={linkHref}
-                className="font-sans text-sm font-bold text-brand-accent hover:text-white transition-colors"
+                className="font-mono text-sm text-brand-accent hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
             >
                 {label || displayAddress}
@@ -58,7 +60,7 @@ export function AddressDisplay({
             {showCopy && (
                 <button
                     onClick={handleCopy}
-                    className="text-brand-gold hover:text-[#fae88a] transition-colors p-0.5 rounded-md hover:bg-white/10"
+                    className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                     aria-label="Copy address"
                 >
                     {copied ? (
@@ -70,15 +72,25 @@ export function AddressDisplay({
             )}
 
             {showExternalLink && (
-                <a
-                    href={`https://app.hyperliquid.xyz/explorer/address/${address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <ExternalLink className="h-3 w-3" />
-                </a>
+                externalLinkHref ? (
+                    <Link
+                        href={externalLinkHref}
+                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <ExternalLink className="h-3 w-3" />
+                    </Link>
+                ) : (
+                    <a
+                        href={`https://app.hyperliquid.xyz/explorer/address/${address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <ExternalLink className="h-3 w-3" />
+                    </a>
+                )
             )}
         </div>
     );

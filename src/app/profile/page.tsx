@@ -5,6 +5,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { useWallets } from "@/store/use-wallets";
 import { useReadLists } from "@/store/use-readlists";
 import { useUserWalletLists } from "@/services/market/tracker/hooks/useWalletLists";
+import { WalletListItem } from "@/services/market/tracker/types";
 import { authService } from "@/services/auth/api";
 import { ReferralStats } from "@/services/auth/types";
 import { useXp } from "@/services/xp";
@@ -13,7 +14,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
 import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard } from "@/components/xp";
-import { Shield, Users, Wallet, BookOpen, Copy, Activity, Menu, List, LucideIcon, Flame } from "lucide-react";
+import { Shield, Users, Wallet, BookOpen, Copy, Activity, Menu, List, LucideIcon, Flame, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -22,11 +23,12 @@ import { usePrivy } from "@privy-io/react-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSearchParams } from "next/navigation";
+import { MySubmissionsList } from "@/components/wiki/MySubmissionsList";
 
 function ProfileTabs() {
     const searchParams = useSearchParams();
     const initialTab = searchParams.get('tab') || 'activity';
-    
+
     return <ProfileContent initialTab={initialTab} />;
 }
 
@@ -41,7 +43,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
     // State pour la sélection de liste (null = "All Wallets")
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
-    const [activeListItems, setActiveListItems] = useState<{ userWallet?: { name?: string; Wallet?: { id?: number; address?: string } }; addedAt?: string }[]>([]);
+    const [activeListItems, setActiveListItems] = useState<WalletListItem[]>([]);
     const [isLoadingListItems, setIsLoadingListItems] = useState(false);
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -244,26 +246,26 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     {/* Tabs for different sections */}
                     <Tabs defaultValue={initialTab} className="space-y-6">
                         <TabsList className="bg-brand-dark border border-white/5 rounded-lg p-1">
-                            <TabsTrigger 
-                                value="activity" 
+                            <TabsTrigger
+                                value="activity"
                                 className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
                             >
                                 Activity
                             </TabsTrigger>
-                            <TabsTrigger 
-                                value="xp-history" 
+                            <TabsTrigger
+                                value="xp-history"
                                 className="text-zinc-400 data-[state=active]:bg-[#F9E370] data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
                             >
                                 XP History
                             </TabsTrigger>
-                            <TabsTrigger 
-                                value="leaderboard" 
+                            <TabsTrigger
+                                value="leaderboard"
                                 className="text-zinc-400 data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
                             >
                                 Leaderboard
                             </TabsTrigger>
-                            <TabsTrigger 
-                                value="missions" 
+                            <TabsTrigger
+                                value="missions"
                                 className="text-zinc-400 data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
                             >
                                 Missions
@@ -384,7 +386,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                     </div>
                                 </div>
 
-                                {/* Section Read List Activity */}
+                                {/* Section Knowledge Base with Tabs */}
                                 <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
                                     <div className="p-4 border-b border-white/5">
                                         <h3 className="flex items-center gap-2 text-white font-semibold">
@@ -392,38 +394,59 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                             Knowledge Base
                                         </h3>
                                     </div>
-                                    <div className="p-4">
-                                        {readLists.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {readLists.map(list => (
-                                                    <div key={list.id} className="flex justify-between items-center p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
-                                                                <BookOpen className="h-4 w-4 text-[#F9E370]" />
+                                    <Tabs defaultValue="readlists" className="w-full">
+                                        <TabsList className="w-full grid grid-cols-2 bg-brand-dark/50 rounded-none border-b border-white/5 p-1">
+                                            <TabsTrigger
+                                                value="readlists"
+                                                className="text-zinc-400 data-[state=active]:bg-[#F9E370]/10 data-[state=active]:text-[#F9E370] data-[state=active]:font-semibold rounded-md text-xs transition-all"
+                                            >
+                                                <BookOpen className="w-3 h-3 mr-1" />
+                                                Read Lists
+                                            </TabsTrigger>
+                                            <TabsTrigger
+                                                value="submissions"
+                                                className="text-zinc-400 data-[state=active]:bg-brand-accent/10 data-[state=active]:text-brand-accent data-[state=active]:font-semibold rounded-md text-xs transition-all"
+                                            >
+                                                <Send className="w-3 h-3 mr-1" />
+                                                My Submissions
+                                            </TabsTrigger>
+                                        </TabsList>
+                                        <TabsContent value="readlists" className="p-4">
+                                            {readLists.length > 0 ? (
+                                                <div className="space-y-4">
+                                                    {readLists.map(list => (
+                                                        <div key={list.id} className="flex justify-between items-center p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
+                                                                    <BookOpen className="h-4 w-4 text-[#F9E370]" />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="font-medium text-sm text-white">{list.name}</div>
+                                                                    <div className="text-xs text-zinc-500">{list.itemsCount || 0} articles</div>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <div className="font-medium text-sm text-white">{list.name}</div>
-                                                                <div className="text-xs text-zinc-500">{list.itemsCount || 0} articles</div>
+                                                            <div className="text-xs text-zinc-400">
+                                                                {list.isPublic ? "Public" : "Private"}
                                                             </div>
                                                         </div>
-                                                        <div className="text-xs text-zinc-400">
-                                                            {list.isPublic ? "Public" : "Private"}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                                <Button variant="outline" className="w-full border-white/5 hover:bg-white/5 text-zinc-300 rounded-lg" asChild>
-                                                    <a href="/wiki">Go to Wiki</a>
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center py-8">
-                                                <p className="text-zinc-500">No reading lists created yet.</p>
-                                                <Button className="mt-4 bg-[#F9E370] text-brand-tertiary hover:bg-[#F9E370]/90 font-semibold rounded-lg" asChild>
-                                                    <a href="/wiki">Explore Wiki</a>
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                                                    ))}
+                                                    <Button variant="outline" className="w-full border-white/5 hover:bg-white/5 text-zinc-300 rounded-lg" asChild>
+                                                        <a href="/wiki">Go to Wiki</a>
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-8">
+                                                    <p className="text-zinc-500">No reading lists created yet.</p>
+                                                    <Button className="mt-4 bg-[#F9E370] text-brand-tertiary hover:bg-[#F9E370]/90 font-semibold rounded-lg" asChild>
+                                                        <a href="/wiki">Explore Wiki</a>
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </TabsContent>
+                                        <TabsContent value="submissions" className="p-4">
+                                            <MySubmissionsList />
+                                        </TabsContent>
+                                    </Tabs>
                                 </div>
                             </div>
                         </TabsContent>

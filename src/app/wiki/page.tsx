@@ -11,6 +11,7 @@ import { EducationSidebar } from "@/components/wiki/EducationSidebar";
 import { ResourcesSection } from "@/components/wiki/ResourcesSection";
 import { CategoryFilter } from "@/components/wiki/CategoryFilter";
 import { EducationModal } from "@/components/wiki/EducationModal";
+import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
 import { SearchBar } from "@/components/common/SearchBar";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
@@ -135,12 +136,14 @@ export default function EducationPage() {
                 className="w-full sm:w-[320px]"
               />
             </div>
-            <ProtectedAction requiredRole="ADMIN" user={user}>
-              <EducationModal onSuccess={() => {
-                // Optionally refresh the page or refetch data
-                window.location.reload();
-              }} />
-            </ProtectedAction>
+            <div className="flex items-center gap-2">
+              {/* User submission button - all authenticated users */}
+              <UserSubmissionModal onSuccess={() => window.location.reload()} />
+              {/* Mod/Admin advanced actions */}
+              <ProtectedAction requiredRole="MODERATOR" user={user}>
+                <EducationModal onSuccess={() => window.location.reload()} />
+              </ProtectedAction>
+            </div>
           </div>
 
           {/* Resources section */}

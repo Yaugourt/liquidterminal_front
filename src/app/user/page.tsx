@@ -6,9 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { SearchBar } from '@/components/SearchBar';
 import { UserManagement } from '@/components/user/UserManagement';
+import { WikiModerationCard } from '@/components/wiki/moderation/WikiModerationCard';
+import { ProtectedAction } from '@/components/common/ProtectedAction';
+import { useAuthContext } from '@/contexts/auth.context';
 
 export default function UserPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user } = useAuthContext();
 
   return (
     <div className="min-h-screen">
@@ -34,8 +38,14 @@ export default function UserPage() {
           <SearchBar placeholder="Search users..." />
         </div>
 
-        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-8 max-w-[1920px] mx-auto">
-          <UserManagement />
+        <main className="px-2 py-2 sm:px-4 sm:py-4 lg:px-6 xl:px-12 lg:py-6 space-y-6 max-w-[1920px] mx-auto">
+          {/* Grid layout for admin cards */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <UserManagement />
+            <ProtectedAction requiredRole="MODERATOR" user={user}>
+              <WikiModerationCard />
+            </ProtectedAction>
+          </div>
         </main>
       </div>
     </div>

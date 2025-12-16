@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Plus, BookOpen, Trash2 } from "lucide-react";
+import { ExternalLink, Plus, BookOpen, Trash2, Flag, Clock, CheckCircle, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -17,6 +17,8 @@ import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common/ProtectedAction";
 import { useAuthContext } from "@/contexts/auth.context";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
+import { ReportResourceModal } from "./ReportResourceModal";
+import { ResourceStatus } from "@/services/wiki/types";
 
 interface Resource {
   id: string;
@@ -24,6 +26,8 @@ interface Resource {
   description: string;
   url: string;
   image: string;
+  status?: ResourceStatus;
+  reviewNotes?: string;
 }
 
 interface ResourceCardProps {
@@ -31,12 +35,20 @@ interface ResourceCardProps {
   categoryColor: string;
   onDelete?: (resourceId: number) => void;
   isDeleting?: boolean;
+  showStatus?: boolean;
 }
 
-export function ResourceCard({ resource, onDelete, isDeleting = false }: ResourceCardProps) {
+const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; color: string }> = {
+  PENDING: { icon: Clock, label: "Pending", color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
+  APPROVED: { icon: CheckCircle, label: "Approved", color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" },
+  REJECTED: { icon: XCircle, label: "Rejected", color: "text-rose-400 bg-rose-400/10 border-rose-400/20" },
+};
+
+export function ResourceCard({ resource, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const { readLists, addItemToReadList } = useReadLists();
   const { user, authenticated } = useAuthContext();
 
@@ -70,8 +82,19 @@ export function ResourceCard({ resource, onDelete, isDeleting = false }: Resourc
     }
   };
 
+  const status = resource.status || 'APPROVED';
+  const StatusIcon = statusConfig[status].icon;
+
   return (
     <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
+      {/* Status badge (top left) */}
+      {showStatus && status !== 'APPROVED' && (
+        <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${statusConfig[status].color}`}>
+          <StatusIcon className="w-3 h-3" />
+          <span>{statusConfig[status].label}</span>
+        </div>
+      )}
+
       {/* Delete button for admins */}
       <ProtectedAction requiredRole="ADMIN" user={user}>
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -142,11 +165,29 @@ export function ResourceCard({ resource, onDelete, isDeleting = false }: Resourc
               >
                 {preview?.siteName || 'Article'}
               </Badge>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {previewLoading && (
                   <span className="text-xs text-zinc-500">Loading...</span>
                 )}
 
+                {/* Report button */}
+                {authenticated && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowReportModal(true);
+                    }}
+                    className="p-1.5 h-auto rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-400/10"
+                    title="Report this resource"
+                  >
+                    <Flag className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+
+                {/* Add to read list button */}
                 <Button
                   size="sm"
                   variant="ghost"
@@ -171,7 +212,6 @@ export function ResourceCard({ resource, onDelete, isDeleting = false }: Resourc
           </div>
         </a>
 
-        {/* Read Lists Modal */}
         {/* Read Lists Modal */}
         <Dialog open={showReadLists && authenticated} onOpenChange={(open) => !open && setShowReadLists(false)}>
           <DialogContent className="max-w-sm bg-brand-secondary border-white/10 p-6 z-[9999]">
@@ -222,6 +262,14 @@ export function ResourceCard({ resource, onDelete, isDeleting = false }: Resourc
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Report Modal */}
+        <ReportResourceModal
+          resourceId={parseInt(resource.id)}
+          resourceTitle={preview?.title || resource.title}
+          open={showReportModal}
+          onOpenChange={setShowReportModal}
+        />
       </div>
     </div>
   );
