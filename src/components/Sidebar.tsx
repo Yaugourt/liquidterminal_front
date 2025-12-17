@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
-import { Menu, Settings, Shield } from "lucide-react"
-import { PiSignIn, PiSignOut } from "react-icons/pi";
+import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -294,7 +293,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             className="group relative w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary rounded-lg overflow-hidden font-bold"
                         >
                             <div className="flex items-center justify-center gap-2 py-1">
-                                <PiSignIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                                 <span className="text-sm">Login</span>
                             </div>
                         </Button>
@@ -331,7 +330,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                     onClick={() => logout()}
                                     className="h-7 w-7 shrink-0 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
                                 >
-                                    <PiSignOut className="w-4 h-4" />
+                                    <LogOut className="w-4 h-4" />
                                 </Button>
                             </div>
                             {/* XP Badge - séparé du lien profil pour éviter la redirection */}

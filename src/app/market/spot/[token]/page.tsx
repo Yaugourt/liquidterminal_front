@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePageTitle } from "@/store/use-page-title";
 import { useParams, useRouter } from "next/navigation";
 import { SpotToken } from "@/services/market/spot/types";
 import { getToken } from "@/services/market/spot/api";
 import { Button } from "@/components/ui/button";
-import { TokenCard, TokenData, TradingViewChart, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { TokenCard, TokenData, OrderBook, TokenInfoSidebar } from "@/components/market/token";
 import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
 import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
 import { useTokenDetails } from "@/services/market/token";
 import { TradingLayout } from "@/layouts/TradingLayout";
+import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+
+// Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
+const TradingViewChart = dynamic(
+    () => import("@/components/market/token/TradingViewChart").then(mod => ({ default: mod.TradingViewChart })),
+    { ssr: false, loading: () => <ChartSkeleton /> }
+);
 
 // Composant HoldersSection
 function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {

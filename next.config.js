@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig = {
     typescript: {
         // ⚠️ Ignore les erreurs TypeScript pour les dépendances externes uniquement
@@ -36,11 +40,23 @@ const nextConfig = {
     },
     
     images: {
-        unoptimized: true,
+        // ✅ Image optimization enabled
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'app.hyperliquid.xyz',
+                pathname: '/coins/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'pbs.twimg.com',
+                pathname: '/**',
+            },
+        ],
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

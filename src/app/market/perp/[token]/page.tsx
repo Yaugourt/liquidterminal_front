@@ -1,12 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Database } from "lucide-react";
 import { TradingLayout } from "@/layouts/TradingLayout";
 import { GlassPanel } from "@/components/ui/glass-panel";
-import { TokenCard, TokenData, TradingViewChart, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { TokenCard, TokenData, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+
+// Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
+const TradingViewChart = dynamic(
+  () => import("@/components/market/token/TradingViewChart").then(mod => ({ default: mod.TradingViewChart })),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+);
 
 // Type pour les tokens perp
 interface PerpToken {

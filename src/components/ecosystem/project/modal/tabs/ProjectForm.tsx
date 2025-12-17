@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { PiUpload, PiX } from "react-icons/pi";
+import { Upload, X } from "lucide-react";
 import { Category } from "@/services/ecosystem/project/types";
 
 interface ProjectFormData {
@@ -67,7 +67,7 @@ export function ProjectForm({
             required
           />
         </div>
-        
+
         <div className="space-y-2">
           <label htmlFor="categories" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Categories</label>
           <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-white/5 rounded-lg p-2">
@@ -97,7 +97,7 @@ export function ProjectForm({
           </div>
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <label htmlFor="desc" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Description *</label>
         <Textarea
@@ -109,16 +109,16 @@ export function ProjectForm({
           required
         />
       </div>
-      
+
       <div className="space-y-2">
         <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Logo *</label>
-        
+
         {/* File Upload Section */}
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="file-upload" className="cursor-pointer">
               <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
-                <PiUpload className="h-4 w-4 text-brand-accent" />
+                <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Image</span>
               </div>
               <input
@@ -129,7 +129,7 @@ export function ProjectForm({
                 className="hidden"
               />
             </label>
-            
+
             {selectedFile && (
               <Button
                 type="button"
@@ -138,12 +138,12 @@ export function ProjectForm({
                 onClick={handleRemoveFile}
                 className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg"
               >
-                <PiX className="h-4 w-4 mr-1" />
+                <X className="h-4 w-4 mr-1" />
                 Remove
               </Button>
             )}
           </div>
-          
+
           {/* Preview */}
           {logoPreview && (
             <div className="relative w-20 h-20 border border-white/10 rounded-xl overflow-hidden">
@@ -156,14 +156,14 @@ export function ProjectForm({
               />
             </div>
           )}
-          
+
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
             <span className="text-zinc-500 text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
-          
+
           {/* URL Input */}
           <div>
             <label htmlFor="logo-url" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Logo URL</label>
@@ -184,7 +184,7 @@ export function ProjectForm({
           </div>
         </div>
       </div>
-      
+
       {/* Banner (optional) */}
       <div className="space-y-2">
         <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Banner (optional)</label>
@@ -192,7 +192,7 @@ export function ProjectForm({
           <div className="flex items-center gap-3">
             <label htmlFor="banner-file-upload" className="cursor-pointer">
               <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
-                <PiUpload className="h-4 w-4 text-brand-accent" />
+                <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Banner</span>
               </div>
               <input
@@ -203,7 +203,7 @@ export function ProjectForm({
                 className="hidden"
               />
             </label>
-            
+
             {selectedBannerFile && (
               <Button
                 type="button"
@@ -212,12 +212,12 @@ export function ProjectForm({
                 onClick={handleRemoveBannerFile}
                 className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg"
               >
-                <PiX className="h-4 w-4 mr-1" />
+                <X className="h-4 w-4 mr-1" />
                 Remove
               </Button>
             )}
           </div>
-          
+
           {/* Preview */}
           {bannerPreview && (
             <div className="relative w-full max-w-md h-24 border border-white/10 rounded-xl overflow-hidden">
@@ -230,14 +230,14 @@ export function ProjectForm({
               />
             </div>
           )}
-          
+
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
             <span className="text-zinc-500 text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
-          
+
           {/* URL Input */}
           <div>
             <label htmlFor="banner-url" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Banner URL</label>
@@ -258,7 +258,7 @@ export function ProjectForm({
           </div>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="website" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Website</label>
@@ -271,7 +271,7 @@ export function ProjectForm({
             placeholder="https://example.com"
           />
         </div>
-        
+
         <div className="space-y-2">
           <label htmlFor="twitter" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Twitter</label>
           <Input
@@ -284,7 +284,7 @@ export function ProjectForm({
           />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="discord" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Discord</label>
@@ -297,7 +297,7 @@ export function ProjectForm({
             placeholder="https://discord.gg/project"
           />
         </div>
-        
+
         <div className="space-y-2">
           <label htmlFor="telegram" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Telegram</label>
           <Input
@@ -310,7 +310,7 @@ export function ProjectForm({
           />
         </div>
       </div>
-      
+
       {/* Token Address (optional) */}
       <div className="space-y-2">
         <label htmlFor="token" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Token Address (optional)</label>
@@ -323,7 +323,7 @@ export function ProjectForm({
           placeholder="0x..."
         />
       </div>
-      
+
       <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
         <Button
           type="button"

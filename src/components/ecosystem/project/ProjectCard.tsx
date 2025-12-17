@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import Image from "next/image";
-import { PiTwitterLogo, PiDiscordLogo, PiTelegramLogo, PiGlobeBold } from "react-icons/pi";
-import { Trash2 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { Trash2, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Project } from "@/services/ecosystem/project/types";
@@ -29,10 +29,10 @@ export const ProjectCard = memo(function ProjectCard({
   const { user } = useAuthContext();
 
   const socialLinks = [
-    { url: project.website, icon: PiGlobeBold, label: "Website" },
-    { url: project.twitter, icon: PiTwitterLogo, label: "Twitter" },
-    { url: project.discord, icon: PiDiscordLogo, label: "Discord" },
-    { url: project.telegram, icon: PiTelegramLogo, label: "Telegram" }
+    { url: project.website, iconName: null, label: "Website", isGlobe: true },
+    { url: project.twitter, iconName: "simple-icons:x", label: "Twitter", isGlobe: false },
+    { url: project.discord, iconName: "ic:baseline-discord", label: "Discord", isGlobe: false },
+    { url: project.telegram, iconName: "ic:baseline-telegram", label: "Telegram", isGlobe: false }
   ].filter(link => link.url);
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -123,21 +123,22 @@ export const ProjectCard = memo(function ProjectCard({
 
           {socialLinks.length > 0 && (
             <div className="flex items-center gap-3">
-              {socialLinks.map((link, index) => {
-                const Icon = link.icon;
-                return (
-                  <a
-                    key={index}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-brand-accent transition-colors"
-                    aria-label={link.label}
-                  >
-                    <Icon size={16} />
-                  </a>
-                );
-              })}
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-500 hover:text-brand-accent transition-colors"
+                  aria-label={link.label}
+                >
+                  {link.isGlobe ? (
+                    <Globe className="w-4 h-4" />
+                  ) : (
+                    <Icon icon={link.iconName!} className="w-4 h-4" />
+                  )}
+                </a>
+              ))}
             </div>
           )}
         </div>

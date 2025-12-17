@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useExplorerStore } from "@/services/explorer";
 import { Button } from "@/components/ui/button";
-import { PiPause, PiPlay } from "react-icons/pi";
-import { Loader2 } from "lucide-react";
+import { Pause, Play, Loader2 } from "lucide-react";
 import { TabSelector } from "./TabSelector";
 // import { ConnectionStatus } from "./ConnectionStatus"; // Removed import
 import { DataTable } from "./DataTable";
@@ -123,7 +122,7 @@ export function RecentDataTable() {
             onClick={handlePauseToggle}
             className="text-zinc-400 hover:text-white hover:bg-white/5 p-2"
           >
-            {isPaused ? <PiPlay className="h-4 w-4" /> : <PiPause className="h-4 w-4" />}
+            {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
           </Button>
         </div>
       </div>

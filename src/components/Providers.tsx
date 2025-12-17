@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar } from "@/components/Sidebar";
+import dynamic from "next/dynamic";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
@@ -9,6 +9,12 @@ import { usePathname } from "next/navigation";
 import { env } from "@/lib/env";
 import { XpNotificationProvider } from "@/components/xp";
 import { XpProvider } from "@/services/xp";
+
+// Lazy load Sidebar - it's a heavy component (22KB) not needed immediately
+const Sidebar = dynamic(
+  () => import("@/components/Sidebar").then(mod => ({ default: mod.Sidebar })),
+  { ssr: false }
+);
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -29,17 +35,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
         loginMethods: ["twitter"],
         embeddedWallets: {
-          createOnLogin: "off",
-          requireUserPasswordOnCreate: false,
+          ethereum: {
+            createOnLogin: "off",
+          },
+          showWalletUIs: false,
         },
       }}
     >
       <AuthProvider>
         <XpProvider>
           <XpNotificationProvider>
-        {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
-        {children}
-        <Toaster />
+            {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
+            {children}
+            <Toaster />
           </XpNotificationProvider>
         </XpProvider>
       </AuthProvider>

@@ -14,8 +14,7 @@ import { OrdersSection, TwapSection } from "@/components/explorer/address/orders
 import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { PiSignIn } from "react-icons/pi";
+import { Menu, LogIn } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 
 export default function Wallets() {
@@ -72,7 +71,7 @@ export default function Wallets() {
                   onClick={() => login()}
                   className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg py-2.5"
                 >
-                  <PiSignIn className="w-5 h-5 mr-2" />
+                  <LogIn className="w-5 h-5 mr-2" />
                   Login
                 </Button>
               </div>
