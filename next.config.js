@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
 });
@@ -50,6 +51,41 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'pbs.twimg.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'pub-097cebbc75d04a3fbd5d0e416820c1a5.r2.dev',
+                pathname: '/**',
+            },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'hyperliquid.gitbook.io',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'hyperliquid-co.gitbook.io',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'substackcdn.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'cdn.prod.website-files.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'luganodes.com',
                 pathname: '/**',
             },
         ],

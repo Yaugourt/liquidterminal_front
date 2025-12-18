@@ -127,6 +127,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
+                unoptimized
               />
             ) : !imageError && resource.image ? (
               <Image
@@ -135,6 +136,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
+                unoptimized
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
