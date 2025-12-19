@@ -17,6 +17,7 @@ import { Users, Lock } from "lucide-react";
 
 import { toast } from "sonner";
 import { useWalletLists } from "@/store/use-wallet-lists";
+import { showXpGainToast } from "@/components/xp";
 
 interface CreateWalletListDialogProps {
   isOpen: boolean;
@@ -24,13 +25,13 @@ interface CreateWalletListDialogProps {
   onSuccess: (listData: { name: string; description?: string; isPublic?: boolean }) => void;
 }
 
-export function CreateWalletListDialog({ 
-  isOpen, 
-  onOpenChange, 
-  onSuccess 
+export function CreateWalletListDialog({
+  isOpen,
+  onOpenChange,
+  onSuccess
 }: CreateWalletListDialogProps) {
   const { userLists } = useWalletLists();
-  
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
@@ -48,7 +49,7 @@ export function CreateWalletListDialog({
     }
 
     setIsLoading(true);
-    
+
     const listData = {
       name: name.trim(),
       description: description.trim() || undefined,
@@ -61,9 +62,14 @@ export function CreateWalletListDialog({
       setDescription("");
       setIsPublic(false);
       onOpenChange(false);
-      
+
       toast.success(`List "${listData.name}" created successfully`);
-      
+
+      // Show XP gain toast
+      const xpReward = listData.isPublic ? 20 : 15;
+      const rewardMsg = listData.isPublic ? "+20 XP Public list created" : "+15 XP List created";
+      showXpGainToast(xpReward, rewardMsg);
+
       // Pass data to parent for creation and selection
       onSuccess(listData);
     } catch {
@@ -82,7 +88,7 @@ export function CreateWalletListDialog({
             Create a new list to organize and track interesting wallets ({userLists.length} list{userLists.length !== 1 ? 's' : ''})
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <label htmlFor="name" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
@@ -96,7 +102,7 @@ export function CreateWalletListDialog({
               className="bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-brand-accent/50"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="description" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
               Description (optional)
@@ -124,7 +130,7 @@ export function CreateWalletListDialog({
                   {isPublic ? '🌐 Public List' : '🔒 Private List'}
                 </label>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  {isPublic 
+                  {isPublic
                     ? 'Anyone can view and copy this list'
                     : 'Only you can view this list'
                   }
@@ -138,16 +144,16 @@ export function CreateWalletListDialog({
             />
           </div>
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             className="border-white/5 text-white hover:bg-white/5 rounded-lg"
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleCreateList}
             disabled={isLoading || !name.trim()}
             className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg disabled:opacity-50"

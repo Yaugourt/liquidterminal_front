@@ -105,6 +105,11 @@ export function ReadList() {
         setActiveReadList(newList.id);
         setIsCreateModalOpen(false);
         readListMessages.success.listCreated(data.name);
+
+        // Show XP gain toast
+        const xpReward = data.isPublic ? 20 : 15;
+        const rewardMsg = data.isPublic ? "+20 XP Public ReadList created" : "+15 XP ReadList created";
+        showXpGainToast(xpReward, rewardMsg);
       }
     } catch (error) {
       handleReadListApiError(error);

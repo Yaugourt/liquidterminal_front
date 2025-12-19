@@ -8,6 +8,7 @@ import { useSubmitResource, useEducationalCategories } from "@/services/wiki";
 import { toast } from "sonner";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
+import { showXpGainToast } from "@/components/xp";
 
 interface UserSubmissionFormProps {
     onSuccess?: () => void;
@@ -64,18 +65,21 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                 { duration: 5000 }
             );
 
+            // Show XP gain toast
+            showXpGainToast(15, "+15 XP Resource submitted");
+
             setUrl("");
             setCategoryId("");
             onSuccess?.();
         } catch (err) {
             const error = err as AxiosError<{ code?: string; reason?: string; error?: string }>;
-            const code = error.response?.data?.code;
-            const reason = error.response?.data?.reason;
+            // Gestion prioritaire du Rate Limit (Status 429 ou Code spécifique)
+            if (error.response?.status === 429 || code === 'RATE_LIMIT_EXCEEDED') {
+                toast.error("Limite hebdomadaire atteinte (10/semaine).");
+                return;
+            }
 
             switch (code) {
-                case 'RATE_LIMIT_EXCEEDED':
-                    toast.error("Limite quotidienne atteinte. Réessayez demain.");
-                    break;
                 case 'CONTENT_FILTERED':
                     toast.error(getContentFilterMessage(reason));
                     break;

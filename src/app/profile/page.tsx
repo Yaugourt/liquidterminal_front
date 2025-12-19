@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { SearchBar } from "@/components/SearchBar";
-import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard } from "@/components/xp";
+import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard, XpEarnGuide } from "@/components/xp";
 import { Shield, Users, Wallet, BookOpen, Copy, Activity, Menu, List, LucideIcon, Flame, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -464,6 +464,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                 <DailyTasksWidget />
                                 <WeeklyChallengesCard />
                             </div>
+                            <XpEarnGuide />
                         </TabsContent>
                     </Tabs>
 

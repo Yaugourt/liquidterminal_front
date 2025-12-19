@@ -2,15 +2,17 @@
 
 import { useXpContext } from "@/services/xp";
 import { cn } from "@/lib/utils";
-import { 
-  CheckCircle2, 
-  Circle, 
-  LogIn, 
-  BookOpen, 
-  Wallet, 
+import {
+  CheckCircle2,
+  Circle,
+  LogIn,
+  BookOpen,
+  Wallet,
   Trophy,
   Gift,
-  Loader2
+  Loader2,
+  Send,
+  ListPlus
 } from "lucide-react";
 import { DailyTaskType } from "@/services/xp/types";
 
@@ -24,6 +26,9 @@ const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
   READ_RESOURCE: BookOpen,
   ADD_WALLET: Wallet,
   EXPLORE_LEADERBOARD: Trophy,
+  SUBMIT_RESOURCE: Send,
+  CREATE_READLIST: ListPlus,
+  CREATE_WALLETLIST: Wallet,
 };
 
 const TASK_COLORS: Record<DailyTaskType, string> = {
@@ -31,6 +36,9 @@ const TASK_COLORS: Record<DailyTaskType, string> = {
   READ_RESOURCE: "text-cyan-400",
   ADD_WALLET: "text-brand-accent",
   EXPLORE_LEADERBOARD: "text-[#F9E370]",
+  SUBMIT_RESOURCE: "text-purple-400",
+  CREATE_READLIST: "text-pink-400",
+  CREATE_WALLETLIST: "text-blue-400",
 };
 
 export function DailyTasksWidget({ compact = false, className }: DailyTasksWidgetProps) {
@@ -67,8 +75,8 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                 key={task.type}
                 className={cn(
                   "h-6 w-6 rounded-full flex items-center justify-center",
-                  task.completed 
-                    ? "bg-emerald-500/20 border border-emerald-500/40" 
+                  task.completed
+                    ? "bg-emerald-500/20 border border-emerald-500/40"
                     : "bg-white/5 border border-white/10"
                 )}
               >
@@ -110,12 +118,12 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             <p className="text-xs text-zinc-500">{dailyTasksCompletedCount}/{dailyTasks.length} completed</p>
           </div>
         </div>
-        
+
         {/* Bonus indicator */}
         {!dailyBonusClaimed && (
           <div className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full",
-            allDailyTasksCompleted 
+            allDailyTasksCompleted
               ? "bg-[#F9E370]/20 border border-[#F9E370]/40 animate-pulse"
               : "bg-[#F9E370]/10 border border-[#F9E370]/20"
           )}>
@@ -140,16 +148,16 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               key={task.type}
               className={cn(
                 "flex items-center gap-3 p-3 rounded-xl transition-all",
-                task.completed 
-                  ? "bg-emerald-500/10 border border-emerald-500/20" 
+                task.completed
+                  ? "bg-emerald-500/10 border border-emerald-500/20"
                   : "bg-white/5 border border-white/5 hover:border-white/10"
               )}
             >
               {/* Icon */}
               <div className={cn(
                 "h-9 w-9 rounded-lg flex items-center justify-center shrink-0",
-                task.completed 
-                  ? "bg-emerald-500/20" 
+                task.completed
+                  ? "bg-emerald-500/20"
                   : "bg-white/5"
               )}>
                 <Icon className={cn(
