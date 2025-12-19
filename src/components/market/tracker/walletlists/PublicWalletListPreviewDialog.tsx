@@ -140,7 +140,7 @@ export function PublicWalletListPreviewDialog({
                   <Users size={14} />
                   <span>Public</span>
                 </div>
-                <div className="flex items-center gap-1 text-gray-400">
+                <div className="flex items-center gap-1 text-zinc-400">
                   <Calendar size={14} />
                   <span>{timeAgo}</span>
                 </div>
@@ -149,7 +149,7 @@ export function PublicWalletListPreviewDialog({
           </div>
 
           {list.description && (
-            <DialogDescription className="text-gray-400 pt-2">
+            <DialogDescription className="text-zinc-400 pt-2">
               {list.description}
             </DialogDescription>
           )}
@@ -160,13 +160,13 @@ export function PublicWalletListPreviewDialog({
           {/* Stats */}
           <div className="flex items-center gap-4 p-3 bg-black/20 border border-white/10 rounded-lg">
             <div className="flex items-center gap-2">
-              <Wallet size={16} className="text-brand-accent" />
+              <Wallet size={16} className="text-[#83E9FF]" />
               <span className="text-white font-medium">{list.itemsCount || 0}</span>
-              <span className="text-gray-400 text-sm">
+              <span className="text-zinc-400 text-sm">
                 wallet{list.itemsCount !== 1 ? 's' : ''}
               </span>
             </div>
-            <div className="text-gray-400 text-sm">
+            <div className="text-zinc-400 text-sm">
               By <span className="text-white font-medium">{list.creator?.name || 'Anonymous'}</span>
             </div>
           </div>
@@ -174,19 +174,19 @@ export function PublicWalletListPreviewDialog({
           {/* Wallets list */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
             </div>
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-gray-400">Wallets in this list:</h3>
+              <h3 className="text-sm font-medium text-zinc-400">Wallets in this list:</h3>
               <div className="h-[300px] border border-white/10 rounded-lg overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                 <div className="p-3 space-y-2">
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-white/5 rounded-lg hover:border-brand-accent transition-colors"
+                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-white/5 rounded-lg hover:border-[#83E9FF]/50 transition-colors"
                     >
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-medium shrink-0">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#83E9FF]/20 text-[#83E9FF] text-xs font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
@@ -197,11 +197,11 @@ export function PublicWalletListPreviewDialog({
                             </span>
                           )}
                         </div>
-                        <code className="text-xs text-gray-400 block break-all">
+                        <code className="text-xs text-zinc-400 block break-all">
                           {item.userWallet?.Wallet?.address}
                         </code>
                         {item.notes && (
-                          <p className="text-xs text-gray-500 italic">{item.notes}</p>
+                          <p className="text-xs text-zinc-500 italic">{item.notes}</p>
                         )}
                       </div>
                     </div>
@@ -210,7 +210,7 @@ export function PublicWalletListPreviewDialog({
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-zinc-400">
               No wallets in this list
             </div>
           )}

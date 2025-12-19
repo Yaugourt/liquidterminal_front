@@ -107,7 +107,7 @@ Source: @Liquidterminal`;
                     {/* <h2 className="text-xl text-white whitespace-nowrap !font-['Higuen_Elegant_Serif'] max-lg:pl-3">{displayTitle}</h2> */}
                     <SearchBar
                         placeholder={searchPlaceholder}
-                        className={`hidden lg:block border border-white/10 rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
+                        className={`hidden lg:block bg-brand-main/80 backdrop-blur-xl border border-white/10 rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
                     />
                 </div>
 

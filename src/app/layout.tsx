@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { MainLayout } from "@/layouts/MainLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
@@ -108,11 +107,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#112941]`}>
         <Providers>
-          <MainLayout>
-            {children}
-            <SpeedInsights />
-            <Analytics />
-          </MainLayout>
+          {children}
+          <SpeedInsights />
+          <Analytics />
         </Providers>
       </body>
     </html>

@@ -70,13 +70,13 @@ export function DataTable({
     }
 
     return (
-        <div className="space-y-4">
+        <div>
             <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent rounded-lg", className)}>
                 {children}
             </div>
 
             {pagination && (
-                <div className="px-1">
+                <div className="px-4 py-3 border-t border-white/5">
                     <Pagination {...pagination} />
                 </div>
             )}

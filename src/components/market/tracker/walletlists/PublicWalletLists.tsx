@@ -90,8 +90,8 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
   if (initialLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-        <p className="text-gray-400">Loading public lists...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+        <p className="text-zinc-400">Loading public lists...</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
         <div className="text-center">
           <h3 className="text-xl font-semibold text-white mb-2">No public lists found</h3>
-          <p className="text-gray-400">
+          <p className="text-zinc-400">
             {searchQuery
               ? `No results for "${searchQuery}"`
               : "Be the first to create and share a public wallet list!"}
@@ -116,7 +116,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
       <div className="space-y-4">
         {/* Header stats */}
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-zinc-400">
             {lists.length} list{lists.length !== 1 ? 's' : ''} loaded
             {searchQuery && ` for "${searchQuery}"`}
           </div>
@@ -155,7 +155,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
 
         {/* End message */}
         {!hasMore && lists.length > 0 && (
-          <div className="text-center py-4 text-sm text-gray-400">
+          <div className="text-center py-4 text-sm text-zinc-400">
             You&apos;ve reached the end of the list
           </div>
         )}
