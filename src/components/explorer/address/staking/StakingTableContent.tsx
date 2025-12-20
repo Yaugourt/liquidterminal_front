@@ -101,7 +101,7 @@ export function StakingTableContent({
                         <>
                           <span className="text-white font-medium text-sm font-inter">{delegation.validatorName}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-brand-accent font-inter text-xs">
+                            <span className="text-brand-accent font-mono text-xs">
                               {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
                             </span>
                             <CopyButton text={delegation.validator} />
@@ -109,7 +109,7 @@ export function StakingTableContent({
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-brand-accent font-inter text-sm">
+                          <span className="text-brand-accent font-mono text-sm">
                             {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
                           </span>
                           <CopyButton text={delegation.validator} />
@@ -167,7 +167,7 @@ export function StakingTableContent({
               <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-brand-accent font-inter text-sm">
+                    <span className="text-brand-accent font-mono text-sm">
                       {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
                     </span>
                     <CopyButton text={tx.hash} />
@@ -197,7 +197,7 @@ export function StakingTableContent({
                         <>
                           <span className="text-white font-medium text-sm font-inter">{tx.validatorName}</span>
                           <div className="flex items-center gap-2">
-                            <span className="text-brand-accent  font-inter text-xs">
+                            <span className="text-brand-accent font-mono text-xs">
                               {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
                             </span>
                             <CopyButton text={tx.validator} />
@@ -205,7 +205,7 @@ export function StakingTableContent({
                         </>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <span className="text-brand-accent  font-inter text-sm">
+                          <span className="text-brand-accent font-mono text-sm">
                             {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
                           </span>
                           <CopyButton text={tx.validator} />

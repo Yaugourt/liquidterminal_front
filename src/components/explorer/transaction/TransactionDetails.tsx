@@ -41,7 +41,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
           <div className="flex items-center gap-2">
             <Link
               href={`/explorer/address/${stringValue}`}
-              className="text-brand-accent hover:text-brand-accent/80 transition-colors font-inter"
+              className="text-brand-accent hover:text-brand-accent/80 transition-colors font-mono"
             >
               {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
@@ -64,7 +64,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       case 'hash':
         return (
           <div className="flex items-center gap-2">
-            <span className="text-brand-accent font-inter">
+            <span className="text-brand-accent font-mono">
               {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
                 : stringValue

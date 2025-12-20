@@ -104,7 +104,7 @@ export function TransactionList({
                         <TableCell className="py-3 pl-0 pr-4">
                           <div className="flex items-center gap-2">
                             <span
-                              className="text-brand-accent text-sm cursor-pointer hover:text-brand-accent/80 transition-colors"
+                              className="text-brand-accent text-sm font-mono cursor-pointer hover:text-brand-accent/80 transition-colors"
                               onClick={() => onTransactionClick(tx.hash)}
                             >
                               {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
@@ -124,7 +124,7 @@ export function TransactionList({
                         <TableCell className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <span
-                              className="text-brand-accent text-sm cursor-pointer hover:text-brand-accent/80 transition-colors"
+                              className="text-brand-accent text-sm font-mono cursor-pointer hover:text-brand-accent/80 transition-colors"
                               onClick={() => onAddressClick(tx.user)}
                             >
                               {tx.user.slice(0, 12)}...{tx.user.slice(-8)}

@@ -400,7 +400,7 @@ export function UniversalTokenTable({
                                             <>
                                                 <TableCell className="py-3 px-3">
                                                     <StatusBadge variant={t.change24h < 0 ? 'error' : 'success'}>
-                                                        {t.change24h > 0 ? '+' : ''}{t.change24h}%
+                                                        {t.change24h > 0 ? '+' : ''}{formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                                                     </StatusBadge>
                                                 </TableCell>
                                                 <TableCell className="py-3 px-3">
@@ -431,7 +431,7 @@ export function UniversalTokenTable({
                                                         </TableCell>
                                                         <TableCell className="py-3 px-3">
                                                             <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
-                                                                {t.funding > 0 ? '+' : ''}{t.funding}%
+                                                                {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
                                                             </StatusBadge>
                                                         </TableCell>
                                                     </>

@@ -62,7 +62,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             <div className="flex items-center gap-2">
               <Link
                 href={`/explorer/address/${transaction.user}`}
-                className="text-brand-accent text-base hover:text-brand-accent/80 transition-colors font-inter"
+                className="text-brand-accent text-base hover:text-brand-accent/80 transition-colors font-mono"
               >
                 <span className="md:hidden">{truncateAddress(transaction.user)}</span>
                 <span className="hidden md:inline">{transaction.user}</span>
