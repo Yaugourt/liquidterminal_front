@@ -33,50 +33,50 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-brand-secondary border-white/10 sm:max-w-md">
+      <DialogContent className="bg-brand-secondary border-border-hover sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-white">Create Read List</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider block mb-1">Name</label>
+              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider block mb-1">Name</label>
               <Input
                 name="name"
                 placeholder="Read list name"
                 required
                 minLength={2}
                 maxLength={255}
-                className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+                className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
               />
             </div>
             <div>
-              <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider block mb-1">Description</label>
+              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider block mb-1">Description</label>
               <textarea
                 name="description"
                 placeholder="Description (optional)"
                 maxLength={500}
-                className="w-full p-3 bg-brand-dark border border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px]"
+                className="w-full p-3 bg-brand-dark border border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px]"
                 rows={3}
               />
             </div>
-            <div className="p-3 bg-brand-dark border border-white/5 rounded-lg">
-              <label className="flex items-center gap-3 text-zinc-300 text-sm cursor-pointer">
+            <div className="p-3 bg-brand-dark border border-border-subtle rounded-lg">
+              <label className="flex items-center gap-3 text-white/80 text-sm cursor-pointer">
                 <input
                   type="checkbox"
                   name="isPublic"
-                  className="w-4 h-4 rounded border-white/10 bg-brand-dark text-brand-accent focus:ring-brand-accent focus:ring-offset-0"
+                  className="w-4 h-4 rounded border-border-hover bg-brand-dark text-brand-accent focus:ring-brand-accent focus:ring-offset-0"
                 />
                 <span>Make this list public</span>
               </label>
             </div>
           </div>
-          <div className="flex gap-2 justify-end mt-6 pt-4 border-t border-white/5">
+          <div className="flex gap-2 justify-end mt-6 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg"
+              className="text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
             >
               Cancel
             </Button>

@@ -53,37 +53,37 @@ export function ReportResourceModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+            <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 bg-rose-500/10 rounded-lg">
                         <Flag className="w-5 h-5 text-rose-400" />
                     </div>
                     <div>
                         <DialogTitle className="text-lg font-bold">Report Resource</DialogTitle>
-                        <DialogDescription className="text-zinc-400 text-sm">
+                        <DialogDescription className="text-text-secondary text-sm">
                             Report inappropriate or broken content
                         </DialogDescription>
                     </div>
                 </div>
 
-                <div className="text-sm text-zinc-300 p-3 bg-brand-dark rounded-lg border border-white/5 mb-4">
-                    <span className="text-zinc-500">Reporting:</span> {resourceTitle}
+                <div className="text-sm text-white/80 p-3 bg-brand-dark rounded-lg border border-border-subtle mb-4">
+                    <span className="text-text-muted">Reporting:</span> {resourceTitle}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+                        <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
                             Reason for report *
                         </label>
                         <Textarea
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Describe why you're reporting this resource (10-500 characters)"
-                            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 min-h-[100px]"
+                            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 min-h-[100px]"
                             required
                             maxLength={500}
                         />
-                        <div className="flex justify-between text-xs text-zinc-500">
+                        <div className="flex justify-between text-xs text-text-muted">
                             <span>{reason.length < 10 && reason.length > 0 && (
                                 <span className="text-amber-400 flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" />
@@ -94,12 +94,12 @@ export function ReportResourceModal({
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+                            className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
                             disabled={isLoading}
                         >
                             Cancel

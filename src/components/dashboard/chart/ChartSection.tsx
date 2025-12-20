@@ -14,14 +14,14 @@ const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsProps) =
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
       {tabs.map(tab => (
         <button
           key={tab.key}
           onClick={() => onFilterChange(tab.key)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedFilter === tab.key
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
         >
           {tab.label}
@@ -48,7 +48,7 @@ export const ChartSection = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-row p-4 pb-0 justify-start items-start border-b border-white/5">
+      <div className="flex flex-row p-4 pb-0 justify-start items-start border-b border-border-subtle">
         <FilterButtons
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}

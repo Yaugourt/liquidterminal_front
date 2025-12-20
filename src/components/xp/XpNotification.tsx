@@ -52,7 +52,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
               <p className="font-bold text-white">
                 +{totalXp} XP
               </p>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-text-secondary">
                 Daily login bonus
                 {lastLoginResult.streakBonus > 0 && (
                   <span className="text-orange-400">
@@ -136,7 +136,7 @@ export function showXpGainToast(amount: number, action: string) {
         </div>
         <div>
           <p className="font-bold text-[#F9E370]">+{amount} XP</p>
-          <p className="text-xs text-zinc-400">{action}</p>
+          <p className="text-xs text-text-secondary">{action}</p>
         </div>
       </div>
     ),
@@ -164,7 +164,7 @@ export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGra
         </div>
         <div>
           <p className="font-bold text-emerald-400">Daily Task Completed!</p>
-          <p className="text-xs text-zinc-400">{taskName} +{xpGranted} XP</p>
+          <p className="text-xs text-text-secondary">{taskName} +{xpGranted} XP</p>
           {bonusGranted && bonusGranted > 0 && (
             <p className="text-xs text-[#F9E370]">All tasks bonus: +{bonusGranted} XP!</p>
           )}
@@ -194,7 +194,7 @@ export function showWeeklyChallengeToast(xpReward: number, challengeName: string
         </div>
         <div>
           <p className="font-bold text-[#F9E370]">Weekly Challenge Complete!</p>
-          <p className="text-xs text-zinc-400">{challengeName}</p>
+          <p className="text-xs text-text-secondary">{challengeName}</p>
           <p className="text-xs text-[#F9E370]">+{xpReward} XP</p>
         </div>
       </div>
@@ -222,7 +222,7 @@ export function showDailyLimitToast(actionName: string) {
         </div>
         <div>
           <p className="font-bold text-orange-400">Daily Limit Reached</p>
-          <p className="text-xs text-zinc-400">{actionName} - No XP until tomorrow</p>
+          <p className="text-xs text-text-secondary">{actionName} - No XP until tomorrow</p>
         </div>
       </div>
     ),

@@ -25,7 +25,7 @@ export function SettingsSelector() {
           <Settings className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[220px] bg-[#151A25] border-white/10 shadow-xl shadow-black/40">
+      <DropdownMenuContent align="end" className="w-[220px] bg-brand-secondary border-border-hover shadow-xl shadow-black/40">
         {/* Section Format des nombres */}
         <div className="px-2 py-1.5">
           <h3 className="text-xs font-medium text-brand-accent uppercase tracking-wide">Numbers</h3>
@@ -33,7 +33,7 @@ export function SettingsSelector() {
         {Object.entries(NUMBER_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
-            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${numberFormat === key ? 'text-brand-accent' : 'text-zinc-300'
+            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${numberFormat === key ? 'text-brand-accent' : 'text-white/80'
               }`}
             onClick={() => setNumberFormat(key as NumberFormatType)}
           >
@@ -53,13 +53,13 @@ export function SettingsSelector() {
         {Object.entries(DATE_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
-            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${dateFormat === key ? 'text-brand-accent' : 'text-zinc-300'
+            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${dateFormat === key ? 'text-brand-accent' : 'text-white/80'
               }`}
             onClick={() => setDateFormat(key as DateFormatType)}
           >
             <div className="flex flex-col">
               <span className="font-medium">{value.example}</span>
-              <span className="text-xs text-zinc-500">{value.description}</span>
+              <span className="text-xs text-text-muted">{value.description}</span>
             </div>
             {dateFormat === key && (
               <span className="h-2 w-2 rounded-full bg-brand-accent" />

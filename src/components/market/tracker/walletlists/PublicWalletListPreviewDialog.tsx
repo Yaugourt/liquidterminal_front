@@ -130,7 +130,7 @@ export function PublicWalletListPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white max-w-3xl max-h-[85vh] shadow-2xl shadow-black/40">
+      <DialogContent className="glass-dialog text-white max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <div className="flex-1 space-y-2">
@@ -140,7 +140,7 @@ export function PublicWalletListPreviewDialog({
                   <Users size={14} />
                   <span>Public</span>
                 </div>
-                <div className="flex items-center gap-1 text-zinc-400">
+                <div className="flex items-center gap-1 text-text-secondary">
                   <Calendar size={14} />
                   <span>{timeAgo}</span>
                 </div>
@@ -149,7 +149,7 @@ export function PublicWalletListPreviewDialog({
           </div>
 
           {list.description && (
-            <DialogDescription className="text-zinc-400 pt-2">
+            <DialogDescription className="text-text-secondary pt-2">
               {list.description}
             </DialogDescription>
           )}
@@ -158,15 +158,15 @@ export function PublicWalletListPreviewDialog({
         {/* Content */}
         <div className="space-y-4">
           {/* Stats */}
-          <div className="flex items-center gap-4 p-3 bg-black/20 border border-white/10 rounded-lg">
+          <div className="flex items-center gap-4 p-3 bg-black/20 border border-border-hover rounded-lg">
             <div className="flex items-center gap-2">
               <Wallet size={16} className="text-[#83E9FF]" />
               <span className="text-white font-medium">{list.itemsCount || 0}</span>
-              <span className="text-zinc-400 text-sm">
+              <span className="text-text-secondary text-sm">
                 wallet{list.itemsCount !== 1 ? 's' : ''}
               </span>
             </div>
-            <div className="text-zinc-400 text-sm">
+            <div className="text-text-secondary text-sm">
               By <span className="text-white font-medium">{list.creator?.name || 'Anonymous'}</span>
             </div>
           </div>
@@ -178,13 +178,13 @@ export function PublicWalletListPreviewDialog({
             </div>
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium text-zinc-400">Wallets in this list:</h3>
-              <div className="h-[300px] border border-white/10 rounded-lg overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <h3 className="text-sm font-medium text-text-secondary">Wallets in this list:</h3>
+              <div className="h-[300px] border border-border-hover rounded-lg overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                 <div className="p-3 space-y-2">
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-white/5 rounded-lg hover:border-[#83E9FF]/50 transition-colors"
+                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-[#83E9FF]/50 transition-colors"
                     >
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#83E9FF]/20 text-[#83E9FF] text-xs font-medium shrink-0">
                         {index + 1}
@@ -197,11 +197,11 @@ export function PublicWalletListPreviewDialog({
                             </span>
                           )}
                         </div>
-                        <code className="text-xs text-zinc-400 block break-all">
+                        <code className="text-xs text-text-secondary block break-all">
                           {item.userWallet?.Wallet?.address}
                         </code>
                         {item.notes && (
-                          <p className="text-xs text-zinc-500 italic">{item.notes}</p>
+                          <p className="text-xs text-text-muted italic">{item.notes}</p>
                         )}
                       </div>
                     </div>
@@ -210,7 +210,7 @@ export function PublicWalletListPreviewDialog({
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-zinc-400">
+            <div className="text-center py-8 text-text-secondary">
               No wallets in this list
             </div>
           )}
@@ -222,7 +222,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleCopyAddresses}
               disabled={!fullList?.items?.length}
-              className="border-white/10 text-white hover:bg-white/5"
+              className="border-border-hover text-white hover:bg-white/5"
             >
               <ClipboardCopy className="mr-2 h-4 w-4" />
               Copy Addresses
@@ -231,7 +231,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleExportCSV}
               disabled={!fullList?.items?.length}
-              className="border-white/10 text-white hover:bg-white/5"
+              className="border-border-hover text-white hover:bg-white/5"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
@@ -242,7 +242,7 @@ export function PublicWalletListPreviewDialog({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-white/10 text-white hover:bg-white/5"
+              className="border-border-hover text-white hover:bg-white/5"
             >
               Cancel
             </Button>

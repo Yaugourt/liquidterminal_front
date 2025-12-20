@@ -42,7 +42,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
         {copiedAddress === hash ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
         )}
       </button>
     </div>
@@ -67,7 +67,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
         {copiedAddress === address ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
         )}
       </button>
     </div>
@@ -86,27 +86,27 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       >
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Block</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Proposer</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Proposer</span>
               </TableHead>
               <TableHead className="py-3 px-3 text-right">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Txs</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Txs</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {blocks.map((block) => (
-              <TableRow key={block.height} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+              <TableRow key={block.height} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                 <TableCell className="py-3 px-3 text-sm">
                   <Link
                     href={`/explorer/block/${block.height}`}
@@ -145,27 +145,27 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
     >
       <Table className="w-full">
         <TableHeader>
-          <TableRow className="border-b border-white/5 hover:bg-transparent">
+          <TableRow className="border-b border-border-subtle hover:bg-transparent">
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Action</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
             </TableHead>
             <TableHead className="py-3 px-3 text-right">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Block</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {transactions.map((tx) => (
-            <TableRow key={tx.hash} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+            <TableRow key={tx.hash} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
               <TableCell className="py-3 px-3 text-sm text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
               <TableCell className="py-3 px-3 text-sm">
                 <div className="relative group">
@@ -177,7 +177,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                   </span>
                   {(tx.action?.type || 'Unknown').length > 7 && (
                     <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
-                      <div className="bg-brand-secondary border border-white/10 rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
+                      <div className="bg-brand-secondary border border-border-hover rounded-lg px-3 py-2 text-sm text-white shadow-lg max-w-xs">
                         {tx.action?.type || 'Unknown'}
                       </div>
                     </div>

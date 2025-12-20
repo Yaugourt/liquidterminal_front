@@ -75,13 +75,13 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
     return (
       <div className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg",
-        "bg-brand-secondary/60 border border-white/5",
+        "bg-brand-secondary/60 border border-border-subtle",
         className
       )}>
         <Trophy className="h-4 w-4 text-[#F9E370]" />
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400">Weekly</span>
+            <span className="text-xs text-text-secondary">Weekly</span>
             <span className="text-xs text-[#F9E370] font-medium">{completedCount}/{weeklyChallenges.length}</span>
           </div>
           <div className="h-1.5 bg-brand-dark rounded-full overflow-hidden mt-1">
@@ -92,7 +92,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
           </div>
         </div>
         {timeUntilWeeklyReset && (
-          <div className="flex items-center gap-1 text-xs text-zinc-500">
+          <div className="flex items-center gap-1 text-xs text-text-muted">
             <Clock className="h-3 w-3" />
             {timeUntilWeeklyReset}
           </div>
@@ -106,7 +106,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
     <div className={cn(
       "p-5 rounded-2xl",
       "bg-brand-secondary/60 backdrop-blur-md",
-      "border border-white/5",
+      "border border-border-subtle",
       className
     )}>
       {/* Header */}
@@ -117,25 +117,25 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Weekly Challenges</h3>
-            <p className="text-xs text-zinc-500">{completedCount}/{weeklyChallenges.length} completed</p>
+            <p className="text-xs text-text-muted">{completedCount}/{weeklyChallenges.length} completed</p>
           </div>
         </div>
         
         {/* Timer */}
         {timeUntilWeeklyReset && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            <span className="text-xs text-zinc-400">Resets in {timeUntilWeeklyReset}</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
+            <Clock className="h-3.5 w-3.5 text-text-secondary" />
+            <span className="text-xs text-text-secondary">Resets in {timeUntilWeeklyReset}</span>
           </div>
         )}
       </div>
 
       {/* XP Summary */}
-      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-white/5">
+      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
         <Star className="h-4 w-4 text-[#F9E370]" />
-        <span className="text-sm text-zinc-400">XP Earned:</span>
+        <span className="text-sm text-text-secondary">XP Earned:</span>
         <span className="text-sm font-bold text-[#F9E370]">{totalXpEarned}</span>
-        <span className="text-sm text-zinc-500">/ {totalXpAvailable}</span>
+        <span className="text-sm text-text-muted">/ {totalXpAvailable}</span>
       </div>
 
       {/* Challenges list */}
@@ -151,7 +151,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                 "p-4 rounded-xl transition-all",
                 challenge.completed 
                   ? "bg-emerald-500/10 border border-emerald-500/20" 
-                  : "bg-white/5 border border-white/5"
+                  : "bg-white/5 border border-border-subtle"
               )}
             >
               <div className="flex items-center gap-3 mb-3">
@@ -185,7 +185,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center justify-between text-xs text-zinc-500">
+                  <div className="flex items-center justify-between text-xs text-text-muted">
                     <span>{challenge.progress}/{challenge.target}</span>
                     <span>{challenge.progressPercent}%</span>
                   </div>
@@ -196,7 +196,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
               <Progress
                 value={challenge.progressPercent}
                 className={cn(
-                  "h-2 bg-brand-dark border border-white/5",
+                  "h-2 bg-brand-dark border border-border-subtle",
                   challenge.completed && "[&>div]:bg-emerald-500"
                 )}
               />

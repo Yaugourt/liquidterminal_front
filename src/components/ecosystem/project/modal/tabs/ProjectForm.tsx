@@ -58,19 +58,19 @@ export function ProjectForm({
     <form onSubmit={handleProjectSubmit} className="space-y-4 pb-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="title" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Title *</label>
+          <label htmlFor="title" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Title *</label>
           <Input
             id="title"
             value={projectForm.title}
             onChange={(e) => setProjectForm(prev => ({ ...prev, title: e.target.value }))}
-            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="categories" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Categories</label>
-          <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-white/5 rounded-lg p-2">
+          <label htmlFor="categories" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Categories</label>
+          <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-border-subtle rounded-lg p-2">
             {categories.map((category) => (
               <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 p-1 rounded">
                 <input
@@ -89,9 +89,9 @@ export function ProjectForm({
                       }));
                     }
                   }}
-                  className="rounded border-white/10 bg-brand-dark text-brand-accent focus:ring-brand-accent"
+                  className="rounded border-border-hover bg-brand-dark text-brand-accent focus:ring-brand-accent"
                 />
-                <span className="text-zinc-300 text-sm">{category.name}</span>
+                <span className="text-white/80 text-sm">{category.name}</span>
               </label>
             ))}
           </div>
@@ -99,25 +99,25 @@ export function ProjectForm({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="desc" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Description *</label>
+        <label htmlFor="desc" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Description *</label>
         <Textarea
           id="desc"
           value={projectForm.desc}
           onChange={(e) => setProjectForm(prev => ({ ...prev, desc: e.target.value }))}
-          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           rows={3}
           required
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Logo *</label>
+        <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Logo *</label>
 
         {/* File Upload Section */}
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
                 <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Image</span>
               </div>
@@ -146,7 +146,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {logoPreview && (
-            <div className="relative w-20 h-20 border border-white/10 rounded-xl overflow-hidden">
+            <div className="relative w-20 h-20 border border-border-hover rounded-xl overflow-hidden">
               <Image
                 src={logoPreview}
                 alt="Logo preview"
@@ -160,13 +160,13 @@ export function ProjectForm({
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
-            <span className="text-zinc-500 text-xs">OR</span>
+            <span className="text-text-muted text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
 
           {/* URL Input */}
           <div>
-            <label htmlFor="logo-url" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Logo URL</label>
+            <label htmlFor="logo-url" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Logo URL</label>
             <Input
               id="logo-url"
               type="url"
@@ -177,7 +177,7 @@ export function ProjectForm({
                   handleRemoveFile();
                 }
               }}
-              className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
+              className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
               placeholder="https://example.com/logo.png"
               disabled={!!selectedFile}
             />
@@ -187,11 +187,11 @@ export function ProjectForm({
 
       {/* Banner (optional) */}
       <div className="space-y-2">
-        <label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Banner (optional)</label>
+        <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Banner (optional)</label>
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="banner-file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-white/5 rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
                 <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Banner</span>
               </div>
@@ -220,7 +220,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {bannerPreview && (
-            <div className="relative w-full max-w-md h-24 border border-white/10 rounded-xl overflow-hidden">
+            <div className="relative w-full max-w-md h-24 border border-border-hover rounded-xl overflow-hidden">
               <Image
                 src={bannerPreview}
                 alt="Banner preview"
@@ -234,13 +234,13 @@ export function ProjectForm({
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
-            <span className="text-zinc-500 text-xs">OR</span>
+            <span className="text-text-muted text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
 
           {/* URL Input */}
           <div>
-            <label htmlFor="banner-url" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Banner URL</label>
+            <label htmlFor="banner-url" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Banner URL</label>
             <Input
               id="banner-url"
               type="url"
@@ -251,7 +251,7 @@ export function ProjectForm({
                   handleRemoveBannerFile();
                 }
               }}
-              className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
+              className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
               placeholder="https://example.com/banner.png"
               disabled={!!selectedBannerFile}
             />
@@ -261,25 +261,25 @@ export function ProjectForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="website" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Website</label>
+          <label htmlFor="website" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Website</label>
           <Input
             id="website"
             type="url"
             value={projectForm.website}
             onChange={(e) => setProjectForm(prev => ({ ...prev, website: e.target.value }))}
-            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             placeholder="https://example.com"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="twitter" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Twitter</label>
+          <label htmlFor="twitter" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Twitter</label>
           <Input
             id="twitter"
             type="url"
             value={projectForm.twitter}
             onChange={(e) => setProjectForm(prev => ({ ...prev, twitter: e.target.value }))}
-            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             placeholder="https://twitter.com/project"
           />
         </div>
@@ -287,25 +287,25 @@ export function ProjectForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="discord" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Discord</label>
+          <label htmlFor="discord" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Discord</label>
           <Input
             id="discord"
             type="url"
             value={projectForm.discord}
             onChange={(e) => setProjectForm(prev => ({ ...prev, discord: e.target.value }))}
-            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             placeholder="https://discord.gg/project"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="telegram" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Telegram</label>
+          <label htmlFor="telegram" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Telegram</label>
           <Input
             id="telegram"
             type="url"
             value={projectForm.telegram}
             onChange={(e) => setProjectForm(prev => ({ ...prev, telegram: e.target.value }))}
-            className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             placeholder="https://t.me/project"
           />
         </div>
@@ -313,23 +313,23 @@ export function ProjectForm({
 
       {/* Token Address (optional) */}
       <div className="space-y-2">
-        <label htmlFor="token" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Token Address (optional)</label>
+        <label htmlFor="token" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Token Address (optional)</label>
         <Input
           id="token"
           type="text"
           value={projectForm.token}
           onChange={(e) => setProjectForm(prev => ({ ...prev, token: e.target.value }))}
-          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           placeholder="0x..."
         />
       </div>
 
-      <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+      <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+          className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
         >
           Cancel
         </Button>

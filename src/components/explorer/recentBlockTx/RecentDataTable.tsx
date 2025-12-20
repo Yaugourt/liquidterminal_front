@@ -110,7 +110,7 @@ export function RecentDataTable() {
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header with Tabs and Controls */}
-      <div className="flex justify-between items-center p-4 border-b border-white/5">
+      <div className="flex justify-between items-center p-4 border-b border-border-subtle">
         <TabSelector activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Controls */}
@@ -120,7 +120,7 @@ export function RecentDataTable() {
             variant="ghost"
             size="sm"
             onClick={handlePauseToggle}
-            className="text-zinc-400 hover:text-white hover:bg-white/5 p-2"
+            className="text-text-secondary hover:text-white hover:bg-white/5 p-2"
           >
             {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
           </Button>
@@ -133,7 +133,7 @@ export function RecentDataTable() {
           <div className="flex justify-center items-center h-[200px]">
             <div className="flex flex-col items-center">
               <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-              <span className="text-zinc-500 text-sm">Connecting...</span>
+              <span className="text-text-muted text-sm">Connecting...</span>
             </div>
           </div>
         ) : (
@@ -147,7 +147,7 @@ export function RecentDataTable() {
             </div>
 
             {currentData.total > 0 && (
-              <div className="px-4 py-3 border-t border-white/5">
+              <div className="px-4 py-3 border-t border-border-subtle">
                 <Pagination
                   total={currentData.total}
                   page={currentData.page}

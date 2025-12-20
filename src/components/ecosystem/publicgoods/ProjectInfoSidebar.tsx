@@ -33,18 +33,18 @@ export function ProjectInfoSidebar({
                     {project.discordContact && (
                         <div className="flex items-center gap-2">
                             <MessageCircle className="w-4 h-4 text-[#5865F2]" />
-                            <span className="text-zinc-400 text-sm">{project.discordContact}</span>
+                            <span className="text-text-secondary text-sm">{project.discordContact}</span>
                         </div>
                     )}
                     {project.telegramContact && (
                         <div className="flex items-center gap-2">
                             <Send className="w-4 h-4 text-[#0088CC]" />
-                            <span className="text-zinc-400 text-sm">{project.telegramContact}</span>
+                            <span className="text-text-secondary text-sm">{project.telegramContact}</span>
                         </div>
                     )}
                     <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-zinc-500" />
-                        <span className="text-zinc-400 text-sm">{project.leadDeveloperContact}</span>
+                        <Mail className="w-4 h-4 text-text-muted" />
+                        <span className="text-text-secondary text-sm">{project.leadDeveloperContact}</span>
                     </div>
                 </div>
             </div>
@@ -54,23 +54,23 @@ export function ProjectInfoSidebar({
                 <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                        <span className="text-zinc-500 text-xs">Status</span>
+                        <span className="text-text-muted text-xs">Status</span>
                         <ProjectStatusBadge status={project.status} className="border text-xs" />
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-zinc-500 text-xs">Category</span>
+                        <span className="text-text-muted text-xs">Category</span>
                         <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.category.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-zinc-500 text-xs">Team Size</span>
+                        <span className="text-text-muted text-xs">Team Size</span>
                         <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.teamSize.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-zinc-500 text-xs">Experience</span>
+                        <span className="text-text-muted text-xs">Experience</span>
                         <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.experienceLevel.replace(/_/g, ' ')}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                        <span className="text-zinc-500 text-xs">Stage</span>
+                        <span className="text-text-muted text-xs">Stage</span>
                         <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
                     </div>
                 </div>
@@ -94,7 +94,7 @@ export function ProjectInfoSidebar({
                             <Button
                                 onClick={onEdit}
                                 variant="outline"
-                                className="w-full border-white/5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg"
+                                className="w-full border-border-subtle text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
                             >
                                 <Edit className="w-4 h-4 mr-2" />
                                 Edit Project

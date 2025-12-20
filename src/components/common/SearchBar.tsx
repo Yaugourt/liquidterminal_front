@@ -52,14 +52,14 @@ export function SearchBar({
                     "bg-brand-secondary/40 backdrop-blur-sm border",
                     isFocused
                         ? "border-brand-accent/50 shadow-[0_0_15px_-3px_rgba(131,233,255,0.15)]"
-                        : "border-white/5 hover:border-white/10"
+                        : "border-border-subtle hover:border-border-hover"
                 )}
             >
                 <Search
                     size={18}
                     className={cn(
                         "mr-3 transition-colors duration-200",
-                        isFocused ? "text-brand-accent" : "text-zinc-500"
+                        isFocused ? "text-brand-accent" : "text-text-muted"
                     )}
                 />
 
@@ -70,7 +70,7 @@ export function SearchBar({
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     placeholder={placeholder}
-                    className="flex-1 bg-transparent text-white placeholder:text-zinc-500 text-sm outline-none w-full"
+                    className="flex-1 bg-transparent text-white placeholder:text-text-muted text-sm outline-none w-full"
                 />
 
                 {query && (
@@ -78,7 +78,7 @@ export function SearchBar({
                         variant="ghost"
                         size="icon"
                         onClick={handleClear}
-                        className="ml-2 h-6 w-6 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full p-0.5"
+                        className="ml-2 h-6 w-6 text-text-muted hover:text-white hover:bg-white/5 rounded-full p-0.5"
                     >
                         <X size={14} />
                     </Button>

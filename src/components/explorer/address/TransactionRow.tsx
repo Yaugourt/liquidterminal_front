@@ -128,7 +128,7 @@ export function TransactionRow({ tx, formatterConfig, currentAddress }: Transact
 
     return (
         <TableRow
-            className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+            className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
         >
             <TableCell className="py-3 px-4 text-sm">
                 <div className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ export function TransactionRow({ tx, formatterConfig, currentAddress }: Transact
                             e.preventDefault();
                             copyHashToClipboard(tx.hash);
                         }}
-                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                     >
                         {copiedHash === tx.hash ? (
                             <Check className="h-3 w-3 text-emerald-400" />

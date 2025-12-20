@@ -67,11 +67,11 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (isLoading) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-zinc-500 text-sm">Loading holders...</span>
+            <span className="text-text-muted text-sm">Loading holders...</span>
           </div>
         </div>
       </div>
@@ -80,12 +80,12 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (error) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
-            <Database className="w-10 h-10 mb-3 text-zinc-600" />
-            <p className="text-zinc-400 text-sm mb-1">Error loading holders</p>
-            <p className="text-zinc-500 text-xs">{error.message}</p>
+            <Database className="w-10 h-10 mb-3 text-text-muted" />
+            <p className="text-text-secondary text-sm mb-1">Error loading holders</p>
+            <p className="text-text-muted text-xs">{error.message}</p>
           </div>
         </div>
       </div>
@@ -93,22 +93,22 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-white/10 transition-all">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-border-hover transition-all">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Address</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Address</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span>
               </TableHead>
               <TableHead className="py-3 px-3">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Percentage</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Percentage</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -117,11 +117,11 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
               paginatedHolders.map((holder, index) => (
                 <TableRow
                   key={holder.address}
-                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                  className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                 >
                   <TableCell className="py-3 px-3 text-sm text-white font-medium">
                     <div className="flex items-center gap-1">
-                      <span className="text-zinc-500 text-xs">{startIndex + index + 1}.</span>
+                      <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
                       <div className="flex items-center gap-1">
                         <Link 
                           href={`/explorer/address/${holder.address}`} 
@@ -130,7 +130,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                           {formatAddress(holder.address)}
                         </Link>
                         {getAlias(holder.address) && (
-                          <span className="text-zinc-500 text-xs ml-1">
+                          <span className="text-text-muted text-xs ml-1">
                             ({getAlias(holder.address)})
                           </span>
                         )}
@@ -141,7 +141,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                           {copiedAddress === holder.address ? (
                             <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
                           ) : (
-                            <Copy className="h-3.5 w-3.5 text-zinc-500 group-hover:text-white transition-all duration-200" />
+                            <Copy className="h-3.5 w-3.5 text-text-muted group-hover:text-white transition-all duration-200" />
                           )}
                         </button>
                       </div>
@@ -172,9 +172,9 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                   className="py-8"
                 >
                   <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                    <p className="text-zinc-400 text-sm mb-1">No holders found</p>
-                    <p className="text-zinc-500 text-xs">No data available</p>
+                    <Database className="w-10 h-10 mb-3 text-text-muted" />
+                    <p className="text-text-secondary text-sm mb-1">No holders found</p>
+                    <p className="text-text-muted text-xs">No data available</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -184,7 +184,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
       </div>
 
       {holdersArray.length > 0 && (
-        <div className="border-t border-white/5 px-4 py-3">
+        <div className="border-t border-border-subtle px-4 py-3">
           <Pagination
             total={holdersArray.length}
             page={currentPage}

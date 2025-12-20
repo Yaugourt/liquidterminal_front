@@ -203,16 +203,16 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           Add Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white text-lg font-bold">Add Project</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-3 bg-brand-dark border border-white/5 rounded-lg p-1">
-            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Project</TabsTrigger>
-            <TabsTrigger value="category" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Category</TabsTrigger>
-            <TabsTrigger value="csv" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">CSV Upload</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-brand-dark border border-border-subtle rounded-lg p-1">
+            <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Project</TabsTrigger>
+            <TabsTrigger value="category" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Category</TabsTrigger>
+            <TabsTrigger value="csv" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">CSV Upload</TabsTrigger>
           </TabsList>
 
           <TabsContent value="project" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{

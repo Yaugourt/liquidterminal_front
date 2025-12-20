@@ -127,7 +127,7 @@ export function WalletListItemSelector({
               value={selectedWalletId?.toString() || ""}
               onValueChange={onWalletChange}
             >
-              <SelectTrigger className="w-full sm:w-[400px] bg-[#151A25]/60 border-white/10 text-white focus:ring-0 focus:ring-offset-0">
+              <SelectTrigger className="w-full sm:w-[400px] bg-brand-secondary/60 border-border-hover text-white focus:ring-0 focus:ring-offset-0">
                 <div className="flex items-center gap-2 truncate">
                   <Wallet className="w-4 h-4 shrink-0 text-[#F9E370]" />
                   <SelectValue>
@@ -147,17 +147,17 @@ export function WalletListItemSelector({
                 </div>
               </SelectTrigger>
 
-              <SelectContent className="bg-[#151A25] border-white/10 text-white max-h-[400px]">
+              <SelectContent className="bg-brand-secondary border-border-hover text-white max-h-[400px]">
                 {/* Search input */}
                 {items.length > 5 && (
-                  <div className="p-2 sticky top-0 bg-[#151A25] z-10 border-b border-white/10">
+                  <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-hover">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         placeholder="Search wallets..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 bg-zinc-800/50 border-white/10 text-white h-8 focus-visible:ring-offset-0"
+                        className="pl-8 bg-zinc-800/50 border-border-hover text-white h-8 focus-visible:ring-offset-0"
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
@@ -244,7 +244,7 @@ export function WalletListItemSelector({
             </Select>
 
             {/* Wallet count badge */}
-            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-brand-accent">
+            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-white/5 border border-border-hover rounded-lg text-xs text-brand-accent">
               <span className="font-medium">{items.length}</span>
               <span className="text-gray-400">wallet{items.length !== 1 ? "s" : ""}</span>
             </div>
@@ -270,7 +270,7 @@ export function WalletListItemSelector({
               onClick={onExportCSV}
               size="sm"
               variant="outline"
-              className="w-full sm:w-auto border-white/10 text-zinc-300 hover:text-white hover:bg-white/5"
+              className="w-full sm:w-auto border-border-hover text-white/80 hover:text-white hover:bg-white/5"
             >
               <Download className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Export CSV</span>
@@ -284,7 +284,7 @@ export function WalletListItemSelector({
               onClick={onImportCSV}
               size="sm"
               variant="outline"
-              className="w-full sm:w-auto border-white/10 text-zinc-300 hover:text-white hover:bg-white/5"
+              className="w-full sm:w-auto border-border-hover text-white/80 hover:text-white hover:bg-white/5"
             >
               <FileUp className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Import CSV</span>
@@ -307,7 +307,7 @@ export function WalletListItemSelector({
 
       {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-[#151A25] border-white/10 text-white">
+        <AlertDialogContent className="bg-brand-secondary border-border-hover text-white">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Delete Multiple Wallets</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-400">
@@ -316,7 +316,7 @@ export function WalletListItemSelector({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-white/10 text-white hover:bg-white/5">
+            <AlertDialogCancel className="border-border-hover text-white hover:bg-white/5">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

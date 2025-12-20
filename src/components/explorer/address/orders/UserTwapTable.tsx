@@ -26,7 +26,7 @@ interface RealTimeData {
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
   <Button
     variant="ghost"
-    className={`text-zinc-400 hover:text-zinc-200 text-[10px] font-semibold uppercase tracking-wider p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+    className={`text-text-secondary hover:text-zinc-200 text-[10px] font-semibold uppercase tracking-wider p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>
@@ -285,7 +285,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="table-fixed w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className="py-3 px-4 w-[80px]">
                 <TableHeaderButton header="Type" align="left" />
               </TableHead>
@@ -308,7 +308,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
               twaps.map((twap) => (
                 <TableRow
                   key={twap.id}
-                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                  className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                 >
                   <TypeCell twap={twap} />
                   <ValueCell twap={twap} realTimeData={realTimeData} format={format} />

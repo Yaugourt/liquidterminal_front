@@ -133,7 +133,7 @@ export function PortfolioStats() {
 
   if (!isMounted) {
     return (
-      <div className="h-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+      <div className="h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
         <div className="flex items-center justify-center h-full">
           <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
         </div>
@@ -156,7 +156,7 @@ export function PortfolioStats() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-6 w-6 p-0 text-zinc-500 hover:text-white hover:bg-white/5"
+                    className="h-6 w-6 p-0 text-text-muted hover:text-white hover:bg-white/5"
                     onClick={copyToClipboard}
                   >
                     {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -186,36 +186,36 @@ export function PortfolioStats() {
           <div className="grid grid-cols-2 gap-4">
             {/* Colonne gauche : Balances */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
-                <p className="text-zinc-400 text-xs">Spot Balance</p>
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+                <p className="text-text-secondary text-xs">Spot Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
-                <p className="text-zinc-400 text-xs">Perp Balance</p>
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+                <p className="text-text-secondary text-xs">Perp Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
-                <p className="text-zinc-400 text-xs">Vault Balance</p>
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+                <p className="text-text-secondary text-xs">Vault Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
-                <p className="text-zinc-400 text-xs">Staked Balance</p>
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+                <p className="text-text-secondary text-xs">Staked Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-white/5 p-3 rounded-xl hover:border-white/10 transition-all">
-                <p className="text-zinc-400 text-xs">Total Balance</p>
+              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+                <p className="text-text-secondary text-xs">Total Balance</p>
                 <p className="text-white text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
               </div>
             </div>
 
             {/* Colonne droite : Long/Short Ratio */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</p>
-                    <div className="flex bg-brand-dark rounded-lg p-0.5 border border-white/5">
+                    <p className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Volume</p>
+                    <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
                       {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
                         <button
                           key={timeframe}
@@ -223,7 +223,7 @@ export function PortfolioStats() {
                           className={`px-2 py-1 text-[10px] rounded-md transition-all ${
                             volumeTimeframe === timeframe
                               ? 'bg-brand-accent text-brand-tertiary font-bold'
-                              : 'text-zinc-400 hover:text-zinc-200'
+                              : 'text-text-secondary hover:text-zinc-200'
                           }`}
                         >
                           {timeframe}
@@ -233,22 +233,22 @@ export function PortfolioStats() {
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <p className="text-zinc-400 text-xs">Perp:</p>
+                      <p className="text-text-secondary text-xs">Perp:</p>
                       <p className="text-white text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-zinc-400 text-xs">Spot + Vault:</p>
+                      <p className="text-text-secondary text-xs">Spot + Vault:</p>
                       <p className="text-white text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-zinc-400 text-xs">Total:</p>
+                      <p className="text-text-secondary text-xs">Total:</p>
                       <p className="text-white text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Section 2: Long/Short Ratio */}
-                <div className="space-y-2 pt-3 border-t border-white/5 mt-auto">
+                <div className="space-y-2 pt-3 border-t border-border-subtle mt-auto">
                   <div className="flex justify-between items-center">
                     <span className="text-emerald-400 text-xs font-medium">
                       Long: {formatAbbreviated(longShortData.longValue)}
@@ -278,15 +278,15 @@ export function PortfolioStats() {
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between text-[10px] text-zinc-500">
+                    <div className="flex justify-between text-[10px] text-text-muted">
                       <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
                       <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
                     </div>
                   </div>
                   
                   {/* Withdrawable */}
-                  <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                    <p className="text-zinc-400 text-xs">Withdrawable:</p>
+                  <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
+                    <p className="text-text-secondary text-xs">Withdrawable:</p>
                     <p className="text-white text-sm font-bold">{formatCurrency(0)}</p>
                   </div>
                 </div>

@@ -56,7 +56,7 @@ export function PublicReadListCard({
       className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
         isSelected 
           ? 'border-brand-accent/50' 
-          : 'border-white/5 hover:border-white/10'
+          : 'border-border-subtle hover:border-border-hover'
       }`}
       onClick={handleSelect}
     >
@@ -67,7 +67,7 @@ export function PublicReadListCard({
               {readList.name}
             </h3>
             {readList.description && (
-              <p className="text-sm text-zinc-400 mt-1 line-clamp-2">
+              <p className="text-sm text-text-secondary mt-1 line-clamp-2">
                 {readList.description}
               </p>
             )}
@@ -83,13 +83,13 @@ export function PublicReadListCard({
 
       <div className="px-4 pb-4">
         {/* Creator Info */}
-        <div className="flex items-center text-sm text-zinc-300 mb-3">
-          <User className="w-4 h-4 mr-2 text-zinc-500" />
+        <div className="flex items-center text-sm text-white/80 mb-3">
+          <User className="w-4 h-4 mr-2 text-text-muted" />
           <span className="truncate">{readList.creator.name}</span>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between text-xs text-zinc-500 mb-4 py-2 border-t border-white/5">
+        <div className="flex items-center justify-between text-xs text-text-muted mb-4 py-2 border-t border-border-subtle">
           <div className="flex items-center">
             <Calendar className="w-3 h-3 mr-1" />
             <span>

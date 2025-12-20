@@ -126,7 +126,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
           key={sectionIndex}
           className="glass-panel p-0 rounded-xl overflow-hidden"
         >
-          <h3 className="text-xl text-white font-medium p-6 border-b border-white/5 font-inter">
+          <h3 className="text-xl text-white font-medium p-6 border-b border-border-subtle font-inter">
             {section.title}
           </h3>
 

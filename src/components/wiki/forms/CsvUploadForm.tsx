@@ -39,7 +39,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
     return (
         <div className="space-y-4">
             <div className="space-y-2">
-                <label htmlFor="csvFile" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">CSV File *</label>
+                <label htmlFor="csvFile" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">CSV File *</label>
                 <div className="relative">
                     <input
                         ref={fileInputRef}
@@ -54,12 +54,12 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={loading}
-                        className="w-full bg-brand-dark border-white/5 text-white hover:bg-white/5 border-dashed border-2 py-8 rounded-xl"
+                        className="w-full bg-brand-dark border-border-subtle text-white hover:bg-white/5 border-dashed border-2 py-8 rounded-xl"
                     >
                         <div className="flex flex-col items-center gap-2">
                             <Upload className="w-6 h-6 text-brand-accent" />
                             <span className="text-sm">Click to select CSV file</span>
-                            <span className="text-xs text-zinc-500">Max 10MB</span>
+                            <span className="text-xs text-text-muted">Max 10MB</span>
                         </div>
                     </Button>
                 </div>
@@ -88,15 +88,15 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
 
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Total :</span>
+                            <span className="text-text-secondary">Total :</span>
                             <span className="text-brand-accent">{result.data.totalRows}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Succès :</span>
+                            <span className="text-text-secondary">Succès :</span>
                             <span className="text-emerald-400">{result.data.successfulImports}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Échecs :</span>
+                            <span className="text-text-secondary">Échecs :</span>
                             <span className="text-rose-400">{result.data.failedImports}</span>
                         </div>
                     </div>
@@ -106,7 +106,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                             <h4 className="text-sm font-medium text-brand-accent">Nouvelles catégories créées :</h4>
                             <div className="flex flex-wrap gap-1">
                                 {result.data.createdCategories.map((category, index) => (
-                                    <span key={index} className="bg-brand-dark px-2 py-1 rounded-lg text-xs border border-white/5">
+                                    <span key={index} className="bg-brand-dark px-2 py-1 rounded-lg text-xs border border-border-subtle">
                                         {category}
                                     </span>
                                 ))}
@@ -128,7 +128,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                         <Button
                             onClick={handleSuccess}
                             className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
@@ -140,12 +140,12 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
             )}
 
             {!result?.success && (
-                <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={onCancel}
-                        className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+                        className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
                     >
                         Cancel
                     </Button>

@@ -68,7 +68,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
     <div
       ref={setNodeRef}
       style={style}
-      className="glass-input p-3 space-y-2 border-white/10 bg-black/20"
+      className="glass-input p-3 space-y-2 border-border-hover bg-black/20"
     >
       {/* Group header */}
       <div className="flex items-center gap-2">
@@ -166,7 +166,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
         <div className="glass-card rounded-lg flex flex-col h-full max-h-[90vh]">
           {/* Header */}
-          <DialogHeader className="p-6 border-b border-white/5 flex flex-row items-center justify-between space-y-0">
+          <DialogHeader className="p-6 border-b border-border-subtle flex flex-row items-center justify-between space-y-0">
             <div>
               <DialogTitle className="text-xl font-bold text-white">Customize Sidebar</DialogTitle>
               <DialogDescription className="text-sm text-gray-400 mt-1">
@@ -206,11 +206,11 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center p-6 border-t border-white/5">
+          <div className="flex justify-between items-center p-6 border-t border-border-subtle">
             <Button
               variant="outline"
               onClick={handleReset}
-              className="border-white/10 text-white hover:bg-white/10 gap-2"
+              className="border-border-hover text-white hover:bg-white/10 gap-2"
             >
               <RotateCcw className="w-4 h-4" />
               Reset to Default

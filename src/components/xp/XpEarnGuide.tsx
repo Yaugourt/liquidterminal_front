@@ -51,7 +51,7 @@ const MISSIONS: MissionItem[] = [
         title: "Create Private List",
         description: "Create a private Readlist or Wallet List for yourself.",
         xp: "+15 XP",
-        color: "text-zinc-400",
+        color: "text-text-secondary",
         bgColor: "bg-zinc-500/10"
     },
     {
@@ -93,7 +93,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
         <div className={cn(
             "p-6 rounded-2xl",
             "bg-brand-secondary/60 backdrop-blur-md",
-            "border border-white/5",
+            "border border-border-subtle",
             className
         )}>
             <div className="flex items-center gap-2 mb-6">
@@ -102,7 +102,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                 </div>
                 <div>
                     <h3 className="text-sm font-bold text-white">Ways to Earn XP</h3>
-                    <p className="text-xs text-zinc-500">Permanent missions and rewards available anytime</p>
+                    <p className="text-xs text-text-muted">Permanent missions and rewards available anytime</p>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                     return (
                         <div
                             key={index}
-                            className="group p-4 rounded-xl bg-brand-dark border border-white/5 hover:border-white/10 transition-all hover:bg-white/5"
+                            className="group p-4 rounded-xl bg-brand-dark border border-border-subtle hover:border-border-hover transition-all hover:bg-white/5"
                         >
                             <div className="flex justify-between items-start mb-3">
                                 <div className={cn(
@@ -122,7 +122,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                                     <Icon className={cn("h-5 w-5", mission.color)} />
                                 </div>
                                 <div className={cn(
-                                    "px-2 py-1 rounded text-xs font-bold bg-brand-main border border-white/5",
+                                    "px-2 py-1 rounded text-xs font-bold bg-brand-main border border-border-subtle",
                                     mission.color
                                 )}>
                                     {mission.xp}
@@ -132,7 +132,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                             <h4 className="text-sm font-semibold text-white mb-1 group-hover:text-brand-accent transition-colors">
                                 {mission.title}
                             </h4>
-                            <p className="text-xs text-zinc-500 leading-relaxed">
+                            <p className="text-xs text-text-muted leading-relaxed">
                                 {mission.description}
                             </p>
                         </div>

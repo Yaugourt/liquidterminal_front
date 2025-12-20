@@ -21,7 +21,7 @@ export function ChartSkeleton({ className = "" }: { className?: string }) {
                         />
                     ))}
                 </div>
-                <span className="text-xs text-zinc-500">Loading chart...</span>
+                <span className="text-xs text-text-muted">Loading chart...</span>
             </div>
         </div>
     );

@@ -176,7 +176,7 @@ export function SearchBar({
         <Input
           ref={inputRef}
           placeholder={placeholder}
-          className="w-full pr-10 p-5 glass-input text-white placeholder:text-zinc-500 text-sm rounded-xl"
+          className="w-full pr-10 p-5 glass-input text-white placeholder:text-text-muted text-sm rounded-xl"
           value={searchValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -194,7 +194,7 @@ export function SearchBar({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-[#151A25]/95 backdrop-blur-sm border border-white/10 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
+          className="absolute top-full left-0 right-0 mt-1 bg-brand-secondary/95 backdrop-blur-sm border border-border-hover rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <button

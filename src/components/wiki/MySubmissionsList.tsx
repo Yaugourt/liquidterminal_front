@@ -17,7 +17,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
     const StatusIcon = config.icon;
 
     return (
-        <div className="p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+        <div className="p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -29,9 +29,9 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                         >
                             {isLoading ? "Loading..." : (preview?.title || resource.url)}
                         </a>
-                        <ExternalLink className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                        <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
                     </div>
-                    <div className="text-xs text-zinc-500 truncate">
+                    <div className="text-xs text-text-muted truncate">
                         {new URL(resource.url).hostname}
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export function MySubmissionsList() {
 
     if (submissions.length === 0) {
         return (
-            <div className="text-center py-8 text-zinc-500 text-sm">
+            <div className="text-center py-8 text-text-muted text-sm">
                 Aucune soumission pour le moment.
             </div>
         );

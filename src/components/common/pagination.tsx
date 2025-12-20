@@ -52,7 +52,7 @@ export function Pagination({
   };
 
   return (
-    <div className={`flex items-center justify-between text-zinc-400 text-sm ${className}`}>
+    <div className={`flex items-center justify-between text-text-secondary text-sm ${className}`}>
       <div className="flex items-center gap-2">
         <span className="text-white hidden sm:inline">Items per page:</span>
         <Select
@@ -60,10 +60,10 @@ export function Pagination({
           onValueChange={handleChangeRowsPerPage}
           disabled={disabled}
         >
-          <SelectTrigger className="h-8 w-[70px] bg-brand-secondary border-white/10 text-white hover:bg-brand-secondary/80 focus:ring-brand-accent">
+          <SelectTrigger className="h-8 w-[70px] bg-brand-secondary border-border-hover text-white hover:bg-brand-secondary/80 focus:ring-brand-accent">
             <SelectValue placeholder={rowsPerPage} />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-white/10 text-white">
+          <SelectContent className="bg-brand-secondary border-border-hover text-white">
             {rowsPerPageOptions.map((opt) => (
               <SelectItem key={opt} value={opt.toString()} className="focus:bg-white/10 focus:text-brand-accent">
                 {opt}
@@ -74,7 +74,7 @@ export function Pagination({
       </div>
 
       <div className="text-white font-medium">
-        {from}-{to} <span className="text-zinc-500">of</span> {total}
+        {from}-{to} <span className="text-text-muted">of</span> {total}
       </div>
 
       {!hidePageNavigation && (

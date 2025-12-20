@@ -49,7 +49,7 @@ export function DeleteWalletDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl shadow-black/40">
+      <DialogContent className="glass-dialog text-white">
         <DialogHeader>
           <DialogTitle>Delete Wallet</DialogTitle>
           <DialogDescription className="text-white">
@@ -65,7 +65,7 @@ export function DeleteWalletDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-white/10 text-white hover:bg-white/5"
+            className="border-border-hover text-white hover:bg-white/5"
           >
             Cancel
           </Button>

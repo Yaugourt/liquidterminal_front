@@ -39,33 +39,33 @@ export function VaultTableContent({ vaults, isLoading, error, format }: VaultTab
     >
       <Table className="w-full">
         <TableHeader>
-          <TableRow className="border-b border-white/5 hover:bg-transparent">
+          <TableRow className="border-b border-border-subtle hover:bg-transparent">
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Status</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Status</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">TVL</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">TVL</span>
             </TableHead>
             <TableHead className="py-3 px-3 text-right">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">APR</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">APR</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Leader</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Leader</span>
             </TableHead>
             <TableHead className="py-3 px-3">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Created</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Created</span>
             </TableHead>
             <TableHead className="py-3 px-3 text-center">
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Action</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {vaults.map((vault: VaultSummary) => (
-            <TableRow key={vault.summary.vaultAddress} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+            <TableRow key={vault.summary.vaultAddress} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
               <TableCell className="py-3 px-3 text-white font-medium">{vault.summary.name}</TableCell>
               <TableCell className="py-3 px-3">
                 <StatusBadge variant={!vault.summary.isClosed ? 'success' : 'error'}>

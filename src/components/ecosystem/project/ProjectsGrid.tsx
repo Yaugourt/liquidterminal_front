@@ -107,14 +107,14 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       {projectsLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-32 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl" />
+            <Skeleton key={i} className="h-32 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl" />
           ))}
         </div>
       ) : projectsError ? (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-8">
           <div className="text-center py-8">
             <p className="text-rose-400 text-lg font-medium">Failed to load projects</p>
-            <p className="text-zinc-500 text-sm mt-2">
+            <p className="text-text-muted text-sm mt-2">
               {projectsError.message || "Please try again later."}
             </p>
           </div>
@@ -129,10 +129,10 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           ))}
         </div>
       ) : (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-8">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-8">
           <div className="text-center py-8">
-            <p className="text-zinc-400 text-lg">No projects found</p>
-            <p className="text-zinc-500 text-sm mt-2">
+            <p className="text-text-secondary text-lg">No projects found</p>
+            <p className="text-text-muted text-sm mt-2">
               {activeTab === 'all'
                 ? "No projects have been added yet."
                 : "No projects in this category yet."}

@@ -48,7 +48,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
             variant="ghost"
             onClick={onClick}
             disabled={!onClick}
-            className={`${isActive ? "text-brand-accent" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider disabled:hover:text-zinc-400 disabled:cursor-default`}
+            className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider disabled:hover:text-text-secondary disabled:cursor-default`}
         >
             {label}
             {onClick && <ArrowUpDown className="h-3 w-3" />}
@@ -63,9 +63,9 @@ const EmptyState = memo(() => (
     <TableRow>
         <TableCell colSpan={6} className="text-center py-8">
             <div className="flex flex-col items-center justify-center">
-                <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                <p className="text-zinc-400 text-sm mb-1">Aucun token disponible</p>
-                <p className="text-zinc-600 text-xs">Vérifiez plus tard</p>
+                <Database className="w-10 h-10 mb-3 text-text-muted" />
+                <p className="text-text-secondary text-sm mb-1">Aucun token disponible</p>
+                <p className="text-text-muted text-xs">Vérifiez plus tard</p>
             </div>
         </TableCell>
     </TableRow>
@@ -210,7 +210,7 @@ export function UniversalTokenTable({
 
     if (isLoading && !tokens.length) {
         return (
-            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
+            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
                 <div className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
                     <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
                 </div>
@@ -220,7 +220,7 @@ export function UniversalTokenTable({
 
     if (error && mode === 'compact') {
         return (
-            <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-full">
+            <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-full">
                 <div className="flex justify-center items-center h-full">
                     <p className="text-rose-400 text-sm">Une erreur est survenue</p>
                 </div>
@@ -231,11 +231,11 @@ export function UniversalTokenTable({
     //--- Main Render ---
 
     return (
-        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
+        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
             <div className={`overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent ${mode === 'compact' ? 'flex-1' : ''}`}>
                 <Table className={mode === 'compact' ? 'h-full' : ''}>
                     <TableHeader>
-                        <TableRow className="border-b border-white/5 hover:bg-transparent">
+                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
                             <TableHeaderCell
                                 label="Name"
                                 className={`py-3 px-3 ${mode === 'compact' ? 'w-[35%]' : (market === 'spot' ? 'w-[16.66%]' : 'w-[17%]')}`}
@@ -342,7 +342,7 @@ export function UniversalTokenTable({
                                 return (
                                     <TableRow
                                         key={uniqueKey}
-                                        className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer`}
+                                        className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer`}
                                         style={mode === 'compact' ? { height: `${100 / pageSize}%` } : undefined}
                                         onClick={() => handleTokenClick(t.name)}
                                     >
@@ -450,7 +450,7 @@ export function UniversalTokenTable({
 
             {/* Pagination intégrée (seulement en mode Full) */}
             {mode === 'full' && (
-                <div className="border-t border-white/5 px-4 py-3">
+                <div className="border-t border-border-subtle px-4 py-3">
                     <Pagination
                         total={total}
                         page={currentPage - 1}

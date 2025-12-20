@@ -86,7 +86,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
   const StatusIcon = statusConfig[status].icon;
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
       {/* Status badge (top left) */}
       {showStatus && status !== 'APPROVED' && (
         <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${statusConfig[status].color}`}>
@@ -156,20 +156,20 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
               <ExternalLink size={14} className="text-brand-accent mt-0.5 flex-shrink-0" />
             </div>
 
-            <p className="text-xs text-zinc-400 line-clamp-2">
+            <p className="text-xs text-text-secondary line-clamp-2">
               {preview?.description || resource.description}
             </p>
 
-            <div className="flex items-center justify-between pt-2 border-t border-white/5">
+            <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
               <Badge
                 variant="secondary"
-                className="bg-brand-dark text-zinc-400 border border-white/5 text-xs rounded-md"
+                className="bg-brand-dark text-text-secondary border border-border-subtle text-xs rounded-md"
               >
                 {preview?.siteName || 'Article'}
               </Badge>
               <div className="flex items-center gap-1">
                 {previewLoading && (
-                  <span className="text-xs text-zinc-500">Loading...</span>
+                  <span className="text-xs text-text-muted">Loading...</span>
                 )}
 
                 {/* Report button */}
@@ -182,7 +182,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                       e.stopPropagation();
                       setShowReportModal(true);
                     }}
-                    className="p-1.5 h-auto rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-400/10"
+                    className="p-1.5 h-auto rounded-lg text-text-muted hover:text-rose-400 hover:bg-rose-400/10"
                     title="Report this resource"
                   >
                     <Flag className="w-3.5 h-3.5" />
@@ -203,7 +203,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                   }}
                   className={`p-1.5 h-auto rounded-lg ${authenticated
                     ? "text-brand-accent hover:bg-brand-accent/10"
-                    : "text-zinc-600 cursor-not-allowed"
+                    : "text-text-muted cursor-not-allowed"
                     }`}
                   title={authenticated ? "Add to read list" : "Login required to add to read list"}
                 >
@@ -216,13 +216,13 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
 
         {/* Read Lists Modal */}
         <Dialog open={showReadLists && authenticated} onOpenChange={(open) => !open && setShowReadLists(false)}>
-          <DialogContent className="max-w-sm bg-brand-secondary border-white/10 p-6 z-[9999]">
+          <DialogContent className="max-w-sm bg-brand-secondary border-border-hover p-6 z-[9999]">
             <DialogHeader>
               <DialogTitle className="text-sm font-bold text-white mb-4">Add to read list:</DialogTitle>
             </DialogHeader>
             <div className="space-y-2">
               {readLists.length === 0 ? (
-                <div className="text-sm text-zinc-500 py-4 text-center">
+                <div className="text-sm text-text-muted py-4 text-center">
                   No read lists available
                 </div>
               ) : (
@@ -236,13 +236,13 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                         handleAddToReadList(readList.id);
                       }}
                       disabled={isAddingToList}
-                      className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-colors border border-white/5 hover:border-white/10"
+                      className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-colors border border-border-subtle hover:border-border-hover"
                     >
                       <BookOpen className="w-5 h-5 text-brand-accent flex-shrink-0" />
                       <div className="flex-1">
                         <div className="font-medium">{readList.name}</div>
                         {readList.description && (
-                          <div className="text-xs text-zinc-500 mt-1">{readList.description}</div>
+                          <div className="text-xs text-text-muted mt-1">{readList.description}</div>
                         )}
                       </div>
                     </button>
@@ -250,14 +250,14 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
                 </div>
               )}
             </div>
-            <DialogFooter className="mt-6 pt-4 border-t border-white/5 flex justify-end">
+            <DialogFooter className="mt-6 pt-4 border-t border-border-subtle flex justify-end">
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setShowReadLists(false);
                 }}
-                className="px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors"
               >
                 Cancel
               </button>

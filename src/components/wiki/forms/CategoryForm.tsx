@@ -42,35 +42,35 @@ export function CategoryForm({ onSuccess, onCancel }: CategoryFormProps) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-                <label htmlFor="categoryName" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Category Name *</label>
+                <label htmlFor="categoryName" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Category Name *</label>
                 <Input
                     id="categoryName"
                     value={form.name}
                     onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
-                    className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+                    className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
                     placeholder="Enter category name"
                     required
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="categoryDesc" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Description</label>
+                <label htmlFor="categoryDesc" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Description</label>
                 <Textarea
                     id="categoryDesc"
                     value={form.description}
                     onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
-                    className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+                    className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
                     rows={3}
                     placeholder="Enter category description (optional)"
                 />
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+            <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                 <Button
                     type="button"
                     variant="outline"
                     onClick={onCancel}
-                    className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+                    className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
                 >
                     Cancel
                 </Button>

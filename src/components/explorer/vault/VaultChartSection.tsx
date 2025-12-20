@@ -46,7 +46,7 @@ const AnimatedTimeframeSelector = ({
   return (
     <div
       ref={containerRef}
-      className="relative flex bg-brand-dark rounded-lg p-1 border border-white/5"
+      className="relative flex bg-brand-dark rounded-lg p-1 border border-border-subtle"
     >
       <div
         className="absolute top-1 bottom-1 bg-brand-accent rounded-md transition-all duration-300 ease-out"
@@ -62,7 +62,7 @@ const AnimatedTimeframeSelector = ({
             buttonRefs.current[timeframe.value] = el;
           }}
           onClick={() => onTimeframeChange(timeframe.value)}
-          className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${selectedTimeframe === timeframe.value ? 'text-brand-tertiary font-bold' : 'text-zinc-400 hover:text-zinc-200'
+          className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${selectedTimeframe === timeframe.value ? 'text-brand-tertiary font-bold' : 'text-text-secondary hover:text-zinc-200'
             }`}
         >
           {timeframe.label}
@@ -143,7 +143,7 @@ const VaultChartDisplay = ({
 
   if (error) {
     return (
-      <div className="w-full h-full flex flex-col bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <div className="w-full h-full flex flex-col bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
         <div className="flex-1 flex items-center justify-center min-h-[300px]">
           <div className="flex items-center gap-2 text-rose-400">
             <span className="text-sm">Failed to load vault chart</span>
@@ -154,25 +154,25 @@ const VaultChartDisplay = ({
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+    <div className="w-full h-full flex flex-col bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
       {/* Header avec tabs et timeframe selector */}
       <div className="flex-shrink-0 p-4 pb-0">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4 flex-wrap">
             {/* Titre */}
-            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+            <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
               Hyperliquidity Provider (HLP)
             </h2>
 
             {/* Tabs pour le type de chart */}
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
               {chartTabs.map(tab => (
                 <button
                   key={tab.key}
                   onClick={() => onChartChange(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedChart === tab.key
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                     }`}
                 >
                   {tab.label}
@@ -187,7 +187,7 @@ const VaultChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-text-muted">
                     {formatDate(new Date(hoverTime), dateFormat)}
                   </span>
                 )}
@@ -212,7 +212,7 @@ const VaultChartDisplay = ({
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
-            <p className="text-zinc-500">No data available</p>
+            <p className="text-text-muted">No data available</p>
           </div>
         ) : (
           <LightweightChart

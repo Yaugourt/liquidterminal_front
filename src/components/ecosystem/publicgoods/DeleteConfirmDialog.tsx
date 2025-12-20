@@ -29,7 +29,7 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20">
+      <AlertDialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20">
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">
@@ -39,7 +39,7 @@ export function DeleteConfirmDialog({
               Delete Project
             </AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="text-zinc-400">
+          <AlertDialogDescription className="text-text-secondary">
             Are you sure you want to delete <span className="font-semibold text-white">{projectName}</span>?
             <br />
             <br />
@@ -48,7 +48,7 @@ export function DeleteConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel 
-            className="bg-transparent border-white/5 text-zinc-400 hover:bg-white/5 hover:text-white rounded-lg"
+            className="bg-transparent border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white rounded-lg"
             disabled={isDeleting}
           >
             Cancel

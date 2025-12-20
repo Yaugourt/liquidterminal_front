@@ -26,12 +26,12 @@ export function StatsCard({ title, value, change, isLoading }: StatsCardProps) {
   };
 
   return (
-    <GlassPanel className="p-4 hover:border-white/10 transition-all group">
+    <GlassPanel className="p-4 hover:border-border-hover transition-all group">
       <div className="flex items-center gap-3 mb-2">
         <div className={`w-8 h-8 rounded-xl ${getIconBg()} flex items-center justify-center transition-transform group-hover:scale-110`}>
           {getIcon()}
         </div>
-        <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">{title}</h3>
+        <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">{title}</h3>
       </div>
 
       {isLoading ? (

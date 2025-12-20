@@ -37,24 +37,24 @@ export function DeploysTable() {
         >
             <Table className="w-full">
                 <TableHeader>
-                    <TableRow className="border-b border-white/5 hover:bg-transparent">
+                    <TableRow className="border-b border-border-subtle hover:bg-transparent">
                         <TableHead className="py-3 px-3">
-                            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span>
+                            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
                         </TableHead>
                         <TableHead className="py-3 px-3">
-                            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span>
+                            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
                         </TableHead>
                         <TableHead className="py-3 px-3">
-                            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span>
+                            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Action</span>
                         </TableHead>
                         <TableHead className="py-3 px-3">
-                            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span>
+                            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {paginatedDeploys.map((deploy) => (
-                        <TableRow key={deploy.hash} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                        <TableRow key={deploy.hash} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                             <TableCell className="py-3 px-3 text-sm text-white font-medium">
                                 {formatDateTime(deploy.timestamp, dateFormat)}
                             </TableCell>

@@ -64,7 +64,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
   return (
     <div className="w-full h-full flex flex-col" ref={containerRef}>
       <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
           {subTabs.map(tab => (
             <button
               key={tab.key}
@@ -72,7 +72,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
               className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${
                 activeSubTab === tab.key
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
               }`}
             >
               {tab.label}
@@ -83,7 +83,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
         {activeSubTab === "spot" && (
           <Link
             href="/market/spot/auction"
-            className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-brand-accent transition-colors"
+            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
           >
             See All
             <ExternalLink size={10} />
@@ -101,9 +101,9 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
             hidePageNavigation={true}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full border border-white/5 rounded-xl bg-white/[0.02]">
+          <div className="flex flex-col items-center justify-center h-full border border-border-subtle rounded-xl bg-white/[0.02]">
             <span className="text-white text-sm font-medium mb-1">Coming Soon</span>
-            <span className="text-zinc-500 text-xs">Perp past auctions will be available soon</span>
+            <span className="text-text-muted text-xs">Perp past auctions will be available soon</span>
           </div>
         )}
       </div>

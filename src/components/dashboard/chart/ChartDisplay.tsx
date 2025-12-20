@@ -31,7 +31,7 @@ const AnimatedPeriodSelector = ({
   availablePeriods: ChartPeriod[]; 
 }) => {
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
       {availablePeriods.map((period) => (
         <button
           key={period}
@@ -39,7 +39,7 @@ const AnimatedPeriodSelector = ({
           className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${
             selectedPeriod === period
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
           }`}
         >
           {period}
@@ -143,7 +143,7 @@ export const ChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-text-muted">
                     {new Date(hoverTime).toLocaleDateString(undefined, { 
                       month: 'short', 
                       day: 'numeric', 
@@ -157,11 +157,11 @@ export const ChartDisplay = ({
             )}
 
             {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
-              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-white/5">
+              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onCurrencyChange("USDC")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-zinc-300"
+                    selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                   }`}
                 >
                   USDC
@@ -169,7 +169,7 @@ export const ChartDisplay = ({
                 <button
                   onClick={() => onCurrencyChange("HYPE")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-zinc-300"
+                    selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                   }`}
                 >
                   HYPE
@@ -178,11 +178,11 @@ export const ChartDisplay = ({
             )}
             
             {selectedFilter === "fees" && onFeeTypeChange && (
-              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-white/5">
+              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onFeeTypeChange("all")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedFeeType === "all" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-zinc-300"
+                    selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                   }`}
                 >
                   All
@@ -190,7 +190,7 @@ export const ChartDisplay = ({
                 <button
                   onClick={() => onFeeTypeChange("spot")}
                   className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-zinc-500 hover:text-zinc-300"
+                    selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                   }`}
                 >
                   Spot
@@ -211,11 +211,11 @@ export const ChartDisplay = ({
       <div className="flex-1 px-2 pb-2">
         {isLoading ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
-            <Loader2 className="h-8 w-8 animate-spin text-zinc-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-text-muted" />
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
-            <p className="text-zinc-500 text-sm">No data available</p>
+            <p className="text-text-muted text-sm">No data available</p>
           </div>
         ) : (
           <LightweightChart

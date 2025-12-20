@@ -63,7 +63,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     return (
       <div 
         ref={containerRef}
-        className="relative flex bg-brand-dark rounded-lg p-1 border border-white/5"
+        className="relative flex bg-brand-dark rounded-lg p-1 border border-border-subtle"
       >
         <div
           className="absolute top-1 bottom-1 bg-brand-accent rounded-md transition-all duration-300 ease-out"
@@ -80,7 +80,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             }}
             onClick={() => onPeriodChange(period)}
             className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${
-              selectedPeriod === period ? 'text-brand-tertiary font-bold' : 'text-zinc-400 hover:text-zinc-200'
+              selectedPeriod === period ? 'text-brand-tertiary font-bold' : 'text-text-secondary hover:text-zinc-200'
             }`}
           >
             {period === '1y' ? 'All Time' : period}
@@ -94,7 +94,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     const barCounts = [7, 10, 15, 30, 60, 90];
     
     return (
-      <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
         {barCounts.map((count) => (
           <button
             key={count}
@@ -102,7 +102,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             className={`px-2 py-1 text-xs font-medium transition-all rounded-md ${
               barCount === count
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             {count}
@@ -117,13 +117,13 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
     
     return (
       <div className="flex items-center gap-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
           <button
             onClick={() => setChartType('line')}
             className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'line'
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             <TrendingUp size={12} />
@@ -134,7 +134,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'bar'
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
           >
             <BarChart3 size={12} />

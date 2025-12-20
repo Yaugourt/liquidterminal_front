@@ -45,7 +45,7 @@ export const StatusTabs = memo(function StatusTabs({
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5 w-fit">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit">
       {tabs.map(tab => (
         <button
           key={tab.id}
@@ -54,7 +54,7 @@ export const StatusTabs = memo(function StatusTabs({
             "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
             activeTab === tab.id
               ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-              : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+              : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
           )}
         >
           <span>

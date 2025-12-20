@@ -102,8 +102,8 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
-      <div className="p-4 border-b border-white/5">
+    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+      <div className="p-4 border-b border-border-subtle">
         <h3 className="flex items-center gap-2 text-white font-semibold">
           <History className="h-5 w-5 text-[#F9E370]" />
           XP History
@@ -116,22 +116,22 @@ export function XpHistoryList({
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-8">
-            <History className="h-12 w-12 mx-auto mb-3 text-zinc-600" />
-            <p className="text-zinc-400">No XP activity yet</p>
-            <p className="text-sm mt-1 text-zinc-600">Start earning XP by using the platform!</p>
+            <History className="h-12 w-12 mx-auto mb-3 text-text-muted" />
+            <p className="text-text-secondary">No XP activity yet</p>
+            <p className="text-sm mt-1 text-text-muted">Start earning XP by using the platform!</p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
               {displayTransactions.map((tx) => {
                 const Icon = ACTION_ICONS[tx.actionType] || Gift;
-                const colorClass = ACTION_COLORS[tx.actionType] || "text-zinc-400 bg-zinc-400/10";
+                const colorClass = ACTION_COLORS[tx.actionType] || "text-text-secondary bg-zinc-400/10";
                 const [textColor, bgColor] = colorClass.split(" ");
 
                 return (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors"
+                    className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -147,11 +147,11 @@ export function XpHistoryList({
                           {XP_ACTION_LABELS[tx.actionType] || tx.actionType}
                         </p>
                         {tx.description && (
-                          <p className="text-xs text-zinc-500 truncate max-w-[200px]">
+                          <p className="text-xs text-text-muted truncate max-w-[200px]">
                             {tx.description}
                           </p>
                         )}
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-text-muted">
                           {formatRelativeTime(tx.createdAt)}
                         </p>
                       </div>
@@ -160,7 +160,7 @@ export function XpHistoryList({
                       <span className="font-bold text-[#F9E370]">
                         +{tx.xpAmount}
                       </span>
-                      <span className="text-xs text-zinc-500 ml-1">XP</span>
+                      <span className="text-xs text-text-muted ml-1">XP</span>
                     </div>
                   </div>
                 );
@@ -173,7 +173,7 @@ export function XpHistoryList({
               historyPagination.page < historyPagination.totalPages && (
                 <Button
                   variant="outline"
-                  className="w-full border-white/5 hover:bg-white/5 text-zinc-300 rounded-lg"
+                  className="w-full border-border-subtle hover:bg-white/5 text-white/80 rounded-lg"
                   onClick={() => refetchHistory(historyPagination.page + 1)}
                   disabled={isLoadingHistory}
                 >

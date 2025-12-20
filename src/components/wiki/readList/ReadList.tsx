@@ -60,10 +60,10 @@ const useReadListInitialization = () => {
 // Simple state components
 const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-    <div className="bg-brand-secondary/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl shadow-black/20 p-8 max-w-md w-full mx-4">
+    <div className="bg-brand-secondary/90 backdrop-blur-md border border-border-hover rounded-2xl shadow-xl shadow-black/20 p-8 max-w-md w-full mx-4">
       <div className="text-center mb-6">
         <h2 className="text-lg font-bold text-white mb-2">Authentication Required</h2>
-        <p className="text-zinc-400 text-sm">You need to login to access your read lists</p>
+        <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
       </div>
       <button
         onClick={onLogin}
@@ -84,7 +84,7 @@ const Error = ({ error }: { error: string }) => (
         </svg>
       </div>
       <h3 className="text-rose-400 text-lg font-semibold mb-2">Error</h3>
-      <p className="text-zinc-400 max-w-md">{error}</p>
+      <p className="text-text-secondary max-w-md">{error}</p>
     </div>
   </div>
 );

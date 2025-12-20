@@ -38,7 +38,7 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
 
   return (
     <div 
-      className={`bg-brand-secondary/60 backdrop-blur-md border border-white/5 hover:border-white/10 transition-all shadow-xl shadow-black/20 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${
+      className={`bg-brand-secondary/60 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${
         item.isRead ? 'opacity-75' : ''
       }`}
       onClick={handleCardClick}
@@ -80,7 +80,7 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
           )}
           
           {/* Action buttons overlay */}
-          <div className="absolute top-2 right-2 flex items-center gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 z-10 border border-white/10">
+          <div className="absolute top-2 right-2 flex items-center gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 z-10 border border-border-hover">
             <Button
               onClick={handleToggleRead}
               size="sm"
@@ -119,7 +119,7 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
           </div>
 
           <h3 className={`font-medium text-sm mb-2 line-clamp-2 group-hover:text-brand-accent transition-colors flex-1 ${
-            item.isRead ? 'text-zinc-400' : 'text-white'
+            item.isRead ? 'text-text-secondary' : 'text-white'
           }`}>
             {preview?.title ? (
               <a 
@@ -146,18 +146,18 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
             )}
           </h3>
 
-          <p className="text-xs text-zinc-500 line-clamp-2 mb-2">
+          <p className="text-xs text-text-muted line-clamp-2 mb-2">
             {preview?.description || 'No description available'}
           </p>
 
           {item.notes && !item.notes.startsWith('Added from') && (
-            <p className="text-xs text-zinc-500 line-clamp-2 mb-2">
+            <p className="text-xs text-text-muted line-clamp-2 mb-2">
               {item.notes}
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-2 mt-auto border-t border-white/5">
-            <div className="text-[10px] text-zinc-500">
+          <div className="flex items-center justify-between pt-2 mt-auto border-t border-border-subtle">
+            <div className="text-[10px] text-text-muted">
               Added {new Date(item.addedAt).toLocaleDateString()}
             </div>
             <div className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${

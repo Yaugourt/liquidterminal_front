@@ -29,7 +29,7 @@ const formatAddress = (address: string) => {
 
 // Composant pour les headers de tableau
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <span className={`text-zinc-400 text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className={`text-text-secondary text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
     {header}
   </span>
 );
@@ -91,7 +91,7 @@ const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
 
   return (
-    <TableCell className="py-3 px-4 text-sm text-zinc-300 w-[180px]">
+    <TableCell className="py-3 px-4 text-sm text-white/80 w-[180px]">
       <span className="text-white font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
     </TableCell>
   );
@@ -138,7 +138,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
     <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
-          <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">
+          <span className="text-[10px] text-text-muted font-medium uppercase tracking-wider">
             {getRemainingTime()}
           </span>
           <span className="text-[10px] text-white font-medium">
@@ -183,7 +183,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
         {copiedAddress === twap.user ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
         )}
       </button>
     </div>
@@ -249,7 +249,7 @@ export const TwapTable = memo(({
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-zinc-500 text-sm">Chargement...</span>
+            <span className="text-text-muted text-sm">Chargement...</span>
           </div>
         </div>
       ) : error ? (
@@ -257,7 +257,7 @@ export const TwapTable = memo(({
           <div className="flex flex-col items-center text-center px-4">
             <Database className="w-8 h-8 mb-3 text-red-400" />
             <p className="text-red-400 text-sm mb-1">Une erreur est survenue</p>
-            <p className="text-zinc-500 text-xs">Veuillez réessayer plus tard</p>
+            <p className="text-text-muted text-xs">Veuillez réessayer plus tard</p>
           </div>
         </div>
       ) : (
@@ -265,7 +265,7 @@ export const TwapTable = memo(({
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
             <Table className="table-fixed w-full">
               <TableHeader>
-                <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableRow className="border-b border-border-subtle hover:bg-transparent">
                   <TableHead className="py-3 px-3 w-[200px]">
                     <TableHeaderButton header="Value" align="left" />
                   </TableHead>
@@ -285,7 +285,7 @@ export const TwapTable = memo(({
                   twaps.map((twap) => (
                     <TableRow
                       key={twap.id}
-                      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                      className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                     >
                       <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
                       <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
@@ -300,9 +300,9 @@ export const TwapTable = memo(({
                       className="py-8 border-none"
                     >
                       <div className="flex flex-col items-center justify-center text-center">
-                        <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                        <p className="text-zinc-400 text-sm mb-1">No active TWAP orders found</p>
-                        <p className="text-zinc-600 text-xs">Come later</p>
+                        <Database className="w-10 h-10 mb-3 text-text-muted" />
+                        <p className="text-text-secondary text-sm mb-1">No active TWAP orders found</p>
+                        <p className="text-text-muted text-xs">Come later</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -312,7 +312,7 @@ export const TwapTable = memo(({
           </div>
 
           {showPagination && total > 0 && onPageChange && onRowsPerPageChange && (
-            <div className="border-t border-white/5 px-4 py-3">
+            <div className="border-t border-border-subtle px-4 py-3">
               <Pagination
                 total={total}
                 page={page}

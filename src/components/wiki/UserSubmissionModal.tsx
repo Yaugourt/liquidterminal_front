@@ -30,9 +30,9 @@ export function UserSubmissionModal({ onSuccess }: UserSubmissionModalProps) {
                         Suggest Resource
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+                <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
                     <DialogTitle className="text-lg font-bold">Suggest a Resource</DialogTitle>
-                    <DialogDescription className="text-zinc-400 text-sm">
+                    <DialogDescription className="text-text-secondary text-sm">
                         Submit a link to be reviewed by moderators before publication.
                     </DialogDescription>
 

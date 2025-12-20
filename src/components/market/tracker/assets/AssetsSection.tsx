@@ -58,9 +58,9 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
 
   if (!walletAddress) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="p-6">
-          <div className="flex items-center justify-center text-zinc-400 space-x-2">
+          <div className="flex items-center justify-center text-text-secondary space-x-2">
             <AlertCircle className="h-5 w-5" />
             <span className="text-sm">Please select a wallet to view your assets</span>
           </div>
@@ -71,7 +71,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
 
   if (error) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="p-6">
           <div className="flex items-center justify-center text-rose-400 space-x-2">
             <AlertCircle className="h-5 w-5" />

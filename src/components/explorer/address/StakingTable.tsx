@@ -137,7 +137,7 @@ export function StakingTable({ address }: StakingTableProps) {
   const undelegatedAmount = delegatorSummary ? parseFloat(delegatorSummary.undelegated) : 0;
 
   return (
-    <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 p-6 flex flex-col">
+    <Card className="glass-panel p-6 flex flex-col">
       <div className="flex items-center justify-between mb-6">
         {/* Sub-tabs */}
         <StakingTabButtons
@@ -211,7 +211,7 @@ export function StakingTable({ address }: StakingTableProps) {
 
       {/* Pagination */}
       {totalItems > 10 && (
-        <div className="border-t border-white/5 flex items-center mt-auto">
+        <div className="border-t border-border-subtle flex items-center mt-auto">
           <div className="w-full px-4 py-3">
             <Pagination
               total={totalItems}

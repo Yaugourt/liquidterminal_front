@@ -44,30 +44,30 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-                <label htmlFor="resourceUrl" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Resource URL *</label>
+                <label htmlFor="resourceUrl" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Resource URL *</label>
                 <Input
                     id="resourceUrl"
                     type="url"
                     value={form.url}
                     onChange={(e) => setForm(prev => ({ ...prev, url: e.target.value }))}
-                    className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50"
+                    className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
                     placeholder="https://example.com/resource"
                     required
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="resourceCategory" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Category *</label>
+                <label htmlFor="resourceCategory" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Category *</label>
                 <Select
                     value={form.categoryId}
                     onValueChange={(value) => setForm(prev => ({ ...prev, categoryId: value }))}
                 >
-                    <SelectTrigger className="bg-brand-dark border-white/5 text-white rounded-lg">
+                    <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg">
                         <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-secondary border-white/10 rounded-xl">
+                    <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
                         {categories?.map(cat => (
-                            <SelectItem key={cat.id} value={String(cat.id)} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                            <SelectItem key={cat.id} value={String(cat.id)} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                                 {cat.name}
                             </SelectItem>
                         ))}
@@ -75,12 +75,12 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                 </Select>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+            <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                 <Button
                     type="button"
                     variant="outline"
                     onClick={onCancel}
-                    className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+                    className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
                 >
                     Cancel
                 </Button>

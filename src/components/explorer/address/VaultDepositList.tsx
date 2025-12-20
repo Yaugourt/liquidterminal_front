@@ -60,12 +60,12 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
   };
 
   // Table style (copié de TransactionList)
-  const containerClass = "bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl flex flex-col";
+  const containerClass = "glass-panel overflow-hidden flex flex-col";
   const tableContainerClass = "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1";
 
   if (isLoading || vaultsLoading) {
     return (
-      <div className="flex items-center justify-center h-[400px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+      <div className="flex items-center justify-center h-[400px] glass-panel">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
       </div>
     );
@@ -73,7 +73,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[400px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl text-rose-500">
+      <div className="flex items-center justify-center h-[400px] glass-panel text-rose-500">
         {error.message}
       </div>
     );
@@ -81,11 +81,11 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center h-[200px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+      <div className="flex items-center justify-center h-[200px] glass-panel">
         <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
+          <Database className="w-8 h-8 mb-3 text-brand-accent/30" />
           <p className="text-white text-sm mb-1">No vault deposits found</p>
-          <p className="text-[#FFFFFF80] text-xs">This address has not deposited in any vault yet.</p>
+          <p className="text-text-muted text-xs">This address has not deposited in any vault yet.</p>
         </div>
       </div>
     );
@@ -96,17 +96,17 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent bg-transparent">
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User deposits</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">APR</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">TVL</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time lock</span></TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User deposits</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">APR</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">TVL</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time lock</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-transparent">
             {paginatedRows.map((row) => (
-              <TableRow key={row.vaultAddress} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+              <TableRow key={row.vaultAddress} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                 <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
                     <Link
@@ -141,7 +141,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
         </Table>
       </div>
       {total > 10 && (
-        <div className="border-t border-white/5 flex items-center mt-auto">
+        <div className="border-t border-border-subtle flex items-center mt-auto">
           <div className="w-full px-4 py-3">
             <Pagination
               total={total}

@@ -40,8 +40,8 @@ export function WalletRecentFillsSection() {
   // Dynamic height based on content - identique à TransactionList
   const needsScroll = paginatedFills.length > 10;
   const containerClass = needsScroll
-    ? "bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-[600px]"
-    : "bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col";
+    ? "glass-panel overflow-hidden flex flex-col h-[600px]"
+    : "glass-panel overflow-hidden flex flex-col";
 
   const tableContainerClass = needsScroll
     ? "overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1"
@@ -100,7 +100,7 @@ export function WalletRecentFillsSection() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="flex items-center justify-center h-[600px] glass-panel">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
       </div>
     );
@@ -108,7 +108,7 @@ export function WalletRecentFillsSection() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden text-red-500">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-red-500">
         {error.message}
       </div>
     );
@@ -116,7 +116,7 @@ export function WalletRecentFillsSection() {
 
   if (!activeWallet?.address) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden text-white">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
         No wallet selected
       </div>
     );
@@ -124,7 +124,7 @@ export function WalletRecentFillsSection() {
 
   if (!fills || fills.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden text-white">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
         No fills found
       </div>
     );
@@ -135,22 +135,22 @@ export function WalletRecentFillsSection() {
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Asset</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Direction</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Age</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
-              <TableHead className="py-3 px-4 text-right"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">PnL</span></TableHead>
-              <TableHead className="py-3 px-4 text-right"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee</span></TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Asset</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Direction</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Age</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
+              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">PnL</span></TableHead>
+              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedFills.map((fill) => (
               <TableRow
                 key={`${fill.hash}-${fill.tid}`}
-                className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
               >
                 <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
@@ -199,7 +199,7 @@ export function WalletRecentFillsSection() {
         </Table>
       </div>
 
-      <div className="border-t border-white/5 flex items-center mt-auto">
+      <div className="border-t border-border-subtle flex items-center mt-auto">
         <div className="w-full px-4 py-3">
           <Pagination
             total={total}

@@ -70,7 +70,7 @@ export function TransactionList({
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   return (
-    <Card className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 p-4 flex flex-col">
+    <Card className="glass-panel p-4 flex flex-col">
       <div className="flex flex-col flex-1">
         <div className="flex-1">
           <DataTable
@@ -87,19 +87,19 @@ export function TransactionList({
               {transactions.length > 0 && (
                 <>
                   <TableHeader>
-                    <TableRow className="border-b border-white/5 hover:bg-transparent">
-                      <TableHead className="text-left py-3 pl-0 pr-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Action</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Block</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">User</span></TableHead>
+                    <TableRow className="border-b border-border-subtle hover:bg-transparent">
+                      <TableHead className="text-left py-3 pl-0 pr-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Action</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Block</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span></TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {displayedTransactions.map((tx) => (
                       <TableRow
                         key={tx.hash}
-                        className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                        className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                       >
                         <TableCell className="py-3 pl-0 pr-4">
                           <div className="flex items-center gap-2">

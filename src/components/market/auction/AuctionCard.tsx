@@ -31,7 +31,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
   }
 
   return (
-    <div className="flex flex-col h-full bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden shadow-xl shadow-black/20">
+    <div className="flex flex-col h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-xl overflow-hidden shadow-xl shadow-black/20">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
@@ -74,20 +74,20 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             {/* Price & Timer */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-zinc-500 font-medium mb-1">Current Price</p>
+                <p className="text-xs text-text-muted font-medium mb-1">Current Price</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-white tracking-tight">
                     {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 
-                    <span className="text-sm font-medium text-zinc-400 ml-1">HYPE</span>
+                    <span className="text-sm font-medium text-text-secondary ml-1">HYPE</span>
                   </span>
                 </div>
-                <p className="text-[10px] text-zinc-600 mt-0.5">
+                <p className="text-[10px] text-text-muted mt-0.5">
                   ≈ {formatNumber(auctionState.currentPriceUSD, format, { minimumFractionDigits: 2, currency: '$', showCurrency: true })}
                 </p>
               </div>
 
               <div className="text-right">
-                <p className="text-xs text-zinc-500 font-medium mb-1">
+                <p className="text-xs text-text-muted font-medium mb-1">
                   {auctionState.isActive ? "Time Remaining" : "Starts In"}
                 </p>
                 <div className="flex items-center justify-end gap-2 text-white">
@@ -101,12 +101,12 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
 
             {/* Progress Bar */}
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+              <div className="flex justify-between text-[10px] font-medium text-text-muted uppercase tracking-wider">
                 <span>Start</span>
                 <span>{auctionState.progressPercentage.toFixed(0)}% Complete</span>
                 <span>End</span>
               </div>
-              <div className="h-2 bg-black/20 rounded-full overflow-hidden border border-white/5">
+              <div className="h-2 bg-black/20 rounded-full overflow-hidden border border-border-subtle">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ease-out ${
                     auctionState.progressPercentage < 30 ? 'bg-gradient-to-r from-red-500 to-red-400' :
@@ -119,12 +119,12 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             </div>
 
             {/* Footer Info */}
-            <div className="pt-4 border-t border-white/5">
+            <div className="pt-4 border-t border-border-subtle">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">Last Auction</span>
+                <span className="text-text-muted">Last Auction</span>
                 <div className="flex items-center gap-2">
                   <span className="text-brand-gold font-medium">{auctionState.lastAuctionName}</span>
-                  <span className="text-zinc-400">•</span>
+                  <span className="text-text-secondary">•</span>
                   <span className="text-white font-medium">{formatNumber(auctionState.lastAuctionPrice, format)} HYPE</span>
                 </div>
               </div>

@@ -253,14 +253,14 @@ export function TradingViewChart({ marketIndex, tokenName, className }: TradingV
     <GlassPanel className={`w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
-      <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 border border-white/5">
+      <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 border border-border-subtle">
         {TIMEFRAMES.map((timeframe) => (
           <button
             key={timeframe.value}
             onClick={() => setSelectedTimeframe(timeframe.value)}
             className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
               }`}
           >
             {timeframe.label}
@@ -273,13 +273,13 @@ export function TradingViewChart({ marketIndex, tokenName, className }: TradingV
         <select
           value={selectedTimeframe}
           onChange={(e) => setSelectedTimeframe(e.target.value as TimeframeType)}
-          className="bg-brand-dark border border-white/5 rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 focus:outline-none focus:border-brand-accent focus:bg-brand-dark"
+          className="bg-brand-dark border border-border-subtle rounded-lg px-3 py-2 text-xs font-medium text-text-secondary focus:outline-none focus:border-brand-accent focus:bg-brand-dark"
         >
           {TIMEFRAMES.map((timeframe) => (
             <option
               key={timeframe.value}
               value={timeframe.value}
-              className="bg-brand-dark text-zinc-400"
+              className="bg-brand-dark text-text-secondary"
             >
               {timeframe.label}
             </option>
@@ -291,7 +291,7 @@ export function TradingViewChart({ marketIndex, tokenName, className }: TradingV
         <div className="absolute inset-0 flex items-center justify-center bg-brand-secondary/60 backdrop-blur-md z-10">
           <div className="flex flex-col items-center">
             <div className="w-8 h-8 border-2 border-brand-accent border-t-transparent rounded-full animate-spin mb-2"></div>
-            <span className="text-zinc-400 text-sm">
+            <span className="text-text-secondary text-sm">
               {isLoading ? 'Loading chart data...' : 'No data available'}
             </span>
             {error && (

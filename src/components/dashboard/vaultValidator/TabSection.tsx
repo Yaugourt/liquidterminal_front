@@ -72,9 +72,9 @@ export const TabSection = memo(({
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center p-4 border-b border-white/5">
+      <div className="flex justify-between items-center p-4 border-b border-border-subtle">
         <div className="flex items-center gap-2">
-          <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
             {[
               { key: 'vault', label: 'Vaults' },
               { key: 'stacking', label: 'Validators' }
@@ -84,7 +84,7 @@ export const TabSection = memo(({
                 onClick={() => handleTabChange(tab.key)}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === tab.key
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                   }`}
               >
                 {tab.label}
@@ -102,7 +102,7 @@ export const TabSection = memo(({
           return (
             <Link
               href={seeAllLink}
-              className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-brand-accent transition-colors"
+              className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
             >
               View All
               <ExternalLink size={10} />

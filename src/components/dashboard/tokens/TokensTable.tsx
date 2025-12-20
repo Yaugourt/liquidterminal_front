@@ -17,7 +17,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
         <Button
             variant="ghost"
             onClick={onClick}
-            className={`${isActive ? "text-brand-gold hover:text-brand-gold" : "text-zinc-400 hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
+            className={`${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
         >
             {label}
             <ArrowUpDown className="ml-1 h-3 w-3 opacity-50" />
@@ -32,8 +32,8 @@ const EmptyState = memo(() => (
     <TableRow className="hover:bg-transparent border-none">
         <TableCell colSpan={4} className="text-center py-8">
             <div className="flex flex-col items-center justify-center">
-                <Database className="w-10 h-10 mb-4 text-zinc-600" />
-                <p className="text-zinc-400 text-sm">No tokens available</p>
+                <Database className="w-10 h-10 mb-4 text-text-muted" />
+                <p className="text-text-secondary text-sm">No tokens available</p>
             </div>
         </TableCell>
     </TableRow>
@@ -43,11 +43,11 @@ EmptyState.displayName = 'EmptyState';
 
 // Composant pour une ligne de token
 const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
-    <TableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group cursor-pointer">
+    <TableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors group cursor-pointer">
         <TableCell className="py-3 pl-4">
             <div className="flex items-center gap-3">
                 <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-[#1A1F2A] p-1 border border-white/10 group-hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 rounded-full bg-[#1A1F2A] p-1 border border-border-hover group-hover:scale-110 transition-transform">
                         <TokenIcon src={token.logo || null} name={token.name} size="sm" />
                     </div>
                 </div>
@@ -75,7 +75,7 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
             </div>
         </TableCell>
         <TableCell className="py-3 pl-4">
-            <div className="text-zinc-400 text-sm">
+            <div className="text-text-secondary text-sm">
                 {formatLargeNumber(token.volume, { prefix: '$', decimals: 1, forceDecimals: true })}
             </div>
         </TableCell>
@@ -118,7 +118,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
             <div className="overflow-x-auto custom-scrollbar flex-1">
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-b border-white/5 hover:bg-transparent">
+                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
                             <TableHeaderCell
                                 label="Name"
                                 onClick={handleSort("name")}

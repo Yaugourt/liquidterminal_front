@@ -30,14 +30,14 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="problemSolved" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Problem Solved *</Label>
+        <Label htmlFor="problemSolved" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Problem Solved *</Label>
         <Textarea
           id="problemSolved"
           value={formData.problemSolved}
           onChange={(e) => updateField('problemSolved', e.target.value)}
           placeholder="What problem does your project solve for HyperLiquid users?"
           rows={4}
-          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.problemSolved.length >= 50 
@@ -48,17 +48,17 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
       </div>
       
       <div>
-        <Label className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Target Users * (select at least 1)</Label>
+        <Label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Target Users * (select at least 1)</Label>
         <div className="grid grid-cols-2 gap-2 mt-2">
           {TARGET_USER_OPTIONS.map(user => (
-            <div key={user} className="flex items-center space-x-2 p-2 bg-brand-dark border border-white/5 rounded-lg hover:border-white/10 transition-colors">
+            <div key={user} className="flex items-center space-x-2 p-2 bg-brand-dark border border-border-subtle rounded-lg hover:border-border-hover transition-colors">
               <Checkbox
                 id={user}
                 checked={formData.targetUsers.includes(user)}
                 onCheckedChange={() => toggleTargetUser(user)}
-                className="border-white/10 data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
+                className="border-border-hover data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
               />
-              <label htmlFor={user} className="text-sm text-zinc-300 capitalize cursor-pointer">
+              <label htmlFor={user} className="text-sm text-white/80 capitalize cursor-pointer">
                 {user}
               </label>
             </div>
@@ -67,14 +67,14 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
       </div>
       
       <div>
-        <Label htmlFor="hlIntegration" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">HyperLiquid Integration *</Label>
+        <Label htmlFor="hlIntegration" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">HyperLiquid Integration *</Label>
         <Textarea
           id="hlIntegration"
           value={formData.hlIntegration}
           onChange={(e) => updateField('hlIntegration', e.target.value)}
           placeholder="How does your project integrate with HyperLiquid? Which APIs, endpoints, or features do you use?"
           rows={4}
-          className="bg-brand-dark border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.hlIntegration.length >= 50 
@@ -85,14 +85,14 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
       </div>
       
       <div>
-        <Label htmlFor="developmentStatus" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Development Status *</Label>
+        <Label htmlFor="developmentStatus" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Development Status *</Label>
         <Select value={formData.developmentStatus} onValueChange={(val) => updateField('developmentStatus', val)}>
-          <SelectTrigger className="bg-brand-dark border-white/5 text-white rounded-lg mt-1">
+          <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-white/10 rounded-xl">
+          <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
             {DEVELOPMENT_STATUSES.map(status => (
-              <SelectItem key={status.value} value={status.value} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+              <SelectItem key={status.value} value={status.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                 {status.label}
               </SelectItem>
             ))}

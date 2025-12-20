@@ -8,7 +8,7 @@ const statusBadgeVariants = cva(
         variants: {
             variant: {
                 default:
-                    "bg-white/5 text-zinc-400 ring-white/10",
+                    "bg-white/5 text-text-secondary ring-white/10",
                 success:
                     "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
                 error:
@@ -22,11 +22,11 @@ const statusBadgeVariants = cva(
                 sell:
                     "bg-rose-500/10 text-rose-400 ring-rose-500/20",
                 neutral:
-                    "bg-zinc-500/10 text-zinc-400 ring-zinc-500/20",
+                    "bg-zinc-500/10 text-text-secondary ring-zinc-500/20",
                 active:
                     "bg-brand-accent/10 text-brand-accent ring-brand-accent/20",
                 inactive:
-                    "bg-zinc-500/10 text-zinc-500 ring-zinc-500/20",
+                    "bg-zinc-500/10 text-text-muted ring-zinc-500/20",
             },
         },
         defaultVariants: {

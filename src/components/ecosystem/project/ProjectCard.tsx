@@ -117,7 +117,7 @@ export const ProjectCard = memo(function ProjectCard({
             )}
           </div>
 
-          <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
+          <p className="text-sm text-text-secondary mb-3 line-clamp-2">
             {project.desc}
           </p>
 
@@ -129,7 +129,7 @@ export const ProjectCard = memo(function ProjectCard({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-zinc-500 hover:text-brand-accent transition-colors"
+                  className="text-text-muted hover:text-brand-accent transition-colors"
                   aria-label={link.label}
                 >
                   {link.isGlobe ? (

@@ -15,7 +15,7 @@ export function VaultStatsCard() {
         <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center">
           <Database size={16} className="text-brand-accent" />
         </div>
-        <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">
+        <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
           Vault Stats
         </h3>
       </div>
@@ -24,13 +24,13 @@ export function VaultStatsCard() {
       <div className="grid grid-cols-1 gap-6 flex-1 content-center">
         {/* Total TVL */}
         <div>
-          <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
+          <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
             <BarChart2 className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
             Total TVL
           </div>
           <div className="text-white font-bold text-xl pl-5">
             {isLoading ? (
-              <span className="animate-pulse text-zinc-600">--</span>
+              <span className="animate-pulse text-text-muted">--</span>
             ) : (
               <>${formatNumber(totalTvl, format, { maximumFractionDigits: 2 })}</>
             )}
@@ -39,13 +39,13 @@ export function VaultStatsCard() {
 
         {/* Open Vaults */}
         <div>
-          <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
+          <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
             <FolderOpen className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
             Open Vaults
           </div>
           <div className="text-white font-bold text-xl pl-5">
             {isLoading ? (
-              <span className="animate-pulse text-zinc-600">--</span>
+              <span className="animate-pulse text-text-muted">--</span>
             ) : (
               totalCount
             )}

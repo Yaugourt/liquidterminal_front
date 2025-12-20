@@ -56,7 +56,7 @@ export function PillTabs({
     return (
         <div
             ref={containerRef}
-            className={cn("relative flex items-center gap-1 p-1 bg-black/20 rounded-lg w-fit", className)}
+            className={cn("relative flex items-center gap-1 p-1 bg-brand-dark/30 rounded-lg w-fit", className)}
         >
             {/* Animated indicator */}
             <div
@@ -81,7 +81,7 @@ export function PillTabs({
                         onClick={() => onTabChange(tab.value)}
                         className={cn(
                             "relative px-4 py-1.5 text-sm font-medium transition-colors rounded-md z-10",
-                            isActive ? "text-black" : "text-zinc-400 hover:text-zinc-200"
+                            isActive ? "text-brand-tertiary" : "text-text-secondary hover:text-white"
                         )}
                     >
                         {tab.label}

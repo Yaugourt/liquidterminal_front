@@ -45,7 +45,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
 
         // Always show leverage
         badges.push(
-            <span key="leverage" className="text-zinc-500 text-[10px]">
+            <span key="leverage" className="text-text-muted text-[10px]">
                 {asset.maxLeverage}x
             </span>
         );
@@ -73,34 +73,34 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
 
     return (
         <div>
-            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
+            <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
                 Markets ({activeAssets} active / {totalAssets} total)
             </h2>
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
                 <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <Table className="table-fixed w-full">
                         <TableHeader>
-                            <TableRow className="border-b border-white/5 hover:bg-transparent">
+                            <TableRow className="border-b border-border-subtle hover:bg-transparent">
                                 <TableHead className="py-3 pl-4 w-[22%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Asset</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Asset</span>
                                 </TableHead>
                                 <TableHead className="py-3 w-[12%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span>
                                 </TableHead>
                                 <TableHead className="py-3 w-[10%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">24h</span>
                                 </TableHead>
                                 <TableHead className="py-3 w-[14%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Volume</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Volume</span>
                                 </TableHead>
                                 <TableHead className="py-3 w-[14%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">OI</span>
                                 </TableHead>
                                 <TableHead className="py-3 w-[12%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Funding</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Funding</span>
                                 </TableHead>
                                 <TableHead className="py-3 pr-4 w-[16%]">
-                                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
+                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -109,7 +109,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                 assets.map((asset) => (
                                     <TableRow
                                         key={asset.name}
-                                        className={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
+                                        className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
                                     >
                                         {/* Asset */}
                                         <TableCell className="py-3 pl-4 text-left">
@@ -118,8 +118,8 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                                 <div>
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-white text-sm font-medium">{getTicker(asset.name)}</span>
-                                                        <span className="text-zinc-600 text-sm">/</span>
-                                                        <span className="text-zinc-500 text-xs">
+                                                        <span className="text-text-muted text-sm">/</span>
+                                                        <span className="text-text-muted text-xs">
                                                             {asset.collateralToken}
                                                         </span>
                                                     </div>
@@ -196,8 +196,8 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                 <TableRow>
                                     <TableCell colSpan={7} className="text-center py-8">
                                         <div className="flex flex-col items-center justify-center">
-                                            <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                                            <p className="text-zinc-400 text-sm mb-1">No markets available</p>
+                                            <Database className="w-10 h-10 mb-3 text-text-muted" />
+                                            <p className="text-text-secondary text-sm mb-1">No markets available</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>

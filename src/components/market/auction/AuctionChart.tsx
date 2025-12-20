@@ -80,9 +80,9 @@ export const AuctionChart = ({
         style={{ height: chartHeight }}
       >
         <div className="flex flex-col items-center text-center">
-          <Database className="w-10 h-10 mb-3 text-zinc-600" />
-          <p className="text-zinc-400 text-sm mb-1">Coming Soon</p>
-          <p className="text-zinc-600 text-xs">Perpetual auctions chart will be available soon.</p>
+          <Database className="w-10 h-10 mb-3 text-text-muted" />
+          <p className="text-text-secondary text-sm mb-1">Coming Soon</p>
+          <p className="text-text-muted text-xs">Perpetual auctions chart will be available soon.</p>
         </div>
       </GlassPanel>
     );
@@ -97,7 +97,7 @@ export const AuctionChart = ({
       <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
         <div className="flex items-center justify-between flex-wrap gap-2 pointer-events-auto">
           <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+            <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
               Auction Price ({selectedCurrency})
             </h2>
 
@@ -107,7 +107,7 @@ export const AuctionChart = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-text-muted">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -119,12 +119,12 @@ export const AuctionChart = ({
               </div>
             )}
 
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
               <button
                 onClick={() => onCurrencyChange("USDC")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "USDC"
                   ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                  : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
                   }`}
               >
                 USDC
@@ -133,7 +133,7 @@ export const AuctionChart = ({
                 onClick={() => onCurrencyChange("HYPE")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "HYPE"
                   ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                  : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
                   }`}
               >
                 HYPE
@@ -141,12 +141,12 @@ export const AuctionChart = ({
             </div>
           </div>
 
-          <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5 gap-1">
+          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1">
             {availablePeriods.map((period) => (
               <button
                 key={period}
                 onClick={() => onPeriodChange(period)}
-                className={`px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${selectedPeriod === period ? 'text-brand-tertiary bg-brand-accent font-bold' : 'text-zinc-400 hover:text-zinc-200'
+                className={`px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${selectedPeriod === period ? 'text-brand-tertiary bg-brand-accent font-bold' : 'text-text-secondary hover:text-zinc-200'
                   }`}
               >
                 {period}
@@ -164,7 +164,7 @@ export const AuctionChart = ({
           </div>
         ) : (!data || data.length === 0) ? (
           <div className="flex justify-center items-center h-full">
-            <p className="text-zinc-500">No data available</p>
+            <p className="text-text-muted">No data available</p>
           </div>
         ) : (
           <LightweightChart

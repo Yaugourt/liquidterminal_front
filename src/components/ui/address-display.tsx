@@ -60,7 +60,7 @@ export function AddressDisplay({
             {showCopy && (
                 <button
                     onClick={handleCopy}
-                    className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                    className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                     aria-label="Copy address"
                 >
                     {copied ? (
@@ -75,7 +75,7 @@ export function AddressDisplay({
                 externalLinkHref ? (
                     <Link
                         href={externalLinkHref}
-                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />
@@ -85,7 +85,7 @@ export function AddressDisplay({
                         href={`https://app.hyperliquid.xyz/explorer/address/${address}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-zinc-500 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />

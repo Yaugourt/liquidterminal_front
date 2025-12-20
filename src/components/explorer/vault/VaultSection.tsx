@@ -46,7 +46,7 @@ export function VaultSection() {
             format={format}
           />
         </div>
-        <div className="mt-4 pt-4 border-t border-white/5">
+        <div className="mt-4 pt-4 border-t border-border-subtle">
           <Pagination
             total={totalCount}
             page={page}

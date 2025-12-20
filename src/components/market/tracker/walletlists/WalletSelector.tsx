@@ -108,7 +108,7 @@ export function WalletSelector({
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           {/* Select Wallet Dropdown */}
           <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
+            <div className="flex items-center gap-2 text-xs text-text-secondary">
               <Wallet className="w-4 h-4" />
               <span>Wallet:</span>
             </div>
@@ -117,35 +117,35 @@ export function WalletSelector({
               value={activeWalletId?.toString() || ""}
               onValueChange={onWalletChange}
             >
-              <SelectTrigger className="w-full sm:w-[400px] bg-brand-dark border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
+              <SelectTrigger className="w-full sm:w-[400px] bg-brand-dark border-border-subtle text-white rounded-lg hover:border-border-hover transition-all">
                 <div className="flex items-center gap-2 truncate">
                   <Wallet className="w-4 h-4 shrink-0 text-brand-accent" />
                   <SelectValue>
                     {activeWallet ? (
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{activeWallet.name || "Unnamed Wallet"}</span>
-                        <span className="text-xs text-zinc-500">
+                        <span className="text-xs text-text-muted">
                           ({formatAddress(activeWallet.address)})
                         </span>
                       </div>
                     ) : (
-                      <span className="text-zinc-500">Select a wallet...</span>
+                      <span className="text-text-muted">Select a wallet...</span>
                     )}
                   </SelectValue>
                 </div>
               </SelectTrigger>
 
-              <SelectContent className="bg-brand-secondary border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
+              <SelectContent className="bg-brand-secondary border-border-hover text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
                 {/* Search input */}
                 {wallets.length > 5 && (
-                  <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-white/5">
+                  <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-subtle">
                     <div className="relative">
-                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
                       <Input
                         placeholder="Search wallets..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 bg-brand-dark border-white/5 text-white h-8 rounded-lg"
+                        className="pl-8 bg-brand-dark border-border-subtle text-white h-8 rounded-lg"
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
@@ -178,11 +178,11 @@ export function WalletSelector({
                                   {wallet.name || "Unnamed Wallet"}
                                 </span>
                               </div>
-                              <span className="text-xs text-zinc-600 shrink-0">
+                              <span className="text-xs text-text-muted shrink-0">
                                 {new Date(wallet.addedAt).toLocaleDateString()}
                               </span>
                             </div>
-                            <code className="text-xs text-zinc-500 pl-6 font-mono">
+                            <code className="text-xs text-text-muted pl-6 font-mono">
                               {wallet.address}
                             </code>
                           </div>
@@ -211,14 +211,14 @@ export function WalletSelector({
                     </div>
                   ))
                 ) : searchQuery ? (
-                  <div className="p-4 text-center text-sm text-zinc-500">
+                  <div className="p-4 text-center text-sm text-text-muted">
                     No wallets found for &quot;{searchQuery}&quot;
                   </div>
                 ) : null}
 
                 {/* Empty state */}
                 {wallets.length === 0 && (
-                  <div className="p-4 text-center text-sm text-zinc-500">
+                  <div className="p-4 text-center text-sm text-text-muted">
                     No wallets yet. Add your first one!
                   </div>
                 )}
@@ -226,9 +226,9 @@ export function WalletSelector({
             </Select>
 
             {/* Wallet count badge */}
-            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-white/5 rounded-lg text-xs text-brand-accent">
+            <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-border-subtle rounded-lg text-xs text-brand-accent">
               <span className="font-medium">{wallets.length}</span>
-              <span className="text-zinc-500">wallet{wallets.length !== 1 ? "s" : ""}</span>
+              <span className="text-text-muted">wallet{wallets.length !== 1 ? "s" : ""}</span>
             </div>
           </div>
 
@@ -252,7 +252,7 @@ export function WalletSelector({
               onClick={onExportCSV}
               size="sm"
               variant="outline"
-              className="w-full sm:w-auto border-white/5 text-white hover:bg-white/5 rounded-lg"
+              className="w-full sm:w-auto border-border-subtle text-white hover:bg-white/5 rounded-lg"
             >
               <Download className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Export CSV</span>
@@ -266,7 +266,7 @@ export function WalletSelector({
               onClick={onImportCSV}
               size="sm"
               variant="outline"
-              className="w-full sm:w-auto border-white/5 text-white hover:bg-white/5 rounded-lg"
+              className="w-full sm:w-auto border-border-subtle text-white hover:bg-white/5 rounded-lg"
             >
               <FileUp className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Import CSV</span>
@@ -289,16 +289,16 @@ export function WalletSelector({
 
       {/* Bulk Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-brand-secondary border-white/10 rounded-2xl shadow-xl shadow-black/20">
+        <AlertDialogContent className="bg-brand-secondary border-border-hover rounded-2xl shadow-xl shadow-black/20">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Delete Multiple Wallets</AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400">
+            <AlertDialogDescription className="text-text-secondary">
               Are you sure you want to delete {selectedWalletIds.size} wallet
               {selectedWalletIds.size !== 1 ? "s" : ""}? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-white/5 text-white hover:bg-white/5 rounded-lg">
+            <AlertDialogCancel className="border-border-subtle text-white hover:bg-white/5 rounded-lg">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction

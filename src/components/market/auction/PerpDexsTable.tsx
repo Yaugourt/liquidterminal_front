@@ -70,7 +70,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
   if (isLoading) {
     return (
-      <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+      <Card className="w-full glass-panel overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         </div>
@@ -80,7 +80,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
   if (error) {
     return (
-      <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+      <Card className="w-full glass-panel overflow-hidden">
         <div className="flex justify-center items-center h-[200px]">
           <span className="text-red-500 text-lg">Erreur lors du chargement des DEXs perpétuels</span>
         </div>
@@ -89,17 +89,17 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
   }
 
   return (
-    <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20 overflow-hidden rounded-2xl">
+    <Card className="w-full glass-panel overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent bg-transparent">
-              <TableHead className="pl-4 w-[12%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Full Name</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Deployer</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span></TableHead>
-              <TableHead className="pl-2 w-[18%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span></TableHead>
-              <TableHead className="pl-2 pr-4 w-[15%] text-left py-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Gas (HYPE)</span></TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
+              <TableHead className="pl-4 w-[12%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Full Name</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Deployer</span></TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span></TableHead>
+              <TableHead className="pl-2 w-[18%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span></TableHead>
+              <TableHead className="pl-2 pr-4 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Gas (HYPE)</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-transparent">
@@ -109,7 +109,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
               validPerpDexs.map((dex) => (
                 <TableRow
                   key={dex.name}
-                  className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                  className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer"
                 >
                   {/* Name */}
                   <TableCell className="py-2 pl-4 text-white text-sm text-left">

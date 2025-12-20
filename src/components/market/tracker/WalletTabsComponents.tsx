@@ -73,7 +73,7 @@ export function WalletListTabs({
             {/* Tab "All Wallets" */}
             <TabsTrigger
               value="all-wallets"
-              className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg text-zinc-400 font-medium hover:text-white transition-colors"
+              className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg text-text-secondary font-medium hover:text-white transition-colors"
             >
               All Wallets
             </TabsTrigger>
@@ -88,7 +88,7 @@ export function WalletListTabs({
               <TabsTrigger
                 key={`list-${list.id || index}`}
                 value={(list.id || index).toString()}
-                className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg flex items-center group text-zinc-400 hover:text-white transition-colors"
+                className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-white transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-start">
@@ -127,7 +127,7 @@ export function WalletListTabs({
         <Button
           onClick={() => router.push('/market/tracker/public-lists')}
           variant="outline"
-          className="border-white/10 text-zinc-400 hover:text-white hover:bg-white/5"
+          className="border-border-hover text-text-secondary hover:text-white hover:bg-white/5"
         >
           <Globe className="mr-2 h-4 w-4" />
           Browse Public Lists
@@ -205,7 +205,7 @@ export function WalletContentTabs({
       {/* Info badge and action button */}
       <div className="flex items-center gap-2 shrink-0">
         {wallets.length > 1 && (
-          <div className="hidden lg:flex items-center gap-1 text-xs text-zinc-500 bg-white/5 px-2 py-1 rounded border border-white/5">
+          <div className="hidden lg:flex items-center gap-1 text-xs text-text-muted bg-white/5 px-2 py-1 rounded border border-border-subtle">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>
@@ -238,7 +238,7 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
       ref={setNodeRef}
       style={style}
       value={wallet.id.toString()}
-      className="bg-zinc-800/50 data-[state=active]:bg-[#151A25] data-[state=active]:text-white data-[state=active]:border border-white/10 rounded-lg flex items-center group text-zinc-400 hover:text-white transition-colors"
+      className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-white transition-colors"
     >
       <div className="flex items-center gap-2">
         {/* Drag handle */}

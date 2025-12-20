@@ -31,7 +31,7 @@ export function PublicGoodsGrid<T>({
             <div className="flex items-center justify-center py-16">
                 <div className="flex flex-col items-center">
                     <Loader2 className="w-6 h-6 text-brand-accent animate-spin mb-2" />
-                    <span className="text-zinc-500 text-sm">Loading projects...</span>
+                    <span className="text-text-muted text-sm">Loading projects...</span>
                 </div>
             </div>
         );
@@ -45,7 +45,7 @@ export function PublicGoodsGrid<T>({
                         {emptyState.icon || <Plus className="w-8 h-8 text-brand-accent" />}
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2">{emptyState.title}</h3>
-                    <p className="text-zinc-400 mb-4">{emptyState.description}</p>
+                    <p className="text-text-secondary mb-4">{emptyState.description}</p>
 
                     {emptyState.actionLabel && emptyState.onAction && (
                         <Button

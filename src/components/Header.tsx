@@ -107,7 +107,7 @@ Source: @Liquidterminal`;
                     {/* <h2 className="text-xl text-white whitespace-nowrap !font-['Higuen_Elegant_Serif'] max-lg:pl-3">{displayTitle}</h2> */}
                     <SearchBar
                         placeholder={searchPlaceholder}
-                        className={`hidden lg:block bg-brand-main/80 backdrop-blur-xl border border-white/10 rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
+                        className={`hidden lg:block bg-brand-main/80 backdrop-blur-xl border border-border-hover rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
                     />
                 </div>
 
@@ -117,10 +117,10 @@ Source: @Liquidterminal`;
                         <div className="flex items-center gap-2 lg:gap-3">
                             {/* HYPE Price Display */}
                             <div className={cn(
-                                "bg-[#151A25]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all text-secondary",
+                                "stat-card",
                                 lastSide === "A" ? "border-red-500 animate-pulse" :
                                     lastSide === "B" ? "border-green-500 animate-pulse" :
-                                        "border-white/10 hover:border-white/20",
+                                        "border-border-hover hover:border-white/20",
                                 "group"
                             )}>
                                 <div className="flex items-center gap-1.5">
@@ -145,10 +145,10 @@ Source: @Liquidterminal`;
 
                             {/* HYPE Buy Pressure Display */}
                             <div className={cn(
-                                "bg-[#151A25]/40 backdrop-blur-sm border rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all",
+                                "stat-card",
                                 buyPressure > 0 ? "border-green-500/50 hover:border-green-500" :
                                     buyPressure < 0 ? "border-red-500/50 hover:border-red-500" :
-                                        "border-white/10 hover:border-white/20",
+                                        "border-border-hover hover:border-white/20",
                                 "group"
                             )}>
                                 <div className="flex items-center gap-1.5">
@@ -171,7 +171,7 @@ Source: @Liquidterminal`;
 
                             {/* Combined Fees and Assistance Fund Display with Share Button - Desktop only */}
                             {feesStats && assistanceFund && !feesLoading && !feesError && !assistanceFundLoading && !assistanceFundError && (
-                                <div className="hidden md:block bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all hover:border-white/20 group relative">
+                                <div className="hidden md:block stat-card group relative">
                                     <div className="flex items-center gap-3">
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
@@ -235,7 +235,7 @@ Source: @Liquidterminal`;
                     <div className="md:hidden w-full px-2 sm:px-4 py-2">
                         <div className="flex items-center gap-2 overflow-x-auto">
                             {/* Fees combined */}
-                            <div className="bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-1.5 transition-all hover:border-white/20 group flex-shrink-0">
+                            <div className="stat-card group flex-shrink-0">
                                 <div className="flex items-center gap-2">
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-1">
@@ -260,7 +260,7 @@ Source: @Liquidterminal`;
                             </div>
 
                             {/* Assistance Fund */}
-                            <div className="bg-[#151A25]/40 backdrop-blur-sm border border-white/10 rounded-lg px-2 py-1.5 transition-all hover:border-white/20 group flex-shrink-0">
+                            <div className="stat-card group flex-shrink-0">
                                 <div className="flex items-center gap-1">
                                     <Shield size={9} className="text-brand-success" />
                                     <span className="text-white text-[9px] font-medium">Fund</span>

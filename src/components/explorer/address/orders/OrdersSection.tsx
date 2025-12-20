@@ -15,7 +15,7 @@ export function OrdersSection({ address }: OrdersSectionProps) {
   } = useOpenOrders(address);
 
   return (
-    <Card className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
+    <Card className="w-full glass-panel">
       <div className="p-4">
         <OpenOrdersList
           orders={openOrders || []}

@@ -79,7 +79,7 @@ export function AddWalletToListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25]/95 backdrop-blur-xl border border-white/10 text-white shadow-2xl shadow-black/40">
+      <DialogContent className="glass-dialog text-white">
         <DialogHeader>
           <DialogTitle>Add wallet to &quot;{listName}&quot;</DialogTitle>
           <DialogDescription className="text-white">
@@ -96,7 +96,7 @@ export function AddWalletToListDialog({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50"
+              className="bg-black/20 border-border-hover text-white focus:border-brand-accent/50"
             />
           </div>
           <div className="space-y-2">
@@ -108,7 +108,7 @@ export function AddWalletToListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-black/20 border-white/10 text-white focus:border-brand-accent/50"
+              className="bg-black/20 border-border-hover text-white focus:border-brand-accent/50"
             />
           </div>
         </div>
@@ -116,7 +116,7 @@ export function AddWalletToListDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-white/10 text-white hover:bg-white/5"
+            className="border-border-hover text-white hover:bg-white/5"
           >
             Cancel
           </Button>

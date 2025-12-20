@@ -287,29 +287,29 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+      <DialogContent className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 flex flex-col" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Submit Your Project</DialogTitle>
-          <p className="text-zinc-400 text-sm">
+          <p className="text-text-secondary text-sm">
             Submit your project to the HyperLiquid Public Goods program
           </p>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-5 bg-black/20 border border-white/5 rounded-lg p-1">
-            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+          <TabsList className="grid w-full grid-cols-5 bg-black/20 border border-border-subtle rounded-lg p-1">
+            <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               1. Project
             </TabsTrigger>
-            <TabsTrigger value="impact" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="impact" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               2. Impact
             </TabsTrigger>
-            <TabsTrigger value="team" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="team" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               3. Team
             </TabsTrigger>
-            <TabsTrigger value="support" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="support" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               4. Support
             </TabsTrigger>
-            <TabsTrigger value="preview" className="text-zinc-400 data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+            <TabsTrigger value="preview" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
               5. Preview
             </TabsTrigger>
           </TabsList>
@@ -366,12 +366,12 @@ export function SubmitProjectModal({ isOpen, onClose, onSuccess }: SubmitProject
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-between pt-4 border-t border-white/5">
+        <div className="flex justify-between pt-4 border-t border-border-subtle">
           <Button
             variant="outline"
             onClick={goPrevious}
             disabled={currentIndex === 0}
-            className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+            className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Previous

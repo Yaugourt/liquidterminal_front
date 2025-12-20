@@ -24,19 +24,19 @@ export function EducationContent({ chapters }: EducationContentProps) {
   };
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
       <div className="p-6">
         <div className="w-full">
-          <div className="flex justify-start items-center mb-6 pb-4 border-b border-white/5">
+          <div className="flex justify-start items-center mb-6 pb-4 border-b border-border-subtle">
             {/* Desktop version - Horizontal tabs */}
-            <div className="hidden min-[750px]:flex bg-brand-dark rounded-lg p-1 border border-white/5">
+            <div className="hidden min-[750px]:flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
               {chapters.map((chapter) => (
                 <button
                   key={chapter.id}
                   onClick={() => setActiveTab(chapter.title)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === chapter.title
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                     }`}
                 >
                   {chapter.title}
@@ -49,7 +49,7 @@ export function EducationContent({ chapters }: EducationContentProps) {
               <select
                 value={activeTab}
                 onChange={(e) => setActiveTab(e.target.value)}
-                className="w-full bg-brand-dark border border-white/5 rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:border-brand-accent/50"
+                className="w-full bg-brand-dark border border-border-subtle rounded-lg px-3 py-2 text-sm font-medium text-white focus:outline-none focus:border-brand-accent/50"
               >
                 {chapters.map((chapter) => (
                   <option
@@ -69,7 +69,7 @@ export function EducationContent({ chapters }: EducationContentProps) {
               {chapters.map((chapter) => (
                 activeTab === chapter.title && (
                   <div key={chapter.id} className="space-y-4">
-                    <div className="text-sm text-zinc-300 leading-relaxed">
+                    <div className="text-sm text-white/80 leading-relaxed">
                       {formatDescription(chapter.description)}
                     </div>
                   </div>

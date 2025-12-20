@@ -12,20 +12,20 @@ export function ProjectContent({ project }: ProjectContentProps) {
     return (
         <div className="lg:col-span-2 space-y-8">
             {/* Section 2: Impact HyperLiquid */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
                 <h2 className="text-lg font-bold text-white mb-4">Impact on HyperLiquid</h2>
 
                 <div className="space-y-4">
                     <div>
                         <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">Problem Solved</h3>
-                        <p className="text-zinc-400 text-sm">{project.problemSolved}</p>
+                        <p className="text-text-secondary text-sm">{project.problemSolved}</p>
                     </div>
 
                     <div>
                         <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">Target Users</h3>
                         <div className="flex flex-wrap gap-2">
                             {project.targetUsers.map(user => (
-                                <Badge key={user} variant="outline" className="border-white/10 text-zinc-400 text-xs">
+                                <Badge key={user} variant="outline" className="border-border-hover text-text-secondary text-xs">
                                     {user}
                                 </Badge>
                             ))}
@@ -34,7 +34,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
                     <div>
                         <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">HyperLiquid Integration</h3>
-                        <p className="text-zinc-400 text-sm">{project.hlIntegration}</p>
+                        <p className="text-text-secondary text-sm">{project.hlIntegration}</p>
                     </div>
 
                     <div>
@@ -47,7 +47,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
             </div>
 
             {/* Section 3: Team & Technical */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
                 <h2 className="text-lg font-bold text-white mb-4">Team & Technical Details</h2>
 
                 <div className="space-y-4">
@@ -56,8 +56,8 @@ export function ProjectContent({ project }: ProjectContentProps) {
                         <div className="flex items-center gap-2">
                             <User className="w-4 h-4 text-brand-accent" />
                             <span className="text-white text-sm">{project.leadDeveloperName}</span>
-                            <Mail className="w-4 h-4 text-zinc-500 ml-2" />
-                            <span className="text-zinc-400 text-sm">{project.leadDeveloperContact}</span>
+                            <Mail className="w-4 h-4 text-text-muted ml-2" />
+                            <span className="text-text-secondary text-sm">{project.leadDeveloperContact}</span>
                         </div>
                     </div>
 
@@ -72,7 +72,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
                         <div>
                             <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">Experience Level</h3>
-                            <Badge variant="outline" className="border-white/10 text-zinc-400 text-xs">
+                            <Badge variant="outline" className="border-border-hover text-text-secondary text-xs">
                                 {project.experienceLevel}
                             </Badge>
                         </div>
@@ -101,7 +101,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
             {/* Section 4: Support Requested */}
             {(project.supportTypes.length > 0 || project.budgetRange) && (
-                <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6">
+                <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
                     <h2 className="text-lg font-bold text-white mb-4">Support Requested</h2>
 
                     <div className="space-y-4">
@@ -110,7 +110,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                                 <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">Types of Support</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {project.supportTypes.map((type: string) => (
-                                        <div key={type} className="flex items-center gap-2 bg-brand-dark border border-white/5 px-3 py-1.5 rounded-lg">
+                                        <div key={type} className="flex items-center gap-2 bg-brand-dark border border-border-subtle px-3 py-1.5 rounded-lg">
                                             {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-amber-400" />}
                                             {type === 'PROMOTION' && <Globe className="w-4 h-4 text-brand-accent" />}
                                             {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
@@ -127,7 +127,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                                 <h3 className="text-[10px] font-semibold text-brand-accent uppercase tracking-wider mb-2">Looking for Contributors</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {project.contributorTypes.map((type: string) => (
-                                        <div key={type} className="flex items-center gap-2 bg-brand-dark border border-white/5 px-3 py-1.5 rounded-lg">
+                                        <div key={type} className="flex items-center gap-2 bg-brand-dark border border-border-subtle px-3 py-1.5 rounded-lg">
                                             <Users className="w-4 h-4 text-emerald-400" />
                                             <span className="text-white text-xs capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
                                         </div>

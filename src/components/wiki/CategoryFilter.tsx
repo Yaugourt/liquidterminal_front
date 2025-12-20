@@ -66,8 +66,8 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
   if (isLoading) {
     return (
       <div className="relative w-full md:w-80">
-        <div className="w-full px-4 py-3 bg-brand-dark border border-white/5 rounded-lg text-white">
-          <span className="text-sm text-zinc-500">Loading categories...</span>
+        <div className="w-full px-4 py-3 bg-brand-dark border border-border-subtle rounded-lg text-white">
+          <span className="text-sm text-text-muted">Loading categories...</span>
         </div>
       </div>
     );
@@ -77,7 +77,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
     <div className="relative w-full md:w-80" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2.5 bg-brand-dark border border-white/5 hover:border-white/10 rounded-lg flex items-center justify-between text-white transition-all"
+        className="w-full px-4 py-2.5 bg-brand-dark border border-border-subtle hover:border-border-hover rounded-lg flex items-center justify-between text-white transition-all"
       >
         <span className="text-sm font-medium">{getButtonText()}</span>
         <ChevronDown 
@@ -87,12 +87,12 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full bg-brand-secondary border border-white/10 rounded-xl shadow-xl shadow-black/20 z-50 overflow-hidden">
+        <div className="absolute top-full mt-2 w-full bg-brand-secondary border border-border-hover rounded-xl shadow-xl shadow-black/20 z-50 overflow-hidden">
           {/* Select All option */}
-          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-white/5">
+          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-border-subtle">
             <button
               onClick={handleSelectAll}
-              className="text-sm text-zinc-300 font-medium hover:text-brand-accent transition-colors"
+              className="text-sm text-white/80 font-medium hover:text-brand-accent transition-colors"
             >
               Select All
             </button>
@@ -113,7 +113,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
           {/* Category options */}
           <div className="max-h-64 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-center text-zinc-500">
+              <div className="p-4 text-center text-text-muted">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-accent mx-auto mb-2"></div>
                 <span className="text-sm">Chargement des catégories...</span>
               </div>
@@ -125,7 +125,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
                 className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-zinc-300">{category.name}</span>
+                  <span className="text-sm text-white/80">{category.name}</span>
                 </div>
                 <div className={`w-4 h-4 rounded border ${
                   selectedCategories.includes(category.id) 

@@ -23,7 +23,7 @@ export function WalletAssetsNavigation({ activeTab, onChange }: WalletAssetsNavi
           tabs={tabs.map(t => ({ value: t.id, label: t.label }))}
           activeTab={activeTab}
           onTabChange={onChange}
-          className="bg-brand-dark border border-white/5"
+          className="bg-brand-dark border border-border-subtle"
         />
       </div>
     </div>

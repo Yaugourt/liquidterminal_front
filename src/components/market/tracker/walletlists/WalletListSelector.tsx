@@ -77,19 +77,19 @@ export function WalletListSelector({
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
       {/* Select List Dropdown */}
       <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
-        <div className="flex items-center gap-2 text-xs text-zinc-400">
+        <div className="flex items-center gap-2 text-xs text-text-secondary">
           <List className="w-4 h-4" />
           <span>List:</span>
         </div>
         
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
-          <SelectTrigger className="w-full sm:w-[320px] bg-brand-dark border-white/5 text-white rounded-lg hover:border-white/10 transition-all">
+          <SelectTrigger className="w-full sm:w-[320px] bg-brand-dark border-border-subtle text-white rounded-lg hover:border-border-hover transition-all">
             <div className="flex items-center gap-2 truncate">
               <List className="w-4 h-4 shrink-0 text-brand-accent" />
               <SelectValue>
                 <span className="font-medium">{activeListInfo.name}</span>
                 {activeListInfo.count !== null && (
-                  <span className="text-xs text-zinc-500 ml-2">
+                  <span className="text-xs text-text-muted ml-2">
                     ({activeListInfo.count} wallet{activeListInfo.count !== 1 ? "s" : ""})
                   </span>
                 )}
@@ -97,17 +97,17 @@ export function WalletListSelector({
             </div>
           </SelectTrigger>
           
-          <SelectContent className="bg-brand-secondary border-white/10 text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
+          <SelectContent className="bg-brand-secondary border-border-hover text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
             {/* Search input */}
             {userLists.length > 5 && (
-              <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-white/5">
+              <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-subtle">
                 <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
                   <Input
                     placeholder="Search lists..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 bg-brand-dark border-white/5 text-white h-8 rounded-lg"
+                    className="pl-8 bg-brand-dark border-border-subtle text-white h-8 rounded-lg"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
@@ -142,25 +142,25 @@ export function WalletListSelector({
                         <List className="w-4 h-4 text-brand-accent shrink-0" />
                         <span className="font-medium truncate">{list.name}</span>
                       </div>
-                      <span className="text-xs text-zinc-600 shrink-0">
+                      <span className="text-xs text-text-muted shrink-0">
                         {new Date(list.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="text-xs text-zinc-500 pl-6">
+                    <div className="text-xs text-text-muted pl-6">
                       {list.itemsCount || 0} wallet{list.itemsCount !== 1 ? "s" : ""}
                     </div>
                   </div>
                 </SelectItem>
               ))
             ) : searchQuery ? (
-              <div className="p-4 text-center text-sm text-zinc-500">
+              <div className="p-4 text-center text-sm text-text-muted">
                 No lists found for &quot;{searchQuery}&quot;
               </div>
             ) : null}
 
             {/* Empty state */}
             {userLists.length === 0 && (
-              <div className="p-4 text-center text-sm text-zinc-500">
+              <div className="p-4 text-center text-sm text-text-muted">
                 No lists yet. Create your first one!
               </div>
             )}
@@ -187,9 +187,9 @@ export function WalletListSelector({
         )}
 
         {/* List count badge */}
-        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-white/5 rounded-lg text-xs text-brand-accent">
+        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-border-subtle rounded-lg text-xs text-brand-accent">
           <span className="font-medium">{userLists.length}</span>
-          <span className="text-zinc-500">list{userLists.length !== 1 ? "s" : ""}</span>
+          <span className="text-text-muted">list{userLists.length !== 1 ? "s" : ""}</span>
         </div>
       </div>
 
@@ -199,7 +199,7 @@ export function WalletListSelector({
           onClick={() => router.push("/market/tracker/public-lists")}
           variant="outline"
           size="sm"
-          className="flex-1 sm:flex-none border-white/5 text-white hover:bg-white/5 rounded-lg"
+          className="flex-1 sm:flex-none border-border-subtle text-white hover:bg-white/5 rounded-lg"
         >
           <Globe className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Browse Public</span>

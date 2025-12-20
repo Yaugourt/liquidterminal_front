@@ -16,7 +16,7 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <Card className="glass-panel rounded-2xl hover:border-white/10 transition-all duration-200 group">
+    <Card className="glass-panel rounded-2xl hover:border-border-hover transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">
@@ -29,7 +29,7 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
         </div>
 
         {list.description && (
-          <CardDescription className="text-zinc-400 text-sm line-clamp-3">
+          <CardDescription className="text-text-secondary text-sm line-clamp-3">
             {list.description}
           </CardDescription>
         )}
@@ -38,20 +38,20 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
       <CardContent className="space-y-4">
         {/* Stats */}
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-zinc-400">
+          <div className="flex items-center gap-1.5 text-text-secondary">
             <Wallet size={14} className="text-[#83E9FF]" />
             <span className="text-white font-medium">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-zinc-400">
+          <div className="flex items-center gap-1.5 text-text-secondary">
             <Calendar size={14} className="text-brand-gold" />
             <span>{timeAgo}</span>
           </div>
         </div>
 
         {/* Creator */}
-        <div className="flex items-center gap-2 text-sm text-zinc-400 pt-2 border-t border-white/5">
+        <div className="flex items-center gap-2 text-sm text-text-secondary pt-2 border-t border-border-subtle">
           <span>By</span>
           <span className="text-white font-medium">
             {list.creator?.name || list.creator?.username || 'Anonymous'}

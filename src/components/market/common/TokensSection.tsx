@@ -19,7 +19,7 @@ export function TokensSection({ market }: TokensSectionProps) {
     <div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
           {(market === 'spot'
             ? [{ key: 'all', label: 'All' }, { key: 'strict', label: 'Strict' }]
             : [{ key: 'all', label: 'All' }]
@@ -29,7 +29,7 @@ export function TokensSection({ market }: TokensSectionProps) {
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${(activeTab || 'all') === tab.key
                 ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                 }`}
             >
               {tab.label}
@@ -39,13 +39,13 @@ export function TokensSection({ market }: TokensSectionProps) {
 
         {/* Barre de recherche */}
         <div className="relative max-w-xs">
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-text-secondary" />
           <Input
             type="text"
             placeholder="Search tokens..."
             value={searchQuery || ''}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pr-10 bg-brand-dark border-white/5 text-white placeholder:text-zinc-500 focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
+            className="pr-10 bg-brand-dark border-border-subtle text-white placeholder:text-text-muted focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
           />
         </div>
       </div>

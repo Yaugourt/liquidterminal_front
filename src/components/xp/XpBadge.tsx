@@ -85,7 +85,7 @@ export function XpBadge({
             </div>
 
             {/* Mini progress */}
-            <div className="w-12 h-1.5 bg-brand-dark rounded-full overflow-hidden border border-white/5">
+            <div className="w-12 h-1.5 bg-brand-dark rounded-full overflow-hidden border border-border-subtle">
               <div
                 className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all duration-500"
                 style={{ width: `${displayStats.progressPercent}%` }}
@@ -104,7 +104,7 @@ export function XpBadge({
           </button>
         </DialogTrigger>
 
-        <DialogContent className="bg-brand-secondary border border-white/10 rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               <Star className="h-5 w-5 text-[#F9E370] fill-[#F9E370]" />
@@ -123,7 +123,7 @@ export function XpBadge({
       className={cn(
         "p-6 rounded-2xl",
         "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-white/5 hover:border-white/10 transition-all",
+        "border border-border-subtle hover:border-border-hover transition-all",
         "shadow-xl shadow-black/20",
         className
       )}
@@ -165,7 +165,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#F9E370]/20 to-purple-500/20 blur-md -z-10" />
           </div>
           <div>
-            <p className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Level</p>
+            <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Level</p>
             <p className="text-lg font-bold text-white">
               {stats.totalXp.toLocaleString()} XP
             </p>
@@ -179,19 +179,19 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
               <Flame
                 className={cn(
                   "h-5 w-5",
-                  stats.loginStreak > 0 ? "text-orange-500" : "text-zinc-600"
+                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-muted"
                 )}
               />
               <span
                 className={cn(
                   "text-lg font-bold",
-                  stats.loginStreak > 0 ? "text-orange-400" : "text-zinc-500"
+                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-muted"
                 )}
               >
                 {stats.loginStreak}
               </span>
             </div>
-            <p className="text-xs text-zinc-500">day streak</p>
+            <p className="text-xs text-text-muted">day streak</p>
           </div>
         )}
       </div>
@@ -199,29 +199,29 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       {/* Progress bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-xs">
-          <span className="text-zinc-400">
+          <span className="text-text-secondary">
             Level {stats.level} → {stats.level + 1}
           </span>
           <span className="text-[#F9E370] font-medium">{stats.progressPercent}%</span>
         </div>
         <Progress
           value={stats.progressPercent}
-          className="h-2 bg-brand-dark border border-white/5"
+          className="h-2 bg-brand-dark border border-border-subtle"
         />
-        <div className="flex justify-between text-xs text-zinc-500">
+        <div className="flex justify-between text-xs text-text-muted">
           <span>{stats.currentLevelXp.toLocaleString()} XP</span>
           <span>{stats.nextLevelXp.toLocaleString()} XP</span>
         </div>
       </div>
 
       {/* XP to next level */}
-      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-white/5">
-        <span className="text-sm text-zinc-400">XP to next level</span>
+      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle">
+        <span className="text-sm text-text-secondary">XP to next level</span>
         <div className="flex items-center gap-1">
           <span className="text-sm font-bold text-[#F9E370]">
             {stats.xpToNextLevel.toLocaleString()}
           </span>
-          <ChevronRight className="h-4 w-4 text-zinc-500" />
+          <ChevronRight className="h-4 w-4 text-text-muted" />
         </div>
       </div>
     </div>

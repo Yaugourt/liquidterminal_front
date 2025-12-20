@@ -24,14 +24,14 @@ const AuctionSection = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
           {subTabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${activeSubTab === tab.key
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                 }`}
             >
               {tab.label}
@@ -65,13 +65,13 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector - Style V2 Pills */}
-      <div className="flex items-center gap-2 p-4 border-b border-white/5">
+      <div className="flex items-center gap-2 p-4 border-b border-border-subtle">
         <div className="flex">
           <PillTabs
             tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
             activeTab={activeTab}
             onTabChange={(val) => handleTabChange(val as "spot" | "perp" | "auction" | "past-auction")}
-            className="bg-brand-dark border border-white/5"
+            className="bg-brand-dark border border-border-subtle"
           />
         </div>
       </div>

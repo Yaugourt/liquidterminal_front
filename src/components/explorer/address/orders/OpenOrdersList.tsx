@@ -62,21 +62,21 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Method</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Side</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Token</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Reduce Only</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Time in Force</span></TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Method</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Side</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Token</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Reduce Only</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time in Force</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedOrders.length > 0 ? (
               paginatedOrders.map((order, index) => (
-                <TableRow key={`${order.coin}-${order.side}-${index}`} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                <TableRow key={`${order.coin}-${order.side}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                   <TableCell className="py-3 px-4 text-white">{order.orderType}</TableCell>
                   <TableCell className="py-3 px-4">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${order.side === 'A'

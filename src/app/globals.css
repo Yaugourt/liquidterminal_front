@@ -9,96 +9,98 @@
   font-style: normal;
 }
 
+/* Dark mode only - app is 100% dark themed */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: 220 20% 4%;     /* #0B0E14 */
+  --foreground: 0 0% 93%;       /* #ededed */
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
   font-family: var(--font-inter), Inter, sans-serif;
 }
 
 @layer base {
   :root {
-    --border: 220 13% 91%;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
+    /* Sidebar variables for dark mode */
+    --sidebar-background: 220 20% 7%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-primary: 191 100% 76%;
+    --sidebar-primary-foreground: 200 100% 9%;
+    --sidebar-accent: 220 20% 12%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-border: 220 13% 15%;
+    --sidebar-ring: 191 100% 76%;
   }
-}
-
-@layer base {
-  * {
-    /* @apply border-border; */
-  }
+  
   body {
     @apply bg-background text-foreground;
   }
 }
 
 @layer components {
-  /* Glassmorphism Containers */
+  /* ===== Glassmorphism Containers ===== */
   .glass-panel {
-    @apply bg-[#151A25]/60 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20;
+    @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
   }
 
   .glass-card {
-    @apply bg-[#151A25]/90 backdrop-blur-md border border-white/5 shadow-xl shadow-black/20;
+    @apply bg-brand-secondary/90 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
   }
 
   .glass-token-card {
-    @apply bg-brand-secondary/40 backdrop-blur-md border border-white/5 hover:border-white/10 transition-all;
+    @apply bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all;
   }
 
-  /* Form Elements */
+  /* ===== Form Elements ===== */
   .glass-input {
-    @apply bg-black/20 border border-white/10 focus:border-brand-accent/50 outline-none transition-colors;
+    @apply bg-black/20 border border-border-hover focus:border-brand-accent/50 outline-none transition-colors rounded-lg;
   }
 
   .glass-button {
-    @apply bg-white/5 hover:bg-white/10 border border-white/5 transition-colors;
+    @apply bg-white/5 hover:bg-white/10 border border-border-subtle transition-colors rounded-lg;
   }
 
-  /* Table Styles */
+  /* ===== Table Styles ===== */
   .table-header {
-    @apply text-[10px] font-semibold uppercase tracking-wider text-zinc-400;
+    @apply text-[10px] font-semibold uppercase tracking-wider text-text-muted;
   }
 
   .table-row {
-    @apply border-b border-white/5 hover:bg-white/[0.02] transition-colors;
+    @apply border-b border-border-subtle hover:bg-white/[0.02] transition-colors;
   }
 
-  /* Text Utilities */
-  .text-secondary {
-    @apply text-zinc-400;
+  /* ===== Shadow Utilities ===== */
+  .shadow-premium {
+    @apply shadow-xl shadow-black/20;
   }
 
-  .text-brand-gold {
-    @apply text-[#f9e370];
+  /* ===== Interactive Elements ===== */
+  .interactive-card {
+    @apply hover:border-border-hover transition-all duration-200;
+  }
+
+  .interactive-button {
+    @apply hover:bg-white/5 transition-colors;
+  }
+
+  /* ===== Text Utilities ===== */
+  .text-muted {
+    @apply text-text-muted;
+  }
+
+  /* ===== Stat Cards (Header) ===== */
+  .stat-card {
+    @apply bg-brand-secondary/40 backdrop-blur-sm border border-border-subtle 
+           rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all 
+           hover:border-border-hover;
+  }
+
+  /* ===== Dialog/Modal Backgrounds ===== */
+  .glass-dialog {
+    @apply bg-brand-secondary/95 backdrop-blur-xl border border-border-hover 
+           shadow-2xl shadow-black/40 rounded-2xl;
   }
 }
 
