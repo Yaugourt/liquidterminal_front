@@ -1,9 +1,9 @@
 import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
-import { StatsCard } from "./StatsCard";
-import { Loader2 } from "lucide-react";
+import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { Users, Activity, Wallet, Shield, Database } from "lucide-react";
 
 interface StatsGridProps {
   stats?: DashboardGlobalStats;
@@ -13,15 +13,11 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   const { stats, isLoading, error } = useDashboardStats(initialData);
   const { format } = useNumberFormat();
 
-  // Fonction pour formater les statistiques
   const formatStat = (value: number | undefined | null, options?: { prefix?: string; decimals?: number }) => {
     const { prefix = '', decimals = 0 } = options || {};
-
-    // Handle undefined or null values
     if (value === undefined || value === null) {
       return `${prefix}0`;
     }
-
     return formatNumber(value, format, {
       minimumFractionDigits: 0,
       maximumFractionDigits: decimals,
@@ -30,53 +26,53 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
     });
   };
 
-  // Afficher un état de chargement
   if (isLoading && !initialData) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(5)].map((_, index) => (
-          <GlassPanel key={index} className="p-4 flex items-center justify-center">
-            <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
-          </GlassPanel>
+          <StatsCardSkeleton key={index} />
         ))}
       </div>
     );
   }
 
-  // Afficher une erreur
   if (error) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-        <div className="col-span-full bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm backdrop-blur-md">
+        <GlassPanel className="col-span-full p-4 text-center text-rose-400 text-sm">
           Error: {error.message}
-        </div>
+        </GlassPanel>
       </div>
     );
   }
 
   const currentStats = stats || initialData;
 
-  // Afficher les données
   const statsItems = currentStats ? [
     {
       title: "Users",
       value: formatStat(currentStats.numberOfUsers),
+      icon: <Users size={16} className="text-brand-accent" />,
     },
     {
       title: "Daily Volume",
       value: formatStat(currentStats.dailyVolume, { prefix: '$', decimals: 2 }),
+      icon: <Activity size={16} className="text-brand-accent" />,
     },
     {
       title: "Bridged USDC",
       value: formatStat(currentStats.bridgedUsdc, { prefix: '$', decimals: 1 }),
+      icon: <Wallet size={16} className="text-brand-accent" />,
     },
     {
       title: "HYPE Staked",
       value: formatStat(currentStats.totalHypeStake, { decimals: 1 }),
+      icon: <Shield size={16} className="text-brand-accent" />,
     },
     {
       title: "Vaults TVL",
       value: formatStat(currentStats.vaultsTvl, { prefix: '$', decimals: 1 }),
+      icon: <Database size={16} className="text-brand-accent" />,
     },
   ] : [];
 
@@ -88,3 +84,4 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
     </div>
   );
 }
+

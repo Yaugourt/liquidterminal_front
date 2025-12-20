@@ -7,7 +7,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components
 import { DataTable } from "@/components/common/DataTable";
 import { TransactionRow } from "./TransactionRow";
 
-export function TransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
+export function AddressTransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {
   const { format } = useNumberFormat();
 
   // Récupération des données de marché pour les prix

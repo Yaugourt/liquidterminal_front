@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { formatStakeValue, formatTVLValue } from "@/lib/formatters/numberFormatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
-import { DataTable, Column } from "./DataTable";
+import { TypedDataTable as DataTable, Column } from "@/components/common/DataTable";
 import { useNumberFormat } from "@/store/number-format.store";
 import { PriceChange } from '@/components/common';
 import { AddressDisplay } from "@/components/ui/address-display";

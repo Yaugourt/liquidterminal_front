@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/SubmitProjectModal";
+import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/ProjectFormModal";
 import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicGoods, PublicGood } from "@/services/ecosystem/publicgood";

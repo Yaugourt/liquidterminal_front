@@ -6,7 +6,7 @@ import { useWallets } from "@/store/use-wallets";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletActiveMessages } from "@/lib/toast-messages";
 import { DeleteWalletDialog } from "../DeleteWalletDialog";
-import { WalletListItemSelector } from "./WalletListItemSelector";
+import { UnifiedWalletSelector, WalletItem } from "./UnifiedWalletSelector";
 import { DragEndEvent } from '@dnd-kit/core';
 import { exportWalletsToCSV } from "@/lib/csv-utils";
 import { toast } from "sonner";
@@ -144,9 +144,15 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
 
   return (
     <>
-      <WalletListItemSelector
-        items={validItems}
-        selectedWalletId={selectedWalletId}
+      <UnifiedWalletSelector
+        items={validItems.map((item): WalletItem => ({
+          id: item.userWallet?.Wallet?.id || 0,
+          name: item.userWallet?.name || null,
+          address: item.userWallet?.Wallet?.address || '',
+          addedAt: item.userWallet?.addedAt || new Date().toISOString(),
+          notes: item.notes ?? undefined,
+        }))}
+        selectedId={selectedWalletId}
         onWalletChange={(value) => {
           const walletId = parseInt(value, 10);
           setSelectedWalletId(walletId);
@@ -161,6 +167,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
         onBulkDelete={onBulkDelete || (async () => { })}
         onImportCSV={onImportCSV}
         onExportCSV={handleExportList}
+        emptyMessage="No wallets in this list yet"
       />
 
       <DeleteWalletDialog

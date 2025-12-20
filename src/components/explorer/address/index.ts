@@ -1,5 +1,5 @@
 export * from './cards';
-export { TransactionList } from './TransactionList';
+export { AddressTransactionList } from './AddressTransactionList';
 export { AddressBalance } from './AddressBalance';
 export { AddressHeader } from './AddressHeader';
 // export { HoldingTabs } from './HoldingTabs'; // Removed

@@ -4,7 +4,7 @@ import { useState, use } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { EditProjectModal } from "@/components/ecosystem/publicgoods/EditProjectModal";
+import { EditProjectModal } from "@/components/ecosystem/publicgoods/ProjectFormModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
 import { ProjectHeader } from "@/components/ecosystem/publicgoods/ProjectHeader";
 import { ProjectContent } from "@/components/ecosystem/publicgoods/ProjectContent";

@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
-
-import { Copy, Check } from "lucide-react";
+import { CopyButton } from "@/components/ui/copy-button";
 
 import { DataTable } from "@/components/common/DataTable";
 
@@ -16,41 +14,7 @@ import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
-// Local DataTable removed, using strict generic component
-
-
-// CopyButton component similar to ValidatorsVaults
-const CopyButton = ({ text }: { text: string }) => {
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedAddress(text);
-      setTimeout(() => setCopiedAddress(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  };
-
-  return (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        copyToClipboard(text);
-      }}
-      className="group p-1 rounded transition-colors"
-    >
-      {copiedAddress === text ? (
-        <Check className="h-3.5 w-3.5 text-green-500" />
-      ) : (
-        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100" />
-      )}
-    </button>
-  );
-};
-
-export function TransactionList({
+export function BlockTransactionList({
   transactions,
   onTransactionClick,
   onAddressClick,

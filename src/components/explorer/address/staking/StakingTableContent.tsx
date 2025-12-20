@@ -1,45 +1,14 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { DataTable } from "@/components/common/DataTable";
-import { Copy, Check } from "lucide-react";
+import { CopyButton } from "@/components/ui/copy-button";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { useState } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { NumberFormatType } from "@/store/number-format.store";
 import { ValidatorDelegation } from "@/services/explorer/validator/types/validators";
 import { FormattedDelegatorHistoryItem, FormattedDelegatorRewardItem } from "@/services/explorer/validator/types/delegator";
 
 type StakingSubTab = 'delegations' | 'history' | 'rewards';
-
-const CopyButton = ({ text }: { text: string }) => {
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedAddress(text);
-      setTimeout(() => setCopiedAddress(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  };
-
-  return (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        copyToClipboard(text);
-      }}
-      className="group p-1 rounded transition-colors"
-    >
-      {copiedAddress === text ? (
-        <Check className="h-3.5 w-3.5 text-green-500" />
-      ) : (
-        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100" />
-      )}
-    </button>
-  );
-};
 
 interface StakingTableContentProps {
   activeSubTab: StakingSubTab;

@@ -28,41 +28,41 @@ export function CategoryForm({
   return (
     <form onSubmit={handleCategorySubmit} className="space-y-4 pb-4">
       <div className="space-y-2">
-        <label htmlFor="categoryName" className="text-white text-sm font-medium">Category Name *</label>
+        <label htmlFor="categoryName" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Category Name *</label>
         <Input
           id="categoryName"
           value={categoryForm.name}
           onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
-          className="bg-[#112941] border-[#1E3851] text-white"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           required
         />
       </div>
-      
+
       <div className="space-y-2">
-        <label htmlFor="categoryDesc" className="text-white text-sm font-medium">Description</label>
+        <label htmlFor="categoryDesc" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Description</label>
         <Textarea
           id="categoryDesc"
           value={categoryForm.description}
           onChange={(e) => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
-          className="bg-[#112941] border-[#1E3851] text-white"
+          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           rows={3}
           placeholder="Optional description for the category"
         />
       </div>
-      
-      <div className="flex justify-end gap-3 pt-4">
+
+      <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="border-[#1E3851] text-white hover:bg-[#112941]"
+          className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={creatingCategory}
-          className="bg-brand-accent hover:bg-brand-accent/90 text-black"
+          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
         >
           {creatingCategory ? "Creating..." : "Create Category"}
         </Button>

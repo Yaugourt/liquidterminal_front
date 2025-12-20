@@ -1,31 +1,33 @@
-import { StatsCard } from "./StatsCard";
+import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
 import { useEffect, useState, useCallback } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { ExplorerStat } from "@/components/types/explorer.types";
 import { useExplorerStore } from "@/services/explorer";
 import { useDashboardStats } from "@/services/dashboard";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
-import { Loader2 } from "lucide-react";
+import { Users, Timer, Zap, Activity, Wallet } from "lucide-react";
+import Image from "next/image";
+
+interface StatItem {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+}
 
 export function StatsGrid() {
   const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState<ExplorerStat[]>([]);
+  const [stats, setStats] = useState<StatItem[]>([]);
   const { format } = useNumberFormat();
   const { currentBlockHeight, connectBlocks, disconnectBlocks } = useExplorerStore();
-  
-  // Récupérer les données du dashboard
+
   const { stats: dashboardStats, isLoading: dashboardLoading } = useDashboardStats();
-  
-  // Récupérer les données des vaults
   const { totalTvl: vaultsTvl, isLoading: vaultsLoading } = useVaults();
 
   useEffect(() => {
-    connectBlocks(); // Connecter seulement les blocks, pas les transactions
+    connectBlocks();
     return () => disconnectBlocks();
   }, [connectBlocks, disconnectBlocks]);
 
-  // Fonction pour formater les nombres selon le format sélectionné
   const formatValue = useCallback((value: number, type: string) => {
     if (type === "users") {
       return formatNumber(value, format, {
@@ -58,53 +60,50 @@ export function StatsGrid() {
       setStats([
         {
           title: "Blocks",
-          type: "block",
           value: formatValue(currentBlockHeight, "blocks"),
+          icon: <Activity size={16} className="text-brand-accent" />,
         },
         {
           title: "Block Time",
-          type: "blockTime",
           value: "0.07s",
+          icon: <Timer size={16} className="text-brand-accent" />,
         },
         {
           title: "Max TPS",
-          type: "transactions",
           value: "200,000",
+          icon: <Zap size={16} className="text-brand-accent" />,
         },
         {
           title: "Users",
-          type: "users",
-          value: dashboardStats?.numberOfUsers 
+          value: dashboardStats?.numberOfUsers
             ? formatValue(dashboardStats.numberOfUsers, "users")
             : dashboardLoading ? "Loading..." : "N/A",
+          icon: <Users size={16} className="text-brand-accent" />,
         },
         {
           title: "HYPE Staked",
-          type: "hypeStaked",
-          value: dashboardStats?.totalHypeStake 
+          value: dashboardStats?.totalHypeStake
             ? formatValue(dashboardStats.totalHypeStake, "hypeStaked")
             : dashboardLoading ? "Loading..." : "N/A",
+          icon: <Image src="https://app.hyperliquid.xyz/coins/HYPE_USDC.svg" alt="HYPE Logo" width={16} height={16} />,
         },
         {
           title: "Vaults TVL",
-          type: "vaultsTvl",
-          value: vaultsTvl > 0 
+          value: vaultsTvl > 0
             ? formatValue(vaultsTvl, "vaultsTvl")
             : vaultsLoading ? "Loading..." : "N/A",
+          icon: <Wallet size={16} className="text-brand-accent" />,
         },
       ]);
       setIsLoading(false);
     }
   }, [currentBlockHeight, formatValue, dashboardStats, dashboardLoading, vaultsTvl, vaultsLoading]);
 
-  // Afficher un état de chargement
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1.5 sm:gap-2 md:gap-3 w-full">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-black/20">
-            <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
-          </div>
+          <StatsCardSkeleton key={index} />
         ))}
       </div>
     );
@@ -118,3 +117,4 @@ export function StatsGrid() {
     </div>
   );
 }
+
