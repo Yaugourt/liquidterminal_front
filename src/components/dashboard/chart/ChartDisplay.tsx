@@ -21,14 +21,14 @@ interface Props {
   onFeeTypeChange?: (feeType: "all" | "spot") => void;
 }
 
-const AnimatedPeriodSelector = ({ 
-  selectedPeriod, 
-  onPeriodChange, 
-  availablePeriods 
-}: { 
-  selectedPeriod: ChartPeriod; 
-  onPeriodChange: (period: ChartPeriod) => void; 
-  availablePeriods: ChartPeriod[]; 
+const AnimatedPeriodSelector = ({
+  selectedPeriod,
+  onPeriodChange,
+  availablePeriods
+}: {
+  selectedPeriod: ChartPeriod;
+  onPeriodChange: (period: ChartPeriod) => void;
+  availablePeriods: ChartPeriod[];
 }) => {
   return (
     <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
@@ -36,11 +36,10 @@ const AnimatedPeriodSelector = ({
         <button
           key={period}
           onClick={() => onPeriodChange(period)}
-          className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${
-            selectedPeriod === period
+          className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${selectedPeriod === period
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
               : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
-          }`}
+            }`}
         >
           {period}
         </button>
@@ -49,7 +48,7 @@ const AnimatedPeriodSelector = ({
   );
 };
 
-export const ChartDisplay = ({ 
+export const ChartDisplay = ({
   data,
   isLoading,
   selectedFilter,
@@ -62,7 +61,7 @@ export const ChartDisplay = ({
   onFeeTypeChange
 }: Props) => {
   const { format } = useNumberFormat();
-  
+
   // State for crosshair tooltip
   const [hoverValue, setHoverValue] = useState<number | null>(null);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
@@ -81,7 +80,7 @@ export const ChartDisplay = ({
       case "bridge":
         return "Bridge TVL";
       case "strict":
-         return "Fees";
+        return "Fees";
       case "fees":
         return "Total Fees";
       default:
@@ -129,29 +128,29 @@ export const ChartDisplay = ({
   return (
     <div className="w-full h-full flex flex-col min-h-[300px]">
       {/* Header */}
-      <div className="flex-shrink-0 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <h2 className="text-sm text-white font-bold uppercase tracking-wider">
               {getTitle()}
             </h2>
-            
+
             {/* Value Display */}
             {displayValue !== null && (
               <div className="flex flex-col">
-              <span className="text-lg font-bold text-white tracking-tight">
+                <span className="text-lg font-bold text-white tracking-tight">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
                   <span className="text-[10px] text-text-muted">
-                    {new Date(hoverTime).toLocaleDateString(undefined, { 
-                      month: 'short', 
-                      day: 'numeric', 
+                    {new Date(hoverTime).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
                       year: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit'
                     })}
-              </span>
+                  </span>
                 )}
               </div>
             )}
@@ -160,45 +159,41 @@ export const ChartDisplay = ({
               <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onCurrencyChange("USDC")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                  }`}
+                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                    }`}
                 >
                   USDC
                 </button>
                 <button
                   onClick={() => onCurrencyChange("HYPE")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                  }`}
+                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                    }`}
                 >
                   HYPE
                 </button>
               </div>
             )}
-            
+
             {selectedFilter === "fees" && onFeeTypeChange && (
               <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onFeeTypeChange("all")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                  }`}
+                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                    }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => onFeeTypeChange("spot")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${
-                    selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                  }`}
+                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                    }`}
                 >
                   Spot
                 </button>
               </div>
             )}
           </div>
-          
+
           <AnimatedPeriodSelector
             selectedPeriod={selectedPeriod}
             onPeriodChange={onPeriodChange}
@@ -223,7 +218,7 @@ export const ChartDisplay = ({
             lineColor={mainColor}
             formatValue={formatYAxisValue}
             onCrosshairMove={handleCrosshairMove}
-              />
+          />
         )}
       </div>
     </div>

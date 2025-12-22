@@ -35,8 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
             <div className="lg:pl-[220px]">
-                {/* Header - sticky, floating style */}
-                <div className="sticky top-0 z-40">
+                {/* Header - scrolls with page content */}
+                <div>
                     <Header showFees={true} />
                 </div>
 

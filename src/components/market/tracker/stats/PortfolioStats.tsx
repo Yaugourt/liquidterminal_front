@@ -6,20 +6,26 @@ import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddressBalance } from "@/services/explorer/address";
-import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
+import { PortfolioApiResponse } from "@/services/explorer/address/types";
+import { HyperliquidPerpResponse } from "@/services/market/tracker/types";
 
-export function PortfolioStats() {
+interface PortfolioStatsProps {
+  portfolioData?: PortfolioApiResponse | null;
+  perpPositions?: HyperliquidPerpResponse | null;
+}
+
+export function PortfolioStats({
+  portfolioData,
+  perpPositions
+}: PortfolioStatsProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [volumeTimeframe, setVolumeTimeframe] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
   const { balances, isLoading, error } = useAddressBalance(activeWallet?.address || '');
-  const { perpPositions } = useWalletsBalances(activeWallet?.address || '');
-  const { data: portfolioData } = usePortfolio(activeWallet?.address || '');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export function PortfolioStats() {
     perpPositions.assetPositions.forEach(({ position }) => {
       const szi = parseFloat(position.szi);
       const positionValue = parseFloat(position.positionValue);
-      
+
       if (szi > 0) {
         // Position longue
         longValue += positionValue;
@@ -76,7 +82,7 @@ export function PortfolioStats() {
   // Mapping des périodes de l'API vers les tabs
   const timeframeMapping = useMemo(() => ({
     '24h': 'day',
-    '7d': 'week', 
+    '7d': 'week',
     '30d': 'month',
     'all': 'allTime'
   } as const), []);
@@ -92,7 +98,7 @@ export function PortfolioStats() {
     }
 
     const currentTimeframe = timeframeMapping[volumeTimeframe];
-    
+
     // Trouver les données pour la période actuelle
     const totalData = portfolioData.find(([period]) => period === currentTimeframe);
     const perpData = portfolioData.find(([period]) => period === `perp${currentTimeframe.charAt(0).toUpperCase() + currentTimeframe.slice(1)}`);
@@ -114,7 +120,7 @@ export function PortfolioStats() {
       spotVaultVolume: Math.max(0, spotVaultVolume), // Éviter les valeurs négatives
       totalVolume
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioData, volumeTimeframe]);
 
   // Fonction pour copier l'adresse
@@ -153,9 +159,9 @@ export function PortfolioStats() {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     className="h-6 w-6 p-0 text-text-muted hover:text-white hover:bg-white/5"
                     onClick={copyToClipboard}
                   >
@@ -220,11 +226,10 @@ export function PortfolioStats() {
                         <button
                           key={timeframe}
                           onClick={() => setVolumeTimeframe(timeframe)}
-                          className={`px-2 py-1 text-[10px] rounded-md transition-all ${
-                            volumeTimeframe === timeframe
-                              ? 'bg-brand-accent text-brand-tertiary font-bold'
-                              : 'text-text-secondary hover:text-zinc-200'
-                          }`}
+                          className={`px-2 py-1 text-[10px] rounded-md transition-all ${volumeTimeframe === timeframe
+                            ? 'bg-brand-accent text-brand-tertiary font-bold'
+                            : 'text-text-secondary hover:text-zinc-200'
+                            }`}
                         >
                           {timeframe}
                         </button>
@@ -283,7 +288,7 @@ export function PortfolioStats() {
                       <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
                     </div>
                   </div>
-                  
+
                   {/* Withdrawable */}
                   <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
                     <p className="text-text-secondary text-xs">Withdrawable:</p>

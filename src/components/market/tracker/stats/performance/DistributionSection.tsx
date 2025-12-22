@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 import { Loader2 } from "lucide-react";
-import { useWallets } from "@/store/use-wallets";
-import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
+import { HyperliquidBalance } from "@/services/market/tracker/types";
 
 // Types pour le tooltip
 interface TooltipProps {
@@ -34,16 +33,27 @@ interface AssetDistribution {
   value: number;
   percentage: number;
   color: string;
+  [key: string]: string | number;
 }
 
-export function DistributionSection() {
-  const { getActiveWallet } = useWallets();
-  const activeWallet = getActiveWallet();
-  const { spotBalances, isLoading: balancesLoading } = useWalletsBalances(activeWallet?.address || '');
+interface DistributionSectionProps {
+  hideSmallBalances?: boolean;
+  spotBalances?: HyperliquidBalance[];
+  isLoading?: boolean;
+}
+
+export function DistributionSection({
+  hideSmallBalances = false,
+  spotBalances = [],
+  isLoading: balancesLoading = false
+}: DistributionSectionProps) {
   const { data: spotMarketTokens, isLoading: tokensLoading } = useSpotTokens({ limit: 100 });
   const { format } = useNumberFormat();
 
   const isLoading = balancesLoading || tokensLoading;
+
+  // Seuil minimum pour les "dust" tokens ($1)
+  const MIN_VALUE_THRESHOLD = 1;
 
   // Calculer la distribution des assets
   const distributionData = useMemo((): AssetDistribution[] => {
@@ -54,11 +64,11 @@ export function DistributionSection() {
     // Calculer la valeur de chaque asset
     const assetValues = spotBalances.map((balance) => {
       const normalizedCoin = balance.coin.toLowerCase();
-      
+
       // Stablecoins ont toujours un prix de $1
       const stablecoins = ['usdc', 'usdt', 'dai', 'busd', 'tusd'];
       const isStablecoin = stablecoins.includes(normalizedCoin);
-      
+
       let price = 0;
       if (isStablecoin) {
         price = 1;
@@ -66,19 +76,25 @@ export function DistributionSection() {
         const marketToken = spotMarketTokens.find(t => t.name.toLowerCase() === normalizedCoin);
         price = marketToken ? marketToken.price : 0;
       }
-      
+
       const value = parseFloat(balance.total) * price;
-      
+
       return {
         name: balance.coin.toUpperCase(),
         value,
         balance: parseFloat(balance.total)
       };
-    }).filter(asset => asset.value > 0); // Filtrer les assets sans valeur
+    }).filter(asset => {
+      // Toujours filtrer les assets sans valeur
+      if (asset.value <= 0) return false;
+      // Si hideSmallBalances est activé, filtrer les assets < $1
+      if (hideSmallBalances && asset.value < MIN_VALUE_THRESHOLD) return false;
+      return true;
+    });
 
     // Calculer le total
     const totalValue = assetValues.reduce((sum, asset) => sum + asset.value, 0);
-    
+
     if (totalValue === 0) return [];
 
     // Trier par valeur décroissante et prendre les 10 premiers
@@ -93,7 +109,7 @@ export function DistributionSection() {
       percentage: (asset.value / totalValue) * 100,
       color: COLORS[index % COLORS.length]
     }));
-  }, [spotBalances, spotMarketTokens]);
+  }, [spotBalances, spotMarketTokens, hideSmallBalances]);
 
   const formatCurrency = (value: number) => {
     return formatAssetValue(value, format);
@@ -125,7 +141,7 @@ export function DistributionSection() {
       return (
         <div className="bg-brand-tertiary border border-[#83E9FF4D] p-3 rounded-md shadow-lg">
           <div className="flex items-center gap-2 mb-2">
-            <div 
+            <div
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: data.color }}
             />
@@ -174,7 +190,7 @@ export function DistributionSection() {
             <div className="grid grid-cols-2 gap-2 max-h-full">
               {distributionData.map((asset) => (
                 <div key={asset.name} className="flex items-center gap-2 p-1.5 rounded-md hover:bg-[#FFFFFF0A] transition-colors">
-                  <div 
+                  <div
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                     style={{ backgroundColor: asset.color }}
                   />

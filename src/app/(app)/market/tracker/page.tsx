@@ -12,21 +12,38 @@ import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
+import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
+import { usePrivy } from "@privy-io/react-auth";
 
 export default function Wallets() {
   const { setTitle } = usePageTitle();
-  const { isAuthenticated, login } = useAuthContext();
+  const { login } = useAuthContext();
+  const { ready: privyReady, authenticated } = usePrivy();
   const { getActiveWallet } = useWallets();
   const activeWallet = getActiveWallet();
   const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Lift API calls to page level to avoid duplicate fetches in child components
+  const { data: portfolioData, isLoading: portfolioLoading } = usePortfolio(activeWallet?.address || '');
+  const { spotBalances, perpPositions, isLoading: balancesLoading } = useWalletsBalances(activeWallet?.address || '');
 
   useEffect(() => {
     setTitle("Wallets");
+    setIsMounted(true);
   }, [setTitle]);
+
+  // Only show auth popup after:
+  // 1. Component is mounted (client-side)
+  // 2. Privy is fully ready
+  // 3. User is confirmed not authenticated
+  // This prevents the popup from flashing during navigation for logged-in users
+  const showAuthPopup = isMounted && privyReady && !authenticated;
 
   return (
     <>
-      {!isAuthenticated && (
+      {showAuthPopup && (
         <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
           <div className="bg-brand-secondary/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
@@ -44,7 +61,7 @@ export default function Wallets() {
         </div>
       )}
 
-      <div className={isAuthenticated ? "" : "filter blur-[5px] pointer-events-none select-none"}>
+      <div className={showAuthPopup ? "filter blur-[5px] pointer-events-none select-none" : ""}>
         {/* Navigation principale */}
         <div className="mb-8">
           <WalletTabs />
@@ -54,10 +71,18 @@ export default function Wallets() {
         <div className="mb-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
             <div className="lg:col-span-5">
-              <PortfolioStats />
+              <PortfolioStats
+                portfolioData={portfolioData}
+                perpPositions={perpPositions}
+              />
             </div>
             <div className="lg:col-span-7">
-              <PerformanceChart />
+              <PerformanceChart
+                portfolioData={portfolioData}
+                portfolioLoading={portfolioLoading}
+                spotBalances={spotBalances}
+                balancesLoading={balancesLoading}
+              />
             </div>
           </div>
         </div>
