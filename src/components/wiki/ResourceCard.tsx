@@ -3,7 +3,7 @@
 import { ExternalLink, Plus, BookOpen, Trash2, Flag, Clock, CheckCircle, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, memo, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -44,7 +44,7 @@ const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; 
   REJECTED: { icon: XCircle, label: "Rejected", color: "text-rose-400 bg-rose-400/10 border-rose-400/20" },
 };
 
-export function ResourceCard({ resource, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
+export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);
@@ -57,7 +57,7 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
     resource.url && resource.url.startsWith('http') ? resource.url : ''
   );
 
-  const handleAddToReadList = async (readListId: number) => {
+  const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
       setIsAddingToList(true);
       const readList = readLists.find(list => list.id === readListId);
@@ -72,15 +72,15 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
     } finally {
       setIsAddingToList(false);
     }
-  };
+  }, [readLists, addItemToReadList, resource.id, resource.title]);
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (onDelete) {
       onDelete(parseInt(resource.id));
     }
-  };
+  }, [onDelete, resource.id]);
 
   const status = resource.status || 'APPROVED';
   const StatusIcon = statusConfig[status].icon;
@@ -275,4 +275,6 @@ export function ResourceCard({ resource, onDelete, isDeleting = false, showStatu
       </div>
     </div>
   );
-} 
+});
+
+ResourceCard.displayName = 'ResourceCard';

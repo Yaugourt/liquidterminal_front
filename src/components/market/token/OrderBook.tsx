@@ -12,13 +12,16 @@ interface OrderBookProps {
   marketIndex?: number;
   tokenNameProp?: string;
   className?: string;
+  /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
+  perpCoinId?: string;
 }
 
-export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: OrderBookProps) {
+export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpCoinId }: OrderBookProps) {
   const [activeTab, setActiveTab] = useState<'orderbook' | 'trades'>('orderbook');
 
   // Connect to WebSocket for real-time order book and trades
-  const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
+  // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
+  const coinId = perpCoinId || (marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '');
   const { orderBook, trades } = useTokenWebSocket(coinId);
 
   // Use only real data from WebSocket

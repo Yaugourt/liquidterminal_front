@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, use } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { EditProjectModal } from "@/components/ecosystem/publicgoods/ProjectFormModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
 import { ProjectHeader } from "@/components/ecosystem/publicgoods/ProjectHeader";
 import { ProjectContent } from "@/components/ecosystem/publicgoods/ProjectContent";
@@ -14,6 +14,12 @@ import { hasRole } from "@/lib/roleHelpers";
 import { useRouter } from "next/navigation";
 import { usePublicGood, useDeletePublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
+
+// Lazy load heavy modal - only loaded when user clicks Edit
+const EditProjectModal = dynamic(
+  () => import("@/components/ecosystem/publicgoods/ProjectFormModal").then(mod => ({ default: mod.EditProjectModal })),
+  { ssr: false }
+);
 
 interface ProjectDetailPageProps {
   params: Promise<{

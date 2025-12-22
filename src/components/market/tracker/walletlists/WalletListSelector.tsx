@@ -81,7 +81,7 @@ export function WalletListSelector({
           <List className="w-4 h-4" />
           <span>List:</span>
         </div>
-        
+
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
           <SelectTrigger className="w-full sm:w-[320px] bg-brand-dark border-border-subtle text-white rounded-lg hover:border-border-hover transition-all">
             <div className="flex items-center gap-2 truncate">
@@ -96,7 +96,7 @@ export function WalletListSelector({
               </SelectValue>
             </div>
           </SelectTrigger>
-          
+
           <SelectContent className="bg-brand-secondary border-border-hover text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
             {/* Search input */}
             {userLists.length > 5 && (
@@ -199,7 +199,7 @@ export function WalletListSelector({
           onClick={() => router.push("/market/tracker/public-lists")}
           variant="outline"
           size="sm"
-          className="flex-1 sm:flex-none border-border-subtle text-white hover:bg-white/5 rounded-lg"
+          className="flex-1 sm:flex-none border-border-subtle text-white hover:text-white hover:bg-white/5 rounded-lg"
         >
           <Globe className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Browse Public</span>

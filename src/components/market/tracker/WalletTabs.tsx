@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useWallets } from "@/store/use-wallets";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
-import { ImportWalletsCSVDialog } from "./ImportWalletsCSVDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
 import { DeleteWalletListDialog } from "./walletlists/DeleteWalletListDialog";
 import { WalletListContent } from "./walletlists/WalletListContent";
@@ -18,6 +18,12 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { exportWalletsToCSV } from "@/lib/csv-utils";
 import { toast } from "sonner";
 import { showXpGainToast } from "@/components/xp";
+
+// Lazy load heavy CSV import dialog - only loaded when user clicks Import
+const ImportWalletsCSVDialog = dynamic(
+  () => import("./ImportWalletsCSVDialog").then(mod => ({ default: mod.ImportWalletsCSVDialog })),
+  { ssr: false }
+);
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);

@@ -108,7 +108,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     >
                         <Menu className="h-5 w-5 text-brand-accent" />
                     </Button>
-                    <div className="flex items-center gap-2">
+                    <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                        onClick={() => setIsOpen(false)}
+                    >
                         <Image
                             src="/logo.svg"
                             alt="Logo"
@@ -120,7 +124,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <span className="text-brand-accent font-higuen">Liquid </span>
                             <span className="text-white font-inter">Terminal</span>
                         </h1>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Navigation */}

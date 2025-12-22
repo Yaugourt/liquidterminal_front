@@ -1,17 +1,23 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { SubmitProjectModal } from "@/components/ecosystem/publicgoods/ProjectFormModal";
 import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
 import { ProjectsLayout } from "@/layouts/ProjectsLayout";
+
+// Lazy load heavy modal - only loaded when user clicks "Submit Project"
+const SubmitProjectModal = dynamic(
+  () => import("@/components/ecosystem/publicgoods/ProjectFormModal").then(mod => ({ default: mod.SubmitProjectModal })),
+  { ssr: false }
+);
 
 export default function PublicGoodsPage() {
   const [activeTab, setActiveTab] = useState('all');

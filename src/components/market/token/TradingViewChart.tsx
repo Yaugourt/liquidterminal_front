@@ -11,6 +11,8 @@ interface TradingViewChartProps {
   marketIndex?: number;
   tokenName?: string;
   className?: string;
+  /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
+  coinId?: string;
 }
 
 // Helper function to convert TokenCandle to CandlestickData
@@ -45,7 +47,7 @@ const TIMEFRAMES: { label: string; value: TimeframeType }[] = [
   { label: '1M', value: '1M' }
 ];
 
-export function TradingViewChart({ marketIndex, tokenName, className }: TradingViewChartProps) {
+export function TradingViewChart({ marketIndex, tokenName, className, coinId: directCoinId }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
@@ -68,8 +70,8 @@ export function TradingViewChart({ marketIndex, tokenName, className }: TradingV
     }
   }, [selectedTimeframe]);
 
-  // Convert marketIndex to coinId
-  const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenName) : null;
+  // Convert marketIndex to coinId, or use direct coinId for perpetuals
+  const coinId = directCoinId || (marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenName) : null);
 
   // Fetch candle data using our hook with coinId
   const { candles, isLoading, error } = useTokenCandles({

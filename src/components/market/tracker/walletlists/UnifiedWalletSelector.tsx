@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -45,7 +45,7 @@ interface UnifiedWalletSelectorProps {
     emptyMessage?: string;
 }
 
-export function UnifiedWalletSelector({
+export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
     items,
     selectedId,
     onWalletChange,
@@ -83,7 +83,7 @@ export function UnifiedWalletSelector({
     };
 
     // Selection handlers
-    const toggleWalletSelection = (walletId: number) => {
+    const toggleWalletSelection = useCallback((walletId: number) => {
         setSelectedWalletIds((prev) => {
             const next = new Set(prev);
             if (next.has(walletId)) {
@@ -93,14 +93,14 @@ export function UnifiedWalletSelector({
             }
             return next;
         });
-    };
+    }, []);
 
-    const handleBulkDeleteClick = () => {
+    const handleBulkDeleteClick = useCallback(() => {
         if (selectedWalletIds.size === 0) return;
         setIsDeleteDialogOpen(true);
-    };
+    }, [selectedWalletIds.size]);
 
-    const handleConfirmBulkDelete = async () => {
+    const handleConfirmBulkDelete = useCallback(async () => {
         try {
             await onBulkDelete(Array.from(selectedWalletIds));
             setSelectedWalletIds(new Set());
@@ -109,7 +109,7 @@ export function UnifiedWalletSelector({
         } finally {
             setIsDeleteDialogOpen(false);
         }
-    };
+    }, [onBulkDelete, selectedWalletIds]);
 
     return (
         <>
@@ -327,4 +327,6 @@ export function UnifiedWalletSelector({
             </AlertDialog>
         </>
     );
-}
+});
+
+UnifiedWalletSelector.displayName = 'UnifiedWalletSelector';

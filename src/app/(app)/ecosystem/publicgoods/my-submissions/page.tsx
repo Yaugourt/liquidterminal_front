@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowLeft } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { SubmitProjectModal, EditProjectModal } from "@/components/ecosystem/publicgoods/ProjectFormModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
 import { SearchBar } from "@/components/common/SearchBar";
 import { useAuthContext } from "@/contexts/auth.context";
@@ -14,6 +14,17 @@ import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ec
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ProjectsLayout } from "@/layouts/ProjectsLayout";
+
+// Lazy load heavy modals - only loaded when user interacts with them
+const SubmitProjectModal = dynamic(
+  () => import("@/components/ecosystem/publicgoods/ProjectFormModal").then(mod => ({ default: mod.SubmitProjectModal })),
+  { ssr: false }
+);
+
+const EditProjectModal = dynamic(
+  () => import("@/components/ecosystem/publicgoods/ProjectFormModal").then(mod => ({ default: mod.EditProjectModal })),
+  { ssr: false }
+);
 
 export default function MySubmissionsPage() {
   const [activeTab, setActiveTab] = useState('all');

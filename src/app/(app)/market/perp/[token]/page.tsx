@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Loader2, Database } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { TradingLayout } from "@/layouts/TradingLayout";
-import { GlassPanel } from "@/components/ui/glass-panel";
-import { TokenCard, TokenData, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { TokenCard, TokenData, OrderBook, TokenInfoSidebar, RecentTrades } from "@/components/market/token";
 import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+import { getPerpCoinId } from "@/services/market/token/utils";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(
@@ -19,6 +19,7 @@ const TradingViewChart = dynamic(
 // Type pour les tokens perp
 interface PerpToken {
   name: string;
+  coin: string; // Coin for WebSocket (e.g., "BTC")
   logo: string | null;
   price: number;
   change24h: number;
@@ -28,44 +29,47 @@ interface PerpToken {
   funding: number;
   maxLeverage: number;
   onlyIsolated: boolean;
-  marketIndex?: number; // Added for compatibility
 }
-
-// Données mockées pour le token perp
-// Note: On utilise un marketIndex arbitraire pour la démo, à remplacer par l'API réelle
-const mockPerpToken: PerpToken = {
-  name: "BTC-PERP",
-  logo: null,
-  price: 65000,
-  change24h: 2.5,
-  volume: 25000000000,
-  marketCap: 1250000000000,
-  openInterest: 15000000000,
-  funding: 0.01,
-  maxLeverage: 100,
-  onlyIsolated: false,
-  marketIndex: 0 // BTC usually
-};
 
 export default function PerpTokenPage() {
   const router = useRouter();
+  const params = useParams();
+  const tokenParam = params?.token as string;
+
   const [token, setToken] = useState<PerpToken | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simuler le chargement des données
+    if (!tokenParam) return;
+
     const loadData = () => {
       setLoading(true);
 
-      // Simuler un délai de chargement
-      setTimeout(() => {
-        setToken(mockPerpToken);
-        setLoading(false);
-      }, 1000);
+      // Parse token from URL (e.g., "BTC" or "BTC-PERP")
+      const coinId = getPerpCoinId(tokenParam.toUpperCase());
+
+      // For now, create token data from URL param
+      // TODO: Replace with real API call to get perpetual metadata
+      const perpToken: PerpToken = {
+        name: `${coinId}-PERP`,
+        coin: coinId,
+        logo: null,
+        price: 0, // Will be filled by WebSocket
+        change24h: 0,
+        volume: 0,
+        marketCap: 0,
+        openInterest: 0,
+        funding: 0,
+        maxLeverage: 100,
+        onlyIsolated: false,
+      };
+
+      setToken(perpToken);
+      setLoading(false);
     };
 
     loadData();
-  }, []);
+  }, [tokenParam]);
 
   if (loading) {
     return (
@@ -91,7 +95,7 @@ export default function PerpTokenPage() {
     );
   }
 
-  // Pour le moment on utilise le composant TokenData commun, en adaptant les champs manquants
+  // Build TokenData for shared components
   const tokenData: TokenData = {
     symbol: token.name,
     name: token.name,
@@ -100,10 +104,11 @@ export default function PerpTokenPage() {
     change24h: token.change24h,
     volume24h: token.volume,
     marketCap: token.marketCap,
-    marketIndex: token.marketIndex,
     logo: token.logo,
-    // Champs spécifiques Perp mappés ou ignorés par TokenInfoSidebar pour l'instant
   };
+
+  // Get the coin ID for WebSocket connections
+  const coinId = token.coin;
 
   return (
     <TradingLayout
@@ -113,12 +118,13 @@ export default function PerpTokenPage() {
         <TokenCard
           token={tokenData}
           className="mb-6"
+          perpCoinId={coinId} // Pass coinId for real-time price updates
         />
       }
       chartSlot={
         <TradingViewChart
           symbol={token.name}
-          marketIndex={token.marketIndex}
+          coinId={coinId} // Use coinId directly for perpetuals
           tokenName={token.name}
           className="flex-1 min-h-[450px]"
         />
@@ -126,7 +132,7 @@ export default function PerpTokenPage() {
       orderBookSlot={
         <OrderBook
           symbol={token.name}
-          marketIndex={token.marketIndex}
+          perpCoinId={coinId} // Use perpCoinId for WebSocket
           tokenNameProp={token.name}
         />
       }
@@ -136,10 +142,11 @@ export default function PerpTokenPage() {
         />
       }
       bottomSectionSlot={
-        <GlassPanel className="p-8 flex flex-col items-center justify-center min-h-[200px] text-zinc-500">
-          <Database className="w-12 h-12 mb-4 text-brand-accent/20" />
-          <p>Recent Trades & Funding History coming soon for Perp</p>
-        </GlassPanel>
+        <RecentTrades
+          coinId={coinId}
+          tokenName={token.name}
+          className="min-h-[300px]"
+        />
       }
     />
   );

@@ -9,12 +9,13 @@ import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
 
-export function TokenCard({ token, className }: TokenCardProps) {
+export function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
   // Get user's number format preference
   const { format } = useNumberFormat();
 
-  // Connect to WebSocket for real-time data if marketIndex is available
-  const coinId = token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '';
+  // Connect to WebSocket for real-time data
+  // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
+  const coinId = perpCoinId || (token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '');
   const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
 
   const formatPriceValue = (value: number) => {
