@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { usePortfolio } from "@/services/explorer/address";
-import { useWallets } from "@/store/use-wallets";
 import { useChartFormat, useChartData, ChartPeriod } from "@/components/common/charts";
 import {
   LineChart,
@@ -12,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { PortfolioApiResponse } from "@/services/explorer/address/types";
 
 // Types pour le tooltip
 interface TooltipProps {
@@ -33,26 +32,25 @@ const chartPeriodToApiPeriod: Record<ChartPeriod, ApiPeriod> = {
   'allTime': 'allTime'
 };
 
-const AnimatedPeriodSelector = ({ 
-  selectedPeriod, 
-  onPeriodChange, 
-  availablePeriods 
-}: { 
-  selectedPeriod: ChartPeriod; 
-  onPeriodChange: (period: ChartPeriod) => void; 
-  availablePeriods: ChartPeriod[]; 
+const AnimatedPeriodSelector = ({
+  selectedPeriod,
+  onPeriodChange,
+  availablePeriods
+}: {
+  selectedPeriod: ChartPeriod;
+  onPeriodChange: (period: ChartPeriod) => void;
+  availablePeriods: ChartPeriod[];
 }) => {
   return (
-    <div className="relative flex items-center bg-brand-tertiary rounded-md p-0.5 border border-[#83E9FF4D]">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
       {availablePeriods.map((period) => (
         <button
           key={period}
           onClick={() => onPeriodChange(period)}
-          className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-sm ${
-            selectedPeriod === period 
-              ? 'bg-brand-accent text-brand-tertiary' 
-              : 'text-white hover:text-brand-accent'
-          }`}
+          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedPeriod === period
+            ? 'bg-brand-accent text-brand-tertiary font-bold shadow-sm'
+            : 'text-text-secondary hover:text-white'
+            }`}
         >
           {period}
         </button>
@@ -61,10 +59,12 @@ const AnimatedPeriodSelector = ({
   );
 };
 
-export function PerformanceSection() {
-  const { wallets, activeWalletId } = useWallets();
-  const activeWallet = wallets.find(w => w.id === activeWalletId);
-  const { data: portfolioData, isLoading } = usePortfolio(activeWallet?.address || '');
+interface PerformanceSectionProps {
+  portfolioData?: PortfolioApiResponse | null;
+  isLoading?: boolean;
+}
+
+export function PerformanceSection({ portfolioData, isLoading = false }: PerformanceSectionProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>('24h');
   const { formatValue } = useChartFormat();
 
@@ -85,12 +85,12 @@ export function PerformanceSection() {
   const pnlData = portfolioData?.find(([period]) => period === chartPeriodToApiPeriod[selectedPeriod])?.[1]?.pnlHistory || [];
   const pnlPercentage = (() => {
     if (pnlData.length === 0 || rawData.length === 0) return 0;
-    
+
     const firstValue = parseFloat(rawData[0]?.value.toString() || '0');
     const lastValue = parseFloat(rawData[rawData.length - 1]?.value.toString() || '0');
-    
+
     if (firstValue === 0) return 0;
-    
+
     return ((lastValue - firstValue) / firstValue) * 100;
   })();
 

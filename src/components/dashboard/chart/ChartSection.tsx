@@ -14,14 +14,14 @@ const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsProps) =
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto no-scrollbar">
       {tabs.map(tab => (
         <button
           key={tab.key}
           onClick={() => onFilterChange(tab.key)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedFilter === tab.key
-              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+            ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+            : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
         >
           {tab.label}

@@ -18,8 +18,8 @@ export default function Home() {
       <StatsGrid />
 
       {/* Tokens + Chart */}
-      <div className="flex flex-col md:flex-row gap-8 w-full md:items-stretch">
-        <GlassPanel className="w-full md:w-[35%] flex flex-col">
+      <div className="flex flex-col custom:flex-row gap-8 w-full custom:items-stretch">
+        <GlassPanel className="w-full custom:w-[35%] flex flex-col">
           <TrendingTokensTabs
             onTabChange={setActiveTokenTab}
             onPastAuctionHeightChange={setPastAuctionHeight}

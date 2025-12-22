@@ -14,7 +14,7 @@ import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
-import { useNumberFormat } from "@/store/number-format.store";
+import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { PerpDexWithMarketData } from "@/services/market/perpDex/types";
 
 type SortField = 'name' | 'activeAssets' | 'totalVolume24h' | 'totalOpenInterest' | 'avgFunding';
@@ -61,14 +61,14 @@ const EmptyState = memo(() => (
 EmptyState.displayName = 'EmptyState';
 
 // Row component with live market data
-const PerpDexRow = memo(({ 
-  dex, 
+const PerpDexRow = memo(({
+  dex,
   onClick,
-  format 
-}: { 
-  dex: PerpDexWithMarketData; 
+  format
+}: {
+  dex: PerpDexWithMarketData;
   onClick: () => void;
-  format: 'US' | 'EU';
+  format: NumberFormatType;
 }) => {
   const formatFunding = (funding: number) => {
     const percentage = funding * 100;
@@ -108,13 +108,13 @@ const PerpDexRow = memo(({
       {/* 24h Volume */}
       <TableCell className="py-3 text-left">
         <span className="text-white text-sm font-medium">
-          {dex.totalVolume24h > 0 
+          {dex.totalVolume24h > 0
             ? formatNumber(dex.totalVolume24h, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              })
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+              currency: '$',
+              showCurrency: true
+            })
             : '-'}
         </span>
       </TableCell>
@@ -122,13 +122,13 @@ const PerpDexRow = memo(({
       {/* Open Interest */}
       <TableCell className="py-3 text-left">
         <span className="text-white text-sm font-medium">
-          {dex.totalOpenInterest > 0 
+          {dex.totalOpenInterest > 0
             ? formatNumber(dex.totalOpenInterest, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              })
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+              currency: '$',
+              showCurrency: true
+            })
             : '-'}
         </span>
       </TableCell>
@@ -154,10 +154,10 @@ const PerpDexRow = memo(({
           {dex.totalOpenInterest > 0 && dex.totalOiCap > 0 && (
             <div className="flex items-center gap-1 mt-0.5">
               <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-brand-accent rounded-full"
-                  style={{ 
-                    width: `${Math.min((dex.totalOpenInterest / dex.totalOiCap) * 100, 100)}%` 
+                  style={{
+                    width: `${Math.min((dex.totalOpenInterest / dex.totalOiCap) * 100, 100)}%`
                   }}
                 />
               </div>
@@ -178,7 +178,7 @@ export function PerpDexTable() {
   const router = useRouter();
   const { format } = useNumberFormat();
   const { dexs, isLoading } = usePerpDexMarketData();
-  
+
   const [sortField, setSortField] = useState<SortField>('totalVolume24h');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -233,7 +233,7 @@ export function PerpDexTable() {
   return (
     <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <Table className="table-fixed w-full">
+        <Table className="min-w-[800px] w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHeaderCell

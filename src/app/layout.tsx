@@ -105,7 +105,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#112941]`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-brand-main`}>
         <Providers>
           {children}
           <SpeedInsights />

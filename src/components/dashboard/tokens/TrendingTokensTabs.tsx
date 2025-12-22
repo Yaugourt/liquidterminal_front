@@ -30,8 +30,8 @@ const AuctionSection = () => {
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${activeSubTab === tab.key
-                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
                 }`}
             >
               {tab.label}
@@ -65,8 +65,8 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector - Style V2 Pills */}
-      <div className="flex items-center gap-2 p-4 border-b border-border-subtle">
-        <div className="flex">
+      <div className="flex items-center gap-2 p-4 border-b border-border-subtle overflow-x-auto no-scrollbar">
+        <div className="flex min-w-0">
           <PillTabs
             tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
             activeTab={activeTab}
