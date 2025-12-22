@@ -24,7 +24,7 @@ export function useDataFetching<T>({
   const [isRefreshing, setIsRefreshing] = useState(false); // NEW: True during background refresh
   const [error, setError] = useState<Error | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  
+
   // Only keep necessary refs
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -64,7 +64,7 @@ export function useDataFetching<T>({
       }
 
       const result = await fetchFn();
-      
+
       if (mountedRef.current) {
         setData(result);
         setError(null);
@@ -74,26 +74,26 @@ export function useDataFetching<T>({
     } catch (err) {
       if (!mountedRef.current) return;
 
-              // Silent error handling
+      // Silent error handling
       const error = err instanceof Error ? err : new Error('Unknown error occurred');
-      
+
       if (retryCount < maxRetries) {
         const nextRetryCount = retryCount + 1;
         setRetryCount(nextRetryCount);
         const retryDelayWithBackoff = retryDelay * Math.pow(2, nextRetryCount - 1);
-        
 
-        
+
+
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
         }
-        
+
         retryTimeoutRef.current = setTimeout(() => {
           if (mountedRef.current) {
             fetchData(true, isPolling);
           }
         }, retryDelayWithBackoff);
-        
+
         setError(new Error(`Retry attempt ${nextRetryCount} of ${maxRetries}: ${error.message}`));
       } else {
         setError(error);

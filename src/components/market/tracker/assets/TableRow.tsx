@@ -26,7 +26,7 @@ export const SpotTableRow = memo(function SpotTableRow({
   formatPercent
 }: SpotRowProps) {
   return (
-    <UITableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+    <UITableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
       <TableCell className="py-3 pl-4 pr-3">
         <div className="flex items-center gap-3">
           <TokenIcon 
@@ -88,7 +88,7 @@ export const PerpTableRow = memo(function PerpTableRow({
   };
 
   return (
-    <UITableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+    <UITableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
       <TableCell className="py-3 pl-4 pr-3">
         <div className="flex items-center gap-3">
           <TokenIcon 
@@ -105,7 +105,7 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className={holding.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
             {holding.type}
           </span>
-          <span className="text-[10px] text-zinc-500">
+          <span className="text-[10px] text-text-muted">
             {holding.leverage.value}x ({holding.leverage.type})
           </span>
         </div>
@@ -124,7 +124,7 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className="text-white text-sm font-medium">
             {formatCurrency(holding.positionValue)}
           </span>
-          <span className="text-[10px] text-zinc-500">
+          <span className="text-[10px] text-text-muted">
             {formatTokenSize(holding.szi, holding.coin)}
           </span>
         </div>

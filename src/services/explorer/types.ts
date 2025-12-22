@@ -3,7 +3,7 @@ export interface BlockTransaction {
   user: string;
   action: {
     type: string;
-   
+
   };
   block: number;
   error: null | string;
@@ -56,7 +56,7 @@ export interface UseTransactionDetailsResult {
 // Types étendus pour les détails de transaction
 export interface TransactionAction {
   type: string;
-  
+
   // Pour les ordres
   orders?: Array<{
     a: number;        // asset/amount
@@ -75,7 +75,7 @@ export interface TransactionAction {
       };
     };
   }>;
-  
+
   // Pour les ordres TWAP
   twap?: {
     a: number;
@@ -85,23 +85,23 @@ export interface TransactionAction {
     m: number;
     t: boolean;
   };
-  
+
   // Pour les annulations
   cancels?: Array<{
     a: number;
     o: number;
   }>;
-  
+
   // Pour les transferts
   destination?: string;
   amount?: string;
   token?: string;
   wei?: string;
-  
+
   // Pour les transferts spot
   signatureChainId?: string;
   hyperliquidChain?: string;
-  
+
   // Pour les déploiements
   registerToken2?: {
     spec?: {
@@ -111,30 +111,30 @@ export interface TransactionAction {
     };
     maxGas?: number;
   };
-  
+
   // Pour les déploiements spot
   userGenesis?: {
     token: number;
     userAndWei: Array<[string, string]>;
   };
-  
+
   genesis?: {
     token: number;
     maxSupply: string;
     noHyperliquidity?: boolean;
   };
-  
+
   registerSpot?: {
     tokens: number[];
   };
-  
+
   // Pour les staking
   validator?: string;
-  
+
   // Pour les votes
   proposal?: number;
   vote?: boolean;
-  
+
   // Propriétés génériques
   [key: string]: unknown;
 }
@@ -282,22 +282,28 @@ export interface Transaction {
   };
 }
 
-export interface ExplorerState {
+import { WebSocketClient } from '../core/WebSocketClient';
+
+export interface ExplorerStore {
   blocks: Block[];
   transactions: Transaction[];
   isBlocksConnected: boolean;
   isTransactionsConnected: boolean;
   error: string | null;
   currentBlockHeight: number;
-}
 
-export interface ExplorerStore extends ExplorerState {
+  blocksClient: WebSocketClient | null;
+  transactionsClient: WebSocketClient | null;
+
   connectBlocks: () => void;
   disconnectBlocks: () => void;
   connectTransactions: () => void;
   disconnectTransactions: () => void;
+
+  // Legacy
   connect: () => void;
   disconnect: () => void;
+
   addBlock: (block: Block) => void;
   addTransaction: (transaction: Transaction) => void;
   setError: (error: string | null) => void;
@@ -315,4 +321,3 @@ export interface UseGlobalAliasesResult {
   getAlias: (address: string) => string | null;
 }
 
- 

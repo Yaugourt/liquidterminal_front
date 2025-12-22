@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Icon } from '@iconify/react'
-import { Menu, Settings, Shield } from "lucide-react"
-import { PiSignIn, PiSignOut } from "react-icons/pi";
+import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -41,13 +40,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
-    
+
     // Hydration fix: track if component has mounted
     const [hasMounted, setHasMounted] = useState(false);
-    
+
     // Sidebar preferences
     const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
-    
+
     // Always use defaultNavigationGroups for SSR, only apply preferences after mount
     const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
 
@@ -92,24 +91,28 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
             <div
                 className={cn(
-                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-[#0B0E14] flex flex-col",
-                    "border-r border-white/5",
+                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-brand-main flex flex-col",
+                    "border-r border-border-subtle",
                     "transition-transform duration-300 ease-in-out z-50",
                     "lg:translate-x-0",
                     isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-3 border-b border-white/5">
+                <div className="flex items-center justify-between p-3 border-b border-border-subtle">
                     <Button
                         variant="ghost"
                         size="icon"
                         className="lg:hidden hover:bg-white/5"
                         onClick={() => setIsOpen(false)}
                     >
-                        <Menu className="h-5 w-5 text-[#83E9FF]" />
+                        <Menu className="h-5 w-5 text-brand-accent" />
                     </Button>
-                    <div className="flex items-center gap-2">
+                    <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                        onClick={() => setIsOpen(false)}
+                    >
                         <Image
                             src="/logo.svg"
                             alt="Logo"
@@ -118,10 +121,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             className="h-6 w-6"
                         />
                         <h1 className="hidden lg:block text-sm font-bold">
-                            <span className="text-[#83E9FF] font-higuen">Liquid </span>
+                            <span className="text-brand-accent font-higuen">Liquid </span>
                             <span className="text-white font-inter">Terminal</span>
                         </h1>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Navigation */}
@@ -131,8 +134,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <li key={groupIndex} className="space-y-1">
                                 {group.groupName && (
                                     <div className="px-3 text-[10px] font-semibold uppercase tracking-wider">
-                                        <span className="text-[#83E9FF] font-higuen">{group.groupName.split(' ')[0]} </span>
-                                        <span className="text-zinc-400 font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
+                                        <span className="text-brand-accent font-higuen">{group.groupName.split(' ')[0]} </span>
+                                        <span className="text-text-secondary font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
                                     </div>
                                 )}
                                 <ul className="space-y-[2px]">
@@ -143,7 +146,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             <li key={item.name} className="relative">
                                                 {/* Barre verticale active */}
                                                 {isActive && (
-                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-[#83E9FF] rounded-r" />
+                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-brand-accent rounded-r" />
                                                 )}
                                                 {item.children ? (
                                                     <div className="flex items-center">
@@ -151,9 +154,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             href={item.href}
                                                             className={cn(
                                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
-                                                                isActive 
-                                                                    ? "bg-[#83E9FF]/10 text-[#83E9FF]" 
-                                                                    : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                                                                isActive
+                                                                    ? "bg-brand-accent/10 text-brand-accent"
+                                                                    : "text-white/80 hover:bg-white/5 hover:text-white"
                                                             )}
                                                             onClick={() => setIsOpen(false)}
                                                         >
@@ -181,9 +184,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                             }}
                                                             className={cn(
                                                                 "p-1 rounded transition-all",
-                                                                isActive 
-                                                                    ? "text-[#83E9FF] hover:bg-white/5" 
-                                                                    : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                                                                isActive
+                                                                    ? "text-brand-accent hover:bg-white/5"
+                                                                    : "text-text-secondary hover:bg-white/5 hover:text-white"
                                                             )}
                                                         >
                                                             <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
@@ -194,9 +197,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                         href={item.href}
                                                         className={cn(
                                                             "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
-                                                            isActive 
-                                                                ? "bg-[#83E9FF]/10 text-[#83E9FF]" 
-                                                                : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                                                            isActive
+                                                                ? "bg-brand-accent/10 text-brand-accent"
+                                                                : "text-white/80 hover:bg-white/5 hover:text-white"
                                                         )}
                                                         onClick={() => setIsOpen(false)}
                                                     >
@@ -220,7 +223,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                 )}
                                                 {/* Sous-menu */}
                                                 {item.children && isOpen && (
-                                                    <ul className="ml-7 mt-1 space-y-1 border-l border-white/5 pl-2">
+                                                    <ul className="ml-7 mt-1 space-y-1 border-l border-border-subtle pl-2">
                                                         {item.children.map((child: NavigationItem) => {
                                                             const isChildActive = pathname === child.href;
                                                             return (
@@ -230,8 +233,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                         className={cn(
                                                                             "flex items-center gap-2 px-2 py-1 rounded-md transition-all",
                                                                             isChildActive
-                                                                                ? "bg-[#83E9FF]/10 text-[#83E9FF] font-medium"
-                                                                                : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                                                                                ? "bg-brand-accent/10 text-brand-accent font-medium"
+                                                                                : "text-text-secondary hover:bg-white/5 hover:text-white"
                                                                         )}
                                                                         onClick={() => setIsOpen(false)}
                                                                     >
@@ -254,20 +257,20 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         {isAdmin && (
                             <li className="space-y-1">
                                 <div className="px-3 text-[10px] font-semibold uppercase tracking-wider">
-                                    <span className="text-[#f9e370] font-higuen">Administration</span>
+                                    <span className="text-brand-gold font-higuen">Administration</span>
                                 </div>
                                 <ul className="space-y-[2px]">
                                     <li className="relative">
                                         {pathname === '/user' && (
-                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-[#f9e370] rounded-r" />
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-brand-gold rounded-r" />
                                         )}
                                         <Link
                                             href="/user"
                                             className={cn(
                                                 "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
                                                 pathname === '/user'
-                                                    ? "bg-[#f9e370]/10 text-[#f9e370]" 
-                                                    : "text-zinc-300 hover:bg-white/5 hover:text-[#f9e370]"
+                                                    ? "bg-brand-gold/10 text-brand-gold"
+                                                    : "text-white/80 hover:bg-white/5 hover:text-brand-gold"
                                             )}
                                             onClick={() => setIsOpen(false)}
                                         >
@@ -287,19 +290,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </nav>
 
                 {/* Account Section */}
-                <div className="p-3 border-t border-white/5">
+                <div className="p-3 border-t border-border-subtle">
                     {!authenticated ? (
                         <Button
                             onClick={() => login()}
-                            className="group relative w-full bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] rounded-lg overflow-hidden font-bold"
+                            className="group relative w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary rounded-lg overflow-hidden font-bold"
                         >
                             <div className="flex items-center justify-center gap-2 py-1">
-                                <PiSignIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                                 <span className="text-sm">Login</span>
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-2 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-xl">
+                        <div className="p-2 glass-card rounded-xl">
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/profile"
@@ -308,7 +311,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 >
                                     <Avatar className="h-7 w-7 ring-1 ring-white/10 shrink-0">
                                         {privyUser?.twitter?.profilePictureUrl ? (
-                                            <Image 
+                                            <Image
                                                 src={privyUser.twitter.profilePictureUrl}
                                                 alt="Avatar"
                                                 width={28}
@@ -316,7 +319,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                 className="object-cover rounded-full"
                                             />
                                         ) : (
-                                            <AvatarFallback className="bg-[#151A25] text-[#83E9FF] text-xs font-medium">
+                                            <AvatarFallback className="bg-brand-secondary text-brand-accent text-xs font-medium">
                                                 {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
                                             </AvatarFallback>
                                         )}
@@ -325,13 +328,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                         {privyUser?.twitter?.username || "User"}
                                     </p>
                                 </Link>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => logout()}
-                                    className="h-7 w-7 shrink-0 hover:bg-white/5 text-zinc-400 hover:text-rose-400 transition-colors"
+                                    className="h-7 w-7 shrink-0 hover:bg-white/5 text-text-secondary hover:text-rose-400 transition-colors"
                                 >
-                                    <PiSignOut className="w-4 h-4" />
+                                    <LogOut className="w-4 h-4" />
                                 </Button>
                             </div>
                             {/* XP Badge - séparé du lien profil pour éviter la redirection */}
@@ -349,7 +352,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsCustomizeOpen(true)}
-                        className="w-full text-zinc-400 hover:text-white hover:bg-white/5 justify-start gap-2 transition-colors"
+                        className="w-full text-text-secondary hover:text-white hover:bg-white/5 justify-start gap-2 transition-colors"
                     >
                         <Settings className="w-4 h-4" />
                         <span className="text-xs">Customize Sidebar</span>
@@ -357,7 +360,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Social Links */}
-                <div className="flex items-center justify-center gap-3 py-3 px-3 border-t border-white/5">
+                <div className="flex items-center justify-center gap-3 py-3 px-3 border-t border-border-subtle">
                     {socials.map((item) => (
                         <a
                             key={item.name}
@@ -366,9 +369,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             rel="noopener noreferrer"
                             className="group p-1.5 rounded-lg hover:bg-white/5 transition-colors"
                         >
-                            <Icon 
-                                icon={item.iconName} 
-                                className="h-4 w-4 text-zinc-500 group-hover:text-[#83E9FF] transition-colors" 
+                            <Icon
+                                icon={item.iconName}
+                                className="h-4 w-4 text-text-muted group-hover:text-brand-accent transition-colors"
                             />
                         </a>
                     ))}

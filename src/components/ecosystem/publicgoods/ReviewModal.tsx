@@ -38,7 +38,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
       const statusLabel = status === 'APPROVED' ? 'approved' : 'rejected';
       toast.success(`Project ${statusLabel} successfully!`);
-      
+
       resetForm();
       onSuccess();
       onClose();
@@ -61,10 +61,10 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-card rounded-2xl border-none">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Review: {project.name}</DialogTitle>
-          <DialogDescription className="text-zinc-500">
+          <DialogDescription className="text-text-muted">
             {project.category}
           </DialogDescription>
         </DialogHeader>
@@ -73,29 +73,29 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
           {/* Review Form */}
           <div className="space-y-4">
             <div>
-              <Label className="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-3 block">Review Decision *</Label>
+              <Label className="text-text-secondary text-xs font-semibold uppercase tracking-wider mb-3 block">Review Decision *</Label>
               <RadioGroup value={status} onValueChange={(val: string) => setStatus(val as ReviewStatus)} className="space-y-2">
-                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-emerald-500/30 transition-colors bg-[#0A0D12]">
+                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-emerald-500/30 transition-colors bg-black/20">
                   <RadioGroupItem value="APPROVED" id="approved" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="approved" className="text-white cursor-pointer flex items-center gap-2 font-medium">
                       <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                       Approve Project
                     </label>
-                    <p className="text-sm text-zinc-500 mt-1">
+                    <p className="text-sm text-text-muted mt-1">
                       The project meets the requirements and will be published in the public goods directory.
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-4 border border-white/5 rounded-xl hover:border-rose-500/30 transition-colors bg-[#0A0D12]">
+
+                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-rose-500/30 transition-colors bg-black/20">
                   <RadioGroupItem value="REJECTED" id="rejected" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="rejected" className="text-white cursor-pointer flex items-center gap-2 font-medium">
                       <XCircle className="w-5 h-5 text-rose-400" />
                       Reject Project
                     </label>
-                    <p className="text-sm text-zinc-500 mt-1">
+                    <p className="text-sm text-text-muted mt-1">
                       The project doesn&apos;t meet the requirements or needs improvements before approval.
                     </p>
                   </div>
@@ -104,38 +104,37 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
             </div>
 
             <div>
-              <Label htmlFor="notes" className="text-zinc-400 text-xs font-semibold uppercase tracking-wider">Review Notes (Optional)</Label>
+              <Label htmlFor="notes" className="text-text-secondary text-xs font-semibold uppercase tracking-wider">Review Notes (Optional)</Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any comments or feedback for the submitter..."
                 rows={3}
-                className="bg-[#0A0D12] border-white/5 text-white mt-2 rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+                className="glass-input mt-2 rounded-lg placeholder:text-text-muted"
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="border-white/5 text-zinc-400 hover:bg-white/5 rounded-lg"
+              className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !status}
-              className={`rounded-lg font-semibold ${
-                status === 'APPROVED'
+              className={`rounded-lg font-semibold ${status === 'APPROVED'
                   ? "bg-emerald-500 text-white hover:bg-emerald-600"
                   : status === 'REJECTED'
-                  ? "bg-rose-500 text-white hover:bg-rose-600"
-                  : "bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/90"
-              }`}
+                    ? "bg-rose-500 text-white hover:bg-rose-600"
+                    : "bg-brand-accent text-brand-tertiary hover:bg-brand-accent/90"
+                }`}
             >
               {isSubmitting ? "Submitting..." : "Submit Review"}
             </Button>

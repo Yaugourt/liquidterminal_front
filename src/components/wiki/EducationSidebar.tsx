@@ -42,7 +42,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
   };
 
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden p-5">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden p-5">
       <div className="space-y-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -56,55 +56,55 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
             <h2 className="text-base font-bold text-white">{info.title}</h2>
           </div>
           {info.description && (
-            <p className="text-xs text-zinc-400 mb-3">{info.description}</p>
+            <p className="text-xs text-text-secondary mb-3">{info.description}</p>
           )}
         </div>
 
-        <div className="space-y-2 pt-3 border-t border-white/5">
+        <div className="space-y-2 pt-3 border-t border-border-subtle">
           {info.creator && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-zinc-500">Creator</span>
+              <span className="text-xs text-text-muted">Creator</span>
               <span className="text-xs text-white font-medium">{info.creator}</span>
             </div>
           )}
 
           {info.consensus && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-zinc-500">Consensus</span>
+              <span className="text-xs text-text-muted">Consensus</span>
               <span className="text-xs text-white font-medium">{info.consensus}</span>
             </div>
           )}
 
           {info.executionLayer && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-zinc-500">Execution Layer</span>
+              <span className="text-xs text-text-muted">Execution Layer</span>
               <span className="text-xs text-white font-medium">{info.executionLayer}</span>
             </div>
           )}
 
           {info.foundationCreation && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-zinc-500">Foundation</span>
+              <span className="text-xs text-text-muted">Foundation</span>
               <span className="text-xs text-white font-medium">{info.foundationCreation}</span>
             </div>
           )}
 
           {info.mainnetLaunch && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-zinc-500">Mainnet Launch</span>
+              <span className="text-xs text-text-muted">Mainnet Launch</span>
               <span className="text-xs text-white font-medium">{info.mainnetLaunch}</span>
             </div>
           )}
 
           {/* Color palette section */}
           <div className="space-y-2">
-            <span className="text-xs text-zinc-500">Brand Colors</span>
+            <span className="text-xs text-text-muted">Brand Colors</span>
             <div className="grid grid-cols-2 gap-2">
               {info.colors.map((color, index) => (
                 <button
                   key={index}
                   onClick={() => copyToClipboard(color)}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
                 >
                   <div 
                     className="w-3 h-3 rounded-full border border-white/20 flex-shrink-0"
@@ -114,7 +114,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                   {copiedColor === color ? (
                     <Check size={12} className="text-emerald-400" />
                   ) : (
-                    <Copy size={12} className="text-zinc-500 group-hover:text-[#83E9FF] transition-colors" />
+                    <Copy size={12} className="text-text-muted group-hover:text-brand-accent transition-colors" />
                   )}
                 </button>
               ))}
@@ -123,17 +123,17 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
         </div>
 
         {/* Links section */}
-        <div className="pt-3 border-t border-white/5">
+        <div className="pt-3 border-t border-border-subtle">
           <div className="grid grid-cols-2 gap-1">
             {info.links.whitepaperLink && (
               <a
                 href={info.links.whitepaperLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <FileText size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">Whitepaper</span>
+                <FileText size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">Whitepaper</span>
               </a>
             )}
 
@@ -142,10 +142,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.websiteLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Globe size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">Website</span>
+                <Globe size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">Website</span>
               </a>
             )}
 
@@ -154,10 +154,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.appLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Layers size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">App</span>
+                <Layers size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">App</span>
               </a>
             )}
 
@@ -166,10 +166,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.documentationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <FileText size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">Documentation</span>
+                <FileText size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">Documentation</span>
               </a>
             )}
 
@@ -178,10 +178,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.twitterLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Twitter size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">X HyperLiquid</span>
+                <Twitter size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">X HyperLiquid</span>
               </a>
             )}
 
@@ -190,10 +190,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.twitterFoundationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Twitter size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">X Foundation</span>
+                <Twitter size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">X Foundation</span>
               </a>
             )}
 
@@ -202,10 +202,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.discordLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <MessageCircle size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">Discord</span>
+                <MessageCircle size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">Discord</span>
               </a>
             )}
 
@@ -214,10 +214,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.telegramLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Send size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">Telegram</span>
+                <Send size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">Telegram</span>
               </a>
             )}
 
@@ -226,10 +226,10 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                 href={info.links.githubLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 p-2 rounded-lg bg-[#0A0D12] border border-white/5 hover:border-white/10 transition-colors group"
+                className="flex items-center gap-1 p-2 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-colors group"
               >
-                <Github size={12} className="text-[#83E9FF] flex-shrink-0" />
-                <span className="text-xs text-zinc-300 truncate group-hover:text-white">GitHub</span>
+                <Github size={12} className="text-brand-accent flex-shrink-0" />
+                <span className="text-xs text-white/80 truncate group-hover:text-white">GitHub</span>
               </a>
             )}
           </div>

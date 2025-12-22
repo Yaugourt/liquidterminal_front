@@ -20,3 +20,19 @@ export function marketIndexToCoinId(marketIndex: number, tokenName?: string): st
 export function coinIdToMarketIndex(coinId: string): number {
   return parseInt(coinId.replace('@', ''));
 }
+
+/**
+ * Get coin ID for perpetual contracts
+ * Perpetuals use the coin name directly (e.g., "BTC", "ETH")
+ * @param tokenName - The perpetual token name (e.g., "BTC-PERP", "BTC", "ETH/USD")
+ * @returns The coin ID string for WebSocket subscription
+ */
+export function getPerpCoinId(tokenName: string): string {
+  // Remove common suffixes and prefixes
+  return tokenName
+    .replace('-PERP', '')
+    .replace('/USD', '')
+    .replace('/USDC', '')
+    .split('/')[0]
+    .trim();
+}

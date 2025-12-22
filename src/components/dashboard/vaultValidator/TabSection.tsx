@@ -1,7 +1,8 @@
 import { memo, useMemo, useState } from "react";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { useValidators } from "@/services/explorer/validator";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
-import { TabButtons } from "./TabButtons";
 import { ValidatorsTable, VaultTable } from "./DataTablesContent";
 import type { VaultSummary } from "@/services/explorer/vault/types";
 import type { Validator } from "@/services/explorer/validator/types/validators";
@@ -71,7 +72,44 @@ export const TabSection = memo(({
 
   return (
     <div className="w-full">
-      <TabButtons activeTab={activeTab} setActiveTab={handleTabChange} />
+      <div className="flex justify-between items-center p-4 border-b border-border-subtle">
+        <div className="flex items-center gap-2">
+          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+            {[
+              { key: 'vault', label: 'Vaults' },
+              { key: 'stacking', label: 'Validators' }
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => handleTabChange(tab.key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === tab.key
+                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                  }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {(() => {
+          const seeAllLink = activeTab === 'vault' ? '/explorer/vaults' :
+            activeTab === 'stacking' ? '/explorer/validator' : null;
+
+          if (!seeAllLink) return null;
+
+          return (
+            <Link
+              href={seeAllLink}
+              className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
+            >
+              View All
+              <ExternalLink size={10} />
+            </Link>
+          );
+        })()}
+      </div>
 
       <div className="min-h-[300px]">
         {activeTab === "stacking" && (
@@ -84,8 +122,6 @@ export const TabSection = memo(({
             {...paginationProps}
           />
         )}
-
-
 
         {activeTab === "vault" && (
           <VaultTable

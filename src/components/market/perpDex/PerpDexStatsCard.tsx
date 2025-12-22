@@ -15,7 +15,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
   if (error) {
     return (
-      <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full">
+      <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 h-full">
         <div className="flex justify-center items-center h-full">
           <p className="text-rose-400 text-sm">Failed to load stats</p>
         </div>
@@ -24,14 +24,14 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
   }
 
   return (
-    <div className="p-4 bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 h-full flex flex-col">
+    <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-            <BarChart3 size={16} className="text-[#83e9ff]" />
+          <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center">
+            <BarChart3 size={16} className="text-brand-accent" />
           </div>
-          <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">HIP-3 Overview</h3>
+          <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">HIP-3 Overview</h3>
         </div>
         <div className="flex items-center gap-2">
           {wsConnected ? (
@@ -48,14 +48,14 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
       {/* Stats */}
       {isLoading ? (
         <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-5 h-5 text-[#83E9FF] animate-spin" />
+          <Loader2 className="w-5 h-5 text-brand-accent animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Dexs */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <Building2 className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Building2 className="h-3 w-3 text-brand-accent mr-1.5" />
               Active DEXs
             </div>
             <div className="text-white font-bold text-lg">
@@ -65,13 +65,13 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Active Markets */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <Layers className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Layers className="h-3 w-3 text-brand-accent mr-1.5" />
               Active Markets
             </div>
             <div className="text-white font-bold text-lg">
               {globalStats?.activeMarkets || 0}
-              <span className="text-zinc-500 text-xs font-normal ml-1">
+              <span className="text-text-muted text-xs font-normal ml-1">
                 / {globalStats?.totalAssets || 0}
               </span>
             </div>
@@ -79,8 +79,8 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* 24h Volume */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <Activity className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
               24h Volume
             </div>
             <div className="text-white font-bold text-lg">
@@ -95,8 +95,8 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Open Interest */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <TrendingUp className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <TrendingUp className="h-3 w-3 text-brand-accent mr-1.5" />
               Open Interest
             </div>
             <div className="text-white font-bold text-lg">
@@ -111,8 +111,8 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Total OI Cap */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <BarChart3 className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <BarChart3 className="h-3 w-3 text-brand-accent mr-1.5" />
               Total OI Cap
             </div>
             <div className="text-white font-bold text-lg">
@@ -127,8 +127,8 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Avg Funding */}
           <div>
-            <div className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
-              <Activity className="h-3 w-3 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+              <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
               Avg Funding
             </div>
             <div className={`font-bold text-lg ${(globalStats?.avgFunding || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>

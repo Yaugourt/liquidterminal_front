@@ -59,18 +59,18 @@ export function DailyLimitsWarning({
         "flex items-center gap-2 p-3 rounded-xl",
         isReached 
           ? "bg-orange-500/10 border border-orange-500/20" 
-          : "bg-white/5 border border-white/5",
+          : "bg-white/5 border border-border-subtle",
         className
       )}>
         {isReached && <AlertTriangle className="h-4 w-4 text-orange-400 shrink-0" />}
         <div className="flex-1 min-w-0">
           <p className={cn(
             "text-sm",
-            isReached ? "text-orange-300" : "text-zinc-300"
+            isReached ? "text-orange-300" : "text-white/80"
           )}>
             {DAILY_LIMIT_LABELS[actionType]}
           </p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-text-muted">
             {isReached 
               ? "Daily limit reached - no XP until tomorrow" 
               : `${limit.remaining}/${limit.max} remaining (+${limit.xpPerAction} XP each)`
@@ -82,7 +82,7 @@ export function DailyLimitsWarning({
             onClick={() => handleDismiss(actionType)}
             className="p-1 hover:bg-white/10 rounded transition-colors"
           >
-            <X className="h-4 w-4 text-zinc-500" />
+            <X className="h-4 w-4 text-text-muted" />
           </button>
         )}
       </div>
@@ -110,7 +110,7 @@ export function DailyLimitsWarning({
               <p className="text-sm text-orange-300">
                 {DAILY_LIMIT_LABELS[type as LimitedActionType]}
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-text-muted">
                 Daily limit reached - no XP until tomorrow
               </p>
             </div>
@@ -118,7 +118,7 @@ export function DailyLimitsWarning({
               onClick={() => handleDismiss(type)}
               className="p-1 hover:bg-white/10 rounded transition-colors"
             >
-              <X className="h-4 w-4 text-zinc-500" />
+              <X className="h-4 w-4 text-text-muted" />
             </button>
           </div>
         );

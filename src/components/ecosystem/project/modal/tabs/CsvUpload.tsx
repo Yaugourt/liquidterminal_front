@@ -41,8 +41,8 @@ export function CsvUpload({
   return (
     <div className="space-y-4 pb-4">
       <div className="text-center">
-        <div className="border-2 border-dashed border-[#1E3851] rounded-lg p-8 hover:border-[#83E9FF]/50 transition-colors">
-          <Upload className="mx-auto h-12 w-12 text-[#83E9FF] mb-4" />
+        <div className="border-2 border-dashed border-[#1E3851] rounded-lg p-8 hover:border-brand-accent/50 transition-colors">
+          <Upload className="mx-auto h-12 w-12 text-brand-accent mb-4" />
           <h3 className="text-lg font-medium text-white mb-2">Upload Projects CSV</h3>
           <p className="text-sm text-gray-400 mb-4">
             Select a CSV file containing project data to bulk import
@@ -60,7 +60,7 @@ export function CsvUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingCsv}
-            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-black"
+            className="bg-brand-accent hover:bg-brand-accent/90 text-black"
           >
             {uploadingCsv ? "Uploading..." : "Choose CSV File"}
           </Button>
@@ -70,7 +70,7 @@ export function CsvUpload({
       {/* Loading state */}
       {uploadingCsv && (
         <div className="text-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF] mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
           <p className="text-sm text-gray-400">Processing CSV file...</p>
         </div>
       )}
@@ -128,7 +128,7 @@ export function CsvUpload({
             <Button
               type="button"
               onClick={handleCsvSuccessInternal}
-              className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-black"
+              className="bg-brand-accent hover:bg-brand-accent/90 text-black"
             >
               Done
             </Button>

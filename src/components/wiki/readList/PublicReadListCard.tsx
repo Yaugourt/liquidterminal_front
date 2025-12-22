@@ -53,21 +53,21 @@ export function PublicReadListCard({
 
   return (
     <div 
-      className={`bg-[#151A25]/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
+      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
         isSelected 
-          ? 'border-[#83E9FF]/50' 
-          : 'border-white/5 hover:border-white/10'
+          ? 'border-brand-accent/50' 
+          : 'border-border-subtle hover:border-border-hover'
       }`}
       onClick={handleSelect}
     >
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-semibold text-white truncate group-hover:text-[#83E9FF] transition-colors">
+            <h3 className="text-base font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
               {readList.name}
             </h3>
             {readList.description && (
-              <p className="text-sm text-zinc-400 mt-1 line-clamp-2">
+              <p className="text-sm text-text-secondary mt-1 line-clamp-2">
                 {readList.description}
               </p>
             )}
@@ -83,13 +83,13 @@ export function PublicReadListCard({
 
       <div className="px-4 pb-4">
         {/* Creator Info */}
-        <div className="flex items-center text-sm text-zinc-300 mb-3">
-          <User className="w-4 h-4 mr-2 text-zinc-500" />
+        <div className="flex items-center text-sm text-white/80 mb-3">
+          <User className="w-4 h-4 mr-2 text-text-muted" />
           <span className="truncate">{readList.creator.name}</span>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between text-xs text-zinc-500 mb-4 py-2 border-t border-white/5">
+        <div className="flex items-center justify-between text-xs text-text-muted mb-4 py-2 border-t border-border-subtle">
           <div className="flex items-center">
             <Calendar className="w-3 h-3 mr-1" />
             <span>
@@ -110,7 +110,7 @@ export function PublicReadListCard({
               handleCopy();
             }}
             disabled={isCopying}
-            className="flex-1 bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg transition-colors"
+            className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg transition-colors"
             size="sm"
           >
             {isCopying ? (

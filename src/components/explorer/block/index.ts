@@ -1,2 +1,2 @@
 export { BlockHeader } from './BlockHeader';
-export { TransactionList } from './TransactionList'; 
+export { BlockTransactionList } from './BlockTransactionList'; 

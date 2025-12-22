@@ -6,14 +6,14 @@ import { TabNavigationProps } from "@/components/types/explorer.types";
 export function TabNavigation({ activeTab, onChange, tabs }: TabNavigationProps) {
   return (
     <div className="flex justify-start items-center">
-      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
+      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+                : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
             }`}
             onClick={() => onChange(tab.id)}
           >

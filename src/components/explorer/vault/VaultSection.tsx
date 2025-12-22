@@ -1,34 +1,39 @@
+
 "use client";
 
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useNumberFormat } from "@/store/number-format.store";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 import { VaultTableContent } from ".";
 
 
 export function VaultSection() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  
-  const { vaults, totalCount, isLoading, error, updateParams } = useVaults({ 
-    page: currentPage + 1,
+  const {
+    page,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange
+  } = usePagination({ initialRowsPerPage: 10 });
+
+  const { vaults, totalCount, isLoading, error, updateParams } = useVaults({
+    page: page + 1,
     limit: rowsPerPage,
     sortBy: 'tvl'
   });
-  
+
   const { format } = useNumberFormat();
 
   const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
+    onPageChange(newPage);
     updateParams({ page: newPage + 1 });
-  }, [updateParams]);
+  }, [updateParams, onPageChange]);
 
   const handleRowsPerPageChange = useCallback((newRows: number) => {
-    setRowsPerPage(newRows);
-    setCurrentPage(0);
+    onRowsPerPageChange(newRows);
     updateParams({ limit: newRows, page: 1 });
-  }, [updateParams]);
+  }, [updateParams, onRowsPerPageChange]);
 
   return (
     <div className="w-full h-full flex flex-col p-4">
@@ -41,10 +46,10 @@ export function VaultSection() {
             format={format}
           />
         </div>
-        <div className="mt-4 pt-4 border-t border-white/5">
+        <div className="mt-4 pt-4 border-t border-border-subtle">
           <Pagination
             total={totalCount}
-            page={currentPage}
+            page={page}
             rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[10, 25, 50, 100]}
             onPageChange={handlePageChange}

@@ -4,14 +4,14 @@ export const COLORS = {
   neutral: "#FFFFFF",
   primary: "#83E9FF",
   textSecondary: "#FFFFFF99",
-  border: "#FFFFFF1A",
-  background: "#051728",
+  border: "rgba(255, 255, 255, 0.05)",
+  background: "#0B0E14",
 } as const;
 
 export const STYLES = {
   table: {
-    container: "overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent",
-    row: "border-b border-[#FFFFFF1A] hover:bg-[#051728] transition-colors cursor-pointer",
+    container: "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
+    row: "border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer",
     cell: {
       base: "py-2",
       first: "pl-4",

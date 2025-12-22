@@ -1,17 +1,21 @@
 import { ComponentType } from "react";
-import { 
-  PiShareNetworkBold, 
-  PiVault, 
-  PiListMagnifyingGlass, 
-  PiInfinity, 
-  PiWallet, 
-  PiGlobe, 
-  PiBooks, 
-  PiAppWindow 
-} from "react-icons/pi";
-import { AiOutlineHome, AiOutlineSearch } from "react-icons/ai";
-import { MdOutlineCandlestickChart } from "react-icons/md";
-import { Gavel, Heart, ClipboardList, Clock, Building2 } from "lucide-react";
+import {
+  Gavel,
+  Heart,
+  ClipboardList,
+  Clock,
+  Building2,
+  Network,
+  Vault,
+  Search,
+  Infinity,
+  Wallet,
+  Globe,
+  BookOpen,
+  AppWindow,
+  Home,
+  CandlestickChart
+} from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
 /**
@@ -59,7 +63,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Home',
         href: '/dashboard',
         icon: null,
-        IconComponent: AiOutlineHome
+        IconComponent: Home
       },
     ]
   },
@@ -70,19 +74,19 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Dashboard',
         href: '/explorer',
         icon: null,
-        IconComponent: AiOutlineSearch
+        IconComponent: Search
       },
       {
         name: 'Validator',
         href: '/explorer/validator',
         icon: null,
-        IconComponent: PiShareNetworkBold
+        IconComponent: Network
       },
       {
         name: 'Vaults',
         href: '/explorer/vaults',
         icon: null,
-        IconComponent: PiVault
+        IconComponent: Vault
       },
     ]
   },
@@ -93,13 +97,13 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Spot',
         href: '/market/spot',
         icon: null,
-        IconComponent: MdOutlineCandlestickChart,
+        IconComponent: CandlestickChart,
         children: [
           {
             name: 'Market',
             href: '/market/spot',
             icon: null,
-            IconComponent: MdOutlineCandlestickChart
+            IconComponent: CandlestickChart
           },
           {
             name: 'Auction',
@@ -113,13 +117,13 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Perpetual',
         href: '/market/perp',
         icon: null,
-        IconComponent: PiInfinity,
+        IconComponent: Infinity,
         children: [
           {
             name: 'Market',
             href: '/market/perp',
             icon: null,
-            IconComponent: PiInfinity
+            IconComponent: Infinity
           },
           {
             name: 'Auction',
@@ -139,19 +143,19 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Tracker',
         href: '/market/tracker',
         icon: null,
-        IconComponent: PiWallet,
+        IconComponent: Wallet,
         children: [
           {
             name: 'My Wallets',
             href: '/market/tracker',
             icon: null,
-            IconComponent: PiWallet
+            IconComponent: Wallet
           },
           {
             name: 'Public Lists',
             href: '/market/tracker/public-lists',
             icon: null,
-            IconComponent: PiGlobe
+            IconComponent: Globe
           }
         ]
       },
@@ -164,7 +168,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Project',
         href: '/ecosystem/project',
         icon: null,
-        IconComponent: PiListMagnifyingGlass
+        IconComponent: Search
       },
       {
         name: 'Public Goods',
@@ -201,19 +205,19 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'App',
         href: '/wiki',
         icon: null,
-        IconComponent: PiAppWindow,
+        IconComponent: AppWindow,
       },
       {
         name: 'Read List',
         href: '/wiki/readlist',
         icon: null,
-        IconComponent: PiBooks,
+        IconComponent: BookOpen,
       },
       {
         name: 'Public Read Lists',
         href: '/wiki/readlist/public-readlists',
         icon: null,
-        IconComponent: PiGlobe,
+        IconComponent: Globe,
       }
     ]
   },
@@ -225,13 +229,13 @@ export const defaultNavigationGroups: NavigationGroup[] = [
 export const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPreferences => {
   const groupPreferences: SidebarGroupPreference[] = groups.map((group, groupIndex) => {
     const groupId = getGroupId(group.groupName);
-    
+
     const itemPreferences: SidebarItemPreference[] = group.items.map((item, itemIndex) => ({
       id: getItemId(item.name, item.href),
       visible: true,
       order: itemIndex
     }));
-    
+
     return {
       id: groupId,
       visible: true,
@@ -239,7 +243,7 @@ export const navigationGroupsToPreferences = (groups: NavigationGroup[]): Sideba
       items: itemPreferences
     };
   });
-  
+
   return {
     version: 1,
     groups: groupPreferences
@@ -262,30 +266,30 @@ export const applyPreferencesToNavigation = (
 ): NavigationGroup[] => {
   // Create a map of preferences
   const prefsMap = new Map(preferences.groups.map(g => [g.id, g]));
-  
+
   // Sort groups by order and filter by visibility
   const sortedGroups = groups
     .map(group => {
       const groupId = getGroupId(group.groupName);
       const groupPref = prefsMap.get(groupId);
-      
+
       if (!groupPref || !groupPref.visible) return null;
-      
+
       // Filter and sort items
       const itemsMap = new Map(groupPref.items.map(i => [i.id, i]));
       const filteredItems = group.items
         .map(item => {
           const itemId = getItemId(item.name, item.href);
           const itemPref = itemsMap.get(itemId);
-          
+
           if (!itemPref || !itemPref.visible) return null;
-          
+
           return { item, order: itemPref.order };
         })
         .filter((i): i is { item: NavigationItem; order: number } => i !== null)
         .sort((a, b) => a.order - b.order)
         .map(i => i.item);
-      
+
       return {
         group,
         order: groupPref.order,
@@ -294,7 +298,7 @@ export const applyPreferencesToNavigation = (
     })
     .filter((g): g is { group: NavigationGroup; order: number; items: NavigationItem[] } => g !== null)
     .sort((a, b) => a.order - b.order);
-  
+
   return sortedGroups.map(({ group, items }) => ({
     ...group,
     items

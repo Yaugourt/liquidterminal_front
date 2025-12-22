@@ -4,25 +4,25 @@ export interface TokenData {
   name: string;
   type: 'spot' | 'perpetual';
   logo?: string | null; // Token logo URL
-  
+
   // Price data
   mark?: number;
   oracle?: number;
   price?: number;
-  
+
   // Market index for WebSocket connection
   marketIndex?: number;
-  
+
   // Change data
   change24h: number;
-  
+
   // Volume data
   volume24h: number;
-  
+
   // Market specific fields
   marketCap?: number; // Spot only
   openInterest?: number; // Perpetual only
-  
+
   // Contract/funding data
   contract?: string;
   fundingRate?: number; // Perpetual only
@@ -32,4 +32,6 @@ export interface TokenData {
 export interface TokenCardProps {
   token: TokenData;
   className?: string;
+  /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
+  perpCoinId?: string;
 }

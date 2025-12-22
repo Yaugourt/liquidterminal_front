@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 import Link from "next/link";
 
 // Composant pour l'en-tête de colonne
@@ -37,9 +38,9 @@ const EmptyState = memo(() => (
   <TableRow className="hover:bg-transparent">
     <TableCell colSpan={3} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-zinc-600" />
-        <p className="text-zinc-400 text-sm mb-1">No stakers found</p>
-        <p className="text-zinc-600 text-xs">Check back later</p>
+        <Database className="w-10 h-10 mb-3 text-text-muted" />
+        <p className="text-text-secondary text-sm mb-1">No stakers found</p>
+        <p className="text-text-muted text-xs">Check back later</p>
       </div>
     </TableCell>
   </TableRow>
@@ -50,7 +51,7 @@ EmptyState.displayName = 'EmptyState';
 const LoadingState = memo(() => (
   <>
     {Array.from({ length: 5 }).map((_, i) => (
-      <TableRow key={i} className="border-b border-white/5 hover:bg-transparent">
+      <TableRow key={i} className="border-b border-border-subtle hover:bg-transparent">
         <TableCell className="py-3 px-4">
           <div className="h-4 bg-white/5 rounded animate-pulse"></div>
         </TableCell>
@@ -67,8 +68,12 @@ const LoadingState = memo(() => (
 LoadingState.displayName = 'LoadingState';
 
 export const StakersTable = memo(function StakersTable() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const {
+    page: currentPage,
+    rowsPerPage,
+    onPageChange,
+    onRowsPerPageChange
+  } = usePagination({ initialRowsPerPage: 25 });
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();
   const { price: hypePrice } = useHypePrice();
@@ -85,15 +90,14 @@ export const StakersTable = memo(function StakersTable() {
   });
 
   const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
+    onPageChange(newPage);
     updateParams({ page: newPage + 1 });
-  }, [updateParams]);
+  }, [updateParams, onPageChange]);
 
   const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(0);
+    onRowsPerPageChange(newRowsPerPage);
     updateParams({ limit: newRowsPerPage, page: 1 });
-  }, [updateParams]);
+  }, [updateParams, onRowsPerPageChange]);
 
   const copyToClipboard = async (address: string) => {
     try {
@@ -113,9 +117,9 @@ export const StakersTable = memo(function StakersTable() {
     return (
       <div className="flex justify-center items-center h-[300px]">
         <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-zinc-600" />
+          <Database className="w-12 h-12 mb-4 text-text-muted" />
           <p className="text-rose-400 text-lg font-medium mb-2">Error loading stakers</p>
-          <p className="text-zinc-400 text-sm">{error.message}</p>
+          <p className="text-text-secondary text-sm">{error.message}</p>
         </div>
       </div>
     );
@@ -126,15 +130,15 @@ export const StakersTable = memo(function StakersTable() {
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className="text-left py-3 px-4">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Address</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Address</span>
               </TableHead>
               <TableHead className="text-left py-3 px-4">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Amount</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
               </TableHead>
               <TableHead className="text-left py-3 px-4 w-48">
-                <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Value</span>
+                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -151,7 +155,7 @@ export const StakersTable = memo(function StakersTable() {
                 return (
                   <TableRow
                     key={holder.address}
-                    className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                    className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                   >
                     <TableCell className="py-3 px-4">
                       <div className="flex items-center gap-2">
@@ -160,7 +164,7 @@ export const StakersTable = memo(function StakersTable() {
                         </span>
                         <Link
                           href={`/explorer/address/${holder.address}`}
-                          className="text-[#83E9FF] hover:text-white transition-colors text-sm font-mono"
+                          className="text-brand-accent hover:text-white transition-colors text-sm font-mono"
                           title="View address details"
                         >
                           {formatAddress(holder.address)}
@@ -169,12 +173,12 @@ export const StakersTable = memo(function StakersTable() {
                           variant="ghost"
                           size="sm"
                           onClick={() => copyToClipboard(holder.address)}
-                          className="h-6 w-6 p-0 hover:bg-white/5 text-zinc-400 hover:text-white"
+                          className="h-6 w-6 p-0 hover:bg-white/5 text-text-secondary hover:text-white"
                         >
                           {copiedAddress === holder.address ? (
                             <Check className="h-3 w-3 text-emerald-400" />
                           ) : (
-                            <Copy className="h-3 w-3 text-zinc-500" />
+                            <Copy className="h-3 w-3 text-text-muted" />
                           )}
                         </Button>
 
@@ -200,7 +204,7 @@ export const StakersTable = memo(function StakersTable() {
 
       {/* Pagination */}
       {!isLoading && holders.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/5">
+        <div className="mt-4 pt-4 border-t border-border-subtle">
           <Pagination
             total={total}
             page={currentPage}

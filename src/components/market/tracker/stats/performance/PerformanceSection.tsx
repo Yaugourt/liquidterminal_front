@@ -43,15 +43,15 @@ const AnimatedPeriodSelector = ({
   availablePeriods: ChartPeriod[]; 
 }) => {
   return (
-    <div className="relative flex items-center bg-[#051728] rounded-md p-0.5 border border-[#83E9FF4D]">
+    <div className="relative flex items-center bg-brand-tertiary rounded-md p-0.5 border border-[#83E9FF4D]">
       {availablePeriods.map((period) => (
         <button
           key={period}
           onClick={() => onPeriodChange(period)}
           className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-sm ${
             selectedPeriod === period 
-              ? 'bg-[#83E9FF] text-[#051728]' 
-              : 'text-white hover:text-[#83E9FF]'
+              ? 'bg-brand-accent text-brand-tertiary' 
+              : 'text-white hover:text-brand-accent'
           }`}
         >
           {period}
@@ -106,11 +106,11 @@ export function PerformanceSection() {
       const value = payload[0].value;
       const formattedValue = formatValue(value, formatOptions);
       return (
-        <div className="bg-[#051728] border border-[#83E9FF4D] p-2 rounded-md">
+        <div className="bg-brand-tertiary border border-[#83E9FF4D] p-2 rounded-md">
           <p className="text-white text-xs">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
-          <p className="text-[#83E9FF] font-medium">
+          <p className="text-brand-accent font-medium">
             {formattedValue}
           </p>
         </div>
@@ -139,7 +139,7 @@ export function PerformanceSection() {
       <div className="absolute inset-0 p-4 pt-12">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
           </div>
         ) : chartData.data.length === 0 ? (
           <div className="flex justify-center items-center h-full">

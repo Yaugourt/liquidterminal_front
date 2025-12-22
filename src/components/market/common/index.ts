@@ -1,8 +1,7 @@
-export { TrendingTokensCard } from './TrendingTokensCard';
 export { GlobalStatsCard } from './GlobalStatsCard';
-export { TokenTable } from './TokenTable';
-export { TokenTabs } from './TokenTabs';
+export { UniversalTokenTable } from './UniversalTokenTable';
+// export { TokenTabs } from './TokenTabs'; // Deleted
 export { TokensSection } from './TokensSection';
 export { LoadingState, ErrorState, EmptyState } from './TableStates';
 export * from './types';
-export * from './constants'; 
+export * from './constants';

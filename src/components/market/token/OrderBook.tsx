@@ -4,19 +4,24 @@ import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
+import { GlassPanel } from "@/components/ui/glass-panel";
+import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface OrderBookProps {
   symbol?: string;
   marketIndex?: number;
   tokenNameProp?: string;
   className?: string;
+  /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
+  perpCoinId?: string;
 }
 
-export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: OrderBookProps) {
+export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpCoinId }: OrderBookProps) {
   const [activeTab, setActiveTab] = useState<'orderbook' | 'trades'>('orderbook');
 
   // Connect to WebSocket for real-time order book and trades
-  const coinId = marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '';
+  // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
+  const coinId = perpCoinId || (marketIndex !== undefined ? marketIndexToCoinId(marketIndex, tokenNameProp) : '');
   const { orderBook, trades } = useTokenWebSocket(coinId);
 
   // Use only real data from WebSocket
@@ -82,30 +87,19 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20 flex flex-col h-full ${className}`}>
-      <div className="p-4 flex-shrink-0 border-b border-white/5">
+    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
+      <div className="p-4 flex-shrink-0 border-b border-border-subtle">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
-          <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
-            <button
-              onClick={() => setActiveTab('orderbook')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'orderbook'
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-                }`}
-            >
-              Order Book
-            </button>
-            <button
-              onClick={() => setActiveTab('trades')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'trades'
-                ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-                }`}
-            >
-              Trades
-            </button>
-          </div>
+          <PillTabs
+            tabs={[
+              { value: 'orderbook', label: 'Order Book' },
+              { value: 'trades', label: 'Trades' }
+            ]}
+            activeTab={activeTab}
+            onTabChange={(val) => setActiveTab(val as 'orderbook' | 'trades')}
+            className="bg-brand-dark border border-border-subtle"
+          />
         </div>
       </div>
 
@@ -113,7 +107,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
         {activeTab === 'orderbook' ? (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-3 gap-2 text-[10px] text-zinc-400 font-semibold uppercase tracking-wider flex-shrink-0 mb-2">
+            <div className="grid grid-cols-3 gap-2 text-[10px] text-text-secondary font-semibold uppercase tracking-wider flex-shrink-0 mb-2">
               <span>Price</span>
               <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Total ({tokenName})</span>
@@ -140,15 +134,15 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
                       />
                       <span className="text-rose-400 relative z-10 font-medium">${formatPrice(ask.px)}</span>
                       <span className="text-white text-right relative z-10">{formatSize(ask.sz)}</span>
-                      <span className="text-zinc-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
+                      <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
                   );
                 })}
               </div>
 
               {/* Spread */}
-              <div className="border-y border-white/5 py-2 text-center mb-2 mx-1 flex items-center justify-center gap-5">
-                <span className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider">Spread</span>
+              <div className="border-y border-border-subtle py-2 text-center mb-2 mx-1 flex items-center justify-center gap-5">
+                <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Spread</span>
                 <span className="text-xs text-white font-medium">
                   {spread.absolute > 0 ? (
                     `${spread.absolute.toFixed(3)} (${spread.percentage.toFixed(6)}%)`
@@ -176,7 +170,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
                       />
                       <span className="text-emerald-400 relative z-10 font-medium">${formatPrice(bid.px)}</span>
                       <span className="text-white text-right relative z-10">{formatSize(bid.sz)}</span>
-                      <span className="text-zinc-400 text-right relative z-10">{formatSize(cumulativeTotal)}</span>
+                      <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
                   );
                 })}
@@ -186,7 +180,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
         ) : (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-3 gap-2 text-[10px] text-zinc-400 font-semibold uppercase tracking-wider border-b border-white/5 pb-2 flex-shrink-0 mb-2">
+            <div className="grid grid-cols-3 gap-2 text-[10px] text-text-secondary font-semibold uppercase tracking-wider border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
               <span>Price</span>
               <span className="text-right">Size (token)</span>
               <span className="text-right">Time</span>
@@ -211,7 +205,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
                         ${formatPrice(tradePrice)}
                       </span>
                       <span className="text-white text-right">{formatSize(tradeSize)}</span>
-                      <span className="text-zinc-400 text-right text-xs">{tradeTime}</span>
+                      <span className="text-text-secondary text-right text-xs">{tradeTime}</span>
                     </div>
                   );
                 })}
@@ -220,6 +214,6 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className }: Ord
           </div>
         )}
       </div>
-    </div>
+    </GlassPanel>
   );
 }

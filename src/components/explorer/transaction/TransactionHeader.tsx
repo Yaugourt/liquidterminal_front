@@ -17,9 +17,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
       await navigator.clipboard.writeText(text);
       setCopiedValue(text);
       setTimeout(() => setCopiedValue(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   const truncateAddress = (address: string) => {
@@ -30,7 +30,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
   };
 
   return (
-    <Card className="bg-[#051728E5] border-2 border-[#83E9FF4D] p-6 shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]">
+    <Card className="glass-panel p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
@@ -46,11 +46,11 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             </p>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <p className="text-white text-sm mb-1 font-inter">Block:</p>
-            <Link 
+            <Link
               href={`/explorer/block/${transaction.block}`}
               className="text-[#F9E370] text-base hover:text-[#F9E370]/80 transition-colors font-inter"
             >
@@ -60,9 +60,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
           <div>
             <p className="text-white text-sm mb-1 font-inter">User:</p>
             <div className="flex items-center gap-2">
-              <Link 
+              <Link
                 href={`/explorer/address/${transaction.user}`}
-                className="text-[#83E9FF] text-base hover:text-[#83E9FF]/80 transition-colors font-inter"
+                className="text-brand-accent text-base hover:text-brand-accent/80 transition-colors font-mono"
               >
                 <span className="md:hidden">{truncateAddress(transaction.user)}</span>
                 <span className="hidden md:inline">{transaction.user}</span>
@@ -74,18 +74,18 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
                 {copiedValue === transaction.user ? (
                   <Check className="h-3 w-3 text-green-500" />
                 ) : (
-                  <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                  <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
                 )}
               </button>
             </div>
           </div>
         </div>
       </div>
-      
+
       {transaction.error && (
-        <div className="mt-4 p-3 bg-[#FF000033] border border-[#FF000066] rounded-lg">
+        <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
           <p className="text-white text-sm mb-1 font-inter">Error:</p>
-          <p className="text-[#FF6B6B] text-sm font-inter">{transaction.error}</p>
+          <p className="text-rose-400 text-sm font-inter">{transaction.error}</p>
         </div>
       )}
     </Card>

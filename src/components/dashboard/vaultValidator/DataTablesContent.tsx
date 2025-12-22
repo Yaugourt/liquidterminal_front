@@ -1,11 +1,10 @@
-import { memo, useMemo, useState, useCallback } from "react";
-import {truncateAddress, formatStakeValue, formatTVLValue} from "@/lib/formatters/numberFormatting";
+import { memo, useMemo } from "react";
+import { formatStakeValue, formatTVLValue } from "@/lib/formatters/numberFormatting";
 import { AuctionsTableProps, ValidatorsTableProps, VaultTableProps } from "@/components/types/dashboard.types";
-import { DataTable, Column } from "./DataTable";
+import { TypedDataTable as DataTable, Column } from "@/components/common/DataTable";
 import { useNumberFormat } from "@/store/number-format.store";
-import Link from "next/link";
 import { PriceChange } from '@/components/common';
-import { Copy, Check } from "lucide-react";
+import { AddressDisplay } from "@/components/ui/address-display";
 
 // Extended validator type for the component
 interface ExtendedValidator {
@@ -25,50 +24,15 @@ interface PaginationProps {
   showPagination?: boolean;
 }
 
-const AuctionsTableComponent = ({ 
-  auctions, 
-  isLoading, 
-  error, 
+const AuctionsTableComponent = ({
+  auctions,
+  isLoading,
+  error,
   paginationDisabled = false,
   hidePageNavigation = false,
-  ...paginationProps 
+  ...paginationProps
 }: AuctionsTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
-  const copyToClipboard = useCallback(async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedAddress(text);
-      setTimeout(() => setCopiedAddress(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  }, []);
-
-  const AddressLink = memo(({ address }: { address: string }) => (
-    <div className="  flex items-center gap-1.5">
-      <Link 
-        href={`/explorer/address/${address}`}
-        className="text-[#83E9FF] hover:text-white transition-colors"
-      >
-        {truncateAddress(address)}
-      </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          copyToClipboard(address);
-        }}  
-        className="group p-1 rounded transition-colors"
-      >
-        {copiedAddress === address ? (
-          <Check className="h-3.5 w-3.5 text-green-500" />
-        ) : (
-          <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
-        )}
-      </button>
-    </div>
-  ));
-  AddressLink.displayName = 'AddressLink';
 
   const sortedAuctions = useMemo(() => {
     return [...auctions]
@@ -85,7 +49,7 @@ const AuctionsTableComponent = ({
     {
       header: "Deployer",
       accessor: (item: AuctionsTableProps["auctions"][0]) => (
-        <AddressLink address={item.deployer} />
+        <AddressDisplay address={item.deployer} />
       ),
       align: "left",
       className: "w-[140px] px-4"
@@ -101,7 +65,7 @@ const AuctionsTableComponent = ({
       align: "left",
       className: "w-[180px] px-4 text-left"
     },
-  ] as Column<typeof auctions[0]>[], [AddressLink]);
+  ] as Column<typeof auctions[0]>[], []);
 
   return (
     <DataTable
@@ -119,61 +83,31 @@ const AuctionsTableComponent = ({
 export const AuctionsTable = memo(AuctionsTableComponent);
 AuctionsTable.displayName = 'AuctionsTable';
 
-const ValidatorsTableComponent = ({ 
-  validators, 
-  isLoading, 
-  error, 
+const ValidatorsTableComponent = ({
+  validators,
+  isLoading,
+  error,
   paginationDisabled = false,
   hidePageNavigation = false,
-  ...paginationProps 
+  ...paginationProps
 }: ValidatorsTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
   const { format } = useNumberFormat();
-  const [copiedValidatorAddress, setCopiedValidatorAddress] = useState<string | null>(null);
 
-  const copyValidatorToClipboard = useCallback(async (address: string) => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopiedValidatorAddress(address);
-      setTimeout(() => setCopiedValidatorAddress(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  }, []);
-
-  const ValidatorNameWithCopy = memo(({ validator }: { validator: ExtendedValidator }) => {
-    const address = validator.validator || validator.address || validator.name;
-    return (
-      <div className="flex items-center gap-1.5">
-        <Link 
-          href={`/explorer/address/${address}`}
-          className="text-white font-inter hover:text-[#83E9FF] transition-colors"
-        >
-          {validator.name}
-        </Link>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            copyValidatorToClipboard(address);
-          }}
-          className="group p-1 rounded transition-colors"
-        >
-          {copiedValidatorAddress === address ? (
-            <Check className="h-3.5 w-3.5 text-green-500" />
-          ) : (
-            <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
-          )}
-        </button>
-      </div>
-    );
-  });
-  ValidatorNameWithCopy.displayName = 'ValidatorNameWithCopy';
 
   const columns = useMemo(() => [
     {
       header: "Name",
-      accessor: (item: ExtendedValidator) => (
-        <ValidatorNameWithCopy validator={item} />
-      ),
+      accessor: (item: ExtendedValidator) => {
+        const address = item.validator || item.address || "";
+        return (
+          <AddressDisplay
+            address={address}
+            label={<span className="text-white font-medium truncate block max-w-[200px]" title={item.name}>{item.name}</span>}
+            truncate={false}
+            className="text-white hover:text-brand-accent max-w-full"
+          />
+        );
+      },
       align: "left",
       className: "w-[220px] px-4"
     },
@@ -191,7 +125,7 @@ const ValidatorsTableComponent = ({
       align: "right",
       className: "w-[120px] px-4 pr-6 text-right"
     },
-  ] as Column<ExtendedValidator>[], [format, ValidatorNameWithCopy]);
+  ] as Column<ExtendedValidator>[], [format]);
 
   return (
     <DataTable
@@ -209,52 +143,27 @@ const ValidatorsTableComponent = ({
 export const ValidatorsTable = memo(ValidatorsTableComponent);
 ValidatorsTable.displayName = 'ValidatorsTable';
 
-const VaultTableComponent = ({ 
-  vaults, 
-  isLoading, 
-  error, 
+const VaultTableComponent = ({
+  vaults,
+  isLoading,
+  error,
   paginationDisabled = false,
   hidePageNavigation = false,
-  ...paginationProps 
+  ...paginationProps
 }: VaultTableProps & PaginationProps & { paginationDisabled?: boolean; hidePageNavigation?: boolean }) => {
   const { format } = useNumberFormat();
-  const [copiedVaultAddress, setCopiedVaultAddress] = useState<string | null>(null);
 
-  const copyVaultToClipboard = useCallback(async (address: string) => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopiedVaultAddress(address);
-      setTimeout(() => setCopiedVaultAddress(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  }, []);
 
   const columns = useMemo(() => [
     {
       header: "Name",
       accessor: (item: VaultTableProps["vaults"][0]) => (
-        <div className="flex items-center gap-1.5">
-          <Link 
-            href={`/explorer/address/${item.vaultAddress}`}
-            className="text-white font-inter hover:text-[#83E9FF] transition-colors"
-          >
-            {item.name.length > 18 ? `${item.name.substring(0, 18)}...` : item.name}
-          </Link>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              copyVaultToClipboard(item.vaultAddress || "");
-            }}
-            className="group p-1 rounded transition-colors"
-          >
-            {String(copiedVaultAddress ?? "") === String(item.vaultAddress ?? "") ? (
-              <Check className="h-3.5 w-3.5 text-green-500" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100" />
-            )}
-          </button>
-        </div>
+        <AddressDisplay
+          address={item.vaultAddress || ""}
+          label={<span className="text-white font-medium truncate block max-w-[150px]" title={item.name}>{item.name}</span>}
+          truncate={false}
+          className="max-w-full"
+        />
       ),
       align: "left",
       className: "w-[220px] px-4"
@@ -273,7 +182,7 @@ const VaultTableComponent = ({
       align: "left",
       className: "w-[100px] px-4 text-right"
     },
-  ] as Column<VaultTableProps["vaults"][0]>[], [format, copiedVaultAddress, copyVaultToClipboard]);
+  ] as Column<VaultTableProps["vaults"][0]>[], [format]);
 
   return (
     <DataTable

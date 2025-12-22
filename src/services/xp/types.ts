@@ -134,11 +134,14 @@ export const XP_ACTION_ICONS: Record<XpActionType, string> = {
 // DAILY TASKS TYPES
 // ============================================
 
-export type DailyTaskType = 
+export type DailyTaskType =
   | 'LOGIN'
   | 'READ_RESOURCE'
   | 'ADD_WALLET'
-  | 'EXPLORE_LEADERBOARD';
+  | 'EXPLORE_LEADERBOARD'
+  | 'SUBMIT_RESOURCE'
+  | 'CREATE_READLIST'
+  | 'CREATE_WALLETLIST';
 
 export interface DailyTask {
   type: DailyTaskType;
@@ -174,6 +177,9 @@ export const DAILY_TASK_LABELS: Record<DailyTaskType, string> = {
   READ_RESOURCE: 'Read a resource',
   ADD_WALLET: 'Add a wallet',
   EXPLORE_LEADERBOARD: 'Explore the leaderboard',
+  SUBMIT_RESOURCE: 'Submit a resource',
+  CREATE_READLIST: 'Create a readlist',
+  CREATE_WALLETLIST: 'Create a wallet list',
 };
 
 // Daily task icons (lucide icon names)
@@ -182,6 +188,9 @@ export const DAILY_TASK_ICONS: Record<DailyTaskType, string> = {
   READ_RESOURCE: 'book-open',
   ADD_WALLET: 'wallet',
   EXPLORE_LEADERBOARD: 'trophy',
+  SUBMIT_RESOURCE: 'send',
+  CREATE_READLIST: 'list-plus',
+  CREATE_WALLETLIST: 'wallet',
 };
 
 // ============================================

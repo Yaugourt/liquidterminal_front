@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCreateProject, useCreateCategory, useCategories, useCsvUploadProjects } from "@/services/ecosystem/project";
 import { Project } from "@/services/ecosystem/project/types";
 import { toast } from "sonner";
-import { PiPlus } from "react-icons/pi";
+import { Plus } from "lucide-react";
 import { ProjectForm, CategoryForm, CsvUpload } from "./modal";
 
 interface ProjectModalProps {
@@ -18,7 +18,7 @@ interface ProjectModalProps {
 export function ProjectModal({ onSuccess }: ProjectModalProps) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("project");
-  
+
   // Form states
   const [projectForm, setProjectForm] = useState({
     title: "",
@@ -32,13 +32,13 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
     token: "",
     categoryIds: [] as number[]
   });
-  
+
   // File upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [selectedBannerFile, setSelectedBannerFile] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string>("");
-  
+
   const [categoryForm, setCategoryForm] = useState({
     name: "",
     description: ""
@@ -87,27 +87,27 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
 
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation: either file or URL must be provided
     const hasFile = selectedFile !== null;
     const hasUrl = projectForm.logo.trim() !== '';
-    
+
     if (!hasFile && !hasUrl) {
       toast.error("Please provide either a logo file or URL");
       return;
     }
-    
+
     if (hasFile && hasUrl) {
       toast.warning("Both file and URL provided. File upload will be used.");
     }
-    
+
     try {
       let newProject: Project | null = null;
-      
+
       if (selectedFile) {
         // Upload file using the new API (route: /project/with-upload)
 
-        
+
         const uploadData = {
           title: projectForm.title,
           desc: projectForm.desc,
@@ -120,7 +120,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           website: projectForm.website || undefined,
           token: projectForm.token || undefined
         };
-        
+
         newProject = await createProjectWithUpload(uploadData);
       } else {
         // Use existing API for URL-based logo (route: /project)
@@ -131,10 +131,10 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
           token: projectForm.token || undefined,
           categoryIds: projectForm.categoryIds.length > 0 ? projectForm.categoryIds : undefined
         };
-        
+
         newProject = await createProject(projectData);
       }
-      
+
       toast.success("Project created successfully!");
       setProjectForm({
         title: "",
@@ -161,7 +161,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
 
   const handleCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await createCategory(categoryForm);
       toast.success("Category created successfully!");
@@ -198,23 +198,23 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg">
-          <PiPlus className="mr-2 h-4 w-4" />
+        <Button className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg">
+          <Plus className="mr-2 h-4 w-4" />
           Add Project
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-[#151A25] border border-white/10 rounded-2xl shadow-xl shadow-black/20 flex flex-col">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white text-lg font-bold">Add Project</DialogTitle>
         </DialogHeader>
-        
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-3 bg-[#0A0D12] border border-white/5 rounded-lg p-1">
-            <TabsTrigger value="project" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">Add Project</TabsTrigger>
-            <TabsTrigger value="category" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">Add Category</TabsTrigger>
-            <TabsTrigger value="csv" className="text-zinc-400 data-[state=active]:bg-[#83E9FF] data-[state=active]:text-[#051728] data-[state=active]:font-bold rounded-md text-xs transition-all">CSV Upload</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-brand-dark border border-border-subtle rounded-lg p-1">
+            <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Project</TabsTrigger>
+            <TabsTrigger value="category" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">Add Category</TabsTrigger>
+            <TabsTrigger value="csv" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">CSV Upload</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="project" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(255,255,255,0.1) transparent'
@@ -236,7 +236,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
               onCancel={() => setOpen(false)}
             />
           </TabsContent>
-          
+
           <TabsContent value="category" className="space-y-4 mt-6 flex-1 overflow-y-auto min-h-0 pr-2" style={{
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(255,255,255,0.1) transparent'

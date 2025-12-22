@@ -16,14 +16,14 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       await navigator.clipboard.writeText(text);
       setCopiedValue(text);
       setTimeout(() => setCopiedValue(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   const renderFieldValue = (field: FormattedTransactionField) => {
     if (field.value === null || field.value === undefined) {
-      return <span className="text-[#FFFFFF80]">-</span>;
+      return <span className="text-secondary">-</span>;
     }
 
     const stringValue = String(field.value);
@@ -39,11 +39,11 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       case 'address':
         return (
           <div className="flex items-center gap-2">
-            <Link 
+            <Link
               href={`/explorer/address/${stringValue}`}
-              className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors font-inter"
+              className="text-brand-accent hover:text-brand-accent/80 transition-colors font-mono"
             >
-              {stringValue.length > 20 
+              {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
                 : stringValue
               }
@@ -55,7 +55,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -64,20 +64,20 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       case 'hash':
         return (
           <div className="flex items-center gap-2">
-            <span className="text-[#83E9FF] font-inter">
-              {stringValue.length > 20 
+            <span className="text-brand-accent font-mono">
+              {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
                 : stringValue
               }
             </span>
             <button
               onClick={() => copyToClipboard(stringValue)}
-              className="p-1 hover:bg-[#FFFFFF0A] rounded transition-colors"
+              className="p-1 hover:bg-white/5 rounded transition-colors"
             >
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-[#f9e370] opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -85,9 +85,9 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'amount':
         return (
-          <span className="text-[#F9E370] font-inter">
-            {typeof field.value === 'number' 
-              ? field.value.toLocaleString() 
+          <span className="text-brand-gold font-inter">
+            {typeof field.value === 'number'
+              ? field.value.toLocaleString()
               : stringValue
             }
           </span>
@@ -95,9 +95,9 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'link':
         return (
-          <Link 
+          <Link
             href={stringValue}
-            className="text-[#83E9FF] hover:text-[#83E9FF]/80 transition-colors underline font-inter"
+            className="text-brand-accent hover:text-brand-accent/80 transition-colors underline font-inter"
           >
             {stringValue}
           </Link>
@@ -105,7 +105,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'json':
         return (
-          <pre className="text-[#FFFFFF] bg-[#FFFFFF0A] p-2 rounded text-xs overflow-x-auto font-inter">
+          <pre className="text-white bg-white/5 p-2 rounded text-xs overflow-x-auto font-inter">
             {stringValue}
           </pre>
         );
@@ -122,19 +122,19 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
   return (
     <div className="space-y-6">
       {data.sections.map((section, sectionIndex) => (
-        <Card 
+        <Card
           key={sectionIndex}
-          className="bg-[#051728CC] border-2 border-[#83E9FF4D] p-0 shadow-[0_4px_24px_0_rgba(0,0,0,0.25)]"
+          className="glass-panel p-0 rounded-xl overflow-hidden"
         >
-          <h3 className="text-xl text-white font-medium p-6 bg-[#051728] border-b border-[#FFFFFF1A] rounded-t-xl font-inter">
+          <h3 className="text-xl text-white font-medium p-6 border-b border-border-subtle font-inter">
             {section.title}
           </h3>
-          
+
           <div className="p-6">
             <div className="space-y-4">
               {section.fields.map((field, fieldIndex) => (
                 <div key={fieldIndex} className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                  <div className="text-[#FFFFFF80] text-sm font-medium min-w-[150px] font-inter">
+                  <div className="text-secondary text-sm font-medium min-w-[150px] font-inter">
                     {field.label}:
                   </div>
                   <div className="flex-1 text-right sm:text-left">

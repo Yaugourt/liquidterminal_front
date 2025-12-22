@@ -1,9 +1,9 @@
 import { Database, Loader2 } from "lucide-react";
 import { StateComponentProps } from "./types";
 
-const baseContainerClasses = "overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent";
+const baseContainerClasses = "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent";
 const baseContentClasses = "flex flex-col items-center justify-center";
-const baseIconClasses = "w-10 h-10 mb-4 text-[#83E9FF4D]";
+const baseIconClasses = "w-10 h-10 mb-4 text-white/20";
 const baseTextClasses = "text-white text-lg";
 
 export function LoadingState({ message = "Chargement..." }: StateComponentProps) {
@@ -28,8 +28,8 @@ export function ErrorState({ message = "Une erreur est survenue" }: StateCompone
   );
 }
 
-export function EmptyState({ 
-  message = "No data available" 
+export function EmptyState({
+  message = "No data available"
 }: StateComponentProps) {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center">

@@ -2,11 +2,11 @@
 
 import { useXpContext } from "@/services/xp";
 import { cn } from "@/lib/utils";
-import { 
-  CheckCircle2, 
-  BookOpen, 
-  ListPlus, 
-  CalendarCheck, 
+import {
+  CheckCircle2,
+  BookOpen,
+  ListPlus,
+  CalendarCheck,
   Wallet,
   Clock,
   Trophy,
@@ -32,25 +32,25 @@ const CHALLENGE_ICONS: Record<WeeklyChallengeType, React.ElementType> = {
 };
 
 const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; border: string }> = {
-  READ_20_RESOURCES: { 
-    text: "text-cyan-400", 
-    bg: "bg-cyan-500/20", 
-    border: "border-cyan-500/30" 
+  READ_20_RESOURCES: {
+    text: "text-cyan-400",
+    bg: "bg-cyan-500/20",
+    border: "border-cyan-500/30"
   },
-  CREATE_5_READLISTS: { 
-    text: "text-purple-400", 
-    bg: "bg-purple-500/20", 
-    border: "border-purple-500/30" 
+  CREATE_5_READLISTS: {
+    text: "text-purple-400",
+    bg: "bg-purple-500/20",
+    border: "border-purple-500/30"
   },
-  LOGIN_7_DAYS: { 
-    text: "text-emerald-400", 
-    bg: "bg-emerald-500/20", 
-    border: "border-emerald-500/30" 
+  LOGIN_7_DAYS: {
+    text: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    border: "border-emerald-500/30"
   },
-  ADD_15_WALLETS: { 
-    text: "text-[#83E9FF]", 
-    bg: "bg-[#83E9FF]/20", 
-    border: "border-[#83E9FF]/30" 
+  ADD_15_WALLETS: {
+    text: "text-brand-accent",
+    bg: "bg-brand-accent/20",
+    border: "border-brand-accent/30"
   },
 };
 
@@ -78,16 +78,16 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
     return (
       <div className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-lg",
-        "bg-[#151A25]/60 border border-white/5",
+        "bg-brand-secondary/60 border border-border-subtle",
         className
       )}>
         <Trophy className="h-4 w-4 text-[#F9E370]" />
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-400">Weekly</span>
+            <span className="text-xs text-text-secondary">Weekly</span>
             <span className="text-xs text-[#F9E370] font-medium">{completedCount}/{weeklyChallenges.length}</span>
           </div>
-          <div className="h-1.5 bg-[#0A0D12] rounded-full overflow-hidden mt-1">
+          <div className="h-1.5 bg-brand-dark rounded-full overflow-hidden mt-1">
             <div
               className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all"
               style={{ width: `${(completedCount / Math.max(weeklyChallenges.length, 1)) * 100}%` }}
@@ -95,7 +95,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
           </div>
         </div>
         {timeUntilWeeklyReset && (
-          <div className="flex items-center gap-1 text-xs text-zinc-500">
+          <div className="flex items-center gap-1 text-xs text-text-muted">
             <Clock className="h-3 w-3" />
             {timeUntilWeeklyReset}
           </div>
@@ -108,8 +108,8 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-[#151A25]/60 backdrop-blur-md",
-      "border border-white/5",
+      "bg-brand-secondary/60 backdrop-blur-md",
+      "border border-border-subtle",
       className
     )}>
       {/* Header */}
@@ -120,25 +120,25 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Weekly Challenges</h3>
-            <p className="text-xs text-zinc-500">{completedCount}/{weeklyChallenges.length} completed</p>
+            <p className="text-xs text-text-muted">{completedCount}/{weeklyChallenges.length} completed</p>
           </div>
         </div>
-        
+
         {/* Timer */}
         {timeUntilWeeklyReset && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            <span className="text-xs text-zinc-400">Resets in {timeUntilWeeklyReset}</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
+            <Clock className="h-3.5 w-3.5 text-text-secondary" />
+            <span className="text-xs text-text-secondary">Resets in {timeUntilWeeklyReset}</span>
           </div>
         )}
       </div>
 
       {/* XP Summary */}
-      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-[#0A0D12] border border-white/5">
+      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
         <Star className="h-4 w-4 text-[#F9E370]" />
-        <span className="text-sm text-zinc-400">XP Earned:</span>
+        <span className="text-sm text-text-secondary">XP Earned:</span>
         <span className="text-sm font-bold text-[#F9E370]">{totalXpEarned}</span>
-        <span className="text-sm text-zinc-500">/ {totalXpAvailable}</span>
+        <span className="text-sm text-text-muted">/ {totalXpAvailable}</span>
       </div>
 
       {/* Challenges list */}
@@ -147,7 +147,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
           const Icon = CHALLENGE_ICONS[challenge.type];
           const colors = CHALLENGE_COLORS[challenge.type];
           const challengeRoute = getWeeklyChallengeRoute(challenge.type);
-          
+
           const challengeContent = (
             <>
               <div className="flex items-center gap-3 mb-3">
@@ -157,12 +157,12 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                   challenge.completed ? "bg-emerald-500/20" : colors.bg,
                   "border",
                   challenge.completed ? "border-emerald-500/30" : colors.border,
-                  !challenge.completed && "group-hover:border-[#83E9FF]/50"
+                  !challenge.completed && "group-hover:border-brand-accent/50"
                 )}>
                   <Icon className={cn(
                     "h-5 w-5 transition-colors",
                     challenge.completed ? "text-emerald-400" : colors.text,
-                    !challenge.completed && "group-hover:text-[#83E9FF]"
+                    !challenge.completed && "group-hover:text-brand-accent"
                   )} />
                 </div>
 
@@ -171,9 +171,9 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                   <div className="flex items-center justify-between mb-1">
                     <p className={cn(
                       "text-sm font-medium transition-colors",
-                      challenge.completed 
-                        ? "text-emerald-300" 
-                        : "text-white group-hover:text-[#83E9FF]"
+                      challenge.completed
+                        ? "text-emerald-300"
+                        : "text-white group-hover:text-brand-accent"
                     )}>
                       {challenge.description}
                     </p>
@@ -182,15 +182,15 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
                         <CheckCircle2 className="h-5 w-5 text-emerald-400" />
                       ) : (
                         <>
-                          <span className="text-xs font-bold text-[#F9E370]">
+                          <span className="text-xs font-bold text-brand-gold">
                             +{challenge.xpReward} XP
                           </span>
-                          <ExternalLink className="h-3.5 w-3.5 text-zinc-500 group-hover:text-[#83E9FF] opacity-0 group-hover:opacity-100 transition-all" />
+                          <ExternalLink className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-accent opacity-0 group-hover:opacity-100 transition-all" />
                         </>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-zinc-500">
+                  <div className="flex items-center justify-between text-xs text-text-muted">
                     <span>{challenge.progress}/{challenge.target}</span>
                     <span>{challenge.progressPercent}%</span>
                   </div>
@@ -201,9 +201,9 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
               <Progress
                 value={challenge.progressPercent}
                 className={cn(
-                  "h-2 bg-[#0A0D12] border border-white/5",
+                  "h-2 bg-brand-dark border border-border-subtle",
                   challenge.completed && "[&>div]:bg-emerald-500",
-                  !challenge.completed && "group-hover:border-[#83E9FF]/30"
+                  !challenge.completed && "group-hover:border-brand-accent/30"
                 )}
               />
             </>
@@ -229,7 +229,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
               href={challengeRoute}
               className={cn(
                 "p-4 rounded-xl transition-all block",
-                "bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[#83E9FF]/30 cursor-pointer group"
+                "bg-white/5 border border-border-subtle hover:bg-white/10 hover:border-brand-accent/30 cursor-pointer group"
               )}
             >
               {challengeContent}

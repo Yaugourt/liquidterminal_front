@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
@@ -24,11 +24,11 @@ interface OpenOrdersListProps {
 
 export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps) {
   const { format } = useNumberFormat();
-  
+
   // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+
   // Pagination logic
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -38,7 +38,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
     return (
       <div className="flex justify-center items-center h-[200px]">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
           <span className="text-[#FFFFFF80] text-sm">Loading orders...</span>
         </div>
       </div>
@@ -59,31 +59,30 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
 
   return (
     <div className="space-y-0">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-none hover:bg-transparent">
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Method</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Side</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Size</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Token</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Price</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Value</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Reduce Only</TableHead>
-              <TableHead className="text-white text-left py-2 px-4 font-normal text-xs">Time in Force</TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Method</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Side</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Token</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Reduce Only</span></TableHead>
+              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time in Force</span></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedOrders.length > 0 ? (
               paginatedOrders.map((order, index) => (
-                <TableRow key={`${order.coin}-${order.side}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+                <TableRow key={`${order.coin}-${order.side}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                   <TableCell className="py-3 px-4 text-white">{order.orderType}</TableCell>
                   <TableCell className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      order.side === 'A' 
-                        ? 'bg-green-500/20 text-green-400' 
-                        : 'bg-red-500/20 text-red-400'
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${order.side === 'A'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'bg-rose-500/10 text-rose-400'
+                      }`}>
                       {order.side === 'A' ? 'Buy' : 'Sell'}
                     </span>
                   </TableCell>
@@ -95,8 +94,8 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
                     {order.limitPx ? formatNumberValue(order.limitPx, format) : 'Market'}
                   </TableCell>
                   <TableCell className="py-3 px-4 text-white">
-                    {order.limitPx ? 
-                      `$${formatNumber(parseFloat(order.sz) * parseFloat(order.limitPx), format)}` 
+                    {order.limitPx ?
+                      `$${formatNumber(parseFloat(order.sz) * parseFloat(order.limitPx), format)}`
                       : '-'
                     }
                   </TableCell>
@@ -120,7 +119,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
           </TableBody>
         </Table>
       </div>
-      
+
       {orders.length > 0 && (
         <div className="border-t border-[#FFFFFF1A] px-4 py-2">
           <Pagination

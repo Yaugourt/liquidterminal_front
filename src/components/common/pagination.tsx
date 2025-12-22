@@ -1,4 +1,17 @@
-import React from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
 export interface PaginationProps {
   total: number;
@@ -34,60 +47,74 @@ export function Pagination({
   const handleNextPage = () => onPageChange(Math.min(pageCount - 1, page + 1));
   const handleLastPage = () => onPageChange(pageCount - 1);
 
-  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onRowsPerPageChange(Number(e.target.value));
+  const handleChangeRowsPerPage = (value: string) => {
+    onRowsPerPageChange(Number(value));
   };
 
   return (
-    <div className={`flex items-center justify-between text-[#8B8B8B] text-sm ${className}`}>
+    <div className={`flex items-center justify-between text-text-secondary text-sm ${className}`}>
       <div className="flex items-center gap-2">
-        <span className="text-white">Items per page:</span>
-        <select
-          className="bg-[#151e2c] border border-[#1E3851] rounded px-2 py-1 text-white hover:border-[#f9e370] focus:border-[#f9e370] focus:outline-none transition-colors"
-          value={rowsPerPage}
-          onChange={handleChangeRowsPerPage}
+        <span className="text-white hidden sm:inline">Items per page:</span>
+        <Select
+          value={rowsPerPage.toString()}
+          onValueChange={handleChangeRowsPerPage}
           disabled={disabled}
         >
-          {rowsPerPageOptions.map((opt) => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
+          <SelectTrigger className="h-8 w-[70px] bg-brand-secondary border-border-hover text-white hover:bg-brand-secondary/80 focus:ring-brand-accent">
+            <SelectValue placeholder={rowsPerPage} />
+          </SelectTrigger>
+          <SelectContent className="bg-brand-secondary border-border-hover text-white">
+            {rowsPerPageOptions.map((opt) => (
+              <SelectItem key={opt} value={opt.toString()} className="focus:bg-white/10 focus:text-brand-accent">
+                {opt}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      
-      <div className="text-white">
-        {from}-{to} of {total}
+
+      <div className="text-white font-medium">
+        {from}-{to} <span className="text-text-muted">of</span> {total}
       </div>
-      
+
       {!hidePageNavigation && (
         <div className="flex items-center gap-1">
-          <button 
-            onClick={handleFirstPage} 
-            disabled={page === 0 || disabled} 
-            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleFirstPage}
+            disabled={page === 0 || disabled}
+            className="h-8 w-8 text-brand-accent hover:bg-brand-accent/10 hover:text-brand-accent disabled:opacity-30 disabled:hover:bg-transparent"
           >
-            &#171;
-          </button>
-          <button 
-            onClick={handlePrevPage} 
-            disabled={page === 0 || disabled} 
-            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePrevPage}
+            disabled={page === 0 || disabled}
+            className="h-8 w-8 text-brand-accent hover:bg-brand-accent/10 hover:text-brand-accent disabled:opacity-30 disabled:hover:bg-transparent"
           >
-            &#60;
-          </button>
-          <button 
-            onClick={handleNextPage} 
-            disabled={page >= pageCount - 1 || disabled} 
-            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNextPage}
+            disabled={page >= pageCount - 1 || disabled}
+            className="h-8 w-8 text-brand-accent hover:bg-brand-accent/10 hover:text-brand-accent disabled:opacity-30 disabled:hover:bg-transparent"
           >
-            &#62;
-          </button>
-          <button 
-            onClick={handleLastPage} 
-            disabled={page >= pageCount - 1 || disabled} 
-            className="px-2 py-1 rounded text-[#f9e370] disabled:opacity-30 hover:bg-[#f9e370]/10 transition-colors disabled:text-[#8B8B8B]"
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLastPage}
+            disabled={page >= pageCount - 1 || disabled}
+            className="h-8 w-8 text-brand-accent hover:bg-brand-accent/10 hover:text-brand-accent disabled:opacity-30 disabled:hover:bg-transparent"
           >
-            &#187;
-          </button>
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>

@@ -44,7 +44,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
 
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-4 shadow-xl shadow-black/20">
+          <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-4 shadow-xl shadow-black/20">
             <div className="h-10 w-10 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
               <TrendingUp className="h-5 w-5 text-[#F9E370]" />
             </div>
@@ -52,7 +52,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
               <p className="font-bold text-white">
                 +{totalXp} XP
               </p>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-text-secondary">
                 Daily login bonus
                 {lastLoginResult.streakBonus > 0 && (
                   <span className="text-orange-400">
@@ -87,7 +87,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
         () => (
           <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-[#F9E370]/20 border border-[#F9E370]/50 rounded-xl p-4 shadow-xl shadow-[#F9E370]/10 animate-pulse">
             <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#F9E370] to-purple-500 flex items-center justify-center">
-              <Star className="h-6 w-6 text-[#051728] fill-[#051728]" />
+              <Star className="h-6 w-6 text-brand-tertiary fill-brand-tertiary" />
             </div>
             <div>
               <p className="font-bold text-[#F9E370] text-lg">
@@ -130,13 +130,13 @@ export function useXpRefetch() {
 export function showXpGainToast(amount: number, action: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-3 shadow-xl shadow-black/20">
+      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-3 shadow-xl shadow-black/20">
         <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
           <Star className="h-4 w-4 text-[#F9E370]" />
         </div>
         <div>
           <p className="font-bold text-[#F9E370]">+{amount} XP</p>
-          <p className="text-xs text-zinc-400">{action}</p>
+          <p className="text-xs text-text-secondary">{action}</p>
         </div>
       </div>
     ),
@@ -158,13 +158,13 @@ export function showXpGainToast(amount: number, action: string) {
 export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGranted?: number) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
         <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
           <Star className="h-4 w-4 text-emerald-400" />
         </div>
         <div>
           <p className="font-bold text-emerald-400">Daily Task Completed!</p>
-          <p className="text-xs text-zinc-400">{taskName} +{xpGranted} XP</p>
+          <p className="text-xs text-text-secondary">{taskName} +{xpGranted} XP</p>
           {bonusGranted && bonusGranted > 0 && (
             <p className="text-xs text-[#F9E370]">All tasks bonus: +{bonusGranted} XP!</p>
           )}
@@ -194,7 +194,7 @@ export function showWeeklyChallengeToast(xpReward: number, challengeName: string
         </div>
         <div>
           <p className="font-bold text-[#F9E370]">Weekly Challenge Complete!</p>
-          <p className="text-xs text-zinc-400">{challengeName}</p>
+          <p className="text-xs text-text-secondary">{challengeName}</p>
           <p className="text-xs text-[#F9E370]">+{xpReward} XP</p>
         </div>
       </div>
@@ -216,13 +216,13 @@ export function showWeeklyChallengeToast(xpReward: number, challengeName: string
 export function showDailyLimitToast(actionName: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-[#151A25] backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
         <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
           <Flame className="h-4 w-4 text-orange-400" />
         </div>
         <div>
           <p className="font-bold text-orange-400">Daily Limit Reached</p>
-          <p className="text-xs text-zinc-400">{actionName} - No XP until tomorrow</p>
+          <p className="text-xs text-text-secondary">{actionName} - No XP until tomorrow</p>
         </div>
       </div>
     ),

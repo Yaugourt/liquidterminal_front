@@ -33,39 +33,39 @@ export function TeamTab({
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="leadDeveloperName" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Lead Developer Name *</Label>
+          <Label htmlFor="leadDeveloperName" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Lead Developer Name *</Label>
           <Input
             id="leadDeveloperName"
             value={formData.leadDeveloperName}
             onChange={(e) => updateField('leadDeveloperName', e.target.value)}
             placeholder="John Doe"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
         
         <div>
-          <Label htmlFor="leadDeveloperContact" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Lead Developer Email *</Label>
+          <Label htmlFor="leadDeveloperContact" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Lead Developer Email *</Label>
           <Input
             id="leadDeveloperContact"
             type="email"
             value={formData.leadDeveloperContact}
             onChange={(e) => updateField('leadDeveloperContact', e.target.value)}
             placeholder="john@example.com"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="teamSize" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Team Size *</Label>
+          <Label htmlFor="teamSize" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Team Size *</Label>
           <Select value={formData.teamSize} onValueChange={(val) => updateField('teamSize', val)}>
-            <SelectTrigger className="bg-[#0A0D12] border-white/5 text-white rounded-lg mt-1">
+            <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
               <SelectValue placeholder="Select team size" />
             </SelectTrigger>
-            <SelectContent className="bg-[#151A25] border-white/10 rounded-xl">
+            <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
               {TEAM_SIZES.map(size => (
-                <SelectItem key={size.value} value={size.value} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                <SelectItem key={size.value} value={size.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                   {size.label}
                 </SelectItem>
               ))}
@@ -74,14 +74,14 @@ export function TeamTab({
         </div>
         
         <div>
-          <Label htmlFor="experienceLevel" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Experience Level *</Label>
+          <Label htmlFor="experienceLevel" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Experience Level *</Label>
           <Select value={formData.experienceLevel} onValueChange={(val) => updateField('experienceLevel', val)}>
-            <SelectTrigger className="bg-[#0A0D12] border-white/5 text-white rounded-lg mt-1">
+            <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
               <SelectValue placeholder="Select experience" />
             </SelectTrigger>
-            <SelectContent className="bg-[#151A25] border-white/10 rounded-xl">
+            <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
               {EXPERIENCE_LEVELS.map(level => (
-                <SelectItem key={level.value} value={level.value} className="text-zinc-300 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                <SelectItem key={level.value} value={level.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
                   {level.label}
                 </SelectItem>
               ))}
@@ -91,7 +91,7 @@ export function TeamTab({
       </div>
       
       <div>
-        <Label htmlFor="technologies" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">Technologies * (at least 1)</Label>
+        <Label htmlFor="technologies" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Technologies * (at least 1)</Label>
         <div className="flex gap-2 mt-1">
           <Input
             id="technologies"
@@ -104,12 +104,12 @@ export function TeamTab({
               }
             }}
             placeholder="Type a technology and press Enter"
-            className="bg-[#0A0D12] border-white/5 text-white rounded-lg placeholder:text-zinc-500 focus:border-[#83E9FF]/50"
+            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           />
           <Button
             type="button"
             onClick={addTechnology}
-            className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -119,7 +119,7 @@ export function TeamTab({
             <Badge
               key={tech}
               variant="outline"
-              className="border-white/10 text-zinc-300 flex items-center gap-1 bg-[#0A0D12] rounded-lg"
+              className="border-border-hover text-white/80 flex items-center gap-1 bg-brand-dark rounded-lg"
             >
               {tech}
               <button

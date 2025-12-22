@@ -80,12 +80,12 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#151A25] border border-white/10 text-white rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="bg-brand-secondary border border-border-hover text-white rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-white">
             {walletListName ? `Add wallet to "${walletListName}"` : "Add a new wallet"}
           </DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription className="text-text-secondary">
             {hasReachedWalletLimit 
               ? `You have reached the limit of 25 wallets. Remove an existing wallet to add a new one.`
               : walletListName 
@@ -96,7 +96,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label htmlFor="address" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+            <label htmlFor="address" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
               Wallet address (required)
             </label>
             <Input
@@ -104,11 +104,11 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg font-mono focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg font-mono focus:border-brand-accent/50"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="name" className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
+            <label htmlFor="name" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
               Wallet name (optional)
             </label>
             <Input
@@ -116,7 +116,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-[#0A0D12] border-white/5 text-white placeholder:text-zinc-500 rounded-lg focus:border-[#83E9FF]/50"
+              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg focus:border-brand-accent/50"
             />
           </div>
 
@@ -125,7 +125,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-white/5 text-white hover:bg-white/5 rounded-lg"
+            className="border-border-subtle text-white hover:bg-white/5 rounded-lg"
           >
             Cancel
           </Button>

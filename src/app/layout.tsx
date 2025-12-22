@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { LayoutWrapper } from "@/components/common/LayoutWrapper";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
@@ -11,16 +10,19 @@ import { SITE_CONFIG } from "@/lib/site-config";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
   description: "Comprehensive data processing platform for the HyperLiquid ecosystem. Free tools for HyperCore & HyperEVM: Explorer, Market tracking, Ecosystem overview, Wiki. Premium products: API, RPC, Tracker, DCA.",
   keywords: [
     "HyperLiquid",
-    "HyperCore", 
+    "HyperCore",
     "HyperEVM",
     "crypto explorer",
     "blockchain data",
@@ -105,11 +107,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#112941]`}>
         <Providers>
-          <LayoutWrapper>
-            {children}
-            <SpeedInsights />
-            <Analytics />
-          </LayoutWrapper>
+          {children}
+          <SpeedInsights />
+          <Analytics />
         </Providers>
       </body>
     </html>

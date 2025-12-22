@@ -1,23 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useWallets } from "@/store/use-wallets";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { AddWalletDialog } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
-import { ImportWalletsCSVDialog } from "./ImportWalletsCSVDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";
 import { DeleteWalletListDialog } from "./walletlists/DeleteWalletListDialog";
 import { WalletListContent } from "./walletlists/WalletListContent";
 import { WalletListSelector } from "./walletlists/WalletListSelector";
-import { WalletSelector } from "./walletlists/WalletSelector";
+import { UnifiedWalletSelector, WalletItem } from "./walletlists/UnifiedWalletSelector";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletReorderMessages, walletActiveMessages, walletEmptyMessages, handleWalletApiError } from "@/lib/toast-messages";
 import { DragEndEvent } from '@dnd-kit/core';
 import { exportWalletsToCSV } from "@/lib/csv-utils";
 import { toast } from "sonner";
 import { showXpGainToast } from "@/components/xp";
+
+// Lazy load heavy CSV import dialog - only loaded when user clicks Import
+const ImportWalletsCSVDialog = dynamic(
+  () => import("./ImportWalletsCSVDialog").then(mod => ({ default: mod.ImportWalletsCSVDialog })),
+  { ssr: false }
+);
 
 export function WalletTabs() {
   const [isAddWalletOpen, setIsAddWalletOpen] = useState(false);
@@ -30,19 +36,19 @@ export function WalletTabs() {
 
   const [activeTab, setActiveTab] = useState<"all-wallets" | number>("all-wallets"); // "all-wallets" ou ID de liste
   const [listContentKey, setListContentKey] = useState(0); // Pour forcer le rechargement du contenu
-  
-  const { 
+
+  const {
     wallets,
-    activeWalletId, 
+    activeWalletId,
     error: storeError,
-    initialize, 
+    initialize,
     setActiveWallet,
     bulkAddWallets,
     bulkDeleteWallets,
   } = useWallets();
-  
+
   const { userLists, loadUserLists, createList, setActiveList, refreshUserLists, loadListItems, activeListItems } = useWalletLists();
-  
+
 
   const { privyUser } = useAuthContext();
   const { getAccessToken } = usePrivy();
@@ -126,10 +132,10 @@ export function WalletTabs() {
       const currentListItems = activeListItems || [];
       const oldIndex = currentListItems.findIndex((item: { id: number }) => item.id === active.id);
       const newIndex = currentListItems.findIndex((item: { id: number }) => item.id === over?.id);
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         try {
-   
+
           walletReorderMessages.success();
         } catch {
           walletReorderMessages.error();
@@ -159,10 +165,10 @@ export function WalletTabs() {
       // C'est un ID de liste
       const listId = parseInt(value, 10);
       setActiveTab(listId);
-      
+
       // Définir la liste active dans le store
       setActiveList(listId);
-      
+
       // Force le rechargement du contenu de la liste pour déclencher la sélection automatique
       setListContentKey(prev => prev + 1);
       // Ne pas faire de setActiveWallet ici pour éviter les boucles; géré dans WalletListContent
@@ -178,7 +184,7 @@ export function WalletTabs() {
         await refreshUserLists();
         // Garder l'onglet actuel actif, ne pas changer vers la nouvelle liste
         setIsCreateListOpen(false);
-        
+
         // Afficher le toast XP si XP accordé
         if (newList.xpGranted && newList.xpGranted > 0) {
           showXpGainToast(newList.xpGranted, "Wallet list created");
@@ -235,7 +241,7 @@ export function WalletTabs() {
 
       const timestamp = new Date().toISOString().split('T')[0];
       exportWalletsToCSV(walletsToExport, `all_wallets_${timestamp}.csv`);
-      
+
       toast.success(`Exported ${wallets.length} wallet${wallets.length !== 1 ? 's' : ''}`);
     } catch {
       toast.error("Failed to export wallets");
@@ -269,15 +275,20 @@ export function WalletTabs() {
         onCreateList={() => setIsCreateListOpen(true)}
         onDeleteList={handleDeleteListClick}
       />
-      
+
       {/* Affichage conditionnel selon l'onglet actif */}
       {activeTab === "all-wallets" && (
         <div className="mt-4">
           {/* Separator between list tabs and wallet tabs */}
           <div className="w-full h-px bg-white/5 mb-4" />
-          <WalletSelector
-            wallets={wallets}
-            activeWalletId={activeWalletId}
+          <UnifiedWalletSelector
+            items={wallets.map((w): WalletItem => ({
+              id: w.id,
+              name: w.name,
+              address: w.address,
+              addedAt: w.addedAt,
+            }))}
+            selectedId={activeWalletId}
             onWalletChange={(value) => {
               const walletId = parseInt(value, 10);
               setActiveWallet(walletId);
@@ -294,13 +305,13 @@ export function WalletTabs() {
           />
         </div>
       )}
-      
+
       {activeTab !== "all-wallets" && (
         <div className="mt-4">
           {/* Separator between list tabs and wallet tabs */}
           <div className="w-full h-px bg-white/5 mb-4" />
           {getActiveListInfo() && (
-            <WalletListContent 
+            <WalletListContent
               key={`list-${getActiveListInfo()!.id}-${listContentKey}`}
               listId={getActiveListInfo()!.id}
               listName={getActiveListInfo()!.name}
@@ -314,8 +325,8 @@ export function WalletTabs() {
       )}
 
       {/* Dialogs */}
-      <AddWalletDialog 
-        isOpen={isAddWalletOpen} 
+      <AddWalletDialog
+        isOpen={isAddWalletOpen}
         onOpenChange={setIsAddWalletOpen}
         onSuccess={handleWalletActionSuccess}
         walletListId={activeTab !== "all-wallets" ? Number(activeTab) : undefined}

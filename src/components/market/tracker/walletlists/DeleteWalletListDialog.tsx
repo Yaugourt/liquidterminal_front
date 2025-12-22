@@ -14,14 +14,14 @@ interface DeleteWalletListDialogProps {
   onSuccess?: () => void;
 }
 
-export function DeleteWalletListDialog({ 
-  isOpen, 
-  onOpenChange, 
+export function DeleteWalletListDialog({
+  isOpen,
+  onOpenChange,
   listToDelete,
-  onSuccess 
+  onSuccess
 }: DeleteWalletListDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { deleteList } = useWalletLists();
 
   const handleConfirmDelete = async () => {
@@ -30,10 +30,10 @@ export function DeleteWalletListDialog({
         setIsLoading(true);
         await deleteList(listToDelete.id);
         onOpenChange(false);
-        
+
         // Show success toast
         toast.success(`List "${listToDelete.name}" deleted successfully!`);
-        
+
         // Notify parent component of success
         if (onSuccess) {
           onSuccess();
@@ -48,7 +48,7 @@ export function DeleteWalletListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#051728] border-2 border-[#83E9FF4D] text-white">
+      <DialogContent className="glass-dialog text-white">
         <DialogHeader>
           <DialogTitle>Delete Wallet List</DialogTitle>
           <DialogDescription className="text-white">
@@ -61,14 +61,14 @@ export function DeleteWalletListDialog({
         </div>
 
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-[#83E9FF4D] text-white"
+            className="border-border-hover text-white hover:bg-white/5"
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleConfirmDelete}
             disabled={isLoading}
             className="bg-[#FF5252] text-white hover:bg-[#FF5252]/90"

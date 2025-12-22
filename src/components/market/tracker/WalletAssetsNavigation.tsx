@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface WalletAssetsNavigationProps {
   activeTab: string;
@@ -17,20 +18,13 @@ export function WalletAssetsNavigation({ activeTab, onChange }: WalletAssetsNavi
 
   return (
     <div className="flex justify-start items-center mb-4">
-      <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-              activeTab === tab.id
-                ? "bg-[#83E9FF] text-[#051728] shadow-sm font-bold"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
-            }`}
-            onClick={() => onChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex">
+        <PillTabs
+          tabs={tabs.map(t => ({ value: t.id, label: t.label }))}
+          activeTab={activeTab}
+          onTabChange={onChange}
+          className="bg-brand-dark border border-border-subtle"
+        />
       </div>
     </div>
   );

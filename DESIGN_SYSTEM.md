@@ -1,142 +1,76 @@
-# Liquid Terminal - Design System V2
+# Liquid Terminal - Design System V3
 
-> **Ce document est destiné à guider l'IA lors de la modification des pages du site pour uniformiser le design.**
+> **Ce document guide l'IA lors de la modification des pages pour uniformiser le design.**
 
-## 🎨 Palette de Couleurs
+## 🎨 Tokens de Couleurs
 
-### 📦 1. Backgrounds & Surfaces
+### CSS Variables (définies dans tailwind.config.ts)
 
-#### Backgrounds Principaux
-| Couleur | Hex | RGB | Usage | Exemple |
-|---------|-----|-----|-------|---------|
-| **Background Principal** | `#0B0E14` | `rgb(11, 14, 20)` | Body, main containers, base layer | `bg-[#0B0E14]` |
-| **Background Gradient Start** | `#1a2c38` | `rgb(26, 44, 56)` | Gradient radial (from) | `from-[#1a2c38]` |
-| **Background Gradient End** | `#050505` | `rgb(5, 5, 5)` | Gradient radial (to) | `to-[#050505]` |
+| Token | Valeur | Usage |
+|-------|--------|-------|
+| `bg-brand-primary` | `#0B0E14` | Background principal |
+| `bg-brand-secondary` | `#151A25` | Cards, sections |
+| `bg-brand-tertiary` | `#0A0D12` | Tabs container |
+| `text-text-secondary` | `#a1a1aa` | Labels, headers (remplace `text-zinc-400`) |
+| `text-text-muted` | `#71717a` | Texte discret (remplace `text-zinc-500`) |
+| `border-border-subtle` | `rgba(255,255,255,0.05)` | Bordures légères |
+| `border-border-hover` | `rgba(255,255,255,0.1)` | Bordures hover |
+| `text-brand-accent` | `#83E9FF` | Accent principal |
+| `text-brand-gold` | `#f9e370` | Accent secondaire |
 
-#### Surfaces (Cards & Containers)
-| Couleur | Hex | RGB | Usage | Opacité | Exemple |
-|---------|-----|-----|-------|---------|---------|
-| **Card Background** | `#151A25` | `rgb(21, 26, 37)` | Cards, sections, modals | `/60` (transparent) | `bg-[#151A25]/60` |
-| **Sidebar/Header** | `#051728` | `rgb(5, 23, 40)` | Sidebar, header elements | `100%` | `bg-[#051728]` |
-| **Tabs Container** | `#0A0D12` | `rgb(10, 13, 18)` | Tabs pills background | `100%` | `bg-[#0A0D12]` |
-| **Input/Field** | `#0A0D12` | `rgb(10, 13, 18)` | Input fields, nested cards | `100%` | `bg-[#0A0D12]` |
+### Couleurs Sémantiques
 
----
-
-### 🎯 2. Couleurs Accent (Primaires)
-
-| Couleur | Hex | RGB | Usage | Variantes |
-|---------|-----|-----|-------|-----------|
-| **Cyan Principal** | `#83E9FF` | `rgb(131, 233, 255)` | Accent principal, active states, hover, icons, links | `/10`, `/20`, `/30` |
-| **Gold/Jaune** | `#F9E370` | `rgb(249, 227, 112)` | Accent secondaire, admin, warnings, badges premium | `/10`, `/20`, `/30` |
-
-**Usages spécifiques Cyan (`#83E9FF`):**
-- Tabs actives: `bg-[#83E9FF] text-[#051728]`
-- Icônes actives: `text-[#83E9FF]`
-- Hover states: `hover:text-[#83E9FF]`
-- Background accent: `bg-[#83E9FF]/10`
-- Borders accent: `border-[#83E9FF]/30`
-
-**Usages spécifiques Gold (`#F9E370`):**
-- Badges admin/premium: `bg-[#F9E370]/10 text-[#F9E370]`
-- Icônes warnings: `text-[#F9E370]`
-- Tabs secondaires: `bg-[#F9E370] text-[#051728]`
+| Couleur | Usage |
+|---------|-------|
+| `emerald-400/500` | Success, Buy, positif |
+| `rose-400/500` | Error, Sell, négatif |
+| `text-brand-accent` | Liens, actif, hover |
+| `text-brand-gold` | Admin, warnings |
 
 ---
 
-### ✅ 3. Couleurs Sémantiques (Actions & États)
+## 🃏 Classes Utilitaires (globals.css)
 
-#### Success & Positive
-| Couleur | Hex/RGB | Usage | Variantes |
-|---------|---------|-------|-----------|
-| **Emerald 400** | `rgb(52, 211, 153)` | Buy actions, success states | `/10`, `/20` |
-| **Emerald 500** | `rgb(16, 185, 129)` | Buy badges, positive values | `/10`, `/20` |
-| **Vert Success** | `#00ff88` | Success messages | `/10`, `/20` |
+### Glass Components
 
-**Exemples:**
-- Buy badge: `bg-emerald-500/10 text-emerald-400`
-- Positive change: `bg-emerald-500/20 text-emerald-400`
-- Success state: `bg-[#00ff88]/10 text-[#00ff88]`
-
-#### Error & Negative
-| Couleur | Hex/RGB | Usage | Variantes |
-|---------|---------|-------|-----------|
-| **Rose 400** | `rgb(251, 113, 133)` | Sell actions, errors | `/10`, `/20` |
-| **Rose 500** | `rgb(244, 63, 94)` | Sell badges, negative values | `/10`, `/20` |
-
-**Exemples:**
-- Sell badge: `bg-rose-500/10 text-rose-400`
-- Negative change: `bg-rose-500/20 text-rose-400`
-- Error state: `bg-rose-500/5 border-rose-500/20 text-rose-400`
-
----
-
-### 🎨 4. Couleurs Neutres (Text & Borders)
-
-#### Text Colors (Zinc Scale)
-| Couleur | Hex | Usage | Exemple |
-|---------|-----|-------|---------|
-| **White** | `#FFFFFF` | Texte principal, valeurs importantes | `text-white` |
-| **Zinc 100** | `rgb(244, 244, 245)` | Body text principal | `text-zinc-100` |
-| **Zinc 300** | `rgb(212, 212, 216)` | Texte secondaire | `text-zinc-300` |
-| **Zinc 400** | `rgb(161, 161, 170)` | Labels, headers, texte discret | `text-zinc-400` |
-| **Zinc 500** | `rgb(113, 113, 122)` | Texte très discret, placeholders | `text-zinc-500` |
-| **Zinc 600** | `rgb(82, 82, 91)` | Placeholder, disabled, empty states | `text-zinc-600` |
-
-#### Borders & Dividers
-| Couleur | Opacité | Usage | Exemple |
-|---------|---------|-------|---------|
-| **White** | `/5` | Bordures subtiles (default) | `border-white/5` |
-| **White** | `/10` | Bordures hover, accentuées | `border-white/10` |
-| **Cyan** | `/30` | Bordures accent actives | `border-[#83E9FF]/30` |
-| **Gold** | `/20` | Bordures premium/admin | `border-[#F9E370]/20` |
-| **Emerald** | `/20` | Bordures success | `border-emerald-500/20` |
-| **Rose** | `/20` | Bordures erreur | `border-rose-500/20` |
-
----
-
-### 📊 5. Système d'Opacité
-
-| Opacité | Valeur | Usage Principal | Exemples |
-|---------|--------|-----------------|----------|
-| `/5` | `5%` | Bordures subtiles, backgrounds très légers | `border-white/5`, `bg-white/5` |
-| `/10` | `10%` | Backgrounds hover, badges légers | `bg-white/10`, `bg-[#83E9FF]/10`, `hover:bg-white/10` |
-| `/20` | `20%` | Backgrounds accentués, badges | `bg-emerald-500/20`, `bg-rose-500/20`, `border-[#F9E370]/20` |
-| `/30` | `30%` | Borders accent actives | `border-[#83E9FF]/30` |
-| `/60` | `60%` | Cards transparentes (glassmorphism) | `bg-[#151A25]/60` |
-| `/80` | `80%` | Header backdrop, overlays | `bg-[#0B0E14]/80` |
-| `/90` | `90%` | Hover states buttons | `hover:bg-[#83E9FF]/90` |
-| `100%` | `100%` | Surfaces opaques | `bg-[#051728]`, `bg-[#0A0D12]` |
-
----
-
-### 🎭 6. Gradient System
-
-#### Background Gradient (Radial)
 ```tsx
-bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-from-[#1a2c38] 
-via-[#0B0E14] 
-to-[#050505]
+// Panel standard (cards, containers)
+<div className="glass-panel">
+
+// Card avec plus d'opacité
+<div className="glass-card">
+
+// Dialog/Modal background
+<div className="glass-dialog">
+
+// Stat card (Header stats)
+<div className="stat-card">
+
+// Input field
+<input className="glass-input" />
+
+// Button glass
+<button className="glass-button">
 ```
 
-**Structure:**
-- **Type**: Radial (ellipse at top)
-- **Start**: `#1a2c38` (bleu-gris foncé)
-- **Middle**: `#0B0E14` (background principal)
-- **End**: `#050505` (noir profond)
+### Définitions
 
----
+```css
+.glass-panel {
+  @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
+}
 
-### 🎨 7. Combinaisons de Couleurs (Patterns)
+.glass-card {
+  @apply bg-brand-secondary/90 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
+}
 
-#### Card Standard
-```tsx
-bg-[#151A25]/60 
-backdrop-blur-md 
-border border-white/5 
-rounded-2xl 
-shadow-xl shadow-black/20
+.glass-dialog {
+  @apply bg-brand-secondary/95 backdrop-blur-xl border border-border-hover shadow-2xl shadow-black/40;
+}
+
+.stat-card {
+  @apply bg-brand-secondary/40 backdrop-blur-sm border border-border-subtle rounded-lg;
+}
 ```
 
 #### Card Hover
@@ -206,33 +140,21 @@ border border-[#F9E370]/20
 
 ---
 
-## 📐 Structure de Page Standard
+## 📐 Structure de Page
 
 ```tsx
-<div className="min-h-screen bg-[#0B0E14] text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-[#0B0E14] to-[#050505]">
-  {/* Mobile menu button - fixed position */}
-  <div className="fixed top-4 left-4 z-50 lg:hidden">
-    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-      <Menu className="h-6 w-6" />
-    </Button>
-  </div>
-  
+<div className="min-h-screen bg-brand-primary text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-primary to-[#050505]">
   <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
   
-  <div className="">
-    {/* Header avec glass effect */}
-    <div className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0E14]/80 border-b border-white/5">
-      <Header customTitle="Page Title" showFees={true} />
+  <div>
+    {/* Header sticky */}
+    <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-primary/80 border-b border-border-subtle">
+      <Header customTitle="Page Title" />
     </div>
     
-    {/* SearchBar mobile */}
-    <div className="p-2 lg:hidden">
-      <SearchBar placeholder="Search..." />
-    </div>
-
-    {/* Contenu principal */}
+    {/* Contenu */}
     <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-      {/* Sections ici */}
+      {/* Sections */}
     </main>
   </div>
 </div>
@@ -242,240 +164,118 @@ border border-[#F9E370]/20
 
 ## 🃏 Cards & Containers
 
-### Card Standard (glassmorphism)
+### Card Standard
 ```tsx
-<div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+<div className="glass-panel p-4">
+  {/* Contenu */}
+</div>
+
+// Avec hover
+<div className="glass-panel p-4 hover:border-border-hover transition-all group">
   {/* Contenu */}
 </div>
 ```
 
-### Card avec padding
+### Stats Card
 ```tsx
-<div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
-  {/* Contenu */}
-</div>
-```
-
-### Stats Card Pattern
-```tsx
-<div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+<div className="glass-panel p-4 hover:border-border-hover transition-all group">
   <div className="flex items-center gap-3 mb-2">
-    <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center transition-transform group-hover:scale-110">
-      <IconComponent size={16} className="text-[#83e9ff]" />
+    <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
+      <Icon size={16} className="text-brand-accent" />
     </div>
-    <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">{title}</h3>
+    <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">{title}</h3>
   </div>
-  <span className="text-xl text-white font-bold tracking-tight">{value}</span>
+  <span className="text-xl text-white font-bold">{value}</span>
 </div>
 ```
 
 ---
 
-## 🔘 Tabs System (Pills Style)
+## 🔘 Tabs System
 
-### Container des Tabs
 ```tsx
-<div className="flex items-center gap-2 p-4 border-b border-white/5">
-  <div className="flex bg-[#0A0D12] rounded-lg p-1 border border-white/5">
-    {tabs.map(tab => (
-      <button
-        key={tab.key}
-        onClick={() => setActiveTab(tab.key)}
-        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-          activeTab === tab.key
-            ? 'bg-[#83E9FF] text-[#051728] shadow-sm font-bold'
-            : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
-        }`}
-      >
-        {tab.label}
-      </button>
-    ))}
-  </div>
+<div className="flex bg-brand-tertiary rounded-lg p-1 border border-border-subtle">
+  {tabs.map(tab => (
+    <button
+      key={tab.key}
+      onClick={() => setActiveTab(tab.key)}
+      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+        activeTab === tab.key
+          ? 'bg-brand-accent text-[#051728] font-bold shadow-sm'
+          : 'text-text-secondary hover:text-white hover:bg-white/5'
+      }`}
+    >
+      {tab.label}
+    </button>
+  ))}
 </div>
 ```
-
-### Tab Active State
-- Background: `bg-[#83E9FF]`
-- Text: `text-[#051728]`
-- Font: `font-bold`
-- Shadow: `shadow-sm`
-
-### Tab Inactive State
-- Text: `text-zinc-400`
-- Hover text: `hover:text-zinc-200`
-- Hover bg: `hover:bg-white/5`
 
 ---
 
 ## 📊 Tables
 
-### Table Container
+### Header
 ```tsx
-<div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-  <Table className="table-fixed w-full">
-    {/* ... */}
-  </Table>
-</div>
+<TableHead className="py-3 px-3">
+  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
+    {headerText}
+  </span>
+</TableHead>
 ```
 
-### Table Header
+### Row
 ```tsx
-<TableHeader>
-  <TableRow className="border-b border-white/5 hover:bg-transparent">
-    <TableHead className="py-3 px-3">
-      <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">
-        {headerText}
-      </span>
-    </TableHead>
-  </TableRow>
-</TableHeader>
-```
-
-### Table Row
-```tsx
-<TableRow className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-  <TableCell className="py-3 px-3 text-sm text-white font-medium">
+<TableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
+  <TableCell className="py-3 px-3 text-sm text-white">
     {content}
   </TableCell>
 </TableRow>
 ```
 
-### Badges dans Tables
+### Badges
 ```tsx
-// Buy badge
-<span className="px-2 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400">
-  Buy
-</span>
+// Buy
+<span className="px-2 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400">Buy</span>
 
-// Sell badge
-<span className="px-2 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400">
-  Sell
-</span>
+// Sell
+<span className="px-2 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400">Sell</span>
 
-// Positive change
-<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-[#83e9ff]/10 text-[#83e9ff]">
-  +5%
-</span>
+// Positive
+<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-brand-accent/10 text-brand-accent">+5%</span>
 
-// Negative change
-<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-rose-500/20 text-rose-400">
-  -3%
-</span>
+// Negative
+<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-rose-500/20 text-rose-400">-3%</span>
 ```
 
 ---
 
-## ⏳ Loading States
+## ⏳ Loading & Error States
 
-### Spinner
+### Loading
 ```tsx
-<div className="flex justify-center items-center h-[200px]">
+<div className="flex justify-center items-center h-[200px] glass-panel">
   <div className="flex flex-col items-center">
-    <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-    <span className="text-zinc-500 text-sm">Loading...</span>
+    <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
+    <span className="text-text-muted text-sm">Loading...</span>
   </div>
 </div>
 ```
 
-### Skeleton Card
-```tsx
-<div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-black/20">
-  <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
-</div>
-```
-
-### Skeleton Line
-```tsx
-<div className="h-7 bg-white/5 animate-pulse rounded w-24" />
-```
-
----
-
-## ❌ Error States
-
-### Error Container
+### Error
 ```tsx
 <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm backdrop-blur-md">
   Error: {error.message}
 </div>
 ```
 
-### Empty State
+### Empty
 ```tsx
-<div className="flex flex-col items-center justify-center text-center py-8">
-  <Database className="w-10 h-10 mb-3 text-zinc-600" />
-  <p className="text-zinc-400 text-sm mb-1">No data found</p>
-  <p className="text-zinc-600 text-xs">Try again later</p>
+<div className="flex flex-col items-center justify-center py-8 glass-panel">
+  <Database className="w-10 h-10 mb-3 text-text-muted" />
+  <p className="text-text-secondary text-sm mb-1">No data found</p>
+  <p className="text-text-muted text-xs">Try again later</p>
 </div>
-```
-
----
-
-## 📏 Grids & Layouts
-
-### Stats Grid (responsive)
-```tsx
-<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-  {/* Stats cards */}
-</div>
-```
-
-### Two Columns (responsive)
-```tsx
-<div className="flex flex-col md:flex-row gap-8 w-full">
-  <div className="w-full md:w-[35%]">
-    {/* Left content */}
-  </div>
-  <div className="flex-1">
-    {/* Right content */}
-  </div>
-</div>
-```
-
-### Custom breakpoint layout
-```tsx
-<div className="flex flex-col custom:flex-row custom:gap-8">
-  <div className="w-full custom:w-[35%] mb-6 custom:mb-0">
-    {/* Left */}
-  </div>
-  <div className="w-full custom:w-[65%]">
-    {/* Right */}
-  </div>
-</div>
-```
-
-> Note: `custom` breakpoint = `1227px` (défini dans tailwind.config.ts)
-
----
-
-## 🔗 Links & Buttons
-
-### Link Accent
-```tsx
-<Link 
-  href={url}
-  className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
->
-  {text}
-</Link>
-```
-
-### "View All" Link
-```tsx
-<Link
-  href={url}
-  className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-[#83E9FF] transition-colors"
->
-  View All
-  <ExternalLink size={10} />
-</Link>
-```
-
-### Icon Button
-```tsx
-<button className="group p-1 rounded transition-colors">
-  <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
-</button>
 ```
 
 ---
@@ -483,27 +283,36 @@ border border-[#F9E370]/20
 ## 📝 Typography
 
 ### Fonts
-- **Titres accent**: `font-higuen` (Higuen Elegant Serif)
-- **Corps de texte**: `font-inter`
+- **Titres accent**: `font-outfit`
+- **Corps**: `font-inter`
+- **Code/Addresses**: `font-mono`
 
-### Tailles de texte
-| Classe | Usage |
-|--------|-------|
-| `text-xl font-bold` | Valeurs principales, stats |
-| `text-sm font-medium` | Contenu standard |
-| `text-xs` | Labels, badges |
-| `text-[11px]` | Small labels |
-| `text-[10px]` | Micro labels, headers tableau |
-
-### Couleurs de texte
-| Classe | Usage |
-|--------|-------|
+### Couleurs de Texte
+| Token | Usage |
+|-------|-------|
 | `text-white` | Texte principal |
-| `text-zinc-100` | Body text |
-| `text-zinc-300` | Texte secondaire |
-| `text-zinc-400` | Labels, headers |
-| `text-zinc-500` | Texte discret |
-| `text-zinc-600` | Placeholder, disabled |
+| `text-white/80` | Texte secondaire important |
+| `text-text-secondary` | Labels, headers |
+| `text-text-muted` | Texte discret, placeholders |
+| `text-brand-accent` | Liens, accents |
+
+---
+
+## 🔗 Buttons & Links
+
+### Link Accent
+```tsx
+<Link href={url} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">
+  {text}
+</Link>
+```
+
+### Icon Button
+```tsx
+<button className="group p-1 rounded transition-colors">
+  <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all" />
+</button>
+```
 
 ---
 
@@ -513,114 +322,29 @@ border border-[#F9E370]/20
 |------------|--------|-------|
 | `sm` | 640px | Mobile landscape |
 | `md` | 768px | Tablet |
-| `lg` | 1024px | Desktop (sidebar visible) |
+| `lg` | 1024px | Desktop (sidebar) |
 | `custom` | 1227px | Layout custom |
 | `xl` | 1280px | Large desktop |
 
-### Pattern Mobile Menu
-```tsx
-// Bouton menu mobile
-<div className="fixed top-4 left-4 z-50 lg:hidden">
-  <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-    <Menu className="h-6 w-6" />
-  </Button>
-</div>
-
-// SearchBar mobile
-<div className="p-2 lg:hidden">
-  <SearchBar placeholder="Search..." />
-</div>
-```
-
 ---
 
-## 🌊 Animations & Transitions
+## ✅ Checklist Migration
 
-### Transitions standard
-```css
-transition-all
-transition-colors
-transition-transform
-```
-
-### Durées
-```css
-duration-200
-duration-300
-```
-
-### Hover effects
-```tsx
-// Scale on hover
-<div className="transition-transform group-hover:scale-110">
-
-// Border color change
-<div className="border border-white/5 hover:border-white/10 transition-all">
-
-// Text color change  
-<span className="text-zinc-400 hover:text-[#83E9FF] transition-colors">
-```
-
-### Loading animation
-```tsx
-<Loader2 className="animate-spin" />
-<div className="animate-pulse" />
-```
-
----
-
-## 🔧 Composants à Réutiliser
-
-### Imports standards pour une page
-```tsx
-"use client";
-
-import { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/Sidebar";
-import { SearchBar } from "@/components/SearchBar";
-import { Button } from "@/components/ui/button";
-import { Menu, Loader2 } from "lucide-react";
-import { useWindowSize } from "@/hooks/use-window-size";
-```
-
-### Pattern useWindowSize pour fermer sidebar
-```tsx
-const { width } = useWindowSize();
-const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-useEffect(() => {
-  if (width && width >= 1024) {
-    setIsSidebarOpen(false);
-  }
-}, [width]);
-```
-
----
-
-## ✅ Checklist Migration Design
-
-Pour chaque page à migrer:
-
-- [ ] Ajouter le background gradient au container principal
-- [ ] Wrapper avec `bg-[#0B0E14]/80 backdrop-blur-xl` pour le header sticky
-- [ ] Ajouter `border-b border-white/5` sous le header
-- [ ] Migrer les cards vers `bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20`
-- [ ] Migrer les tabs vers le style pills (`bg-[#0A0D12] rounded-lg p-1 border border-white/5`)
-- [ ] Mettre à jour les couleurs des badges (Buy/Sell)
-- [ ] Ajouter les hover states (`hover:border-white/10`, `group-hover:scale-110`)
-- [ ] Vérifier le responsive (mobile menu, grids)
-- [ ] Mettre à jour les loading/error states
-- [ ] Ajouter `max-w-[1920px] mx-auto` au main content
+- [ ] Utiliser `glass-panel` pour les cards
+- [ ] Remplacer `text-zinc-400` → `text-text-secondary`
+- [ ] Remplacer `text-zinc-500` → `text-text-muted`
+- [ ] Remplacer `border-white/5` → `border-border-subtle`
+- [ ] Remplacer `border-white/10` → `border-border-hover`
+- [ ] Remplacer `bg-[#151A25]` → `bg-brand-secondary`
+- [ ] Utiliser `glass-dialog` pour les modals
+- [ ] Vérifier les hover states
 
 ---
 
 ## 📂 Fichiers de Référence
 
-- **Page exemple**: `src/app/dashboard/page.tsx`
-- **Stats Card**: `src/components/dashboard/StatsCard.tsx`
-- **Tabs Pills**: `src/components/dashboard/vaultValidator/TabButtons.tsx`
-- **Table**: `src/components/dashboard/twap/TwapTable.tsx`
+- **Tokens**: `tailwind.config.ts`
+- **Classes utilitaires**: `src/app/globals.css`
 - **Header**: `src/components/Header.tsx`
 - **Sidebar**: `src/components/Sidebar.tsx`
-
+- **DataTable**: `src/components/common/DataTable.tsx`

@@ -1,26 +1,36 @@
 import { useEffect, useState, useRef } from "react";
 import { useExplorerStore } from "@/services/explorer";
 import { Button } from "@/components/ui/button";
-import { PiPause, PiPlay } from "react-icons/pi";
-import { Loader2 } from "lucide-react";
+import { Pause, Play, Loader2 } from "lucide-react";
 import { TabSelector } from "./TabSelector";
-import { ConnectionStatus } from "./ConnectionStatus";
+// import { ConnectionStatus } from "./ConnectionStatus"; // Removed import
 import { DataTable } from "./DataTable";
 import { Pagination } from "@/components/common/pagination";
+import { usePagination } from "@/hooks/core/usePagination";
 
 type TabType = 'blocks' | 'transactions';
+
+// Inlined ConnectionStatus component
+function ConnectionStatus({ isConnected }: { isConnected: boolean }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+      <span className={`text-xs font-medium ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+        {isConnected ? 'CONNECTED' : 'DISCONNECTED'}
+      </span>
+    </div>
+  );
+}
 
 export function RecentDataTable() {
   const store = useExplorerStore();
   const [activeTab, setActiveTab] = useState<TabType>('blocks');
   const [isBlocksPaused, setIsBlocksPaused] = useState(false);
   const [isTransactionsPaused, setIsTransactionsPaused] = useState(false);
-  
+
   // États de pagination
-  const [blocksPage, setBlocksPage] = useState(0);
-  const [blocksRowsPerPage, setBlocksRowsPerPage] = useState(5);
-  const [transactionsPage, setTransactionsPage] = useState(0);
-  const [transactionsRowsPerPage, setTransactionsRowsPerPage] = useState(5);
+  const blocksPagination = usePagination({ initialRowsPerPage: 5 });
+  const transactionsPagination = usePagination({ initialRowsPerPage: 5 });
 
   // Mémoriser les méthodes du store pour éviter les boucles infinies
   const storeRef = useRef(store);
@@ -54,7 +64,7 @@ export function RecentDataTable() {
 
   const isConnected = activeTab === 'blocks' ? store.isBlocksConnected : store.isTransactionsConnected;
   const isPaused = activeTab === 'blocks' ? isBlocksPaused : isTransactionsPaused;
-  
+
   const handlePauseToggle = () => {
     if (activeTab === 'blocks') {
       setIsBlocksPaused(!isBlocksPaused);
@@ -65,24 +75,22 @@ export function RecentDataTable() {
 
   const getCurrentData = () => {
     if (activeTab === 'blocks') {
-      const page = blocksPage;
-      const rowsPerPage = blocksRowsPerPage;
-      const startIndex = page * rowsPerPage;
       return {
-        data: store.blocks.slice(startIndex, startIndex + rowsPerPage),
+        data: store.blocks.slice(blocksPagination.startIndex, blocksPagination.endIndex),
         total: store.blocks.length,
-        page,
-        rowsPerPage
+        page: blocksPagination.page,
+        rowsPerPage: blocksPagination.rowsPerPage,
+        onPageChange: blocksPagination.onPageChange,
+        onRowsPerPageChange: blocksPagination.onRowsPerPageChange
       };
     } else {
-      const page = transactionsPage;
-      const rowsPerPage = transactionsRowsPerPage;
-      const startIndex = page * rowsPerPage;
       return {
-        data: store.transactions.slice(startIndex, startIndex + rowsPerPage),
+        data: store.transactions.slice(transactionsPagination.startIndex, transactionsPagination.endIndex),
         total: store.transactions.length,
-        page,
-        rowsPerPage
+        page: transactionsPagination.page,
+        rowsPerPage: transactionsPagination.rowsPerPage,
+        onPageChange: transactionsPagination.onPageChange,
+        onRowsPerPageChange: transactionsPagination.onRowsPerPageChange
       };
     }
   };
@@ -97,30 +105,14 @@ export function RecentDataTable() {
   const currentData = getCurrentData();
   const showLoading = !isConnected && currentData.data.length === 0;
 
-  const handlePageChange = (newPage: number) => {
-    if (activeTab === 'blocks') {
-      setBlocksPage(newPage);
-    } else {
-      setTransactionsPage(newPage);
-    }
-  };
 
-  const handleRowsPerPageChange = (newRowsPerPage: number) => {
-    if (activeTab === 'blocks') {
-      setBlocksRowsPerPage(newRowsPerPage);
-      setBlocksPage(0);
-    } else {
-      setTransactionsRowsPerPage(newRowsPerPage);
-      setTransactionsPage(0);
-    }
-  };
 
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header with Tabs and Controls */}
-      <div className="flex justify-between items-center p-4 border-b border-white/5">
+      <div className="flex justify-between items-center p-4 border-b border-border-subtle">
         <TabSelector activeTab={activeTab} onTabChange={setActiveTab} />
-        
+
         {/* Controls */}
         <div className="flex items-center gap-3">
           <ConnectionStatus isConnected={isConnected} />
@@ -128,9 +120,9 @@ export function RecentDataTable() {
             variant="ghost"
             size="sm"
             onClick={handlePauseToggle}
-            className="text-zinc-400 hover:text-white hover:bg-white/5 p-2"
+            className="text-text-secondary hover:text-white hover:bg-white/5 p-2"
           >
-            {isPaused ? <PiPlay className="h-4 w-4" /> : <PiPause className="h-4 w-4" />}
+            {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
           </Button>
         </div>
       </div>
@@ -140,29 +132,29 @@ export function RecentDataTable() {
         {showLoading ? (
           <div className="flex justify-center items-center h-[200px]">
             <div className="flex flex-col items-center">
-              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-              <span className="text-zinc-500 text-sm">Connecting...</span>
+              <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
+              <span className="text-text-muted text-sm">Connecting...</span>
             </div>
           </div>
         ) : (
           <div className="space-y-0">
             <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-              <DataTable 
+              <DataTable
                 type={activeTab}
                 data={currentData.data}
                 emptyMessage={getEmptyMessage()}
               />
             </div>
-            
+
             {currentData.total > 0 && (
-              <div className="px-4 py-3 border-t border-white/5">
+              <div className="px-4 py-3 border-t border-border-subtle">
                 <Pagination
                   total={currentData.total}
                   page={currentData.page}
                   rowsPerPage={currentData.rowsPerPage}
                   rowsPerPageOptions={[5, 10, 25, 50, 100, 500]}
-                  onPageChange={handlePageChange}
-                  onRowsPerPageChange={handleRowsPerPageChange}
+                  onPageChange={currentData.onPageChange}
+                  onRowsPerPageChange={currentData.onRowsPerPageChange}
                   disabled={false}
                 />
               </div>

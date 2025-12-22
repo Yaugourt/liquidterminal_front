@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { X, GripVertical, RotateCcw } from "lucide-react";
+import { GripVertical, RotateCcw } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   DndContext,
   closestCenter,
@@ -61,7 +68,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-[#0C2237] border border-[#83E9FF4D] rounded-lg p-3 space-y-2"
+      className="glass-input p-3 space-y-2 border-border-hover bg-black/20"
     >
       {/* Group header */}
       <div className="flex items-center gap-2">
@@ -73,7 +80,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           <Switch
             checked={group.visible}
             onCheckedChange={() => onToggleGroup(group.id)}
-            className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#64748B]"
+            className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B]"
           />
         </div>
       </div>
@@ -84,14 +91,14 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           {group.items.map(item => {
             const navItem = navGroup.items.find(ni => getItemId(ni.name, ni.href) === item.id);
             if (!navItem) return null;
-            
+
             return (
               <div key={item.id} className="flex items-center justify-between py-1">
                 <span className="text-gray-300 text-xs">{navItem.name}</span>
                 <Switch
                   checked={item.visible}
                   onCheckedChange={() => onToggleItem(group.id, item.id)}
-                  className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-[#64748B] scale-75"
+                  className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B] scale-75"
                 />
               </div>
             );
@@ -154,77 +161,70 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
     toast.success("Sidebar reset to default");
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-[#051728] border-2 border-[#83E9FF4D] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-[#83E9FF1A]">
-          <div>
-            <h2 className="text-xl font-bold text-white">Customize Sidebar</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              Toggle visibility and drag to reorder sections
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="hover:bg-[#83E9FF20]"
-          >
-            <X className="w-5 h-5 text-white" />
-          </Button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
+        <div className="glass-card rounded-lg flex flex-col h-full max-h-[90vh]">
+          {/* Header */}
+          <DialogHeader className="p-6 border-b border-border-subtle flex flex-row items-center justify-between space-y-0">
+            <div>
+              <DialogTitle className="text-xl font-bold text-white">Customize Sidebar</DialogTitle>
+              <DialogDescription className="text-sm text-gray-400 mt-1">
+                Toggle visibility and drag to reorder sections
+              </DialogDescription>
+            </div>
+            {/* Close button is handled by DialogContent's defaulting close button or we can keep this custom one if we hide the default */}
+          </DialogHeader>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={localGroups.map(g => g.id)}
-              strategy={verticalListSortingStrategy}
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              <div className="space-y-3">
-                {localGroups.map(group => {
-                  const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
-                  return (
-                    <SortableGroupItem
-                      key={group.id}
-                      group={group}
-                      groupName={navGroup?.groupName || null}
-                      onToggleGroup={handleToggleGroup}
-                      onToggleItem={handleToggleItem}
-                    />
-                  );
-                })}
-              </div>
-            </SortableContext>
-          </DndContext>
-        </div>
+              <SortableContext
+                items={localGroups.map(g => g.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {localGroups.map(group => {
+                    const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
+                    return (
+                      <SortableGroupItem
+                        key={group.id}
+                        group={group}
+                        groupName={navGroup?.groupName || null}
+                        onToggleGroup={handleToggleGroup}
+                        onToggleItem={handleToggleItem}
+                      />
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center p-6 border-t border-[#83E9FF1A]">
-          <Button
-            variant="outline"
-            onClick={handleReset}
-            className="border-[#83E9FF4D] text-white hover:bg-[#83E9FF20] gap-2"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Reset to Default
-          </Button>
-          <Button
-            onClick={onClose}
-            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
-          >
-            Done
-          </Button>
+          {/* Footer */}
+          <div className="flex justify-between items-center p-6 border-t border-border-subtle">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              className="border-border-hover text-white hover:bg-white/10 gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset to Default
+            </Button>
+            <Button
+              onClick={onClose}
+              className="bg-brand-gold text-black hover:bg-brand-gold/90"
+            >
+              Done
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

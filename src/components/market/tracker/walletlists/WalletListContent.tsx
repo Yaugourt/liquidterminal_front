@@ -6,7 +6,7 @@ import { useWallets } from "@/store/use-wallets";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletActiveMessages } from "@/lib/toast-messages";
 import { DeleteWalletDialog } from "../DeleteWalletDialog";
-import { WalletListItemSelector } from "./WalletListItemSelector";
+import { UnifiedWalletSelector, WalletItem } from "./UnifiedWalletSelector";
 import { DragEndEvent } from '@dnd-kit/core';
 import { exportWalletsToCSV } from "@/lib/csv-utils";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
   const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [walletToDelete, setWalletToDelete] = useState<{ id: number; name: string } | null>(null);
-  
+
   const { setActiveWallet, userWallets } = useWallets();
   const { activeListId, activeListItems, loading, error, setActiveList, refreshUserLists, loadListItems } = useWalletLists();
 
@@ -33,15 +33,15 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
     if (!item.userWallet || !item.userWallet.Wallet) {
       return false;
     }
-    
+
     // Vérifier si ce wallet existe encore dans userWallets
-    const walletStillExists = userWallets.some(uw => 
-      uw.walletId === item.userWallet.Wallet.id || 
+    const walletStillExists = userWallets.some(uw =>
+      uw.walletId === item.userWallet.Wallet.id ||
       (uw.wallet && typeof uw.wallet === 'object' && 'id' in uw.wallet && uw.wallet.id === item.userWallet.Wallet.id)
     );
-    
-// Log supprimé
-    
+
+    // Log supprimé
+
     return walletStillExists;
   });
 
@@ -109,12 +109,12 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
       }));
 
       const timestamp = new Date().toISOString().split('T')[0];
-      const filename = listName 
+      const filename = listName
         ? `${listName.toLowerCase().replace(/\s+/g, '_')}_${timestamp}.csv`
         : `wallet_list_${listId}_${timestamp}.csv`;
-      
+
       exportWalletsToCSV(walletsToExport, filename);
-      
+
       toast.success(`Exported ${validItems.length} wallet${validItems.length !== 1 ? 's' : ''}`);
     } catch {
       toast.error("Failed to export list");
@@ -125,7 +125,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-20 bg-[#051728] border border-[#83E9FF4D] rounded-lg animate-pulse" />
+          <div key={i} className="h-20 bg-white/5 border border-border-subtle rounded-lg animate-pulse" />
         ))}
       </div>
     );
@@ -144,9 +144,15 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
 
   return (
     <>
-      <WalletListItemSelector
-        items={validItems}
-        selectedWalletId={selectedWalletId}
+      <UnifiedWalletSelector
+        items={validItems.map((item): WalletItem => ({
+          id: item.userWallet?.Wallet?.id || 0,
+          name: item.userWallet?.name || null,
+          address: item.userWallet?.Wallet?.address || '',
+          addedAt: item.userWallet?.addedAt || new Date().toISOString(),
+          notes: item.notes ?? undefined,
+        }))}
+        selectedId={selectedWalletId}
         onWalletChange={(value) => {
           const walletId = parseInt(value, 10);
           setSelectedWalletId(walletId);
@@ -158,11 +164,12 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
         }}
         onAddWallet={() => onAddWallet?.()}
         onDeleteWallet={handleDeleteClick}
-        onBulkDelete={onBulkDelete || (async () => {})}
+        onBulkDelete={onBulkDelete || (async () => { })}
         onImportCSV={onImportCSV}
         onExportCSV={handleExportList}
+        emptyMessage="No wallets in this list yet"
       />
-      
+
       <DeleteWalletDialog
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}

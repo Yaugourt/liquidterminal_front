@@ -25,9 +25,9 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
           setCopiedValues((prev) => ({ ...prev, [key]: false }));
         }, 2000);
       })
-              .catch(() => {
-          // Error handled silently
-        });
+      .catch(() => {
+        // Error handled silently
+      });
   }, []);
 
   return (
@@ -42,18 +42,18 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
             {copiedValues['blockHeight'] ? (
               <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         </div>
       </div>
-      
-      <Card className="bg-[#051728E5]/80 backdrop-blur-sm border-2 border-[#83E9FF4D] p-5 shadow-md hover:border-[#83E9FF40] transition-all duration-300 mb-6">
+
+      <Card className="glass-panel p-5 hover:border-border-hover transition-all duration-300 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Clock size={14} className="text-[#f9e370]" />
+                <Clock size={14} className="text-brand-gold" />
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Time</p>
               </div>
               <p className="text-white text-sm font-medium ml-6">
@@ -62,11 +62,11 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Hash size={14} className="text-[#f9e370]" />
+                <Hash size={14} className="text-brand-gold" />
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Hash</p>
               </div>
               <div className="flex items-center gap-1.5 ml-6">
-                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent font-inter">
+                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent font-mono">
                   {blockDetails.hash}
                 </p>
                 <button
@@ -76,7 +76,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                   {copiedValues["blockHash"] ? (
                     <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                   ) : (
-                    <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                    <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
                 </button>
               </div>
@@ -85,13 +85,13 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <User size={14} className="text-[#f9e370]" />
+                <User size={14} className="text-brand-gold" />
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Proposer</p>
               </div>
               <div className="flex items-center gap-1.5 ml-6">
-                <Link 
+                <Link
                   href={`/explorer/address/${blockDetails.proposer}`}
-                  className="text-[#83E9FF] break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent hover:text-[#83E9FF]/80 transition-colors font-inter"
+                  className="text-brand-accent break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:text-brand-accent/80 transition-colors font-mono"
                 >
                   {blockDetails.proposer}
                 </Link>
@@ -102,14 +102,14 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                   {copiedValues["proposer"] ? (
                     <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                   ) : (
-                    <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                    <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
                 </button>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <FileText size={14} className="text-[#f9e370]" />
+                <FileText size={14} className="text-brand-gold" />
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Transactions</p>
               </div>
               <p className="text-white text-sm font-medium ml-6">

@@ -186,7 +186,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                 {hasMore && (
                   <Button
                     onClick={() => handleShowMore(category.id)}
-                    className="bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+                    className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
                   >
                     Show more
                   </Button>

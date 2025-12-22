@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Pagination } from "@/components/common/pagination";
 import { TwapTableProps, TwapTableData } from "./types";
 import Link from "next/link";
@@ -28,7 +29,7 @@ const formatAddress = (address: string) => {
 
 // Composant pour les headers de tableau
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <span className={`text-zinc-400 text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className={`text-text-secondary text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
     {header}
   </span>
 );
@@ -42,18 +43,18 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
   const durationMs = twap.duration * 60 * 1000; // minutes to ms
   const currentTime = Date.now();
   const elapsedTime = currentTime - startTime;
-  
+
   // Calculate smooth progression based on elapsed time (not suborders)
   const timeProgressionPercent = Math.min(100, Math.max(0, (elapsedTime / durationMs) * 100));
-  
+
   // Calculate remaining quantity and value based on smooth time progression
   const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
   const originalAmount = parseFloat(twap.amount);
   const remainingAmount = originalAmount * (remainingPercent / 100);
-  
+
   // For value calculation, use the remaining amount with current token price
   const remainingValue = remainingAmount * (twap.value / parseFloat(twap.amount));
-  
+
   return {
     progression: timeProgressionPercent,
     remainingValue: Math.max(0, remainingValue),
@@ -66,19 +67,13 @@ const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
 const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
-  
+
   return (
     <TableCell className="py-3 px-3 text-sm text-white font-medium w-[200px]">
       <div className="flex items-center gap-2">
-        <span
-          className={`px-2 py-1 rounded-md text-xs font-bold ${
-            twap.type === 'Buy'
-              ? 'bg-emerald-500/10 text-emerald-400'
-              : 'bg-rose-500/10 text-rose-400'
-          }`}
-        >
+        <StatusBadge variant={twap.type === 'Buy' ? 'success' : 'error'}>
           {twap.type}
-        </span>
+        </StatusBadge>
         <span className="text-white font-medium">
           ${formatNumber(value, format)}
         </span>
@@ -94,9 +89,9 @@ ValueCell.displayName = 'ValueCell';
 const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
-  
+
   return (
-    <TableCell className="py-3 px-4 text-sm text-zinc-300 w-[180px]">
+    <TableCell className="py-3 px-4 text-sm text-white/80 w-[180px]">
       <span className="text-white font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
     </TableCell>
   );
@@ -110,20 +105,20 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
   const realTime = realTimeData.get(twap.id);
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
-  
+
   const getRemainingTime = () => {
     const startTime = twap.time;
     const durationMs = twap.duration * 60 * 1000;
     const currentTime = Date.now();
     const elapsedTime = currentTime - startTime;
     const remainingMs = Math.max(0, durationMs - elapsedTime);
-    
+
     if (remainingMs === 0) return "Completed";
-    
+
     const hours = Math.floor(remainingMs / (1000 * 60 * 60));
     const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     } else if (minutes > 0) {
@@ -138,12 +133,12 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
     if (progression < 70) return "bg-emerald-400";
     return "bg-emerald-300";
   };
-  
+
   return (
     <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
-          <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">
+          <span className="text-[10px] text-text-muted font-medium uppercase tracking-wider">
             {getRemainingTime()}
           </span>
           <span className="text-[10px] text-white font-medium">
@@ -165,16 +160,16 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
 ProgressionCell.displayName = 'ProgressionCell';
 
 // Composant mémorisé pour la cellule User (statique)
-const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: { 
-  twap: TwapTableData, 
-  copiedAddress: string | null, 
-  copyToClipboard: (text: string) => void 
+const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
+  twap: TwapTableData,
+  copiedAddress: string | null,
+  copyToClipboard: (text: string) => void
 }) => (
   <TableCell className="py-3 px-3 text-sm w-[170px]">
     <div className="flex items-center gap-1.5">
-      <Link 
+      <Link
         href={`/explorer/address/${twap.user}`}
-        className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors"
+        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
       >
         {formatAddress(twap.user)}
       </Link>
@@ -188,7 +183,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
         {copiedAddress === twap.user ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
         )}
       </button>
     </div>
@@ -217,7 +212,7 @@ export const TwapTable = memo(({
 
     const updateRealTimeData = () => {
       const newRealTimeData = new Map();
-      
+
       twaps.forEach(twap => {
         // Only update active TWAP orders (not completed, cancelled, or errored)
         if (!twap.ended && !twap.error) {
@@ -225,7 +220,7 @@ export const TwapTable = memo(({
           newRealTimeData.set(twap.id, realTimeCalc);
         }
       });
-      
+
       setRealTimeData(newRealTimeData);
     };
 
@@ -243,9 +238,9 @@ export const TwapTable = memo(({
       await navigator.clipboard.writeText(text);
       setCopiedAddress(text);
       setTimeout(() => setCopiedAddress(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -253,8 +248,8 @@ export const TwapTable = memo(({
       {isLoading ? (
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-            <span className="text-zinc-500 text-sm">Chargement...</span>
+            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
+            <span className="text-text-muted text-sm">Chargement...</span>
           </div>
         </div>
       ) : error ? (
@@ -262,7 +257,7 @@ export const TwapTable = memo(({
           <div className="flex flex-col items-center text-center px-4">
             <Database className="w-8 h-8 mb-3 text-red-400" />
             <p className="text-red-400 text-sm mb-1">Une erreur est survenue</p>
-            <p className="text-zinc-500 text-xs">Veuillez réessayer plus tard</p>
+            <p className="text-text-muted text-xs">Veuillez réessayer plus tard</p>
           </div>
         </div>
       ) : (
@@ -270,7 +265,7 @@ export const TwapTable = memo(({
           <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
             <Table className="table-fixed w-full">
               <TableHeader>
-                <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableRow className="border-b border-border-subtle hover:bg-transparent">
                   <TableHead className="py-3 px-3 w-[200px]">
                     <TableHeaderButton header="Value" align="left" />
                   </TableHead>
@@ -290,7 +285,7 @@ export const TwapTable = memo(({
                   twaps.map((twap) => (
                     <TableRow
                       key={twap.id}
-                      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                      className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
                     >
                       <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
                       <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
@@ -305,9 +300,9 @@ export const TwapTable = memo(({
                       className="py-8 border-none"
                     >
                       <div className="flex flex-col items-center justify-center text-center">
-                        <Database className="w-10 h-10 mb-3 text-zinc-600" />
-                        <p className="text-zinc-400 text-sm mb-1">No active TWAP orders found</p>
-                        <p className="text-zinc-600 text-xs">Come later</p>
+                        <Database className="w-10 h-10 mb-3 text-text-muted" />
+                        <p className="text-text-secondary text-sm mb-1">No active TWAP orders found</p>
+                        <p className="text-text-muted text-xs">Come later</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -317,7 +312,7 @@ export const TwapTable = memo(({
           </div>
 
           {showPagination && total > 0 && onPageChange && onRowsPerPageChange && (
-            <div className="border-t border-white/5 px-4 py-3">
+            <div className="border-t border-border-subtle px-4 py-3">
               <Pagination
                 total={total}
                 page={page}

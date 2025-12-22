@@ -4,7 +4,8 @@ import { useState } from "react";
 import { AssetsTable } from "./AssetsTable";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue, formatAssetTokenAmount, formatAssetPercent } from '@/lib/formatters/numberFormatting';
-import { ErrorCard } from './components';
+// import { ErrorCard } from './components'; // Inlined
+import { AlertCircle } from "lucide-react";
 import { useWalletData } from './hooks/useWalletData';
 import { useHoldingsConverter } from './hooks/useHoldingsConverter';
 import { useSortableData } from '@/hooks/useSortableData';
@@ -19,7 +20,7 @@ interface AssetsSectionProps {
 export function AssetsSection({ initialViewType = "spot", addressOverride }: AssetsSectionProps) {
   const [viewType, setViewType] = useState<"spot" | "perp">(initialViewType);
   const { format } = useNumberFormat();
-  
+
   const {
     walletAddress,
     activeWalletDisplay,
@@ -56,14 +57,29 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
   }
 
   if (!walletAddress) {
-    return <ErrorCard message="Please select a wallet to view your assets" />;
+    return (
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-center text-text-secondary space-x-2">
+            <AlertCircle className="h-5 w-5" />
+            <span className="text-sm">Please select a wallet to view your assets</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <ErrorCard 
-      message={error.message || "Une erreur est survenue lors du chargement des assets"} 
-      variant="error" 
-    />;
+    return (
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-center text-rose-400 space-x-2">
+            <AlertCircle className="h-5 w-5" />
+            <span className="text-sm">{error.message || "Une erreur est survenue lors du chargement des assets"}</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

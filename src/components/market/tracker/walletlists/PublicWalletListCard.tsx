@@ -16,20 +16,20 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <Card className="bg-[#051728] border-[#83E9FF4D] hover:border-[#83E9FF] transition-all duration-200 group">
+    <Card className="glass-panel rounded-2xl hover:border-border-hover transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-[#83E9FF] transition-colors">
+          <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">
             {list.name}
           </CardTitle>
-          <div className="flex items-center gap-1 text-xs text-[#4ADE80] bg-[#4ADE80]/10 px-2 py-1 rounded-full shrink-0">
+          <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full shrink-0">
             <Users size={12} />
             <span>Public</span>
           </div>
         </div>
-        
+
         {list.description && (
-          <CardDescription className="text-gray-400 text-sm line-clamp-3">
+          <CardDescription className="text-text-secondary text-sm line-clamp-3">
             {list.description}
           </CardDescription>
         )}
@@ -38,20 +38,20 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
       <CardContent className="space-y-4">
         {/* Stats */}
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-gray-400">
+          <div className="flex items-center gap-1.5 text-text-secondary">
             <Wallet size={14} className="text-[#83E9FF]" />
             <span className="text-white font-medium">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
-          
-          <div className="flex items-center gap-1.5 text-gray-400">
-            <Calendar size={14} className="text-[#F9E370]" />
+
+          <div className="flex items-center gap-1.5 text-text-secondary">
+            <Calendar size={14} className="text-brand-gold" />
             <span>{timeAgo}</span>
           </div>
         </div>
 
         {/* Creator */}
-        <div className="flex items-center gap-2 text-sm text-gray-400 pt-2 border-t border-[#83E9FF4D]">
+        <div className="flex items-center gap-2 text-sm text-text-secondary pt-2 border-t border-border-subtle">
           <span>By</span>
           <span className="text-white font-medium">
             {list.creator?.name || list.creator?.username || 'Anonymous'}
@@ -62,7 +62,7 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
         <div className="flex gap-2 pt-2">
           <Button
             onClick={() => onPreview(list)}
-            className="flex-1 bg-[#83E9FF] hover:bg-[#6bd4f0] text-[#051728] font-medium"
+            className="flex-1 bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
           >
             <Eye className="mr-2 h-4 w-4" />
             View & Copy

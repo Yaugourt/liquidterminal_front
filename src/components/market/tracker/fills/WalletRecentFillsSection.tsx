@@ -14,16 +14,16 @@ export function WalletRecentFillsSection() {
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
-  
+
   // État pour la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+
   // Copy state pour les hashs
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
   // Récupérer tous les fills
-  const { 
+  const {
     data: allFills,
     isLoading,
     error
@@ -36,16 +36,16 @@ export function WalletRecentFillsSection() {
   const fills = allFills || [];
   const total = fills.length;
   const paginatedFills = fills.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-  
+
   // Dynamic height based on content - identique à TransactionList
   const needsScroll = paginatedFills.length > 10;
-  const containerClass = needsScroll 
-    ? "bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg flex flex-col h-[600px]"
-    : "bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg flex flex-col";
-  
+  const containerClass = needsScroll
+    ? "glass-panel overflow-hidden flex flex-col h-[600px]"
+    : "glass-panel overflow-hidden flex flex-col";
+
   const tableContainerClass = needsScroll
-    ? "overflow-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent flex-1"
-    : "overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent";
+    ? "overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1"
+    : "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent";
 
   const formatCurrency = (value: string | number) => {
     return formatAssetValue(Number(value), format);
@@ -55,25 +55,25 @@ export function WalletRecentFillsSection() {
     const isClose = dir.toLowerCase().includes('close');
     const isShort = dir.toLowerCase().includes('short');
     const isLong = dir.toLowerCase().includes('long');
-    
+
     if (isClose) {
       return <span className="text-[#F9E370]">{dir}</span>;
     } else if (isShort) {
-      return <span className="text-[#FF4D4F]">{dir}</span>;
+      return <span className="text-rose-400">{dir}</span>;
     } else if (isLong) {
-      return <span className="text-[#52C41A]">{dir}</span>;
+      return <span className="text-emerald-400">{dir}</span>;
     }
-    
+
     return <span className="text-white">{dir}</span>;
   };
 
   const formatPnl = (pnl: string) => {
     const pnlValue = parseFloat(pnl);
     if (pnlValue === 0) return <span className="text-[#FFFFFF80]">$0.00</span>;
-    
+
     const color = pnlValue > 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]';
     const sign = pnlValue > 0 ? '+' : '';
-    
+
     return (
       <span className={color}>
         {sign}{formatCurrency(Math.abs(pnlValue))}
@@ -87,9 +87,9 @@ export function WalletRecentFillsSection() {
       await navigator.clipboard.writeText(hash);
       setCopiedHash(hash);
       setTimeout(() => setCopiedHash(null), 2000);
-          } catch {
-        // Error handled silently
-      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   // Fonction pour formater le hash - identique à TransactionList
@@ -100,15 +100,15 @@ export function WalletRecentFillsSection() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#83E9FF]"></div>
+      <div className="flex items-center justify-center h-[600px] glass-panel">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-red-500">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-red-500">
         {error.message}
       </div>
     );
@@ -116,7 +116,7 @@ export function WalletRecentFillsSection() {
 
   if (!activeWallet?.address) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-white">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
         No wallet selected
       </div>
     );
@@ -124,7 +124,7 @@ export function WalletRecentFillsSection() {
 
   if (!fills || fills.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-[#051728E5] border-2 border-[#83E9FF4D] hover:border-[#83E9FF80] transition-colors shadow-[0_4px_24px_0_rgba(0,0,0,0.25)] backdrop-blur-sm overflow-hidden rounded-lg text-white">
+      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
         No fills found
       </div>
     );
@@ -135,26 +135,26 @@ export function WalletRecentFillsSection() {
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-none bg-[#051728]">
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Hash</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Asset</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Direction</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Age</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Size</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-left text-sm">Price</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">PnL</TableHead>
-              <TableHead className="text-white font-normal py-3 px-4 bg-[#051728] text-right text-sm">Fee</TableHead>
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Asset</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Direction</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Age</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
+              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
+              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">PnL</span></TableHead>
+              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee</span></TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="bg-[#051728]">
+          <TableBody>
             {paginatedFills.map((fill) => (
-              <TableRow 
-                key={`${fill.hash}-${fill.tid}`} 
-                className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A] transition-colors"
+              <TableRow
+                key={`${fill.hash}-${fill.tid}`}
+                className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
               >
                 <TableCell className="py-3 px-4 text-sm">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[#83E9FF]" title={fill.hash}>
+                    <span className="text-brand-accent" title={fill.hash}>
                       {formatHash(fill.hash)}
                     </span>
                     <button
@@ -167,7 +167,7 @@ export function WalletRecentFillsSection() {
                       {copiedHash === fill.hash ? (
                         <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
                       ) : (
-                        <Copy className="h-3.5 w-3.5 text-[#f9e370] opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                       )}
                     </button>
                   </div>
@@ -198,8 +198,8 @@ export function WalletRecentFillsSection() {
           </TableBody>
         </Table>
       </div>
-      
-      <div className="border-t border-[#FFFFFF1A] flex items-center mt-auto">
+
+      <div className="border-t border-border-subtle flex items-center mt-auto">
         <div className="w-full px-4 py-3">
           <Pagination
             total={total}

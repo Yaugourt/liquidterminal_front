@@ -34,10 +34,10 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
       {/* Header with title */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-            <Shield size={16} className="text-[#83e9ff]" />
+          <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center">
+            <Shield size={16} className="text-brand-accent" />
           </div>
-          <h3 className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider">
+          <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
             Validator Stats
           </h3>
         </div>
@@ -46,7 +46,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
           href="https://app.hyperliquid.xyz/staking"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[10px] text-zinc-500 hover:text-[#83E9FF] transition-colors"
+          className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
         >
           Stake
           <ExternalLink size={10} />
@@ -56,14 +56,14 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
       {/* Main content */}
       {isLoading ? (
         <div className="flex justify-center items-center flex-1">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#83E9FF]"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-accent"></div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Validators */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <Users className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <Users className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
               Total Validators
             </div>
             <div className="text-white font-bold text-sm pl-5">
@@ -74,14 +74,14 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
           {/* HYPE Staked */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <Coins className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <Coins className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
               HYPE Staked
             </div>
             <div className="text-white font-bold text-sm pl-5">
               {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
               {hypePrice && (
-                <div className="text-zinc-500 text-xs font-medium">
+                <div className="text-text-muted text-xs font-medium">
                   ${formatNumber(stats.totalHypeStaked * hypePrice, format, { maximumFractionDigits: 0 })}
                 </div>
               )}
@@ -90,9 +90,9 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
           {/* Average Staked */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <div className="w-3.5 h-3.5 rounded-full bg-[#f9e370]/20 flex items-center justify-center mr-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#f9e370]"></div>
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <div className="w-3.5 h-3.5 rounded-full bg-brand-gold/20 flex items-center justify-center mr-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-gold"></div>
               </div>
               Average Staked
             </div>
@@ -103,9 +103,9 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
           {/* Active Stakers */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <div className="w-3.5 h-3.5 rounded-full bg-[#83E9FF]/20 flex items-center justify-center mr-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#83E9FF]"></div>
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <div className="w-3.5 h-3.5 rounded-full bg-brand-accent/20 flex items-center justify-center mr-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-accent"></div>
               </div>
               Active Stakers
             </div>
@@ -116,8 +116,8 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
           {/* 1h Unstaking */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <Clock className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
               1h Unstaking
             </div>
             <div className="text-white font-bold text-sm pl-5">
@@ -127,8 +127,8 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
           {/* 24h Unstaking */}
           <div>
-            <div className="text-zinc-400 mb-1 flex items-center text-xs font-medium">
-              <Clock className="h-3.5 w-3.5 text-[#83e9ff] mr-1.5" />
+            <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+              <Clock className="h-3.5 w-3.5 text-brand-accent mr-1.5" />
               24h Unstaking
             </div>
             <div className="text-white font-bold text-sm pl-5">

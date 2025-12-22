@@ -11,6 +11,8 @@ export interface EducationalCategory {
   };
 }
 
+export type ResourceStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface EducationalResource {
   id: number;
   url: string;
@@ -21,6 +23,15 @@ export interface EducationalResource {
     email: string | null;
   };
   categories: EducationalResourceCategory[];
+  // Moderation fields
+  status: ResourceStatus;
+  reviewedAt?: string;
+  reviewedBy?: number;
+  reviewNotes?: string;
+  reviewer?: {
+    id: number;
+    name: string | null;
+  } | null;
 }
 
 export interface EducationalResourceCategory {
@@ -193,4 +204,81 @@ export interface CsvUploadErrorResponse {
   code: string;
 }
 
-export type CsvUploadApiResponse = CsvUploadResponse | CsvUploadErrorResponse; 
+export type CsvUploadApiResponse = CsvUploadResponse | CsvUploadErrorResponse;
+
+// ==================== TYPES POUR SIGNALEMENTS ====================
+export interface ResourceReport {
+  id: number;
+  resourceId: number;
+  reportedBy: number;
+  reason: string;
+  createdAt: string;
+  reporter?: {
+    id: number;
+    name: string | null;
+  };
+}
+
+export interface ReportResourceInput {
+  reason: string;
+}
+
+export interface ReportResourceResponse {
+  success: true;
+  message: string;
+  data: ResourceReport;
+}
+
+// ==================== TYPES POUR MODÉRATION ====================
+export interface ApproveResourceInput {
+  notes?: string;
+}
+
+export interface RejectResourceInput {
+  notes: string; // Required for rejection
+}
+
+export interface PendingCountResponse {
+  success: true;
+  data: { count: number };
+}
+
+export interface ReportsResponse {
+  success: true;
+  data: ResourceReport[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// ==================== CODES D'ERREURS WIKI ====================
+export type WikiErrorCode =
+  | 'RATE_LIMIT_EXCEEDED'
+  | 'CONTENT_FILTERED'
+  | 'EDUCATIONAL_INVALID_URL'
+  | 'EDUCATIONAL_RESOURCE_ALREADY_EXISTS'
+  | 'DUPLICATE_REPORT'
+  | 'REPORT_REASON_REQUIRED'
+  | 'REPORT_REASON_TOO_LONG'
+  | 'REJECTION_REASON_REQUIRED'
+  | 'RESOURCE_ALREADY_REVIEWED';
+
+export type ContentFilterReason =
+  | 'BLACKLISTED_DOMAIN'
+  | 'BLOCKED_EXTENSION'
+  | 'MALWARE_PATTERN'
+  | 'INJECTION_DETECTED'
+  | 'URL_MANIPULATION'
+  | 'PUNYCODE_DETECTED'
+  | 'HOMOGRAPH_DETECTED'
+  | 'HTTPS_REQUIRED';
+
+export interface WikiApiError {
+  success: false;
+  error: string;
+  code: WikiErrorCode;
+  reason?: ContentFilterReason;
+} 

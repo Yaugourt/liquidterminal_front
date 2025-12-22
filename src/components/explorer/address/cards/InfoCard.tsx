@@ -63,11 +63,11 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
                     <div className="flex gap-5">
                         <div>
                             <span className="text-[#FFFFFF80] text-xs">Latest:</span>
-                            <span className="text-[#83E9FF] ml-1.5 text-xs">{latest}</span>
+                            <span className="text-brand-accent ml-1.5 text-xs">{latest}</span>
                         </div>
                         <div>
                             <span className="text-[#FFFFFF80] text-xs">First:</span>
-                            <span className="text-[#83E9FF] ml-1.5 text-xs">{first}</span>
+                            <span className="text-brand-accent ml-1.5 text-xs">{first}</span>
                         </div>
                     </div>
                 </div>

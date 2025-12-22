@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import Image from "next/image";
-import { PiTwitterLogo, PiDiscordLogo, PiTelegramLogo, PiGlobeBold } from "react-icons/pi";
-import { Trash2 } from "lucide-react";
+import { Icon } from "@iconify/react";
+import { Trash2, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Project } from "@/services/ecosystem/project/types";
@@ -17,8 +17,8 @@ interface ProjectCardProps {
   showSelection?: boolean;
 }
 
-export const ProjectCard = memo(function ProjectCard({ 
-  project, 
+export const ProjectCard = memo(function ProjectCard({
+  project,
   onDelete,
   isDeleting = false,
   isSelected = false,
@@ -29,10 +29,10 @@ export const ProjectCard = memo(function ProjectCard({
   const { user } = useAuthContext();
 
   const socialLinks = [
-    { url: project.website, icon: PiGlobeBold, label: "Website" },
-    { url: project.twitter, icon: PiTwitterLogo, label: "Twitter" },
-    { url: project.discord, icon: PiDiscordLogo, label: "Discord" },
-    { url: project.telegram, icon: PiTelegramLogo, label: "Telegram" }
+    { url: project.website, iconName: null, label: "Website", isGlobe: true },
+    { url: project.twitter, iconName: "simple-icons:x", label: "Twitter", isGlobe: false },
+    { url: project.discord, iconName: "ic:baseline-discord", label: "Discord", isGlobe: false },
+    { url: project.telegram, iconName: "ic:baseline-telegram", label: "Telegram", isGlobe: false }
   ].filter(link => link.url);
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -50,9 +50,8 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-[#151A25]/60 backdrop-blur-md border border-white/5 p-5 rounded-2xl shadow-xl shadow-black/20 hover:border-white/10 transition-all group relative ${
-      isSelected ? 'border-[#83E9FF] bg-[#83E9FF]/5' : ''
-    }`}>
+    <div className={`glass-token-card p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
+      }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
         <ProtectedAction requiredRole="ADMIN" user={user}>
@@ -61,7 +60,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-[#0A0D12] border-white/20 data-[state=checked]:bg-[#83E9FF] data-[state=checked]:border-[#83E9FF]"
+              className="bg-brand-dark border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
             />
           </div>
         </ProtectedAction>
@@ -94,14 +93,14 @@ export const ProjectCard = memo(function ProjectCard({
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">
-              <span className="text-[#83E9FF] text-lg font-bold">
+            <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
+              <span className="text-brand-accent text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
             <h3 className="text-base text-white font-semibold truncate">
@@ -110,35 +109,36 @@ export const ProjectCard = memo(function ProjectCard({
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-[10px] text-[#83E9FF] bg-[#83E9FF]/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
+                  <span key={category.id} className="text-[10px] text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}
               </div>
             )}
           </div>
-          
-          <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
+
+          <p className="text-sm text-text-secondary mb-3 line-clamp-2">
             {project.desc}
           </p>
-          
+
           {socialLinks.length > 0 && (
             <div className="flex items-center gap-3">
-              {socialLinks.map((link, index) => {
-                const Icon = link.icon;
-                return (
-                  <a
-                    key={index}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-zinc-500 hover:text-[#83E9FF] transition-colors"
-                    aria-label={link.label}
-                  >
-                    <Icon size={16} />
-                  </a>
-                );
-              })}
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-muted hover:text-brand-accent transition-colors"
+                  aria-label={link.label}
+                >
+                  {link.isGlobe ? (
+                    <Globe className="w-4 h-4" />
+                  ) : (
+                    <Icon icon={link.iconName!} className="w-4 h-4" />
+                  )}
+                </a>
+              ))}
             </div>
           )}
         </div>

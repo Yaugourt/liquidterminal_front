@@ -1,23 +1,12 @@
 import { PerpMarketData, PerpGlobalStats, PerpMarketParams } from './types';
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { PaginatedResponse } from '../../common';
+import { PaginatedResponse, buildQueryParams } from '../../common';
 
 export async function fetchPerpMarkets(params: PerpMarketParams): Promise<PaginatedResponse<PerpMarketData>> {
   return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
-    
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        if (Array.isArray(value)) {
-          value.forEach(v => queryParams.append(key, v.toString()));
-        } else {
-          queryParams.append(key, value.toString());
-        }
-      }
-    });
-
-    const url = `/market/perp${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const queryParams = buildQueryParams(params);
+    const url = `/market/perp?${queryParams.toString()}`;
     return await get<PaginatedResponse<PerpMarketData>>(url);
   }, 'fetching perp markets');
 }

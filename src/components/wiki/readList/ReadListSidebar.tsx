@@ -79,7 +79,7 @@ function SortableReadListItem({
       onClick={() => onSelect(list.id)}
       className={`p-3 rounded-xl cursor-pointer transition-all group ${
         isActive
-          ? "bg-[#83E9FF]/10 border border-[#83E9FF]/20"
+          ? "bg-brand-accent/10 border border-brand-accent/20"
           : "hover:bg-white/[0.02] border border-transparent"
       } ${isDragging ? 'shadow-lg' : ''}`}
     >
@@ -92,29 +92,29 @@ function SortableReadListItem({
             className="cursor-grab active:cursor-grabbing p-1 hover:bg-white/5 rounded"
           >
             <GripVertical className={`w-4 h-4 mt-0.5 ${
-              isActive ? "text-[#83E9FF]" : "text-zinc-500"
+              isActive ? "text-brand-accent" : "text-text-muted"
             }`} />
           </div>
           
           <BookOpen className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-            isActive ? "text-[#83E9FF]" : "text-zinc-500"
+            isActive ? "text-brand-accent" : "text-text-muted"
           }`} />
           
           <div className="min-w-0 flex-1">
             <h3 className={`font-medium text-sm truncate ${
-              isActive ? "text-[#83E9FF]" : "text-white"
+              isActive ? "text-brand-accent" : "text-white"
             }`}>
               {list.name}
             </h3>
             {list.description && (
-              <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+              <p className="text-xs text-text-muted mt-1 line-clamp-2">
                 {list.description}
               </p>
             )}
-            <div className="flex items-center gap-2 mt-2 text-xs text-zinc-500">
+            <div className="flex items-center gap-2 mt-2 text-xs text-text-muted">
               <span>{list.itemsCount || 0} items</span>
               {list.isPublic && (
-                <span className="bg-[#83E9FF]/10 text-[#83E9FF] px-1.5 py-0.5 rounded text-[10px]">
+                <span className="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded text-[10px]">
                   Public
                 </span>
               )}
@@ -176,11 +176,11 @@ export function ReadListSidebar({
   };
 
   return (
-    <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-4 h-fit">
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-4 h-fit">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2">
           <h2 className="text-white font-semibold text-sm">Read Lists</h2>
-          <div className="flex items-center gap-1 text-[10px] text-zinc-500">
+          <div className="flex items-center gap-1 text-[10px] text-text-muted">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>
@@ -188,7 +188,7 @@ export function ReadListSidebar({
         <Button
           onClick={onCreateList}
           size="sm"
-          className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg"
+          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
           disabled={loading}
         >
           <Plus className="w-4 h-4" />
@@ -203,10 +203,10 @@ export function ReadListSidebar({
           ))
         ) : readLists?.length === 0 ? (
           <div className="text-center py-8">
-            <div className="w-12 h-12 mx-auto mb-3 bg-[#83e9ff]/10 rounded-xl flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-[#83E9FF]" />
+            <div className="w-12 h-12 mx-auto mb-3 bg-brand-accent/10 rounded-xl flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-brand-accent" />
             </div>
-            <p className="text-zinc-500 text-sm">No read lists yet</p>
+            <p className="text-text-muted text-sm">No read lists yet</p>
           </div>
         ) : (
           <DndContext

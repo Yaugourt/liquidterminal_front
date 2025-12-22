@@ -25,7 +25,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: 
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`${isActive ? "text-[#83E9FF]" : "text-zinc-400"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
+      className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
     >
       {label}
       {onClick && <ArrowUpDown className="h-3 w-3" />}
@@ -39,9 +39,9 @@ const EmptyState = memo(() => (
   <TableRow>
     <TableCell colSpan={7} className="text-center py-8">
       <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-zinc-600" />
-        <p className="text-zinc-400 text-sm mb-1">No auctions available</p>
-        <p className="text-zinc-600 text-xs">Check back later</p>
+        <Database className="w-10 h-10 mb-3 text-text-muted" />
+        <p className="text-text-secondary text-sm mb-1">No auctions available</p>
+        <p className="text-text-muted text-xs">Check back later</p>
       </div>
     </TableCell>
   </TableRow>
@@ -52,9 +52,9 @@ EmptyState.displayName = 'EmptyState';
 const ComingSoonState = memo(() => (
   <div className="flex items-center justify-center h-[400px]">
     <div className="flex flex-col items-center text-center px-4">
-      <Database className="w-10 h-10 mb-3 text-zinc-600" />
-      <p className="text-zinc-400 text-sm mb-1">Coming Soon</p>
-      <p className="text-zinc-600 text-xs">Perpetual auctions table will be available soon.</p>
+      <Database className="w-10 h-10 mb-3 text-text-muted" />
+      <p className="text-text-secondary text-sm mb-1">Coming Soon</p>
+      <p className="text-text-muted text-xs">Perpetual auctions table will be available soon.</p>
     </div>
   </div>
 ));
@@ -147,7 +147,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <ComingSoonState />
       </div>
     );
@@ -155,9 +155,9 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
 
   if (isLoading) {
     return (
-      <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
         </div>
       </div>
     );
@@ -173,11 +173,11 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   }
 
   return (
-    <div className="w-full bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-white/5 hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               {columns.map(col => (
                 col.sortable ? (
                   <TableHeaderCell
@@ -192,7 +192,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                     key={col.key}
                     className={`py-3 px-3 ${col.className}`}
                   >
-                    <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">{col.label}</span>
+                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">{col.label}</span>
                   </TableHead>
                 )
               ))}
@@ -203,19 +203,19 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
               <EmptyState />
             ) : (
               auctions.map((auction) => (
-                <TableRow key={auction.tokenId} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer">
+                <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">
                   <TableCell className="py-3 px-3 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
                   <TableCell className="py-3 px-3 text-white text-sm font-medium text-left">{auction.name}</TableCell>
                   <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
+                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
                   <TableCell className="py-3 px-3 text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-[#83E9FF] font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-zinc-500 group-hover:text-white transition-all duration-200" />)}</button>
+                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
                   <TableCell className="py-3 px-3 text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
@@ -229,7 +229,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
       </div>
       
       {/* Pagination intégrée */}
-      <div className="border-t border-white/5 px-4 py-3">
+      <div className="border-t border-border-subtle px-4 py-3">
         <Pagination
           total={total}
           page={currentPage - 1}
