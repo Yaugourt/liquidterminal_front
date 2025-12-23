@@ -1,5 +1,3 @@
-"use client";
-
 import { memo } from "react";
 import { Info, Shield, Coins, Scale } from "lucide-react";
 
@@ -60,9 +58,9 @@ export const Hip3InfoCard = memo(function Hip3InfoCard() {
 
       {/* Link */}
       <div className="mt-4 pt-3 border-t border-border-subtle">
-        <a 
-          href="https://hyperliquid.gitbook.io/hyperliquid-docs/technical-docs/hips/hip-3" 
-          target="_blank" 
+        <a
+          href="https://hyperliquid.gitbook.io/hyperliquid-docs/technical-docs/hips/hip-3"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-brand-accent text-xs hover:text-white transition-colors flex items-center gap-1"
         >
