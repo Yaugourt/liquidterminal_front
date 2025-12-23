@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { User, Mail, Users, Code2, DollarSign, Globe } from "lucide-react";
 import { PublicGood } from "@/services/ecosystem/publicgood";
