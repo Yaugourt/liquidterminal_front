@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 import { TokenCardProps } from "./types";
 import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -9,7 +11,7 @@ import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
 
-export function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
+export const TokenCard = memo(function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
   // Get user's number format preference
   const { format } = useNumberFormat();
 
@@ -202,4 +204,4 @@ export function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
     </GlassPanel>
 
   );
-}
+});

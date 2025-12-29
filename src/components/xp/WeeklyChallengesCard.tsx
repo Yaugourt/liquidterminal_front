@@ -1,12 +1,14 @@
 "use client";
 
+import { memo } from "react";
+
 import { useXpContext } from "@/services/xp";
 import { cn } from "@/lib/utils";
-import { 
-  CheckCircle2, 
-  BookOpen, 
-  ListPlus, 
-  CalendarCheck, 
+import {
+  CheckCircle2,
+  BookOpen,
+  ListPlus,
+  CalendarCheck,
   Wallet,
   Clock,
   Trophy,
@@ -29,29 +31,29 @@ const CHALLENGE_ICONS: Record<WeeklyChallengeType, React.ElementType> = {
 };
 
 const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; border: string }> = {
-  READ_20_RESOURCES: { 
-    text: "text-cyan-400", 
-    bg: "bg-cyan-500/20", 
-    border: "border-cyan-500/30" 
+  READ_20_RESOURCES: {
+    text: "text-cyan-400",
+    bg: "bg-cyan-500/20",
+    border: "border-cyan-500/30"
   },
-  CREATE_5_READLISTS: { 
-    text: "text-purple-400", 
-    bg: "bg-purple-500/20", 
-    border: "border-purple-500/30" 
+  CREATE_5_READLISTS: {
+    text: "text-purple-400",
+    bg: "bg-purple-500/20",
+    border: "border-purple-500/30"
   },
-  LOGIN_7_DAYS: { 
-    text: "text-emerald-400", 
-    bg: "bg-emerald-500/20", 
-    border: "border-emerald-500/30" 
+  LOGIN_7_DAYS: {
+    text: "text-emerald-400",
+    bg: "bg-emerald-500/20",
+    border: "border-emerald-500/30"
   },
-  ADD_15_WALLETS: { 
-    text: "text-brand-accent", 
-    bg: "bg-brand-accent/20", 
-    border: "border-brand-accent/30" 
+  ADD_15_WALLETS: {
+    text: "text-brand-accent",
+    bg: "bg-brand-accent/20",
+    border: "border-brand-accent/30"
   },
 };
 
-export function WeeklyChallengesCard({ compact = false, className }: WeeklyChallengesCardProps) {
+export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact = false, className }: WeeklyChallengesCardProps) {
   const {
     weeklyChallenges,
     timeUntilWeeklyReset,
@@ -120,7 +122,7 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
             <p className="text-xs text-text-muted">{completedCount}/{weeklyChallenges.length} completed</p>
           </div>
         </div>
-        
+
         {/* Timer */}
         {timeUntilWeeklyReset && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
@@ -143,14 +145,14 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
         {weeklyChallenges.map((challenge) => {
           const Icon = CHALLENGE_ICONS[challenge.type];
           const colors = CHALLENGE_COLORS[challenge.type];
-          
+
           return (
             <div
               key={challenge.type}
               className={cn(
                 "p-4 rounded-xl transition-all",
-                challenge.completed 
-                  ? "bg-emerald-500/10 border border-emerald-500/20" 
+                challenge.completed
+                  ? "bg-emerald-500/10 border border-emerald-500/20"
                   : "bg-white/5 border border-border-subtle"
               )}
             >
@@ -206,5 +208,5 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
       </div>
     </div>
   );
-}
+});
 

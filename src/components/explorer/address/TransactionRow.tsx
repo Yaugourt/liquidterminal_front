@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -31,7 +31,7 @@ interface TransactionRowProps {
     currentAddress?: string;
 }
 
-export function TransactionRow({ tx, formatterConfig, currentAddress }: TransactionRowProps) {
+export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig, currentAddress }: TransactionRowProps) {
     const { spotTokens, perpMarkets, format } = formatterConfig;
     const tokenName = getTokenName(tx.token, spotTokens, perpMarkets);
     const tokenPrice = getTokenPrice(tokenName, spotTokens);
@@ -180,4 +180,4 @@ export function TransactionRow({ tx, formatterConfig, currentAddress }: Transact
             </TableCell>
         </TableRow>
     );
-}
+});

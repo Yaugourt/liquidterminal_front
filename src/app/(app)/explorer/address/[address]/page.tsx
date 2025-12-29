@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useTransactions, usePortfolio } from "@/services/explorer/address";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,10 @@ export default function AddressPage() {
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("transactions");
 
+  // Track which tabs have been visited (lazy mount + keep alive)
+  // Initialize with "transactions" since it's the default tab
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set(["transactions"]));
+
   // Handler for add wallet button click
   const handleAddWalletClick = () => {
     if (isAuthenticated) {
@@ -33,10 +37,16 @@ export default function AddressPage() {
     }
   };
 
-  // Handle tab change
-  const handleTabChange = (tabId: string) => {
+  // Handle tab change - mark tab as visited
+  const handleTabChange = useCallback((tabId: string) => {
     setActiveTab(tabId);
-  };
+    setVisitedTabs(prev => {
+      if (prev.has(tabId)) return prev;
+      const next = new Set(prev);
+      next.add(tabId);
+      return next;
+    });
+  }, []);
 
   return (
     <>
@@ -60,22 +70,28 @@ export default function AddressPage() {
         tabs={ADDRESS_TABS}
       />
 
-      {/* Content based on active tab */}
-      {activeTab === "vaults" && (
-        <VaultDepositList address={address} />
+      {/* Content based on active tab - lazy mount + keep alive pattern */}
+      {/* Components are only mounted on first visit, then stay in memory */}
+
+      {visitedTabs.has("vaults") && (
+        <div className={activeTab === "vaults" ? "" : "hidden"}>
+          <VaultDepositList address={address} />
+        </div>
       )}
 
-      {activeTab === "transactions" && (
-        <TransactionList
-          transactions={transactions || []}
-          isLoading={isLoading}
-          error={error}
-          currentAddress={address}
-        />
+      {visitedTabs.has("transactions") && (
+        <div className={activeTab === "transactions" ? "" : "hidden"}>
+          <TransactionList
+            transactions={transactions || []}
+            isLoading={isLoading}
+            error={error}
+            currentAddress={address}
+          />
+        </div>
       )}
 
-      {activeTab === "holdings" && (
-        <div className="mt-6">
+      {visitedTabs.has("holdings") && (
+        <div className={activeTab === "holdings" ? "mt-6" : "hidden"}>
           <AssetsSection
             initialViewType="spot"
             addressOverride={address}
@@ -83,20 +99,24 @@ export default function AddressPage() {
         </div>
       )}
 
-      {activeTab === "orders" && (
-        <OrdersSection
-          address={address}
-        />
+      {visitedTabs.has("orders") && (
+        <div className={activeTab === "orders" ? "" : "hidden"}>
+          <OrdersSection
+            address={address}
+          />
+        </div>
       )}
 
-      {activeTab === "twap" && (
-        <TwapSection
-          address={address}
-        />
+      {visitedTabs.has("twap") && (
+        <div className={activeTab === "twap" ? "" : "hidden"}>
+          <TwapSection
+            address={address}
+          />
+        </div>
       )}
 
-      {activeTab === "perps" && (
-        <div className="mt-6">
+      {visitedTabs.has("perps") && (
+        <div className={activeTab === "perps" ? "mt-6" : "hidden"}>
           <AssetsSection
             initialViewType="perp"
             addressOverride={address}
@@ -104,8 +124,10 @@ export default function AddressPage() {
         </div>
       )}
 
-      {activeTab === "staking" && (
-        <StakingTable address={address} />
+      {visitedTabs.has("staking") && (
+        <div className={activeTab === "staking" ? "" : "hidden"}>
+          <StakingTable address={address} />
+        </div>
       )}
 
       {activeTab !== "transactions" && activeTab !== "holdings" && activeTab !== "orders" && activeTab !== "twap" && activeTab !== "perps" && activeTab !== "vaults" && activeTab !== "staking" && (

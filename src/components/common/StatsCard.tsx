@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 import { Loader2 } from "lucide-react";
 import { GlassPanel } from "@/components/ui/glass-panel";
 
@@ -11,7 +11,7 @@ export interface StatsCardProps {
     className?: string;
 }
 
-export function StatsCard({
+export const StatsCard = memo(function StatsCard({
     title,
     value,
     icon,
@@ -42,8 +42,8 @@ export function StatsCard({
                     {change !== undefined && (
                         <span
                             className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${change >= 0
-                                    ? "bg-brand-accent/10 text-brand-accent"
-                                    : "bg-rose-500/20 text-rose-400"
+                                ? "bg-brand-accent/10 text-brand-accent"
+                                : "bg-rose-500/20 text-rose-400"
                                 }`}
                         >
                             {change >= 0 ? "+" : ""}
@@ -54,7 +54,7 @@ export function StatsCard({
             )}
         </GlassPanel>
     );
-}
+});
 
 // Loading placeholder for StatsCard grid
 export function StatsCardSkeleton() {

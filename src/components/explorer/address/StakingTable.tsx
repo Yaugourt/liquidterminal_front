@@ -138,18 +138,18 @@ export function StakingTable({ address }: StakingTableProps) {
 
   return (
     <Card className="glass-panel p-6 flex flex-col">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         {/* Sub-tabs */}
         <StakingTabButtons
           activeSubTab={activeSubTab}
           onSubTabChange={handleSubTabChange}
         />
 
-        {/* Stats */}
-        <div className="flex items-center gap-8">
+        {/* Stats - responsive grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6">
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter">Delegated:</span>
-            <span className="text-[#4ADE80] text-sm font-semibold font-inter">
+            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
+            <span className="text-[#4ADE80] text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(stakingBalance, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">
@@ -158,10 +158,9 @@ export function StakingTable({ address }: StakingTableProps) {
               )}
             </span>
           </div>
-          <div className="w-px h-4 bg-white/10"></div>
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter">Undelegated:</span>
-            <span className="text-brand-accent text-sm font-semibold font-inter">
+            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Undelegated:</span>
+            <span className="text-brand-accent text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(undelegatedAmount, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">
@@ -170,10 +169,9 @@ export function StakingTable({ address }: StakingTableProps) {
               )}
             </span>
           </div>
-          <div className="w-px h-4 bg-[#FFFFFF20]"></div>
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter">Pending withdrawal:</span>
-            <span className="text-[#F9E370] text-sm font-semibold font-inter">
+            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
+            <span className="text-[#F9E370] text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(pendingWithdrawal, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">

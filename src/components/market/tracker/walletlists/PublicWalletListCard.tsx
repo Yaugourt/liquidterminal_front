@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 import { WalletList } from "@/services/market/tracker/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +13,7 @@ interface PublicWalletListCardProps {
   onPreview: (list: WalletList) => void;
 }
 
-export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardProps) {
+export const PublicWalletListCard = memo(function PublicWalletListCard({ list, onPreview }: PublicWalletListCardProps) {
   const createdDate = new Date(list.createdAt);
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
@@ -54,7 +56,7 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
         <div className="flex items-center gap-2 text-sm text-text-secondary pt-2 border-t border-border-subtle">
           <span>By</span>
           <span className="text-white font-medium">
-            {list.creator?.name || list.creator?.username || 'Anonymous'}
+            {list.creator?.name || 'Anonymous'}
           </span>
         </div>
 
@@ -71,5 +73,5 @@ export function PublicWalletListCard({ list, onPreview }: PublicWalletListCardPr
       </CardContent>
     </Card>
   );
-}
+});
 
