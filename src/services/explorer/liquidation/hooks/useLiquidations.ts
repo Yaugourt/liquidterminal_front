@@ -6,7 +6,7 @@ import {
   LiquidationResponse,
   LiquidationsParams
 } from '../types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Hook pour récupérer les liquidations avec pagination keyset et filtres
@@ -70,16 +70,23 @@ export const useRecentLiquidations = ({
   user,
   amount_dollars,
   limit = 50,
+  hours = 2,
   order = 'DESC',
   refreshInterval = 10000 // Refresh plus fréquent pour les données récentes
-}: Omit<UseLiquidationsOptions, 'start_time' | 'end_time' | 'cursor'> = {}): UseLiquidationsResult => {
+}: Omit<UseLiquidationsOptions, 'start_time' | 'end_time' | 'cursor'> & { hours?: number } = {}): UseLiquidationsResult => {
   const [params, setParams] = useState<LiquidationsParams>({
     coin,
     user,
     amount_dollars,
     limit,
+    hours,
     order
   });
+
+  // Sync params when hours changes
+  useEffect(() => {
+    setParams(prev => ({ ...prev, hours }));
+  }, [hours]);
 
   const { data, isLoading, error, refetch } = useDataFetching<LiquidationResponse>({
     fetchFn: () => fetchRecentLiquidations(params),

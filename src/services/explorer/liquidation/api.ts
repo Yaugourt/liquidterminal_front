@@ -1,7 +1,7 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
 import { ENDPOINTS } from '@/services/api/constants';
-import { LiquidationResponse, LiquidationsParams } from './types';
+import { LiquidationResponse, LiquidationsParams, LiquidationStatsAllResponse } from './types';
 
 /**
  * Construit les query params à partir des paramètres de liquidations
@@ -51,4 +51,17 @@ export const fetchRecentLiquidations = async (
     );
     return response;
   }, 'fetching recent liquidations');
+};
+
+/**
+ * Récupère les statistiques de toutes les périodes en un seul appel
+ * @returns Stats pour 2h, 4h, 8h, 12h, 24h
+ */
+export const fetchAllLiquidationStats = async (): Promise<LiquidationStatsAllResponse> => {
+  return withErrorHandling(async () => {
+    const response = await get<LiquidationStatsAllResponse>(
+      `${ENDPOINTS.LIQUIDATIONS_STATS_ALL}`
+    );
+    return response;
+  }, 'fetching all liquidation stats');
 };

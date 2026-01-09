@@ -53,6 +53,7 @@ export interface LiquidationsParams {
   limit?: number;            // Nombre max de résultats (1-1000, défaut: 100)
   cursor?: string;           // Curseur keyset format <time_ms>:<tid>
   order?: 'ASC' | 'DESC';    // Tri par temps (défaut: DESC)
+  hours?: number;            // Fenêtre de temps en heures (pour recent endpoint)
 }
 
 /**
@@ -78,13 +79,32 @@ export interface UseLiquidationsResult {
 }
 
 /**
- * Statistiques des liquidations (pour les stats cards)
+ * Statistiques des liquidations pour une période
  */
 export interface LiquidationStats {
-  volume24h: number;         // Volume total en USD sur 24h
-  count24h: number;          // Nombre de liquidations sur 24h
-  longCount: number;         // Nombre de liquidations Long
-  shortCount: number;        // Nombre de liquidations Short
-  topCoin: string;           // Coin le plus liquidé
-  topCoinVolume: number;     // Volume du coin le plus liquidé
+  totalVolume: number;
+  liquidationsCount: number;
+  longCount: number;
+  shortCount: number;
+  topCoin: string;
+  topCoinVolume: number;
+}
+
+/**
+ * Réponse de l'API pour /stats/all (toutes les périodes)
+ */
+export interface LiquidationStatsAllResponse {
+  success: boolean;
+  stats: {
+    "2h": LiquidationStats | null;
+    "4h": LiquidationStats | null;
+    "8h": LiquidationStats | null;
+    "12h": LiquidationStats | null;
+    "24h": LiquidationStats | null;
+  };
+  errors?: string[];
+  metadata: {
+    executionTimeMs: number;
+    cachedAt: string;
+  };
 }

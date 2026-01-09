@@ -1,9 +1,9 @@
 "use client";
 
-import { useRecentLiquidations, Liquidation } from "@/services/explorer/liquidation";
+import { Liquidation } from "@/services/explorer/liquidation";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Pagination } from "@/components/common/pagination";
 import { usePagination } from "@/hooks/core/usePagination";
 import { DataTable } from "@/components/common/DataTable";
@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
+import { useLiquidationsContext } from "./LiquidationsContext";
 
 export function LiquidationsSection() {
   const {
@@ -21,26 +22,29 @@ export function LiquidationsSection() {
     onRowsPerPageChange
   } = usePagination({ initialRowsPerPage: 25 });
 
-  const { liquidations, hasMore, isLoading, error, updateParams } = useRecentLiquidations({
-    limit: rowsPerPage
-  });
+  // Utilise les données du Context
+  const { liquidations: allLiquidations, isLoading, error } = useLiquidationsContext();
 
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
 
+  // Pagination locale sur les données du Context
+  const paginatedLiquidations = useMemo(() => {
+    const start = page * rowsPerPage;
+    const end = start + rowsPerPage;
+    return allLiquidations.slice(start, end);
+  }, [allLiquidations, page, rowsPerPage]);
+
   const handlePageChange = useCallback((newPage: number) => {
     onPageChange(newPage);
-    // Note: Keyset pagination doesn't support arbitrary page jumps
-    // For now, we'll just update the limit
   }, [onPageChange]);
 
   const handleRowsPerPageChange = useCallback((newRows: number) => {
     onRowsPerPageChange(newRows);
-    updateParams({ limit: newRows });
-  }, [updateParams, onRowsPerPageChange]);
+  }, [onRowsPerPageChange]);
 
-  // Estimate total based on hasMore
-  const estimatedTotal = hasMore ? (page + 2) * rowsPerPage : (page + 1) * rowsPerPage;
+  // Total basé sur les données disponibles
+  const total = allLiquidations.length;
 
   return (
     <div className="w-full h-full flex flex-col p-4">
@@ -49,7 +53,7 @@ export function LiquidationsSection() {
           <DataTable
             isLoading={isLoading}
             error={error}
-            isEmpty={liquidations.length === 0}
+            isEmpty={paginatedLiquidations.length === 0}
             emptyState={{
               title: "No liquidations available"
             }}
@@ -88,8 +92,8 @@ export function LiquidationsSection() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {liquidations.map((liq: Liquidation) => (
-                  <TableRow key={liq.tid} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
+                {paginatedLiquidations.map((liq: Liquidation, index: number) => (
+                  <TableRow key={`${liq.tid}-${liq.time_ms}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
                     <TableCell className="py-3 px-3 text-white font-medium">
                       {formatDateTime(liq.time, dateFormat)}
                     </TableCell>
@@ -127,7 +131,7 @@ export function LiquidationsSection() {
         </div>
         <div className="mt-4 pt-4 border-t border-border-subtle">
           <Pagination
-            total={estimatedTotal}
+            total={total}
             page={page}
             rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[10, 25, 50, 100]}

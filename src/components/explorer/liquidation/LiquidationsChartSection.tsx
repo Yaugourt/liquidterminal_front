@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { useRecentLiquidations } from "@/services/explorer/liquidation";
+import { useLiquidationsContext } from "./LiquidationsContext";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDate } from '@/lib/formatters/dateFormatting';
 import {
@@ -176,7 +176,9 @@ export const LiquidationsChartSection = () => {
   const [hoverTime, setHoverTime] = useState<number | null>(null);
   
   const { format: dateFormat } = useDateFormat();
-  const { liquidations, isLoading, error } = useRecentLiquidations({ limit: 500 });
+  
+  // Utilise les données du Context
+  const { liquidations, isLoading, error } = useLiquidationsContext();
 
   // Aggregate liquidations by 5-minute intervals
   const chartData = useMemo(() => {
@@ -186,16 +188,19 @@ export const LiquidationsChartSection = () => {
     const buckets: Record<number, { volume: number; count: number; longVolume: number; shortVolume: number }> = {};
 
     liquidations.forEach((liq) => {
+      // Skip invalid data
+      if (!liq.time_ms || isNaN(liq.time_ms) || isNaN(liq.notional_total)) return;
+      
       const bucketTime = Math.floor(liq.time_ms / intervalMs) * intervalMs;
       if (!buckets[bucketTime]) {
         buckets[bucketTime] = { volume: 0, count: 0, longVolume: 0, shortVolume: 0 };
       }
-      buckets[bucketTime].volume += liq.notional_total;
+      buckets[bucketTime].volume += liq.notional_total || 0;
       buckets[bucketTime].count += 1;
       if (liq.liq_dir === 'Long') {
-        buckets[bucketTime].longVolume += liq.notional_total;
+        buckets[bucketTime].longVolume += liq.notional_total || 0;
       } else {
-        buckets[bucketTime].shortVolume += liq.notional_total;
+        buckets[bucketTime].shortVolume += liq.notional_total || 0;
       }
     });
 
@@ -204,13 +209,15 @@ export const LiquidationsChartSection = () => {
         // Color based on dominant direction: green if more longs, red if more shorts
         const longRatio = data.volume > 0 ? data.longVolume / data.volume : 0.5;
         const color = longRatio > 0.5 ? "#10b981" : "#f43f5e"; // emerald for longs, rose for shorts
+        const value = selectedChart === 'volume' ? data.volume : data.count;
         
         return {
           time: parseInt(time),
-          value: selectedChart === 'volume' ? data.volume : data.count,
+          value: isNaN(value) ? 0 : value,
           color,
         };
       })
+      .filter(item => !isNaN(item.time) && !isNaN(item.value))
       .sort((a, b) => a.time - b.time);
   }, [liquidations, selectedChart]);
 

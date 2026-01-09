@@ -49,6 +49,7 @@ export const ENDPOINTS = {
   MARKET_VAULTS: '/market/vaults',
   LIQUIDATIONS: '/liquidations',
   LIQUIDATIONS_RECENT: '/liquidations/recent',
+  LIQUIDATIONS_STATS_ALL: '/liquidations/stats/all',
 } as const;
 
 // Helper functions pour construire les URLs complètes
