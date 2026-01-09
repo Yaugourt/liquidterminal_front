@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { useValidators } from "@/services/explorer/validator";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
+import { useRecentLiquidations } from "@/services/explorer/liquidation";
 import { ValidatorsTable, VaultTable } from "./DataTablesContent";
+import { LiquidationsTable } from "./LiquidationsTable";
 import type { VaultSummary } from "@/services/explorer/vault/types";
 import type { Validator } from "@/services/explorer/validator/types/validators";
 
@@ -26,6 +28,9 @@ export const TabSection = memo(({
     sortBy: 'tvl',
     initialData: initialVaults
   });
+  const { liquidations, isLoading: liquidationsLoading, error: liquidationsError } = useRecentLiquidations({
+    limit: 100
+  });
 
   // Transform vaults data to match VaultTableProps type
   const transformedVaults = useMemo(() => vaults.map(vault => ({
@@ -47,6 +52,7 @@ export const TabSection = memo(({
 
   const paginatedVaults = transformedVaults.slice(startIndex, endIndex);
   const paginatedValidators = validators.slice(startIndex, endIndex);
+  const paginatedLiquidations = liquidations.slice(startIndex, endIndex);
 
   const getTotalCount = () => {
     switch (activeTab) {
@@ -54,6 +60,8 @@ export const TabSection = memo(({
         return transformedVaults.length;
       case 'stacking':
         return validators.length;
+      case 'liquidations':
+        return liquidations.length;
       default:
         return 0;
     }
@@ -77,7 +85,8 @@ export const TabSection = memo(({
           <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
             {[
               { key: 'vault', label: 'Vaults' },
-              { key: 'stacking', label: 'Validators' }
+              { key: 'stacking', label: 'Validators' },
+              { key: 'liquidations', label: 'Liquidations' }
             ].map(tab => (
               <button
                 key={tab.key}
@@ -95,7 +104,8 @@ export const TabSection = memo(({
 
         {(() => {
           const seeAllLink = activeTab === 'vault' ? '/explorer/vaults' :
-            activeTab === 'stacking' ? '/explorer/validator' : null;
+            activeTab === 'stacking' ? '/explorer/validator' :
+            activeTab === 'liquidations' ? '/explorer/liquidations' : null;
 
           if (!seeAllLink) return null;
 
@@ -133,9 +143,21 @@ export const TabSection = memo(({
             {...paginationProps}
           />
         )}
+
+        {activeTab === "liquidations" && (
+          <LiquidationsTable
+            liquidations={paginatedLiquidations}
+            isLoading={liquidationsLoading}
+            error={liquidationsError}
+            paginationDisabled={false}
+            hidePageNavigation={true}
+            {...paginationProps}
+          />
+        )}
       </div>
     </div>
   );
 });
 
 TabSection.displayName = 'TabSection';
+

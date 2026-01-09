@@ -47,6 +47,8 @@ export const ENDPOINTS = {
   STAKING_HOLDERS_TOP: '/staking/holders/top',
   STAKING_HOLDERS_STATS: '/staking/holders/stats',
   MARKET_VAULTS: '/market/vaults',
+  LIQUIDATIONS: '/liquidations',
+  LIQUIDATIONS_RECENT: '/liquidations/recent',
 } as const;
 
 // Helper functions pour construire les URLs complètes

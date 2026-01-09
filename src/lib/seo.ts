@@ -213,5 +213,12 @@ export const seoConfig = {
     keywords: ["validators", "staking", "HyperLiquid validators", "proof of stake", "network security"],
     path: "/explorer/validator",
   },
+
+  liquidations: {
+    title: "Liquidations - HyperLiquid Liquidation Events",
+    description: "Track HyperLiquid liquidation events in real-time. Monitor size, notional value, and market impact of liquidations.",
+    keywords: ["liquidations", "HyperLiquid liquidations", "trading liquidations", "perp liquidations", "market data"],
+    path: "/explorer/liquidations",
+  },
 };
 
