@@ -109,7 +109,7 @@ export const ProjectCard = memo(function ProjectCard({
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-[10px] text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
+                  <span key={category.id} className="text-label text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}

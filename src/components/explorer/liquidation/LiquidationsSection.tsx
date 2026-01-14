@@ -62,39 +62,21 @@ export function LiquidationsSection() {
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Coin</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Side</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Notional</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right max-lg:hidden">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right max-md:hidden">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 max-lg:hidden">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Method</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
-                  </TableHead>
+                  <TableHead className="py-3 px-3">Time</TableHead>
+                  <TableHead className="py-3 px-3">Coin</TableHead>
+                  <TableHead className="py-3 px-3">Side</TableHead>
+                  <TableHead className="py-3 px-3 text-right">Notional</TableHead>
+                  <TableHead className="py-3 px-3 text-right max-lg:hidden">Size</TableHead>
+                  <TableHead className="py-3 px-3 text-right max-md:hidden">Fee</TableHead>
+                  <TableHead className="py-3 px-3 max-lg:hidden">Method</TableHead>
+                  <TableHead className="py-3 px-3">User</TableHead>
+                  <TableHead className="py-3 px-3">Hash</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedLiquidations.map((liq: Liquidation, index: number) => (
                   <TableRow key={`${liq.tid}-${liq.time_ms}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                    <TableCell className="py-3 px-3 text-white font-medium">
+                    <TableCell className="py-3 px-3">
                       {formatDateTime(liq.time, dateFormat)}
                     </TableCell>
                     <TableCell className="py-3 px-3 text-brand-accent font-medium">
@@ -105,10 +87,10 @@ export function LiquidationsSection() {
                         {liq.liq_dir}
                       </StatusBadge>
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right text-white font-medium">
+                    <TableCell className="py-3 px-3 text-right font-medium">
                       ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right text-white font-medium max-lg:hidden">
+                    <TableCell className="py-3 px-3 text-right font-medium max-lg:hidden">
                       {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
                     </TableCell>
                     <TableCell className="py-3 px-3 text-right text-text-muted max-md:hidden">

@@ -17,7 +17,7 @@ export function AssetLogo({ assetName, isDelisted, className = "w-6 h-6", showTi
     if (hasError || showTickerOnly) {
         return (
             <div className={`${className} rounded-full bg-brand-accent/20 flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
-                <span className="text-[10px] font-bold text-brand-accent">{ticker.charAt(0)}</span>
+                <span className="text-label text-brand-accent">{ticker.charAt(0)}</span>
             </div>
         );
     }

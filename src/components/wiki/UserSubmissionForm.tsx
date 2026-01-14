@@ -73,6 +73,9 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
             onSuccess?.();
         } catch (err) {
             const error = err as AxiosError<{ code?: string; reason?: string; error?: string }>;
+            const code = error.response?.data?.code;
+            const reason = error.response?.data?.reason;
+            
             // Gestion prioritaire du Rate Limit (Status 429 ou Code spécifique)
             if (error.response?.status === 429 || code === 'RATE_LIMIT_EXCEEDED') {
                 toast.error("Limite hebdomadaire atteinte (10/semaine).");

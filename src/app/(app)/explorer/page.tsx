@@ -6,6 +6,7 @@ import {
   ValidatorsTable,
   TransfersDeployTable
 } from "@/components/explorer";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 export default function Explorer() {
   return (
@@ -15,18 +16,18 @@ export default function Explorer() {
 
       {/* Recent Data Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        <GlassPanel>
           <RecentDataTable />
-        </div>
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        </GlassPanel>
+        <GlassPanel>
           <TransfersDeployTable />
-        </div>
+        </GlassPanel>
       </div>
 
       {/* Validators Table */}
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <GlassPanel>
         <ValidatorsTable />
-      </div>
+      </GlassPanel>
     </>
   );
 }

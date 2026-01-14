@@ -36,7 +36,9 @@ export function usePerpMarkets({
         page: response.pagination.page,
         limit: response.pagination.limit,
         totalPages: response.pagination.totalPages,
-        totalVolume: response.metadata?.totalVolume || 0
+        totalVolume: response.pagination.totalVolume || 0,
+        hasNext: response.pagination.page < response.pagination.totalPages,
+        hasPrevious: response.pagination.page > 1
       };
     },
     refreshInterval: 10000,

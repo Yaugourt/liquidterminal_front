@@ -34,7 +34,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
       <Button
         variant="ghost"
         onClick={onClick}
-        className={`${isActive ? "text-brand-accent hover:text-brand-accent" : "text-text-secondary hover:text-zinc-200"} font-semibold text-[10px] uppercase tracking-wider p-0 flex items-center justify-start w-full h-auto`}
+        className={`${isActive ? "text-brand-accent hover:text-brand-accent" : "text-text-secondary hover:text-zinc-200"} text-label p-0 flex items-center justify-start w-full h-auto`}
       >
         {label}
         {onClick && <ArrowUpDown className="ml-1.5 h-3 w-3" />}
@@ -98,7 +98,7 @@ const PerpDexRow = memo(({
         <div className="flex flex-col items-start">
           <span className="text-white text-sm font-medium">{dex.activeAssets}</span>
           {dex.activeAssets !== dex.totalAssets && (
-            <span className="text-rose-400 text-[10px]">
+            <span className="text-rose-400 text-label">
               +{dex.totalAssets - dex.activeAssets} delisted
             </span>
           )}
@@ -161,7 +161,7 @@ const PerpDexRow = memo(({
                   }}
                 />
               </div>
-              <span className="text-text-muted text-[10px]">
+              <span className="text-label text-text-muted">
                 {((dex.totalOpenInterest / dex.totalOiCap) * 100).toFixed(1)}%
               </span>
             </div>

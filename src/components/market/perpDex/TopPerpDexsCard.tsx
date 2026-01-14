@@ -61,15 +61,11 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                   <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
                     <Building2 size={12} className="text-brand-accent" />
                   </div>
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Top by Volume</span>
+                  Top by Volume
                 </div>
               </TableHead>
-              <TableHead className="py-3 w-[30%]">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">24h Vol</span>
-              </TableHead>
-              <TableHead className="py-3 pr-4 w-[30%]">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
-              </TableHead>
+              <TableHead className="py-3 w-[30%]">24h Vol</TableHead>
+              <TableHead className="py-3 pr-4 w-[30%]">Open Interest</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -82,12 +78,12 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                 >
                   <TableCell className="py-2.5 pl-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-[10px] font-bold text-brand-accent">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent">
                         {dex.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-white text-xs font-medium">{dex.fullName}</span>
-                        <span className="text-text-muted text-[10px]">
+                        <span className="text-label text-text-muted">
                           {dex.activeAssets}/{dex.totalAssets} markets
                         </span>
                       </div>

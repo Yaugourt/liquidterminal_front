@@ -105,7 +105,7 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className={holding.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
             {holding.type}
           </span>
-          <span className="text-[10px] text-text-muted">
+          <span className="text-label text-text-muted">
             {holding.leverage.value}x ({holding.leverage.type})
           </span>
         </div>
@@ -124,7 +124,7 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className="text-white text-sm font-medium">
             {formatCurrency(holding.positionValue)}
           </span>
-          <span className="text-[10px] text-text-muted">
+          <span className="text-label text-text-muted">
             {formatTokenSize(holding.szi, holding.coin)}
           </span>
         </div>

@@ -36,7 +36,7 @@ const AnimatedPeriodSelector = ({
         <button
           key={period}
           onClick={() => onPeriodChange(period)}
-          className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${selectedPeriod === period
+          className={`px-2 py-1 rounded-md text-label transition-all ${selectedPeriod === period
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
               : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
             }`}
@@ -142,7 +142,7 @@ export const ChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-text-muted">
+                  <span className="text-label text-text-muted">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -159,14 +159,14 @@ export const ChartDisplay = ({
               <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onCurrencyChange("USDC")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                  className={`px-2 py-0.5 text-label rounded ${selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                     }`}
                 >
                   USDC
                 </button>
                 <button
                   onClick={() => onCurrencyChange("HYPE")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                  className={`px-2 py-0.5 text-label rounded ${selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                     }`}
                 >
                   HYPE
@@ -178,14 +178,14 @@ export const ChartDisplay = ({
               <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
                 <button
                   onClick={() => onFeeTypeChange("all")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                  className={`px-2 py-0.5 text-label rounded ${selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                     }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => onFeeTypeChange("spot")}
-                  className={`px-2 py-0.5 text-[10px] font-medium rounded ${selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+                  className={`px-2 py-0.5 text-label rounded ${selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
                     }`}
                 >
                   Spot

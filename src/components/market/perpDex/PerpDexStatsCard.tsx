@@ -39,7 +39,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
           ) : (
             <WifiOff className="h-3 w-3 text-rose-400" />
           )}
-          <span className="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full font-medium">
+          <span className="text-label px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full">
             LIVE
           </span>
         </div>
@@ -54,7 +54,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Dexs */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <Building2 className="h-3 w-3 text-brand-accent mr-1.5" />
               Active DEXs
             </div>
@@ -65,7 +65,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Active Markets */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <Layers className="h-3 w-3 text-brand-accent mr-1.5" />
               Active Markets
             </div>
@@ -79,7 +79,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* 24h Volume */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
               24h Volume
             </div>
@@ -95,7 +95,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Open Interest */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <TrendingUp className="h-3 w-3 text-brand-accent mr-1.5" />
               Open Interest
             </div>
@@ -111,7 +111,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Total OI Cap */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <BarChart3 className="h-3 w-3 text-brand-accent mr-1.5" />
               Total OI Cap
             </div>
@@ -127,7 +127,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
           {/* Avg Funding */}
           <div>
-            <div className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider mb-1 flex items-center">
+            <div className="text-stat-label mb-1 flex items-center">
               <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
               Avg Funding
             </div>

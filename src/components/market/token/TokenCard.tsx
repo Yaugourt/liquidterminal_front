@@ -98,7 +98,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
         <div className="flex flex-wrap gap-6">
           {/* Mark/Price */}
           <div className="flex flex-col">
-            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
+            <span className="text-stat-label">
               {token.type === 'perpetual' ? 'Mark' : 'Price'}
             </span>
             <span className={cn(
@@ -114,7 +114,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* Oracle (Perpetual only) */}
           {token.type === 'perpetual' && token.oracle && (
             <div className="flex flex-col">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Oracle</span>
+              <span className="text-stat-label">Oracle</span>
               <span className="text-white text-sm font-medium">
                 {formatPriceValue(token.oracle)}
               </span>
@@ -123,7 +123,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
 
           {/* 24h Change */}
           <div className="flex flex-col">
-            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">24h Change</span>
+            <span className="text-stat-label">24h Change</span>
             <span className={cn(
               "text-sm font-medium px-2 py-0.5 rounded-md w-fit",
               token.change24h >= 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
@@ -134,7 +134,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
 
           {/* 24h Volume */}
           <div className="flex flex-col">
-            <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
+            <span className="text-stat-label">24h Volume</span>
             <span className="text-white text-sm font-medium">
               {formatVolumeValue(token.volume24h)}
             </span>
@@ -143,7 +143,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* Market Cap (Spot) or Open Interest (Perpetual) */}
           {token.type === 'spot' && token.marketCap && (
             <div className="flex flex-col">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Market Cap</span>
+              <span className="text-stat-label">Market Cap</span>
               <span className="text-white text-sm font-medium">
                 {formatMarketCapValue(token.marketCap)}
               </span>
@@ -152,7 +152,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
 
           {token.type === 'perpetual' && token.openInterest && (
             <div className="flex flex-col">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
+              <span className="text-stat-label">Open Interest</span>
               <span className="text-white text-sm font-medium">
                 {formatVolumeValue(token.openInterest)}
               </span>
@@ -162,7 +162,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* Contract */}
           {token.contract && (
             <div className="flex flex-col">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Contract</span>
+              <span className="text-stat-label">Contract</span>
               <div className="flex items-center gap-2">
                 <span className="text-brand-accent text-xs font-mono">
                   {truncateAddress(token.contract)}
@@ -179,7 +179,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* Funding Rate / Countdown (Perpetual only) */}
           {token.type === 'perpetual' && (
             <div className="flex flex-col">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
+              <span className="text-stat-label">
                 Funding / Countdown
               </span>
               <div className="flex flex-col">

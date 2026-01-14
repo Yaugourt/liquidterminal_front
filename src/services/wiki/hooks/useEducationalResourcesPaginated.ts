@@ -45,7 +45,9 @@ export function useEducationalResourcesPaginated({
         total: initialData.length,
         page: 1,
         limit: initialData.length,
-        totalPages: 1
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false
       },
       metadata: {
         lastUpdate: Date.now()

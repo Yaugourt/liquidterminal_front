@@ -112,7 +112,7 @@ export const TabSection = memo(({
           return (
             <Link
               href={seeAllLink}
-              className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
+              className="flex items-center gap-1 text-label text-text-muted hover:text-brand-accent transition-colors"
             >
               View All
               <ExternalLink size={10} />

@@ -45,14 +45,14 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
 
         // Always show leverage
         badges.push(
-            <span key="leverage" className="text-text-muted text-[10px]">
+            <span key="leverage" className="text-label text-text-muted">
                 {asset.maxLeverage}x
             </span>
         );
 
         if (asset.growthMode === 'enabled') {
             badges.push(
-                <span key="growth" className="text-emerald-400 text-[10px] flex items-center gap-0.5">
+                <span key="growth" className="text-emerald-400 text-label flex items-center gap-0.5">
                     <Sprout className="h-2.5 w-2.5" />
                     Growth
                 </span>
@@ -61,7 +61,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
 
         if (asset.isDelisted) {
             badges.push(
-                <span key="delisted" className="text-rose-400 text-[10px] flex items-center gap-0.5">
+                <span key="delisted" className="text-rose-400 text-label flex items-center gap-0.5">
                     <AlertCircle className="h-2.5 w-2.5" />
                     Delisted
                 </span>
@@ -81,27 +81,13 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                     <Table className="table-fixed w-full">
                         <TableHeader>
                             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                                <TableHead className="py-3 pl-4 w-[22%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Asset</span>
-                                </TableHead>
-                                <TableHead className="py-3 w-[12%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span>
-                                </TableHead>
-                                <TableHead className="py-3 w-[10%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">24h</span>
-                                </TableHead>
-                                <TableHead className="py-3 w-[14%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Volume</span>
-                                </TableHead>
-                                <TableHead className="py-3 w-[14%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">OI</span>
-                                </TableHead>
-                                <TableHead className="py-3 w-[12%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Funding</span>
-                                </TableHead>
-                                <TableHead className="py-3 pr-4 w-[16%]">
-                                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
-                                </TableHead>
+                                <TableHead className="py-3 pl-4 w-[22%]">Asset</TableHead>
+                                <TableHead className="py-3 w-[12%]">Price</TableHead>
+                                <TableHead className="py-3 w-[10%]">24h</TableHead>
+                                <TableHead className="py-3 w-[14%]">Volume</TableHead>
+                                <TableHead className="py-3 w-[14%]">OI</TableHead>
+                                <TableHead className="py-3 w-[12%]">Funding</TableHead>
+                                <TableHead className="py-3 pr-4 w-[16%]">OI Cap</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

@@ -94,12 +94,12 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
-              <TableHead className="pl-4 w-[12%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Full Name</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Deployer</span></TableHead>
-              <TableHead className="pl-2 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Oracle Updater</span></TableHead>
-              <TableHead className="pl-2 w-[18%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee Recipient</span></TableHead>
-              <TableHead className="pl-2 pr-4 w-[15%] text-left py-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Gas (HYPE)</span></TableHead>
+              <TableHead className="pl-4 w-[12%] text-left py-3">Name</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3">Full Name</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3">Deployer</TableHead>
+              <TableHead className="pl-2 w-[15%] text-left py-3">Oracle Updater</TableHead>
+              <TableHead className="pl-2 w-[18%] text-left py-3">Fee Recipient</TableHead>
+              <TableHead className="pl-2 pr-4 w-[15%] text-left py-3">Gas (HYPE)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-transparent">

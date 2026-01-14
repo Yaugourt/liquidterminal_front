@@ -93,27 +93,13 @@ export function TableContent({
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Status</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Staked HYPE</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">APR</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Commission</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Uptime</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3 text-right">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Recent Blocks</span>
-                  </TableHead>
+                  <TableHead className="py-3 px-3">Name</TableHead>
+                  <TableHead className="py-3 px-3">Status</TableHead>
+                  <TableHead className="py-3 px-3 text-right">Staked HYPE</TableHead>
+                  <TableHead className="py-3 px-3 text-right">APR</TableHead>
+                  <TableHead className="py-3 px-3 text-right">Commission</TableHead>
+                  <TableHead className="py-3 px-3 text-right">Uptime</TableHead>
+                  <TableHead className="py-3 px-3 text-right">Recent Blocks</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -161,24 +147,12 @@ export function TableContent({
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Type</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Validator</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
-                  </TableHead>
+                  <TableHead className="py-3 px-3">Time</TableHead>
+                  <TableHead className="py-3 px-3">User</TableHead>
+                  <TableHead className="py-3 px-3">Type</TableHead>
+                  <TableHead className="py-3 px-3">Amount</TableHead>
+                  <TableHead className="py-3 px-3">Validator</TableHead>
+                  <TableHead className="py-3 px-3">Hash</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -225,15 +199,9 @@ export function TableContent({
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
-                  </TableHead>
-                  <TableHead className="py-3 px-3">
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
-                  </TableHead>
+                  <TableHead className="py-3 px-3">Time</TableHead>
+                  <TableHead className="py-3 px-3">User</TableHead>
+                  <TableHead className="py-3 px-3">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -273,33 +241,15 @@ export function TableContent({
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Coin</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Side</span>
-              </TableHead>
-              <TableHead className="py-3 px-3 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Notional</span>
-              </TableHead>
-              <TableHead className="py-3 px-3 text-right max-lg:hidden">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span>
-              </TableHead>
-              <TableHead className="py-3 px-3 text-right max-md:hidden">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee</span>
-              </TableHead>
-              <TableHead className="py-3 px-3 max-lg:hidden">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Method</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span>
-              </TableHead>
+              <TableHead className="py-3 px-3">Time</TableHead>
+              <TableHead className="py-3 px-3">Coin</TableHead>
+              <TableHead className="py-3 px-3">Side</TableHead>
+              <TableHead className="py-3 px-3 text-right">Notional</TableHead>
+              <TableHead className="py-3 px-3 text-right max-lg:hidden">Size</TableHead>
+              <TableHead className="py-3 px-3 text-right max-md:hidden">Fee</TableHead>
+              <TableHead className="py-3 px-3 max-lg:hidden">Method</TableHead>
+              <TableHead className="py-3 px-3">User</TableHead>
+              <TableHead className="py-3 px-3">Hash</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -355,24 +305,12 @@ export function TableContent({
       <Table className="w-full">
         <TableHeader>
           <TableRow className="border-b border-border-subtle hover:bg-transparent">
-            <TableHead className="py-3 px-3">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Status</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">TVL</span>
-            </TableHead>
-            <TableHead className="py-3 px-3 text-right">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">APR</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Leader</span>
-            </TableHead>
-            <TableHead className="py-3 px-3">
-              <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Created</span>
-            </TableHead>
+            <TableHead className="py-3 px-3">Name</TableHead>
+            <TableHead className="py-3 px-3">Status</TableHead>
+            <TableHead className="py-3 px-3">TVL</TableHead>
+            <TableHead className="py-3 px-3 text-right">APR</TableHead>
+            <TableHead className="py-3 px-3">Leader</TableHead>
+            <TableHead className="py-3 px-3">Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

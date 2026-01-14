@@ -68,13 +68,13 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
           </div>
           
           {/* Count */}
-          <span className="text-[10px] text-text-secondary group-hover:text-white/80">
+          <span className="text-label text-text-secondary group-hover:text-white/80">
             {dailyTasksCompletedCount}/{dailyTasks.length}
           </span>
 
           {/* Bonus indicator if not all completed */}
           {!allDailyTasksCompleted && !dailyBonusClaimed && (
-            <span className="text-[10px] text-[#F9E370] font-medium">
+            <span className="text-label text-[#F9E370]">
               +{dailyBonusXp}
             </span>
           )}
@@ -137,7 +137,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
 
                 {/* XP */}
                 <span className={cn(
-                  "text-[10px] font-medium shrink-0",
+                  "text-label shrink-0",
                   task.completed ? "text-emerald-400" : "text-text-muted"
                 )}>
                   +{task.xp}

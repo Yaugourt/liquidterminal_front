@@ -220,13 +220,13 @@ export function PortfolioStats({
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Volume</p>
+                    <p className="text-stat-label">Volume</p>
                     <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
                       {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
                         <button
                           key={timeframe}
                           onClick={() => setVolumeTimeframe(timeframe)}
-                          className={`px-2 py-1 text-[10px] rounded-md transition-all ${volumeTimeframe === timeframe
+                          className={`px-2 py-1 text-label rounded-md transition-all ${volumeTimeframe === timeframe
                             ? 'bg-brand-accent text-brand-tertiary font-bold'
                             : 'text-text-secondary hover:text-zinc-200'
                             }`}
@@ -283,7 +283,7 @@ export function PortfolioStats({
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between text-[10px] text-text-muted">
+                    <div className="flex justify-between text-label text-text-muted">
                       <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
                       <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
                     </div>

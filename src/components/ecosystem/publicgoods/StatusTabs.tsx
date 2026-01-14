@@ -62,7 +62,7 @@ export const StatusTabs = memo(function StatusTabs({
           </span>
           {tab.count > 0 && (
             <span className={cn(
-              "px-1.5 py-0.5 text-[10px] rounded-md font-medium",
+              "px-1.5 py-0.5 text-label rounded-md",
               activeTab === tab.id
                 ? "bg-brand-tertiary/20 text-brand-tertiary"
                 : `bg-white/5 ${tab.color}`

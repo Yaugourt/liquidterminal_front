@@ -34,7 +34,7 @@ export function LiquidationsStatsCard() {
             <button
               key={option.value}
               onClick={() => setSelectedPeriod(option.value)}
-              className={`flex-1 px-2 py-1 rounded-md text-[10px] font-medium transition-all ${
+              className={`flex-1 px-2 py-1 rounded-md text-label transition-all ${
                 selectedPeriod === option.value
                   ? 'bg-rose-500/20 text-rose-400 font-bold'
                   : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'

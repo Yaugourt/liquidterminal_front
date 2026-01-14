@@ -33,7 +33,7 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
         setError('Failed to load public read lists');
       }
     } catch (err) {
-      const errorMessage = handleReadListApiError(err, 'fetch public read lists');
+      const errorMessage = handleReadListApiError(err);
       setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch public read lists');
     } finally {
       setLoading(false);
@@ -59,11 +59,11 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
         readListMessages.success.listCreated(response.data.name);
         return true;
       } else {
-        handleReadListApiError(new Error(response.message || 'Copy failed'), 'copy read list');
+        handleReadListApiError(new Error(response.message || 'Copy failed'));
         return false;
       }
     } catch (err) {
-      handleReadListApiError(err, 'copy read list');
+      handleReadListApiError(err);
       return false;
     }
   }, []);

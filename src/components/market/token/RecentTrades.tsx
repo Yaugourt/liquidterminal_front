@@ -47,7 +47,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
 
             <div className="p-4 flex-1 flex flex-col min-h-0">
                 {/* Header */}
-                <div className="grid grid-cols-4 gap-4 text-[10px] text-text-secondary font-semibold uppercase tracking-wider border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
+                <div className="grid grid-cols-4 gap-4 text-label text-text-secondary border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
                     <span>Price</span>
                     <span className="text-right">Size</span>
                     <span className="text-right">Value</span>

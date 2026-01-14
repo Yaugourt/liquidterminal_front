@@ -2,15 +2,11 @@
 
 import { FeesChartSection } from "./FeesChartSection";
 
-interface FeesChartDemoProps {
-  chartHeight?: number;
-}
-
 /**
  * Composant de démonstration pour la chart des fees
  * Utilise le hook useFeesHistory avec la logique de sélection du dernier snapshot par jour
  */
-export const FeesChartDemo = ({ chartHeight = 320 }: FeesChartDemoProps) => {
+export const FeesChartDemo = () => {
   return (
     <div className="w-full">
       <div className="mb-4">
@@ -22,7 +18,7 @@ export const FeesChartDemo = ({ chartHeight = 320 }: FeesChartDemoProps) => {
         </p>
       </div>
       
-      <FeesChartSection chartHeight={chartHeight} />
+      <FeesChartSection />
     </div>
   );
-}; 
+};

@@ -5,6 +5,4 @@ export * from './common';
 export * from './token';
 
 // Auction exports
-export * from './perp/auction';
-
-// Root exports
+export * from './auction';

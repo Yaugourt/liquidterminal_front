@@ -69,7 +69,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
-              className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all ${
+              className={`px-3 py-1 rounded-md text-label transition-all ${
                 activeSubTab === tab.key
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                   : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
@@ -83,7 +83,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
         {activeSubTab === "spot" && (
           <Link
             href="/market/spot/auction"
-            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
+            className="flex items-center gap-1 text-label text-text-muted hover:text-brand-accent transition-colors"
           >
             See All
             <ExternalLink size={10} />

@@ -109,7 +109,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           <div className="flex items-start justify-between gap-2">
             <Badge
               variant="secondary"
-              className="bg-brand-accent/10 text-brand-accent border-none text-[10px]"
+              className="bg-brand-accent/10 text-brand-accent border-none text-label"
             >
               Resource #{item.resourceId}
             </Badge>
@@ -154,10 +154,10 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           )}
 
           <div className="flex items-center justify-between pt-2 mt-auto border-t border-border-subtle">
-            <div className="text-[10px] text-text-muted">
+            <div className="text-label text-text-muted">
               Added {new Date(item.addedAt).toLocaleDateString()}
             </div>
-            <div className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${item.isRead
+            <div className={`text-label px-1.5 py-0.5 rounded ${item.isRead
               ? 'bg-emerald-500/10 text-emerald-400'
               : 'bg-[#F9E370]/10 text-[#F9E370]'
               }`}>

@@ -6,6 +6,7 @@ import { ValidatorTable } from "@/components/explorer/validator/ValidatorTable";
 import { ValidatorChartSection } from "@/components/explorer/validator/chart/ValidatorChartSection";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { ValidatorSubTab } from "@/components/explorer/validator/types";
+import { GlassPanel } from "@/components/ui/glass-panel";
 
 export default function ValidatorPage() {
   const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>('all');
@@ -13,12 +14,12 @@ export default function ValidatorPage() {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        <GlassPanel>
           <ValidatorStatsCard />
-        </div>
-        <div className="md:col-span-2 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+        </GlassPanel>
+        <GlassPanel className="md:col-span-2">
           <ValidatorChartSection />
-        </div>
+        </GlassPanel>
       </div>
 
       {/* Tabs above table */}
@@ -36,9 +37,9 @@ export default function ValidatorPage() {
         />
       </div>
 
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
+      <GlassPanel>
         <ValidatorTable activeTab={validatorSubTab} />
-      </div>
+      </GlassPanel>
     </>
   );
 }

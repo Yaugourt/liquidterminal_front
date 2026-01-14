@@ -146,7 +146,7 @@ export function ReadListContent({
               <span className="text-text-secondary"><span className="text-emerald-400 font-medium">{readItems}</span> read</span>
               <span className="text-text-secondary"><span className="text-[#F9E370] font-medium">{unreadItems}</span> unread</span>
               {activeList.isPublic && (
-                <span className="bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md text-[10px] font-medium">
+                <span className="bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md text-label">
                   Public
                 </span>
               )}

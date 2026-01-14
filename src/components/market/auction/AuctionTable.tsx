@@ -25,7 +25,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: 
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white text-[10px] font-semibold uppercase tracking-wider`}
+      className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white text-label`}
     >
       {label}
       {onClick && <ArrowUpDown className="h-3 w-3" />}
@@ -192,7 +192,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                     key={col.key}
                     className={`py-3 px-3 ${col.className}`}
                   >
-                    <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">{col.label}</span>
+                    {col.label}
                   </TableHead>
                 )
               ))}

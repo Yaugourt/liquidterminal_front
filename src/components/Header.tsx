@@ -131,7 +131,7 @@ Source: @Liquidterminal`;
                                         height={11}
                                         className="text-brand-accent"
                                     />
-                                    <span className="text-white text-[10px] font-medium">HYPE</span>
+                                    <span className="text-white text-label">HYPE</span>
                                 </div>
                                 <div className={cn(
                                     "text-white text-xs lg:text-sm font-medium transition-colors",
@@ -157,7 +157,7 @@ Source: @Liquidterminal`;
                                             buyPressure < 0 ? "text-red-400" :
                                                 "text-brand-accent"
                                     )} />
-                                    <span className="text-white text-[10px] font-medium">TWAPs HYPE buy</span>
+                                    <span className="text-white text-label">TWAPs HYPE buy</span>
                                 </div>
                                 <div className={cn(
                                     "text-xs lg:text-sm font-medium transition-colors",
@@ -176,7 +176,7 @@ Source: @Liquidterminal`;
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <Clock size={11} className="text-brand-gold" />
-                                                <span className="text-white text-[10px] font-medium">Hourly fees</span>
+                                                <span className="text-white text-label">Hourly fees</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatFee(feesStats.hourlyFees)}
@@ -188,7 +188,7 @@ Source: @Liquidterminal`;
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <CalendarDays size={11} className="text-brand-gold" />
-                                                <span className="text-white text-[10px] font-medium">Daily fees</span>
+                                                <span className="text-white text-label">Daily fees</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatFee(feesStats.dailyFees)}
@@ -200,7 +200,7 @@ Source: @Liquidterminal`;
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-1.5">
                                                 <Shield size={11} className="text-brand-success" />
-                                                <span className="text-white text-[10px] font-medium">Assistance Fund</span>
+                                                <span className="text-white text-label">Assistance Fund</span>
                                             </div>
                                             <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
                                                 {formatHypeBalance(assistanceFund.hypeBalance)} HYPE ({formatCompactUsd(assistanceFund.hypeValueUsd)})

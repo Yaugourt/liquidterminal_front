@@ -114,7 +114,7 @@ function SortableReadListItem({
             <div className="flex items-center gap-2 mt-2 text-xs text-text-muted">
               <span>{list.itemsCount || 0} items</span>
               {list.isPublic && (
-                <span className="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded text-[10px]">
+                <span className="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded text-label">
                   Public
                 </span>
               )}
@@ -180,7 +180,7 @@ export function ReadListSidebar({
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2">
           <h2 className="text-white font-semibold text-sm">Read Lists</h2>
-          <div className="flex items-center gap-1 text-[10px] text-text-muted">
+          <div className="flex items-center gap-1 text-label text-text-muted">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>

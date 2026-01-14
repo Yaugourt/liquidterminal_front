@@ -302,7 +302,7 @@ export const LiquidationsChartSection = () => {
                   )}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-text-muted">
+                  <span className="text-label text-text-muted">
                     {formatDate(new Date(hoverTime), dateFormat)}
                   </span>
                 )}

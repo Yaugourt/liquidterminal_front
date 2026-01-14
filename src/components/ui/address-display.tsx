@@ -51,7 +51,7 @@ export function AddressDisplay({
         <div className={cn("inline-flex items-center gap-1.5", className)} {...props}>
             <Link
                 href={linkHref}
-                className="font-mono text-sm text-brand-accent hover:text-white transition-colors"
+                className="font-mono text-brand-accent hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
             >
                 {label || displayAddress}

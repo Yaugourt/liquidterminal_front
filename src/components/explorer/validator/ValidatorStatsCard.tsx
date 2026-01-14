@@ -46,7 +46,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
           href="https://app.hyperliquid.xyz/staking"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-[10px] text-text-muted hover:text-brand-accent transition-colors"
+          className="flex items-center gap-1 text-label text-text-muted hover:text-brand-accent transition-colors"
         >
           Stake
           <ExternalLink size={10} />

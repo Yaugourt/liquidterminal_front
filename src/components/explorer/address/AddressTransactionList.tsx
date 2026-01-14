@@ -54,14 +54,14 @@ export function AddressTransactionList({ transactions, isLoading, error, current
       <Table className="w-full">
         <TableHeader>
           <TableRow className="border-b border-border-subtle hover:bg-transparent">
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Hash</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Method</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Age</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">From</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">To</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Token</TableHead>
-            <TableHead className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Price</TableHead>
-            <TableHead className="py-3 px-4 text-right text-[10px] font-semibold uppercase tracking-wider text-text-secondary">Value</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">Hash</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">Method</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">Age</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">From</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">To</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">Token</TableHead>
+            <TableHead className="py-3 px-4 text-left text-label text-text-secondary">Price</TableHead>
+            <TableHead className="py-3 px-4 text-right text-label text-text-secondary">Value</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

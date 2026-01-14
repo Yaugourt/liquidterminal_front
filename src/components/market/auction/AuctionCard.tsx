@@ -42,7 +42,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             <h3 className="text-sm font-medium text-white tracking-tight">Auction Status</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <div className={`w-1.5 h-1.5 rounded-full ${auctionState.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-              <span className={`text-[10px] font-medium ${auctionState.isActive ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <span className={`text-label ${auctionState.isActive ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {auctionState.isActive ? "LIVE NOW" : "UPCOMING"}
               </span>
             </div>
@@ -81,7 +81,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                     <span className="text-sm font-medium text-text-secondary ml-1">HYPE</span>
                   </span>
                 </div>
-                <p className="text-[10px] text-text-muted mt-0.5">
+                <p className="text-label text-text-muted mt-0.5">
                   ≈ {formatNumber(auctionState.currentPriceUSD, format, { minimumFractionDigits: 2, currency: '$', showCurrency: true })}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
 
             {/* Progress Bar */}
             <div className="space-y-2">
-              <div className="flex justify-between text-[10px] font-medium text-text-muted uppercase tracking-wider">
+              <div className="flex justify-between text-label text-text-muted">
                 <span>Start</span>
                 <span>{auctionState.progressPercentage.toFixed(0)}% Complete</span>
                 <span>End</span>

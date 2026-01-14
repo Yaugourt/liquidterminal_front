@@ -188,7 +188,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
 
         {/* Problem solved */}
         <div className="mb-4">
-          <p className="text-[10px] text-brand-accent uppercase tracking-wider font-semibold mb-1">Problem Solved:</p>
+          <p className="text-label text-brand-accent mb-1">Problem Solved:</p>
           <p className="text-sm text-text-secondary line-clamp-2">
             {project.problemSolved}
           </p>
