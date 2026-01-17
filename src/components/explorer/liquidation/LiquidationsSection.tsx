@@ -12,7 +12,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { useLiquidationsContext } from "./LiquidationsContext";
+import { useLiquidationsContext, MIN_AMOUNT_PRESETS } from "./LiquidationsContext";
+import { Filter, RefreshCw } from "lucide-react";
 
 export function LiquidationsSection() {
   const {
@@ -22,8 +23,16 @@ export function LiquidationsSection() {
     onRowsPerPageChange
   } = usePagination({ initialRowsPerPage: 25 });
 
-  // Utilise les données du Context
-  const { liquidations: allLiquidations, isLoading, error } = useLiquidationsContext();
+  // Utilise les données filtrées du Context
+  const { 
+    filteredLiquidations: allLiquidations, 
+    isLoading, 
+    error,
+    minAmount,
+    setMinAmount,
+    lastUpdated,
+    refreshData
+  } = useLiquidationsContext();
 
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
@@ -48,6 +57,47 @@ export function LiquidationsSection() {
 
   return (
     <div className="w-full h-full flex flex-col p-4">
+      {/* Header with filters */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-4 border-b border-border-subtle">
+        <div className="flex items-center gap-3">
+          <h3 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+            Recent Liquidations
+          </h3>
+          {lastUpdated && (
+            <span className="text-[10px] text-text-muted">
+              Updated {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+          <button 
+            onClick={refreshData}
+            className="p-1.5 rounded-md hover:bg-white/5 transition-colors text-text-muted hover:text-text-secondary"
+            title="Refresh data"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        
+        {/* Min Amount Filter */}
+        <div className="flex items-center gap-2">
+          <Filter className="h-3.5 w-3.5 text-text-muted" />
+          <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
+            {MIN_AMOUNT_PRESETS.map(preset => (
+              <button
+                key={preset.value}
+                onClick={() => setMinAmount(preset.value)}
+                className={`px-2.5 py-1 rounded-md text-label transition-all ${
+                  minAmount === preset.value
+                    ? 'bg-brand-accent text-brand-tertiary font-bold'
+                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col flex-1">
         <div className="flex-1">
           <DataTable
@@ -55,7 +105,9 @@ export function LiquidationsSection() {
             error={error}
             isEmpty={paginatedLiquidations.length === 0}
             emptyState={{
-              title: "No liquidations available"
+              title: minAmount > 0 
+                ? `No liquidations above $${(minAmount / 1000).toFixed(0)}K` 
+                : "No liquidations available"
             }}
             className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
           >
@@ -125,3 +177,4 @@ export function LiquidationsSection() {
     </div>
   );
 }
+

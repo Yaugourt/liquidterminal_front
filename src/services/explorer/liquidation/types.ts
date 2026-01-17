@@ -88,6 +88,11 @@ export interface LiquidationStats {
   shortCount: number;
   topCoin: string;
   topCoinVolume: number;
+  // Nouveaux champs ajoutés par le backend
+  avgSize: number;      // Taille moyenne (totalVolume / liquidationsCount)
+  maxLiq: number;       // Plus grosse liquidation
+  longVolume: number;   // Volume total des Long
+  shortVolume: number;  // Volume total des Short
 }
 
 /**
@@ -103,6 +108,72 @@ export interface LiquidationStatsAllResponse {
     "24h": LiquidationStats | null;
   };
   errors?: string[];
+  metadata: {
+    executionTimeMs: number;
+    cachedAt: string;
+  };
+}
+
+/**
+ * Période disponible pour les données de chart
+ */
+export type ChartPeriod = "2h" | "4h" | "8h" | "12h" | "24h";
+
+/**
+ * Bucket de données agrégées pour le chart
+ */
+export interface ChartDataBucket {
+  timestamp: string;       // ISO datetime (début du bucket)
+  timestampMs: number;     // Pour le tri côté client
+  totalVolume: number;     // Volume total en USD
+  longVolume: number;      // Volume des longs liquidés
+  shortVolume: number;     // Volume des shorts liquidés
+  liquidationsCount: number; // Nombre total de liquidations
+  longCount: number;       // Nombre de longs
+  shortCount: number;      // Nombre de shorts
+}
+
+/**
+ * Réponse de l'API pour /liquidations/chart-data
+ */
+export interface LiquidationChartDataResponse {
+  success: boolean;
+  period: ChartPeriod;
+  interval: "5m" | "15m" | "30m";
+  buckets: ChartDataBucket[];
+  metadata: {
+    bucketCount: number;
+    totalLiquidations: number;
+    totalVolume: number;
+    executionTimeMs: number;
+    cachedAt: string;
+    dataSource: "stats-cache" | "historical-fetch";
+  };
+}
+
+/**
+ * Données combinées stats + chart pour une période
+ */
+export interface LiquidationsPeriodData {
+  stats: LiquidationStats;
+  chart: {
+    interval: "5m" | "15m" | "30m";
+    buckets: ChartDataBucket[];
+  };
+}
+
+/**
+ * Réponse de l'API pour /liquidations/data (endpoint unifié)
+ */
+export interface LiquidationsDataResponse {
+  success: boolean;
+  periods: {
+    "2h": LiquidationsPeriodData;
+    "4h": LiquidationsPeriodData;
+    "8h": LiquidationsPeriodData;
+    "12h": LiquidationsPeriodData;
+    "24h": LiquidationsPeriodData;
+  };
   metadata: {
     executionTimeMs: number;
     cachedAt: string;

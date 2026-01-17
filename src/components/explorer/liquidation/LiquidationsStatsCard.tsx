@@ -1,7 +1,7 @@
 "use client";
 
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { Zap, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { Zap, TrendingUp, TrendingDown, DollarSign, BarChart3, Target } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useLiquidationsContext, TIMEFRAME_OPTIONS } from "./LiquidationsContext";
 
@@ -10,10 +10,15 @@ export function LiquidationsStatsCard() {
     selectedPeriod, 
     setSelectedPeriod, 
     stats, 
-    statsLoading 
+    statsLoading
   } = useLiquidationsContext();
   
   const { format } = useNumberFormat();
+
+  // Calculer le pourcentage Long/Short pour la barre de progression
+  const totalVolume = stats.longVolume + stats.shortVolume;
+  const longPercent = totalVolume > 0 ? (stats.longVolume / totalVolume) * 100 : 50;
+  const shortPercent = 100 - longPercent;
 
   return (
     <div className="p-4 h-full flex flex-col">
@@ -46,8 +51,8 @@ export function LiquidationsStatsCard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 flex-1 content-center">
+      {/* Stats Grid - 2x2 on XL screens, 1 column on smaller */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4 flex-1 content-center">
         {/* Total Volume */}
         <div>
           <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
@@ -78,7 +83,7 @@ export function LiquidationsStatsCard() {
           </div>
         </div>
 
-        {/* Long vs Short */}
+        {/* Long vs Short Count */}
         <div>
           <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
             Long / Short
@@ -113,7 +118,63 @@ export function LiquidationsStatsCard() {
             )}
           </div>
         </div>
+
+        {/* Avg Size - Hidden on small screens */}
+        <div className="hidden xl:block">
+          <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+            <BarChart3 className="h-3.5 w-3.5 text-amber-400 mr-1.5" />
+            Avg Size
+          </div>
+          <div className="text-white font-bold text-lg pl-5">
+            {statsLoading ? (
+              <span className="animate-pulse text-text-muted">--</span>
+            ) : (
+              <>${formatNumber(stats.avgSize, format, { maximumFractionDigits: 0 })}</>
+            )}
+          </div>
+        </div>
+
+        {/* Max Liquidation - Hidden on small screens */}
+        <div className="hidden xl:block">
+          <div className="text-text-secondary mb-1 flex items-center text-xs font-medium">
+            <Target className="h-3.5 w-3.5 text-purple-400 mr-1.5" />
+            Max Liq
+          </div>
+          <div className="text-white font-bold text-lg pl-5">
+            {statsLoading ? (
+              <span className="animate-pulse text-text-muted">--</span>
+            ) : (
+              <>${formatNumber(stats.maxLiq, format, { maximumFractionDigits: 0 })}</>
+            )}
+          </div>
+        </div>
+
+        {/* Long/Short Volume Ratio - Hidden on small screens, spans 2 cols */}
+        <div className="hidden xl:block xl:col-span-2">
+          <div className="text-text-secondary mb-2 flex items-center text-xs font-medium">
+            Volume Ratio
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Progress bar showing Long vs Short volume */}
+            <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
+                style={{ width: `${longPercent}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-emerald-400 font-medium">
+                {statsLoading ? '--' : `${longPercent.toFixed(0)}%`}
+              </span>
+              <span className="text-text-muted">/</span>
+              <span className="text-rose-400 font-medium">
+                {statsLoading ? '--' : `${shortPercent.toFixed(0)}%`}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+

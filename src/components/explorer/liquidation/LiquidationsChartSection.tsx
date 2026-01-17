@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { useLiquidationsContext } from "./LiquidationsContext";
+import { useLiquidationsContext, CHART_PERIOD_OPTIONS } from "./LiquidationsContext";
 import { useDateFormat } from '@/store/date-format.store';
-import { formatDate } from '@/lib/formatters/dateFormatting';
+import { formatDateTime } from '@/lib/formatters/dateFormatting';
 import {
   createChart,
   ColorType,
@@ -38,16 +38,27 @@ const LiquidationsBarChart = ({
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  
+  // Map pour retrouver le temps original (ms) depuis le temps chart (seconds)
+  const timeMapRef = useRef<Map<number, number>>(new Map());
 
   // Convert milliseconds to seconds for lightweight-charts
   const formatData = useCallback((rawData: ChartDataPoint[]): HistogramData<Time>[] => {
-    return rawData
-      .map((point) => ({
-        time: Math.floor(point.time / 1000) as Time,
-        value: point.value,
-        color: point.color || "#f43f5e",
-      }))
+    const timeMap = new Map<number, number>();
+    const formattedData = rawData
+      .map((point) => {
+        const timeInSeconds = Math.floor(point.time / 1000);
+        timeMap.set(timeInSeconds, point.time); // Garder le mapping
+        return {
+          time: timeInSeconds as Time,
+          value: point.value,
+          color: point.color || "#f43f5e",
+        };
+      })
       .sort((a, b) => (a.time as number) - (b.time as number));
+    
+    timeMapRef.current = timeMap;
+    return formattedData;
   }, []);
 
   // Initialize chart
@@ -128,8 +139,11 @@ const LiquidationsBarChart = ({
           onCrosshairMove(null, null);
           return;
         }
-        const data = param.seriesData.get(seriesRef.current!) as HistogramData<Time>;
-        onCrosshairMove(data.value, (param.time as number) * 1000);
+        const chartData = param.seriesData.get(seriesRef.current!) as HistogramData<Time>;
+        const timeInSeconds = param.time as number;
+        // Utiliser le mapping pour retrouver le temps original en ms
+        const originalTimeMs = timeMapRef.current.get(timeInSeconds) || timeInSeconds * 1000;
+        onCrosshairMove(chartData.value, originalTimeMs);
       });
     }
 
@@ -177,49 +191,40 @@ export const LiquidationsChartSection = () => {
   
   const { format: dateFormat } = useDateFormat();
   
-  // Utilise les données du Context
-  const { liquidations, isLoading, error } = useLiquidationsContext();
+  // Utilise les données du chart depuis le Context (période indépendante)
+  const { 
+    chartBuckets, 
+    chartLoading, 
+    chartPeriod,
+    setChartPeriod
+  } = useLiquidationsContext();
 
-  // Aggregate liquidations by 5-minute intervals
+  // Transformer les buckets en données de chart
   const chartData = useMemo(() => {
-    if (!liquidations.length) return [];
+    if (!chartBuckets.length) return [];
 
-    const intervalMs = 5 * 60 * 1000; // 5 minutes
-    const buckets: Record<number, { volume: number; count: number; longVolume: number; shortVolume: number }> = {};
-
-    liquidations.forEach((liq) => {
-      // Skip invalid data
-      if (!liq.time_ms || isNaN(liq.time_ms) || isNaN(liq.notional_total)) return;
+    return chartBuckets.map((bucket) => {
+      // Couleur basée sur la direction dominante
+      const longRatio = bucket.totalVolume > 0 ? bucket.longVolume / bucket.totalVolume : 0.5;
+      const color = longRatio > 0.5 ? "#10b981" : "#f43f5e"; // emerald for longs, rose for shorts
+      const value = selectedChart === 'volume' ? bucket.totalVolume : bucket.liquidationsCount;
       
-      const bucketTime = Math.floor(liq.time_ms / intervalMs) * intervalMs;
-      if (!buckets[bucketTime]) {
-        buckets[bucketTime] = { volume: 0, count: 0, longVolume: 0, shortVolume: 0 };
-      }
-      buckets[bucketTime].volume += liq.notional_total || 0;
-      buckets[bucketTime].count += 1;
-      if (liq.liq_dir === 'Long') {
-        buckets[bucketTime].longVolume += liq.notional_total || 0;
-      } else {
-        buckets[bucketTime].shortVolume += liq.notional_total || 0;
-      }
-    });
+      return {
+        time: bucket.timestampMs,
+        value: isNaN(value) ? 0 : value,
+        color,
+      };
+    }).filter(item => !isNaN(item.time) && !isNaN(item.value));
+  }, [chartBuckets, selectedChart]);
 
-    return Object.entries(buckets)
-      .map(([time, data]) => {
-        // Color based on dominant direction: green if more longs, red if more shorts
-        const longRatio = data.volume > 0 ? data.longVolume / data.volume : 0.5;
-        const color = longRatio > 0.5 ? "#10b981" : "#f43f5e"; // emerald for longs, rose for shorts
-        const value = selectedChart === 'volume' ? data.volume : data.count;
-        
-        return {
-          time: parseInt(time),
-          value: isNaN(value) ? 0 : value,
-          color,
-        };
-      })
-      .filter(item => !isNaN(item.time) && !isNaN(item.value))
-      .sort((a, b) => a.time - b.time);
-  }, [liquidations, selectedChart]);
+  // Calculer le total depuis les buckets
+  const totalFromBuckets = useMemo(() => {
+    if (!chartBuckets.length) return { volume: 0, count: 0 };
+    return chartBuckets.reduce((acc, bucket) => ({
+      volume: acc.volume + bucket.totalVolume,
+      count: acc.count + bucket.liquidationsCount
+    }), { volume: 0, count: 0 });
+  }, [chartBuckets]);
 
   const formatYAxisValue = useCallback((value: number) => {
     if (selectedChart === 'count') {
@@ -239,30 +244,14 @@ export const LiquidationsChartSection = () => {
     setHoverTime(time);
   }, []);
 
-  // Get latest value for display
-  const latestValue = useMemo(() => {
-    if (chartData.length === 0) return null;
-    return chartData.reduce((sum, point) => sum + point.value, 0);
-  }, [chartData]);
-
-  const displayValue = hoverValue ?? latestValue;
+  // Get total value for display
+  const totalValue = selectedChart === 'volume' ? totalFromBuckets.volume : totalFromBuckets.count;
+  const displayValue = hoverValue ?? totalValue;
 
   const chartTabs: { key: LiquidationChartType; label: string }[] = [
     { key: 'volume', label: 'Volume' },
     { key: 'count', label: 'Count' }
   ];
-
-  if (error) {
-    return (
-      <div className="w-full h-full flex flex-col">
-        <div className="flex-1 flex items-center justify-center min-h-[300px]">
-          <div className="flex items-center gap-2 text-rose-400">
-            <span className="text-sm">Failed to load liquidations chart</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-full flex flex-col p-4">
@@ -272,10 +261,10 @@ export const LiquidationsChartSection = () => {
           <div className="flex items-center gap-4 flex-wrap">
             {/* Titre */}
             <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-              Liquidations (2h)
+              Liquidations
             </h2>
 
-            {/* Tabs */}
+            {/* Volume/Count Tabs */}
             <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
               {chartTabs.map(tab => (
                 <button
@@ -298,23 +287,40 @@ export const LiquidationsChartSection = () => {
                   {hoverValue !== null ? formatYAxisValue(hoverValue) : (
                     selectedChart === 'volume' 
                       ? formatYAxisValue(displayValue)
-                      : `${liquidations.length} liquidations`
+                      : `${displayValue} liquidations`
                   )}
                 </span>
                 {hoverTime && (
                   <span className="text-label text-text-muted">
-                    {formatDate(new Date(hoverTime), dateFormat)}
+                    {formatDateTime(new Date(hoverTime), dateFormat)}
                   </span>
                 )}
               </div>
             )}
+          </div>
+
+          {/* Period Selector (right side) */}
+          <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
+            {CHART_PERIOD_OPTIONS.map(option => (
+              <button
+                key={option.value}
+                onClick={() => setChartPeriod(option.value)}
+                className={`px-2 py-1 rounded-md text-label transition-all ${
+                  chartPeriod === option.value
+                    ? 'bg-rose-500/20 text-rose-400 font-bold'
+                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Chart */}
       <div className="flex-1 min-h-0">
-        {isLoading ? (
+        {chartLoading ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
           </div>
