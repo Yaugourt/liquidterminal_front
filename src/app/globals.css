@@ -45,32 +45,6 @@ body {
         @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
     }
 
-    .glass-card {
-        @apply bg-brand-secondary/90 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
-    }
-
-    .glass-token-card {
-        @apply bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all;
-    }
-
-    /* ===== Form Elements ===== */
-    .glass-input {
-        @apply bg-black/20 border border-border-hover focus:border-brand-accent/50 outline-none transition-colors rounded-lg;
-    }
-
-    .glass-button {
-        @apply bg-white/5 hover:bg-white/10 border border-border-subtle transition-colors rounded-lg;
-    }
-
-    /* ===== Table Styles ===== */
-    .table-header {
-        @apply text-[10px] font-semibold uppercase tracking-wider text-text-muted;
-    }
-
-    .table-row {
-        @apply border-b border-border-subtle hover:bg-white/[0.02] transition-colors;
-    }
-
     /* ===== Typography Utilities ===== */
     .text-label {
         @apply text-[10px] font-semibold uppercase tracking-wider;
@@ -118,10 +92,21 @@ body {
            hover:border-border-hover;
     }
 
-    /* ===== Dialog/Modal Backgrounds ===== */
-    .glass-dialog {
-        @apply bg-brand-secondary/95 backdrop-blur-xl border border-border-hover 
-           shadow-2xl shadow-black/40 rounded-2xl;
+    /* ===== Interactive Hover States ===== */
+
+    /* Pattern 1: Onglets/Tabs inactifs */
+    .tab-inactive {
+        @apply text-text-secondary hover:text-zinc-200 hover:bg-white/5;
+    }
+
+    /* Pattern 3: Éléments avec hover léger */
+    .hover-subtle {
+        @apply hover:bg-white/5 transition-colors;
+    }
+
+    /* Pattern 4: Liens/boutons secondary */
+    .interactive-secondary {
+        @apply text-text-secondary hover:text-white hover:bg-white/5;
     }
 }
 

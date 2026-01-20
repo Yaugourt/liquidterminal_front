@@ -50,7 +50,7 @@ export function WelcomePrompt() {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300">
-            <div className="glass-card p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
+            <div className="glass-panel p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
                 <button
                     onClick={handleDismiss}
                     className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"

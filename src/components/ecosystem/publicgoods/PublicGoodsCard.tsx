@@ -138,7 +138,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                 >
                   {canEdit && onEdit && (
                     <DropdownMenuItem
-                      className="text-text-secondary hover:text-white hover:bg-white/5 cursor-pointer"
+                      className="interactive-secondary cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

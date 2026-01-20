@@ -8,7 +8,6 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { TokenData } from "./types";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
-import { GlassPanel } from "@/components/ui/glass-panel";
 
 interface TokenInfoSidebarProps {
   token: TokenData;
@@ -59,7 +58,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
   };
 
   return (
-    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
+    <div className={`glass-panel flex flex-col h-full overflow-hidden ${className || ''}`}>
       <div className="p-4 space-y-4 flex-1">
         {/* Token Header */}
         <div className="text-center space-y-2">
@@ -158,7 +157,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           )}
         </div>
       </div>
-    </GlassPanel>
+    </div>
 
   );
 }

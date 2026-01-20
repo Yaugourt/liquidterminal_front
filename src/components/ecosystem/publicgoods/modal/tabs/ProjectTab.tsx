@@ -158,7 +158,7 @@ export function ProjectTab({
         {/* Logo */}
         <div>
           <label htmlFor="logo-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Logo (max 2MB)</span>
             </div>
@@ -186,7 +186,7 @@ export function ProjectTab({
         {/* Banner */}
         <div>
           <label htmlFor="banner-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Banner (max 5MB)</span>
             </div>
@@ -214,7 +214,7 @@ export function ProjectTab({
         {/* Screenshots */}
         <div>
           <label htmlFor="screenshots-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Screenshots (max 5, 2MB each)</span>
             </div>

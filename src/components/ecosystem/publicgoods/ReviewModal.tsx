@@ -61,7 +61,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-card rounded-2xl border-none">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-panel rounded-2xl border-none">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-text-muted">
@@ -111,7 +111,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any comments or feedback for the submitter..."
                 rows={3}
-                className="glass-input mt-2 rounded-lg placeholder:text-text-muted"
+                className="bg-black/20 border border-border-hover focus:border-brand-accent/50 outline-none transition-colors mt-2 rounded-lg placeholder:text-text-muted"
               />
             </div>
           </div>

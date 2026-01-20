@@ -166,7 +166,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                 {filteredItems.length > 0 ? (
                                     filteredItems.map((item) => (
                                         <div key={item.id} className="relative group">
-                                            <div className="flex items-center gap-2 px-2 hover:bg-white/5 transition-colors rounded-lg">
+                                            <div className="flex items-center gap-2 px-2 hover-subtle rounded-lg">
                                                 {/* Checkbox */}
                                                 <Checkbox
                                                     checked={selectedWalletIds.has(item.id)}

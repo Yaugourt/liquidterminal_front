@@ -38,7 +38,7 @@ const AnimatedPeriodSelector = ({
           onClick={() => onPeriodChange(period)}
           className={`px-2 py-1 rounded-md text-label transition-all ${selectedPeriod === period
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+              : 'tab-inactive'
             }`}
         >
           {period}

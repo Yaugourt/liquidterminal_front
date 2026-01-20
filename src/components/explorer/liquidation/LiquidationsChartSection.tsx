@@ -272,7 +272,7 @@ export const LiquidationsChartSection = () => {
                   onClick={() => setSelectedChart(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedChart === tab.key
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                     }`}
                 >
                   {tab.label}
@@ -308,7 +308,7 @@ export const LiquidationsChartSection = () => {
                 className={`px-2 py-1 rounded-md text-label transition-all ${
                   chartPeriod === option.value
                     ? 'bg-rose-500/20 text-rose-400 font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                 }`}
               >
                 {option.label}

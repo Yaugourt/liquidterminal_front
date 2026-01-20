@@ -302,7 +302,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-2 glass-card rounded-xl">
+                        <div className="p-2 glass-panel rounded-xl">
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/profile"
@@ -352,7 +352,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsCustomizeOpen(true)}
-                        className="w-full text-text-secondary hover:text-white hover:bg-white/5 justify-start gap-2 transition-colors"
+                        className="w-full interactive-secondary justify-start gap-2 transition-colors"
                     >
                         <Settings className="w-4 h-4" />
                         <span className="text-xs">Customize Sidebar</span>
@@ -367,7 +367,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                            className="group p-1.5 rounded-lg hover-subtle"
                         >
                             <Icon
                                 icon={item.iconName}

@@ -70,7 +70,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
   if (isLoading) {
     return (
-      <Card className="w-full glass-panel overflow-hidden">
+      <Card className="w-full overflow-hidden">
         <div className="flex justify-center items-center h-[400px]">
           <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
         </div>
@@ -80,7 +80,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
 
   if (error) {
     return (
-      <Card className="w-full glass-panel overflow-hidden">
+      <Card className="w-full overflow-hidden">
         <div className="flex justify-center items-center h-[200px]">
           <span className="text-red-500 text-lg">Erreur lors du chargement des DEXs perpétuels</span>
         </div>
@@ -89,7 +89,7 @@ export const PerpDexsTable = memo(function PerpDexsTable() {
   }
 
   return (
-    <Card className="w-full glass-panel overflow-hidden">
+    <Card className="w-full overflow-hidden">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>

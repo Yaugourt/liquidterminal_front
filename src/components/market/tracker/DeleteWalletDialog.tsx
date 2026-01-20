@@ -49,7 +49,7 @@ export function DeleteWalletDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-dialog text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Wallet</DialogTitle>
           <DialogDescription className="text-white">

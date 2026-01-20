@@ -48,7 +48,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
         </div>
       </div>
 
-      <Card className="glass-panel p-5 hover:border-border-hover transition-all duration-300 mb-6">
+      <Card className="p-5 hover:border-border-hover transition-all duration-300 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
           <div className="space-y-5">
             <div>

@@ -125,7 +125,7 @@ export function CategoryTabs({
               className={`flex-shrink-0 px-4 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === 'all'
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                  : 'tab-inactive'
               }`}
             >
               All Projects
@@ -139,7 +139,7 @@ export function CategoryTabs({
                 className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   activeTab === category.id.toString()
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                 }`}
               >
                 {category.name}

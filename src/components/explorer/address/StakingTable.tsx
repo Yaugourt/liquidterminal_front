@@ -137,7 +137,7 @@ export function StakingTable({ address }: StakingTableProps) {
   const undelegatedAmount = delegatorSummary ? parseFloat(delegatorSummary.undelegated) : 0;
 
   return (
-    <Card className="glass-panel p-6 flex flex-col">
+    <Card className="p-6 flex flex-col">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         {/* Sub-tabs */}
         <StakingTabButtons

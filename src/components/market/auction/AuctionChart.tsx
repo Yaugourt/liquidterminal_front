@@ -5,7 +5,6 @@ import { Loader2, Database } from "lucide-react";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '@/components/common/charts';
-import { GlassPanel } from "@/components/ui/glass-panel";
 import { LightweightChart } from "@/components/common/charts/LightweightChart";
 
 interface AuctionDataPoint {
@@ -75,8 +74,8 @@ export const AuctionChart = ({
   // If perp coming soon
   if (marketType === "perp") {
     return (
-      <GlassPanel
-        className="w-full relative overflow-hidden flex flex-col items-center justify-center p-4"
+      <div
+        className="glass-panel w-full relative overflow-hidden flex flex-col items-center justify-center p-4"
         style={{ height: chartHeight }}
       >
         <div className="flex flex-col items-center text-center">
@@ -84,13 +83,13 @@ export const AuctionChart = ({
           <p className="text-text-secondary text-sm mb-1">Coming Soon</p>
           <p className="text-text-muted text-xs">Perpetual auctions chart will be available soon.</p>
         </div>
-      </GlassPanel>
+      </div>
     );
   }
 
   return (
-    <GlassPanel
-      className="w-full h-full relative overflow-hidden flex flex-col"
+    <div
+      className="glass-panel w-full h-full relative overflow-hidden flex flex-col"
       style={{ height: chartHeight }}
     >
       {/* Header Controls */}
@@ -124,7 +123,7 @@ export const AuctionChart = ({
                 onClick={() => onCurrencyChange("USDC")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "USDC"
                   ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
+                  : "tab-inactive"
                   }`}
               >
                 USDC
@@ -133,7 +132,7 @@ export const AuctionChart = ({
                 onClick={() => onCurrencyChange("HYPE")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "HYPE"
                   ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
+                  : "tab-inactive"
                   }`}
               >
                 HYPE
@@ -176,6 +175,6 @@ export const AuctionChart = ({
           />
         )}
       </div>
-    </GlassPanel>
+    </div>
   );
 };

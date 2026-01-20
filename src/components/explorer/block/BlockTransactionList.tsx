@@ -34,7 +34,7 @@ export function BlockTransactionList({
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   return (
-    <Card className="glass-panel p-4 flex flex-col">
+    <Card className="p-4 flex flex-col">
       <div className="flex flex-col flex-1">
         <div className="flex-1">
           <DataTable

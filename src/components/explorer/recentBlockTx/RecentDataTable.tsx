@@ -120,7 +120,7 @@ export function RecentDataTable() {
             variant="ghost"
             size="sm"
             onClick={handlePauseToggle}
-            className="text-text-secondary hover:text-white hover:bg-white/5 p-2"
+            className="interactive-secondary p-2"
           >
             {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
           </Button>

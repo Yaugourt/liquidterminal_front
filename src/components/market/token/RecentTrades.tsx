@@ -2,7 +2,6 @@
 
 import { useTokenWebSocket } from "@/services/market/token";
 import { cn } from "@/lib/utils";
-import { GlassPanel } from "@/components/ui/glass-panel";
 import "@/styles/scrollbar.css";
 
 interface RecentTradesProps {
@@ -37,7 +36,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
     const displayName = tokenName || coinId;
 
     return (
-        <GlassPanel className={cn("flex flex-col h-full overflow-hidden", className)}>
+        <div className={cn("glass-panel flex flex-col h-full overflow-hidden", className)}>
             <div className="p-4 flex-shrink-0 border-b border-border-subtle">
                 <h3 className="text-sm font-semibold text-white">Recent Trades</h3>
                 <p className="text-xs text-text-secondary mt-1">
@@ -99,6 +98,6 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                     )}
                 </div>
             </div>
-        </GlassPanel>
+        </div>
     );
 }

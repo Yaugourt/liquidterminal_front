@@ -184,7 +184,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         <div className="border-t border-border-subtle">
           <Link
             href="/profile?tab=missions"
-            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover-subtle"
           >
             <span>See Weekly Challenges</span>
             <ChevronRight className="h-4 w-4" />

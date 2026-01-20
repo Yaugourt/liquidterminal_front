@@ -94,7 +94,7 @@ export function ProjectInfoSidebar({
                             <Button
                                 onClick={onEdit}
                                 variant="outline"
-                                className="w-full border-border-subtle text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
+                                className="w-full border-border-subtle interactive-secondary rounded-lg"
                             >
                                 <Edit className="w-4 h-4 mr-2" />
                                 Edit Project

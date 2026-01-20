@@ -178,7 +178,7 @@ export function UserTable({
                     </code>
                     <button
                       onClick={() => copyReferralCode(user.referralCode!)}
-                      className="p-1 rounded hover:bg-white/5 transition-colors"
+                      className="p-1 rounded hover-subtle"
                     >
                       {copiedCode === user.referralCode ? (
                         <Check className="w-3 h-3 text-emerald-400" />

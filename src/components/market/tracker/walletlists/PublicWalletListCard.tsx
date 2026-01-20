@@ -18,7 +18,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <Card className="glass-panel rounded-2xl hover:border-border-hover transition-all duration-200 group">
+    <Card className="rounded-2xl hover:border-border-hover transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">

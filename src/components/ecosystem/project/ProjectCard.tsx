@@ -50,7 +50,7 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`glass-token-card p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
+    <div className={`bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
       }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (

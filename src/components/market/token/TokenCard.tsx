@@ -6,7 +6,6 @@ import { TokenCardProps } from "./types";
 import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
-import { GlassPanel } from "@/components/ui/glass-panel";
 import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
@@ -47,8 +46,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   };
 
   return (
-    <GlassPanel className={cn(
-      "w-fit p-4 hover:border-border-hover transition-all",
+    <div className={cn(
+      "glass-panel w-fit p-4 hover:border-border-hover transition-all",
       className
     )}>
       <div className="flex flex-wrap items-center gap-6 w-fit">
@@ -201,7 +200,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           )}
         </div>
       </div>
-    </GlassPanel>
+    </div>
 
   );
 });

@@ -225,7 +225,7 @@ export function UserManagement() {
             disabled={isLoading}
             variant="ghost"
             size="sm"
-            className="text-text-secondary hover:text-white hover:bg-white/5"
+            className="interactive-secondary"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh

@@ -72,7 +72,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
               className={`px-3 py-1 rounded-md text-label transition-all ${
                 activeSubTab === tab.key
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                  : 'tab-inactive'
               }`}
             >
               {tab.label}

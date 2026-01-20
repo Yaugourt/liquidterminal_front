@@ -15,7 +15,7 @@ export function OrdersSection({ address }: OrdersSectionProps) {
   } = useOpenOrders(address);
 
   return (
-    <Card className="w-full glass-panel">
+    <Card className="w-full">
       <div className="p-4">
         <OpenOrdersList
           orders={openOrders || []}

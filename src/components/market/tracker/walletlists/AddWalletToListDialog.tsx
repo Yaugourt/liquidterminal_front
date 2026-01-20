@@ -79,7 +79,7 @@ export function AddWalletToListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-dialog text-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Add wallet to &quot;{listName}&quot;</DialogTitle>
           <DialogDescription className="text-white">

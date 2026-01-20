@@ -257,7 +257,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                   e.stopPropagation();
                   setShowReadLists(false);
                 }}
-                className="px-4 py-2 text-sm text-text-secondary hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm interactive-secondary rounded-lg transition-colors"
               >
                 Cancel
               </button>

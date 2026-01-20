@@ -1,6 +1,5 @@
 import { ReactNode, memo } from "react";
 import { Loader2 } from "lucide-react";
-import { GlassPanel } from "@/components/ui/glass-panel";
 
 export interface StatsCardProps {
     title: string;
@@ -20,7 +19,7 @@ export const StatsCard = memo(function StatsCard({
     className
 }: StatsCardProps) {
     return (
-        <GlassPanel className={`p-4 hover:border-border-hover transition-all group ${className || ''}`}>
+        <div className={`glass-panel p-4 hover:border-border-hover transition-all group ${className || ''}`}>
             <div className="flex items-center gap-3 mb-2">
                 {icon && (
                     <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
@@ -52,15 +51,15 @@ export const StatsCard = memo(function StatsCard({
                     )}
                 </div>
             )}
-        </GlassPanel>
+        </div>
     );
 });
 
 // Loading placeholder for StatsCard grid
 export function StatsCardSkeleton() {
     return (
-        <GlassPanel className="p-4 flex items-center justify-center">
+        <div className="glass-panel p-4 flex items-center justify-center">
             <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
-        </GlassPanel>
+        </div>
     );
 }

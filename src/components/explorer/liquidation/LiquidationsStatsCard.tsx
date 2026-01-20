@@ -42,7 +42,7 @@ export function LiquidationsStatsCard() {
               className={`flex-1 px-2 py-1 rounded-md text-label transition-all ${
                 selectedPeriod === option.value
                   ? 'bg-rose-500/20 text-rose-400 font-bold'
-                  : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                  : 'tab-inactive'
               }`}
             >
               {option.label}

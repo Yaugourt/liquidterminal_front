@@ -70,7 +70,7 @@ export function LiquidationsSection() {
           )}
           <button 
             onClick={refreshData}
-            className="p-1.5 rounded-md hover:bg-white/5 transition-colors text-text-muted hover:text-text-secondary"
+            className="p-1.5 rounded-md hover-subtle text-text-muted hover:text-text-secondary"
             title="Refresh data"
           >
             <RefreshCw className="h-3.5 w-3.5" />
@@ -88,7 +88,7 @@ export function LiquidationsSection() {
                 className={`px-2.5 py-1 rounded-md text-label transition-all ${
                   minAmount === preset.value
                     ? 'bg-brand-accent text-brand-tertiary font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                 }`}
               >
                 {preset.label}

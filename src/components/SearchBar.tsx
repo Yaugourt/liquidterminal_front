@@ -176,7 +176,7 @@ export function SearchBar({
         <Input
           ref={inputRef}
           placeholder={placeholder}
-          className="w-full pr-10 p-5 glass-input text-white placeholder:text-text-muted text-sm rounded-xl"
+          className="w-full pr-10 p-5 text-white placeholder:text-text-muted text-sm rounded-xl"
           value={searchValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -200,7 +200,7 @@ export function SearchBar({
             <button
               key={suggestion.address}
               type="button"
-              className={`w-full px-4 py-3 text-left hover:bg-white/5 transition-colors border-none ${index === selectedSuggestion ? 'bg-white/5' : ''
+              className={`w-full px-4 py-3 text-left hover-subtle border-none ${index === selectedSuggestion ? 'bg-white/5' : ''
                 } ${index === 0 ? 'rounded-t-xl' : ''} ${index === suggestions.length - 1 ? 'rounded-b-xl' : ''
                 }`}
               onClick={() => handleSearch(suggestion.address)}

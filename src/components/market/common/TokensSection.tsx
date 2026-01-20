@@ -29,7 +29,7 @@ export function TokensSection({ market }: TokensSectionProps) {
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${(activeTab || 'all') === tab.key
                 ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                : 'tab-inactive'
                 }`}
             >
               {tab.label}

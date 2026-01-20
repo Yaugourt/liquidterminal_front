@@ -68,7 +68,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
     <div
       ref={setNodeRef}
       style={style}
-      className="glass-input p-3 space-y-2 border-border-hover bg-black/20"
+      className="bg-black/20 border border-border-hover focus:border-brand-accent/50 outline-none transition-colors rounded-lg p-3 space-y-2"
     >
       {/* Group header */}
       <div className="flex items-center gap-2">
@@ -164,7 +164,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
-        <div className="glass-card rounded-lg flex flex-col h-full max-h-[90vh]">
+        <div className="glass-panel rounded-lg flex flex-col h-full max-h-[90vh]">
           {/* Header */}
           <DialogHeader className="p-6 border-b border-border-subtle flex flex-row items-center justify-between space-y-0">
             <div>

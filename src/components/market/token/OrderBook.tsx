@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
-import { GlassPanel } from "@/components/ui/glass-panel";
 import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface OrderBookProps {
@@ -87,7 +86,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
+    <div className={`glass-panel flex flex-col h-full overflow-hidden ${className || ''}`}>
       <div className="p-4 flex-shrink-0 border-b border-border-subtle">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
@@ -214,6 +213,6 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
           </div>
         )}
       </div>
-    </GlassPanel>
+    </div>
   );
 }
