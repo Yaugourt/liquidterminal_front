@@ -1,6 +1,5 @@
 import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
 import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
-import { GlassPanel } from "@/components/ui/glass-panel";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Users, Activity, Wallet, Shield, Database } from "lucide-react";
@@ -39,9 +38,9 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   if (error) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-        <GlassPanel className="col-span-full p-4 text-center text-rose-400 text-sm">
+        <div className="glass-panel col-span-full p-4 text-center text-rose-400 text-sm">
           Error: {error.message}
-        </GlassPanel>
+        </div>
       </div>
     );
   }

@@ -3,7 +3,7 @@
 import { ExternalLink, Trash2, Check, Clock, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, memo } from "react";
 import Image from "next/image";
 import type { ReadListItem } from "@/services/wiki";
 import type { LinkPreview } from "@/services/wiki/linkPreview";
@@ -15,7 +15,7 @@ interface ReadListItemCardProps {
   onToggleRead: (itemId: number, isRead: boolean) => void;
 }
 
-export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: ReadListItemCardProps) {
+export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: ReadListItemCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const handleRemoveItem = (e: React.MouseEvent) => {
@@ -37,10 +37,9 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
   };
 
   return (
-    <div 
-      className={`bg-brand-secondary/60 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${
-        item.isRead ? 'opacity-75' : ''
-      }`}
+    <div
+      className={`bg-brand-secondary/60 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-75' : ''
+        }`}
       onClick={handleCardClick}
     >
       <div className="p-0 flex flex-col h-full">
@@ -69,7 +68,7 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
               </div>
             </div>
           )}
-          
+
           {/* Read status overlay */}
           {item.isRead && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -78,18 +77,17 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
               </div>
             </div>
           )}
-          
+
           {/* Action buttons overlay */}
           <div className="absolute top-2 right-2 flex items-center gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 z-10 border border-border-hover">
             <Button
               onClick={handleToggleRead}
               size="sm"
               variant="ghost"
-              className={`p-1.5 h-auto rounded-md ${
-                item.isRead 
-                  ? 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10' 
-                  : 'text-[#F9E370] hover:text-emerald-400 hover:bg-emerald-400/10'
-              }`}
+              className={`p-1.5 h-auto rounded-md ${item.isRead
+                ? 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10'
+                : 'text-[#F9E370] hover:text-emerald-400 hover:bg-emerald-400/10'
+                }`}
               title={item.isRead ? "Mark as unread" : "Mark as read"}
             >
               {item.isRead ? <Check className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
@@ -109,22 +107,21 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
         {/* Content section */}
         <div className="p-4 space-y-2 flex-1 flex flex-col">
           <div className="flex items-start justify-between gap-2">
-            <Badge 
-              variant="secondary" 
-              className="bg-brand-accent/10 text-brand-accent border-none text-[10px]"
+            <Badge
+              variant="secondary"
+              className="bg-brand-accent/10 text-brand-accent border-none text-label"
             >
               Resource #{item.resourceId}
             </Badge>
             <ExternalLink size={12} className="text-brand-accent mt-0.5 flex-shrink-0" />
           </div>
 
-          <h3 className={`font-medium text-sm mb-2 line-clamp-2 group-hover:text-brand-accent transition-colors flex-1 ${
-            item.isRead ? 'text-text-secondary' : 'text-white'
-          }`}>
+          <h3 className={`font-medium text-sm mb-2 line-clamp-2 group-hover:text-brand-accent transition-colors flex-1 ${item.isRead ? 'text-text-secondary' : 'text-white'
+            }`}>
             {preview?.title ? (
-              <a 
-                href={item.resource?.url || '#'} 
-                target="_blank" 
+              <a
+                href={item.resource?.url || '#'}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-brand-accent transition-colors"
                 onClick={(e) => e.stopPropagation()}
@@ -132,9 +129,9 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
                 {preview.title.length > 53 ? `${preview.title.substring(0, 53)}...` : preview.title}
               </a>
             ) : item.resource?.url ? (
-              <a 
-                href={item.resource.url} 
-                target="_blank" 
+              <a
+                href={item.resource.url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-brand-accent transition-colors"
                 onClick={(e) => e.stopPropagation()}
@@ -157,14 +154,13 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
           )}
 
           <div className="flex items-center justify-between pt-2 mt-auto border-t border-border-subtle">
-            <div className="text-[10px] text-text-muted">
+            <div className="text-label text-text-muted">
               Added {new Date(item.addedAt).toLocaleDateString()}
             </div>
-            <div className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-              item.isRead 
-                ? 'bg-emerald-500/10 text-emerald-400' 
-                : 'bg-[#F9E370]/10 text-[#F9E370]'
-            }`}>
+            <div className={`text-label px-1.5 py-0.5 rounded ${item.isRead
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'bg-[#F9E370]/10 text-[#F9E370]'
+              }`}>
               {item.isRead ? 'Read' : 'Unread'}
             </div>
           </div>
@@ -172,4 +168,4 @@ export function ReadListItemCard({ item, preview, onRemoveItem, onToggleRead }: 
       </div>
     </div>
   );
-} 
+}); 

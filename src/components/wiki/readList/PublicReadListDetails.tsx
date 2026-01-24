@@ -61,7 +61,7 @@ export function PublicReadListDetails({
           onClick={onBack}
           variant="ghost"
           size="sm"
-          className="text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
+          className="interactive-secondary rounded-lg"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Lists

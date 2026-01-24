@@ -17,22 +17,6 @@ import { Pagination } from "@/components/common/pagination";
 import { usePagination } from "@/hooks/core/usePagination";
 import Link from "next/link";
 
-// Composant pour l'en-tête de colonne
-const TableHeaderCell = memo(({ label, className, align = "left" }: { label: string; className?: string; align?: "left" | "right" | "center" }) => (
-  <TableHead className={className}>
-    <Button
-      variant="ghost"
-      className={`text-white hover:text-white font-inter font-normal p-0 flex items-center w-full ${align === 'right' ? 'justify-end text-right' :
-        align === 'center' ? 'justify-center text-center' :
-          'justify-start text-left'
-        }`}
-    >
-      {label}
-    </Button>
-  </TableHead>
-));
-TableHeaderCell.displayName = 'TableHeaderCell';
-
 // Composant pour l'état vide
 const EmptyState = memo(() => (
   <TableRow className="hover:bg-transparent">
@@ -131,15 +115,9 @@ export const StakersTable = memo(function StakersTable() {
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="text-left py-3 px-4">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Address</span>
-              </TableHead>
-              <TableHead className="text-left py-3 px-4">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
-              </TableHead>
-              <TableHead className="text-left py-3 px-4 w-48">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span>
-              </TableHead>
+              <TableHead className="py-3 px-4">Address</TableHead>
+              <TableHead className="py-3 px-4">Amount</TableHead>
+              <TableHead className="py-3 px-4 w-48">Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -159,12 +137,12 @@ export const StakersTable = memo(function StakersTable() {
                   >
                     <TableCell className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium text-sm">
+                        <span className="font-medium">
                           {rank}.
                         </span>
                         <Link
                           href={`/explorer/address/${holder.address}`}
-                          className="text-brand-accent hover:text-white transition-colors text-sm font-mono"
+                          className="text-brand-accent hover:text-white transition-colors font-mono"
                           title="View address details"
                         >
                           {formatAddress(holder.address)}
@@ -184,12 +162,12 @@ export const StakersTable = memo(function StakersTable() {
 
                       </div>
                     </TableCell>
-                    <TableCell className="py-3 px-4 text-left text-white text-sm">
+                    <TableCell className="py-3 px-4">
                       <span className="inline-block">
                         {formatNumber(holder.amount, format)} HYPE
                       </span>
                     </TableCell>
-                    <TableCell className="py-3 px-4 text-left text-white w-48 text-sm">
+                    <TableCell className="py-3 px-4 w-48">
                       <span className="inline-block">
                         {hypePrice ? `$${formatNumber(value, format)}` : '-'}
                       </span>

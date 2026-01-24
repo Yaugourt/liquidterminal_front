@@ -54,7 +54,7 @@ export const StatusTabs = memo(function StatusTabs({
             "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
             activeTab === tab.id
               ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-              : "text-text-secondary hover:text-zinc-200 hover:bg-white/5"
+              : "tab-inactive"
           )}
         >
           <span>
@@ -62,7 +62,7 @@ export const StatusTabs = memo(function StatusTabs({
           </span>
           {tab.count > 0 && (
             <span className={cn(
-              "px-1.5 py-0.5 text-[10px] rounded-md font-medium",
+              "px-1.5 py-0.5 text-label rounded-md",
               activeTab === tab.id
                 ? "bg-brand-tertiary/20 text-brand-tertiary"
                 : `bg-white/5 ${tab.color}`

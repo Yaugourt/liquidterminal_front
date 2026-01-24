@@ -63,14 +63,14 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Method</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Side</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Token</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Reduce Only</span></TableHead>
-              <TableHead className="py-3 px-3"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time in Force</span></TableHead>
+              <TableHead className="py-3 px-3">Method</TableHead>
+              <TableHead className="py-3 px-3">Side</TableHead>
+              <TableHead className="py-3 px-3">Size</TableHead>
+              <TableHead className="py-3 px-3">Token</TableHead>
+              <TableHead className="py-3 px-3">Price</TableHead>
+              <TableHead className="py-3 px-3">Value</TableHead>
+              <TableHead className="py-3 px-3">Reduce Only</TableHead>
+              <TableHead className="py-3 px-3">Time in Force</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 import { useXpContext } from "@/services/xp";
 import { cn } from "@/lib/utils";
 import {
@@ -54,7 +56,7 @@ const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; 
   },
 };
 
-export function WeeklyChallengesCard({ compact = false, className }: WeeklyChallengesCardProps) {
+export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact = false, className }: WeeklyChallengesCardProps) {
   const {
     weeklyChallenges,
     timeUntilWeeklyReset,
@@ -239,5 +241,5 @@ export function WeeklyChallengesCard({ compact = false, className }: WeeklyChall
       </div>
     </div>
   );
-}
+});
 

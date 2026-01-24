@@ -119,7 +119,7 @@ const TwapTabButtons = memo(({
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-md text-[10px] font-medium transition-all whitespace-nowrap border ${activeTab === tab.key
+              className={`flex-shrink-0 px-3 py-1.5 rounded-md text-label transition-all whitespace-nowrap border ${activeTab === tab.key
                   ? 'bg-brand-accent/10 border-brand-accent/20 text-brand-accent shadow-sm'
                   : 'bg-white/5 border-transparent text-text-secondary hover:text-zinc-200 hover:bg-white/10'
                 }`}

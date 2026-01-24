@@ -147,6 +147,11 @@ export function ValidatorTable({ activeTab }: ValidatorTableProps) {
                 loading: unstakingLoading,
                 error: unstakingError
               }}
+              liquidationsData={{
+                liquidations: [],
+                loading: false,
+                error: null
+              }}
               format={format}
               startIndex={validatorSubTab === 'all' ? startIndex : 0}
               endIndex={validatorSubTab === 'all' ? endIndex : 0}

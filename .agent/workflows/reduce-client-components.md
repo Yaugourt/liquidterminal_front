@@ -1,189 +1,227 @@
 ---
-description: Reduce "use client" directives by converting components to Server Components
+description: Réduire le nombre de directives "use client" dans l'application Next.js
 ---
 
-# Reduce Client Components Workflow
+# Workflow : Réduction des Client Components
 
-This workflow helps reduce the number of `"use client"` directives in a Next.js 13+ App Router project, improving performance by reducing JavaScript sent to the browser.
+## Objectif
 
-## Prerequisites
-- Next.js 13+ with App Router
-- Run `grep -r "use client" src --include="*.tsx" | wc -l` to get current count
+Minimiser le JavaScript côté client en convertissant les composants vers Server Components quand possible.
 
-## Step 1: Identify Candidates
+---
 
-// turbo
+## Phase 1 : Audit Initial
+
+### 1.1 Compter les directives actuelles
+
 ```bash
-# List all files with "use client"
-grep -rl "use client" src --include="*.tsx" | head -30
-```
-
-Prioritize files that:
-1. **Don't use hooks** (`useState`, `useEffect`, `useRef`, etc.)
-2. **Don't handle events** (`onClick`, `onChange`, etc.)
-3. **Only display data** (pure presentation components)
-4. **Are layouts** that just wrap children
-
-## Step 2: Analyze a Component
-
-For each candidate file, check:
-```
-Does it use useState/useEffect/useRef? → Keep "use client"
-Does it use onClick/onChange/onSubmit? → Keep "use client"
-Does it use browser APIs (window, document)? → Keep "use client"
-Does it only receive props and render JSX? → Can be Server Component ✓
-```
-
-## Step 3: Extract Interactive Parts
-
-If a component has BOTH static and interactive parts:
-
-**Before (all client):**
-```tsx
-"use client";
-import { useState } from "react";
-
-export function ProductCard({ product }) {
-  const [isLiked, setIsLiked] = useState(false);
-  
-  return (
-    <div>
-      <h2>{product.name}</h2>           {/* Static */}
-      <p>{product.description}</p>       {/* Static */}
-      <span>${product.price}</span>      {/* Static */}
-      <button onClick={() => setIsLiked(!isLiked)}>  {/* Interactive */}
-        {isLiked ? "❤️" : "🤍"}
-      </button>
-    </div>
-  );
-}
-```
-
-**After (split):**
-```tsx
-// ProductCard.tsx - Server Component (no "use client")
-import { LikeButton } from "./LikeButton";
-
-export function ProductCard({ product }) {
-  return (
-    <div>
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
-      <span>${product.price}</span>
-      <LikeButton productId={product.id} />  {/* Client island */}
-    </div>
-  );
-}
-```
-
-```tsx
-// LikeButton.tsx - Client Component
-"use client";
-import { useState } from "react";
-
-export function LikeButton({ productId }) {
-  const [isLiked, setIsLiked] = useState(false);
-  return (
-    <button onClick={() => setIsLiked(!isLiked)}>
-      {isLiked ? "❤️" : "🤍"}
-    </button>
-  );
-}
-```
-
-## Step 4: Common Patterns to Fix
-
-### Pattern A: Unnecessary "use client" on wrappers
-```tsx
-// ❌ Before
-"use client";
-export function Container({ children }) {
-  return <div className="container">{children}</div>;
-}
-
-// ✅ After - Remove "use client", it's just JSX
-export function Container({ children }) {
-  return <div className="container">{children}</div>;
-}
-```
-
-### Pattern B: Data fetching in client
-```tsx
-// ❌ Before - fetches on client
-"use client";
-import { useEffect, useState } from "react";
-
-export function UserList() {
-  const [users, setUsers] = useState([]);
-  useEffect(() => { fetch('/api/users').then(...) }, []);
-  return <ul>{users.map(...)}</ul>;
-}
-
-// ✅ After - Server Component with async
-export async function UserList() {
-  const users = await fetch('/api/users').then(r => r.json());
-  return <ul>{users.map(...)}</ul>;
-}
-```
-
-### Pattern C: Layout with providers
-```tsx
-// ❌ Before - entire layout is client
-"use client";
-import { ThemeProvider } from "./ThemeProvider";
-
-export function Layout({ children }) {
-  return (
-    <ThemeProvider>
-      <header>...</header>
-      <main>{children}</main>
-      <footer>...</footer>
-    </ThemeProvider>
-  );
-}
-
-// ✅ After - only provider is client
-// ThemeProvider.tsx stays "use client"
-// Layout.tsx becomes server component
-import { ThemeProvider } from "./ThemeProvider";
-
-export function Layout({ children }) {
-  return (
-    <ThemeProvider>
-      <header>...</header>
-      <main>{children}</main>
-      <footer>...</footer>
-    </ThemeProvider>
-  );
-}
-```
-
-## Step 5: Verify Changes
-
 // turbo
+grep -r '"use client"' src/components src/app --include="*.tsx" | wc -l
+```
+
+### 1.2 Lister tous les fichiers avec "use client"
+
 ```bash
+// turbo
+grep -rl '"use client"' src/components src/app --include="*.tsx" | head -50
+```
+
+### 1.3 Analyser les raisons du "use client"
+
+Pour chaque fichier, identifier pourquoi il est client :
+
+| Raison                   | Peut être converti ?             |
+| ------------------------ | -------------------------------- |
+| `useState`               | ⚠️ Parfois (URL state avec nuqs) |
+| `useEffect`              | ❌ Non                           |
+| `onClick/onChange`       | ❌ Non                           |
+| `useContext`             | ❌ Non                           |
+| Hooks custom (`useXxx`)  | ❌ Non                           |
+| Juste des imports client | ✅ Oui (Islands)                 |
+
+---
+
+## Phase 2 : URL State avec nuqs
+
+### 2.1 Installer nuqs
+
+```bash
+npm install nuqs
+```
+
+### 2.2 Configurer le provider
+
+Dans `src/components/Providers.tsx` :
+
+```tsx
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+
+// Wrapper autour de l'app
+<NuqsAdapter>{children}</NuqsAdapter>;
+```
+
+### 2.3 Identifier les candidats
+
+Chercher les composants avec useState pour :
+
+-   Filtres (tabs, toggles)
+-   Période sélectionnée
+-   Pagination
+-   Tri de tableaux
+
+```bash
+// turbo
+grep -rn "useState.*filter\|useState.*tab\|useState.*period\|useState.*page" src/components --include="*.tsx"
+```
+
+### 2.4 Migrer un composant
+
+**Avant :**
+
+```tsx
+const [filter, setFilter] = useState<FilterType>("default");
+```
+
+**Après :**
+
+```tsx
+import { useQueryState, parseAsStringLiteral } from "nuqs";
+
+const OPTIONS = ["option1", "option2", "option3"] as const;
+const [filter, setFilter] = useQueryState("filter", parseAsStringLiteral(OPTIONS).withDefault("option1"));
+```
+
+### 2.5 Ajouter Suspense boundary
+
+Dans la page parente :
+
+```tsx
+import { Suspense } from "react";
+
+<Suspense fallback={<LoadingFallback />}>
+    <ComponentWithNuqs />
+</Suspense>;
+```
+
+> ⚠️ **Important** : Sans Suspense, le build échouera avec l'erreur `useSearchParams() should be wrapped in a suspense boundary`
+
+---
+
+## Phase 3 : Islands Architecture (Splitting)
+
+### 3.1 Identifier les composants mixtes
+
+Composants qui ont :
+
+-   Partie statique (titre, layout)
+-   Partie interactive (boutons, inputs)
+
+### 3.2 Pattern de splitting
+
+**Avant :** Un seul composant client
+
+```tsx
+"use client";
+export function Card({ data }) {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div>
+            <h2>{data.title}</h2> {/* Statique */}
+            <p>{data.description}</p> {/* Statique */}
+            <button onClick={() => setIsOpen(!isOpen)}>Toggle</button> {/* Client */}
+        </div>
+    );
+}
+```
+
+**Après :** Server Component + Island
+
+```tsx
+// CardContent.tsx (Server Component - pas de "use client")
+export function CardContent({ data }) {
+    return (
+        <>
+            <h2>{data.title}</h2>
+            <p>{data.description}</p>
+        </>
+    );
+}
+
+// CardToggle.tsx (Client Component)
+("use client");
+export function CardToggle() {
+    const [isOpen, setIsOpen] = useState(false);
+    return <button onClick={() => setIsOpen(!isOpen)}>Toggle</button>;
+}
+
+// Card.tsx (Server Component - composition)
+import { CardContent } from "./CardContent";
+import { CardToggle } from "./CardToggle";
+
+export function Card({ data }) {
+    return (
+        <div>
+            <CardContent data={data} />
+            <CardToggle />
+        </div>
+    );
+}
+```
+
+---
+
+## Phase 4 : Vérification
+
+### 4.1 Build de test
+
+```bash
+// turbo
 npm run build
 ```
 
-Check for:
-1. No build errors
-2. Components render correctly
-3. Interactive features still work
+### 4.2 Recompter les directives
 
-## Step 6: Measure Impact
-
-// turbo
 ```bash
-# Count remaining "use client" files
-grep -rl "use client" src --include="*.tsx" | wc -l
+// turbo
+grep -r '"use client"' src/components src/app --include="*.tsx" | wc -l
 ```
 
-Compare with initial count. Target: reduce by 30-50%.
+### 4.3 Comparer le bundle size
 
-## Tips
+Avant/après dans le output du build :
 
-- Start with **leaf components** (no children) - easier to convert
-- **Layouts** are often good candidates
-- **Card components** displaying data are usually convertible
-- Keep **forms**, **modals**, **dropdowns** as client components
-- Use `next/dynamic` for client-only libraries in server components
+```
++ First Load JS shared by all    XXX kB
+```
+
+---
+
+## Patterns NON recommandés
+
+### Server Actions pour formulaires existants
+
+❌ Si les formulaires utilisent déjà des hooks custom (`useWallets`, `useReportResource`), ne pas migrer vers Server Actions - le gain est minimal et le refactoring majeur.
+
+### URL state pour composants sans Suspense
+
+❌ L'adoption de nuqs nécessite un Suspense wrapper dans chaque page parente. Évaluer le coût avant de migrer massivement.
+
+---
+
+## Checklist finale
+
+-   [ ] Audit initial terminé
+-   [ ] nuqs configuré (NuqsAdapter)
+-   [ ] Composants avec filtres/tabs migrés vers URL state
+-   [ ] Suspense boundaries ajoutés
+-   [ ] Composants splittés (Islands) si applicable
+-   [ ] Build passe sans erreur
+-   [ ] Bundle size comparé
+
+---
+
+## Références
+
+-   [nuqs Documentation](https://nuqs.47ng.com/)
+-   [Next.js Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+-   [Islands Architecture](https://www.patterns.dev/posts/islands-architecture)

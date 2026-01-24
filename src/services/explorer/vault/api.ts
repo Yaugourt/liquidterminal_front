@@ -37,7 +37,11 @@ export const fetchVaults = async (params: VaultsParams): Promise<VaultsResponse>
       pagination: {
         totalTvl: response.pagination.totalTvl,
         total: response.pagination.vaultsNumber,
-        page: response.pagination.page
+        page: response.pagination.page,
+        limit: response.pagination.limit || params.limit || 10,
+        totalPages: response.pagination.totalPages || Math.ceil(response.pagination.vaultsNumber / (params.limit || 10)),
+        hasNext: response.pagination.page < (response.pagination.totalPages || 1),
+        hasPrevious: response.pagination.page > 1
       }
     };
   }, 'fetching vaults');

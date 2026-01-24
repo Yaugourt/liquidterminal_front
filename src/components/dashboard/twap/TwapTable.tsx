@@ -29,7 +29,7 @@ const formatAddress = (address: string) => {
 
 // Composant pour les headers de tableau
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <span className={`text-text-secondary text-[10px] font-semibold uppercase tracking-wider block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className={`block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
     {header}
   </span>
 );
@@ -138,10 +138,10 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
     <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
-          <span className="text-[10px] text-text-muted font-medium uppercase tracking-wider">
+          <span className="text-label text-text-muted">
             {getRemainingTime()}
           </span>
-          <span className="text-[10px] text-white font-medium">
+          <span className="text-label text-white">
             {roundedProgression.toFixed(1)}%
           </span>
         </div>

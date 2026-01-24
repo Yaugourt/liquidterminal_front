@@ -1,4 +1,4 @@
-type TabType = 'validators' | 'vaults';
+type TabType = 'validators' | 'vaults' | 'liquidations';
 
 interface TabButtonsProps {
   activeTab: TabType;
@@ -8,7 +8,8 @@ interface TabButtonsProps {
 export function TabButtons({ activeTab, onTabChange }: TabButtonsProps) {
   const tabs: { key: TabType; label: string }[] = [
     { key: 'validators', label: 'Validators' },
-    { key: 'vaults', label: 'Vaults' }
+    { key: 'vaults', label: 'Vaults' },
+    { key: 'liquidations', label: 'Liquidations' }
   ];
 
   return (
@@ -19,7 +20,7 @@ export function TabButtons({ activeTab, onTabChange }: TabButtonsProps) {
           onClick={() => onTabChange(tab.key)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === tab.key
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+              : 'tab-inactive'
             }`}
         >
           {tab.label}

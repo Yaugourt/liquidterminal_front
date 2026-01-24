@@ -6,11 +6,7 @@ import { FeesTabsButton } from "./FeesTabsButton";
 import { useChartPeriod } from '@/components/common/charts';
 import { useFeesChartData } from "@/services/dashboard";
 
-interface FeesChartSectionProps {
-  chartHeight: number;
-}
-
-export const FeesChartSection = ({ chartHeight }: FeesChartSectionProps) => {
+export const FeesChartSection = () => {
   const [selectedFeeType, setSelectedFeeType] = useState<"all" | "spot">("all");
   const { selectedPeriod, handlePeriodChange, availablePeriods } = useChartPeriod({
     defaultPeriod: "7d",
@@ -36,9 +32,8 @@ export const FeesChartSection = ({ chartHeight }: FeesChartSectionProps) => {
           selectedPeriod={selectedPeriod}
           onPeriodChange={handlePeriodChange}
           availablePeriods={availablePeriods}
-          chartHeight={chartHeight}
         />
       </div>
     </div>
   );
-}; 
+};

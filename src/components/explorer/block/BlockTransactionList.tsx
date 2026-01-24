@@ -34,7 +34,7 @@ export function BlockTransactionList({
   const displayedTransactions = transactions.slice(startIndex, endIndex);
 
   return (
-    <Card className="glass-panel p-4 flex flex-col">
+    <Card className="p-4 flex flex-col">
       <div className="flex flex-col flex-1">
         <div className="flex-1">
           <DataTable
@@ -52,11 +52,11 @@ export function BlockTransactionList({
                 <>
                   <TableHeader>
                     <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                      <TableHead className="text-left py-3 pl-0 pr-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Action</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Block</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time</span></TableHead>
-                      <TableHead className="text-left py-3 px-4 w-1/5"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User</span></TableHead>
+                      <TableHead className="text-left py-3 pl-0 pr-4 w-1/5">Hash</TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5">Action</TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5">Block</TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5">Time</TableHead>
+                      <TableHead className="text-left py-3 px-4 w-1/5">User</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

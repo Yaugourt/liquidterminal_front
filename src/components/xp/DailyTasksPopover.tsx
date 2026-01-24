@@ -70,13 +70,13 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
           </div>
 
           {/* Count */}
-          <span className="text-[10px] text-text-secondary group-hover:text-white/80">
+          <span className="text-label text-text-secondary group-hover:text-white/80">
             {dailyTasksCompletedCount}/{dailyTasks.length}
           </span>
 
           {/* Bonus indicator if not all completed */}
           {!allDailyTasksCompleted && !dailyBonusClaimed && (
-            <span className="text-[10px] text-[#F9E370] font-medium">
+            <span className="text-label text-[#F9E370]">
               +{dailyBonusXp}
             </span>
           )}
@@ -213,7 +213,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         <div className="border-t border-border-subtle">
           <Link
             href="/profile?tab=missions"
-            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover-subtle"
           >
             <span>See Weekly Challenges</span>
             <ChevronRight className="h-4 w-4" />

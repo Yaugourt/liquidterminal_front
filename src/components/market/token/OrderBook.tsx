@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
-import { GlassPanel } from "@/components/ui/glass-panel";
 import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface OrderBookProps {
@@ -87,7 +86,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <GlassPanel className={`flex flex-col h-full overflow-hidden ${className || ''}`}>
+    <div className={`glass-panel flex flex-col h-full overflow-hidden ${className || ''}`}>
       <div className="p-4 flex-shrink-0 border-b border-border-subtle">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
@@ -107,7 +106,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
         {activeTab === 'orderbook' ? (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-3 gap-2 text-[10px] text-text-secondary font-semibold uppercase tracking-wider flex-shrink-0 mb-2">
+            <div className="grid grid-cols-3 gap-2 text-label text-text-secondary flex-shrink-0 mb-2">
               <span>Price</span>
               <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Total ({tokenName})</span>
@@ -142,7 +141,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
 
               {/* Spread */}
               <div className="border-y border-border-subtle py-2 text-center mb-2 mx-1 flex items-center justify-center gap-5">
-                <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Spread</span>
+                <span className="text-label text-text-secondary">Spread</span>
                 <span className="text-xs text-white font-medium">
                   {spread.absolute > 0 ? (
                     `${spread.absolute.toFixed(3)} (${spread.percentage.toFixed(6)}%)`
@@ -180,7 +179,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
         ) : (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-3 gap-2 text-[10px] text-text-secondary font-semibold uppercase tracking-wider border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
+            <div className="grid grid-cols-3 gap-2 text-label text-text-secondary border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
               <span>Price</span>
               <span className="text-right">Size (token)</span>
               <span className="text-right">Time</span>
@@ -214,6 +213,6 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
           </div>
         )}
       </div>
-    </GlassPanel>
+    </div>
   );
 }

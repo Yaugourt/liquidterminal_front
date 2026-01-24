@@ -1,6 +1,7 @@
 import { useValidators } from "@/services/explorer/validator";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useStakingValidationsPaginated, useUnstakingQueuePaginated } from "@/services/explorer/validator/hooks/staking";
+import { useRecentLiquidations } from "@/services/explorer/liquidation";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect } from "react";
@@ -8,7 +9,7 @@ import { Pagination } from "../../common/pagination";
 import { TabButtons, TableContent } from ".";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 
-type TabType = 'validators' | 'vaults';
+type TabType = 'validators' | 'vaults' | 'liquidations';
 type ValidatorSubTab = 'all' | 'transactions' | 'unstaking';
 
 export function ValidatorsTable() {
@@ -46,6 +47,17 @@ export function ValidatorsTable() {
     limit: rowsPerPage,
     sortBy: 'tvl'
   });
+
+  // For liquidations, use recent liquidations hook
+  const {
+    liquidations,
+    totalCount: liquidationsTotalCount,
+    isLoading: liquidationsLoading,
+    error: liquidationsError
+  } = useRecentLiquidations({
+    limit: rowsPerPage
+  });
+
   const { format } = useNumberFormat();
   const { price: hypePrice } = useHypePrice();
 
@@ -141,6 +153,9 @@ export function ValidatorsTable() {
       }
       return validators.length;
     }
+    if (activeTab === 'liquidations') {
+      return liquidationsTotalCount ?? liquidations.length;
+    }
     return vaultsTotalCount;
   };
 
@@ -166,7 +181,7 @@ export function ValidatorsTable() {
                   onClick={() => handleValidatorSubTabChange(tab as ValidatorSubTab)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${validatorSubTab === tab
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                     }`}
                 >
                   {tab === 'all' ? 'All' : tab === 'transactions' ? 'Transactions' : 'Unstaking Queue'}
@@ -174,7 +189,7 @@ export function ValidatorsTable() {
               ))}
             </div>
           )}
-          {activeTab === 'validators' ? (
+          {activeTab === 'validators' && (
             <div className="flex items-center gap-6 max-[720px]:flex-wrap max-[720px]:gap-4">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
@@ -200,7 +215,8 @@ export function ValidatorsTable() {
                 </div>
               </div>
             </div>
-          ) : (
+          )}
+          {activeTab === 'vaults' && (
             <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
@@ -212,6 +228,14 @@ export function ValidatorsTable() {
                 <span className="text-brand-gold text-sm font-bold">
                   ${formatNumber(totalTvl, format, { maximumFractionDigits: 0 })}
                 </span>
+              </div>
+            </div>
+          )}
+          {activeTab === 'liquidations' && (
+            <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
+              <div className="flex items-baseline gap-2">
+                <span className="text-text-secondary text-xs font-medium">Recent (2h):</span>
+                <span className="text-white text-sm font-bold">{liquidations.length}</span>
               </div>
             </div>
           )}
@@ -242,6 +266,11 @@ export function ValidatorsTable() {
                 unstakingQueue,
                 loading: unstakingLoading,
                 error: unstakingError
+              }}
+              liquidationsData={{
+                liquidations,
+                loading: liquidationsLoading,
+                error: liquidationsError
               }}
               format={format}
               startIndex={activeTab === 'validators' && validatorSubTab === 'all' ? startIndex : 0}

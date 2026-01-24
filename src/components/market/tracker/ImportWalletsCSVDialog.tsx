@@ -185,7 +185,7 @@ export function ImportWalletsCSVDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="glass-dialog text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <DialogTitle>Import Wallets from CSV</DialogTitle>
           <DialogDescription className="text-white">

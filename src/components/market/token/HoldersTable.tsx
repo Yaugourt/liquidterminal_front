@@ -98,18 +98,10 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
         <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Address</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Amount</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Value</span>
-              </TableHead>
-              <TableHead className="py-3 px-3">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Percentage</span>
-              </TableHead>
+              <TableHead className="py-3 px-3">Address</TableHead>
+              <TableHead className="py-3 px-3">Amount</TableHead>
+              <TableHead className="py-3 px-3">Value</TableHead>
+              <TableHead className="py-3 px-3">Percentage</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

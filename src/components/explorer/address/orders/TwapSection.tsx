@@ -15,7 +15,7 @@ export function TwapSection({ address }: TwapSectionProps) {
   } = useUserTwapOrders(address);
 
   return (
-    <Card className="w-full glass-panel">
+    <Card className="w-full">
       <div className="p-4">
         <UserTwapTable
           twaps={twapOrders}

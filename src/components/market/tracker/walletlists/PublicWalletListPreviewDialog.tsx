@@ -130,7 +130,7 @@ export function PublicWalletListPreviewDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-dialog text-white max-w-3xl max-h-[85vh]">
+      <DialogContent className="max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <div className="flex-1 space-y-2">

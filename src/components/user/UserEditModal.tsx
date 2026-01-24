@@ -38,7 +38,7 @@ export function UserEditModal({
 
   return (
     <Dialog open={!!user} onOpenChange={(open) => !open && onCancel()}>
-      <DialogContent className="sm:max-w-md glass-dialog">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader className="pb-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#83e9ff]/10 flex items-center justify-center">

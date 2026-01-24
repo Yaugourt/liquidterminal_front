@@ -29,7 +29,11 @@ export const useVaults = ({
       pagination: {
         totalTvl: 0, // Will be updated on first fetch
         total: initialData.length,
-        page: 1
+        page: 1,
+        limit: initialData.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false
       }
     } : null,
     refreshInterval: 30000 // 30 seconds

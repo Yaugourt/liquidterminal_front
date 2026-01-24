@@ -34,7 +34,7 @@ export default function PublicListsPage() {
           placeholder="Search public lists by name or description..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 glass-input rounded-lg text-white placeholder:text-zinc-500"
+          className="pl-10 rounded-lg text-white placeholder:text-zinc-500"
         />
       </div>
 

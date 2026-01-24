@@ -50,7 +50,7 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`glass-token-card p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
+    <div className={`bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
       }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
@@ -109,7 +109,7 @@ export const ProjectCard = memo(function ProjectCard({
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-[10px] text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md font-medium whitespace-nowrap">
+                  <span key={category.id} className="text-label text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}

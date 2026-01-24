@@ -20,7 +20,9 @@ export const useEducationalResources = (
         total: options.initialData.length,
         page: 1,
         limit: options.initialData.length,
-        totalPages: 1
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false
       }
     } : undefined,
     dependencies: [JSON.stringify(filters)],

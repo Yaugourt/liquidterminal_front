@@ -102,7 +102,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             className={`px-2 py-1 text-xs font-medium transition-all rounded-md ${
               barCount === count
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                : 'tab-inactive'
             }`}
           >
             {count}
@@ -123,7 +123,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'line'
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                : 'tab-inactive'
             }`}
           >
             <TrendingUp size={12} />
@@ -134,7 +134,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
               chartType === 'bar'
                 ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                : 'tab-inactive'
             }`}
           >
             <BarChart3 size={12} />

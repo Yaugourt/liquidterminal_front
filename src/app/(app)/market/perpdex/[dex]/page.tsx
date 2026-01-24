@@ -115,7 +115,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Activity className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">24h Volume</span>
+            <span className="text-stat-label">24h Volume</span>
           </div>
           <span className="text-white font-bold text-lg">
             {dex.totalVolume24h > 0
@@ -135,7 +135,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Open Interest</span>
+            <span className="text-stat-label">Open Interest</span>
           </div>
           <span className="text-white font-bold text-lg">
             {dex.totalOpenInterest > 0
@@ -155,7 +155,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Zap className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Avg Funding</span>
+            <span className="text-stat-label">Avg Funding</span>
           </div>
           <span className={`font-bold text-lg ${dex.avgFunding >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {formatFunding(dex.avgFunding)}
@@ -168,7 +168,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Scale className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Active Markets</span>
+            <span className="text-stat-label">Active Markets</span>
           </div>
           <span className="text-white font-bold text-lg">
             {dex.activeAssets}
@@ -186,7 +186,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">OI Cap</span>
+            <span className="text-stat-label">OI Cap</span>
           </div>
           <span className="text-white font-bold text-lg">
             {formatNumber(dex.totalOiCap, format, {
@@ -204,7 +204,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Fee Scale</span>
+            <span className="text-stat-label">Fee Scale</span>
           </div>
           <span className="text-white font-bold text-lg">
             {(dex.deployerFeeScale * 100).toFixed(0)}%
@@ -220,7 +220,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Database className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">DEPLOYER</span>
+            <span className="text-stat-label">DEPLOYER</span>
           </div>
           <AddressDisplay
             address={dex.deployer}
@@ -237,7 +237,7 @@ export default function PerpDexDetailPage() {
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand-accent" />
             </div>
-            <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">FEE RECIPIENT</span>
+            <span className="text-stat-label">FEE RECIPIENT</span>
           </div>
           <AddressDisplay
             address={dex.feeRecipient}
@@ -262,7 +262,7 @@ export default function PerpDexDetailPage() {
               <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
                 <Wallet className="h-3 w-3 text-brand-accent" />
               </div>
-              <span className="text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">Sub-Deployers ({dex.subDeployers.length})</span>
+              <span className="text-stat-label">Sub-Deployers ({dex.subDeployers.length})</span>
             </div>
             <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {dex.subDeployers.slice(0, 4).map((sub, idx) => (
@@ -275,13 +275,13 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-zinc-400 font-mono text-[10px] hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-zinc-400 font-mono text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>
                     ))}
                     {sub.addresses.length > 2 && (
-                      <span className="text-zinc-600 text-[10px]">+{sub.addresses.length - 2}</span>
+                      <span className="text-zinc-600 text-label">+{sub.addresses.length - 2}</span>
                     )}
                   </div>
                 </div>

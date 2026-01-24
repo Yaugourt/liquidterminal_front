@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseChartProps } from "../types/chart";
+import { BaseChartProps, ChartDataPoint } from "../types/chart";
 import {
   LineChart,
   Line,
@@ -9,8 +9,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
+import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import { ContentType } from 'recharts/types/component/Tooltip';
+
+// Type helper for tooltip content
+type TooltipPayload = Payload<ValueType, NameType>;
 
 export function Chart({
   data,
@@ -30,8 +34,26 @@ export function Chart({
   if (isLoading) return children?.loading || null;
   if (error) return children?.error || null;
 
+  // Cast dimensions to expected types
+  const responsiveWidth = typeof width === 'number' ? width : (width === "100%" ? "100%" as const : undefined);
+  const responsiveHeight = typeof height === 'number' ? height : (height === "100%" ? "100%" as const : undefined);
+
+  const tooltipContent: ContentType<ValueType, NameType> = ({ active, payload, label }) => {
+    if (children?.tooltip && payload) {
+      return children.tooltip({
+        active,
+        payload: payload.map((item: TooltipPayload) => ({
+          value: typeof item.value === 'number' ? item.value : 0,
+          payload: item.payload as ChartDataPoint
+        })),
+        label
+      });
+    }
+    return null;
+  };
+
   return (
-    <ResponsiveContainer width={width} height={height}>
+    <ResponsiveContainer width={responsiveWidth} height={responsiveHeight}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" {...gridProps} />
         <XAxis
@@ -43,21 +65,7 @@ export function Chart({
           tickFormatter={formatValue}
           {...yAxisProps}
         />
-        <Tooltip 
-          content={(props: TooltipProps<number, string>) => {
-            if (children?.tooltip && props.payload) {
-              return children.tooltip({
-                active: props.active,
-                payload: props.payload.map((item) => ({
-                  value: item.value ?? item.payload.value,
-                  payload: item.payload
-                })),
-                label: props.label
-              });
-            }
-            return null;
-          }}
-        />
+        <Tooltip content={tooltipContent} />
         <Line
           type="monotone"
           dataKey="value"
@@ -66,4 +74,4 @@ export function Chart({
       </LineChart>
     </ResponsiveContainer>
   );
-} 
+}

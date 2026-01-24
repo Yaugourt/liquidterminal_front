@@ -76,7 +76,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
+              className="interactive-secondary rounded-lg"
             >
               Cancel
             </Button>

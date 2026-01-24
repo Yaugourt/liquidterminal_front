@@ -136,14 +136,14 @@ export function WalletRecentFillsSection() {
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Hash</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Asset</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Direction</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Age</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Size</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Price</span></TableHead>
-              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">PnL</span></TableHead>
-              <TableHead className="py-3 px-4 text-right"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Fee</span></TableHead>
+              <TableHead className="py-3 px-4 text-left">Hash</TableHead>
+              <TableHead className="py-3 px-4 text-left">Asset</TableHead>
+              <TableHead className="py-3 px-4 text-left">Direction</TableHead>
+              <TableHead className="py-3 px-4 text-left">Age</TableHead>
+              <TableHead className="py-3 px-4 text-left">Size</TableHead>
+              <TableHead className="py-3 px-4 text-left">Price</TableHead>
+              <TableHead className="py-3 px-4 text-right">PnL</TableHead>
+              <TableHead className="py-3 px-4 text-right">Fee</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

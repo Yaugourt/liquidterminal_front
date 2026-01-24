@@ -142,7 +142,7 @@ export default function TokenPage() {
                                     onClick={() => setActiveTab('twap')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
                                         ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                                        : 'tab-inactive'
                                         }`}
                                 >
                                     TWAP
@@ -151,7 +151,7 @@ export default function TokenPage() {
                                     onClick={() => setActiveTab('holders')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
                                         ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                                        : 'tab-inactive'
                                         }`}
                                 >
                                     Holders

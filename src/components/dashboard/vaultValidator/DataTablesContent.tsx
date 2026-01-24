@@ -116,14 +116,14 @@ const ValidatorsTableComponent = ({
       accessor: (item: ValidatorsTableProps["validators"][0]) => (
         <PriceChange value={item.apr} suffix="%" />
       ),
-      align: "center",
-      className: "w-[120px] px-2 text-center"
+      align: "right",
+      className: "w-[100px] px-4 text-right"
     },
     {
       header: "Stake",
       accessor: (item: ValidatorsTableProps["validators"][0]) => formatStakeValue(item.stake, format),
       align: "right",
-      className: "w-[120px] px-4 pr-6 text-right"
+      className: "w-[120px] px-4 text-right"
     },
   ] as Column<ExtendedValidator>[], [format]);
 

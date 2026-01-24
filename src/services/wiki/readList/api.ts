@@ -143,7 +143,9 @@ export const getPublicReadListsPaginated = async (params?: PublicReadListQueryPa
           page: 1,
           limit: 12,
           total: 0,
-          totalPages: 0
+          totalPages: 0,
+          hasNext: false,
+          hasPrevious: false
         }
       };
     }

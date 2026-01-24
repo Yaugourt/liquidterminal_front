@@ -97,11 +97,11 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Name</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">User deposits</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">APR</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">TVL</span></TableHead>
-              <TableHead className="py-3 px-4 text-left"><span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">Time lock</span></TableHead>
+              <TableHead className="py-3 px-4 text-left">Name</TableHead>
+              <TableHead className="py-3 px-4 text-left">User deposits</TableHead>
+              <TableHead className="py-3 px-4 text-left">APR</TableHead>
+              <TableHead className="py-3 px-4 text-left">TVL</TableHead>
+              <TableHead className="py-3 px-4 text-left">Time lock</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="bg-transparent">

@@ -117,7 +117,7 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle">
                 <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Image</span>
               </div>
@@ -191,7 +191,7 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="banner-file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover:bg-white/5 transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle">
                 <Upload className="h-4 w-4 text-brand-accent" />
                 <span className="text-sm">Upload Banner</span>
               </div>

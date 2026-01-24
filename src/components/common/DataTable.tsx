@@ -70,7 +70,7 @@ const TableHeaderButtonComponent = ({
     align
 }: { header: string; align?: string }) => (
     <span className={cn(
-        "text-text-secondary text-[10px] font-semibold uppercase tracking-wider block w-full",
+        "text-text-secondary font-semibold uppercase tracking-wider block w-full",
         align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left"
     )}>
         {header}

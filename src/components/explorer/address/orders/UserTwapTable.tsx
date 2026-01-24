@@ -26,7 +26,7 @@ interface RealTimeData {
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
   <Button
     variant="ghost"
-    className={`text-text-secondary hover:text-zinc-200 text-[10px] font-semibold uppercase tracking-wider p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+    className={`text-text-secondary hover:text-zinc-200 text-label p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
   >
     {header}
   </Button>

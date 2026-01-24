@@ -127,7 +127,7 @@ export function WalletListTabs({
         <Button
           onClick={() => router.push('/market/tracker/public-lists')}
           variant="outline"
-          className="border-border-hover text-text-secondary hover:text-white hover:bg-white/5"
+          className="border-border-hover interactive-secondary"
         >
           <Globe className="mr-2 h-4 w-4" />
           Browse Public Lists

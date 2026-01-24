@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
 import { useTokenCandles, useTokenWebSocket, marketIndexToCoinId } from '@/services/market/token';
 import { TokenCandle } from '@/services/market/token/types';
-import { GlassPanel } from "@/components/ui/glass-panel";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -252,7 +251,7 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
   }, [currentPrice, selectedTimeframe, coinId]);
 
   return (
-    <GlassPanel className={`w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
+    <div className={`glass-panel w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
       <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 border border-border-subtle">
@@ -262,7 +261,7 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
             onClick={() => setSelectedTimeframe(timeframe.value)}
             className={`px-2 py-1 text-xs font-medium rounded transition-all duration-200 ${selectedTimeframe === timeframe.value
               ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+              : 'tab-inactive'
               }`}
           >
             {timeframe.label}
@@ -306,6 +305,6 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
         ref={containerRef}
         className="w-full flex-1 min-h-0 rounded-lg overflow-hidden"
       />
-    </GlassPanel>
+    </div>
   );
 }

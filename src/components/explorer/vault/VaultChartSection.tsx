@@ -172,7 +172,7 @@ const VaultChartDisplay = ({
                   onClick={() => onChartChange(tab.key)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedChart === tab.key
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'text-text-secondary hover:text-zinc-200 hover:bg-white/5'
+                    : 'tab-inactive'
                     }`}
                 >
                   {tab.label}
@@ -187,7 +187,7 @@ const VaultChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-[10px] text-text-muted">
+                  <span className="text-label text-text-muted">
                     {formatDate(new Date(hoverTime), dateFormat)}
                   </span>
                 )}

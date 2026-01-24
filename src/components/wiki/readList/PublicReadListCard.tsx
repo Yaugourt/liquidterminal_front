@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Copy, 
-  User, 
-  Calendar, 
+import {
+  Copy,
+  User,
+  Calendar,
   FileText,
   CheckCircle,
   Loader2
@@ -21,18 +21,18 @@ interface PublicReadListCardProps {
   onCopy?: () => void;
 }
 
-export function PublicReadListCard({ 
-  readList, 
-  isSelected = false, 
-  onSelect, 
-  onCopy 
+export const PublicReadListCard = memo(function PublicReadListCard({
+  readList,
+  isSelected = false,
+  onSelect,
+  onCopy
 }: PublicReadListCardProps) {
   const [isCopying, setIsCopying] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopy = async () => {
     if (isCopying) return;
-    
+
     setIsCopying(true);
     try {
       if (onCopy) {
@@ -52,12 +52,11 @@ export function PublicReadListCard({
   };
 
   return (
-    <div 
-      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${
-        isSelected 
-          ? 'border-brand-accent/50' 
-          : 'border-border-subtle hover:border-border-hover'
-      }`}
+    <div
+      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${isSelected
+        ? 'border-brand-accent/50'
+        : 'border-border-subtle hover:border-border-hover'
+        }`}
       onClick={handleSelect}
     >
       <div className="p-4 pb-3">
@@ -72,8 +71,8 @@ export function PublicReadListCard({
               </p>
             )}
           </div>
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className="ml-2 bg-[#F9E370]/10 text-[#F9E370] border-none text-xs"
           >
             {readList.itemsCount} items
@@ -134,4 +133,4 @@ export function PublicReadListCard({
       </div>
     </div>
   );
-} 
+}); 

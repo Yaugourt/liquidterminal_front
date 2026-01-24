@@ -89,7 +89,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
       {isOpen && (
         <div className="absolute top-full mt-2 w-full bg-brand-secondary border border-border-hover rounded-xl shadow-xl shadow-black/20 z-50 overflow-hidden">
           {/* Select All option */}
-          <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors border-b border-border-subtle">
+          <div className="w-full px-4 py-3 flex items-center justify-between hover-subtle border-b border-border-subtle">
             <button
               onClick={handleSelectAll}
               className="text-sm text-white/80 font-medium hover:text-brand-accent transition-colors"
@@ -122,7 +122,7 @@ export function CategoryFilter({ selectedCategories, onCategoryChange }: Categor
               <button
                 key={category.id}
                 onClick={() => handleToggleCategory(category.id)}
-                className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+                className="w-full px-4 py-3 flex items-center justify-between hover-subtle"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-white/80">{category.name}</span>

@@ -29,6 +29,7 @@ export interface PerpMarketParams {
   sortOrder?: 'asc' | 'desc';
   limit: number;
   page?: number;
+  [key: string]: unknown;
 }
 
 // Options pour le hook usePerpMarkets
