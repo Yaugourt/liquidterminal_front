@@ -1,6 +1,7 @@
 "use client";
 
 import { AuctionCard, AuctionChartSection, PerpDexsTable } from "@/components/market/auction";
+import { PastAuctionsPerpTable } from "@/components/market/perpDex";
 
 export function PerpAuctionContent() {
   return (
@@ -15,10 +16,17 @@ export function PerpAuctionContent() {
       </div>
 
       <div>
-        <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
+        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
           Perpetual DEXs
         </h2>
         <PerpDexsTable />
+      </div>
+
+      <div>
+        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
+          Recent Auction Pairs
+        </h2>
+        <PastAuctionsPerpTable />
       </div>
     </>
   );

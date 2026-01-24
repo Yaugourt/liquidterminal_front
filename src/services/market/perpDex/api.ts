@@ -11,7 +11,9 @@ import {
   CollateralToken,
   COLLATERAL_TOKEN_MAP,
   PastAuctionsPerpApiResponse,
-  PastAuctionPerp
+  PastAuctionPerp,
+  PastAuctionPerpRawNew,
+  isPastAuctionPerpNew
 } from './types';
 
 /**
@@ -187,11 +189,11 @@ const extractSymbol = (coin: string): string => {
 };
 
 /**
- * Transform raw auction data to parsed format
+ * Transform raw auction data (new format) to parsed format
  */
-const transformPastAuction = (raw: PastAuctionsPerpApiResponse[number]): PastAuctionPerp => {
+const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
   const { action } = raw;
-  const { assetRequest, dex } = action.registerAsset;
+  const { assetRequest, dex, schema } = action.registerAsset;
 
   return {
     time: new Date(raw.time),
@@ -199,6 +201,7 @@ const transformPastAuction = (raw: PastAuctionsPerpApiResponse[number]): PastAuc
     coin: assetRequest.coin,
     symbol: extractSymbol(assetRequest.coin),
     dex,
+    dexFullName: schema?.fullName ?? null,
     oraclePx: parseFloat(assetRequest.oraclePx),
     szDecimals: assetRequest.szDecimals,
     marginTableId: assetRequest.marginTableId,
@@ -212,12 +215,17 @@ const transformPastAuction = (raw: PastAuctionsPerpApiResponse[number]): PastAuc
 
 /**
  * Fetches past perp auctions from Hypurrscan API
+ * Filters only new format entries (with action.registerAsset)
  */
 export const fetchPastAuctionsPerp = async (): Promise<PastAuctionPerp[]> => {
   return withErrorHandling(async () => {
     const url = `${API_URLS.HYPURRSCAN_API}/pastAuctionsPerp`;
     const response = await getExternal<PastAuctionsPerpApiResponse>(url);
-    return response.map(transformPastAuction);
+
+    // Filter only new format entries and transform
+    return response
+      .filter(isPastAuctionPerpNew)
+      .map(transformPastAuction);
   }, 'fetching past perp auctions');
 };
 

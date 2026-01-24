@@ -92,9 +92,14 @@ const AuctionRow = memo(({
 
       {/* DEX */}
       <TableCell className="py-3">
-        <span className="text-white text-sm font-medium px-2 py-1 bg-brand-secondary/60 rounded-md">
-          {auction.dex}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-white text-sm font-medium px-2 py-1 bg-brand-secondary/60 rounded-md inline-block w-fit">
+            {auction.dex}
+          </span>
+          {auction.dexFullName && (
+            <span className="text-text-muted text-xs mt-0.5">{auction.dexFullName}</span>
+          )}
+        </div>
       </TableCell>
 
       {/* Oracle Price */}

@@ -290,13 +290,22 @@ export interface PastAuctionAssetRequest {
 }
 
 /**
+ * Schema info for the DEX
+ */
+export interface PastAuctionSchema {
+  fullName: string;
+  collateralToken: number;
+  oracleUpdater: string | null;
+}
+
+/**
  * Register asset action in the auction
  */
 export interface PastAuctionRegisterAsset {
   maxGas: number | null;
   assetRequest: PastAuctionAssetRequest;
   dex: string; // e.g., "cash", "xyz"
-  schema: string | null;
+  schema: PastAuctionSchema | null;
 }
 
 /**
@@ -308,9 +317,9 @@ export interface PastAuctionAction {
 }
 
 /**
- * Raw entry from the pastAuctionsPerp API
+ * Raw entry from the pastAuctionsPerp API (new format with action)
  */
-export interface PastAuctionPerpRaw {
+export interface PastAuctionPerpRawNew {
   time: number; // Unix timestamp in ms
   user: string; // Deployer address
   action: PastAuctionAction;
@@ -318,6 +327,28 @@ export interface PastAuctionPerpRaw {
   hash: string;
   error: string | null;
   gasUsed?: number;
+}
+
+/**
+ * Raw entry from the pastAuctionsPerp API (legacy format without action)
+ */
+export interface PastAuctionPerpRawLegacy {
+  time: number;
+  deployer: string;
+  name: string;
+  deployGas: string;
+}
+
+/**
+ * Union type for API response entries
+ */
+export type PastAuctionPerpRaw = PastAuctionPerpRawNew | PastAuctionPerpRawLegacy;
+
+/**
+ * Type guard to check if entry is new format
+ */
+export function isPastAuctionPerpNew(entry: PastAuctionPerpRaw): entry is PastAuctionPerpRawNew {
+  return 'action' in entry && entry.action?.type === 'perpDeploy';
 }
 
 /**
@@ -329,6 +360,7 @@ export interface PastAuctionPerp {
   coin: string; // Full name e.g., "cash:TSLA"
   symbol: string; // Just the symbol e.g., "TSLA"
   dex: string; // e.g., "cash", "xyz"
+  dexFullName: string | null;
   oraclePx: number;
   szDecimals: number;
   marginTableId: number;
