@@ -1,15 +1,17 @@
-import { postExternal } from '../../api/axios-config';
+import { postExternal, getExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
-import { 
-  PerpDexApiResponse, 
-  PerpDex, 
+import {
+  PerpDexApiResponse,
+  PerpDex,
   PerpDexRaw,
   PerpDexGlobalStats,
   AllPerpMetasResponse,
   PerpMetaAsset,
   CollateralToken,
-  COLLATERAL_TOKEN_MAP
+  COLLATERAL_TOKEN_MAP,
+  PastAuctionsPerpApiResponse,
+  PastAuctionPerp
 } from './types';
 
 /**
@@ -170,5 +172,52 @@ export const fetchAllPerpMetas = async (): Promise<ParsedPerpMetas> => {
 export const fetchPerpMetasByDex = async (dexName: string): Promise<PerpMetaAsset[]> => {
   const { dexMetas } = await fetchAllPerpMetas();
   return dexMetas.get(dexName.toLowerCase()) || [];
+};
+
+// ============================================
+// Past Auctions Perp API (Hypurrscan)
+// ============================================
+
+/**
+ * Extract symbol from coin name (e.g., "cash:TSLA" -> "TSLA")
+ */
+const extractSymbol = (coin: string): string => {
+  const parts = coin.split(':');
+  return parts.length > 1 ? parts[1] : coin;
+};
+
+/**
+ * Transform raw auction data to parsed format
+ */
+const transformPastAuction = (raw: PastAuctionsPerpApiResponse[number]): PastAuctionPerp => {
+  const { action } = raw;
+  const { assetRequest, dex } = action.registerAsset;
+
+  return {
+    time: new Date(raw.time),
+    user: raw.user,
+    coin: assetRequest.coin,
+    symbol: extractSymbol(assetRequest.coin),
+    dex,
+    oraclePx: parseFloat(assetRequest.oraclePx),
+    szDecimals: assetRequest.szDecimals,
+    marginTableId: assetRequest.marginTableId,
+    onlyIsolated: assetRequest.onlyIsolated,
+    block: raw.block,
+    hash: raw.hash,
+    error: raw.error,
+    gasUsed: raw.gasUsed ?? null
+  };
+};
+
+/**
+ * Fetches past perp auctions from Hypurrscan API
+ */
+export const fetchPastAuctionsPerp = async (): Promise<PastAuctionPerp[]> => {
+  return withErrorHandling(async () => {
+    const url = `${API_URLS.HYPURRSCAN_API}/pastAuctionsPerp`;
+    const response = await getExternal<PastAuctionsPerpApiResponse>(url);
+    return response.map(transformPastAuction);
+  }, 'fetching past perp auctions');
 };
 

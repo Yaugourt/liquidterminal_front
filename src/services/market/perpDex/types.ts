@@ -274,3 +274,73 @@ export interface PerpDexMarketDataStore {
   disconnect: () => void;
 }
 
+// ============================================
+// Past Auctions Perp API Types (Hypurrscan)
+// ============================================
+
+/**
+ * Asset request in the auction action
+ */
+export interface PastAuctionAssetRequest {
+  coin: string; // e.g., "cash:TSLA", "xyz:SMSN"
+  szDecimals: number;
+  oraclePx: string;
+  marginTableId: number;
+  onlyIsolated: boolean;
+}
+
+/**
+ * Register asset action in the auction
+ */
+export interface PastAuctionRegisterAsset {
+  maxGas: number | null;
+  assetRequest: PastAuctionAssetRequest;
+  dex: string; // e.g., "cash", "xyz"
+  schema: string | null;
+}
+
+/**
+ * Action in the auction entry
+ */
+export interface PastAuctionAction {
+  type: 'perpDeploy';
+  registerAsset: PastAuctionRegisterAsset;
+}
+
+/**
+ * Raw entry from the pastAuctionsPerp API
+ */
+export interface PastAuctionPerpRaw {
+  time: number; // Unix timestamp in ms
+  user: string; // Deployer address
+  action: PastAuctionAction;
+  block: number;
+  hash: string;
+  error: string | null;
+  gasUsed?: number;
+}
+
+/**
+ * Transformed/parsed auction entry
+ */
+export interface PastAuctionPerp {
+  time: Date;
+  user: string;
+  coin: string; // Full name e.g., "cash:TSLA"
+  symbol: string; // Just the symbol e.g., "TSLA"
+  dex: string; // e.g., "cash", "xyz"
+  oraclePx: number;
+  szDecimals: number;
+  marginTableId: number;
+  onlyIsolated: boolean;
+  block: number;
+  hash: string;
+  error: string | null;
+  gasUsed: number | null;
+}
+
+/**
+ * API response type
+ */
+export type PastAuctionsPerpApiResponse = PastAuctionPerpRaw[];
+

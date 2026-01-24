@@ -32,6 +32,7 @@ export const ENDPOINTS = {
   HYPURRSCAN_TRANSFERS: '/transfers',
   HYPURRSCAN_DEPLOYS: '/deploys',
   HYPURRSCAN_TWAP: '/twap/*',
+  HYPURRSCAN_PAST_AUCTIONS_PERP: '/pastAuctionsPerp',
   HYPURRSCAN_HOLDERS: '/holders',
   HYPURRSCAN_STAKED_HOLDERS: '/holders/stakedHYPE',
   

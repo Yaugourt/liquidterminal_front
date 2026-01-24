@@ -3,3 +3,4 @@ export { PerpDexTable } from './PerpDexTable';
 export { TopPerpDexsCard } from './TopPerpDexsCard';
 export { Hip3InfoCard } from './Hip3InfoCard';
 export { PerpDexMarketsTable } from './PerpDexMarketsTable';
+export { PastAuctionsPerpTable } from './PastAuctionsPerpTable';
