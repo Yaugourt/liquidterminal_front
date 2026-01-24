@@ -368,7 +368,7 @@ export interface PastAuctionPerp {
   block: number;
   hash: string;
   error: string | null;
-  gasUsed: number | null;
+  maxGas: number | null; // Auction gas bid (HYPE)
 }
 
 /**

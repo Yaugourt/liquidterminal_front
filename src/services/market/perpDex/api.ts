@@ -193,7 +193,7 @@ const extractSymbol = (coin: string): string => {
  */
 const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
   const { action } = raw;
-  const { assetRequest, dex, schema } = action.registerAsset;
+  const { assetRequest, dex, schema, maxGas } = action.registerAsset;
 
   return {
     time: new Date(raw.time),
@@ -209,7 +209,7 @@ const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
     block: raw.block,
     hash: raw.hash,
     error: raw.error,
-    gasUsed: raw.gasUsed ?? null
+    maxGas: maxGas ?? null
   };
 };
 
