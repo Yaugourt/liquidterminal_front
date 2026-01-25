@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuctionChart } from "./AuctionChart";
 import { useChartPeriod } from '@/components/common/charts';
 import { useAuctionChart } from "@/services/market/auction/hooks/useAuctionChart";
+import { usePerpAuctionChart } from "@/services/market/auction/hooks/usePerpAuctionChart";
 
 interface AuctionChartSectionProps {
   chartHeight: number;
@@ -11,25 +12,28 @@ interface AuctionChartSectionProps {
 }
 
 export const AuctionChartSection = ({ chartHeight, marketType }: AuctionChartSectionProps) => {
-  // Toujours appeler tous les hooks de manière inconditionnelle
+  // Currency state - only used for spot (perp is always HYPE)
   const [selectedCurrency, setSelectedCurrency] = useState<"HYPE" | "USDC">("USDC");
   const { selectedPeriod, handlePeriodChange, availablePeriods } = useChartPeriod({
     defaultPeriod: "7d",
     availablePeriods: ["7d", "30d", "90d", "1y"]
   });
 
-  // Toujours appeler useAuctionChart, même pour perp
-  const { data: fetchedData, isLoading: fetchedLoading } = useAuctionChart(selectedPeriod, selectedCurrency);
+  // Fetch data from both hooks unconditionally (hooks must be called consistently)
+  const { data: spotData, isLoading: spotLoading } = useAuctionChart(selectedPeriod, selectedCurrency);
+  const { data: perpData, isLoading: perpLoading } = usePerpAuctionChart(selectedPeriod);
 
-  // Déterminer les données à utiliser après avoir appelé tous les hooks
-  const data = marketType === "spot" ? fetchedData : [];
-  const isLoading = marketType === "spot" ? fetchedLoading : false;
+  // Select the appropriate data based on market type
+  const data = marketType === "spot" ? spotData : perpData;
+  const isLoading = marketType === "spot" ? spotLoading : perpLoading;
+  // For perp, currency is always HYPE
+  const displayCurrency = marketType === "perp" ? "HYPE" : selectedCurrency;
 
   return (
     <AuctionChart
       data={data}
       isLoading={isLoading}
-      selectedCurrency={selectedCurrency}
+      selectedCurrency={displayCurrency}
       onCurrencyChange={setSelectedCurrency}
       selectedPeriod={selectedPeriod}
       onPeriodChange={handlePeriodChange}

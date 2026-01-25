@@ -326,7 +326,7 @@ export interface PastAuctionPerpRawNew {
   block: number;
   hash: string;
   error: string | null;
-  gasUsed?: number;
+  gasUsed?: number; // Gas used in HYPE (can be negative, use absolute value)
 }
 
 /**

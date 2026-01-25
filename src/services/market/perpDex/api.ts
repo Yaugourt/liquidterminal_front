@@ -190,10 +190,14 @@ const extractSymbol = (coin: string): string => {
 
 /**
  * Transform raw auction data (new format) to parsed format
+ * Uses gasUsed field (absolute value) for the gas price
  */
 const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
   const { action } = raw;
-  const { assetRequest, dex, schema, maxGas } = action.registerAsset;
+  const { assetRequest, dex, schema } = action.registerAsset;
+
+  // Use gasUsed from root level with absolute value (can be negative in API response)
+  const gasValue = raw.gasUsed !== undefined ? Math.abs(raw.gasUsed) : null;
 
   return {
     time: new Date(raw.time),
@@ -209,7 +213,7 @@ const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
     block: raw.block,
     hash: raw.hash,
     error: raw.error,
-    maxGas: maxGas ?? null
+    maxGas: gasValue
   };
 };
 

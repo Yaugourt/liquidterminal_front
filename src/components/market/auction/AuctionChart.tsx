@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from 'react';
-import { Loader2, Database } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '@/components/common/charts';
@@ -71,22 +71,6 @@ export const AuctionChart = ({
     }));
   }, [data]);
 
-  // If perp coming soon
-  if (marketType === "perp") {
-    return (
-      <div
-        className="glass-panel w-full relative overflow-hidden flex flex-col items-center justify-center p-4"
-        style={{ height: chartHeight }}
-      >
-        <div className="flex flex-col items-center text-center">
-          <Database className="w-10 h-10 mb-3 text-text-muted" />
-          <p className="text-text-secondary text-sm mb-1">Coming Soon</p>
-          <p className="text-text-muted text-xs">Perpetual auctions chart will be available soon.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className="glass-panel w-full h-full relative overflow-hidden flex flex-col"
@@ -97,7 +81,7 @@ export const AuctionChart = ({
         <div className="flex items-center justify-between flex-wrap gap-2 pointer-events-auto">
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-              Auction Price ({selectedCurrency})
+              {marketType === "perp" ? "Gas Price (HYPE)" : `Auction Price (${selectedCurrency})`}
             </h2>
 
             {displayValue !== null && (
@@ -118,26 +102,29 @@ export const AuctionChart = ({
               </div>
             )}
 
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-              <button
-                onClick={() => onCurrencyChange("USDC")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "USDC"
-                  ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "tab-inactive"
-                  }`}
-              >
-                USDC
-              </button>
-              <button
-                onClick={() => onCurrencyChange("HYPE")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "HYPE"
-                  ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                  : "tab-inactive"
-                  }`}
-              >
-                HYPE
-              </button>
-            </div>
+            {/* Currency selector - only show for spot */}
+            {marketType === "spot" && (
+              <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+                <button
+                  onClick={() => onCurrencyChange("USDC")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "USDC"
+                    ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+                    : "tab-inactive"
+                    }`}
+                >
+                  USDC
+                </button>
+                <button
+                  onClick={() => onCurrencyChange("HYPE")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedCurrency === "HYPE"
+                    ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+                    : "tab-inactive"
+                    }`}
+                >
+                  HYPE
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1">

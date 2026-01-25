@@ -1,6 +1,6 @@
 "use client";
 
-import { AuctionCard, AuctionChartSection, PerpDexsTable } from "@/components/market/auction";
+import { AuctionCard, AuctionChartSection } from "@/components/market/auction";
 import { PastAuctionsPerpTable } from "@/components/market/perpDex";
 
 export function PerpAuctionContent() {
@@ -13,13 +13,6 @@ export function PerpAuctionContent() {
         <div className="md:w-2/3">
           <AuctionChartSection marketType="perp" chartHeight={270} />
         </div>
-      </div>
-
-      <div>
-        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
-          Perpetual DEXs
-        </h2>
-        <PerpDexsTable />
       </div>
 
       <div>
