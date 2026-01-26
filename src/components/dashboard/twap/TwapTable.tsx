@@ -29,7 +29,7 @@ const formatAddress = (address: string) => {
 
 // Composant pour les headers de tableau
 const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <span className={`block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className={`text-label text-text-secondary block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
     {header}
   </span>
 );

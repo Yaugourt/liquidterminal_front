@@ -34,7 +34,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
       <Button
         variant="ghost"
         onClick={onClick}
-        className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white text-label`}
+        className={`text-label p-0 h-auto flex items-center justify-start gap-1 hover:text-white ${isActive ? "text-brand-accent" : "text-text-secondary"}`}
       >
         {label}
         {onClick && <ArrowUpDown className="h-3 w-3" />}

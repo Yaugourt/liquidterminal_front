@@ -17,10 +17,10 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
         <Button
             variant="ghost"
             onClick={onClick}
-            className={`${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
+            className={`text-label p-0 h-auto flex items-center justify-start w-full ${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"}`}
         >
             {label}
-            <ArrowUpDown className="ml-1 h-3 w-3 opacity-50" />
+            <ArrowUpDown className="ml-1.5 h-3 w-3" />
         </Button>
     </TableHead>
 ));

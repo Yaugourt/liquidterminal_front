@@ -81,13 +81,13 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                     <Table className="table-fixed w-full">
                         <TableHeader>
                             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                                <TableHead className="py-3 pl-4 w-[22%]">Asset</TableHead>
-                                <TableHead className="py-3 w-[12%]">Price</TableHead>
-                                <TableHead className="py-3 w-[10%]">24h</TableHead>
-                                <TableHead className="py-3 w-[14%]">Volume</TableHead>
-                                <TableHead className="py-3 w-[14%]">OI</TableHead>
-                                <TableHead className="py-3 w-[12%]">Funding</TableHead>
-                                <TableHead className="py-3 pr-4 w-[16%]">OI Cap</TableHead>
+                                <TableHead className="py-3 pl-4 w-[22%]"><span className="text-label text-text-secondary">Asset</span></TableHead>
+                                <TableHead className="py-3 w-[12%]"><span className="text-label text-text-secondary">Price</span></TableHead>
+                                <TableHead className="py-3 w-[10%]"><span className="text-label text-text-secondary">24h</span></TableHead>
+                                <TableHead className="py-3 w-[14%]"><span className="text-label text-text-secondary">Volume</span></TableHead>
+                                <TableHead className="py-3 w-[14%]"><span className="text-label text-text-secondary">OI</span></TableHead>
+                                <TableHead className="py-3 w-[12%]"><span className="text-label text-text-secondary">Funding</span></TableHead>
+                                <TableHead className="py-3 pr-4 w-[16%]"><span className="text-label text-text-secondary">OI Cap</span></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
