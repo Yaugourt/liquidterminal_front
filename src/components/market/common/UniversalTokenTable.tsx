@@ -5,20 +5,21 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableHead,
     TableHeader,
     TableRow,
+    SortableTableHead,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { ArrowUpDown, Database, Loader2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Database, Loader2 } from "lucide-react";
 import { formatNumber, formatMetricValue, formatPrice, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
-import { Pagination, TokenIcon, formatPriceChange } from "@/components/common";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { TokenIcon, formatPriceChange } from "@/components/common";
 import {
     SpotToken,
     PerpToken,
@@ -34,29 +35,7 @@ interface UniversalTokenTableProps {
     searchQuery?: string;
 }
 
-interface TableHeaderCellProps {
-    label: string;
-    onClick?: () => void;
-    className?: string;
-    isActive?: boolean;
-}
 
-// Composant pour l'en-tête de colonne
-const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps) => (
-    <TableHead className={className}>
-        <Button
-            variant="ghost"
-            onClick={onClick}
-            disabled={!onClick}
-            className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center justify-start gap-1 hover:text-white hover:bg-transparent text-label disabled:hover:text-text-secondary disabled:cursor-default`}
-        >
-            {label}
-            {onClick && <ArrowUpDown className="h-3 w-3" />}
-        </Button>
-    </TableHead>
-));
-
-TableHeaderCell.displayName = 'TableHeaderCell';
 
 // Composant pour l'état vide
 const EmptyState = memo(() => (
@@ -82,8 +61,8 @@ export function UniversalTokenTable({
     const router = useRouter();
     const { format } = useNumberFormat();
 
-    // Configuration par défaut selon le mode
-    const initialSortField = mode === 'compact' ? 'change24h' : 'volume';
+    // Configuration par défaut selon le mode - 24h change est toujours le défaut
+    const initialSortField = 'change24h';
 
     const [sortField, setSortField] = useState<SpotSortableFields | PerpSortableFields>(initialSortField);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -210,102 +189,108 @@ export function UniversalTokenTable({
 
     if (isLoading && !tokens.length) {
         return (
-            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
-                <div className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
-                    <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-                </div>
-            </div>
+            <Card className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
+                <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+            </Card>
         );
     }
 
     if (error && mode === 'compact') {
         return (
-            <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden h-full">
-                <div className="flex justify-center items-center h-full">
-                    <p className="text-rose-400 text-sm">Une erreur est survenue</p>
-                </div>
-            </div>
+            <Card className="flex justify-center items-center h-full">
+                <p className="text-rose-400 text-sm">Une erreur est survenue</p>
+            </Card>
         );
     }
 
     //--- Main Render ---
 
     return (
-        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
-            <div className={`overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent ${mode === 'compact' ? 'flex-1' : ''}`}>
+        <Card className={mode === 'compact' ? 'h-full' : undefined}>
+            <ScrollableTable
+                className={mode === 'compact' ? 'h-full' : undefined}
+                pagination={mode === 'full' ? {
+                    total,
+                    page: currentPage - 1,
+                    rowsPerPage: pageSize,
+                    onPageChange: handlePageChange,
+                    onRowsPerPageChange: handleRowsPerPageChange,
+                    rowsPerPageOptions: [5, 10, 15, 20],
+                } : undefined}
+            >
                 <Table className={mode === 'compact' ? 'h-full' : ''}>
                     <TableHeader>
-                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                            <TableHeaderCell
+                        <TableRow className="hover:bg-transparent">
+                            <SortableTableHead
                                 label="Name"
-                                className={`py-3 px-3 ${mode === 'compact' ? 'w-[35%]' : (market === 'spot' ? 'w-[16.66%]' : 'w-[17%]')}`}
+                                className={mode === 'compact' ? 'w-[35%]' : (market === 'spot' ? 'w-[16.66%]' : 'w-[17%]')}
                             />
-                            <TableHeaderCell
+                            <SortableTableHead
                                 label="Price"
                                 onClick={mode === 'full' && market === 'perp' ? () => handleSort("price") : undefined}
                                 isActive={market === 'perp' && sortField === "price"}
-                                className={`py-3 px-3 ${mode === 'compact' ? 'w-[20%]' : 'w-[10%]'}`}
+                                className={mode === 'compact' ? 'w-[20%]' : 'w-[10%]'}
                             />
 
                             {/* Colonne 3 */}
                             {mode === 'compact' ? (
                                 market === 'spot' ? (
-                                    <TableHeaderCell
+                                    <SortableTableHead
                                         label="Volume"
                                         onClick={() => handleSort("volume")}
                                         isActive={sortField === "volume"}
-                                        className="py-3 px-3 w-[20%]"
+                                        className="w-[20%]"
                                     />
                                 ) : (
-                                    <TableHeaderCell
+                                    <SortableTableHead
                                         label="24h"
                                         onClick={() => handleSort("change24h")}
                                         isActive={sortField === "change24h"}
-                                        className="py-3 px-3 w-[20%]"
+                                        className="w-[20%]"
                                     />
                                 )
                             ) : (
-                                <TableHeaderCell
+                                <SortableTableHead
                                     label="24h"
                                     onClick={() => handleSort("change24h")}
                                     isActive={sortField === "change24h"}
-                                    className="py-3 px-3 w-[10%]"
+                                    className="w-[10%]"
                                 />
                             )}
 
                             {/* Colonne 4 et plus (Full mode ou derniere colonne compact) */}
                             {mode === 'full' ? (
                                 <>
-                                    <TableHeaderCell
+                                    <SortableTableHead
                                         label="Volume"
                                         onClick={() => handleSort("volume")}
                                         isActive={sortField === "volume"}
-                                        className={`py-3 px-3 ${market === 'spot' ? 'w-[12%]' : 'w-[20%]'}`}
+                                        className={market === 'spot' ? 'w-[12%]' : 'w-[20%]'}
                                     />
                                     {market === 'spot' ? (
                                         <>
-                                            <TableHeaderCell
+                                            <SortableTableHead
                                                 label="Market Cap"
                                                 onClick={() => handleSort("marketCap")}
                                                 isActive={sortField === "marketCap"}
-                                                className="py-3 px-3 w-[20%]"
+                                                className="w-[20%]"
                                             />
-                                            <TableHeaderCell
+                                            <SortableTableHead
                                                 label="Supply"
-                                                className="py-3 px-3 w-[12%]"
+                                                className="w-[12%]"
                                             />
                                         </>
                                     ) : (
                                         <>
-                                            <TableHeaderCell
+                                            <SortableTableHead
                                                 label="Open Interest"
                                                 onClick={() => handleSort("openInterest")}
                                                 isActive={sortField === "openInterest"}
-                                                className="py-3 px-3 w-[20%]"
+                                                className="w-[20%]"
                                             />
-                                            <TableHeaderCell
+                                            <SortableTableHead
                                                 label="Funding Rate"
-                                                className="py-3 px-3 w-[11%]"
+                                                className="w-[11%]"
                                             />
                                         </>
                                     )}
@@ -313,18 +298,18 @@ export function UniversalTokenTable({
                             ) : (
                                 // Compact Mode - Dernière colonne
                                 market === 'spot' ? (
-                                    <TableHeaderCell
+                                    <SortableTableHead
                                         label="24h"
                                         onClick={() => handleSort("change24h")}
                                         isActive={sortField === "change24h"}
-                                        className="py-3 px-3 w-[20%]"
+                                        className="w-[20%]"
                                     />
                                 ) : (
-                                    <TableHeaderCell
+                                    <SortableTableHead
                                         label="Open Interest"
                                         onClick={() => handleSort("openInterest")}
                                         isActive={sortField === "openInterest"}
-                                        className="py-3 px-3 w-[20%]"
+                                        className="w-[20%]"
                                     />
                                 )
                             )}
@@ -342,12 +327,12 @@ export function UniversalTokenTable({
                                 return (
                                     <TableRow
                                         key={uniqueKey}
-                                        className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer`}
+                                        className="hover:bg-white/[0.02] cursor-pointer"
                                         style={mode === 'compact' ? { height: `${100 / pageSize}%` } : undefined}
                                         onClick={() => handleTokenClick(t.name)}
                                     >
                                         {/* Name */}
-                                        <TableCell className="py-3 px-3">
+                                        <TableCell>
                                             <div className="flex items-center gap-2">
                                                 <TokenIcon src={t.logo} name={t.name} size="sm" />
                                                 <span className="text-white text-sm font-medium">{t.name}</span>
@@ -355,7 +340,7 @@ export function UniversalTokenTable({
                                         </TableCell>
 
                                         {/* Price */}
-                                        <TableCell className="py-3 px-3">
+                                        <TableCell>
                                             <div className="text-white text-sm">
                                                 {mode === 'compact'
                                                     ? formatNumber(t.price, format, { minimumFractionDigits: 0, maximumFractionDigits: 2, currency: '$', showCurrency: true })
@@ -398,12 +383,12 @@ export function UniversalTokenTable({
                                             // FULL MODE
                                             // Colonnes: 24h, Volume, (MarketCap/Supply OR OI/Funding)
                                             <>
-                                                <TableCell className="py-3 px-3">
+                                                <TableCell>
                                                     <StatusBadge variant={t.change24h < 0 ? 'error' : 'success'}>
                                                         {t.change24h > 0 ? '+' : ''}{formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                                                     </StatusBadge>
                                                 </TableCell>
-                                                <TableCell className="py-3 px-3">
+                                                <TableCell>
                                                     <div className="text-white text-sm">
                                                         ${formatNumber(t.volume, format)}
                                                     </div>
@@ -416,7 +401,7 @@ export function UniversalTokenTable({
                                                                 ${formatNumber(t.marketCap, format)}
                                                             </div>
                                                         </TableCell>
-                                                        <TableCell className="py-3 px-3">
+                                                        <TableCell>
                                                             <div className="text-white text-sm">
                                                                 {formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </div>
@@ -424,12 +409,12 @@ export function UniversalTokenTable({
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <TableCell className="py-3 px-3">
+                                                        <TableCell>
                                                             <div className="text-white text-sm">
                                                                 ${formatNumber(t.openInterest, format)}
                                                             </div>
                                                         </TableCell>
-                                                        <TableCell className="py-3 px-3">
+                                                        <TableCell>
                                                             <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
                                                                 {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
                                                             </StatusBadge>
@@ -446,21 +431,7 @@ export function UniversalTokenTable({
                         )}
                     </TableBody>
                 </Table>
-            </div>
-
-            {/* Pagination intégrée (seulement en mode Full) */}
-            {mode === 'full' && (
-                <div className="border-t border-border-subtle px-4 py-3">
-                    <Pagination
-                        total={total}
-                        page={currentPage - 1}
-                        rowsPerPage={pageSize}
-                        onPageChange={handlePageChange}
-                        onRowsPerPageChange={handleRowsPerPageChange}
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                    />
-                </div>
-            )}
-        </div>
+            </ScrollableTable>
+        </Card>
     );
 }

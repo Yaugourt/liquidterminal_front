@@ -63,14 +63,14 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3">Method</TableHead>
-              <TableHead className="py-3 px-3">Side</TableHead>
-              <TableHead className="py-3 px-3">Size</TableHead>
-              <TableHead className="py-3 px-3">Token</TableHead>
-              <TableHead className="py-3 px-3">Price</TableHead>
-              <TableHead className="py-3 px-3">Value</TableHead>
-              <TableHead className="py-3 px-3">Reduce Only</TableHead>
-              <TableHead className="py-3 px-3">Time in Force</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>Side</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Token</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Value</TableHead>
+              <TableHead>Reduce Only</TableHead>
+              <TableHead>Time in Force</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

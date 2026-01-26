@@ -5,45 +5,22 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
+  SortableTableHead,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Database, Loader2 } from "lucide-react";
+import { Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { PerpDexWithMarketData } from "@/services/market/perpDex/types";
+import { Card } from "@/components/ui/card";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
 
 type SortField = 'name' | 'activeAssets' | 'totalVolume24h' | 'totalOpenInterest' | 'avgFunding';
 
-interface TableHeaderCellProps {
-  label: string;
-  onClick?: () => void;
-  className?: string;
-  isActive?: boolean;
-  icon?: React.ReactNode;
-}
 
-// Header cell component
-const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps) => {
-  return (
-    <TableHead className={className}>
-      <Button
-        variant="ghost"
-        onClick={onClick}
-        className={`${isActive ? "text-brand-accent hover:text-brand-accent" : "text-text-secondary hover:text-zinc-200"} text-label p-0 flex items-center justify-start w-full h-auto`}
-      >
-        {label}
-        {onClick && <ArrowUpDown className="ml-1.5 h-3 w-3" />}
-      </Button>
-    </TableHead>
-  );
-});
-
-TableHeaderCell.displayName = 'TableHeaderCell';
 
 // Empty state component
 const EmptyState = memo(() => (
@@ -77,11 +54,11 @@ const PerpDexRow = memo(({
 
   return (
     <TableRow
-      className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer"
+      className="hover:bg-white/[0.02] cursor-pointer"
       onClick={onClick}
     >
       {/* Name */}
-      <TableCell className="py-3 pl-4">
+      <TableCell className="pl-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-sm font-bold text-brand-accent">
             {dex.name.charAt(0).toUpperCase()}
@@ -94,7 +71,7 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Active Markets */}
-      <TableCell className="py-3 text-left">
+      <TableCell className="text-left">
         <div className="flex flex-col items-start">
           <span className="text-white text-sm font-medium">{dex.activeAssets}</span>
           {dex.activeAssets !== dex.totalAssets && (
@@ -106,7 +83,7 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* 24h Volume */}
-      <TableCell className="py-3 text-left">
+      <TableCell className="text-left">
         <span className="text-white text-sm font-medium">
           {dex.totalVolume24h > 0
             ? formatNumber(dex.totalVolume24h, format, {
@@ -120,7 +97,7 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Open Interest */}
-      <TableCell className="py-3 text-left">
+      <TableCell className="text-left">
         <span className="text-white text-sm font-medium">
           {dex.totalOpenInterest > 0
             ? formatNumber(dex.totalOpenInterest, format, {
@@ -134,14 +111,14 @@ const PerpDexRow = memo(({
       </TableCell>
 
       {/* Avg Funding */}
-      <TableCell className="py-3 text-left">
+      <TableCell className="text-left">
         <span className={`text-sm font-medium ${dex.avgFunding >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
           {dex.avgFunding !== 0 ? formatFunding(dex.avgFunding) : '-'}
         </span>
       </TableCell>
 
       {/* OI Cap Utilization */}
-      <TableCell className="py-3 pr-4 text-left">
+      <TableCell className="pr-4 text-left">
         <div className="flex flex-col items-start">
           <span className="text-white text-sm font-medium">
             {formatNumber(dex.totalOiCap, format, {
@@ -222,53 +199,51 @@ export function PerpDexTable() {
 
   if (isLoading && !sortedDexs.length) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
-      </div>
+      <Card className="flex justify-center items-center h-[400px]">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+      </Card>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <Card>
+      <ScrollableTable>
         <Table className="min-w-[800px] w-full">
           <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHeaderCell
+            <TableRow className="hover:bg-transparent">
+              <SortableTableHead
                 label="Name"
                 onClick={() => handleSort('name')}
                 isActive={sortField === 'name'}
-                className="py-3 pl-4 w-[22%]"
+                className="pl-4 w-[22%]"
               />
-              <TableHeaderCell
+              <SortableTableHead
                 label="Markets"
                 onClick={() => handleSort('activeAssets')}
                 isActive={sortField === 'activeAssets'}
-                className="py-3 w-[12%]"
+                className="w-[12%]"
               />
-              <TableHeaderCell
+              <SortableTableHead
                 label="24h Volume"
                 onClick={() => handleSort('totalVolume24h')}
                 isActive={sortField === 'totalVolume24h'}
-                className="py-3 w-[18%]"
+                className="w-[18%]"
               />
-              <TableHeaderCell
+              <SortableTableHead
                 label="Open Interest"
                 onClick={() => handleSort('totalOpenInterest')}
                 isActive={sortField === 'totalOpenInterest'}
-                className="py-3 w-[18%]"
+                className="w-[18%]"
               />
-              <TableHeaderCell
+              <SortableTableHead
                 label="Avg Funding"
                 onClick={() => handleSort('avgFunding')}
                 isActive={sortField === 'avgFunding'}
-                className="py-3 w-[15%]"
+                className="w-[15%]"
               />
-              <TableHeaderCell
+              <SortableTableHead
                 label="OI Cap"
-                className="py-3 pr-4 w-[15%]"
+                className="pr-4 w-[15%]"
               />
             </TableRow>
           </TableHeader>
@@ -287,8 +262,8 @@ export function PerpDexTable() {
             )}
           </TableBody>
         </Table>
-      </div>
-    </div>
+      </ScrollableTable>
+    </Card>
   );
 }
 

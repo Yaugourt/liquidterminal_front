@@ -37,36 +37,36 @@ export function DeploysTable() {
         >
             <Table className="w-full">
                 <TableHeader>
-                    <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                        <TableHead className="py-3 px-3">
+                    <TableRow className="hover:bg-transparent">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">Time</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">User</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">Action</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">Hash</span>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {paginatedDeploys.map((deploy) => (
-                        <TableRow key={deploy.hash} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                            <TableCell className="py-3 px-3 text-white font-medium">
+                        <TableRow key={deploy.hash} className="hover:bg-white/[0.02]">
+                            <TableCell className="text-white font-medium">
                                 {formatDateTime(deploy.timestamp, dateFormat)}
                             </TableCell>
-                            <TableCell className="py-3 px-3 text-sm">
+                            <TableCell className="text-sm">
                                 <AddressDisplay address={deploy.user} />
                             </TableCell>
-                            <TableCell className="py-3 px-3">
+                            <TableCell>
                                 <StatusBadge variant={deploy.status === 'error' ? 'error' : 'success'}>
                                     {deploy.action}
                                 </StatusBadge>
                             </TableCell>
-                            <TableCell className="py-3 px-3 text-brand-accent">
+                            <TableCell className="text-brand-accent">
                                 <AddressDisplay address={deploy.hash} showCopy={false} showExternalLink={true} className="text-brand-accent" />
                             </TableCell>
                         </TableRow>

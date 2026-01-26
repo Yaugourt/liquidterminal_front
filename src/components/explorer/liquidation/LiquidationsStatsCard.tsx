@@ -156,7 +156,7 @@ export function LiquidationsStatsCard() {
           </div>
           <div className="flex items-center gap-2">
             {/* Progress bar showing Long vs Short volume */}
-            <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-gradient-to-r from-rose-500 to-rose-400 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
                 style={{ width: `${longPercent}%` }}

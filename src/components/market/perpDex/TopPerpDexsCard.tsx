@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useRouter } from "next/navigation";
 
@@ -32,27 +34,23 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
 
   if (isLoading && !topDexs.length) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
-        <div className="flex justify-center items-center h-full py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
-      </div>
+      <Card className="flex justify-center items-center h-full py-8">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden h-full">
-        <div className="flex justify-center items-center h-full py-8">
-          <p className="text-rose-400 text-sm">Failed to load data</p>
-        </div>
-      </div>
+      <Card className="flex justify-center items-center h-full py-8">
+        <p className="text-rose-400 text-sm">Failed to load data</p>
+      </Card>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden h-full flex flex-col">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
+    <Card className="h-full">
+      <ScrollableTable className="h-full">
         <Table className="h-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
@@ -125,8 +123,8 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
             )}
           </TableBody>
         </Table>
-      </div>
-    </div>
+      </ScrollableTable>
+    </Card>
   );
 });
 

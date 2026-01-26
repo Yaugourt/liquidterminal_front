@@ -9,8 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableHeadLabel,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { TwapTableData } from "@/services/explorer/address/types";
 import Link from "next/link";
 
@@ -22,18 +22,7 @@ interface RealTimeData {
   isCompleted: boolean;
 }
 
-// Composant pour les headers de tableau
-const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <Button
-    variant="ghost"
-    className={`text-text-secondary hover:text-zinc-200 text-label p-0 h-auto flex items-center transition-colors w-full ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
-  >
-    {header}
-  </Button>
-);
 
-const TableHeaderButton = memo(TableHeaderButtonComponent);
-TableHeaderButton.displayName = 'TableHeaderButton';
 
 // Utility function to calculate real-time TWAP progression
 const calculateRealTimeProgression = (twap: TwapTableData) => {
@@ -287,19 +276,19 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className="py-3 px-4 w-[80px]">
-                <TableHeaderButton header="Type" align="left" />
+                <TableHeadLabel>Type</TableHeadLabel>
               </TableHead>
               <TableHead className="py-3 px-4 w-[150px]">
-                <TableHeaderButton header="Value" align="left" />
+                <TableHeadLabel>Value</TableHeadLabel>
               </TableHead>
               <TableHead className="py-3 px-4 w-[180px]">
-                <TableHeaderButton header="Token" align="left" />
+                <TableHeadLabel>Token</TableHeadLabel>
               </TableHead>
               <TableHead className="py-3 px-4 w-[180px]">
-                <TableHeaderButton header="Hash" align="left" />
+                <TableHeadLabel>Hash</TableHeadLabel>
               </TableHead>
               <TableHead className="py-3 px-4 w-[170px]">
-                <TableHeaderButton header="Progression" align="left" />
+                <TableHeadLabel>Progression</TableHeadLabel>
               </TableHead>
             </TableRow>
           </TableHeader>

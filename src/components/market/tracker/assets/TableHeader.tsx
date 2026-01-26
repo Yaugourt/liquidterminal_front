@@ -27,12 +27,12 @@ const SortableColumnHeader = ({
   isActive = false
 }: SortableColumnHeaderProps) => (
   <Button
-    variant="ghost"
+    variant="tableHeaderSortable"
     onClick={() => onSort(sortKey)}
-    className={`text-label hover:text-zinc-200 p-0 h-auto flex items-center ${isActive ? 'text-brand-accent' : 'text-text-secondary'} ${className}`}
+    className={isActive ? 'table-header-active-accent' : className}
   >
     {label}
-    <ArrowUpDown className={`ml-1.5 h-3 w-3 ${isActive ? 'text-brand-accent' : ''}`} />
+    <ArrowUpDown className="h-3 w-3" />
   </Button>
 );
 
@@ -48,7 +48,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
     return (
       <TableHeader>
         <TableRow className="border-b border-border-subtle hover:bg-transparent">
-          <TableHead className="py-3 pl-4">
+          <TableHead className="pl-4">
             <SortableColumnHeader 
               label="Name" 
               sortKey="coin" 
@@ -56,7 +56,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'coin'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Type" 
               sortKey="type" 
@@ -64,7 +64,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'type'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Entry Price" 
               sortKey="entryPriceNum" 
@@ -72,7 +72,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'entryPriceNum'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Liquidation Price" 
               sortKey="liquidationNum" 
@@ -80,7 +80,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'liquidationNum'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Price" 
               sortKey="price" 
@@ -88,7 +88,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'price'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Value" 
               sortKey="positionValueNum" 
@@ -96,7 +96,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'positionValueNum'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3">
+          <TableHead>
             <SortableColumnHeader 
               label="Unrealized PNL" 
               sortKey="unrealizedPnl" 
@@ -104,7 +104,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
               isActive={activeSortKey === 'unrealizedPnl'}
             />
           </TableHead>
-          <TableHead className="py-3 px-3 pr-4">
+          <TableHead className="pr-4">
             <SortableColumnHeader 
               label="Funding" 
               sortKey="funding" 
@@ -120,7 +120,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
   return (
     <TableHeader>
       <TableRow className="border-b border-border-subtle hover:bg-transparent">
-        <TableHead className="py-3 pl-4">
+        <TableHead className="pl-4">
           <SortableColumnHeader 
             label="Name" 
             sortKey="coin" 
@@ -128,7 +128,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
             isActive={activeSortKey === 'coin'}
           />
         </TableHead>
-        <TableHead className="py-3 px-3">
+        <TableHead>
           <SortableColumnHeader 
             label="Size" 
             sortKey="total" 
@@ -136,7 +136,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
             isActive={activeSortKey === 'total'}
           />
         </TableHead>
-        <TableHead className="py-3 px-3">
+        <TableHead>
           <SortableColumnHeader 
             label="Price" 
             sortKey="price" 
@@ -144,7 +144,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
             isActive={activeSortKey === 'price'}
           />
         </TableHead>
-        <TableHead className="py-3 px-3">
+        <TableHead>
           <SortableColumnHeader 
             label="Change 24h" 
             sortKey="pnlPercentage" 
@@ -152,7 +152,7 @@ export function TableHeaderComponent({ onSort, type, activeSortKey }: TableHeade
             isActive={activeSortKey === 'pnlPercentage'}
           />
         </TableHead>
-        <TableHead className="py-3 px-3 pr-4">
+        <TableHead className="pr-4">
           <SortableColumnHeader 
             label="Value" 
             sortKey="totalValue" 

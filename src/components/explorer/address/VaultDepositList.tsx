@@ -5,7 +5,7 @@ import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposi
 import { useVaults } from '@/services/explorer/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
-import { Pagination } from '@/components/common';
+import { ScrollableTable } from '@/components/common/ScrollableTable';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 
 interface VaultDepositListProps {
@@ -59,9 +59,8 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     return formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
   };
 
-  // Table style (copié de TransactionList)
+  // Table style
   const containerClass = "glass-panel overflow-hidden flex flex-col";
-  const tableContainerClass = "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1";
 
   if (isLoading || vaultsLoading) {
     return (
@@ -93,7 +92,18 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
 
   return (
     <div className={containerClass}>
-      <div className={tableContainerClass}>
+      <ScrollableTable
+        pagination={total > 10 ? {
+          total,
+          page,
+          rowsPerPage,
+          onPageChange: setPage,
+          onRowsPerPageChange: (newRowsPerPage) => {
+            setRowsPerPage(newRowsPerPage);
+            setPage(0);
+          },
+        } : undefined}
+      >
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
@@ -139,23 +149,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
             ))}
           </TableBody>
         </Table>
-      </div>
-      {total > 10 && (
-        <div className="border-t border-border-subtle flex items-center mt-auto">
-          <div className="w-full px-4 py-3">
-            <Pagination
-              total={total}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              onPageChange={setPage}
-              onRowsPerPageChange={(newRowsPerPage) => {
-                setRowsPerPage(newRowsPerPage);
-                setPage(0);
-              }}
-            />
-          </div>
-        </div>
-      )}
+      </ScrollableTable>
     </div>
   );
 } 

@@ -7,8 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  SortableTableHead,
 } from '@/components/ui/table';
-import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
+import { Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
@@ -18,19 +19,6 @@ interface AuctionTableProps {
   marketType: "spot" | "perp";
 }
 
-// TableHeaderCell
-const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: string; onClick?: () => void; className?: string; isActive?: boolean }) => (
-  <TableHead className={className}>
-    <button
-      onClick={onClick}
-      className={`text-label p-0 h-auto flex items-center justify-start gap-1 transition-colors hover:text-white ${isActive ? "text-brand-accent" : "text-text-secondary"}`}
-    >
-      {label}
-      {onClick && <ArrowUpDown className="h-3 w-3" />}
-    </button>
-  </TableHead>
-));
-TableHeaderCell.displayName = 'TableHeaderCell';
 
 // EmptyState
 const EmptyState = memo(() => (
@@ -175,20 +163,20 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
+            <TableRow className="hover:bg-transparent">
               {columns.map(col => (
                 col.sortable ? (
-                  <TableHeaderCell
+                  <SortableTableHead
                     key={col.key}
                     label={col.label}
                     onClick={() => handleSort(col.key)}
                     isActive={sortField === col.key}
-                    className={`py-3 px-3 ${col.className}`}
+                    className={col.className}
                   />
                 ) : (
                   <TableHead
                     key={col.key}
-                    className={`py-3 px-3 ${col.className}`}
+                    className={col.className}
                   >
                     <span className="text-label text-text-secondary">{col.label}</span>
                   </TableHead>
@@ -201,24 +189,24 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
               <EmptyState />
             ) : (
               auctions.map((auction) => (
-                <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">
-                  <TableCell className="py-3 px-3 text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
-                  <TableCell className="py-3 px-3 text-white text-sm font-medium text-left">{auction.name}</TableCell>
-                  <TableCell className="py-3 px-3 text-sm text-left">
+                <TableRow key={auction.tokenId} className="hover:bg-white/[0.02] cursor-pointer">
+                  <TableCell className="text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
+                  <TableCell className="text-white text-sm font-medium text-left">{auction.name}</TableCell>
+                  <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
                       <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />)}</button>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-brand-gold transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-3 text-sm text-left">
+                  <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
                       <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />)}</button>
+                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-text-muted group-hover:text-brand-gold transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-3 text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
-                  <TableCell className="py-3 px-3 text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
-                  <TableCell className="py-3 px-3 text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
+                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
                 </TableRow>
               ))
             )}
