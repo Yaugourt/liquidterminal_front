@@ -6,6 +6,7 @@ import { TwapTable } from "@/components/dashboard/twap/TwapTable";
 import { TwapTableData } from "@/components/dashboard/twap/types";
 import { useTwapOrders } from "@/services/market/order";
 import { EnrichedTwapOrder } from "@/services/market/order/types";
+import { Card } from "@/components/ui/card";
 
 // Transformer les données enrichies en format tableau
 const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[] => {
@@ -65,7 +66,7 @@ export const TokenTwapSection = memo(({ tokenName }: TokenTwapSectionProps) => {
   };
 
   return (
-    <div className="w-full">
+    <Card className="w-full">
       <div className="min-h-[300px]">
         <TwapTable
           twaps={paginatedTwaps}
@@ -74,8 +75,9 @@ export const TokenTwapSection = memo(({ tokenName }: TokenTwapSectionProps) => {
           {...paginationProps}
         />
       </div>
-    </div>
+    </Card>
   );
 });
 
 TokenTwapSection.displayName = 'TokenTwapSection';
+

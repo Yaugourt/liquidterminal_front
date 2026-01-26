@@ -42,7 +42,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
         {copiedAddress === hash ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
         )}
       </button>
     </div>
@@ -67,7 +67,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
         {copiedAddress === address ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
         )}
       </button>
     </div>
@@ -86,28 +86,28 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       >
         <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3">
+            <TableRow className="hover:bg-transparent">
+              <TableHead>
                 <span className="text-text-secondary font-semibold uppercase tracking-wider">Block</span>
               </TableHead>
-              <TableHead className="py-3 px-3">
+              <TableHead>
                 <span className="text-text-secondary font-semibold uppercase tracking-wider">Time</span>
               </TableHead>
-              <TableHead className="py-3 px-3">
+              <TableHead>
                 <span className="text-text-secondary font-semibold uppercase tracking-wider">Hash</span>
               </TableHead>
-              <TableHead className="py-3 px-3">
+              <TableHead>
                 <span className="text-text-secondary font-semibold uppercase tracking-wider">Proposer</span>
               </TableHead>
-              <TableHead className="py-3 px-3 text-right">
+              <TableHead className="text-right">
                 <span className="text-text-secondary font-semibold uppercase tracking-wider">Txs</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {blocks.map((block) => (
-              <TableRow key={block.height} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                <TableCell className="py-3 px-3">
+              <TableRow key={block.height} className="hover:bg-white/[0.02]">
+                <TableCell>
                   <Link
                     href={`/explorer/block/${block.height}`}
                     prefetch={false}
@@ -116,14 +116,14 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                     {block.height}
                   </Link>
                 </TableCell>
-                <TableCell className="py-3 px-3 text-white font-medium">{formatDistanceToNowStrict(block.blockTime, { addSuffix: false })}</TableCell>
-                <TableCell className="py-3 px-3">
+                <TableCell className="text-white font-medium">{formatDistanceToNowStrict(block.blockTime, { addSuffix: false })}</TableCell>
+                <TableCell>
                   <HashDisplay hash={block.hash} />
                 </TableCell>
-                <TableCell className="py-3 px-3">
+                <TableCell>
                   <AddressLink address={block.proposer} />
                 </TableCell>
-                <TableCell className="py-3 px-3 text-white font-medium text-right">{block.numTxs}</TableCell>
+                <TableCell className="text-white font-medium text-right">{block.numTxs}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -145,29 +145,29 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
     >
       <Table className="w-full">
         <TableHeader>
-          <TableRow className="border-b border-border-subtle hover:bg-transparent">
-            <TableHead className="py-3 px-3">
+          <TableRow className="hover:bg-transparent">
+            <TableHead>
               <span className="text-text-secondary font-semibold uppercase tracking-wider">Time</span>
             </TableHead>
-            <TableHead className="py-3 px-3">
+            <TableHead>
               <span className="text-text-secondary font-semibold uppercase tracking-wider">Action</span>
             </TableHead>
-            <TableHead className="py-3 px-3">
+            <TableHead>
               <span className="text-text-secondary font-semibold uppercase tracking-wider">User</span>
             </TableHead>
-            <TableHead className="py-3 px-3">
+            <TableHead>
               <span className="text-text-secondary font-semibold uppercase tracking-wider">Hash</span>
             </TableHead>
-            <TableHead className="py-3 px-3 text-right">
+            <TableHead className="text-right">
               <span className="text-text-secondary font-semibold uppercase tracking-wider">Block</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {transactions.map((tx) => (
-            <TableRow key={tx.hash} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-              <TableCell className="py-3 px-3 text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
-              <TableCell className="py-3 px-3">
+            <TableRow key={tx.hash} className="hover:bg-white/[0.02]">
+              <TableCell className="text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
+              <TableCell>
                 <div className="relative group">
                   <span className="px-2 py-1 rounded-md font-bold bg-brand-accent/10 text-brand-accent">
                     {(tx.action?.type || 'Unknown').length > 7
@@ -184,13 +184,13 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <AddressLink address={tx.user} />
               </TableCell>
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <HashDisplay hash={tx.hash} />
               </TableCell>
-              <TableCell className="py-3 px-3 text-right">
+              <TableCell className="text-right">
                 <Link
                   href={`/explorer/block/${tx.block}`}
                   prefetch={false}

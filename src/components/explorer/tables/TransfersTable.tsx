@@ -37,28 +37,28 @@ export function TransfersTable() {
         >
             <Table className="w-full">
                 <TableHeader>
-                    <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                        <TableHead className="py-3 px-3">
+                    <TableRow className="hover:bg-transparent">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">Time</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">Amount</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">From</span>
                         </TableHead>
-                        <TableHead className="py-3 px-3">
+                        <TableHead>
                             <span className="text-text-secondary font-semibold uppercase tracking-wider">To</span>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {paginatedTransfers.map((transfer) => (
-                        <TableRow key={transfer.hash} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                            <TableCell className="py-3 px-3 text-white font-medium">
+                        <TableRow key={transfer.hash} className="hover:bg-white/[0.02]">
+                            <TableCell className="text-white font-medium">
                                 {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
                             </TableCell>
-                            <TableCell className="py-3 px-3 text-white font-medium">
+                            <TableCell className="text-white font-medium">
                                 {(() => {
                                     const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
                                     return `${formatNumber(numericAmount, format, {
@@ -67,10 +67,10 @@ export function TransfersTable() {
                                     })} ${transfer.token}`;
                                 })()}
                             </TableCell>
-                            <TableCell className="py-3 px-3 text-sm">
+                            <TableCell className="text-sm">
                                 <AddressDisplay address={transfer.from} />
                             </TableCell>
-                            <TableCell className="py-3 px-3">
+                            <TableCell>
                                 <AddressDisplay address={transfer.to} />
                             </TableCell>
                         </TableRow>

@@ -1,31 +1,13 @@
 import { memo, useCallback } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHeader, TableRow, SortableTableHead, TableHead } from "@/components/ui/table";
+import { Database, Loader2, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
-import { 
-  TableHeaderCellProps, 
-  TokenRowProps, 
-  TokensTableProps 
-} from "@/components/types/dashboard.types";
+import { TokenRowProps, TokensTableProps } from "@/components/types/dashboard.types";
 
-// Composant pour l'en-tête de colonne
-const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps & { isActive?: boolean }) => (
-    <TableHead className={className}>
-        <Button
-            variant="ghost"
-            onClick={onClick}
-            className={`${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"} font-medium p-0 flex items-center justify-start w-full text-xs uppercase tracking-wider`}
-        >
-            {label}
-            <ArrowUpDown className="ml-1 h-3 w-3 opacity-50" />
-        </Button>
-    </TableHead>
-));
 
-TableHeaderCell.displayName = 'TableHeaderCell';
 
 // Composant pour l'état vide
 const EmptyState = memo(() => (
@@ -43,7 +25,7 @@ EmptyState.displayName = 'EmptyState';
 
 // Composant pour une ligne de token
 const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
-    <TableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors group cursor-pointer">
+    <TableRow className="hover:bg-white/[0.02] group cursor-pointer">
         <TableCell className="py-3 pl-4">
             <div className="flex items-center gap-3">
                 <div className="relative">
@@ -118,31 +100,38 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
             <div className="overflow-x-auto custom-scrollbar flex-1">
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                            <TableHeaderCell
+                        <TableRow className="hover:bg-transparent">
+                            <SortableTableHead
                                 label="Name"
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
+                                highlight="gold"
                                 className="pl-4 w-[35%]"
                             />
-                            <TableHeaderCell
+                            <SortableTableHead
                                 label="Price"
                                 onClick={handleSort("price")}
                                 isActive={activeSort === "price"}
+                                highlight="gold"
                                 className="pl-4 w-[25%]"
                             />
-                            <TableHeaderCell
+                            <SortableTableHead
                                 label="Vol"
                                 onClick={handleSort("volume")}
                                 isActive={activeSort === "volume"}
+                                highlight="gold"
                                 className="pl-4 w-[20%]"
                             />
-                            <TableHeaderCell
-                                label="24h"
-                                onClick={handleSort("change24h")}
-                                isActive={activeSort === "change24h"}
-                                className="pl-4 w-[20%]"
-                            />
+                            <TableHead className="pl-4 w-[20%]">
+                                <Button
+                                    variant="tableHeaderSortable"
+                                    onClick={handleSort("change24h")}
+                                    className="text-brand-gold hover:text-brand-gold/80"
+                                >
+                                    24h
+                                    <ArrowUpDown className="h-3 w-3" />
+                                </Button>
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

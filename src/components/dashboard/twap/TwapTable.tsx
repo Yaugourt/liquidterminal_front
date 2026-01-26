@@ -9,9 +9,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableHeadLabel,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Pagination } from "@/components/common/pagination";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { TwapTableProps, TwapTableData } from "./types";
 import Link from "next/link";
 
@@ -27,15 +28,7 @@ const formatAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-// Composant pour les headers de tableau
-const TableHeaderButtonComponent = ({ header, align }: { header: string; align?: string }) => (
-  <span className={`block w-full ${align === 'right' ? 'text-right' : 'text-left'}`}>
-    {header}
-  </span>
-);
 
-const TableHeaderButton = memo(TableHeaderButtonComponent);
-TableHeaderButton.displayName = 'TableHeaderButton';
 
 // Utility function to calculate real-time TWAP progression
 const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
@@ -69,7 +62,7 @@ const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const value = realTime ? realTime.remainingValue : twap.value;
 
   return (
-    <TableCell className="py-3 px-3 text-sm text-white font-medium w-[200px]">
+    <TableCell className="text-sm text-white font-medium w-[200px]">
       <div className="flex items-center gap-2">
         <StatusBadge variant={twap.type === 'Buy' ? 'success' : 'error'}>
           {twap.type}
@@ -91,7 +84,7 @@ const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
 
   return (
-    <TableCell className="py-3 px-4 text-sm text-white/80 w-[180px]">
+    <TableCell className="px-4 text-sm text-white/80 w-[180px]">
       <span className="text-white font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
     </TableCell>
   );
@@ -135,7 +128,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
   };
 
   return (
-    <TableCell className="py-3 px-3 text-sm text-white w-[160px]">
+    <TableCell className="text-sm text-white w-[160px]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
           <span className="text-label text-text-muted">
@@ -165,7 +158,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
   copiedAddress: string | null,
   copyToClipboard: (text: string) => void
 }) => (
-  <TableCell className="py-3 px-3 text-sm w-[170px]">
+  <TableCell className="text-sm w-[170px]">
     <div className="flex items-center gap-1.5">
       <Link
         href={`/explorer/address/${twap.user}`}
@@ -183,7 +176,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
         {copiedAddress === twap.user ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-text-muted group-hover:text-white transition-all duration-200" />
+          <Copy className="h-3 w-3 text-text-muted group-hover:text-brand-gold transition-all duration-200" />
         )}
       </button>
     </div>
@@ -261,69 +254,63 @@ export const TwapTable = memo(({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col h-full">
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
-            <Table className="table-fixed w-full">
-              <TableHeader>
-                <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3 w-[200px]">
-                    <TableHeaderButton header="Value" align="left" />
-                  </TableHead>
-                  <TableHead className="py-3 px-4 w-[180px]">
-                    <TableHeaderButton header="Token" align="left" />
-                  </TableHead>
-                  <TableHead className="py-3 px-3 w-[170px]">
-                    <TableHeaderButton header="User" align="left" />
-                  </TableHead>
-                  <TableHead className="py-3 px-3 w-[160px]">
-                    <TableHeaderButton header="Progression" align="left" />
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {twaps.length > 0 ? (
-                  twaps.map((twap) => (
-                    <TableRow
-                      key={twap.id}
-                      className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
-                    >
-                      <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
-                      <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
-                      <UserCell twap={twap} copiedAddress={copiedAddress} copyToClipboard={copyToClipboard} />
-                      <ProgressionCell twap={twap} realTimeData={realTimeData} />
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="py-8 border-none"
-                    >
-                      <div className="flex flex-col items-center justify-center text-center">
-                        <Database className="w-10 h-10 mb-3 text-text-muted" />
-                        <p className="text-text-secondary text-sm mb-1">No active TWAP orders found</p>
-                        <p className="text-text-muted text-xs">Come later</p>
-                      </div>
-                    </TableCell>
+        <ScrollableTable
+          pagination={showPagination && total > 0 && onPageChange !== undefined && onRowsPerPageChange !== undefined ? {
+            total,
+            page,
+            rowsPerPage,
+            onPageChange,
+            onRowsPerPageChange,
+            rowsPerPageOptions: [5, 10, 15, 20],
+          } : undefined}
+        >
+          <Table className="table-fixed w-full">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[200px]">
+                  <TableHeadLabel>Value</TableHeadLabel>
+                </TableHead>
+                <TableHead className="px-4 w-[180px]">
+                  <TableHeadLabel>Token</TableHeadLabel>
+                </TableHead>
+                <TableHead className="w-[170px]">
+                  <TableHeadLabel>User</TableHeadLabel>
+                </TableHead>
+                <TableHead className="w-[160px]">
+                  <TableHeadLabel>Progression</TableHeadLabel>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {twaps.length > 0 ? (
+                twaps.map((twap) => (
+                  <TableRow
+                    key={twap.id}
+                    className="hover:bg-white/[0.02]"
+                  >
+                    <ValueCell twap={twap} realTimeData={realTimeData} format={format} />
+                    <TokenCell twap={twap} realTimeData={realTimeData} format={format} />
+                    <UserCell twap={twap} copiedAddress={copiedAddress} copyToClipboard={copyToClipboard} />
+                    <ProgressionCell twap={twap} realTimeData={realTimeData} />
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          {showPagination && total > 0 && onPageChange && onRowsPerPageChange && (
-            <div className="border-t border-border-subtle px-4 py-3">
-              <Pagination
-                total={total}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                rowsPerPageOptions={[5, 10, 15, 20]}
-              />
-            </div>
-          )}
-        </div>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className="py-8 border-none"
+                  >
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <Database className="w-10 h-10 mb-3 text-text-muted" />
+                      <p className="text-text-secondary text-sm mb-1">No active TWAP orders found</p>
+                      <p className="text-text-muted text-xs">Come later</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </ScrollableTable>
       )}
     </div>
   );

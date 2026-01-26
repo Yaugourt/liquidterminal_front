@@ -9,7 +9,7 @@ export default function PerpDexsPage() {
   return (
     <>
       {/* Overview cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-5">
         <PerpDexStatsCard />
         <TopPerpDexsCard />
         <Hip3InfoCard />

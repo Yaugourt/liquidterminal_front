@@ -99,25 +99,25 @@ export function UserTable({
     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
       <Table className="table-fixed w-full">
         <TableHeader>
-          <TableRow className="border-b border-border-subtle hover:bg-transparent">
-            <TableHead className="py-3 px-3">User</TableHead>
-            <TableHead className="py-3 px-3">Role</TableHead>
-            <TableHead className="py-3 px-3">Status</TableHead>
-            <TableHead className="py-3 px-3">Referrals</TableHead>
-            <TableHead className="py-3 px-3">Referred By</TableHead>
-            <TableHead className="py-3 px-3">Referral Code</TableHead>
-            <TableHead className="py-3 px-3">Dates</TableHead>
-            <TableHead className="py-3 px-3 text-right">Actions</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>User</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Referrals</TableHead>
+            <TableHead>Referred By</TableHead>
+            <TableHead>Referral Code</TableHead>
+            <TableHead>Dates</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
             <TableRow
               key={user.id}
-              className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
+              className="hover:bg-white/[0.02]"
             >
               {/* User Info */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <div>
                   <p className="font-medium text-white text-sm">{user.name}</p>
                   <p className="text-xs text-text-muted">{user.email || 'No email'}</p>
@@ -125,7 +125,7 @@ export function UserTable({
               </TableCell>
 
               {/* Role */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <div className="flex items-center gap-1.5">
                   {getRoleIcon(user.role)}
                   <span className={`font-medium text-xs ${getRoleColor(user.role)}`}>
@@ -135,7 +135,7 @@ export function UserTable({
               </TableCell>
 
               {/* Status */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={user.verified}
@@ -150,7 +150,7 @@ export function UserTable({
               </TableCell>
 
               {/* Referrals Count */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 {user.referralCount > 0 ? (
                   <span className="px-2 py-1 rounded-md text-xs font-bold bg-[#83e9ff]/10 text-[#83e9ff]">
                     {user.referralCount}
@@ -161,7 +161,7 @@ export function UserTable({
               </TableCell>
 
               {/* Referred By */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 {user.referredBy ? (
                   <span className="text-xs text-white/80">{user.referredBy}</span>
                 ) : (
@@ -170,7 +170,7 @@ export function UserTable({
               </TableCell>
 
               {/* Referral Code */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 {user.referralCode ? (
                   <div className="flex items-center gap-1">
                     <code className="text-xs font-mono text-text-secondary bg-zinc-800/50 px-1.5 py-0.5 rounded">
@@ -183,7 +183,7 @@ export function UserTable({
                       {copiedCode === user.referralCode ? (
                         <Check className="w-3 h-3 text-emerald-400" />
                       ) : (
-                        <Copy className="w-3 h-3 text-text-muted hover:text-white" />
+                        <Copy className="w-3 h-3 text-text-muted hover:text-brand-gold" />
                       )}
                     </button>
                   </div>
@@ -193,7 +193,7 @@ export function UserTable({
               </TableCell>
 
               {/* Dates with Tooltip */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -212,7 +212,7 @@ export function UserTable({
               </TableCell>
 
               {/* Actions */}
-              <TableCell className="py-3 px-3">
+              <TableCell>
                 <div className="flex items-center justify-end gap-1">
                   <Button
                     variant="ghost"

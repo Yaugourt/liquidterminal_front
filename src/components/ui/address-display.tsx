@@ -60,13 +60,13 @@ export function AddressDisplay({
             {showCopy && (
                 <button
                     onClick={handleCopy}
-                    className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                    className="group p-0.5 rounded-md hover:bg-white/10 transition-colors"
                     aria-label="Copy address"
                 >
                     {copied ? (
                         <Check className="h-3 w-3 text-emerald-400" />
                     ) : (
-                        <Copy className="h-3 w-3" />
+                        <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100" />
                     )}
                 </button>
             )}

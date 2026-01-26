@@ -26,8 +26,8 @@ export const SpotTableRow = memo(function SpotTableRow({
   formatPercent
 }: SpotRowProps) {
   return (
-    <UITableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-      <TableCell className="py-3 pl-4 pr-3">
+    <UITableRow className="hover:bg-white/[0.02]">
+      <TableCell className="pl-4 pr-3">
         <div className="flex items-center gap-3">
           <TokenIcon 
             src={holding.logo} 
@@ -38,19 +38,19 @@ export const SpotTableRow = memo(function SpotTableRow({
           <span className="text-white text-sm font-medium">{holding.coin}</span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3">
+      <TableCell className="text-white text-sm">
         {formatTokenAmount(holding.total)}
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3">
+      <TableCell className="text-white text-sm">
         {formatCurrency(holding.price)}
       </TableCell>
       <TableCell 
-        className="text-sm py-3 px-3 font-medium" 
+        className="text-sm font-medium" 
         style={{color: holding.pnlPercentage < 0 ? '#f87171' : '#4ade80'}}
       >
         {formatPercent(holding.pnlPercentage)}
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3 pr-4 font-medium">
+      <TableCell className="text-white text-sm pr-4 font-medium">
         {formatCurrency(holding.totalValue)}
       </TableCell>
     </UITableRow>
@@ -88,8 +88,8 @@ export const PerpTableRow = memo(function PerpTableRow({
   };
 
   return (
-    <UITableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-      <TableCell className="py-3 pl-4 pr-3">
+    <UITableRow className="hover:bg-white/[0.02]">
+      <TableCell className="pl-4 pr-3">
         <div className="flex items-center gap-3">
           <TokenIcon 
             src={holding.logo} 
@@ -100,7 +100,7 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className="text-white text-sm font-medium">{holding.coin}</span>
         </div>
       </TableCell>
-      <TableCell className="text-sm py-3 px-3">
+      <TableCell className="text-sm">
         <div className="flex flex-col gap-0.5">
           <span className={holding.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
             {holding.type}
@@ -110,16 +110,16 @@ export const PerpTableRow = memo(function PerpTableRow({
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3">
+      <TableCell className="text-white text-sm">
         {formatCurrency(holding.entryPrice)}
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3">
+      <TableCell className="text-white text-sm">
         {formatCurrency(holding.liquidation)}
       </TableCell>
-      <TableCell className="text-white text-sm py-3 px-3">
+      <TableCell className="text-white text-sm">
         {formatCurrency(holding.price)}
       </TableCell>
-      <TableCell className="text-sm py-3 px-3">
+      <TableCell className="text-sm">
         <div className="flex flex-col gap-0.5">
           <span className="text-white text-sm font-medium">
             {formatCurrency(holding.positionValue)}
@@ -129,10 +129,10 @@ export const PerpTableRow = memo(function PerpTableRow({
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-sm py-3 px-3 font-medium">
+      <TableCell className="text-sm font-medium">
         {formatUnrealizedPnl(holding.unrealizedPnl)}
       </TableCell>
-      <TableCell className="text-sm py-3 px-3 pr-4 font-medium">
+      <TableCell className="text-sm pr-4 font-medium">
         {formatFunding(holding.funding)}
       </TableCell>
     </UITableRow>

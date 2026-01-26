@@ -62,38 +62,38 @@ export function VaultSection() {
           >
             <Table className="w-full">
               <TableHeader>
-                <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">Name</TableHead>
-                  <TableHead className="py-3 px-3">Status</TableHead>
-                  <TableHead className="py-3 px-3">TVL</TableHead>
-                  <TableHead className="py-3 px-3 text-right">APR</TableHead>
-                  <TableHead className="py-3 px-3">Leader</TableHead>
-                  <TableHead className="py-3 px-3">Created</TableHead>
-                  <TableHead className="py-3 px-3 text-center">Action</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>TVL</TableHead>
+                  <TableHead className="text-right">APR</TableHead>
+                  <TableHead>Leader</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-center">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {vaults.map((vault: VaultSummary) => (
-                  <TableRow key={vault.summary.vaultAddress} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                    <TableCell className="py-3 px-3">{vault.summary.name}</TableCell>
-                    <TableCell className="py-3 px-3">
+                  <TableRow key={vault.summary.vaultAddress} className="hover:bg-white/[0.02]">
+                    <TableCell>{vault.summary.name}</TableCell>
+                    <TableCell>
                       <StatusBadge variant={!vault.summary.isClosed ? 'success' : 'error'}>
                         {!vault.summary.isClosed ? 'Open' : 'Closed'}
                       </StatusBadge>
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
                     </TableCell>
-                    <TableCell className={`py-3 px-3 text-right ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <TableCell className={`text-right ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       <AddressDisplay address={vault.summary.leader} />
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       {formatDate(vault.summary.createTimeMillis, dateFormat)}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-center">
+                    <TableCell className="text-center">
                       <Button
                         onClick={() => handleDepositClick(vault.summary.vaultAddress)}
                         className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold px-3 py-1 flex items-center gap-1 mx-auto"

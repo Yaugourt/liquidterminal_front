@@ -113,48 +113,48 @@ export function LiquidationsSection() {
           >
             <Table className="w-full">
               <TableHeader>
-                <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-3">Time</TableHead>
-                  <TableHead className="py-3 px-3">Coin</TableHead>
-                  <TableHead className="py-3 px-3">Side</TableHead>
-                  <TableHead className="py-3 px-3 text-right">Notional</TableHead>
-                  <TableHead className="py-3 px-3 text-right max-lg:hidden">Size</TableHead>
-                  <TableHead className="py-3 px-3 text-right max-md:hidden">Fee</TableHead>
-                  <TableHead className="py-3 px-3 max-lg:hidden">Method</TableHead>
-                  <TableHead className="py-3 px-3">User</TableHead>
-                  <TableHead className="py-3 px-3">Hash</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Time</TableHead>
+                  <TableHead>Coin</TableHead>
+                  <TableHead>Side</TableHead>
+                  <TableHead className="text-right">Notional</TableHead>
+                  <TableHead className="text-right max-lg:hidden">Size</TableHead>
+                  <TableHead className="text-right max-md:hidden">Fee</TableHead>
+                  <TableHead className="max-lg:hidden">Method</TableHead>
+                  <TableHead>User</TableHead>
+                  <TableHead>Hash</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedLiquidations.map((liq: Liquidation, index: number) => (
-                  <TableRow key={`${liq.tid}-${liq.time_ms}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                    <TableCell className="py-3 px-3">
+                  <TableRow key={`${liq.tid}-${liq.time_ms}-${index}`} className="hover:bg-white/[0.02]">
+                    <TableCell>
                       {formatDateTime(liq.time, dateFormat)}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-brand-accent font-medium">
+                    <TableCell className="text-brand-accent font-medium">
                       {liq.coin}
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       <StatusBadge variant={liq.liq_dir === 'Long' ? 'success' : 'error'}>
                         {liq.liq_dir}
                       </StatusBadge>
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right font-medium">
+                    <TableCell className="text-right font-medium">
                       ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right font-medium max-lg:hidden">
+                    <TableCell className="text-right font-medium max-lg:hidden">
                       {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-right text-text-muted max-md:hidden">
+                    <TableCell className="text-right text-text-muted max-md:hidden">
                       ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
                     </TableCell>
-                    <TableCell className="py-3 px-3 text-text-secondary max-lg:hidden">
+                    <TableCell className="text-text-secondary max-lg:hidden">
                       {liq.method}
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       <AddressDisplay address={liq.liquidated_user} />
                     </TableCell>
-                    <TableCell className="py-3 px-3">
+                    <TableCell>
                       <AddressDisplay address={liq.hash} showExternalLink={true} showCopy={true} />
                     </TableCell>
                   </TableRow>

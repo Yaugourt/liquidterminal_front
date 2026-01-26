@@ -54,6 +54,15 @@ body {
         @apply text-label text-text-secondary text-[12px];
     }
 
+    /* États actifs pour les colonnes triables */
+    .table-header-active-accent {
+        @apply text-brand-accent;
+    }
+
+    .table-header-active-gold {
+        @apply text-brand-gold;
+    }
+
     .text-table-cell {
         @apply text-sm text-white;
     }

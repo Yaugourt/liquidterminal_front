@@ -75,7 +75,8 @@ export const getWalletsByUser = async (): Promise<WalletResponse> => {
   return withErrorHandling(async () => {
     // NOUVEAU: utiliser /my-wallets au lieu de /user/:privyUserId
     // Désactiver le cache pour toujours avoir les données fraîches
-    const response = await get<WalletResponse>('/wallet/my-wallets', {}, { useCache: false });
+    // Passer limit=1000 pour éviter la pagination par défaut de 10 wallets côté backend
+    const response = await get<WalletResponse>('/wallet/my-wallets?limit=1000', {}, { useCache: false });
     
     // Vérifier que la réponse contient les données attendues
     if (!response) {

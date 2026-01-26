@@ -13,7 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pagination } from "@/components/common/pagination";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 
 interface HoldersTableProps {
@@ -21,9 +22,9 @@ interface HoldersTableProps {
   isLoading: boolean;
   error: Error | null;
   tokenName: string;
-  tokenPrice?: number; // Prix du token pour calculer la valeur
-  totalSupply?: number; // Total supply pour calculer le pourcentage
-  stakedHolders?: Record<string, number>; // Holders stakés pour identifier les adresses stakées
+  tokenPrice?: number;
+  totalSupply?: number;
+  stakedHolders?: Record<string, number>;
 }
 
 const formatAddress = (address: string) => {
@@ -52,8 +53,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   // Pagination
   const startIndex = currentPage * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-  const paginatedHolders = holdersArray.slice(startIndex, endIndex);
+  const paginatedHolders = holdersArray.slice(startIndex, startIndex + rowsPerPage);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -67,127 +67,119 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (isLoading) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
-        <div className="flex justify-center items-center h-[200px]">
-          <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-text-muted text-sm">Loading holders...</span>
-          </div>
+      <Card className="flex justify-center items-center h-[200px]">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
+          <span className="text-text-muted text-sm">Loading holders...</span>
         </div>
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20">
-        <div className="flex justify-center items-center h-[200px]">
-          <div className="flex flex-col items-center">
-            <Database className="w-10 h-10 mb-3 text-text-muted" />
-            <p className="text-text-secondary text-sm mb-1">Error loading holders</p>
-            <p className="text-text-muted text-xs">{error.message}</p>
-          </div>
+      <Card className="flex justify-center items-center h-[200px]">
+        <div className="flex flex-col items-center">
+          <Database className="w-10 h-10 mb-3 text-text-muted" />
+          <p className="text-text-secondary text-sm mb-1">Error loading holders</p>
+          <p className="text-text-muted text-xs">{error.message}</p>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl overflow-hidden shadow-xl shadow-black/20 hover:border-border-hover transition-all">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <Table className="table-fixed w-full">
-          <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-3">Address</TableHead>
-              <TableHead className="py-3 px-3">Amount</TableHead>
-              <TableHead className="py-3 px-3">Value</TableHead>
-              <TableHead className="py-3 px-3">Percentage</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedHolders.length > 0 ? (
-              paginatedHolders.map((holder, index) => (
-                <TableRow
-                  key={holder.address}
-                  className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
-                >
-                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
+    <Card>
+      <ScrollableTable
+      pagination={holdersArray.length > 0 ? {
+        total: holdersArray.length,
+        page: currentPage,
+        rowsPerPage,
+        onPageChange: setCurrentPage,
+        onRowsPerPageChange: setRowsPerPage,
+        rowsPerPageOptions: [10, 25, 50, 100],
+      } : undefined}
+    >
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Address</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Value</TableHead>
+            <TableHead>Percentage</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {paginatedHolders.length > 0 ? (
+            paginatedHolders.map((holder, index) => (
+              <TableRow
+                key={holder.address}
+                className="hover:bg-white/[0.02]"
+              >
+                <TableCell className="text-sm text-white font-medium">
+                  <div className="flex items-center gap-1">
+                    <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
                     <div className="flex items-center gap-1">
-                      <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
-                      <div className="flex items-center gap-1">
-                        <Link 
-                          href={`/explorer/address/${holder.address}`} 
-                          className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
-                        >
-                          {formatAddress(holder.address)}
-                        </Link>
-                        {getAlias(holder.address) && (
-                          <span className="text-text-muted text-xs ml-1">
-                            ({getAlias(holder.address)})
-                          </span>
-                        )}
-                        <button 
-                          onClick={() => copyToClipboard(holder.address)}
-                          className="group p-1 rounded transition-colors hover:bg-white/5"
-                        >
-                          {copiedAddress === holder.address ? (
-                            <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
-                          ) : (
-                            <Copy className="h-3.5 w-3.5 text-text-muted group-hover:text-white transition-all duration-200" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
-                    <div className="flex items-center gap-1">
-                      <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
-                      {stakedHolders && stakedHolders[holder.address] && (
-                        <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
-                          (staked)
+                      <Link 
+                        href={`/explorer/address/${holder.address}`} 
+                        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
+                      >
+                        {formatAddress(holder.address)}
+                      </Link>
+                      {getAlias(holder.address) && (
+                        <span className="text-text-muted text-xs ml-1">
+                          ({getAlias(holder.address)})
                         </span>
                       )}
+                      <button 
+                        onClick={() => copyToClipboard(holder.address)}
+                        className="group p-1 rounded transition-colors hover:bg-white/5"
+                      >
+                        {copiedAddress === holder.address ? (
+                          <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-gold transition-all duration-200" />
+                        )}
+                      </button>
                     </div>
-                  </TableCell>
-                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
-                    {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
-                  </TableCell>
-                  <TableCell className="py-3 px-3 text-sm text-white font-medium">
-                    {formatPercentage(holder.amount, supplyForCalculation, format)}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="py-8"
-                >
-                  <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-text-muted" />
-                    <p className="text-text-secondary text-sm mb-1">No holders found</p>
-                    <p className="text-text-muted text-xs">No data available</p>
                   </div>
                 </TableCell>
+                <TableCell className="text-sm text-white font-medium">
+                  <div className="flex items-center gap-1">
+                    <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
+                    {stakedHolders && stakedHolders[holder.address] && (
+                      <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
+                        (staked)
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm text-white font-medium">
+                  {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
+                </TableCell>
+                <TableCell className="text-sm text-white font-medium">
+                  {formatPercentage(holder.amount, supplyForCalculation, format)}
+                </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {holdersArray.length > 0 && (
-        <div className="border-t border-border-subtle px-4 py-3">
-          <Pagination
-            total={holdersArray.length}
-            page={currentPage}
-            rowsPerPage={rowsPerPage}
-            onPageChange={setCurrentPage}
-            onRowsPerPageChange={setRowsPerPage}
-            rowsPerPageOptions={[10, 25, 50, 100]}
-          />
-        </div>
-      )}
-    </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={4}
+                className="py-8"
+              >
+                <div className="flex flex-col items-center justify-center text-center">
+                  <Database className="w-10 h-10 mb-3 text-text-muted" />
+                  <p className="text-text-secondary text-sm mb-1">No holders found</p>
+                  <p className="text-text-muted text-xs">No data available</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </ScrollableTable>
+    </Card>
   );
 });
 
