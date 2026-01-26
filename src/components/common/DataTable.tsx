@@ -196,8 +196,7 @@ export function TypedDataTable<T>({
                                         <TableHead
                                             key={index}
                                             className={cn(
-                                                textSize === "xs" ? "py-2" : "py-3",
-                                                "px-4",
+                                                "py-3 px-4",
                                                 column.className
                                             )}
                                         >

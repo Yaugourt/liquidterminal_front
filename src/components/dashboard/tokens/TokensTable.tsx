@@ -13,7 +13,7 @@ import {
 
 // Composant pour l'en-tête de colonne
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps & { isActive?: boolean }) => (
-    <TableHead className={className}>
+    <TableHead className={`py-3 ${className}`}>
         <Button
             variant="ghost"
             onClick={onClick}
