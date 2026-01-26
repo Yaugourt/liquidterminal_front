@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
 import { ArrowUpDown, Database, Loader2, Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
@@ -22,14 +21,13 @@ interface AuctionTableProps {
 // TableHeaderCell
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: { label: string; onClick?: () => void; className?: string; isActive?: boolean }) => (
   <TableHead className={className}>
-    <Button
-      variant="ghost"
+    <button
       onClick={onClick}
-      className={`text-label p-0 h-auto flex items-center justify-start gap-1 hover:text-white ${isActive ? "text-brand-accent" : "text-text-secondary"}`}
+      className={`text-label p-0 h-auto flex items-center justify-start gap-1 transition-colors hover:text-white ${isActive ? "text-brand-accent" : "text-text-secondary"}`}
     >
       {label}
       {onClick && <ArrowUpDown className="h-3 w-3" />}
-    </Button>
+    </button>
   </TableHead>
 ));
 TableHeaderCell.displayName = 'TableHeaderCell';

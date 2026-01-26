@@ -1,6 +1,5 @@
 import { memo, useCallback } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Database, Loader2 } from "lucide-react";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
@@ -14,14 +13,13 @@ import {
 // Composant pour l'en-tête de colonne
 const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHeaderCellProps & { isActive?: boolean }) => (
     <TableHead className={`py-3 ${className}`}>
-        <Button
-            variant="ghost"
+        <button
             onClick={onClick}
-            className={`text-label p-0 h-auto flex items-center justify-start w-full ${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"}`}
+            className={`text-label p-0 h-auto flex items-center justify-start w-full transition-colors ${isActive ? "text-brand-gold hover:text-brand-gold" : "text-text-secondary hover:text-white"}`}
         >
             {label}
             <ArrowUpDown className="ml-1.5 h-3 w-3" />
-        </Button>
+        </button>
     </TableHead>
 ));
 
