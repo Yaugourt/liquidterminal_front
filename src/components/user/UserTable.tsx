@@ -183,7 +183,7 @@ export function UserTable({
                       {copiedCode === user.referralCode ? (
                         <Check className="w-3 h-3 text-emerald-400" />
                       ) : (
-                        <Copy className="w-3 h-3 text-text-muted hover:text-brand-gold" />
+                        <Copy className="w-3 h-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                       )}
                     </button>
                   </div>

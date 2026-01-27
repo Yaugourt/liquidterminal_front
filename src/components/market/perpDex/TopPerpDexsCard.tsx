@@ -53,17 +53,17 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
       <ScrollableTable className="h-full">
         <Table className="h-full">
           <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 pl-4 w-[40%]">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="pl-4">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
                     <Building2 size={12} className="text-brand-accent" />
                   </div>
-                  Top by Volume
+                  <span>Top by Volume</span>
                 </div>
               </TableHead>
-              <TableHead className="py-3 w-[30%]">24h Vol</TableHead>
-              <TableHead className="py-3 pr-4 w-[30%]">Open Interest</TableHead>
+              <TableHead>24h Vol</TableHead>
+              <TableHead className="pr-4">Open Interest</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

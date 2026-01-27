@@ -114,7 +114,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                   {copiedColor === color ? (
                     <Check size={12} className="text-emerald-400" />
                   ) : (
-                    <Copy size={12} className="text-text-muted group-hover:text-brand-accent transition-colors" />
+                    <Copy size={12} className="text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
                 </button>
               ))}

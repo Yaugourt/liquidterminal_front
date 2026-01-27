@@ -8,6 +8,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { Card } from "@/components/ui/card";
 import { Database } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -76,18 +78,18 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
             <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
                 Markets ({activeAssets} active / {totalAssets} total)
             </h2>
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                    <Table className="table-fixed w-full">
+            <Card>
+                <ScrollableTable>
+                    <Table>
                         <TableHeader>
-                            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                                <TableHead className="py-3 pl-4 w-[22%]"><span className="text-label text-text-secondary">Asset</span></TableHead>
-                                <TableHead className="py-3 w-[12%]"><span className="text-label text-text-secondary">Price</span></TableHead>
-                                <TableHead className="py-3 w-[10%]"><span className="text-label text-text-secondary">24h</span></TableHead>
-                                <TableHead className="py-3 w-[14%]"><span className="text-label text-text-secondary">Volume</span></TableHead>
-                                <TableHead className="py-3 w-[14%]"><span className="text-label text-text-secondary">OI</span></TableHead>
-                                <TableHead className="py-3 w-[12%]"><span className="text-label text-text-secondary">Funding</span></TableHead>
-                                <TableHead className="py-3 pr-4 w-[16%]"><span className="text-label text-text-secondary">OI Cap</span></TableHead>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead>Asset</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>24h</TableHead>
+                                <TableHead>Volume</TableHead>
+                                <TableHead>OI</TableHead>
+                                <TableHead>Funding</TableHead>
+                                <TableHead>OI Cap</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -95,10 +97,10 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                 assets.map((asset) => (
                                     <TableRow
                                         key={asset.name}
-                                        className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
+                                        className={`hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
                                     >
                                         {/* Asset */}
-                                        <TableCell className="py-3 pl-4 text-left">
+                                        <TableCell>
                                             <div className="flex items-center gap-2">
                                                 <AssetLogo assetName={asset.name} isDelisted={asset.isDelisted} />
                                                 <div>
@@ -115,7 +117,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                         </TableCell>
 
                                         {/* Price */}
-                                        <TableCell className="py-3 text-left">
+                                        <TableCell>
                                             <span className="text-white text-sm font-medium">
                                                 {asset.markPx
                                                     ? `$${formatNumber(asset.markPx, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -124,14 +126,14 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                         </TableCell>
 
                                         {/* 24h Change */}
-                                        <TableCell className="py-3 text-left">
+                                        <TableCell>
                                             <span className={`text-sm font-medium ${(asset.priceChange24h ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                                 {formatPriceChange(asset.priceChange24h)}
                                             </span>
                                         </TableCell>
 
                                         {/* Volume */}
-                                        <TableCell className="py-3 text-left">
+                                        <TableCell>
                                             <span className="text-white text-sm font-medium">
                                                 {asset.dayNtlVlm && asset.dayNtlVlm > 0
                                                     ? formatNumber(asset.dayNtlVlm, format, {
@@ -145,7 +147,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                         </TableCell>
 
                                         {/* Open Interest */}
-                                        <TableCell className="py-3 text-left">
+                                        <TableCell>
                                             <span className="text-white text-sm font-medium">
                                                 {asset.openInterest && asset.openInterest > 0
                                                     ? formatNumber(asset.openInterest, format, {
@@ -159,14 +161,14 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                         </TableCell>
 
                                         {/* Funding */}
-                                        <TableCell className="py-3 text-left">
+                                        <TableCell>
                                             <span className={`text-sm font-medium ${(asset.funding ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                                 {formatFunding(asset.funding)}
                                             </span>
                                         </TableCell>
 
                                         {/* OI Cap */}
-                                        <TableCell className="py-3 pr-4 text-left">
+                                        <TableCell>
                                             <span className="text-white text-sm font-medium">
                                                 {formatNumber(asset.streamingOiCap, format, {
                                                     minimumFractionDigits: 0,
@@ -190,8 +192,8 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                             )}
                         </TableBody>
                     </Table>
-                </div>
-            </div>
+                </ScrollableTable>
+            </Card>
         </div>
     );
 }

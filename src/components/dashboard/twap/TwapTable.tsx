@@ -175,7 +175,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
         {copiedAddress === twap.user ? (
           <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
         ) : (
-          <Copy className="h-3 w-3 text-text-muted group-hover:text-brand-gold transition-all duration-200" />
+          <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
         )}
       </button>
     </div>

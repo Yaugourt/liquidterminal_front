@@ -18,7 +18,8 @@ export function useSpotTokens({
 } = {}) {
   const { 
     data: response, 
-    isLoading, 
+    isLoading,
+    isInitialLoading,
     error,
     refetch
   } = useDataFetching<SpotMarketResponse>({
@@ -76,6 +77,7 @@ export function useSpotTokens({
     page: response?.page || 1,
     totalPages: response?.totalPages || 0,
     isLoading,
+    isInitialLoading,
     error,
     refetch,
     totalVolume: response?.totalVolume || 0,
@@ -85,7 +87,7 @@ export function useSpotTokens({
 
 // Hook spécifique pour les tokens tendance (top 5)
 export function useTrendingSpotTokens(limit: number = 5, sortBy: string = 'change24h', sortOrder: 'asc' | 'desc' = 'desc') {
-  const { data, isLoading, error, refetch, totalVolume } = useSpotTokens({
+  const { data, isInitialLoading, error, refetch, totalVolume } = useSpotTokens({
     limit,
     page: 1,
     sortBy,
@@ -95,7 +97,7 @@ export function useTrendingSpotTokens(limit: number = 5, sortBy: string = 'chang
 
   return {
     data,
-    isLoading,
+    isLoading: isInitialLoading, // Utilise isInitialLoading pour éviter le flash
     error,
     refetch,
     totalVolume

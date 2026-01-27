@@ -51,7 +51,7 @@ body {
     }
 
     .text-table-header {
-        @apply text-label text-text-secondary text-[12px];
+        @apply text-[11px] font-semibold uppercase tracking-wider text-text-secondary;
     }
 
     /* États actifs pour les colonnes triables */

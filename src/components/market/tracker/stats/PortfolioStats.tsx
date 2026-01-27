@@ -165,7 +165,7 @@ export function PortfolioStats({
                     className="h-6 w-6 p-0 text-text-muted hover:text-white hover:bg-white/5"
                     onClick={copyToClipboard}
                   >
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
+                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

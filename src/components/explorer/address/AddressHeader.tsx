@@ -55,11 +55,11 @@ export function AddressHeader({ address }: AddressHeaderProps) {
           <Tooltip open={showCopied}>
             <TooltipTrigger asChild>
               <button
-                className="p-1.5 hover:bg-[#1E3851] rounded-lg transition-all flex-shrink-0"
+                className="group p-1.5 hover:bg-[#1E3851] rounded-lg transition-all flex-shrink-0"
                 onClick={copyToClipboard}
                 title="Copy address to clipboard"
               >
-                <Copy size={16} className="text-brand-accent" />
+                <Copy size={16} className="text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="bg-brand-tertiary border border-brand-accent text-white">

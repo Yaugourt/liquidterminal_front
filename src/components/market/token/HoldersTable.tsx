@@ -138,7 +138,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                         {copiedAddress === holder.address ? (
                           <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
                         ) : (
-                          <Copy className="h-3.5 w-3.5 text-text-muted group-hover:text-brand-gold transition-all duration-200" />
+                          <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                       </button>
                     </div>

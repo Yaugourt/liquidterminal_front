@@ -145,12 +145,12 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                             e.preventDefault();
                             copyHashToClipboard(tx.hash);
                         }}
-                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="group text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                     >
                         {copiedHash === tx.hash ? (
                             <Check className="h-3 w-3 text-emerald-400" />
                         ) : (
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                     </button>
                 </div>

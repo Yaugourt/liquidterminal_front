@@ -164,7 +164,7 @@ export const StakersTable = memo(function StakersTable() {
                         {copiedAddress === holder.address ? (
                           <Check className="h-3 w-3 text-emerald-400" />
                         ) : (
-                          <Copy className="h-3 w-3" />
+                          <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                       </Button>
 
