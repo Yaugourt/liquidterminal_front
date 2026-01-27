@@ -13,12 +13,11 @@ export interface BasePagination {
 // Type pour la réponse API paginée
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: BasePagination & {
-    totalVolume?: number;
-  };
+  pagination: BasePagination;
   metadata?: {
-    lastUpdate: number;
-    isFresh: boolean;
-    timeSinceLastUpdate: number;
+    lastUpdate?: number;
+    isFresh?: boolean;
+    timeSinceLastUpdate?: number;
+    totalVolume?: number;
   };
 } 
