@@ -320,7 +320,7 @@ export function UniversalTokenTable({
                                 return (
                                     <TableRow
                                         key={uniqueKey}
-                                        className="hover:bg-white/[0.02] cursor-pointer"
+                                        className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer"
                                         style={mode === 'compact' ? { height: `${100 / pageSize}%` } : undefined}
                                         onClick={() => handleTokenClick(t.name)}
                                     >

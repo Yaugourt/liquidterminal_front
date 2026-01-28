@@ -52,7 +52,7 @@ const PerpDexRow = memo(({
 
   return (
     <TableRow
-      className="hover:bg-white/[0.02] cursor-pointer"
+      className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer"
       onClick={onClick}
     >
       {/* Name */}

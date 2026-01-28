@@ -95,7 +95,7 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                 assets.map((asset) => (
                                     <TableRow
                                         key={asset.name}
-                                        className={`hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
+                                        className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
                                     >
                                         {/* Asset */}
                                         <TableCell>

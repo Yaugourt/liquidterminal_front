@@ -163,7 +163,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               {columns.map(col => (
                 col.sortable ? (
                   <SortableTableHead
@@ -189,7 +189,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
               <EmptyState />
             ) : (
               auctions.map((auction) => (
-                <TableRow key={auction.tokenId} className="hover:bg-white/[0.02] cursor-pointer">
+                <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">
                   <TableCell className="text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
                   <TableCell className="text-white text-sm font-medium text-left">{auction.name}</TableCell>
                   <TableCell className="text-sm text-left">
