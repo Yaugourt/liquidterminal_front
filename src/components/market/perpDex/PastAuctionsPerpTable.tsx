@@ -17,6 +17,7 @@ import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { useDateFormat, DateFormatType } from "@/store/date-format.store";
 import { PastAuctionPerp } from "@/services/market/perpDex/types";
 import { AddressDisplay } from "@/components/ui/address-display";
+import { Pagination } from "@/components/common/pagination";
 
 type SortField = 'time' | 'symbol' | 'dex' | 'oraclePx' | 'user' | 'maxGas';
 
@@ -150,6 +151,8 @@ export function PastAuctionsPerpTable() {
 
   const [sortField, setSortField] = useState<SortField>('time');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const sortedAuctions = useMemo(() => {
     return [...auctions].sort((a, b) => {
@@ -185,7 +188,24 @@ export function PastAuctionsPerpTable() {
       setSortField(field);
       setSortOrder('desc');
     }
+    setPage(0); // Reset to first page when sorting
   }, [sortField]);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
+    setPageSize(newRowsPerPage);
+    setPage(0); // Reset to first page when changing page size
+  }, []);
+
+  // Paginate the sorted auctions
+  const paginatedAuctions = useMemo(() => {
+    const start = page * pageSize;
+    const end = start + pageSize;
+    return sortedAuctions.slice(start, end);
+  }, [sortedAuctions, page, pageSize]);
 
   if (isLoading && !sortedAuctions.length) {
     return (
@@ -246,8 +266,8 @@ export function PastAuctionsPerpTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedAuctions.length > 0 ? (
-              sortedAuctions.map((auction) => (
+            {paginatedAuctions.length > 0 ? (
+              paginatedAuctions.map((auction) => (
                 <AuctionRow
                   key={auction.hash}
                   auction={auction}
@@ -261,6 +281,20 @@ export function PastAuctionsPerpTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {sortedAuctions.length > 0 && (
+        <div className="border-t border-border-subtle px-4 py-3">
+          <Pagination
+            total={sortedAuctions.length}
+            page={page}
+            rowsPerPage={pageSize}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            rowsPerPageOptions={[5, 10, 15, 20]}
+          />
+        </div>
+      )}
     </div>
   );
 }
