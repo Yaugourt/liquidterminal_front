@@ -39,7 +39,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             <Gavel size={16} />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-white tracking-tight">Auction Status</h3>
+            <h3 className="text-xs font-medium text-white tracking-tight">Auction Status</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <div className={`w-1.5 h-1.5 rounded-full ${auctionState.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
               <span className={`text-label ${auctionState.isActive ? 'text-emerald-400' : 'text-amber-400'}`}>
@@ -76,9 +76,9 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
               <div>
                 <p className="text-xs text-text-muted font-medium mb-1">Current Price</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold text-white tracking-tight">
-                    {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 
-                    <span className="text-sm font-medium text-text-secondary ml-1">HYPE</span>
+                  <span className="text-lg font-bold text-white tracking-tight">
+                    {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <span className="text-xs font-medium text-text-secondary ml-1">HYPE</span>
                   </span>
                 </div>
                 <p className="text-label text-text-muted mt-0.5">
@@ -92,7 +92,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 </p>
                 <div className="flex items-center justify-end gap-2 text-white">
                   <Clock className="w-4 h-4 text-brand-gold" />
-                  <span className="text-xl font-mono font-medium tracking-tight">
+                  <span className="text-lg font-mono font-medium tracking-tight">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
                   </span>
                 </div>

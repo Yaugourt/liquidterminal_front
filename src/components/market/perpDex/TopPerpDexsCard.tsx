@@ -79,17 +79,12 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent">
                         {dex.name.charAt(0).toUpperCase()}
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-white text-xs font-medium">{dex.fullName}</span>
-                        <span className="text-label text-text-muted">
-                          {dex.activeAssets}/{dex.totalAssets} markets
-                        </span>
-                      </div>
+                      <span className="text-white text-[11px] font-medium">{dex.fullName}</span>
                       <ChevronRight className="h-3 w-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </TableCell>
-                  <TableCell className="text-left text-white text-xs py-2.5 font-medium">
-                    {dex.totalVolume24h > 0 
+                  <TableCell className="text-left text-white text-[11px] py-2.5 font-medium">
+                    {dex.totalVolume24h > 0
                       ? formatNumber(dex.totalVolume24h, format, {
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,
@@ -98,8 +93,8 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                         })
                       : '-'}
                   </TableCell>
-                  <TableCell className="text-left text-white text-xs py-2.5 pr-4 font-medium">
-                    {dex.totalOpenInterest > 0 
+                  <TableCell className="text-left text-white text-[11px] py-2.5 pr-4 font-medium">
+                    {dex.totalOpenInterest > 0
                       ? formatNumber(dex.totalOpenInterest, format, {
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,

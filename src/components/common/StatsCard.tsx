@@ -26,7 +26,7 @@ export const StatsCard = memo(function StatsCard({
                         {icon}
                     </div>
                 )}
-                <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
+                <h3 className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
                     {title}
                 </h3>
             </div>
@@ -35,7 +35,7 @@ export const StatsCard = memo(function StatsCard({
                 <div className="h-7 bg-white/5 animate-pulse rounded w-24" />
             ) : (
                 <div className="flex items-baseline gap-2">
-                    <span className="text-xl text-white font-bold tracking-tight">
+                    <span className="text-lg text-white font-bold tracking-tight">
                         {value}
                     </span>
                     {change !== undefined && (
