@@ -2,7 +2,6 @@ import * as React from "react";
 import { ArrowUpDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -63,15 +62,18 @@ interface SortableTableHeadProps extends React.ThHTMLAttributes<HTMLTableCellEle
 const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHeadProps>(
   ({ className, label, isActive, onClick, highlight = 'accent', ...props }, ref) => (
     <TableHead ref={ref} className={className} {...props}>
-      <Button
-        variant="tableHeaderSortable"
+      <button
         onClick={onClick}
         disabled={!onClick}
-        className={isActive ? `table-header-active-${highlight}` : undefined}
+        className={`text-label p-0 h-auto flex items-center justify-start gap-1 transition-colors hover:text-white ${
+          isActive
+            ? (highlight === 'gold' ? 'text-brand-gold' : 'text-brand-accent')
+            : 'text-text-secondary'
+        }`}
       >
         {label}
         {onClick && <ArrowUpDown className="h-3 w-3" />}
-      </Button>
+      </button>
     </TableHead>
   )
 );
