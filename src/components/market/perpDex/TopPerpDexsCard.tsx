@@ -3,7 +3,7 @@
 import { memo, useMemo } from "react";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { Loader2, Database, Building2, ChevronRight } from "lucide-react";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import {
   Table,
   TableBody,
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ScrollableTable } from "@/components/common/ScrollableTable";
-import { useNumberFormat } from "@/store/number-format.store";
 import { useRouter } from "next/navigation";
 
 /**
@@ -22,7 +21,6 @@ import { useRouter } from "next/navigation";
  */
 export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
   const router = useRouter();
-  const { format } = useNumberFormat();
   const { dexs, isLoading, error } = usePerpDexMarketData();
 
   // Sort by volume and get top 5
@@ -85,21 +83,19 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                   </TableCell>
                   <TableCell className="text-left text-white text-[11px] py-2.5 font-medium">
                     {dex.totalVolume24h > 0
-                      ? formatNumber(dex.totalVolume24h, format, {
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                          currency: '$',
-                          showCurrency: true
+                      ? formatLargeNumber(dex.totalVolume24h, {
+                          prefix: '$',
+                          decimals: 1,
+                          forceDecimals: false
                         })
                       : '-'}
                   </TableCell>
                   <TableCell className="text-left text-white text-[11px] py-2.5 pr-4 font-medium">
                     {dex.totalOpenInterest > 0
-                      ? formatNumber(dex.totalOpenInterest, format, {
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                          currency: '$',
-                          showCurrency: true
+                      ? formatLargeNumber(dex.totalOpenInterest, {
+                          prefix: '$',
+                          decimals: 1,
+                          forceDecimals: false
                         })
                       : '-'}
                   </TableCell>
