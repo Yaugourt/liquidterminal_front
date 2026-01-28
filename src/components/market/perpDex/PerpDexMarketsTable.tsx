@@ -8,8 +8,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
-import { Card } from "@/components/ui/card";
 import { Database } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -78,11 +76,11 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
             <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
                 Markets ({activeAssets} active / {totalAssets} total)
             </h2>
-            <Card>
-                <ScrollableTable>
+            <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <Table>
                         <TableHeader>
-                            <TableRow className="hover:bg-transparent">
+                            <TableRow className="border-b border-border-subtle hover:bg-transparent">
                                 <TableHead>Asset</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead>24h</TableHead>
@@ -192,8 +190,8 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                             )}
                         </TableBody>
                     </Table>
-                </ScrollableTable>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 }

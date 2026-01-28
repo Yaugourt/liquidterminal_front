@@ -10,7 +10,6 @@ import {
     SortableTableHead,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Card } from "@/components/ui/card";
 import { Database, Loader2 } from "lucide-react";
 import { formatNumber, formatMetricValue, formatPrice, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
@@ -18,8 +17,8 @@ import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
-import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { TokenIcon, formatPriceChange } from "@/components/common";
+import { Pagination } from "@/components/common/pagination";
 import {
     SpotToken,
     PerpToken,
@@ -189,38 +188,32 @@ export function UniversalTokenTable({
 
     if (isLoading && !tokens.length) {
         return (
-            <Card className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
-                <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-            </Card>
+            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
+                <div className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
+                    <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+                </div>
+            </div>
         );
     }
 
     if (error && mode === 'compact') {
         return (
-            <Card className="flex justify-center items-center h-full">
-                <p className="text-rose-400 text-sm">Une erreur est survenue</p>
-            </Card>
+            <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+                <div className="flex justify-center items-center h-full">
+                    <p className="text-rose-400 text-sm">Une erreur est survenue</p>
+                </div>
+            </div>
         );
     }
 
     //--- Main Render ---
 
     return (
-        <Card className={mode === 'compact' ? 'h-full' : undefined}>
-            <ScrollableTable
-                className={mode === 'compact' ? 'h-full' : undefined}
-                pagination={mode === 'full' ? {
-                    total,
-                    page: currentPage - 1,
-                    rowsPerPage: pageSize,
-                    onPageChange: handlePageChange,
-                    onRowsPerPageChange: handleRowsPerPageChange,
-                    rowsPerPageOptions: [5, 10, 15, 20],
-                } : undefined}
-            >
+        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
+            <div className={`overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent ${mode === 'compact' ? 'flex-1' : ''}`}>
                 <Table className={mode === 'compact' ? 'h-full' : ''}>
                     <TableHeader>
-                        <TableRow className="hover:bg-transparent">
+                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
                             <SortableTableHead
                                 label="Name"
                                 className={mode === 'compact' ? 'w-[35%]' : (market === 'spot' ? 'w-[16.66%]' : 'w-[17%]')}
@@ -431,7 +424,19 @@ export function UniversalTokenTable({
                         )}
                     </TableBody>
                 </Table>
-            </ScrollableTable>
-        </Card>
+            </div>
+            {mode === 'full' && (
+                <div className="border-t border-border-subtle px-4 py-3">
+                    <Pagination
+                        total={total}
+                        page={currentPage - 1}
+                        rowsPerPage={pageSize}
+                        onPageChange={handlePageChange}
+                        onRowsPerPageChange={handleRowsPerPageChange}
+                        rowsPerPageOptions={[5, 10, 15, 20]}
+                    />
+                </div>
+            )}
+        </div>
     );
 }

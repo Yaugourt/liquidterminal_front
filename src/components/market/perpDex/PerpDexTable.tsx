@@ -15,8 +15,6 @@ import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { PerpDexWithMarketData } from "@/services/market/perpDex/types";
-import { Card } from "@/components/ui/card";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
 
 type SortField = 'name' | 'activeAssets' | 'totalVolume24h' | 'totalOpenInterest' | 'avgFunding';
 
@@ -199,18 +197,20 @@ export function PerpDexTable() {
 
   if (isLoading && !sortedDexs.length) {
     return (
-      <Card className="flex justify-center items-center h-[400px]">
-        <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-      </Card>
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+        <div className="flex justify-center items-center h-[400px]">
+          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <ScrollableTable>
+    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <Table className="min-w-[800px] w-full">
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <SortableTableHead
                 label="Name"
                 onClick={() => handleSort('name')}
@@ -262,8 +262,8 @@ export function PerpDexTable() {
             )}
           </TableBody>
         </Table>
-      </ScrollableTable>
-    </Card>
+      </div>
+    </div>
   );
 }
 
