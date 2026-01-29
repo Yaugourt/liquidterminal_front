@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
-import { formatLargeNumber } from "@/lib/numberFormatting";
+import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { Loader2, TrendingUp, ArrowRight } from "lucide-react";
 import {
   Table,
