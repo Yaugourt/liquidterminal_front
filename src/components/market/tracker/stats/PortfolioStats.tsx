@@ -15,14 +15,12 @@ interface PortfolioStatsProps {
   portfolioData?: PortfolioApiResponse | null;
   perpPositions?: HyperliquidPerpResponse | null;
   walletAddress?: string;  // Optional for public view
-  walletName?: string;      // Optional for public view
 }
 
 export function PortfolioStats({
   portfolioData,
   perpPositions,
-  walletAddress: walletAddressProp,
-  walletName: walletNameProp
+  walletAddress: walletAddressProp
 }: PortfolioStatsProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [volumeTimeframe, setVolumeTimeframe] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
@@ -30,7 +28,7 @@ export function PortfolioStats({
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
 
-  // Use provided address/name or fall back to active wallet
+  // Use provided address or fall back to active wallet
   const walletAddress = walletAddressProp || activeWallet?.address || '';
 
   const { balances, isLoading, error } = useAddressBalance(walletAddress);
