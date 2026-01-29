@@ -154,7 +154,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         children: [
           {
             name: 'My Wallets',
-            href: '/market/tracker',
+            href: '/market/tracker/my-wallets',
             icon: null,
             IconComponent: Wallet
           },

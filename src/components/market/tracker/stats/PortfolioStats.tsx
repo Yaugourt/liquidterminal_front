@@ -14,18 +14,26 @@ import { HyperliquidPerpResponse } from "@/services/market/tracker/types";
 interface PortfolioStatsProps {
   portfolioData?: PortfolioApiResponse | null;
   perpPositions?: HyperliquidPerpResponse | null;
+  walletAddress?: string;  // Optional for public view
+  walletName?: string;      // Optional for public view
 }
 
 export function PortfolioStats({
   portfolioData,
-  perpPositions
+  perpPositions,
+  walletAddress: walletAddressProp,
+  walletName: walletNameProp
 }: PortfolioStatsProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [volumeTimeframe, setVolumeTimeframe] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
-  const { balances, isLoading, error } = useAddressBalance(activeWallet?.address || '');
+
+  // Use provided address/name or fall back to active wallet
+  const walletAddress = walletAddressProp || activeWallet?.address || '';
+
+  const { balances, isLoading, error } = useAddressBalance(walletAddress);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {

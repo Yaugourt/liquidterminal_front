@@ -10,10 +10,17 @@ import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { formatAge } from "@/services/explorer/address/utils";
 import { Pagination } from "@/components/common/pagination";
 
-export function WalletRecentFillsSection() {
+interface WalletRecentFillsSectionProps {
+  address?: string; // Optional: if not provided, use active wallet from store
+}
+
+export function WalletRecentFillsSection({ address: addressProp }: WalletRecentFillsSectionProps = {}) {
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
+
+  // Use provided address or fall back to active wallet
+  const walletAddress = addressProp || activeWallet?.address;
 
   // État pour la pagination
   const [page, setPage] = useState(0);
@@ -27,7 +34,7 @@ export function WalletRecentFillsSection() {
     data: allFills,
     isLoading,
     error
-  } = useUserFills(activeWallet?.address, {
+  } = useUserFills(walletAddress, {
     pageSize: 1000, // Récupérer beaucoup de fills pour la pagination côté client
     refreshInterval: 30000
   });

@@ -1,124 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { useWallets } from "@/store/use-wallets";
-import { WalletTabs } from "@/components/market/tracker";
-import { PortfolioStats, PerformanceChart } from "@/components/market/tracker/stats";
-import { AssetsSection } from "@/components/market/tracker/assets";
-import { WalletAssetsNavigation } from "@/components/market/tracker/WalletAssetsNavigation";
-import { OrdersSection, TwapSection } from "@/components/explorer/address/orders";
-import { WalletRecentFillsSection } from "@/components/market/tracker";
-import { useAuthContext } from "@/contexts/auth.context";
-import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
-import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
-import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { usePrivy } from "@privy-io/react-auth";
+import {
+  TopTradersPreview,
+  PublicListsPreview,
+  TrackedWalletsPreview
+} from "@/components/market/tracker/home";
 
-export default function Wallets() {
+/**
+ * Home page du Tracker - Accessible publiquement
+ * Affiche: Top Traders 24h, Public Lists Preview, Your Tracked Wallets
+ */
+export default function TrackerHome() {
   const { setTitle } = usePageTitle();
-  const { login } = useAuthContext();
-  const { ready: privyReady, authenticated } = usePrivy();
-  const { getActiveWallet } = useWallets();
-  const activeWallet = getActiveWallet();
-  const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Lift API calls to page level to avoid duplicate fetches in child components
-  const { data: portfolioData, isLoading: portfolioLoading } = usePortfolio(activeWallet?.address || '');
-  const { spotBalances, perpPositions, isLoading: balancesLoading } = useWalletsBalances(activeWallet?.address || '');
 
   useEffect(() => {
-    setTitle("Wallets");
-    setIsMounted(true);
+    setTitle("Wallet Tracker");
   }, [setTitle]);
 
-  // Only show auth popup after:
-  // 1. Component is mounted (client-side)
-  // 2. Privy is fully ready
-  // 3. User is confirmed not authenticated
-  // This prevents the popup from flashing during navigation for logged-in users
-  const showAuthPopup = isMounted && privyReady && !authenticated;
-
   return (
-    <>
-      {showAuthPopup && (
-        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="bg-brand-secondary/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
-              <p className="text-zinc-400 text-sm">You need to login to access your wallet data</p>
-            </div>
-            <Button
-              onClick={() => login()}
-              className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg py-2.5"
-            >
-              <LogIn className="w-5 h-5 mr-2" />
-              Login
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <div className={showAuthPopup ? "filter blur-[5px] pointer-events-none select-none" : ""}>
-        {/* Navigation principale */}
-        <div className="mb-8">
-          <WalletTabs />
-        </div>
-
-        {/* Stats et graphiques */}
-        <div className="mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-            <div className="lg:col-span-5">
-              <PortfolioStats
-                portfolioData={portfolioData}
-                perpPositions={perpPositions}
-              />
-            </div>
-            <div className="lg:col-span-7">
-              <PerformanceChart
-                portfolioData={portfolioData}
-                portfolioLoading={portfolioLoading}
-                spotBalances={spotBalances}
-                balancesLoading={balancesLoading}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation des assets */}
-        <WalletAssetsNavigation
-          activeTab={activeAssetsTab}
-          onChange={setActiveAssetsTab}
-        />
-
-        {/* Contenu selon l'onglet des assets */}
-        {activeAssetsTab === "holdings" && <AssetsSection />}
-
-        {activeAssetsTab === "orders" && (
-          activeWallet?.address ? (
-            <OrdersSection address={activeWallet.address} />
-          ) : (
-            <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
-              <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
-              <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
-            </div>
-          )
-        )}
-
-        {activeAssetsTab === "twap" && (
-          activeWallet?.address ? (
-            <TwapSection address={activeWallet.address} />
-          ) : (
-            <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
-              <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
-              <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
-            </div>
-          )
-        )}
-        {activeAssetsTab === "recent-fills" && <WalletRecentFillsSection />}
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="glass-panel rounded-2xl p-6">
+        <h1 className="text-2xl font-semibold text-white mb-2">Wallet Tracker</h1>
+        <p className="text-text-secondary">
+          Track top traders, discover public wallet lists, and monitor your favorite addresses
+        </p>
       </div>
-    </>
+
+      {/* Top Traders Section - Full Width */}
+      <TopTradersPreview />
+
+      {/* Two Column Layout - Public Lists + Your Wallets */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <PublicListsPreview />
+        <TrackedWalletsPreview />
+      </div>
+    </div>
   );
 }
