@@ -113,7 +113,7 @@ export function CategoryTabs({
         <div className="flex-1 min-w-0">
           <div
             ref={scrollContainerRef}
-            className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent gap-1"
+            className="w-fit flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent gap-1"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
