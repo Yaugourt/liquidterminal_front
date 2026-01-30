@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, Users } from "lucide-react";
+import { Loader2, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,16 +22,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const ITEMS_PER_PAGE = 10;
+
 /**
- * Composant preview des utilisateurs actifs pour la home page du tracker
+ * Composant Active Users avec pagination pour la home page du tracker
  * Affiche les utilisateurs les plus actifs avec filtres de période
  */
 export function ActiveUsersPreview() {
   const [hours, setHours] = useState(24);
+  const [page, setPage] = useState(1);
+
   const { users, metadata, isLoading, error, refetch } = useActiveUsers({
     hours,
-    limit: 10
+    limit: 100
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+  const paginatedUsers = users.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset page when hours changes
+  const handleHoursChange = (newHours: number) => {
+    setHours(newHours);
+    setPage(1);
+  };
 
   // Format relative time
   const formatRelativeTime = (isoDate: string) => {
@@ -82,7 +97,7 @@ export function ActiveUsersPreview() {
   }
 
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden">
+    <div className="glass-panel rounded-2xl overflow-hidden flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -91,28 +106,27 @@ export function ActiveUsersPreview() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">Active Users</h2>
-            <p className="text-text-muted text-sm">Most active traders</p>
+            <p className="text-text-muted text-sm">
+              {metadata?.totalCount || users.length} users
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          {/* Timeframe selector */}
-          <Select value={hours.toString()} onValueChange={(val) => setHours(Number(val))}>
-            <SelectTrigger className="w-[120px] bg-brand-secondary/40 border-border-subtle text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Last 1h</SelectItem>
-              <SelectItem value="4">Last 4h</SelectItem>
-              <SelectItem value="12">Last 12h</SelectItem>
-              <SelectItem value="24">Last 24h</SelectItem>
-              <SelectItem value="168">Last 7d</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Select value={hours.toString()} onValueChange={(val) => handleHoursChange(Number(val))}>
+          <SelectTrigger className="w-[120px] bg-brand-secondary/40 border-border-subtle text-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1">Last 1h</SelectItem>
+            <SelectItem value="4">Last 4h</SelectItem>
+            <SelectItem value="12">Last 12h</SelectItem>
+            <SelectItem value="24">Last 24h</SelectItem>
+            <SelectItem value="168">Last 7d</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto flex-1">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
@@ -149,22 +163,20 @@ export function ActiveUsersPreview() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.length === 0 ? (
+            {paginatedUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-text-muted">
                   No active users data available
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user, index) => (
+              paginatedUsers.map((user, index) => (
                 <TableRow
                   key={user.user}
                   className="border-b border-border-subtle hover:bg-white/5 transition-colors"
                 >
                   <TableCell className="py-3 px-4 text-sm text-white">
-                    <div className="flex items-center gap-2">
-                      <span className="text-brand-gold font-semibold">#{index + 1}</span>
-                    </div>
+                    <span className="text-brand-gold font-semibold">#{startIndex + index + 1}</span>
                   </TableCell>
                   <TableCell className="py-3 px-4">
                     <Link
@@ -193,15 +205,61 @@ export function ActiveUsersPreview() {
         </Table>
       </div>
 
-      {/* Footer with metadata */}
-      {metadata && (
-        <div className="px-6 py-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-muted">
-          <span>
-            Showing {users.length} of {metadata.totalCount} users
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="px-6 py-3 border-t border-border-subtle flex items-center justify-between">
+          <span className="text-text-muted text-xs">
+            Page {page} of {totalPages}
           </span>
-          <span>
-            Updated {new Date(metadata.cachedAt).toLocaleTimeString()}
-          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="h-8 w-8 p-0 text-text-muted hover:text-white disabled:opacity-50"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageNum: number;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (page <= 3) {
+                  pageNum = i + 1;
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = page - 2 + i;
+                }
+                return (
+                  <Button
+                    key={pageNum}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPage(pageNum)}
+                    className={`h-8 w-8 p-0 text-sm ${
+                      pageNum === page
+                        ? 'bg-brand-accent/20 text-brand-accent'
+                        : 'text-text-muted hover:text-white'
+                    }`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="h-8 w-8 p-0 text-text-muted hover:text-white disabled:opacity-50"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>
