@@ -30,7 +30,7 @@ interface ColumnSort {
  * Composant Top Traders avec pagination et tri par colonnes
  */
 export function TopTradersPreview() {
-  const [apiSort, setApiSort] = useState<TopTradersSortType>('pnl_pos');
+  const [apiSort] = useState<TopTradersSortType>('pnl_pos');
   const [page, setPage] = useState(1);
   const [columnSort, setColumnSort] = useState<ColumnSort>({ field: null, direction: 'desc' });
 
