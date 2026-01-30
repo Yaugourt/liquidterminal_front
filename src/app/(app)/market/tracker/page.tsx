@@ -6,7 +6,8 @@ import {
   TopTradersPreview,
   PublicListsPreview,
   TrackedWalletsPreview,
-  ActiveUsersPreview
+  ActiveUsersPreview,
+  TrackerStatsBar
 } from "@/components/market/tracker/home";
 
 /**
@@ -22,13 +23,8 @@ export default function TrackerHome() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="glass-panel rounded-2xl p-6">
-        <h1 className="text-2xl font-semibold text-white mb-2">Wallet Tracker</h1>
-        <p className="text-text-secondary">
-          Track top traders, discover public wallet lists, and monitor your favorite addresses
-        </p>
-      </div>
+      {/* Stats Bar */}
+      <TrackerStatsBar />
 
       {/* Top Traders & Active Users - Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
