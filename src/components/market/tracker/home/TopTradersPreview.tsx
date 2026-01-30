@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, TrendingUp, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,40 +14,91 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { TopTradersSortType } from "@/services/market/toptraders";
+import { TopTradersSortType, TopTrader } from "@/services/market/toptraders";
 
 const ITEMS_PER_PAGE = 10;
 
+type SortField = 'tradeCount' | 'totalVolume' | 'winRate' | 'totalPnl';
+type SortDirection = 'asc' | 'desc';
+
+interface ColumnSort {
+  field: SortField | null;
+  direction: SortDirection;
+}
+
 /**
- * Composant Top Traders avec pagination pour la home page du tracker
- * Affiche les traders avec différents filtres de tri
+ * Composant Top Traders avec pagination et tri par colonnes
  */
 export function TopTradersPreview() {
-  const [sort, setSort] = useState<TopTradersSortType>('pnl_pos');
+  const [apiSort, setApiSort] = useState<TopTradersSortType>('pnl_pos');
   const [page, setPage] = useState(1);
+  const [columnSort, setColumnSort] = useState<ColumnSort>({ field: null, direction: 'desc' });
 
   const { traders, isLoading, error, refetch } = useTopTraders({
-    sort,
+    sort: apiSort,
     limit: 50
   });
 
-  // Pagination logic
-  const totalPages = Math.ceil(traders.length / ITEMS_PER_PAGE);
-  const startIndex = (page - 1) * ITEMS_PER_PAGE;
-  const paginatedTraders = traders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  // Sort traders locally based on column click
+  const sortedTraders = useMemo(() => {
+    if (!columnSort.field) return traders;
 
-  // Reset page when sort changes
-  const handleSortChange = (newSort: TopTradersSortType) => {
-    setSort(newSort);
+    return [...traders].sort((a, b) => {
+      const aVal = a[columnSort.field as keyof TopTrader] as number;
+      const bVal = b[columnSort.field as keyof TopTrader] as number;
+
+      if (columnSort.direction === 'asc') {
+        return aVal - bVal;
+      }
+      return bVal - aVal;
+    });
+  }, [traders, columnSort]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedTraders.length / ITEMS_PER_PAGE);
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+  const paginatedTraders = sortedTraders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Handle column sort click
+  const handleColumnSort = (field: SortField) => {
     setPage(1);
+    if (columnSort.field === field) {
+      // Toggle direction or reset
+      if (columnSort.direction === 'desc') {
+        setColumnSort({ field, direction: 'asc' });
+      } else {
+        setColumnSort({ field: null, direction: 'desc' });
+      }
+    } else {
+      setColumnSort({ field, direction: 'desc' });
+    }
   };
+
+  // Get sort icon for column
+  const getSortIcon = (field: SortField) => {
+    if (columnSort.field !== field) {
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
+    }
+    if (columnSort.direction === 'desc') {
+      return <ArrowDown className="h-3 w-3 ml-1 text-brand-accent" />;
+    }
+    return <ArrowUp className="h-3 w-3 ml-1 text-brand-accent" />;
+  };
+
+  // Sortable column header component
+  const SortableHeader = ({ field, children, align = 'left' }: { field: SortField; children: React.ReactNode; align?: 'left' | 'right' }) => (
+    <TableHead className={`py-3 px-4 ${align === 'right' ? 'text-right' : ''}`}>
+      <button
+        onClick={() => handleColumnSort(field)}
+        className={`inline-flex items-center gap-0.5 text-text-secondary text-[10px] font-semibold uppercase tracking-wider hover:text-white transition-colors ${
+          columnSort.field === field ? 'text-brand-accent' : ''
+        }`}
+      >
+        {children}
+        {getSortIcon(field)}
+      </button>
+    </TableHead>
+  );
 
   // Loading state
   if (isLoading) {
@@ -95,17 +146,6 @@ export function TopTradersPreview() {
             </p>
           </div>
         </div>
-        <Select value={sort} onValueChange={(val) => handleSortChange(val as TopTradersSortType)}>
-          <SelectTrigger className="w-[140px] bg-brand-secondary/40 border-border-subtle text-white">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="pnl_pos">Top PnL</SelectItem>
-            <SelectItem value="pnl_neg">Worst PnL</SelectItem>
-            <SelectItem value="volume">Top Volume</SelectItem>
-            <SelectItem value="trades">Most Trades</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
@@ -123,26 +163,10 @@ export function TopTradersPreview() {
                   Trader
                 </span>
               </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Trades
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Volume
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Win Rate
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  PnL (24h)
-                </span>
-              </TableHead>
+              <SortableHeader field="tradeCount" align="right">Trades</SortableHeader>
+              <SortableHeader field="totalVolume" align="right">Volume</SortableHeader>
+              <SortableHeader field="winRate" align="right">Win Rate</SortableHeader>
+              <SortableHeader field="totalPnl" align="right">PnL (24h)</SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -209,21 +233,33 @@ export function TopTradersPreview() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <Button
-                  key={p}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPage(p)}
-                  className={`h-8 w-8 p-0 text-sm ${
-                    p === page
-                      ? 'bg-brand-accent/20 text-brand-accent'
-                      : 'text-text-muted hover:text-white'
-                  }`}
-                >
-                  {p}
-                </Button>
-              ))}
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageNum: number;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (page <= 3) {
+                  pageNum = i + 1;
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = page - 2 + i;
+                }
+                return (
+                  <Button
+                    key={pageNum}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPage(pageNum)}
+                    className={`h-8 w-8 p-0 text-sm ${
+                      pageNum === page
+                        ? 'bg-brand-accent/20 text-brand-accent'
+                        : 'text-text-muted hover:text-white'
+                    }`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
             </div>
             <Button
               variant="ghost"

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Users, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,32 +21,105 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ActiveUser } from "@/services/market/activeusers";
 
 const ITEMS_PER_PAGE = 10;
 
+type SortField = 'fill_count' | 'total_volume' | 'unique_coins' | 'last_activity';
+type SortDirection = 'asc' | 'desc';
+
+interface ColumnSort {
+  field: SortField | null;
+  direction: SortDirection;
+}
+
 /**
- * Composant Active Users avec pagination pour la home page du tracker
- * Affiche les utilisateurs les plus actifs avec filtres de période
+ * Composant Active Users avec pagination et tri par colonnes
  */
 export function ActiveUsersPreview() {
   const [hours, setHours] = useState(24);
   const [page, setPage] = useState(1);
+  const [columnSort, setColumnSort] = useState<ColumnSort>({ field: null, direction: 'desc' });
 
   const { users, metadata, isLoading, error, refetch } = useActiveUsers({
     hours,
     limit: 100
   });
 
+  // Sort users locally based on column click
+  const sortedUsers = useMemo(() => {
+    if (!columnSort.field) return users;
+
+    return [...users].sort((a, b) => {
+      let aVal: number | string;
+      let bVal: number | string;
+
+      if (columnSort.field === 'last_activity') {
+        aVal = new Date(a.last_activity).getTime();
+        bVal = new Date(b.last_activity).getTime();
+      } else {
+        aVal = a[columnSort.field as keyof ActiveUser] as number;
+        bVal = b[columnSort.field as keyof ActiveUser] as number;
+      }
+
+      if (columnSort.direction === 'asc') {
+        return (aVal as number) - (bVal as number);
+      }
+      return (bVal as number) - (aVal as number);
+    });
+  }, [users, columnSort]);
+
   // Pagination logic
-  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedUsers.length / ITEMS_PER_PAGE);
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
-  const paginatedUsers = users.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedUsers = sortedUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   // Reset page when hours changes
   const handleHoursChange = (newHours: number) => {
     setHours(newHours);
     setPage(1);
+    setColumnSort({ field: null, direction: 'desc' });
   };
+
+  // Handle column sort click
+  const handleColumnSort = (field: SortField) => {
+    setPage(1);
+    if (columnSort.field === field) {
+      if (columnSort.direction === 'desc') {
+        setColumnSort({ field, direction: 'asc' });
+      } else {
+        setColumnSort({ field: null, direction: 'desc' });
+      }
+    } else {
+      setColumnSort({ field, direction: 'desc' });
+    }
+  };
+
+  // Get sort icon for column
+  const getSortIcon = (field: SortField) => {
+    if (columnSort.field !== field) {
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
+    }
+    if (columnSort.direction === 'desc') {
+      return <ArrowDown className="h-3 w-3 ml-1 text-brand-accent" />;
+    }
+    return <ArrowUp className="h-3 w-3 ml-1 text-brand-accent" />;
+  };
+
+  // Sortable column header component
+  const SortableHeader = ({ field, children, align = 'left' }: { field: SortField; children: React.ReactNode; align?: 'left' | 'right' }) => (
+    <TableHead className={`py-3 px-4 ${align === 'right' ? 'text-right' : ''}`}>
+      <button
+        onClick={() => handleColumnSort(field)}
+        className={`inline-flex items-center gap-0.5 text-text-secondary text-[10px] font-semibold uppercase tracking-wider hover:text-white transition-colors ${
+          columnSort.field === field ? 'text-brand-accent' : ''
+        }`}
+      >
+        {children}
+        {getSortIcon(field)}
+      </button>
+    </TableHead>
+  );
 
   // Format relative time
   const formatRelativeTime = (isoDate: string) => {
@@ -140,26 +213,10 @@ export function ActiveUsersPreview() {
                   Trader
                 </span>
               </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Fills
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Volume
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Coins
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4 text-right">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Last Active
-                </span>
-              </TableHead>
+              <SortableHeader field="fill_count" align="right">Fills</SortableHeader>
+              <SortableHeader field="total_volume" align="right">Volume</SortableHeader>
+              <SortableHeader field="unique_coins" align="right">Coins</SortableHeader>
+              <SortableHeader field="last_activity" align="right">Last Active</SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>
