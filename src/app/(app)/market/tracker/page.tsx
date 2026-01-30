@@ -5,7 +5,8 @@ import { usePageTitle } from "@/store/use-page-title";
 import {
   TopTradersPreview,
   PublicListsPreview,
-  TrackedWalletsPreview
+  TrackedWalletsPreview,
+  ActiveUsersPreview
 } from "@/components/market/tracker/home";
 
 /**
@@ -29,10 +30,13 @@ export default function TrackerHome() {
         </p>
       </div>
 
-      {/* Top Traders Section - Full Width */}
-      <TopTradersPreview />
+      {/* Top Traders & Active Users - Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <TopTradersPreview />
+        <ActiveUsersPreview />
+      </div>
 
-      {/* Two Column Layout - Public Lists + Your Wallets */}
+      {/* Public Lists + Your Wallets - Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <PublicListsPreview />
         <TrackedWalletsPreview />
