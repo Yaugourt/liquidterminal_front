@@ -56,7 +56,12 @@ export function PillTabs({
     return (
         <div
             ref={containerRef}
-            className={cn("relative flex items-center gap-1 p-1 bg-brand-dark/30 rounded-lg w-fit", className)}
+            className={cn(
+                "relative flex items-center gap-1 p-1 bg-brand-dark/30 rounded-lg",
+                "w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
+                "sm:w-fit sm:overflow-x-visible",
+                className
+            )}
         >
             {/* Animated indicator */}
             <div
@@ -80,7 +85,8 @@ export function PillTabs({
                         data-tab-value={tab.value}
                         onClick={() => onTabChange(tab.value)}
                         className={cn(
-                            "relative px-4 py-1.5 text-sm font-medium transition-colors rounded-md z-10",
+                            "relative py-1.5 text-xs font-medium transition-colors rounded-md z-10 whitespace-nowrap",
+                            "px-2.5 sm:px-4",
                             isActive ? "text-brand-tertiary" : "text-text-secondary hover:text-white"
                         )}
                     >

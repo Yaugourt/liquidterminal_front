@@ -45,13 +45,14 @@ export const StatusTabs = memo(function StatusTabs({
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
+            "py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
+            "px-2 sm:px-3",
             activeTab === tab.id
               ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
               : "tab-inactive"

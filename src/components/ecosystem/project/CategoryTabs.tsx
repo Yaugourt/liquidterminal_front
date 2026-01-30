@@ -110,10 +110,10 @@ export function CategoryTabs({
         )}
         
         {/* Tabs container with scroll */}
-        <div className="flex-1 min-w-0 max-w-[800px]">
+        <div className="flex-1 min-w-0">
           <div
             ref={scrollContainerRef}
-            className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto gap-1 max-w-full"
+            className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent gap-1"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none'
@@ -122,7 +122,7 @@ export function CategoryTabs({
             {/* Tab "All" */}
             <button
               onClick={() => onTabChange('all')}
-              className={`flex-shrink-0 px-4 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex-shrink-0 px-2.5 sm:px-4 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === 'all'
                   ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                   : 'tab-inactive'
@@ -136,7 +136,7 @@ export function CategoryTabs({
               <button
                 key={category.id}
                 onClick={() => onTabChange(category.id.toString())}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+                className={`flex-shrink-0 px-2 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                   activeTab === category.id.toString()
                     ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                     : 'tab-inactive'

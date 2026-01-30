@@ -49,7 +49,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       return (
-        <div className="bg-brand-tertiary border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
+        <div className="bg-brand-secondary/95 backdrop-blur-md border border-border-subtle rounded-lg p-3 shadow-xl shadow-black/40">
           <p className="text-brand-accent font-medium mb-1">{`Range: ${label} HYPE`}</p>
           <p className="text-white text-sm">{`Holders: ${formatNumber(data.holders, format)}`}</p>
           <p className="text-white text-sm">{`Staked: ${formatNumber(data.staked, format)} HYPE`}</p>
@@ -104,7 +104,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
               bottom: 8,
             }}
           >
-          <CartesianGrid strokeDasharray="3 3" stroke="#83E9FF20" />
+          <CartesianGrid strokeDasharray="3 3" className="stroke-brand-accent/10" />
           <XAxis 
             dataKey="range" 
             stroke="#FFFFFF"
@@ -134,7 +134,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
             {chartData.map((entry, index) => (
               <Cell 
                 key={`cell-${index}`} 
-                fill={hoveredIndex === index ? "#a3f3ff" : "#83E9FF"}
+                className={hoveredIndex === index ? "fill-brand-accent/80" : "fill-brand-accent"}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               />

@@ -42,7 +42,7 @@ export const StakingLineChart = memo(function StakingLineChart({
       const date = new Date(data.date);
       
       return (
-        <div className="bg-brand-tertiary border border-[#83E9FF4D] rounded-lg p-3 shadow-lg">
+        <div className="bg-brand-secondary/95 backdrop-blur-md border border-border-subtle rounded-lg p-3 shadow-xl shadow-black/40">
           <p className="text-brand-accent font-medium mb-1">
             {formatDate(date, dateFormat)}
           </p>
@@ -99,10 +99,10 @@ export const StakingLineChart = memo(function StakingLineChart({
               bottom: period === '1y' ? 18 : 35,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#83E9FF20" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-brand-accent/10" />
             <XAxis 
               dataKey="day" 
-              stroke="#f9e370"
+              className="stroke-brand-gold"
               fontSize={11}
               tickLine={false}
               axisLine={false}
@@ -114,7 +114,7 @@ export const StakingLineChart = memo(function StakingLineChart({
               minTickGap={period === '1y' ? 30 : 20}
             />
             <YAxis 
-              stroke="#f9e370"
+              className="stroke-brand-gold"
               fontSize={12}
               tickLine={false}
               axisLine={false}
@@ -129,10 +129,10 @@ export const StakingLineChart = memo(function StakingLineChart({
             <Line 
               type="monotone"
               dataKey="totalTokens" 
-              stroke="#83E9FF"
+              className="stroke-brand-accent"
               strokeWidth={2}
-              dot={{ fill: '#83E9FF', strokeWidth: 2, r: 3 }}
-              activeDot={{ r: 5, fill: '#83E9FF' }}
+              dot={{ className: 'fill-brand-accent', strokeWidth: 2, r: 3 }}
+              activeDot={{ r: 5, className: 'fill-brand-accent' }}
             />
           </LineChart>
         </ResponsiveContainer>

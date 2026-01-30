@@ -61,7 +61,7 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
             </div>
         </TableCell>
         <TableCell className="py-3 pl-4 pr-4">
-            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-brand-accent/10 text-brand-accent' : 'bg-rose-500/20 text-rose-400'}`}>
+            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-brand-gold/10 text-brand-gold' : 'bg-rose-500/20 text-rose-400'}`}>
                 {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
             </div>
         </TableCell>
