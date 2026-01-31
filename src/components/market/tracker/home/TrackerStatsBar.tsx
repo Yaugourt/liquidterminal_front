@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, TrendingUp, Users, DollarSign, Activity, Trophy, Crown, Zap } from "lucide-react";
+import { Loader2, TrendingUp, DollarSign, Activity, Trophy, Crown, Zap } from "lucide-react";
 
 /**
  * Barre de statistiques et wallets notables pour la home page du tracker
@@ -26,7 +26,7 @@ export function TrackerStatsBar() {
     limit: 1
   });
 
-  const { users, metadata: activeMetadata, isLoading: usersLoading } = useActiveUsers({
+  const { users, isLoading: usersLoading } = useActiveUsers({
     hours: 24,
     limit: 100
   });
@@ -36,7 +36,6 @@ export function TrackerStatsBar() {
   // Calculate aggregated stats
   const totalPnl24h = traders.reduce((sum, t) => sum + t.totalPnl, 0);
   const totalVolume24h = traders.reduce((sum, t) => sum + t.totalVolume, 0);
-  const totalActiveUsers = activeMetadata?.totalCount || users.length;
   const totalFills24h = users.reduce((sum, u) => sum + u.fill_count, 0);
 
   // Notable wallets
@@ -49,12 +48,6 @@ export function TrackerStatsBar() {
 
   // Stats row
   const stats = [
-    {
-      label: "Active Traders",
-      value: formatLargeNumber(totalActiveUsers),
-      icon: Users,
-      color: "text-brand-accent"
-    },
     {
       label: "24h Volume",
       value: `$${formatLargeNumber(totalVolume24h)}`,
@@ -133,7 +126,7 @@ export function TrackerStatsBar() {
   return (
     <div className="space-y-4">
       {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {stats.map((stat) => (
           <div
             key={stat.label}
