@@ -35,7 +35,7 @@ export const StatsCard = memo(function StatsCard({
                 <div className="h-7 bg-white/5 animate-pulse rounded w-24" />
             ) : (
                 <div className="flex items-baseline gap-2">
-                    <span className="text-lg text-white font-bold tracking-tight">
+                    <span className="text-lg max-sm:text-[16px] text-white font-bold tracking-tight">
                         {value}
                     </span>
                     {change !== undefined && (

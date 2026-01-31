@@ -31,7 +31,7 @@ const AnimatedPeriodSelector = ({
   availablePeriods: ChartPeriod[];
 }) => {
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+    <div className="flex w-fit bg-brand-dark rounded-lg p-1 border border-border-subtle">
       {availablePeriods.map((period) => (
         <button
           key={period}

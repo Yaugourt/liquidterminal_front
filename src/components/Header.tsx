@@ -233,7 +233,7 @@ Source: @Liquidterminal`;
                 {/* Mobile Fees and Assistance Fund Display - Compact version below */}
                 {showFees && feesStats && assistanceFund && !feesLoading && !feesError && !assistanceFundLoading && !assistanceFundError && (
                     <div className="md:hidden w-full px-2 sm:px-4 py-2">
-                        <div className="flex items-center gap-2 overflow-x-auto">
+                        <div className="flex items-center gap-2 overflow-x-auto flex-row-reverse">
                             {/* Fees combined */}
                             <div className="stat-card group flex-shrink-0">
                                 <div className="flex items-center gap-2">

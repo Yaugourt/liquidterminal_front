@@ -87,7 +87,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
 
   return (
     <div className={`glass-panel flex flex-col h-full overflow-hidden ${className || ''}`}>
-      <div className="p-4 flex-shrink-0 border-b border-border-subtle">
+      <div className="p-4 flex-shrink-0 border-b border-border-subtle w-fit">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
           <PillTabs
