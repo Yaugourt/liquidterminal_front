@@ -110,7 +110,7 @@ export function CategoryTabs({
         )}
         
         {/* Tabs container with scroll */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <div
             ref={scrollContainerRef}
             className="w-fit flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent gap-1"

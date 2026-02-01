@@ -84,8 +84,8 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       </div>
 
       {/* Category Tabs and Search Bar */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex-1">
+      <div className="flex items-center justify-between gap-4 w-full min-w-0 overflow-hidden">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <CategoryTabs
             categories={categories}
             activeTab={activeTab}
@@ -98,7 +98,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           <SearchBar
             onSearch={setSearchQuery}
             placeholder="Search projects..."
-            className="max-w-sm"
+            className="w-full max-w-sm"
           />
         </div>
       </div>
