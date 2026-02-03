@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from "react";
-import { useRecentLiquidations, Liquidation } from "@/services/explorer/liquidation";
-import { fetchLiquidationsData } from "@/services/explorer/liquidation/api";
+import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback, useRef } from "react";
+import { Liquidation } from "@/services/explorer/liquidation";
+import { fetchRecentLiquidations, fetchLiquidationsData } from "@/services/explorer/liquidation/api";
+import { useLiquidationWSStore } from "@/services/explorer/liquidation/websocket.store";
 import { LiquidationStats, ChartDataBucket, ChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
 
 type TimeframePeriod = 2 | 4 | 8 | 12 | 24;
@@ -29,12 +30,15 @@ export const CHART_PERIOD_OPTIONS: { value: ChartPeriod; label: string }[] = [
 const periodToKey = (period: TimeframePeriod): PeriodKey => `${period}h` as PeriodKey;
 
 interface LiquidationsContextValue {
-  // Raw data for table only (2h, 1000 max)
+  // Liquidations data (initial from API + realtime from WS)
   liquidations: Liquidation[];
   filteredLiquidations: Liquidation[];
   isLoading: boolean;
   error: Error | null;
-  refetch: () => Promise<void>;
+  
+  // WebSocket status
+  isConnected: boolean;
+  isSubscribed: boolean;
   
   // Period selection for StatsCard
   selectedPeriod: TimeframePeriod;
@@ -55,9 +59,8 @@ interface LiquidationsContextValue {
   chartPeriod: ChartPeriod;
   setChartPeriod: (period: ChartPeriod) => void;
   
-  // Auto-refresh
+  // Last update info
   lastUpdated: Date | null;
-  refreshData: () => Promise<void>;
 }
 
 const defaultStats: LiquidationStats = {
@@ -75,88 +78,110 @@ const defaultStats: LiquidationStats = {
 
 const LiquidationsContext = createContext<LiquidationsContextValue | null>(null);
 
-// Cache global - persiste entre les remontages (StrictMode safe)
-let globalAllData: Record<PeriodKey, LiquidationsPeriodData> | null = null;
-let isLoadingGlobal = false;
-let hasLoadedGlobal = false;
-
-// Interval d'auto-refresh en ms (60 secondes)
-const AUTO_REFRESH_INTERVAL = 60 * 1000;
+const MAX_LIQUIDATIONS = 1000;
 
 export function LiquidationsProvider({ children }: { children: ReactNode }) {
   const [selectedPeriod, setSelectedPeriod] = useState<TimeframePeriod>(2);
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("2h");
   const [minAmount, setMinAmount] = useState<MinAmountPreset>(0);
   
-  // Données unifiées - toutes les périodes en mémoire
-  const [allData, setAllData] = useState<Record<PeriodKey, LiquidationsPeriodData> | null>(globalAllData);
-  const [dataLoading, setDataLoading] = useState(!hasLoadedGlobal);
+  // Données initiales chargées via API
+  const [liquidations, setLiquidations] = useState<Liquidation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
-  // Requête pour les liquidations récentes (tableau seulement)
-  const { liquidations, isLoading, error, refetch } = useRecentLiquidations({
-    limit: 1000,
-    hours: 2
-  });
+  // Stats/Chart data
+  const [allData, setAllData] = useState<Record<PeriodKey, LiquidationsPeriodData> | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
+  
+  // Track if initial load is done
+  const hasLoadedRef = useRef(false);
+  
+  // WebSocket store
+  const { 
+    isConnected, 
+    isSubscribed, 
+    connect: wsConnect, 
+    disconnect: wsDisconnect,
+    setOnLiquidation 
+  } = useLiquidationWSStore();
+
+  // Callback pour les nouvelles liquidations via WebSocket
+  const handleNewLiquidation = useCallback((newLiq: Liquidation) => {
+    setLiquidations(prev => {
+      // Éviter les doublons (même tid)
+      if (prev.some(l => l.tid === newLiq.tid)) {
+        return prev;
+      }
+      // Ajouter en tête, limiter la taille
+      return [newLiq, ...prev].slice(0, MAX_LIQUIDATIONS);
+    });
+    setLastUpdated(new Date());
+  }, []);
+
+  // Charger les données initiales via API (UNE SEULE FOIS)
+  useEffect(() => {
+    if (hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
+
+    const loadInitialData = async () => {
+      setIsLoading(true);
+      setDataLoading(true);
+
+      try {
+        // Charger en parallèle : liquidations récentes + stats/chart
+        const [liquidationsResponse, dataResponse] = await Promise.all([
+          fetchRecentLiquidations({ limit: 1000, hours: 2 }),
+          fetchLiquidationsData()
+        ]);
+
+        // Liquidations pour le tableau
+        if (liquidationsResponse.success) {
+          setLiquidations(liquidationsResponse.data);
+        }
+
+        // Stats + Chart pour toutes les périodes
+        if (dataResponse.success) {
+          setAllData(dataResponse.periods);
+        }
+
+        setLastUpdated(new Date());
+        setError(null);
+      } catch (err) {
+        console.error('Error loading initial liquidations data:', err);
+        setError(err instanceof Error ? err : new Error('Failed to load data'));
+      } finally {
+        setIsLoading(false);
+        setDataLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
+  // Activer le WebSocket après le chargement initial
+  useEffect(() => {
+    if (isLoading) return; // Attendre que l'API ait fini
+
+    // Enregistrer le callback pour les nouvelles liquidations
+    setOnLiquidation(handleNewLiquidation);
+    
+    // Connecter le WebSocket
+    wsConnect();
+
+    // Cleanup à la déconnexion
+    return () => {
+      setOnLiquidation(undefined);
+      wsDisconnect();
+    };
+  }, [isLoading, handleNewLiquidation, setOnLiquidation, wsConnect, wsDisconnect]);
 
   // Filtrer les liquidations par montant minimum (pour le tableau)
   const filteredLiquidations = useMemo(() => {
     if (minAmount === 0) return liquidations;
     return liquidations.filter(liq => liq.notional_total >= minAmount);
   }, [liquidations, minAmount]);
-
-  // Fonction pour charger toutes les données (stats + chart) en UN appel
-  const loadAllData = useCallback(async () => {
-    setDataLoading(true);
-    try {
-      const response = await fetchLiquidationsData();
-      if (response.success) {
-        globalAllData = response.periods;
-        setAllData(response.periods);
-        setLastUpdated(new Date());
-      }
-    } catch (err) {
-      console.error('Error fetching liquidations data:', err);
-    } finally {
-      hasLoadedGlobal = true;
-      isLoadingGlobal = false;
-      setDataLoading(false);
-    }
-  }, []);
-
-  // Fonction de refresh manuel
-  const refreshData = useCallback(async () => {
-    hasLoadedGlobal = false;
-    isLoadingGlobal = false;
-    await loadAllData();
-    await refetch();
-  }, [loadAllData, refetch]);
-
-  // Charger toutes les données en UN SEUL appel au montage
-  useEffect(() => {
-    if (hasLoadedGlobal || isLoadingGlobal) {
-      if (globalAllData) {
-        setAllData(globalAllData);
-        setDataLoading(false);
-      }
-      return;
-    }
-    
-    isLoadingGlobal = true;
-    loadAllData();
-  }, [loadAllData]);
-
-  // Auto-refresh toutes les 60 secondes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      hasLoadedGlobal = false;
-      isLoadingGlobal = false;
-      loadAllData();
-      refetch();
-    }, AUTO_REFRESH_INTERVAL);
-
-    return () => clearInterval(interval);
-  }, [loadAllData, refetch]);
 
   // Stats actives basées sur la période sélectionnée (INSTANT - pas de fetch)
   const periodKey = periodToKey(selectedPeriod);
@@ -172,7 +197,8 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     filteredLiquidations,
     isLoading,
     error,
-    refetch,
+    isConnected,
+    isSubscribed,
     selectedPeriod,
     setSelectedPeriod,
     minAmount,
@@ -185,7 +211,6 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     chartPeriod,
     setChartPeriod,
     lastUpdated,
-    refreshData,
   };
 
   return (

@@ -179,3 +179,83 @@ export interface LiquidationsDataResponse {
     cachedAt: string;
   };
 }
+
+// ============================================
+// WebSocket Types
+// ============================================
+
+/**
+ * Filtres pour la subscription WebSocket liquidations
+ */
+export interface LiquidationWSFilters {
+  coins?: string[];        // Filtrer par coins (ex: ["BTC", "ETH"])
+  minAmountUsd?: number;   // Montant minimum en USD
+  wallets?: string[];      // Filtrer par wallets liquidés
+}
+
+/**
+ * Types de messages WebSocket
+ */
+export type LiquidationWSMessageType = 
+  | 'connected' 
+  | 'subscribed' 
+  | 'liquidation' 
+  | 'heartbeat' 
+  | 'error';
+
+/**
+ * Message WebSocket reçu du serveur
+ */
+export interface LiquidationWSMessage {
+  type: LiquidationWSMessageType;
+  data?: Liquidation | { filters?: LiquidationWSFilters };
+  timestamp: string;
+  error?: string;
+}
+
+/**
+ * Message de subscription envoyé au serveur
+ */
+export interface LiquidationWSSubscription {
+  method: 'subscribe';
+  subscription: {
+    type: 'liquidation';
+    filters?: LiquidationWSFilters;
+  };
+}
+
+/**
+ * État du store WebSocket liquidations
+ */
+export interface LiquidationWSStore {
+  // État de connexion
+  isConnected: boolean;
+  isSubscribed: boolean;
+  error: string | null;
+  
+  // Données temps réel
+  recentLiquidations: Liquidation[];
+  
+  // Filtres actifs
+  filters: LiquidationWSFilters;
+  
+  // Actions
+  connect: () => void;
+  disconnect: () => void;
+  updateFilters: (filters: LiquidationWSFilters) => void;
+  clearLiquidations: () => void;
+  
+  // Callback pour notifications externes
+  onLiquidation?: (liq: Liquidation) => void;
+  setOnLiquidation: (callback: ((liq: Liquidation) => void) | undefined) => void;
+}
+
+/**
+ * Options pour le hook useLiquidationsWebSocket
+ */
+export interface UseLiquidationsWSOptions {
+  enabled?: boolean;
+  filters?: LiquidationWSFilters;
+  onLiquidation?: (liq: Liquidation) => void;
+  maxRecentItems?: number;
+}
