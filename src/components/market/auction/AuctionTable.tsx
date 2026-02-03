@@ -1,4 +1,4 @@
-import { useState, memo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
 import {
   Table,
@@ -9,42 +9,22 @@ import {
   TableRow,
   SortableTableHead,
 } from '@/components/ui/table';
-import { Database, Loader2, Copy, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
 import { Pagination } from '@/components/common';
+import { TableEmptyState } from "@/components/ui/table-states";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 interface AuctionTableProps {
   marketType: "spot" | "perp";
 }
 
 
-// EmptyState
-const EmptyState = memo(() => (
-  <TableRow>
-    <TableCell colSpan={7} className="text-center py-8">
-      <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-text-muted" />
-        <p className="text-text-secondary text-sm mb-1">No auctions available</p>
-        <p className="text-text-muted text-xs">Check back later</p>
-      </div>
-    </TableCell>
-  </TableRow>
-));
-EmptyState.displayName = 'EmptyState';
 
-// Coming Soon State pour perp
-const ComingSoonState = memo(() => (
-  <div className="flex items-center justify-center h-[400px]">
-    <div className="flex flex-col items-center text-center px-4">
-      <Database className="w-10 h-10 mb-3 text-text-muted" />
-      <p className="text-text-secondary text-sm mb-1">Coming Soon</p>
-      <p className="text-text-muted text-xs">Perpetual auctions table will be available soon.</p>
-    </div>
-  </div>
-));
-ComingSoonState.displayName = 'ComingSoonState';
 
 const columns = [
   { key: 'time', label: 'Date', sortable: true, className: 'pl-4 w-[16%] text-left' },
@@ -134,7 +114,11 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   if (marketType === "perp") {
     return (
       <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-        <ComingSoonState />
+        <EmptyState
+          title="Coming Soon"
+          description="Perpetual auctions table will be available soon."
+          withCard={false}
+        />
       </div>
     );
   }
@@ -142,18 +126,14 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   if (isLoading) {
     return (
       <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Loading auctions..." size="lg" withCard={false} />
       </div>
     );
   }
   if (error) {
     return (
-      <div className="w-full bg-rose-500/5 border border-rose-500/20 rounded-2xl backdrop-blur-md overflow-hidden">
-        <div className="flex justify-center items-center h-[200px]">
-          <span className="text-rose-400 text-sm">Error loading auctions</span>
-        </div>
+      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+        <ErrorState title="Error loading auctions" message={error.message} withCard={false} />
       </div>
     );
   }
@@ -186,7 +166,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
           </TableHeader>
           <TableBody>
             {auctions.length === 0 ? (
-              <EmptyState />
+              <TableEmptyState colSpan={7} title="No auctions available" description="Check back later" />
             ) : (
               auctions.map((auction) => (
                 <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">

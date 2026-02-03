@@ -3,8 +3,10 @@
 import { memo } from "react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
-import { Loader2, BarChart3, Layers, Building2, TrendingUp, Activity, Wifi, WifiOff } from "lucide-react";
+import { BarChart3, Layers, Building2, TrendingUp, Activity, Wifi, WifiOff } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 /**
  * Carte affichant les statistiques globales des PerpDexs (HIP-3) avec données live
@@ -16,9 +18,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
   if (error) {
     return (
       <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 h-full">
-        <div className="flex justify-center items-center h-full">
-          <p className="text-rose-400 text-sm">Failed to load stats</p>
-        </div>
+        <ErrorState title="Failed to load stats" withCard={false} />
       </div>
     );
   }
@@ -47,9 +47,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
       {/* Stats */}
       {isLoading ? (
-        <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-5 h-5 text-brand-accent animate-spin" />
-        </div>
+        <LoadingState message="" size="sm" withCard={false} />
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Dexs */}

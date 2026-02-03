@@ -61,7 +61,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-panel rounded-2xl border-none">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-white text-xl font-bold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-text-muted">

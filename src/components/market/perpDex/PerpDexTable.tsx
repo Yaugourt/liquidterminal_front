@@ -9,31 +9,19 @@ import {
   TableRow,
   SortableTableHead,
 } from "@/components/ui/table";
-import { Database, Loader2 } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { PerpDexWithMarketData } from "@/services/market/perpDex/types";
+import { TableEmptyState } from "@/components/ui/table-states";
+import { LoadingState } from "@/components/ui/loading-state";
 
 type SortField = 'name' | 'activeAssets' | 'totalVolume24h' | 'totalOpenInterest' | 'avgFunding';
 
 
 
-// Empty state component
-const EmptyState = memo(() => (
-  <TableRow>
-    <TableCell colSpan={6} className="text-center py-8">
-      <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-text-muted" />
-        <p className="text-text-secondary text-sm mb-1">No PerpDex available</p>
-        <p className="text-text-muted text-xs">Check back later</p>
-      </div>
-    </TableCell>
-  </TableRow>
-));
 
-EmptyState.displayName = 'EmptyState';
 
 // Row component with live market data
 const PerpDexRow = memo(({
@@ -198,9 +186,7 @@ export function PerpDexTable() {
   if (isLoading && !sortedDexs.length) {
     return (
       <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Loading PerpDex..." size="lg" withCard={false} />
       </div>
     );
   }
@@ -258,7 +244,7 @@ export function PerpDexTable() {
                 />
               ))
             ) : (
-              <EmptyState />
+              <TableEmptyState colSpan={6} title="No PerpDex available" description="Check back later" />
             )}
           </TableBody>
         </Table>

@@ -13,6 +13,7 @@ import { Users, Shield, RefreshCw, ShieldCheck, UserCheck, Loader2 } from 'lucid
 import { UserFilters } from './UserFilters';
 import { UserTable } from './UserTable';
 import { UserEditModal } from './UserEditModal';
+import { Card } from "@/components/ui/card";
 
 // Stats Card Component
 function StatsCard({
@@ -29,7 +30,7 @@ function StatsCard({
   iconBg?: string;
 }) {
   return (
-    <div className="glass-panel p-4 hover:border-border-hover transition-all group">
+    <Card className="p-4">
       <div className="flex items-center gap-3 mb-2">
         <div className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center transition-transform group-hover:scale-110`}>
           <Icon size={16} className={iconColor} />
@@ -37,7 +38,7 @@ function StatsCard({
         <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">{title}</h3>
       </div>
       <span className="text-xl text-white font-bold tracking-tight">{value}</span>
-    </div>
+    </Card>
   );
 }
 
@@ -164,7 +165,7 @@ export function UserManagement() {
 
   if (error) {
     return (
-      <div className="glass-panel p-6">
+      <Card className="p-6">
         <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center backdrop-blur-md">
           <p className="text-rose-400 mb-3 text-sm">Error loading users</p>
           <Button
@@ -174,21 +175,21 @@ export function UserManagement() {
             Retry
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Check if user is loaded
   if (!currentUser) {
     return (
-      <div className="glass-panel p-6">
+      <Card className="p-6">
         <div className="flex justify-center items-center h-[200px]">
           <div className="flex flex-col items-center">
             <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
             <span className="text-text-muted text-sm">Loading user...</span>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -197,18 +198,18 @@ export function UserManagement() {
       requiredRole="ADMIN"
       user={currentUser}
       fallback={
-        <div className="glass-panel p-6">
+        <Card className="p-6">
           <div className="flex items-center justify-center h-48">
             <div className="text-center">
               <Shield className="w-8 h-8 text-[#f9e370] mx-auto mb-3" />
               <p className="text-white text-sm">Access restricted to administrators</p>
             </div>
           </div>
-        </div>
+        </Card>
       }
     >
       {/* Main Card Container */}
-      <div className="glass-panel overflow-hidden">
+      <Card>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
@@ -310,7 +311,7 @@ export function UserManagement() {
             />
           )}
         </div>
-      </div>
+      </Card>
     </ProtectedAction>
   );
 }

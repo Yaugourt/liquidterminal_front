@@ -3,10 +3,12 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
-import { Loader2, BarChart2, Clock, CalendarDays, Scale, Wallet } from "lucide-react";
+import { BarChart2, Clock, CalendarDays, Scale, Wallet } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { SpotGlobalStats } from "@/services/market/spot/types";
 import { PerpGlobalStats } from "@/services/market/perp/types";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 type GlobalStats = SpotGlobalStats | PerpGlobalStats;
 
@@ -41,9 +43,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
   if (error) {
     return (
       <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 h-full">
-        <div className="flex justify-center items-center h-full">
-          <p className="text-rose-400 text-sm">Une erreur est survenue</p>
-        </div>
+        <ErrorState title="Une erreur est survenue" withCard={false} />
       </div>
     );
   }
@@ -60,9 +60,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
 
       {/* Statistiques détaillées - flex-1 pour occuper l'espace restant */}
       {isLoading || feesLoading ? (
-        <div className="flex justify-center items-center flex-1">
-          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
-        </div>
+        <LoadingState message="" size="sm" withCard={false} />
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Première stat - conditionnelle selon le marché */}

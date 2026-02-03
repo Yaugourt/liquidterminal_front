@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Loader2, Database, AlertCircle } from "lucide-react";
+import { Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Pagination, PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
@@ -12,7 +12,9 @@ import {
     TableRow,
     TableHeadLabel,
 } from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 /**
  * Column definition for typed DataTable
@@ -85,34 +87,21 @@ export function DataTable({
     pagination,
 }: DataTableWrapperProps) {
     if (isLoading) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-[300px] w-full">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-accent mb-3" />
-                <span className="text-text-muted text-sm">{loadingMessage}</span>
-            </Card>
-        );
+        return <LoadingState message={loadingMessage} size="lg" />;
     }
 
     if (error) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-[300px] w-full text-center px-4">
-                <AlertCircle className="w-12 h-12 mb-4 text-rose-500/50" />
-                <p className="text-rose-400 text-lg mb-2">{errorMessage}</p>
-                <p className="text-text-muted text-sm">{error.message}</p>
-            </Card>
-        );
+        return <ErrorState title={errorMessage} message={error.message} />;
     }
 
     if (isEmpty) {
         return (
-            <Card className="flex flex-col items-center justify-center h-[300px] w-full text-center px-4">
-                <div className="w-16 h-16 mb-4 bg-white/5 rounded-2xl flex items-center justify-center">
-                    {emptyState?.icon || <Database className="w-8 h-8 text-text-muted" />}
-                </div>
-                <p className="text-white text-lg mb-2">{emptyState?.title || "No data available"}</p>
-                <p className="text-text-muted text-sm mb-4">{emptyState?.description || "There is no data to display at this time."}</p>
-                {emptyState?.action}
-            </Card>
+            <EmptyState
+                title={emptyState?.title}
+                description={emptyState?.description}
+                icon={emptyState?.icon}
+                action={emptyState?.action}
+            />
         );
     }
 
@@ -152,21 +141,23 @@ export function TypedDataTable<T>({
     paginationDisabled = false,
     hidePageNavigation = false,
 }: DataTableWithColumnsProps<T>) {
+    if (isLoading) {
+        return <LoadingState message="Chargement..." size="md" withCard={false} />;
+    }
+
+    if (error) {
+        return (
+            <ErrorState
+                title="Une erreur est survenue"
+                message="Veuillez réessayer plus tard"
+                withCard={false}
+            />
+        );
+    }
+
     return (
         <div className={cn("w-full h-full flex flex-col", className)}>
-            {isLoading ? (
-                <div className="flex flex-col items-center justify-center h-[200px]">
-                    <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-                    <span className="text-text-muted text-sm">Chargement...</span>
-                </div>
-            ) : error ? (
-                <div className="flex flex-col items-center justify-center h-[200px] text-center px-4">
-                    <Database className="w-8 h-8 mb-3 text-rose-400" />
-                    <p className="text-rose-400 text-sm mb-1">Une erreur est survenue</p>
-                    <p className="text-text-muted text-xs">Veuillez réessayer plus tard</p>
-                </div>
-            ) : (
-                <ScrollableTable
+            <ScrollableTable
                     pagination={showPagination && total > 0 && onPageChange && onRowsPerPageChange ? {
                         total,
                         page,
@@ -233,7 +224,6 @@ export function TypedDataTable<T>({
                         </TableBody>
                     </Table>
                 </ScrollableTable>
-            )}
         </div>
     );
 }

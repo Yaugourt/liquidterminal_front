@@ -7,6 +7,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { Wallet, LogIn, ArrowRight, TrendingUp, BarChart3, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 /**
  * Composant preview des wallets suivis pour la home page du tracker
@@ -26,7 +27,7 @@ export function TrackedWalletsPreview() {
   const isAuthenticated = isMounted && privyReady && authenticated;
 
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden h-full flex flex-col">
+    <Card className="h-full flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -143,6 +144,6 @@ export function TrackedWalletsPreview() {
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

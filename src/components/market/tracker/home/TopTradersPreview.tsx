@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, TrendingUp, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { TrendingUp, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { TopTradersSortType, TopTrader } from "@/services/market/toptraders";
+import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { TableEmptyState } from "@/components/ui/table-states";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -103,36 +107,23 @@ export function TopTradersPreview() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px] glass-panel rounded-2xl">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-          <span className="text-text-muted text-sm">Loading top traders...</span>
-        </div>
-      </div>
+      <Card className="min-h-[400px]">
+        <LoadingState message="Loading top traders..." size="lg" withCard={false} />
+      </Card>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <div className="glass-panel rounded-2xl p-6">
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-xl p-4 text-center">
-          <p className="text-rose-400 text-sm mb-3">Failed to load top traders</p>
-          <Button
-            onClick={() => refetch()}
-            variant="outline"
-            size="sm"
-            className="border-rose-500/50 text-rose-400 hover:bg-rose-500/10"
-          >
-            Retry
-          </Button>
-        </div>
-      </div>
+      <Card className="p-6">
+        <ErrorState title="Failed to load top traders" onRetry={() => refetch()} withCard={false} />
+      </Card>
     );
   }
 
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden flex flex-col">
+    <Card className="flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -171,11 +162,7 @@ export function TopTradersPreview() {
           </TableHeader>
           <TableBody>
             {paginatedTraders.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-text-muted">
-                  No traders data available
-                </TableCell>
-              </TableRow>
+              <TableEmptyState colSpan={6} title="No traders data available" />
             ) : (
               paginatedTraders.map((trader, index) => (
                 <TableRow
@@ -273,6 +260,6 @@ export function TopTradersPreview() {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

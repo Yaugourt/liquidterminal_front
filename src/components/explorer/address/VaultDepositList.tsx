@@ -7,6 +7,7 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { ScrollableTable } from '@/components/common/ScrollableTable';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 
 interface VaultDepositListProps {
   address: string;
@@ -60,38 +61,38 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
   };
 
   // Table style
-  const containerClass = "glass-panel overflow-hidden flex flex-col";
+  const containerClass = "overflow-hidden flex flex-col";
 
   if (isLoading || vaultsLoading) {
     return (
-      <div className="flex items-center justify-center h-[400px] glass-panel">
+      <Card className="flex items-center justify-center h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[400px] glass-panel text-rose-500">
+      <Card className="flex items-center justify-center h-[400px] text-rose-500">
         {error.message}
-      </div>
+      </Card>
     );
   }
 
   if (!rows.length) {
     return (
-      <div className="flex items-center justify-center h-[200px] glass-panel">
+      <Card className="flex items-center justify-center h-[200px]">
         <div className="flex flex-col items-center text-center px-4">
           <Database className="w-8 h-8 mb-3 text-brand-accent/30" />
           <p className="text-white text-sm mb-1">No vault deposits found</p>
           <p className="text-text-muted text-xs">This address has not deposited in any vault yet.</p>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className={containerClass}>
+    <Card className={containerClass}>
       <ScrollableTable
         pagination={total > 10 ? {
           total,
@@ -150,6 +151,6 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
           </TableBody>
         </Table>
       </ScrollableTable>
-    </div>
+    </Card>
   );
 } 

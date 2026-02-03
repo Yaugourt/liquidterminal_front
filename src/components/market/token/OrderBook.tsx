@@ -5,6 +5,7 @@ import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token"
 import { cn } from "@/lib/utils";
 import "@/styles/scrollbar.css";
 import { PillTabs } from "@/components/ui/pill-tabs";
+import { Card } from "@/components/ui/card";
 
 interface OrderBookProps {
   symbol?: string;
@@ -86,7 +87,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
   const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
 
   return (
-    <div className={`glass-panel flex flex-col h-full overflow-hidden ${className || ''}`}>
+    <Card className={`flex flex-col h-full ${className || ''}`}>
       <div className="p-4 flex-shrink-0 border-b border-border-subtle w-fit">
         {/* Tabs Pills Style */}
         <div className="flex items-center gap-2">
@@ -213,6 +214,6 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

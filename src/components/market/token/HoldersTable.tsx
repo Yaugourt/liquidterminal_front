@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Loader2, Database, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useGlobalAliases } from "@/services/explorer";
@@ -16,6 +16,9 @@ import {
 import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { TableEmptyState } from "@/components/ui/table-states";
 
 interface HoldersTableProps {
   holders: Record<string, number>;
@@ -67,23 +70,16 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
 
   if (isLoading) {
     return (
-      <Card className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-          <span className="text-text-muted text-sm">Loading holders...</span>
-        </div>
+      <Card>
+        <LoadingState message="Loading holders..." size="md" withCard={false} />
       </Card>
     );
   }
 
   if (error) {
     return (
-      <Card className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Database className="w-10 h-10 mb-3 text-text-muted" />
-          <p className="text-text-secondary text-sm mb-1">Error loading holders</p>
-          <p className="text-text-muted text-xs">{error.message}</p>
-        </div>
+      <Card>
+        <ErrorState title="Error loading holders" message={error.message} withCard={false} />
       </Card>
     );
   }
@@ -163,18 +159,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
               </TableRow>
             ))
           ) : (
-            <TableRow>
-              <TableCell
-                colSpan={4}
-                className="py-8"
-              >
-                <div className="flex flex-col items-center justify-center text-center">
-                  <Database className="w-10 h-10 mb-3 text-text-muted" />
-                  <p className="text-text-secondary text-sm mb-1">No holders found</p>
-                  <p className="text-text-muted text-xs">No data available</p>
-                </div>
-              </TableCell>
-            </TableRow>
+            <TableEmptyState colSpan={4} title="No holders found" description="No data available" />
           )}
         </TableBody>
       </Table>

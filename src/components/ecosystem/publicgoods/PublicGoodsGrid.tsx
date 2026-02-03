@@ -3,6 +3,7 @@
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
+import { Card } from "@/components/ui/card";
 
 interface PublicGoodsGridProps<T> {
     isLoading: boolean;
@@ -39,7 +40,7 @@ export function PublicGoodsGrid<T>({
 
     if (items.length === 0) {
         return (
-            <div className="glass-panel p-8">
+            <Card className="p-8">
                 <div className="text-center py-8">
                     <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                         {emptyState.icon || <Plus className="w-8 h-8 text-brand-accent" />}
@@ -56,7 +57,7 @@ export function PublicGoodsGrid<T>({
                         </Button>
                     )}
                 </div>
-            </div>
+            </Card>
         );
     }
 

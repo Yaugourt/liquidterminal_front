@@ -4,6 +4,9 @@ import { useHoldersStats } from "@/services/explorer/validator/hooks/useHoldersS
 import { HoldersDistributionRange } from "@/services/explorer/validator/types/holders";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatLargeNumber, formatNumber } from "@/lib/formatters/numberFormatting";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 // Types pour le tooltip
 interface TooltipProps {
@@ -61,35 +64,15 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
   };
 
   if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
-          <p className="text-white/60 text-sm">Loading distribution data...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading distribution data..." size="md" withCard={false} />;
   }
 
   if (error) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-sm mb-1">Error loading data</p>
-          <p className="text-white/40 text-xs">{error.message}</p>
-        </div>
-      </div>
-    );
+    return <ErrorState title="Error loading data" message={error.message} withCard={false} />;
   }
 
   if (!chartData.length) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white/60 text-sm">No distribution data available</p>
-        </div>
-      </div>
-    );
+    return <EmptyState title="No distribution data" description="Check back later" withCard={false} />;
   }
 
   return (

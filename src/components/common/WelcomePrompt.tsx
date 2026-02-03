@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Sparkles, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/auth.context";
+import { Card } from "@/components/ui/card";
 
 const STORAGE_KEY = "welcomePromptDismissed";
 const DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
@@ -50,7 +51,7 @@ export function WelcomePrompt() {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300">
-            <div className="glass-panel p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
+            <Card className="p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
                 <button
                     onClick={handleDismiss}
                     className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"
@@ -82,7 +83,7 @@ export function WelcomePrompt() {
                         </Button>
                     </div>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 }

@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
-import { Loader2, Database, Building2, ChevronRight } from "lucide-react";
+import { Building2, ChevronRight } from "lucide-react";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import {
   Table,
@@ -13,6 +13,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { TableEmptyState } from "@/components/ui/table-states";
 
 /**
  * Card showing top PerpDexs by 24h Volume (live data)
@@ -31,9 +34,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
   if (isLoading && !topDexs.length) {
     return (
       <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-full py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Chargement..." size="md" withCard={false} />
       </div>
     );
   }
@@ -41,9 +42,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
   if (error) {
     return (
       <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-full py-8">
-          <p className="text-rose-400 text-sm">Failed to load data</p>
-        </div>
+        <ErrorState title="Failed to load data" withCard={false} />
       </div>
     );
   }
@@ -104,15 +103,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center py-8">
-                  <div className="flex flex-col items-center justify-center">
-                    <Database className="w-10 h-10 mb-3 text-text-muted" />
-                    <p className="text-text-secondary text-sm mb-1">No DEXs available</p>
-                    <p className="text-text-muted text-xs">Check back later</p>
-                  </div>
-                </TableCell>
-              </TableRow>
+              <TableEmptyState colSpan={3} title="No DEXs available" description="Check back later" />
             )}
           </TableBody>
         </Table>

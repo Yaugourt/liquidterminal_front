@@ -10,6 +10,8 @@ import { canCreateProject } from "@/lib/roleHelpers";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/common";
 import { SearchBar } from "@/components/common/SearchBar";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface ProjectsGridProps {
   activeTab?: string;
@@ -84,7 +86,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
       </div>
 
       {/* Category Tabs and Search Bar */}
-      <div className="flex items-center justify-between gap-4 w-full min-w-0 overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0 overflow-hidden">
         <div className="flex-1 min-w-0 overflow-hidden">
           <CategoryTabs
             categories={categories}
@@ -94,11 +96,11 @@ export const ProjectsGrid = memo(function ProjectsGrid({
             error={categoriesError}
           />
         </div>
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-full md:w-auto">
           <SearchBar
             onSearch={setSearchQuery}
             placeholder="Search projects..."
-            className="w-full max-w-sm"
+            className="w-full md:max-w-sm"
           />
         </div>
       </div>
@@ -111,14 +113,10 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           ))}
         </div>
       ) : projectsError ? (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-8">
-          <div className="text-center py-8">
-            <p className="text-rose-400 text-lg font-medium">Failed to load projects</p>
-            <p className="text-text-muted text-sm mt-2">
-              {projectsError.message || "Please try again later."}
-            </p>
-          </div>
-        </div>
+        <ErrorState 
+          title="Failed to load projects" 
+          message={projectsError.message || "Please try again later."}
+        />
       ) : projects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
@@ -129,16 +127,10 @@ export const ProjectsGrid = memo(function ProjectsGrid({
           ))}
         </div>
       ) : (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-8">
-          <div className="text-center py-8">
-            <p className="text-text-secondary text-lg">No projects found</p>
-            <p className="text-text-muted text-sm mt-2">
-              {activeTab === 'all'
-                ? "No projects have been added yet."
-                : "No projects in this category yet."}
-            </p>
-          </div>
-        </div>
+        <EmptyState 
+          title="No projects found"
+          description={activeTab === 'all' ? "No projects have been added yet." : "No projects in this category yet."}
+        />
       )}
 
       {/* Pagination */}

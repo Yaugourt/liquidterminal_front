@@ -1,21 +1,22 @@
 import React from "react";
 import { LiquidationsStatsCard, LiquidationsSection, LiquidationsChartSection, LiquidationsProvider } from "@/components/explorer/liquidation";
+import { Card } from "@/components/ui/card";
 
 export default function LiquidationsPage() {
   return (
     <LiquidationsProvider>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:items-stretch">
-        <div className="glass-panel">
+        <Card>
           <LiquidationsStatsCard />
-        </div>
-        <div className="glass-panel md:col-span-2">
+        </Card>
+        <Card className="md:col-span-2">
           <LiquidationsChartSection />
-        </div>
+        </Card>
       </div>
 
-      <div className="glass-panel">
+      <Card>
         <LiquidationsSection />
-      </div>
+      </Card>
     </LiquidationsProvider>
   );
 }

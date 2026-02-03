@@ -9,6 +9,7 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { formatAge } from "@/services/explorer/address/utils";
 import { Pagination } from "@/components/common/pagination";
+import { Card } from "@/components/ui/card";
 
 interface WalletRecentFillsSectionProps {
   address?: string; // Optional: if not provided, use active wallet from store
@@ -47,8 +48,8 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
   // Dynamic height based on content - identique à TransactionList
   const needsScroll = paginatedFills.length > 10;
   const containerClass = needsScroll
-    ? "glass-panel overflow-hidden flex flex-col h-[600px]"
-    : "glass-panel overflow-hidden flex flex-col";
+    ? "flex flex-col h-[600px]"
+    : "flex flex-col";
 
   const tableContainerClass = needsScroll
     ? "overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1"
@@ -107,38 +108,38 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[600px] glass-panel">
+      <Card className="flex items-center justify-center h-[600px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
-      </div>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[600px] glass-panel text-red-500">
+      <Card className="flex items-center justify-center h-[600px] text-red-500">
         {error.message}
-      </div>
+      </Card>
     );
   }
 
   if (!activeWallet?.address) {
     return (
-      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
+      <Card className="flex items-center justify-center h-[600px] text-white">
         No wallet selected
-      </div>
+      </Card>
     );
   }
 
   if (!fills || fills.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[600px] glass-panel text-white">
+      <Card className="flex items-center justify-center h-[600px] text-white">
         No fills found
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className={containerClass}>
+    <Card className={containerClass}>
       <div className={tableContainerClass}>
         <Table className="w-full">
           <TableHeader>
@@ -220,6 +221,6 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
           />
         </div>
       </div>
-    </div>
+    </Card>
   );
 } 

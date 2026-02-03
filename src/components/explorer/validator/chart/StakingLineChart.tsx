@@ -6,6 +6,9 @@ import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 // Types pour le tooltip
 interface TooltipProps {
@@ -56,35 +59,15 @@ export const StakingLineChart = memo(function StakingLineChart({
   };
 
   if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
-          <p className="text-white/60 text-sm">Loading unstaking data...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Loading unstaking data..." size="md" withCard={false} />;
   }
 
   if (error) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-sm mb-1">Error loading data</p>
-          <p className="text-white/40 text-xs">{error.message}</p>
-        </div>
-      </div>
-    );
+    return <ErrorState title="Error loading data" message={error.message} withCard={false} />;
   }
 
   if (!filteredData.length) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white/60 text-sm">No unstaking data for the selected period</p>
-        </div>
-      </div>
-    );
+    return <EmptyState title="No unstaking data" description="No data for the selected period" withCard={false} />;
   }
 
   return (

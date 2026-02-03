@@ -6,6 +6,7 @@ import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { AddressBalanceProps } from "@/components/types/explorer.types";
+import { Loader2, AlertCircle } from "lucide-react";
 
 export function AddressBalance({ address }: AddressBalanceProps) {
   const { spotBalances, perpPositions, isLoading, error } = useWalletsBalances(address);
@@ -47,11 +48,21 @@ export function AddressBalance({ address }: AddressBalanceProps) {
   }, [format]);
 
   if (isLoading || isSpotMarketLoading) {
-    return <div className="text-white text-[16px]">Loading...</div>;
+    return (
+      <div className="text-white text-[16px] flex items-center gap-2">
+        <Loader2 className="h-4 w-4 animate-spin text-brand-accent" />
+        <span>Loading...</span>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-[#FF5757] text-[16px]">Error loading balances</div>;
+    return (
+      <div className="text-rose-400 text-[16px] flex items-center gap-2">
+        <AlertCircle className="h-4 w-4" />
+        <span>Error loading balances</span>
+      </div>
+    );
   }
 
   return (

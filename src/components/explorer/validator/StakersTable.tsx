@@ -1,5 +1,5 @@
 import { memo, useState, useCallback } from "react";
-import { Copy, Database, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { useStakingHoldersPaginated } from "@/services/explorer/validator";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
@@ -13,43 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TableEmptyState, TableLoadingState } from "@/components/ui/table-states";
+import { ErrorState } from "@/components/ui/error-state";
 import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { usePagination } from "@/hooks/core/usePagination";
 import Link from "next/link";
 
-// Composant pour l'état vide
-const EmptyState = memo(() => (
-  <TableRow className="hover:bg-transparent">
-    <TableCell colSpan={3} className="text-center py-8">
-      <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-text-muted" />
-        <p className="text-text-secondary text-sm mb-1">No stakers found</p>
-        <p className="text-text-muted text-xs">Check back later</p>
-      </div>
-    </TableCell>
-  </TableRow>
-));
-EmptyState.displayName = 'EmptyState';
 
-// Composant pour l'état de chargement
-const LoadingState = memo(() => (
-  <>
-    {Array.from({ length: 5 }).map((_, i) => (
-      <TableRow key={i} className="hover:bg-transparent">
-        <TableCell className="px-4">
-          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
-        </TableCell>
-        <TableCell className="px-4">
-          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
-        </TableCell>
-        <TableCell className="px-4">
-          <div className="h-4 bg-white/5 rounded animate-pulse"></div>
-        </TableCell>
-      </TableRow>
-    ))}
-  </>
-));
-LoadingState.displayName = 'LoadingState';
 
 export const StakersTable = memo(function StakersTable() {
   const {
@@ -99,13 +69,11 @@ export const StakersTable = memo(function StakersTable() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-[300px]">
-        <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-12 h-12 mb-4 text-text-muted" />
-          <p className="text-rose-400 text-lg font-medium mb-2">Error loading stakers</p>
-          <p className="text-text-secondary text-sm">{error.message}</p>
-        </div>
-      </div>
+      <ErrorState
+        title="Error loading stakers"
+        message={error.message}
+        withCard={false}
+      />
     );
   }
 
@@ -130,9 +98,9 @@ export const StakersTable = memo(function StakersTable() {
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            <LoadingState />
+            <TableLoadingState colSpan={3} rows={5} />
           ) : holders.length === 0 ? (
-            <EmptyState />
+            <TableEmptyState colSpan={3} title="No stakers found" description="Check back later" />
           ) : (
             holders.map((holder, index) => {
               const rank = (currentPage * rowsPerPage) + index + 1;

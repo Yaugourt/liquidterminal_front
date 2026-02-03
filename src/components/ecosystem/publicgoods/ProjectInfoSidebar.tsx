@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, Send, Mail, CheckCircle, Edit, Trash2 } from "lucide-react";
 import { PublicGood } from "@/services/ecosystem/publicgood";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
+import { Card } from "@/components/ui/card";
 
 interface ProjectInfoSidebarProps {
     project: PublicGood;
@@ -27,7 +28,7 @@ export function ProjectInfoSidebar({
     return (
         <div className="space-y-6">
             {/* Contact */}
-            <div className="glass-panel p-6 rounded-2xl">
+            <Card className="p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Contact</h3>
                 <div className="space-y-3">
                     {project.discordContact && (
@@ -47,10 +48,10 @@ export function ProjectInfoSidebar({
                         <span className="text-text-secondary text-sm">{project.leadDeveloperContact}</span>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* Quick Stats */}
-            <div className="glass-panel p-6 rounded-2xl">
+            <Card className="p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -74,11 +75,11 @@ export function ProjectInfoSidebar({
                         <span className="text-brand-accent text-xs font-medium lowercase first-letter:uppercase">{project.developmentStatus.replace(/_/g, ' ')}</span>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* Actions */}
             {(canEdit || canDelete || canReview) && (
-                <div className="glass-panel p-6 rounded-2xl">
+                <Card className="p-6">
                     <h3 className="text-sm font-bold text-white mb-4">Manage Project</h3>
                     <div className="space-y-3">
                         {canReview && onReview && (
@@ -111,7 +112,7 @@ export function ProjectInfoSidebar({
                             </Button>
                         )}
                     </div>
-                </div>
+                </Card>
             )}
         </div>
     );

@@ -1,28 +1,14 @@
 import { memo, useCallback } from "react";
 import { Table, TableBody, TableCell, TableHeader, TableRow, SortableTableHead, TableHead } from "@/components/ui/table";
-import { Database, Loader2, ArrowUpDown } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
 import { TokenRowProps, TokensTableProps } from "@/components/types/dashboard.types";
+import { TableEmptyState, TableLoadingState } from "@/components/ui/table-states";
 
 
-// Composant pour l'état vide
-const EmptyState = memo(() => (
-    <TableRow className="hover:bg-transparent border-none">
-        <TableCell colSpan={4} className="text-center py-8">
-            <div className="flex flex-col items-center justify-center">
-                <Database className="w-10 h-10 mb-4 text-text-muted" />
-                <p className="text-text-secondary text-sm">No tokens available</p>
-            </div>
-        </TableCell>
-    </TableRow>
-));
-
-EmptyState.displayName = 'EmptyState';
-
-// Composant pour une ligne de token
 const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
     <TableRow className="hover:bg-white/[0.02] group cursor-pointer">
         <TableCell className="py-3 pl-4">
@@ -88,8 +74,22 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-[200px]">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+            <div className="w-full h-full flex flex-col">
+                <div className="overflow-x-auto custom-scrollbar flex-1">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="hover:bg-transparent">
+                                <TableHead className="pl-4 w-[35%]">Name</TableHead>
+                                <TableHead className="pl-4 w-[25%]">Price</TableHead>
+                                <TableHead className="pl-4 w-[20%]">Vol</TableHead>
+                                <TableHead className="pl-4 w-[20%]">24h</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <TableLoadingState colSpan={4} rows={5} />
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         );
     }
@@ -145,7 +145,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 />
                             ))
                         ) : (
-                            <EmptyState />
+                            <TableEmptyState colSpan={4} title="No tokens available" />
                         )}
                     </TableBody>
                 </Table>

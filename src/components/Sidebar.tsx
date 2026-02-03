@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
@@ -302,7 +303,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </div>
                         </Button>
                     ) : (
-                        <div className="p-2 glass-panel rounded-xl">
+                        <Card className="p-2">
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/profile"
@@ -342,7 +343,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 <XpBadge compact showStreak />
                                 <DailyTasksPopover />
                             </div>
-                        </div>
+                        </Card>
                     )}
                 </div>
 

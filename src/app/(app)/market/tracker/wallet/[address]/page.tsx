@@ -12,6 +12,7 @@ import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { Loader2, AlertCircle, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface PublicWalletViewProps {
   params: {
@@ -51,7 +52,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
   if (!isValidAddress) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="glass-panel p-8 max-w-md text-center">
+        <Card className="p-8 max-w-md text-center">
           <AlertCircle className="w-12 h-12 text-rose-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-white mb-2">Invalid Wallet Address</h2>
           <p className="text-text-secondary mb-4">
@@ -60,7 +61,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
           <Button onClick={() => window.history.back()} className="bg-brand-accent hover:bg-brand-accent/90 text-black">
             Go Back
           </Button>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -81,7 +82,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
   if (portfolioError || balancesError) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="glass-panel p-6 max-w-md text-center">
+        <Card className="p-6 max-w-md text-center">
           <AlertCircle className="w-10 h-10 text-rose-400 mx-auto mb-3" />
           <p className="text-rose-400 text-sm mb-4">
             {portfolioError?.message || balancesError?.message || "Failed to load wallet data"}
@@ -89,7 +90,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
           <Button onClick={() => window.location.reload()} variant="outline">
             Retry
           </Button>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -100,7 +101,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
   return (
     <div className="space-y-8">
       {/* Header with address + CTA */}
-      <div className="flex items-center justify-between glass-panel rounded-2xl p-4">
+      <Card className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <span className="text-sm text-text-muted">Wallet:</span>
           <span className="font-mono text-white text-sm">{address}</span>
@@ -118,16 +119,16 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
           </Button>
         </div>
         <AddToTrackListButton address={address} />
-      </div>
+      </Card>
 
       {/* Empty wallet message */}
       {isEmpty && (
-        <div className="glass-panel rounded-2xl p-8 text-center">
+        <Card className="p-8 text-center">
           <h3 className="text-lg font-semibold text-white mb-2">Empty Wallet</h3>
           <p className="text-text-secondary">
             This wallet has no spot balances or perpetual positions.
           </p>
-        </div>
+        </Card>
       )}
 
       {/* Wallet data */}

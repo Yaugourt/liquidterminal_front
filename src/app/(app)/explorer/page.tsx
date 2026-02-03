@@ -6,6 +6,7 @@ import {
   ValidatorsTable,
   TransfersDeployTable
 } from "@/components/explorer";
+import { Card } from "@/components/ui/card";
 
 export default function Explorer() {
   return (
@@ -15,18 +16,18 @@ export default function Explorer() {
 
       {/* Recent Data Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-panel">
+        <Card>
           <RecentDataTable />
-        </div>
-        <div className="glass-panel">
+        </Card>
+        <Card>
           <TransfersDeployTable />
-        </div>
+        </Card>
       </div>
 
       {/* Validators Table */}
-      <div className="glass-panel">
+      <Card>
         <ValidatorsTable />
-      </div>
+      </Card>
     </>
   );
 }

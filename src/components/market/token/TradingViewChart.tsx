@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
 import { useTokenCandles, useTokenWebSocket, marketIndexToCoinId } from '@/services/market/token';
 import { TokenCandle } from '@/services/market/token/types';
+import { Card } from '@/components/ui/card';
 
 interface TradingViewChartProps {
   symbol: string;
@@ -251,7 +252,7 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
   }, [currentPrice, selectedTimeframe, coinId]);
 
   return (
-    <div className={`glass-panel w-full h-full flex flex-col relative overflow-hidden ${className || ''}`}>
+    <Card className={`w-full h-full flex flex-col relative ${className || ''}`}>
       {/* Timeframe Selector - Range Switcher */}
       {/* Desktop version - Hidden on small screens */}
       <div className="absolute top-4 left-4 z-20 hidden min-[620px]:flex gap-1 bg-brand-dark/90 backdrop-blur-sm rounded-lg p-1 border border-border-subtle">
@@ -305,6 +306,6 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
         ref={containerRef}
         className="w-full flex-1 min-h-0 rounded-lg overflow-hidden"
       />
-    </div>
+    </Card>
   );
 }

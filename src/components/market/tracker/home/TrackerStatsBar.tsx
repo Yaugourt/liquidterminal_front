@@ -5,6 +5,7 @@ import { useTopTraders } from "@/services/market/toptraders";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { Loader2, TrendingUp, DollarSign, Activity, Trophy, Crown, Zap } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 /**
  * Barre de statistiques et wallets notables pour la home page du tracker
@@ -114,12 +115,12 @@ export function TrackerStatsBar() {
 
   if (isLoading) {
     return (
-      <div className="glass-panel rounded-2xl p-6">
+      <Card className="p-6">
         <div className="flex items-center justify-center gap-3">
           <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
           <span className="text-text-muted text-sm">Loading tracker stats...</span>
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -128,9 +129,9 @@ export function TrackerStatsBar() {
       {/* Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {stats.map((stat) => (
-          <div
+          <Card
             key={stat.label}
-            className="glass-panel rounded-xl p-4 flex items-center gap-3"
+            className="p-4 flex items-center gap-3"
           >
             <div className={`p-2 rounded-lg bg-white/5`}>
               <stat.icon className={`h-4 w-4 ${stat.color}`} />
@@ -143,16 +144,16 @@ export function TrackerStatsBar() {
                 {stat.value}
               </span>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* Notable Wallets Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {notableWallets.map((item) => (
-          <div
+          <Card
             key={item.label}
-            className={`glass-panel rounded-xl p-4 border ${item.borderColor} ${item.bgColor}`}
+            className={`p-4 border ${item.borderColor} ${item.bgColor}`}
           >
             <div className="flex items-center gap-2 mb-2">
               <item.icon className={`h-4 w-4 ${item.color}`} />
@@ -175,7 +176,7 @@ export function TrackerStatsBar() {
             ) : (
               <span className="text-text-muted text-sm">No data</span>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </div>

@@ -1,20 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePublicListsPreview } from "@/services/market/tracker/hooks/usePublicListsPreview";
 import { PublicWalletListCard } from "../walletlists/PublicWalletListCard";
-import { Loader2, List, ArrowRight } from "lucide-react";
+import { List, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { WalletList } from "@/services/market/tracker/types";
 
 /**
  * Composant preview des listes publiques pour la home page du tracker
  * Affiche 6 listes publiques récentes/populaires
  */
 export function PublicListsPreview() {
+  const router = useRouter();
   const { lists, isLoading, error, refetch } = usePublicListsPreview(6);
 
+  const handlePreview = (list: WalletList) => {
+    router.push(`/market/tracker/public-lists/${list.id}`);
+  };
+
   return (
-    <div className="glass-panel rounded-2xl overflow-hidden h-full flex flex-col">
+    <Card className="h-full flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -42,27 +52,12 @@ export function PublicListsPreview() {
       <div className="flex-1 p-6">
         {/* Loading state */}
         {isLoading && (
-          <div className="flex justify-center items-center h-full min-h-[300px]">
-            <div className="flex flex-col items-center gap-3">
-              <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-              <span className="text-text-muted text-sm">Loading public lists...</span>
-            </div>
-          </div>
+          <LoadingState message="Loading public lists..." size="md" withCard={false} />
         )}
 
         {/* Error state */}
         {error && !isLoading && (
-          <div className="bg-rose-500/5 border border-rose-500/20 rounded-xl p-4 text-center">
-            <p className="text-rose-400 text-sm mb-3">Failed to load public lists</p>
-            <Button
-              onClick={() => refetch()}
-              variant="outline"
-              size="sm"
-              className="border-rose-500/50 text-rose-400 hover:bg-rose-500/10"
-            >
-              Retry
-            </Button>
-          </div>
+          <ErrorState title="Failed to load public lists" onRetry={() => refetch()} withCard={false} />
         )}
 
         {/* Lists grid */}
@@ -79,6 +74,7 @@ export function PublicListsPreview() {
                   <PublicWalletListCard
                     key={list.id}
                     list={list}
+                    onPreview={handlePreview}
                   />
                 ))}
               </div>
@@ -86,6 +82,6 @@ export function PublicListsPreview() {
           </>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

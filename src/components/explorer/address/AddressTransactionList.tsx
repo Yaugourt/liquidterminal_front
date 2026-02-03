@@ -38,7 +38,7 @@ export function AddressTransactionList({ transactions, isLoading, error, current
       loadingMessage="Loading transactions..."
       errorMessage="Failed to load transactions"
       emptyState={{ title: "No transactions found" }}
-      className="max-h-[600px] glass-panel"
+      className="max-h-[600px] bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20"
       pagination={{
         total: total,
         page: page,

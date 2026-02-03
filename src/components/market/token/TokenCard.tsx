@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
 
 export const TokenCard = memo(function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
   // Get user's number format preference
@@ -46,8 +47,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   };
 
   return (
-    <div className={cn(
-      "glass-panel w-fit p-4 hover:border-border-hover transition-all",
+    <Card className={cn(
+      "w-fit p-4",
       className
     )}>
       <div className="flex flex-wrap items-center gap-6 w-fit">
@@ -200,7 +201,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           )}
         </div>
       </div>
-    </div>
+    </Card>
 
   );
 });

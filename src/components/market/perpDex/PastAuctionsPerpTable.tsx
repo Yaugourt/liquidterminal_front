@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, Database, Loader2, ExternalLink } from "lucide-react";
+import { ArrowUpDown, ExternalLink } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -18,6 +18,8 @@ import { useDateFormat, DateFormatType } from "@/store/date-format.store";
 import { PastAuctionPerp } from "@/services/market/perpDex/types";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Pagination } from "@/components/common/pagination";
+import { TableEmptyState } from "@/components/ui/table-states";
+import { LoadingState } from "@/components/ui/loading-state";
 
 type SortField = 'time' | 'symbol' | 'dex' | 'oraclePx' | 'user' | 'maxGas';
 
@@ -44,19 +46,7 @@ const TableHeaderCell = memo(({ label, onClick, className, isActive }: TableHead
 
 TableHeaderCell.displayName = 'TableHeaderCell';
 
-const EmptyState = memo(() => (
-  <TableRow>
-    <TableCell colSpan={7} className="text-center py-8">
-      <div className="flex flex-col items-center justify-center">
-        <Database className="w-10 h-10 mb-3 text-text-muted" />
-        <p className="text-text-secondary text-sm mb-1">No auction pairs found</p>
-        <p className="text-text-muted text-xs">Check back later</p>
-      </div>
-    </TableCell>
-  </TableRow>
-));
 
-EmptyState.displayName = 'EmptyState';
 
 const AuctionRow = memo(({
   auction,
@@ -210,9 +200,7 @@ export function PastAuctionsPerpTable() {
   if (isLoading && !sortedAuctions.length) {
     return (
       <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="flex justify-center items-center h-[400px]">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Loading auctions..." size="lg" withCard={false} />
       </div>
     );
   }
@@ -276,7 +264,7 @@ export function PastAuctionsPerpTable() {
                 />
               ))
             ) : (
-              <EmptyState />
+              <TableEmptyState colSpan={7} title="No auction pairs found" description="Check back later" />
             )}
           </TableBody>
         </Table>

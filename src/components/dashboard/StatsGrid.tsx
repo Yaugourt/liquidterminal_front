@@ -3,6 +3,7 @@ import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Users, Activity, Wallet, Shield, Database } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface StatsGridProps {
   stats?: DashboardGlobalStats;
@@ -38,9 +39,9 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   if (error) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-        <div className="glass-panel col-span-full p-4 text-center text-rose-400 text-sm">
+        <Card className="col-span-full p-4 text-center text-rose-400 text-sm">
           Error: {error.message}
-        </div>
+        </Card>
       </div>
     );
   }

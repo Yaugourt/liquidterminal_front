@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
     Table,
     TableBody,
@@ -10,7 +10,6 @@ import {
     SortableTableHead,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Database, Loader2 } from "lucide-react";
 import { formatNumber, formatMetricValue, formatPrice, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
@@ -19,6 +18,9 @@ import { useNumberFormat } from "@/store/number-format.store";
 
 import { TokenIcon, formatPriceChange } from "@/components/common";
 import { Pagination } from "@/components/common/pagination";
+import { TableEmptyState } from "@/components/ui/table-states";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
 import {
     SpotToken,
     PerpToken,
@@ -36,20 +38,7 @@ interface UniversalTokenTableProps {
 
 
 
-// Composant pour l'état vide
-const EmptyState = memo(() => (
-    <TableRow>
-        <TableCell colSpan={6} className="text-center py-8">
-            <div className="flex flex-col items-center justify-center">
-                <Database className="w-10 h-10 mb-3 text-text-muted" />
-                <p className="text-text-secondary text-sm mb-1">Aucun token disponible</p>
-                <p className="text-text-muted text-xs">Vérifiez plus tard</p>
-            </div>
-        </TableCell>
-    </TableRow>
-));
 
-EmptyState.displayName = 'EmptyState';
 
 export function UniversalTokenTable({
     market,
@@ -189,9 +178,7 @@ export function UniversalTokenTable({
     if (isLoading && !tokens.length) {
         return (
             <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
-                <div className={`flex justify-center items-center ${mode === 'compact' ? 'h-full' : 'h-[400px]'}`}>
-                    <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-                </div>
+                <LoadingState message="Loading tokens..." size="lg" withCard={false} />
             </div>
         );
     }
@@ -199,9 +186,7 @@ export function UniversalTokenTable({
     if (error && mode === 'compact') {
         return (
             <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-                <div className="flex justify-center items-center h-full">
-                    <p className="text-rose-400 text-sm">Une erreur est survenue</p>
-                </div>
+                <ErrorState title="Error" message="Une erreur est survenue" withCard={false} />
             </div>
         );
     }
@@ -420,7 +405,7 @@ export function UniversalTokenTable({
                                 );
                             })
                         ) : (
-                            <EmptyState />
+                            <TableEmptyState colSpan={6} title="Aucun token disponible" description="Vérifiez plus tard" />
                         )}
                     </TableBody>
                 </Table>

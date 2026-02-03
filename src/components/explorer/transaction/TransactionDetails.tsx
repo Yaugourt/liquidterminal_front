@@ -124,7 +124,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       {data.sections.map((section, sectionIndex) => (
         <Card
           key={sectionIndex}
-          className="glass-panel p-0 rounded-xl overflow-hidden"
+          className="p-0 rounded-xl overflow-hidden"
         >
           <h3 className="text-xl text-white font-medium p-6 border-b border-border-subtle font-inter">
             {section.title}

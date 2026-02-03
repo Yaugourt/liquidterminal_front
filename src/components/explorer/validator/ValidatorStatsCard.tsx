@@ -7,6 +7,8 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import Link from "next/link";
+import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
 
 /**
  * Carte affichant les statistiques des validateurs
@@ -21,10 +23,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
   if (error) {
     return (
       <div className="p-4 h-full flex flex-col">
-        <div className="flex items-center gap-2 text-rose-400">
-          <Shield size={18} />
-          <span className="text-sm">Failed to load validator stats</span>
-        </div>
+        <ErrorState title="Failed to load validator stats" withCard={false} />
       </div>
     );
   }
@@ -55,9 +54,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
 
       {/* Main content */}
       {isLoading ? (
-        <div className="flex justify-center items-center flex-1">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-accent"></div>
-        </div>
+        <LoadingState message="" size="sm" withCard={false} />
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
           {/* Total Validators */}

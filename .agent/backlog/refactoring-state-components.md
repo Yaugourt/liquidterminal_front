@@ -1,5 +1,7 @@
 # Refactoring : Composants État (Loading/Error/Empty)
 
+> **Statut : 🟢 Majoritairement terminé** - 9 fichiers migrés, composants centralisés créés
+
 ## Contexte
 
 Le codebase a beaucoup de duplication pour les états loading, error et empty. Ces patterns sont répétés dans de nombreux composants avec des variations mineures.

@@ -6,6 +6,7 @@ import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatti
 import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '@/components/common/charts';
 import { LightweightChart } from "@/components/common/charts/LightweightChart";
+import { Card } from '@/components/ui/card';
 
 interface AuctionDataPoint {
   time: number;
@@ -72,8 +73,8 @@ export const AuctionChart = ({
   }, [data]);
 
   return (
-    <div
-      className="glass-panel w-full h-full relative overflow-hidden flex flex-col"
+    <Card
+      className="w-full h-full relative flex flex-col"
       style={{ height: chartHeight }}
     >
       {/* Header Controls */}
@@ -162,6 +163,6 @@ export const AuctionChart = ({
           />
         )}
       </div>
-    </div>
+    </Card>
   );
 };

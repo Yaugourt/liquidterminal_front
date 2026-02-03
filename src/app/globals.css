@@ -40,11 +40,6 @@ body {
 }
 
 @layer components {
-    /* ===== Glassmorphism Containers ===== */
-    .glass-panel {
-        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
-    }
-
     /* ===== Typography Utilities ===== */
     .text-label {
         @apply text-[10px] font-semibold uppercase tracking-wider;
