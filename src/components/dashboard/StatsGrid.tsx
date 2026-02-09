@@ -4,6 +4,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Users, Activity, Wallet, Shield, Database } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Liquidations24hCard } from "./Liquidations24hCard";
 
 interface StatsGridProps {
   stats?: DashboardGlobalStats;
@@ -28,17 +29,24 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
 
   if (isLoading && !initialData) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-        {[...Array(5)].map((_, index) => (
-          <StatsCardSkeleton key={index} />
-        ))}
+      <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full">
+        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
+          {[...Array(6)].map((_, index) => (
+            <StatsCardSkeleton key={index} />
+          ))}
+        </div>
+        <div className="w-full md:w-64 lg:w-72">
+          <Card className="p-4 h-full flex items-center justify-center min-h-[180px]">
+            <div className="h-32 w-full bg-white/5 animate-pulse rounded" />
+          </Card>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 w-full">
         <Card className="col-span-full p-4 text-center text-rose-400 text-sm">
           Error: {error.message}
         </Card>
@@ -77,10 +85,18 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
   ] : [];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
-      {statsItems.map((stat, index) => (
-        <StatsCard key={index} {...stat} />
-      ))}
+    <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full">
+      {/* Stats cards à gauche - grille 2 cols mobile, 3 cols desktop */}
+      <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
+        {statsItems.map((stat, index) => (
+          <StatsCard key={index} {...stat} />
+        ))}
+      </div>
+      
+      {/* Liquidations24hCard à droite */}
+      <div className="w-full md:w-64 lg:w-72">
+        <Liquidations24hCard className="h-full" />
+      </div>
     </div>
   );
 }

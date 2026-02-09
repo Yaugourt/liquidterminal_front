@@ -53,6 +53,7 @@ export const ENDPOINTS = {
   LIQUIDATIONS_STATS_ALL: '/liquidations/stats/all',
   LIQUIDATIONS_CHART_DATA: '/liquidations/chart-data',
   LIQUIDATIONS_DATA: '/liquidations/data',
+  LIQUIDATIONS_ANALYTICS_STATS: '/liquidations/analytics/stats',
 } as const;
 
 // Helper functions pour construire les URLs complètes
