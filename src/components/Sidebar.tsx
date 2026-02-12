@@ -8,7 +8,7 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
 import {
@@ -20,6 +20,13 @@ import {
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
 import { XpBadge, DailyTasksPopover } from "@/components/xp"
+
+// Telegram brand icon
+const TelegramIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+    </svg>
+);
 
 // Social links
 
@@ -41,6 +48,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
     const { authenticated, login, logout, privyUser, user } = useAuthContext();
     const pathname = usePathname();
+    const router = useRouter();
 
     // Hydration fix: track if component has mounted
     const [hasMounted, setHasMounted] = useState(false);
@@ -342,6 +350,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <div className="mt-2 space-y-1.5" onClick={(e) => e.stopPropagation()}>
                                 <XpBadge compact showStreak />
                                 <DailyTasksPopover />
+                                {/* Telegram link */}
+                                <button
+                                    onClick={() => router.push('/profile')}
+                                    className={cn(
+                                        "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors",
+                                        user?.telegramUsername
+                                            ? "text-emerald-400 hover:bg-emerald-500/10"
+                                            : "text-[#0088cc] hover:bg-[#0088cc]/10"
+                                    )}
+                                >
+                                    <TelegramIcon className="h-4 w-4" />
+                                    {user?.telegramUsername
+                                        ? `@${user.telegramUsername}`
+                                        : 'Connect Telegram'}
+                                </button>
                             </div>
                         </Card>
                     )}
