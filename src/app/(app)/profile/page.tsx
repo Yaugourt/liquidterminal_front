@@ -20,6 +20,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from "next/navigation";
 import { MySubmissionsList } from "@/components/wiki/MySubmissionsList";
+import { TelegramLinkCard } from "@/components/profile";
 
 function ProfileTabs() {
     const searchParams = useSearchParams();
@@ -199,6 +200,9 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                         icon={Users}
                         color="text-brand-accent"
                         subtext="+200 XP each"
+                    />
+                    <TelegramLinkCard
+                        initialTelegramUsername={currentUser?.telegramUsername}
                     />
                 </div>
             </div>

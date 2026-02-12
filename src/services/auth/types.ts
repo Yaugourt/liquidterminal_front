@@ -11,6 +11,8 @@ export interface User {
   referralCount: number;
   referredBy: string | null;
   referralCode?: string;
+  // TELEGRAM LINK
+  telegramUsername?: string | null;
 }
 
 export interface AuthResponse {

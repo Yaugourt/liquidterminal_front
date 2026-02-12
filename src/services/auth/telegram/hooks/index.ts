@@ -1,0 +1,1 @@
+export { useTelegramLink } from './useTelegramLink';

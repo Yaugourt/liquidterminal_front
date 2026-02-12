@@ -4,4 +4,7 @@ export * from './types';
 // Exports des API
 export * from './api';
 export * from './hooks/use-auth';
-export { AuthService } from './service'; 
+export { AuthService } from './service';
+
+// Telegram integration
+export * from './telegram'; 
