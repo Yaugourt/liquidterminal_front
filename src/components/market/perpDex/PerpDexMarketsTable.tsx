@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   Table,
   TableBody,
@@ -43,8 +44,8 @@ function MarketsSortableHead({
   return (
     <TableHead
       className={cn(
-        "cursor-pointer select-none align-middle outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
-        isActive ? "text-brand-accent" : "text-text-secondary hover:text-white"
+        "cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
+        isActive ? "!text-brand-accent" : "hover:text-white"
       )}
       onClick={() => onSort(field)}
       onKeyDown={(e) => {
@@ -62,18 +63,28 @@ function MarketsSortableHead({
           : undefined
       }
     >
-      <span className="text-label inline-flex items-center justify-start gap-1">
+      {/* Même structure visuelle que les <TableHead> non triables : pas de text-label en double sur le span */}
+      <span className="inline-flex items-center gap-1">
         {label}
         {isActive ? (
           sortOrder === "asc" ? (
-            <ChevronUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <ChevronUp className="h-3 w-3 shrink-0 opacity-90" aria-hidden />
           ) : (
-            <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <ChevronDown className="h-3 w-3 shrink-0 opacity-90" aria-hidden />
           )
         ) : (
-          <ArrowUpDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
+          <ArrowUpDown className="h-3 w-3 shrink-0 opacity-50" aria-hidden />
         )}
       </span>
+    </TableHead>
+  );
+}
+
+/** Même alignement vertical que les en-têtes triables (icône = h-3). */
+function MarketsStaticHead({ children }: { children: ReactNode }) {
+  return (
+    <TableHead>
+      <span className="inline-flex items-center gap-1 min-h-[12px]">{children}</span>
     </TableHead>
   );
 }
@@ -144,8 +155,8 @@ export function PerpDexMarketsTable({
           <Table>
             <TableHeader>
               <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                <TableHead>Asset</TableHead>
-                <TableHead>Price</TableHead>
+                <MarketsStaticHead>Asset</MarketsStaticHead>
+                <MarketsStaticHead>Price</MarketsStaticHead>
                 <MarketsSortableHead
                   label="24h"
                   field="priceChange24h"
@@ -167,8 +178,8 @@ export function PerpDexMarketsTable({
                   sortOrder={sortOrder}
                   onSort={onSort}
                 />
-                <TableHead>Funding</TableHead>
-                <TableHead>OI Cap</TableHead>
+                <MarketsStaticHead>Funding</MarketsStaticHead>
+                <MarketsStaticHead>OI Cap</MarketsStaticHead>
               </TableRow>
             </TableHeader>
             <TableBody>
