@@ -63,28 +63,27 @@ function MarketsSortableHead({
           : undefined
       }
     >
-      {/* Même structure visuelle que les <TableHead> non triables : pas de text-label en double sur le span */}
-      <span className="inline-flex items-center gap-1">
+      <span className="text-label inline-flex items-center justify-start gap-1">
         {label}
         {isActive ? (
           sortOrder === "asc" ? (
-            <ChevronUp className="h-3 w-3 shrink-0 opacity-90" aria-hidden />
+            <ChevronUp className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden />
           ) : (
-            <ChevronDown className="h-3 w-3 shrink-0 opacity-90" aria-hidden />
+            <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden />
           )
         ) : (
-          <ArrowUpDown className="h-3 w-3 shrink-0 opacity-50" aria-hidden />
+          <ArrowUpDown className="h-3 w-3 shrink-0 opacity-60" aria-hidden />
         )}
       </span>
     </TableHead>
   );
 }
 
-/** Même alignement vertical que les en-têtes triables (icône = h-3). */
+/** Même rendu « petit label » que les colonnes triables (text-label = 10px uppercase). */
 function MarketsStaticHead({ children }: { children: ReactNode }) {
   return (
     <TableHead>
-      <span className="inline-flex items-center gap-1 min-h-[12px]">{children}</span>
+      <span className="text-label inline-flex items-center justify-start">{children}</span>
     </TableHead>
   );
 }
