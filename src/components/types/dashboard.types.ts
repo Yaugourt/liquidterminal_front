@@ -35,17 +35,24 @@ export interface TokenRowProps {
     formatValue: (value: number) => string;
 }
 
+export type SortOrder = "asc" | "desc";
+
 export interface TokensTableProps {
     type: "spot" | "perp";
     data: SpotToken[] | PerpMarketData[];
     isLoading: boolean;
     onSort: (field: string) => void;
+    /** Compact rows with reduced padding */
+    compact?: boolean;
+    /** Override header styling (e.g. "compact" for smaller header) */
+    headerVariant?: "default" | "compact";
+    /** Current sort direction for chevron on active column */
+    sortDirection?: SortOrder;
 }
 
 // Types pour TrendingTokens
 export type SpotSortableFields = "volume" | "marketcap" | "change24h" | "price" | "name";
 export type SortableFields = PerpSortableFields | SpotSortableFields;
-export type SortOrder = "asc" | "desc";
 
 // Types pour TokensHeader
 export interface StatItemProps {
@@ -59,6 +66,7 @@ export interface TokensHeaderProps {
     totalVolume: number;
     dailyFees?: number;
     openInterest?: number;
+    compact?: boolean;
 }
 
 /**
@@ -186,6 +194,12 @@ export interface TrendingTokensProps {
   type: "perp" | "spot";
   title?: string;
   initialData?: SpotToken[] | PerpMarketData[];
+  /** Root container className */
+  className?: string;
+  /** Compact layout: denser rows, smaller header */
+  compact?: boolean;
+  /** Visual variant for table styling */
+  variant?: "default" | "compact";
 } 
 
 /**

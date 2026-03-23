@@ -151,14 +151,12 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                     label={col.label}
                     onClick={() => handleSort(col.key)}
                     isActive={sortField === col.key}
+                    sortDirection={sortOrder}
                     className={col.className}
                   />
                 ) : (
-                  <TableHead
-                    key={col.key}
-                    className={col.className}
-                  >
-                    <span className="text-label text-text-secondary">{col.label}</span>
+                  <TableHead key={col.key} className={col.className}>
+                    {col.label}
                   </TableHead>
                 )
               ))}
@@ -174,13 +172,13 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
                   <TableCell className="text-white text-sm font-medium text-left">{auction.name}</TableCell>
                   <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
+                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent font-mono text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
+                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>

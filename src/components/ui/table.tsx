@@ -39,7 +39,11 @@ const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-  <th ref={ref} className={cn("text-left text-label text-text-secondary py-3 px-3", className)} {...props} />
+  <th
+    ref={ref}
+    className={cn("text-left table-column-head py-2.5 px-3 align-middle", className)}
+    {...props}
+  />
 ));
 TableHead.displayName = "TableHead";
 
@@ -73,10 +77,12 @@ const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHe
         }}
         disabled={!onClick}
         className={cn(
-          "text-label w-full min-h-9 px-0 py-1 flex items-center justify-start gap-1 transition-colors hover:text-white cursor-pointer disabled:cursor-default disabled:opacity-60",
+          "table-column-head w-full min-h-8 px-0 py-0.5 flex items-center justify-start gap-1 transition-colors hover:text-text-secondary cursor-pointer disabled:cursor-default disabled:opacity-80 disabled:hover:text-text-muted",
           isActive
-            ? (highlight === 'gold' ? 'text-brand-gold' : 'text-brand-accent')
-            : 'text-text-secondary'
+            ? highlight === "gold"
+              ? "!text-brand-gold"
+              : "!text-brand-accent"
+            : ""
         )}
         aria-sort={
           isActive && sortDirection
@@ -111,11 +117,13 @@ interface TableHeadLabelProps {
 }
 
 const TableHeadLabel = ({ children, align = 'left', className }: TableHeadLabelProps) => (
-  <span className={cn(
-    "text-text-secondary font-semibold uppercase tracking-wider block w-full text-[11px]",
-    align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
-    className
-  )}>
+  <span
+    className={cn(
+      "table-column-head block w-full",
+      align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left",
+      className
+    )}
+  >
     {children}
   </span>
 );

@@ -93,9 +93,10 @@ export function TopTradersPreview() {
   const SortableHeader = ({ field, children, align = 'left' }: { field: SortField; children: React.ReactNode; align?: 'left' | 'right' }) => (
     <TableHead className={`py-3 px-4 ${align === 'right' ? 'text-right' : ''}`}>
       <button
+        type="button"
         onClick={() => handleColumnSort(field)}
-        className={`inline-flex items-center gap-0.5 text-text-secondary text-[10px] font-semibold uppercase tracking-wider hover:text-white transition-colors ${
-          columnSort.field === field ? 'text-brand-accent' : ''
+        className={`table-column-head inline-flex items-center gap-0.5 hover:text-text-secondary transition-colors ${align === 'right' ? 'w-full justify-end' : ''} ${
+          columnSort.field === field ? "!text-brand-accent" : ""
         }`}
       >
         {children}
@@ -144,16 +145,8 @@ export function TopTradersPreview() {
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className="py-3 px-4">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Rank
-                </span>
-              </TableHead>
-              <TableHead className="py-3 px-4">
-                <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                  Trader
-                </span>
-              </TableHead>
+              <TableHead className="py-3 px-4">Rank</TableHead>
+              <TableHead className="py-3 px-4">Trader</TableHead>
               <SortableHeader field="tradeCount" align="right">Trades</SortableHeader>
               <SortableHeader field="totalVolume" align="right">Volume</SortableHeader>
               <SortableHeader field="winRate" align="right">Win Rate</SortableHeader>
@@ -175,7 +168,7 @@ export function TopTradersPreview() {
                   <TableCell className="py-3 px-4">
                     <Link
                       href={`/market/tracker/wallet/${trader.user}`}
-                      className="text-sm text-brand-accent hover:underline font-mono"
+                      className="text-sm text-brand-accent hover:underline"
                     >
                       {trader.user.slice(0, 6)}...{trader.user.slice(-4)}
                     </Link>

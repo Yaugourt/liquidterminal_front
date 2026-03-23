@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { TableEmptyState } from "@/components/ui/table-states";
+import { cn } from "@/lib/utils";
 
 /** Matches compact TokensTable (Trending spot / perp): padding + column widths */
 const headFirst = "pl-3 py-1.5 w-[40%]";
@@ -61,7 +62,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
         <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
           <Building2 size={12} className="text-brand-accent" />
         </div>
-        <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
+        <h3 className="text-[10px] font-normal uppercase tracking-wide text-text-secondary">
           Top by Volume
         </h3>
       </div>
@@ -70,9 +71,9 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
         <Table className="h-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className={headFirst}>Name</TableHead>
-              <TableHead className={headMid}>24h Vol</TableHead>
-              <TableHead className={headLast}>Open Interest</TableHead>
+              <TableHead className={cn(headFirst)}>Name</TableHead>
+              <TableHead className={cn(headMid, "!text-brand-accent")}>24h Vol</TableHead>
+              <TableHead className={cn(headLast)}>Open Interest</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
