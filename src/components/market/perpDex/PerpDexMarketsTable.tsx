@@ -79,7 +79,7 @@ function MarketsSortableHead({
   );
 }
 
-/** Même rendu « petit label » que les colonnes triables (text-label = 10px uppercase). */
+/** Same small-label look as sortable columns (text-label: 10px uppercase). */
 function MarketsStaticHead({ children }: { children: ReactNode }) {
   return (
     <TableHead>
