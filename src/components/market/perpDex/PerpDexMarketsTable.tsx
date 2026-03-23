@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useMemo, useState } from "react";
 import {
     Table,
     TableBody,
@@ -7,6 +8,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
+    SortableTableHead,
 } from "@/components/ui/table";
 import { Database } from "lucide-react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -14,6 +16,24 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { AssetLogo } from "@/components/common";
 import { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
 import { Sprout, AlertCircle } from "lucide-react";
+
+type PerpDexMarketsSortField = "dayNtlVlm" | "openInterest" | "priceChange24h";
+
+function getSortNumericValue(
+    field: PerpDexMarketsSortField,
+    asset: PerpDexAssetWithMarketData
+): number {
+    switch (field) {
+        case "dayNtlVlm":
+            return asset.dayNtlVlm ?? 0;
+        case "openInterest":
+            return asset.openInterest ?? 0;
+        case "priceChange24h":
+            return asset.priceChange24h ?? 0;
+        default:
+            return 0;
+    }
+}
 
 interface PerpDexMarketsTableProps {
     assets: PerpDexAssetWithMarketData[];
@@ -23,6 +43,30 @@ interface PerpDexMarketsTableProps {
 
 export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpDexMarketsTableProps) {
     const { format } = useNumberFormat();
+
+    const [sortField, setSortField] = useState<PerpDexMarketsSortField>("dayNtlVlm");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+    const sortedAssets = useMemo(() => {
+        return [...assets].sort((a, b) => {
+            const va = getSortNumericValue(sortField, a);
+            const vb = getSortNumericValue(sortField, b);
+            const comparison = va - vb;
+            return sortOrder === "desc" ? -comparison : comparison;
+        });
+    }, [assets, sortField, sortOrder]);
+
+    const handleSort = useCallback(
+        (field: PerpDexMarketsSortField) => {
+            if (sortField === field) {
+                setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+            } else {
+                setSortField(field);
+                setSortOrder("desc");
+            }
+        },
+        [sortField]
+    );
 
     const formatFunding = (funding: number | undefined) => {
         if (funding === undefined) return '-';
@@ -83,16 +127,28 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                             <TableRow className="border-b border-border-subtle hover:bg-transparent">
                                 <TableHead>Asset</TableHead>
                                 <TableHead>Price</TableHead>
-                                <TableHead>24h</TableHead>
-                                <TableHead>Volume</TableHead>
-                                <TableHead>OI</TableHead>
+                                <SortableTableHead
+                                    label="24h"
+                                    onClick={() => handleSort("priceChange24h")}
+                                    isActive={sortField === "priceChange24h"}
+                                />
+                                <SortableTableHead
+                                    label="Volume"
+                                    onClick={() => handleSort("dayNtlVlm")}
+                                    isActive={sortField === "dayNtlVlm"}
+                                />
+                                <SortableTableHead
+                                    label="OI"
+                                    onClick={() => handleSort("openInterest")}
+                                    isActive={sortField === "openInterest"}
+                                />
                                 <TableHead>Funding</TableHead>
                                 <TableHead>OI Cap</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {assets.length > 0 ? (
-                                assets.map((asset) => (
+                            {sortedAssets.length > 0 ? (
+                                sortedAssets.map((asset) => (
                                     <TableRow
                                         key={asset.name}
                                         className={`border-b border-border-subtle hover:bg-white/[0.02] transition-colors ${asset.isDelisted ? 'opacity-50' : ''}`}
