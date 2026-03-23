@@ -113,7 +113,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
                                 sortDirection={sortDirection}
-                                highlight="gold"
                                 className={`${sortableClass} w-[35%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                             <SortableTableHead
@@ -121,7 +120,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 onClick={handleSort("price")}
                                 isActive={activeSort === "price"}
                                 sortDirection={sortDirection}
-                                highlight="gold"
                                 className={`${sortableClass} w-[25%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                             <SortableTableHead
@@ -129,7 +127,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 onClick={handleSort("volume")}
                                 isActive={activeSort === "volume"}
                                 sortDirection={sortDirection}
-                                highlight="gold"
                                 className={`${sortableClass} w-[20%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                             <SortableTableHead
@@ -137,7 +134,6 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 onClick={handleSort("change24h")}
                                 isActive={activeSort === "change24h"}
                                 sortDirection={sortDirection}
-                                highlight="gold"
                                 className={`${sortableClass} w-[20%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                         </TableRow>

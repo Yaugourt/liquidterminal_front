@@ -44,8 +44,8 @@ function MarketsSortableHead({
   return (
     <TableHead
       className={cn(
-        "cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
-        isActive ? "!text-brand-accent" : "hover:text-white"
+        "cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
+        isActive ? "!text-brand-gold" : "hover:text-white"
       )}
       onClick={() => onSort(field)}
       onKeyDown={(e) => {
