@@ -18,6 +18,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { TableEmptyState } from "@/components/ui/table-states";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
 import type { PerpDexWithMarketData } from "@/services/market/perpDex/types";
+import { cn } from "@/lib/utils";
 
 const HIP3_DOCS_URL =
   "https://hyperliquid.gitbook.io/hyperliquid-docs/technical-docs/hips/hip-3";
@@ -122,10 +123,10 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
           <LineChart size={12} className="text-brand-accent" />
         </div>
         <div className="min-w-0">
-          <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
+          <h3 className="text-[10px] font-normal uppercase tracking-wide text-text-secondary">
             Top markets
           </h3>
-          <p className="text-[10px] text-text-muted truncate">
+          <p className="text-[9px] text-text-muted truncate font-normal normal-case tracking-normal">
             Aggregated across all builder DEXs
           </p>
         </div>
@@ -135,9 +136,9 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
         <Table className="h-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              <TableHead className={headFirst}>Ticker</TableHead>
-              <TableHead className={headMid}>24h Vol</TableHead>
-              <TableHead className={headLast}>Open Interest</TableHead>
+              <TableHead className={cn(headFirst)}>Ticker</TableHead>
+              <TableHead className={cn(headMid, "!text-brand-accent")}>24h Vol</TableHead>
+              <TableHead className={cn(headLast)}>Open Interest</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

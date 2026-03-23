@@ -1,7 +1,6 @@
 import { memo, useCallback } from "react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHeader, TableRow, SortableTableHead, TableHead } from "@/components/ui/table";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TokenIcon } from '@/components/common';
@@ -9,45 +8,43 @@ import { TokenRowProps, TokensTableProps } from "@/components/types/dashboard.ty
 import { TableEmptyState, TableLoadingState } from "@/components/ui/table-states";
 
 
-const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: NumberFormatType }) => (
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- type is required by TokenRowProps but not used in this component
+const TokenRow = memo(({ token, type, format, compact }: TokenRowProps & { format: NumberFormatType; compact?: boolean }) => (
     <TableRow className="hover:bg-white/[0.02] group cursor-pointer">
-        <TableCell className="py-3 pl-4">
-            <div className="flex items-center gap-3">
-                <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-[#1A1F2A] p-1 border border-border-hover group-hover:scale-110 transition-transform">
-                        <TokenIcon src={token.logo || null} name={token.name} size="sm" />
-                    </div>
-                </div>
-                <span className="text-white text-sm font-medium">{token.name}</span>
+        <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
+            <div className="flex items-center gap-2">
+                <TokenIcon src={token.logo || null} name={token.name} size="sm" />
+                <span className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>{token.name}</span>
             </div>
         </TableCell>
-        <TableCell className="py-3 pl-4">
-            <div className="text-white text-sm font-medium">
-                {token.price >= 1000000 
-                    ? formatLargeNumber(token.price, { prefix: '$', decimals: 2, forceDecimals: true })
-                    : type === "spot"
+        <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
+            <div className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>
+                {token.price >= 1000000
+                    ? formatLargeNumber(token.price, { prefix: '$', decimals: 1 })
+                    : token.price >= 1
                         ? formatNumber(token.price, format, {
                             minimumFractionDigits: 0,
-                            maximumFractionDigits: 4,
+                            maximumFractionDigits: 2,
                             currency: '$',
                             showCurrency: true
                         })
                         : formatNumber(token.price, format, {
                             minimumFractionDigits: 0,
-                            maximumFractionDigits: 3,
+                            maximumFractionDigits: 4,
                             currency: '$',
                             showCurrency: true
                         })
                 }
             </div>
         </TableCell>
-        <TableCell className="py-3 pl-4">
-            <div className="text-text-secondary text-sm">
-                {formatLargeNumber(token.volume, { prefix: '$', decimals: 1, forceDecimals: true })}
+        <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
+            <div className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>
+                {formatLargeNumber(token.volume, { prefix: '$', decimals: 1 })}
             </div>
         </TableCell>
-        <TableCell className="py-3 pl-4 pr-4">
-            <div className={`text-xs font-medium px-2 py-1 rounded-md inline-block ${token.change24h >= 0 ? 'bg-brand-gold/10 text-brand-gold' : 'bg-rose-500/20 text-rose-400'}`}>
+        <TableCell className={compact ? "py-1 pl-3 pr-3" : "py-1.5 pl-4 pr-4"}>
+            <div className={`flex items-center gap-1 font-medium ${compact ? "text-[11px]" : "text-xs"} ${token.change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {token.change24h >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                 {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
             </div>
         </TableCell>
@@ -56,7 +53,7 @@ const TokenRow = memo(({ token, type, format }: TokenRowProps & { format: Number
 
 TokenRow.displayName = 'TokenRow';
 
-export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "change24h" }: TokensTableProps & { activeSort?: string }) => {
+export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "change24h", sortDirection = "desc", compact = false, headerVariant = "default" }: TokensTableProps & { activeSort?: string }) => {
     const { format } = useNumberFormat();
 
     const formatValue = useCallback((value: number) => {
@@ -72,6 +69,17 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
         onSort(field);
     }, [onSort]);
 
+    const headerCellClass = headerVariant === "compact"
+        ? "pl-3 py-1.5 w-[35%] text-[10px]"
+        : "pl-4 w-[35%]";
+    const headerCellClass2 = headerVariant === "compact"
+        ? "pl-3 py-1.5 w-[25%] text-[10px]"
+        : "pl-4 w-[25%]";
+    const headerCellClass3 = headerVariant === "compact"
+        ? "pl-3 py-1.5 w-[20%] text-[10px]"
+        : "pl-4 w-[20%]";
+    const sortableClass = headerVariant === "compact" ? "pl-3 py-1.5" : "pl-4";
+
     if (isLoading) {
         return (
             <div className="w-full h-full flex flex-col">
@@ -79,10 +87,10 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
-                                <TableHead className="pl-4 w-[35%]">Name</TableHead>
-                                <TableHead className="pl-4 w-[25%]">Price</TableHead>
-                                <TableHead className="pl-4 w-[20%]">Vol</TableHead>
-                                <TableHead className="pl-4 w-[20%]">24h</TableHead>
+                                <TableHead className={headerCellClass}>Name</TableHead>
+                                <TableHead className={headerCellClass2}>Price</TableHead>
+                                <TableHead className={headerCellClass3}>Vol</TableHead>
+                                <TableHead className={headerCellClass3}>24h</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -104,33 +112,34 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                 label="Name"
                                 onClick={handleSort("name")}
                                 isActive={activeSort === "name"}
+                                sortDirection={sortDirection}
                                 highlight="gold"
-                                className="pl-4 w-[35%]"
+                                className={`${sortableClass} w-[35%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                             <SortableTableHead
                                 label="Price"
                                 onClick={handleSort("price")}
                                 isActive={activeSort === "price"}
+                                sortDirection={sortDirection}
                                 highlight="gold"
-                                className="pl-4 w-[25%]"
+                                className={`${sortableClass} w-[25%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
                             <SortableTableHead
                                 label="Vol"
                                 onClick={handleSort("volume")}
                                 isActive={activeSort === "volume"}
+                                sortDirection={sortDirection}
                                 highlight="gold"
-                                className="pl-4 w-[20%]"
+                                className={`${sortableClass} w-[20%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
                             />
-                            <TableHead className="pl-4 w-[20%]">
-                                <Button
-                                    variant="tableHeaderSortable"
-                                    onClick={handleSort("change24h")}
-                                    className="text-brand-gold hover:text-brand-gold/80"
-                                >
-                                    24h
-                                    <ArrowUpDown className="h-3 w-3" />
-                                </Button>
-                            </TableHead>
+                            <SortableTableHead
+                                label="24h"
+                                onClick={handleSort("change24h")}
+                                isActive={activeSort === "change24h"}
+                                sortDirection={sortDirection}
+                                highlight="gold"
+                                className={`${sortableClass} w-[20%] ${headerVariant === "compact" ? "text-[10px]" : ""}`}
+                            />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -142,6 +151,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
                                     type={type}
                                     formatValue={formatValue}
                                     format={format}
+                                    compact={compact}
                                 />
                             ))
                         ) : (

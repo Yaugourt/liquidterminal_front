@@ -63,7 +63,7 @@ function MarketsSortableHead({
           : undefined
       }
     >
-      <span className="text-label inline-flex items-center justify-start gap-1">
+      <span className="table-column-head inline-flex items-center justify-start gap-1">
         {label}
         {isActive ? (
           sortOrder === "asc" ? (
@@ -79,13 +79,9 @@ function MarketsSortableHead({
   );
 }
 
-/** Same small-label look as sortable columns (text-label: 10px uppercase). */
+/** Static column — inherits `table-column-head` from TableHead. */
 function MarketsStaticHead({ children }: { children: ReactNode }) {
-  return (
-    <TableHead>
-      <span className="text-label inline-flex items-center justify-start">{children}</span>
-    </TableHead>
-  );
+  return <TableHead>{children}</TableHead>;
 }
 
 export function PerpDexMarketsTable({
@@ -146,7 +142,7 @@ export function PerpDexMarketsTable({
 
   return (
     <div>
-      <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
+      <h2 className="text-table-header mb-3">
         Markets ({activeAssets} active / {totalAssets} total)
       </h2>
       <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">

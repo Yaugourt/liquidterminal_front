@@ -45,8 +45,16 @@ body {
         @apply text-[10px] font-semibold uppercase tracking-wider;
     }
 
+    /**
+     * Column headers for data tables (Markets, DEX list, etc.):
+     * light weight, small caps — not the bold "text-label" badge style.
+     */
+    .table-column-head {
+        @apply text-[10px] font-normal uppercase tracking-wide text-text-muted;
+    }
+
     .text-table-header {
-        @apply text-[11px] font-semibold uppercase tracking-wider text-text-secondary;
+        @apply text-[10px] font-normal uppercase tracking-wide text-text-muted;
     }
 
     /* États actifs pour les colonnes triables */

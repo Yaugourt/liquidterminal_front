@@ -5,6 +5,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
   TableHeader,
   TableRow,
   SortableTableHead,
@@ -201,36 +202,38 @@ export function PerpDexTable() {
                 label="Name"
                 onClick={() => handleSort('name')}
                 isActive={sortField === 'name'}
+                sortDirection={sortOrder}
                 className="pl-4 w-[22%]"
               />
               <SortableTableHead
                 label="Markets"
                 onClick={() => handleSort('activeAssets')}
                 isActive={sortField === 'activeAssets'}
+                sortDirection={sortOrder}
                 className="w-[12%]"
               />
               <SortableTableHead
                 label="24h Volume"
                 onClick={() => handleSort('totalVolume24h')}
                 isActive={sortField === 'totalVolume24h'}
+                sortDirection={sortOrder}
                 className="w-[18%]"
               />
               <SortableTableHead
                 label="Open Interest"
                 onClick={() => handleSort('totalOpenInterest')}
                 isActive={sortField === 'totalOpenInterest'}
+                sortDirection={sortOrder}
                 className="w-[18%]"
               />
               <SortableTableHead
                 label="Avg Funding"
                 onClick={() => handleSort('avgFunding')}
                 isActive={sortField === 'avgFunding'}
+                sortDirection={sortOrder}
                 className="w-[15%]"
               />
-              <SortableTableHead
-                label="OI Cap"
-                className="pr-4 w-[15%]"
-              />
+              <TableHead className="pr-4 w-[15%]">OI Cap</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
