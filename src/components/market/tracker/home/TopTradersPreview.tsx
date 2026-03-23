@@ -84,9 +84,9 @@ export function TopTradersPreview() {
       return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
     }
     if (columnSort.direction === 'desc') {
-      return <ArrowDown className="h-3 w-3 ml-1 text-brand-accent" />;
+      return <ArrowDown className="h-3 w-3 ml-1 text-brand-gold" />;
     }
-    return <ArrowUp className="h-3 w-3 ml-1 text-brand-accent" />;
+    return <ArrowUp className="h-3 w-3 ml-1 text-brand-gold" />;
   };
 
   // Sortable column header component
@@ -96,7 +96,7 @@ export function TopTradersPreview() {
         type="button"
         onClick={() => handleColumnSort(field)}
         className={`table-column-head inline-flex items-center gap-0.5 hover:text-text-secondary transition-colors ${align === 'right' ? 'w-full justify-end' : ''} ${
-          columnSort.field === field ? "!text-brand-accent" : ""
+          columnSort.field === field ? "!text-brand-gold" : ""
         }`}
       >
         {children}

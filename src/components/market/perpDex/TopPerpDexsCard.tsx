@@ -72,7 +72,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className={cn(headFirst)}>Name</TableHead>
-              <TableHead className={cn(headMid, "!text-brand-accent")}>24h Vol</TableHead>
+              <TableHead className={cn(headMid, "!text-brand-gold")}>24h Vol</TableHead>
               <TableHead className={cn(headLast)}>Open Interest</TableHead>
             </TableRow>
           </TableHeader>

@@ -348,19 +348,20 @@ Header (sticky top-0, backdrop-blur-xl, bg-brand-primary/80)
 </div>
 ```
 
-### Sortable Header
+### Sortable header (site-wide)
+
+**Colonne de tri active :** toujours **`text-brand-gold`** (or), pas le cyan accent — via `SortableTableHead` (défaut `highlight="gold"`) ou `!text-brand-gold` / `table-header-active-gold` sur les headers custom.
 
 ```tsx
-<TableHead>
-  <Button
-    variant="ghost"
-    onClick={onSort}
-    className={`${isActive ? "text-brand-accent" : "text-text-secondary"} p-0 flex items-center gap-1 hover:text-white text-label`}
-  >
-    {label}
-    <ArrowUpDown className="h-3 w-3" />
-  </Button>
-</TableHead>
+import { SortableTableHead } from "@/components/ui/table";
+
+<SortableTableHead
+  label="Volume"
+  onClick={() => handleSort("volume")}
+  isActive={sortField === "volume"}
+  sortDirection={sortOrder}
+/>
+// Option rare : forcer le cyan → highlight="accent"
 ```
 
 ### Table Empty State

@@ -62,11 +62,12 @@ interface SortableTableHeadProps extends React.ThHTMLAttributes<HTMLTableCellEle
   /** When set with isActive, shows up/down chevron instead of neutral ArrowUpDown */
   sortDirection?: "asc" | "desc";
   onClick?: () => void;
-  highlight?: 'accent' | 'gold';
+  /** Active sort column color; default gold site-wide */
+  highlight?: "gold" | "accent";
 }
 
 const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHeadProps>(
-  ({ className, label, isActive, sortDirection, onClick, highlight = 'accent', ...props }, ref) => (
+  ({ className, label, isActive, sortDirection, onClick, highlight = "gold", ...props }, ref) => (
     <TableHead ref={ref} className={className} {...props}>
       <button
         type="button"
@@ -79,9 +80,9 @@ const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHe
         className={cn(
           "table-column-head w-full min-h-8 px-0 py-0.5 flex items-center justify-start gap-1 transition-colors hover:text-text-secondary cursor-pointer disabled:cursor-default disabled:opacity-80 disabled:hover:text-text-muted",
           isActive
-            ? highlight === "gold"
-              ? "!text-brand-gold"
-              : "!text-brand-accent"
+            ? highlight === "accent"
+              ? "!text-brand-accent"
+              : "!text-brand-gold"
             : ""
         )}
         aria-sort={

@@ -29,7 +29,7 @@ const SortableColumnHeader = ({
   <Button
     variant="tableHeaderSortable"
     onClick={() => onSort(sortKey)}
-    className={isActive ? 'table-header-active-accent' : className}
+    className={isActive ? "table-header-active-gold" : className}
   >
     {label}
     <ArrowUpDown className="h-3 w-3" />

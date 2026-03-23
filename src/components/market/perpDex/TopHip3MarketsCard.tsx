@@ -137,7 +137,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">
               <TableHead className={cn(headFirst)}>Ticker</TableHead>
-              <TableHead className={cn(headMid, "!text-brand-accent")}>24h Vol</TableHead>
+              <TableHead className={cn(headMid, "!text-brand-gold")}>24h Vol</TableHead>
               <TableHead className={cn(headLast)}>Open Interest</TableHead>
             </TableRow>
           </TableHeader>
