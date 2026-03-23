@@ -4,7 +4,7 @@ import {
   PerpDexStatsCard,
   PerpDexTable,
   TopPerpDexsCard,
-  Hip3InfoCard,
+  TopHip3MarketsCard,
   PastAuctionsPerpTable
 } from "@/components/market/perpDex";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -16,7 +16,7 @@ export default function PerpDexsPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-5">
         <PerpDexStatsCard />
         <TopPerpDexsCard />
-        <Hip3InfoCard />
+        <TopHip3MarketsCard />
       </div>
 
       {/* Tables with Tabs */}

@@ -1,6 +1,6 @@
 export { PerpDexStatsCard } from './PerpDexStatsCard';
 export { PerpDexTable } from './PerpDexTable';
 export { TopPerpDexsCard } from './TopPerpDexsCard';
-export { Hip3InfoCard } from './Hip3InfoCard';
+export { TopHip3MarketsCard } from './TopHip3MarketsCard';
 export { PerpDexMarketsTable } from './PerpDexMarketsTable';
 export { PastAuctionsPerpTable } from './PastAuctionsPerpTable';

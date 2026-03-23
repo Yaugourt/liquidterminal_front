@@ -8,14 +8,7 @@ import {
   PerpDexAssetWithMarketData,
   PerpDexEnhancedGlobalStats
 } from '../types';
-
-/**
- * Extract asset ticker from full name (e.g., "xyz:AAPL" -> "AAPL")
- */
-const extractTicker = (assetName: string): string => {
-  const parts = assetName.split(':');
-  return parts.length > 1 ? parts[1] : assetName;
-};
+import { extractPerpDexAssetTicker } from '../utils';
 
 /**
  * Hook that combines all PerpDex data sources:
@@ -78,13 +71,13 @@ export function usePerpDexMarketData() {
       // Create OI cap lookup from perpDexs API
       const oiCapByTicker = new Map<string, number>();
       dex.assets.forEach(asset => {
-        const ticker = extractTicker(asset.name);
+        const ticker = extractPerpDexAssetTicker(asset.name);
         oiCapByTicker.set(ticker.toUpperCase(), asset.streamingOiCap);
       });
 
       // Use allPerpMetas as primary source, enrich with OI cap and market data
       const assetsWithMarketData: PerpDexAssetWithMarketData[] = dexMetas.map((meta: PerpMetaAssetWithCollateral, index) => {
-        const ticker = extractTicker(meta.name);
+        const ticker = extractPerpDexAssetTicker(meta.name);
         const streamingOiCap = oiCapByTicker.get(ticker.toUpperCase()) || 0;
         const marketAsset = dexMarketData?.assets[index];
 
