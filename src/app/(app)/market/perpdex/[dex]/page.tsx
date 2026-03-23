@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +21,10 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { PerpDexMarketsTable } from "@/components/market/perpDex";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { toast } from "sonner";
+import {
+  sortPerpDexMarketsAssets,
+  type PerpDexMarketsSortField,
+} from "@/lib/perpDexMarketsSort";
 
 export default function PerpDexDetailPage() {
   const params = useParams();
@@ -28,6 +33,30 @@ export default function PerpDexDetailPage() {
   const { format } = useNumberFormat();
 
   const { dex, isLoading, error, wsConnected } = usePerpDexWithMarketData(dexName);
+
+  const [marketsSortField, setMarketsSortField] =
+    useState<PerpDexMarketsSortField>("dayNtlVlm");
+  const [marketsSortOrder, setMarketsSortOrder] = useState<"asc" | "desc">("desc");
+
+  const sortedMarketsAssets = useMemo(() => {
+    if (!dex) return [];
+    return sortPerpDexMarketsAssets(
+      dex.assetsWithMarketData,
+      marketsSortField,
+      marketsSortOrder
+    );
+  }, [dex, marketsSortField, marketsSortOrder]);
+
+  const handleMarketsSort = useCallback((field: PerpDexMarketsSortField) => {
+    setMarketsSortField((prevField) => {
+      if (prevField === field) {
+        setMarketsSortOrder((o) => (o === "asc" ? "desc" : "asc"));
+        return prevField;
+      }
+      setMarketsSortOrder("desc");
+      return field;
+    });
+  }, []);
 
   const formatFunding = (funding: number | undefined) => {
     if (funding === undefined) return '-';
@@ -227,7 +256,7 @@ export default function PerpDexDetailPage() {
             showExternalLink={true}
             externalLinkHref={`/explorer/address/${dex.deployer}`}
             copyMessage="Deployer address copied"
-            className="text-brand-accent font-mono text-sm"
+            className="text-brand-accent text-sm"
           />
         </div>
 
@@ -244,7 +273,7 @@ export default function PerpDexDetailPage() {
             showExternalLink={true}
             externalLinkHref={`/explorer/address/${dex.feeRecipient}`}
             copyMessage="Fee recipient address copied"
-            className="text-brand-accent font-mono text-sm"
+            className="text-brand-accent text-sm"
           />
         </div>
 
@@ -254,7 +283,7 @@ export default function PerpDexDetailPage() {
             address={dex.oracleUpdater!}
             label="Oracle Updater"
             copyMessage="Oracle updater address copied"
-            className="text-zinc-400 font-mono text-sm"
+            className="text-zinc-400 text-sm"
           />
         ) : dex.subDeployers.length > 0 ? (
           <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
@@ -275,7 +304,7 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-zinc-400 font-mono text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-zinc-400 text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>
@@ -296,9 +325,12 @@ export default function PerpDexDetailPage() {
 
       {/* Markets table with live data */}
       <PerpDexMarketsTable
-        assets={dex.assetsWithMarketData}
+        assets={sortedMarketsAssets}
         totalAssets={dex.totalAssets}
         activeAssets={dex.activeAssets}
+        sortField={marketsSortField}
+        sortOrder={marketsSortOrder}
+        onSort={handleMarketsSort}
       />
     </>
   );
