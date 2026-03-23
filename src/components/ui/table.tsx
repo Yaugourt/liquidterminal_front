@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -55,24 +55,48 @@ TableCell.displayName = "TableCell";
 interface SortableTableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
   label: string;
   isActive?: boolean;
+  /** When set with isActive, shows up/down chevron instead of neutral ArrowUpDown */
+  sortDirection?: "asc" | "desc";
   onClick?: () => void;
   highlight?: 'accent' | 'gold';
 }
 
 const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHeadProps>(
-  ({ className, label, isActive, onClick, highlight = 'accent', ...props }, ref) => (
+  ({ className, label, isActive, sortDirection, onClick, highlight = 'accent', ...props }, ref) => (
     <TableHead ref={ref} className={className} {...props}>
       <button
-        onClick={onClick}
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick?.();
+        }}
         disabled={!onClick}
-        className={`text-label p-0 h-auto flex items-center justify-start gap-1 transition-colors hover:text-white ${
+        className={cn(
+          "text-label w-full min-h-9 px-0 py-1 flex items-center justify-start gap-1 transition-colors hover:text-white cursor-pointer disabled:cursor-default disabled:opacity-60",
           isActive
             ? (highlight === 'gold' ? 'text-brand-gold' : 'text-brand-accent')
             : 'text-text-secondary'
-        }`}
+        )}
+        aria-sort={
+          isActive && sortDirection
+            ? sortDirection === "asc"
+              ? "ascending"
+              : "descending"
+            : undefined
+        }
       >
         {label}
-        {onClick && <ArrowUpDown className="h-3 w-3" />}
+        {onClick &&
+          (isActive && sortDirection ? (
+            sortDirection === "asc" ? (
+              <ChevronUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            ) : (
+              <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            )
+          ) : (
+            <ArrowUpDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
+          ))}
       </button>
     </TableHead>
   )

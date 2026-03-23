@@ -19,17 +19,23 @@ import { Sprout, AlertCircle } from "lucide-react";
 
 type PerpDexMarketsSortField = "dayNtlVlm" | "openInterest" | "priceChange24h";
 
+function toSortNumber(value: number | undefined | null): number {
+    if (value === undefined || value === null) return 0;
+    const n = typeof value === "number" ? value : Number(value);
+    return Number.isFinite(n) ? n : 0;
+}
+
 function getSortNumericValue(
     field: PerpDexMarketsSortField,
     asset: PerpDexAssetWithMarketData
 ): number {
     switch (field) {
         case "dayNtlVlm":
-            return asset.dayNtlVlm ?? 0;
+            return toSortNumber(asset.dayNtlVlm);
         case "openInterest":
-            return asset.openInterest ?? 0;
+            return toSortNumber(asset.openInterest);
         case "priceChange24h":
-            return asset.priceChange24h ?? 0;
+            return toSortNumber(asset.priceChange24h);
         default:
             return 0;
     }
@@ -51,7 +57,10 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
         return [...assets].sort((a, b) => {
             const va = getSortNumericValue(sortField, a);
             const vb = getSortNumericValue(sortField, b);
-            const comparison = va - vb;
+            let comparison = va - vb;
+            if (comparison === 0) {
+                comparison = a.name.localeCompare(b.name);
+            }
             return sortOrder === "desc" ? -comparison : comparison;
         });
     }, [assets, sortField, sortOrder]);
@@ -131,16 +140,19 @@ export function PerpDexMarketsTable({ assets, totalAssets, activeAssets }: PerpD
                                     label="24h"
                                     onClick={() => handleSort("priceChange24h")}
                                     isActive={sortField === "priceChange24h"}
+                                    sortDirection={sortField === "priceChange24h" ? sortOrder : undefined}
                                 />
                                 <SortableTableHead
                                     label="Volume"
                                     onClick={() => handleSort("dayNtlVlm")}
                                     isActive={sortField === "dayNtlVlm"}
+                                    sortDirection={sortField === "dayNtlVlm" ? sortOrder : undefined}
                                 />
                                 <SortableTableHead
                                     label="OI"
                                     onClick={() => handleSort("openInterest")}
                                     isActive={sortField === "openInterest"}
+                                    sortDirection={sortField === "openInterest" ? sortOrder : undefined}
                                 />
                                 <TableHead>Funding</TableHead>
                                 <TableHead>OI Cap</TableHead>
