@@ -51,7 +51,7 @@ const TableCell = React.forwardRef<
 ));
 TableCell.displayName = "TableCell";
 
-// Composant centralisé pour les colonnes triables
+// Shared sortable column header
 interface SortableTableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
   label: string;
   isActive?: boolean;
@@ -103,7 +103,7 @@ const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHe
 );
 SortableTableHead.displayName = "SortableTableHead";
 
-// Composant centralisé pour les labels de colonnes non-triables
+// Shared non-sortable column label
 interface TableHeadLabelProps {
   children: React.ReactNode;
   align?: 'left' | 'center' | 'right';
