@@ -45,7 +45,7 @@ function MarketsSortableHead({
     <TableHead
       className={cn(
         "cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
-        isActive ? "!text-brand-gold" : "hover:text-white"
+        !isActive && "hover:text-white"
       )}
       onClick={() => onSort(field)}
       onKeyDown={(e) => {
@@ -63,7 +63,13 @@ function MarketsSortableHead({
           : undefined
       }
     >
-      <span className="table-column-head inline-flex items-center justify-start gap-1">
+      {/* Do not put `table-column-head` on inner span: its text-text-muted would override th !text-brand-gold */}
+      <span
+        className={cn(
+          "text-[10px] font-normal uppercase tracking-wide inline-flex items-center justify-start gap-1",
+          isActive ? "!text-brand-gold" : "text-text-muted"
+        )}
+      >
         {label}
         {isActive ? (
           sortOrder === "asc" ? (
