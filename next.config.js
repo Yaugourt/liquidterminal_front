@@ -5,6 +5,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 const nextConfig = {
+    async redirects() {
+        return [
+            { source: '/docs/hip4', destination: '/hip4/home', permanent: true },
+            { source: '/docs/hip4/:path*', destination: '/hip4/:path*', permanent: true },
+        ];
+    },
     typescript: {
         // ⚠️ Ignore les erreurs TypeScript pour les dépendances externes uniquement
         // Raison: Bug de typage dans viem/wagmi avec les signatures de transactions

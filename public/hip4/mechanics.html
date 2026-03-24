@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIP-4 — Mechanics</title>
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- ═══ STICKY HEADER ═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#83E9FF" stroke-width="1.5" opacity=".4"/>
+        <circle cx="12" cy="12" r="5" fill="#83E9FF" opacity=".8"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <span>Liquid</span><span> Terminal</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-muted">Testnet · Chain 998</span>
+      <span class="header-badge badge-gold">0.9% fee</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <span>HIP-4 Contest Contract</span>
+      <span class="header-badge badge-success">Prediction Markets</span>
+    </div>
+    <div class="hero-address mono">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
+      <span style="color:var(--text-muted)">Contract:</span>
+      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    </div>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#83E9FF" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Balance
+        </div>
+        <div class="stat-value text-accent">94.37 HYPE</div>
+        <div class="stat-sub">Active deposited balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
+          Platform Fee
+        </div>
+        <div class="stat-value text-gold">0.9%</div>
+        <div class="stat-sub">90 bps — immutable</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="#83E9FF" stroke-width="2"/></svg>
+          Active contests
+        </div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">IDs : 595, 596, 604, 608</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f9e370" stroke-width="2"/></svg>
+          Ownership
+        </div>
+        <div class="stat-value" style="font-size:14px;font-family:monospace;">0xe21c…0d135</div>
+        <div class="stat-sub">Renounce disabled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00ff88" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/></svg>
+          Mainnet
+        </div>
+        <div class="stat-value text-error">Not deployed</div>
+        <div class="stat-sub">Testnet only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Bytecode
+        </div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-sub">9 checks CALLER</div>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs-container" aria-label="Sections">
+    <a class="tab-btn" href="home.html">Home</a>
+    <a class="tab-btn" href="overview.html">Overview</a>
+    <a class="tab-btn" href="abi.html">Full ABI</a>
+    <a class="tab-btn" href="events.html">Events</a>
+    <a class="tab-btn" href="reverts.html">Revert strings</a>
+    <a class="tab-btn" href="markets.html">Active markets</a>
+    <a class="tab-btn active" href="mechanics.html" aria-current="page">Mechanics</a>
+    <a class="tab-btn" href="bridge.html">Bridge L1↔EVM</a>
+    <a class="tab-btn" href="txexamples.html">Real txs</a>
+    <a class="tab-btn" href="storage.html">Storage</a>
+    <a class="tab-btn" href="docs.html">Docs</a>
+  </nav>
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">Contest lifecycle</div>
+      <ul class="flow-list">
+        <li class="flow-item"><div class="flow-num">1</div><div><strong>OWNER</strong> calls <code class="mono text-gold">createContest(contestId, entryFee)</code> — creates the market and sets the exact entry fee in wei.</div></li>
+        <li class="flow-item"><div class="flow-num">2</div><div><strong>Anyone</strong> deposits exactly <code>entryFee</code> HYPE by sending a tx to the contract — emits <code class="mono text-accent">DepositReceived(contestId, sideId, depositor, amount)</code>. 1 deposit max per address.</div></li>
+        <li class="flow-item"><div class="flow-num">3</div><div>The <strong>deposit deadline</strong> passes — deposits are closed (<em>"Deposit deadline passed"</em>).</div></li>
+        <li class="flow-item"><div class="flow-num">4</div><div><strong>OWNER</strong> publishes the winners Merkle root via <code class="mono text-gold">publishMerkleRoot(contestId, root)</code> — proves winners off-chain, root posted on-chain. Can only be published once.</div></li>
+        <li class="flow-item"><div class="flow-num">5</div><div><strong>Winners</strong> call <code class="mono text-accent">claim(contestId, sideId, proof[])</code> with their Merkle proof — the contract verifies the proof and pays the reward. Platform fee of <strong class="text-gold">0.9%</strong> deducted from the pool.</div></li>
+        <li class="flow-item"><div class="flow-num">6</div><div>After the <strong>claim period</strong>: <strong>OWNER</strong> calls <code class="mono text-gold">sweepUnclaimed(contestId)</code> to recover unclaimed funds (<em>"Claim period not expired"</em> if too early).</div></li>
+        <li class="flow-item"><div class="flow-num" style="background:rgba(239,68,68,.12);color:var(--brand-error);">!</div><div><strong>Alternative:</strong> before the Merkle root is published, OWNER can call <code class="mono text-gold">refund(contestId, sideId, user)</code> to cancel and refund a contest.</div></li>
+      </ul>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">Market types</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div style="padding:14px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Custom</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Open questions — e.g. "Who will win the HL 100 meter dash?" with N named outcomes.</div>
+        </div>
+        <div style="padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--brand-gold);text-transform:uppercase;margin-bottom:6px;">priceBinary</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Price above/below a threshold at a given expiry. Yes / No only.</div>
+        </div>
+        <div style="padding:14px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--brand-success);text-transform:uppercase;margin-bottom:6px;">Recurring</div>
+          <div style="font-size:12px;color:var(--text-secondary);">Recurring — periods: 15m, 1h, 1d. Same priceBinary structure but auto-recreated.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;">
+      <div class="section-title">System bridge — HyperEVM</div>
+      <div class="info-row">
+        <div class="info-line">
+          <div class="info-key">Native HYPE</div>
+          <div class="info-val mono" style="font-size:12px;">From <span class="text-accent">0x2222222222222222222222222222222222222222</span> — value transfer, empty input</div>
+        </div>
+        <div class="info-line">
+          <div class="info-key">Spot tokens</div>
+          <div class="info-val mono" style="font-size:12px;">From <span class="text-accent">0x2000...{assetIndex 2 bytes hex}</span> — ERC20 <code>transfer(address,uint256)</code>, selector <span class="text-success">0xa9059cbb</span></div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- /page-wrapper -->
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
+  Liquid Terminal · HIP-4 Reverse Engineering · Generated Mar 23, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+</div>
+
+</body>
+</html>

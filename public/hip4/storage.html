@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIP-4 — Storage</title>
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- ═══ STICKY HEADER ═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#83E9FF" stroke-width="1.5" opacity=".4"/>
+        <circle cx="12" cy="12" r="5" fill="#83E9FF" opacity=".8"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <span>Liquid</span><span> Terminal</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-muted">Testnet · Chain 998</span>
+      <span class="header-badge badge-gold">0.9% fee</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <span>HIP-4 Contest Contract</span>
+      <span class="header-badge badge-success">Prediction Markets</span>
+    </div>
+    <div class="hero-address mono">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
+      <span style="color:var(--text-muted)">Contract:</span>
+      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    </div>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#83E9FF" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Balance
+        </div>
+        <div class="stat-value text-accent">94.37 HYPE</div>
+        <div class="stat-sub">Active deposited balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
+          Platform Fee
+        </div>
+        <div class="stat-value text-gold">0.9%</div>
+        <div class="stat-sub">90 bps — immutable</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="#83E9FF" stroke-width="2"/></svg>
+          Active contests
+        </div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">IDs : 595, 596, 604, 608</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f9e370" stroke-width="2"/></svg>
+          Ownership
+        </div>
+        <div class="stat-value" style="font-size:14px;font-family:monospace;">0xe21c…0d135</div>
+        <div class="stat-sub">Renounce disabled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00ff88" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/></svg>
+          Mainnet
+        </div>
+        <div class="stat-value text-error">Not deployed</div>
+        <div class="stat-sub">Testnet only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Bytecode
+        </div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-sub">9 checks CALLER</div>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs-container" aria-label="Sections">
+    <a class="tab-btn" href="home.html">Home</a>
+    <a class="tab-btn" href="overview.html">Overview</a>
+    <a class="tab-btn" href="abi.html">Full ABI</a>
+    <a class="tab-btn" href="events.html">Events</a>
+    <a class="tab-btn" href="reverts.html">Revert strings</a>
+    <a class="tab-btn" href="markets.html">Active markets</a>
+    <a class="tab-btn" href="mechanics.html">Mechanics</a>
+    <a class="tab-btn" href="bridge.html">Bridge L1↔EVM</a>
+    <a class="tab-btn" href="txexamples.html">Real txs</a>
+    <a class="tab-btn active" href="storage.html" aria-current="page">Storage</a>
+    <a class="tab-btn" href="docs.html">Docs</a>
+  </nav>
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">On-chain storage slots</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Slot</th><th>Raw value</th><th>Decoded</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono text-accent">0</td>
+              <td class="mono" style="font-size:12px;">0x000000000000000000000000e21c78037329d06fe0d6fefc4221aaa67cb0d135</td>
+              <td style="font-size:12px;"><span class="header-badge badge-gold">Owner/Admin</span><br/><span class="mono text-gold" style="font-size:11px;">0xe21c78037329d06fe0d6fefc4221aaa67cb0d135</span></td>
+            </tr>
+            <tr>
+              <td class="mono text-accent">1</td>
+              <td class="text-muted" style="font-size:12px;">0x000…000 (zero)</td>
+              <td style="font-size:12px;color:var(--text-muted);">Unused or empty</td>
+            </tr>
+            <tr>
+              <td class="mono text-accent">2</td>
+              <td class="mono" style="font-size:12px;">0x000000000000000000000000000000000000000000000000000000000000001</td>
+              <td style="font-size:12px;"><span class="header-badge badge-accent">Initialized flag</span> = 1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-muted);">
+        Slots 3–19 are zero. Mappings (contests, deposits…) use slots derived dynamically via keccak256(key, slotBase).
+      </div>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;">
+      <div class="section-title">Inferred storage layout</div>
+      <div class="code-block">
+<span class="cm">// Inferred from bytecode — not confirmed from source</span>
+<span class="kw">contract</span> <span class="fn">HIP4Contest</span> {
+  <span class="cm">// Slot 0</span>
+  <span class="ty">address</span> <span class="kw">public</span> owner;  <span class="cm">// = 0xe21c…0d135</span>
+
+  <span class="cm">// Slot 1 — likely unused / _gap</span>
+
+  <span class="cm">// Slot 2 — initialized or platformFeeBps if packed</span>
+  <span class="ty">uint256</span> <span class="kw">public</span> initialized; <span class="cm">// = 1</span>
+
+  <span class="cm">// Dynamic slots (mappings)</span>
+  <span class="ty">mapping</span>(<span class="ty">uint256</span> => <span class="ty">Contest</span>) <span class="kw">internal</span> contests;
+  <span class="ty">mapping</span>(<span class="ty">uint256</span> => <span class="ty">mapping</span>(<span class="ty">address</span> => <span class="ty">bool</span>)) <span class="kw">internal</span> hasDeposited;
+
+  <span class="kw">struct</span> <span class="fn">Contest</span> {
+    <span class="ty">uint256</span> entryFee;
+    <span class="ty">uint256</span> totalPool;
+    <span class="ty">uint256</span> deadline;
+    <span class="ty">bytes32</span> merkleRoot;
+    <span class="ty">bool</span>    finalized;
+  }
+
+  <span class="ty">uint256</span> <span class="kw">public constant</span> platformFeeBps = <span class="sel">90</span>; <span class="cm">// 0.9%</span>
+}
+      </div>
+    </div>
+</div>
+<!-- /page-wrapper -->
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
+  Liquid Terminal · HIP-4 Reverse Engineering · Generated Mar 23, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+</div>
+
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIP-4 — Full ABI</title>
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- ═══ STICKY HEADER ═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#83E9FF" stroke-width="1.5" opacity=".4"/>
+        <circle cx="12" cy="12" r="5" fill="#83E9FF" opacity=".8"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <span>Liquid</span><span> Terminal</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-muted">Testnet · Chain 998</span>
+      <span class="header-badge badge-gold">0.9% fee</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <span>HIP-4 Contest Contract</span>
+      <span class="header-badge badge-success">Prediction Markets</span>
+    </div>
+    <div class="hero-address mono">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
+      <span style="color:var(--text-muted)">Contract:</span>
+      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    </div>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#83E9FF" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Balance
+        </div>
+        <div class="stat-value text-accent">94.37 HYPE</div>
+        <div class="stat-sub">Active deposited balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
+          Platform Fee
+        </div>
+        <div class="stat-value text-gold">0.9%</div>
+        <div class="stat-sub">90 bps — immutable</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="#83E9FF" stroke-width="2"/></svg>
+          Active contests
+        </div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">IDs : 595, 596, 604, 608</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f9e370" stroke-width="2"/></svg>
+          Ownership
+        </div>
+        <div class="stat-value" style="font-size:14px;font-family:monospace;">0xe21c…0d135</div>
+        <div class="stat-sub">Renounce disabled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00ff88" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/></svg>
+          Mainnet
+        </div>
+        <div class="stat-value text-error">Not deployed</div>
+        <div class="stat-sub">Testnet only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Bytecode
+        </div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-sub">9 checks CALLER</div>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs-container" aria-label="Sections">
+    <a class="tab-btn" href="home.html">Home</a>
+    <a class="tab-btn" href="overview.html">Overview</a>
+    <a class="tab-btn active" href="abi.html" aria-current="page">Full ABI</a>
+    <a class="tab-btn" href="events.html">Events</a>
+    <a class="tab-btn" href="reverts.html">Revert strings</a>
+    <a class="tab-btn" href="markets.html">Active markets</a>
+    <a class="tab-btn" href="mechanics.html">Mechanics</a>
+    <a class="tab-btn" href="bridge.html">Bridge L1↔EVM</a>
+    <a class="tab-btn" href="txexamples.html">Real txs</a>
+    <a class="tab-btn" href="storage.html">Storage</a>
+    <a class="tab-btn" href="docs.html">Docs</a>
+  </nav>
+
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">Reconstructed ABI — Functions</div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+        ABI reconstructed from bytecode reverse engineering + indexer calldata decoding. Not verified from Solidity source.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Selector</th>
+              <th>Signature</th>
+              <th>Access</th>
+              <th>Returns</th>
+              <th>Calldata</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="sel-pill">0x8da5cb5b</span></td>
+              <td class="mono" style="font-size:12px;">owner()</td>
+              <td><span class="access-chip access-public">public view</span></td>
+              <td class="mono" style="font-size:12px;color:#c084fc;">address</td>
+              <td class="text-muted" style="font-size:12px;">4 bytes</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x715018a6</span></td>
+              <td class="mono" style="font-size:12px;">renounceOwnership()</td>
+              <td><span class="access-chip access-revert">ALWAYS REVERT</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">4 bytes</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0xf2fde38b</span></td>
+              <td class="mono" style="font-size:12px;">transferOwnership(address)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">36 bytes</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x6dab6b23</span></td>
+              <td class="mono" style="font-size:12px;">createContest(uint256,uint256)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">68 bytes — [4:36]=contestId, [36:68]=entryFee</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0xf295f6e4</span></td>
+              <td class="mono" style="font-size:12px;">publishMerkleRoot(uint256,bytes32,uint256)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">100 bytes — contestId, merkleRoot, rewardPool</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x3a8ef03b</span></td>
+              <td class="mono" style="font-size:12px;">finalizeContest(uint256)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">36 bytes — contestId · emits ContestFinalized</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0xa3d07f67</span></td>
+              <td class="mono" style="font-size:12px;">refund(uint256,uint256,address)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">100 bytes — contestId, sideId, user</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0xe50e64d5</span></td>
+              <td class="mono" style="font-size:12px;">sweepUnclaimed(uint256)</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">36 bytes — [4:36]=contestId</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x00aeef8a</span></td>
+              <td class="mono" style="font-size:12px;">deposit(uint256,uint256) payable</td>
+              <td><span class="access-chip access-public">public</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">68 bytes — contestId, sideId · msg.value = entryFee</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill unknown">unknown</span></td>
+              <td class="mono" style="font-size:12px;">claim(uint256,uint256,bytes32[])</td>
+              <td><span class="access-chip access-public">public</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">contestId, sideId, merkle proof</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x2a658bdf</span></td>
+              <td class="mono" style="font-size:12px;">getContestPool(uint256)</td>
+              <td><span class="access-chip access-public">public view</span></td>
+              <td class="mono" style="font-size:12px;color:#c084fc;">uint256</td>
+              <td class="text-muted" style="font-size:12px;">36 bytes — contestId</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x71c5ecb1</span></td>
+              <td class="mono" style="font-size:12px;">getMerkleRoot(uint256)</td>
+              <td><span class="access-chip access-public">public view</span></td>
+              <td class="mono" style="font-size:12px;color:#c084fc;">bytes32</td>
+              <td class="text-muted" style="font-size:12px;">36 bytes — contestId</td>
+            </tr>
+            <tr>
+              <td><span class="sel-pill">0x91d3b00c</span></td>
+              <td class="mono" style="font-size:12px;">platformFeeBps()</td>
+              <td><span class="access-chip access-public">public view</span></td>
+              <td class="mono" style="font-size:12px;color:#c084fc;">uint256 → 90</td>
+              <td class="text-muted" style="font-size:12px;">4 bytes</td>
+            </tr>
+            <tr style="background:rgba(249,227,112,.03);">
+              <td><span class="sel-pill unknown">0xb2447e34</span></td>
+              <td class="mono" style="font-size:12px;color:var(--brand-gold);">???(uint256,uint256) — OWNER ONLY</td>
+              <td><span class="access-chip access-owner">onlyOwner</span></td>
+              <td class="text-muted" style="font-size:12px;">—</td>
+              <td class="text-muted" style="font-size:12px;">68 bytes — 2 × uint256 · reverts OwnableUnauthorizedAccount if not owner</td>
+            </tr>
+            <tr style="background:rgba(0,255,136,.03);">
+              <td><span class="sel-pill">0xf364c90c</span></td>
+              <td class="mono" style="font-size:12px;">contestExists?(uint256,uint256) → bool</td>
+              <td><span class="access-chip access-public">public view</span></td>
+              <td class="mono" style="font-size:12px;color:#c084fc;">bool</td>
+              <td class="text-muted" style="font-size:12px;">68 bytes — returns 1 if contest exists (2nd arg ignored), 0 otherwise</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Code block ABI JSON -->
+    <div class="glass-panel" style="padding:24px;">
+      <div class="section-title">ABI JSON — copy/paste</div>
+      <div class="code-block">
+<span class="cm">// Reconstructed ABI — unofficial</span>
+[
+  { <span class="kw">"name"</span>: <span class="sel">"owner"</span>,            <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "view",     <span class="kw">"inputs"</span>: [],
+    <span class="kw">"outputs"</span>: [{ <span class="kw">"type"</span>: <span class="ty">"address"</span> }] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"platformFeeBps"</span>,   <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "view",     <span class="kw">"inputs"</span>: [],
+    <span class="kw">"outputs"</span>: [{ <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"getContestPool"</span>,   <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "view",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }],
+    <span class="kw">"outputs"</span>: [{ <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"getMerkleRoot"</span>,    <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "view",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }],
+    <span class="kw">"outputs"</span>: [{ <span class="kw">"type"</span>: <span class="ty">"bytes32"</span> }] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"createContest"</span>,    <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> },
+               { <span class="kw">"name"</span>: "entryFee",  <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"finalizeContest"</span>,  <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"publishMerkleRoot"</span>, <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId",  <span class="kw">"type"</span>: <span class="ty">"uint256"</span> },
+               { <span class="kw">"name"</span>: "merkleRoot", <span class="kw">"type"</span>: <span class="ty">"bytes32"</span> },
+               { <span class="kw">"name"</span>: "rewardPool", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"deposit"</span>,          <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "payable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> },
+               { <span class="kw">"name"</span>: "sideId",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"refund"</span>,           <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> },
+               { <span class="kw">"name"</span>: "sideId",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span> },
+               { <span class="kw">"name"</span>: "user",      <span class="kw">"type"</span>: <span class="ty">"address"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"sweepUnclaimed"</span>,   <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"transferOwnership"</span>, <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "newOwner", <span class="kw">"type"</span>: <span class="ty">"address"</span> }], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="sel">"renounceOwnership"</span>, <span class="kw">"type"</span>: "function", <span class="kw">"stateMutability"</span>: "nonpayable",
+    <span class="kw">"inputs"</span>: [], <span class="kw">"outputs"</span>: [] },
+
+  { <span class="kw">"name"</span>: <span class="ev">"DepositReceived"</span>, <span class="kw">"type"</span>: "event",  <span class="cm">// topic0: 0xb3e6929b...</span>
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true  },
+               { <span class="kw">"name"</span>: "sideId",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true  },
+               { <span class="kw">"name"</span>: "depositor", <span class="kw">"type"</span>: <span class="ty">"address"</span>, <span class="kw">"indexed"</span>: false },
+               { <span class="kw">"name"</span>: "amount",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: false }] },
+
+  { <span class="kw">"name"</span>: <span class="ev">"Claimed"</span>, <span class="kw">"type"</span>: "event",  <span class="cm">// topic0: 0xb94bf7f9...</span>
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true  },
+               { <span class="kw">"name"</span>: "sideId",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true  },
+               { <span class="kw">"name"</span>: "claimer",   <span class="kw">"type"</span>: <span class="ty">"address"</span>, <span class="kw">"indexed"</span>: false },
+               { <span class="kw">"name"</span>: "amount",    <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: false }] },
+
+  { <span class="kw">"name"</span>: <span class="ev">"ContestFinalized"</span>, <span class="kw">"type"</span>: "event",  <span class="cm">// topic0: 0xfb508a26... CONFIRMÉ</span>
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true }] },
+
+  { <span class="kw">"name"</span>: <span class="ev">"MerkleRootPublished"</span>, <span class="kw">"type"</span>: "event",  <span class="cm">// topic0: 0x7e3a4a26...</span>
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId",  <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true  },
+               { <span class="kw">"name"</span>: "root",       <span class="kw">"type"</span>: <span class="ty">"bytes32"</span>, <span class="kw">"indexed"</span>: false },
+               { <span class="kw">"name"</span>: "rewardPool", <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: false }] },
+
+  { <span class="kw">"name"</span>: <span class="ev">"ContestCreated"</span>, <span class="kw">"type"</span>: "event",  <span class="cm">// topic0: 0x4093d35f...</span>
+    <span class="kw">"inputs"</span>: [{ <span class="kw">"name"</span>: "contestId", <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: true },
+               { <span class="kw">"name"</span>: "entryFee",  <span class="kw">"type"</span>: <span class="ty">"uint256"</span>, <span class="kw">"indexed"</span>: false }] }
+]
+      </div>
+
+      <!-- Unknown selectors -->
+      <div style="margin-top:20px;padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.15);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-gold);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">⚠ Unidentified selectors</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:12px;">
+            <span class="sel-pill unknown">0xb2447e34</span>
+            <span class="mono" style="margin-left:10px;color:var(--text-secondary);">Owner-only · takes (uint256,uint256) · reverts OwnableUnauthorizedAccount if not owner · name unknown despite 200+ brute-force candidates</span>
+          </div>
+          <div style="font-size:12px;">
+            <span class="sel-pill" style="background:rgba(0,255,136,.08);color:var(--brand-success);border:1px solid rgba(0,255,136,.2);">0xf364c90c</span>
+            <span class="mono" style="margin-left:10px;color:var(--text-secondary);">View → bool · takes (uint256,uint256) · returns 1 if contest exists, 0 otherwise · 2nd arg ignored · existence check function</span>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- /page-wrapper -->
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
+  Liquid Terminal · HIP-4 Reverse Engineering · Generated Mar 23, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+</div>
+
+</body>
+</html>
