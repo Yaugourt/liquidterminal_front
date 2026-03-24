@@ -353,6 +353,25 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
 
+    /* ── HIP-4 ABI version tabs ───────────────────────────────── */
+    .hip4-version-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hip4-abi-tab {
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,.03);
+      color: var(--text-secondary);
+    }
+    .hip4-abi-tab:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .hip4-abi-tab.active {
+      border-color: rgba(131,233,255,.35);
+      background: rgba(131,233,255,.08);
+      color: var(--brand-accent);
+    }
+
     /* ── Responsive ───────────────────────────────────────────── */
     @media (max-width: 640px) {
       .page-wrapper { padding: 20px 14px 60px; }

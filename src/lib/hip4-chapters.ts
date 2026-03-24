@@ -25,6 +25,13 @@ export function getHip4Chapter(slug: string) {
 /** Extra scripts (paths under /hip4/) needed for a chapter after HTML inject */
 export function hip4ScriptsForSlug(slug: string): string[] {
   if (slug === "overview") return ["/hip4/layout.js"];
-  if (slug === "markets") return ["/hip4/markets.js"];
+  if (slug === "markets")
+    return [
+      "/hip4/hip4-contracts.js",
+      "/hip4/markets.js",
+      "/hip4/markets-scan.js",
+    ];
+  if (slug === "abi")
+    return ["/hip4/hip4-contracts.js", "/hip4/abi.js"];
   return [];
 }

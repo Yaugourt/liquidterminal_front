@@ -38,10 +38,17 @@
       <span>HIP-4 Contest Contract</span>
       <span class="header-badge badge-success">Prediction Markets</span>
     </div>
-    <div class="hero-address mono">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
-      <span style="color:var(--text-muted)">Contract:</span>
-      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    <div class="hero-address mono" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-muted">V1</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-success">V2</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x6d86b21e853758f5719408633e6bcb2cfd50cf07</span>
+      </div>
     </div>
 
     <!-- KPI STATS -->
@@ -112,7 +119,7 @@
 
 
     <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
-      <div class="section-title">Contract information</div>
+      <div class="section-title">V1 — Contract information</div>
       <div class="info-row">
         <div class="info-line">
           <div class="info-key">Address</div>
@@ -153,8 +160,41 @@
       </div>
     </div>
 
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">V2 — Contract information</div>
+      <div class="info-row">
+        <div class="info-line">
+          <div class="info-key">Address</div>
+          <div class="info-val mono text-accent">0x6d86b21e853758f5719408633e6bcb2cfd50cf07</div>
+        </div>
+        <div class="info-line">
+          <div class="info-key">Network</div>
+          <div class="info-val">HyperEVM Testnet &nbsp;<span class="header-badge badge-muted">Chain ID 998</span></div>
+        </div>
+        <div class="info-line">
+          <div class="info-key">Owner / Admin</div>
+          <div class="info-val mono text-gold">0xe21c78037329d06fe0d6fefc4221aaa67cb0d135<br><span class="text-muted" style="font-size:11px;">Same owner as V1 · genesis deployment</span></div>
+        </div>
+        <div class="info-line">
+          <div class="info-key">Reference</div>
+          <div class="info-val text-muted">Verified Solidity + ABI in-repo: <code class="mono">HIP4Contest.sol</code>, <code class="mono">HIP4Contest.v2.abi</code> (selectors match bytecode).</div>
+        </div>
+        <div class="info-line">
+          <div class="info-key">Notable deltas vs V1</div>
+          <div class="info-val text-muted" style="font-size:12px;">
+            <code class="mono">deposit</code> adds <code class="mono">deadline</code>;
+            <code class="mono">claim</code> uses <code class="mono">(contestId,index,recipient,amount,proof[])</code> + per-index bitmap;
+            <code class="mono">sweepUnclaimed</code> → <code class="mono">withdrawPlatformFee</code>;
+            <code class="mono">Pausable</code> + <code class="mono">Ownable2Step</code>;
+            no <code class="mono">platformFeeBps()</code> view (fee implied from pools).
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="glass-panel" style="padding:24px;">
-      <div class="section-title">Access control</div>
+      <div class="section-title">Access control (V1 bytecode)</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:-8px 0 14px;">V2 reuses the same owner gate; see <a href="/hip4/abi" class="text-accent" style="text-decoration:underline;">Full ABI</a> for pause / 2-step ownership / new selectors. On V2, selector <span class="mono sel-pill" style="display:inline;padding:1px 6px;">0xb2447e34</span> is <code class="mono">withdrawPlatformFee(uint256,uint256)</code> (not unknown).</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;" class="access-grid">
         <div>
           <div class="revert-group-title" style="color:var(--brand-gold);margin-bottom:10px;">🔒 Owner-only functions</div>
@@ -202,7 +242,7 @@
             </li>
             <li class="flow-item" style="gap:8px;">
               <span class="sel-pill">0x71c5ecb1</span>
-              <span class="mono" style="font-size:12px;">getMerkleRoot(uint256) view</span>
+              <span class="mono" style="font-size:12px;">merkle root getter (uint256) view → bytes32</span>
             </li>
             <li class="flow-item" style="gap:8px;">
               <span class="sel-pill">0xf364c90c</span>
