@@ -1,14 +1,11 @@
 import Link from "next/link"
-import { Icon } from '@iconify/react'
-import { Menu, Settings, Shield, LogIn, LogOut } from "lucide-react"
+import { Menu, Settings, Shield, MessageCircle, Github, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
 import {
@@ -19,23 +16,15 @@ import {
     type NavigationItem
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
-import { XpBadge, DailyTasksPopover } from "@/components/xp"
-
-// Telegram brand icon
-const TelegramIcon = ({ className }: { className?: string }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-    </svg>
-);
 
 // Social links
 
 
 const socials = [
-    { name: 'Discord', href: '#', iconName: 'ic:baseline-discord' },
-    { name: 'Twitter', href: 'https://x.com/liquidterminal', iconName: 'simple-icons:x' },
-    { name: 'Github', href: 'https://github.com/Liquid-Terminal', iconName: 'mdi:github' },
-    { name: 'GitBook', href: 'https://liquid-terminal.gitbook.io/liquid-terminal', iconName: 'simple-icons:gitbook' },
+    { name: 'Discord', href: '#', Icon: MessageCircle },
+    { name: 'Twitter', href: 'https://x.com/liquidterminal', Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
+    { name: 'Github', href: 'https://github.com/Liquid-Terminal', Icon: Github },
+    { name: 'GitBook', href: 'https://liquid-terminal.gitbook.io/liquid-terminal', Icon: BookOpen },
 ]
 
 interface SidebarProps {
@@ -46,9 +35,8 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
-    const { authenticated, login, logout, privyUser, user } = useAuthContext();
+    const { user } = useAuthContext();
     const pathname = usePathname();
-    const router = useRouter();
 
     // Hydration fix: track if component has mounted
     const [hasMounted, setHasMounted] = useState(false);
@@ -298,78 +286,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     </ul>
                 </nav>
 
-                {/* Account Section */}
-                <div className="p-3 border-t border-border-subtle">
-                    {!authenticated ? (
-                        <Button
-                            onClick={() => login()}
-                            className="group relative w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary rounded-lg overflow-hidden font-bold"
-                        >
-                            <div className="flex items-center justify-center gap-2 py-1">
-                                <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                                <span className="text-sm">Login</span>
-                            </div>
-                        </Button>
-                    ) : (
-                        <Card className="p-2">
-                            <div className="flex items-center gap-2">
-                                <Link
-                                    href="/profile"
-                                    className="flex items-center gap-2 flex-1 min-w-0 hover:opacity-80 transition-opacity"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <Avatar className="h-7 w-7 ring-1 ring-white/10 shrink-0">
-                                        {privyUser?.twitter?.profilePictureUrl ? (
-                                            <Image
-                                                src={privyUser.twitter.profilePictureUrl}
-                                                alt="Avatar"
-                                                width={28}
-                                                height={28}
-                                                className="object-cover rounded-full"
-                                            />
-                                        ) : (
-                                            <AvatarFallback className="bg-brand-secondary text-brand-accent text-xs font-medium">
-                                                {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
-                                            </AvatarFallback>
-                                        )}
-                                    </Avatar>
-                                    <p className="text-white text-sm font-medium truncate flex-1 min-w-0">
-                                        {privyUser?.twitter?.username || "User"}
-                                    </p>
-                                </Link>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => logout()}
-                                    className="h-7 w-7 shrink-0 hover:bg-white/5 text-text-secondary hover:text-rose-400 transition-colors"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                </Button>
-                            </div>
-                            {/* XP Badge - séparé du lien profil pour éviter la redirection */}
-                            <div className="mt-2 space-y-1.5" onClick={(e) => e.stopPropagation()}>
-                                <XpBadge compact showStreak />
-                                <DailyTasksPopover />
-                                {/* Telegram link */}
-                                <button
-                                    onClick={() => router.push('/profile')}
-                                    className={cn(
-                                        "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors",
-                                        user?.telegramUsername
-                                            ? "text-emerald-400 hover:bg-emerald-500/10"
-                                            : "text-[#0088cc] hover:bg-[#0088cc]/10"
-                                    )}
-                                >
-                                    <TelegramIcon className="h-4 w-4" />
-                                    {user?.telegramUsername
-                                        ? `@${user.telegramUsername}`
-                                        : 'Connect Telegram'}
-                                </button>
-                            </div>
-                        </Card>
-                    )}
-                </div>
-
                 {/* Customize Button */}
                 <div className="px-3 py-2">
                     <Button
@@ -393,10 +309,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             rel="noopener noreferrer"
                             className="group p-1.5 rounded-lg hover-subtle"
                         >
-                            <Icon
-                                icon={item.iconName}
-                                className="h-4 w-4 text-text-muted group-hover:text-brand-accent transition-colors"
-                            />
+                            <item.Icon className="h-4 w-4 text-text-muted group-hover:text-brand-accent transition-colors" />
                         </a>
                     ))}
                 </div>
