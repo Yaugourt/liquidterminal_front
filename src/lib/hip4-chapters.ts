@@ -31,7 +31,5 @@ export function hip4ScriptsForSlug(slug: string): string[] {
       "/hip4/markets.js",
       "/hip4/markets-scan.js",
     ];
-  if (slug === "abi")
-    return ["/hip4/hip4-contracts.js", "/hip4/abi.js"];
   return [];
 }

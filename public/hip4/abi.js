@@ -1,5 +1,7 @@
 /**
- * V1/V2 ABI page: load V2 JSON into <pre> and wire version tabs.
+ * V1/V2 ABI page (optional static host): load V2 JSON + tabs.
+ * In Liquid Terminal, tabs are wired in Hip4DocBody.tsx after each HTML inject
+ * so client navigation / Strict Mode keep working — this script is not loaded there.
  */
 (function () {
   function root() {

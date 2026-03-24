@@ -126,15 +126,77 @@
       </div>
     </div>
 
-    <div class="hip4-abi-toolbar glass-panel" style="padding:14px 20px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between;">
-      <span class="section-title" style="margin:0;">ABI version</span>
-      <div class="hip4-version-tabs">
-        <button type="button" class="hip4-abi-tab active" data-version="v1">V1 · 0x4fd7…44bd</button>
-        <button type="button" class="hip4-abi-tab" data-version="v2">V2 · 0x6d86…cf07</button>
+    <div class="glass-panel hip4-compare-panel" id="hip4-v1-v2-compare" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">V1 vs V2 — contract diff</div>
+      <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;max-width:900px;">
+        Full diff mindset: V1 <span class="mono">0x4fd772e5…744bd</span> (reverse-engineered) vs V2 <span class="mono">0x6d86b21e…cf07</span> (verified Solidity). Use this table when explaining upgrades to builders (e.g. indexers, claim proofs, fee accounting).
+      </p>
+      <div class="table-wrap">
+        <table class="hip4-compare-table">
+          <thead>
+            <tr>
+              <th scope="col">Topic</th>
+              <th scope="col"><span class="header-badge badge-muted" style="vertical-align:middle;">V1</span></th>
+              <th scope="col"><span class="header-badge badge-success" style="vertical-align:middle;">V2</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Security stack</td>
+              <td style="font-size:12px;">Ownable-style admin; bytecode shows renounce disabled · no pause in reconstructed ABI</td>
+              <td style="font-size:12px;"><strong>OpenZeppelin stack:</strong> Ownable2Step + ReentrancyGuard + Pausable</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">claim()</td>
+              <td style="font-size:12px;"><code class="mono">claim(contestId, sideId, proof[])</code> per reconstructed model · payout tied to side</td>
+              <td style="font-size:12px;">Leaf <code class="mono">keccak256(abi.encodePacked(index, recipient, amount))</code> · per-leaf payout amounts · <strong>bitmap</strong> by <code class="mono">index</code> (gas vs mapping)</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">deposit()</td>
+              <td style="font-size:12px;"><code class="mono">deposit(contestId, sideId)</code> payable</td>
+              <td style="font-size:12px;">Adds <code class="mono">deadline</code> — user-side guard against <strong>stale mempool</strong> txs</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Refunds</td>
+              <td style="font-size:12px;"><code class="mono">refund(contestId, sideId, user)</code></td>
+              <td style="font-size:12px;">+ <code class="mono">refundTo(..., recipient)</code> — payout to an address <strong>≠</strong> depositor</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Circuit breaker</td>
+              <td style="font-size:12px;">—</td>
+              <td style="font-size:12px;"><code class="mono">pause()</code> / <code class="mono">unpause()</code></td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Reward pool (view)</td>
+              <td style="font-size:12px;">Inferred from <code class="mono">publishMerkleRoot</code> + pool reads</td>
+              <td style="font-size:12px;"><code class="mono">contestRewardPools(contestId)</code> public getter</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Fee / residual withdrawal</td>
+              <td style="font-size:12px;"><code class="mono">platformFeeBps()</code> → 90 · <code class="mono">sweepUnclaimed(contestId)</code></td>
+              <td style="font-size:12px;"><strong>No</strong> <code class="mono">platformFeeBps()</code> — fee <strong>implicit</strong> from <code class="mono">totalPool</code> vs published reward pool / paid-out accounting · <code class="mono">withdrawPlatformFee(contestId, amount)</code> (granular). V1 owner-only mystery selector <span class="sel-pill">0xb2447e34</span> matches this shape on V2.</td>
+            </tr>
+            <tr>
+              <td class="mono" style="font-size:12px;color:var(--text-secondary);">Unchanged</td>
+              <td colspan="2" style="font-size:12px;color:var(--text-secondary);">Same owner <span class="mono text-gold">0xe21c…0d135</span> · same parimutuel / HYPE-native model · genesis-style deploy on testnet · <strong>renounce still disabled</strong> · still <strong>no CoreWriter</strong> / precompile coupling in this contract surface</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="hip4-abi-panel" data-version="v1">
+    <div class="hip4-abi-tabbar glass-panel" role="region" aria-label="ABI version switcher">
+      <div class="hip4-abi-tabbar-inner">
+        <span class="hip4-abi-tabbar-label">ABI version</span>
+        <div class="hip4-version-tabs" role="tablist" aria-label="V1 or V2 ABI">
+          <button type="button" role="tab" class="hip4-abi-tab active" id="hip4-abi-tab-v1" data-version="v1" aria-selected="true" aria-controls="hip4-abi-panel-v1">V1 · legacy · 0x4fd7…44bd</button>
+          <button type="button" role="tab" class="hip4-abi-tab" id="hip4-abi-tab-v2" data-version="v2" aria-selected="false" aria-controls="hip4-abi-panel-v2">V2 · verified · 0x6d86…cf07</button>
+        </div>
+      </div>
+      <p class="hip4-abi-tabbar-hint">Choose which deployment the tables and JSON below refer to. V1 is reverse-engineered; V2 matches on-chain bytecode + <code class="mono">HIP4Contest.sol</code>.</p>
+    </div>
+
+    <div class="hip4-abi-panel hip4-abi-panel--v1" id="hip4-abi-panel-v1" data-version="v1" role="tabpanel" aria-labelledby="hip4-abi-tab-v1">
 
     <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
       <div class="section-title">V1 — Reconstructed ABI — Functions</div>
@@ -358,7 +420,7 @@
 
     </div>
 
-    <div class="hip4-abi-panel" data-version="v2" hidden>
+    <div class="hip4-abi-panel hip4-abi-panel--v2" id="hip4-abi-panel-v2" data-version="v2" role="tabpanel" aria-labelledby="hip4-abi-tab-v2" hidden>
 
     <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
       <div class="section-title">V2 — Verified ABI — Functions</div>
