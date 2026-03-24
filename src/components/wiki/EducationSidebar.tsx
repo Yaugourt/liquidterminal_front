@@ -110,7 +110,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
                     className="w-3 h-3 rounded-full border border-white/20 flex-shrink-0"
                     style={{ backgroundColor: color }}
                   />
-                  <span className="text-xs text-white font-mono flex-1 text-left">{color}</span>
+                  <span className="text-xs text-white flex-1 text-left">{color}</span>
                   {copiedColor === color ? (
                     <Check size={12} className="text-emerald-400" />
                   ) : (

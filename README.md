@@ -115,10 +115,22 @@ src/
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server (Turbo)
+- `npm run dev:clean` - Clear `.next` cache and start dev (use when ENOENT errors occur)
+- `npm run dev:stable` - Start dev without Turbo (more stable on WSL)
+- `npm run clean` - Remove `.next` cache only
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+
+### Troubleshooting: ENOENT / _buildManifest.js.tmp errors
+
+If you see `ENOENT: no such file or directory` errors with `_buildManifest.js.tmp`:
+
+1. **Stop the server** (Ctrl+C)
+2. **Run** `npm run dev:clean` — clears the cache and restarts
+3. If it persists: `npm run dev:stable` — disables Turbo (slower but more stable, especially on WSL)
+4. Avoid running multiple `npm run dev` instances in parallel
 
 ### Code Style
 
