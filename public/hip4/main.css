@@ -354,22 +354,91 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
 
     /* ── HIP-4 ABI version tabs ───────────────────────────────── */
-    .hip4-version-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hip4-abi-tabbar {
+      padding: 16px 20px 18px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(131,233,255,.18);
+      background: linear-gradient(135deg, rgba(131,233,255,.06) 0%, rgba(21,26,37,.75) 45%, rgba(249,227,112,.04) 100%);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset;
+    }
+    .hip4-abi-tabbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .hip4-abi-tabbar-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .hip4-abi-tabbar-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .hip4-version-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
     .hip4-abi-tab {
       cursor: pointer;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
       font-size: 12px;
       font-weight: 600;
       border: 1px solid var(--border-subtle);
-      background: rgba(255,255,255,.03);
+      background: rgba(255,255,255,.04);
       color: var(--text-secondary);
+      transition: border-color .15s, background .15s, color .15s;
     }
     .hip4-abi-tab:hover { border-color: var(--border-hover); color: var(--text-primary); }
     .hip4-abi-tab.active {
-      border-color: rgba(131,233,255,.35);
-      background: rgba(131,233,255,.08);
+      border-color: rgba(131,233,255,.45);
+      background: rgba(131,233,255,.12);
       color: var(--brand-accent);
+      box-shadow: 0 0 20px rgba(131,233,255,.08);
+    }
+    .hip4-abi-tab[data-version="v2"].active {
+      border-color: rgba(0,255,136,.35);
+      background: rgba(0,255,136,.1);
+      color: var(--brand-success);
+      box-shadow: 0 0 20px rgba(0,255,136,.06);
+    }
+    .hip4-abi-panel {
+      margin-bottom: 4px;
+      padding-left: 12px;
+      border-left: 4px solid var(--border-subtle);
+      border-radius: 4px 0 0 4px;
+    }
+    .hip4-abi-panel--v1 { border-left-color: rgba(131,233,255,.55); }
+    .hip4-abi-panel--v2 { border-left-color: rgba(0,255,136,.5); }
+    .hip4-abi-panel--active {
+      border-left-width: 5px;
+    }
+    .hip4-abi-panel[hidden] {
+      display: none !important;
+    }
+
+    /* ── V1 vs V2 compare table (ABI page) ───────────────────── */
+    .hip4-compare-panel .hip4-compare-table th:first-child,
+    .hip4-compare-panel .hip4-compare-table td:first-child {
+      min-width: 140px;
+      max-width: 200px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+    .hip4-compare-panel .hip4-compare-table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,.02);
+    }
+    .hip4-compare-panel .hip4-compare-table td {
+      font-size: 12px;
+      line-height: 1.55;
     }
 
     /* ── Responsive ───────────────────────────────────────────── */

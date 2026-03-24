@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { Loader2 } from "lucide-react";
 import { getHip4Chapter, hip4ScriptsForSlug } from "@/lib/hip4-chapters";
@@ -25,6 +25,7 @@ export function Hip4DocBody({ slug }: Hip4DocBodyProps) {
   const chapter = getHip4Chapter(slug);
   const [html, setHtml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const injectedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!chapter) return;
@@ -49,6 +50,71 @@ export function Hip4DocBody({ slug }: Hip4DocBodyProps) {
       cancelled = true;
     };
   }, [chapter]);
+
+  /** ABI tabs + V2 JSON: must re-bind after each inject (Strict Mode / client navigation). */
+  useEffect(() => {
+    if (slug !== "abi" || html === null) return;
+    const root = injectedRef.current;
+    if (!root) return;
+
+    let cancelled = false;
+    const preV2 = root.querySelector<HTMLPreElement>("#hip4-v2-abi-json");
+    if (preV2?.textContent === "Loading…") {
+      fetch("/hip4/HIP4Contest.v2.abi")
+        .then((r) => {
+          if (!r.ok) throw new Error(r.statusText);
+          return r.text();
+        })
+        .then((text) => {
+          if (cancelled) return;
+          const pre = root.querySelector<HTMLPreElement>("#hip4-v2-abi-json");
+          if (!pre) return;
+          pre.textContent = JSON.stringify(JSON.parse(text), null, 2);
+        })
+        .catch((e: unknown) => {
+          if (cancelled) return;
+          const pre = root.querySelector<HTMLPreElement>("#hip4-v2-abi-json");
+          if (pre) {
+            pre.textContent =
+              "Failed to load ABI: " +
+              (e instanceof Error ? e.message : String(e));
+          }
+        });
+    }
+
+    const tabs = root.querySelectorAll<HTMLButtonElement>(".hip4-abi-tab");
+    const panels = root.querySelectorAll<HTMLElement>(".hip4-abi-panel");
+
+    function setVersion(v: string) {
+      tabs.forEach((tab) => {
+        const active = tab.getAttribute("data-version") === v;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      panels.forEach((panel) => {
+        const match = panel.getAttribute("data-version") === v;
+        panel.hidden = !match;
+        panel.classList.toggle("hip4-abi-panel--active", match);
+      });
+    }
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement | null;
+      const tab = target?.closest<HTMLButtonElement>(".hip4-abi-tab");
+      if (!tab || !root.contains(tab)) return;
+      e.preventDefault();
+      const v = tab.getAttribute("data-version");
+      if (v) setVersion(v);
+    }
+
+    root.addEventListener("click", onClick);
+    setVersion("v1");
+
+    return () => {
+      cancelled = true;
+      root.removeEventListener("click", onClick);
+    };
+  }, [slug, html]);
 
   const scripts = chapter ? hip4ScriptsForSlug(slug) : [];
 
@@ -76,6 +142,7 @@ export function Hip4DocBody({ slug }: Hip4DocBodyProps) {
   return (
     <>
       <div
+        ref={injectedRef}
         className="hip4-injected"
         dangerouslySetInnerHTML={{ __html: html }}
       />
