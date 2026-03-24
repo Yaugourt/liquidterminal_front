@@ -38,10 +38,17 @@
       <span>HIP-4 Contest Contract</span>
       <span class="header-badge badge-success">Prediction Markets</span>
     </div>
-    <div class="hero-address mono">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
-      <span style="color:var(--text-muted)">Contract:</span>
-      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    <div class="hero-address mono" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-muted">V1</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-success">V2</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x6d86b21e853758f5719408633e6bcb2cfd50cf07</span>
+      </div>
     </div>
 
     <!-- KPI STATS -->
@@ -110,9 +117,27 @@
     <a class="tab-btn" href="docs.html">Docs</a>
   </nav>
 
+    <div class="glass-panel" style="padding:18px 24px;margin-bottom:16px;">
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.55;">
+        <strong style="color:var(--brand-accent)">Dual deployments (HyperEVM testnet · chain 998):</strong>
+        <span class="header-badge badge-muted" style="margin-left:6px;">V1</span> legacy bytecode (reverse-engineered ABI below) ·
+        <span class="header-badge badge-success" style="margin-left:4px;">V2</span> second genesis contract — Solidity + compiled ABI verified (selectors match bytecode).
+        Same owner: <span class="mono" style="color:var(--brand-gold)">0xe21c78037329d06fe0d6fefc4221aaa67cb0d135</span>.
+      </div>
+    </div>
+
+    <div class="hip4-abi-toolbar glass-panel" style="padding:14px 20px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between;">
+      <span class="section-title" style="margin:0;">ABI version</span>
+      <div class="hip4-version-tabs">
+        <button type="button" class="hip4-abi-tab active" data-version="v1">V1 · 0x4fd7…44bd</button>
+        <button type="button" class="hip4-abi-tab" data-version="v2">V2 · 0x6d86…cf07</button>
+      </div>
+    </div>
+
+    <div class="hip4-abi-panel" data-version="v1">
 
     <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
-      <div class="section-title">Reconstructed ABI — Functions</div>
+      <div class="section-title">V1 — Reconstructed ABI — Functions</div>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
         ABI reconstructed from bytecode reverse engineering + indexer calldata decoding. Not verified from Solidity source.
       </p>
@@ -240,7 +265,8 @@
 
     <!-- Code block ABI JSON -->
     <div class="glass-panel" style="padding:24px;">
-      <div class="section-title">ABI JSON — copy/paste</div>
+      <div class="section-title">V1 — ABI JSON — copy/paste</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:-8px 0 12px;">Machine-readable: <a href="/hip4/HIP4Contest.v1.abi" class="text-accent" style="text-decoration:underline;">HIP4Contest.v1.abi</a></p>
       <div class="code-block">
 <span class="cm">// Reconstructed ABI — unofficial</span>
 [
@@ -329,6 +355,65 @@
         </div>
       </div>
     </div>
+
+    </div>
+
+    <div class="hip4-abi-panel" data-version="v2" hidden>
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">V2 — Verified ABI — Functions</div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+        Reconstructed from verified Solidity (<code class="mono">HIP4Contest.sol</code>) — 24 functions; selectors checked against on-chain bytecode.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Selector</th>
+              <th>Signature</th>
+              <th>Access</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="sel-pill">0x8da5cb5b</span></td><td class="mono" style="font-size:12px;">owner()</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0xe30c3978</span></td><td class="mono" style="font-size:12px;">pendingOwner()</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">Ownable2Step</td></tr>
+            <tr><td><span class="sel-pill">0xf2fde38b</span></td><td class="mono" style="font-size:12px;">transferOwnership(address)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">starts 2-step transfer</td></tr>
+            <tr><td><span class="sel-pill">0x79ba5097</span></td><td class="mono" style="font-size:12px;">acceptOwnership()</td><td><span class="access-chip access-public">nonpayable</span></td><td class="text-muted" style="font-size:11px;">pendingOwner</td></tr>
+            <tr><td><span class="sel-pill">0x715018a6</span></td><td class="mono" style="font-size:12px;">renounceOwnership()</td><td><span class="access-chip access-revert">pure → revert</span></td><td class="text-muted" style="font-size:11px;">"Renounce disabled"</td></tr>
+            <tr><td><span class="sel-pill">0x8456cb59</span></td><td class="mono" style="font-size:12px;">pause()</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">Pausable</td></tr>
+            <tr><td><span class="sel-pill">0x3f4ba83a</span></td><td class="mono" style="font-size:12px;">unpause()</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0x5c975abb</span></td><td class="mono" style="font-size:12px;">paused()</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">bool</td></tr>
+            <tr><td><span class="sel-pill">0x6dab6b23</span></td><td class="mono" style="font-size:12px;">createContest(uint256,uint256)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">contestId, entryFee</td></tr>
+            <tr><td><span class="sel-pill">0x3a8ef03b</span></td><td class="mono" style="font-size:12px;">finalizeContest(uint256)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0xf295f6e4</span></td><td class="mono" style="font-size:12px;">publishMerkleRoot(uint256,bytes32,uint256)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">sets rewardPool</td></tr>
+            <tr><td><span class="sel-pill">0xb2447e34</span></td><td class="mono" style="font-size:12px;">withdrawPlatformFee(uint256,uint256)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">replaces V1 <code class="mono">sweepUnclaimed</code></td></tr>
+            <tr><td><span class="sel-pill">0xa3d07f67</span></td><td class="mono" style="font-size:12px;">refund(uint256,uint256,address)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0x6ab49c2f</span></td><td class="mono" style="font-size:12px;">refundTo(uint256,uint256,address,address)</td><td><span class="access-chip access-owner">onlyOwner</span></td><td class="text-muted" style="font-size:11px;">new in V2</td></tr>
+            <tr><td><span class="sel-pill">0x00aeef8a</span></td><td class="mono" style="font-size:12px;">deposit(uint256,uint256,uint256) payable</td><td><span class="access-chip access-public">public</span></td><td class="text-muted" style="font-size:11px;">+ deadline</td></tr>
+            <tr><td><span class="sel-pill">0x5d4df3bf</span></td><td class="mono" style="font-size:12px;">claim(uint256,uint256,address,uint256,bytes32[])</td><td><span class="access-chip access-public">public</span></td><td class="text-muted" style="font-size:11px;">index + bitmap</td></tr>
+            <tr><td><span class="sel-pill">0x9d7ed738</span></td><td class="mono" style="font-size:12px;">contests(uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">entryFee, totalPool, totalPaidOut, finalized</td></tr>
+            <tr><td><span class="sel-pill">0x5065a5ed</span></td><td class="mono" style="font-size:12px;">deposits(uint256,uint256,address)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0x71c5ecb1</span></td><td class="mono" style="font-size:12px;">merkleRoots(uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">bytes32</td></tr>
+            <tr><td><span class="sel-pill">0x5b65ac32</span></td><td class="mono" style="font-size:12px;">contestRewardPools(uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">reward portion</td></tr>
+            <tr><td><span class="sel-pill">0x6692afd0</span></td><td class="mono" style="font-size:12px;">getContestPool(uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">totalPool</td></tr>
+            <tr><td><span class="sel-pill">0x979f4877</span></td><td class="mono" style="font-size:12px;">getDeposit(uint256,uint256,address)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">—</td></tr>
+            <tr><td><span class="sel-pill">0x2a658bdf</span></td><td class="mono" style="font-size:12px;">getTotalPaidOut(uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">claims + fee withdrawals</td></tr>
+            <tr><td><span class="sel-pill">0xf364c90c</span></td><td class="mono" style="font-size:12px;">isClaimed(uint256,uint256)</td><td><span class="access-chip access-public">view</span></td><td class="text-muted" style="font-size:11px;">bitmap</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:14px;">Platform fee is implicit: <code class="mono">totalPool - contestRewardPools(id) - …</code> after payouts — no <code class="mono">platformFeeBps()</code> view.</p>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;">
+      <div class="section-title">V2 — ABI JSON</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:-8px 0 12px;">Loaded from <a href="/hip4/HIP4Contest.v2.abi" class="text-accent" style="text-decoration:underline;">HIP4Contest.v2.abi</a> (also <code class="mono">HIP4Contest.abi</code>).</p>
+      <pre class="code-block" id="hip4-v2-abi-json" style="white-space:pre-wrap;min-height:120px;margin:0;">Loading…</pre>
+    </div>
+
+    </div>
+
 </div>
 <!-- /page-wrapper -->
 

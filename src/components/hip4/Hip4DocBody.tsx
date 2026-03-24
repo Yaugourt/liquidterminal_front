@@ -75,13 +75,13 @@ export function Hip4DocBody({ slug }: Hip4DocBodyProps) {
 
   return (
     <>
-      {scripts.map((src) => (
-        <Script key={src} src={src} strategy="afterInteractive" />
-      ))}
       <div
         className="hip4-injected"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      {scripts.map((src) => (
+        <Script key={src} src={src} strategy="afterInteractive" />
+      ))}
     </>
   );
 }
