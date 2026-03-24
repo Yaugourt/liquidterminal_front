@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIP-4 — Bridge L1↔EVM</title>
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- ═══ STICKY HEADER ═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#83E9FF" stroke-width="1.5" opacity=".4"/>
+        <circle cx="12" cy="12" r="5" fill="#83E9FF" opacity=".8"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <span>Liquid</span><span> Terminal</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-muted">Testnet · Chain 998</span>
+      <span class="header-badge badge-gold">0.9% fee</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <span>HIP-4 Contest Contract</span>
+      <span class="header-badge badge-success">Prediction Markets</span>
+    </div>
+    <div class="hero-address mono">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
+      <span style="color:var(--text-muted)">Contract:</span>
+      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    </div>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#83E9FF" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Balance
+        </div>
+        <div class="stat-value text-accent">94.37 HYPE</div>
+        <div class="stat-sub">Active deposited balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
+          Platform Fee
+        </div>
+        <div class="stat-value text-gold">0.9%</div>
+        <div class="stat-sub">90 bps — immutable</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="#83E9FF" stroke-width="2"/></svg>
+          Active contests
+        </div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">IDs : 595, 596, 604, 608</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f9e370" stroke-width="2"/></svg>
+          Ownership
+        </div>
+        <div class="stat-value" style="font-size:14px;font-family:monospace;">0xe21c…0d135</div>
+        <div class="stat-sub">Renounce disabled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00ff88" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/></svg>
+          Mainnet
+        </div>
+        <div class="stat-value text-error">Not deployed</div>
+        <div class="stat-sub">Testnet only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Bytecode
+        </div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-sub">9 checks CALLER</div>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs-container" aria-label="Sections">
+    <a class="tab-btn" href="home.html">Home</a>
+    <a class="tab-btn" href="overview.html">Overview</a>
+    <a class="tab-btn" href="abi.html">Full ABI</a>
+    <a class="tab-btn" href="events.html">Events</a>
+    <a class="tab-btn" href="reverts.html">Revert strings</a>
+    <a class="tab-btn" href="markets.html">Active markets</a>
+    <a class="tab-btn" href="mechanics.html">Mechanics</a>
+    <a class="tab-btn active" href="bridge.html" aria-current="page">Bridge L1↔EVM</a>
+    <a class="tab-btn" href="txexamples.html">Real txs</a>
+    <a class="tab-btn" href="storage.html">Storage</a>
+    <a class="tab-btn" href="docs.html">Docs</a>
+  </nav>
+
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">HyperCore ↔ HyperEVM architecture</div>
+      <div class="code-block" style="font-size:13px;line-height:1.9;">
+<span class="cm">╔══════════════════════════════════════════════════════════════════╗</span>
+<span class="cm">║         HYPERCORE L1  (native order book, blocks ~526M+)           ║</span>
+<span class="cm">╠══════════════════════════════════════════════════════════════════╣</span>
+<span class="kw">║  You trade outcome tokens like classic SPOT            ║</span>
+<span class="kw">║  asset_idx = 100_000_000 + int(str(outcomeId) + str(sideId))    ║</span>
+<span class="kw">║  Price = implied probability (0.0 → 1.0)                       ║</span>
+<span class="kw">║  No EVM interaction required to buy/sell              ║</span>
+<span class="cm">╠══════════════════════════════════════════════════════════════════╣</span>
+<span class="cm">║  Examples:                                                       ║</span>
+<span class="sel">║  #90  (Hypurr wins 100m)  → asset 100000090  mid=67.4%         ║</span>
+<span class="sel">║  #91  (Usain Bolt wins)   → asset 100000091  mid=32.6%         ║</span>
+<span class="sel">║  #19520 (BTC > $68k)       → asset 100019520  mid=70.0%         ║</span>
+<span class="cm">╚══════════════════════════════════════════════════════════════════╝</span>
+                   <span class="gold">↕  bridge  ↕</span>
+<span class="cm">╔══════════════════════════════════════════════════════════════════╗</span>
+<span class="cm">║         HYPEREVM  (chain 998, blocks ~48M)                        ║</span>
+<span class="cm">╠══════════════════════════════════════════════════════════════════╣</span>
+<span class="kw">║  HIP-4 Contract  0x4fd772...744bd                                ║</span>
+<span class="kw">║  ├─ Prize pool : 94.37 HYPE  (winner funds)                    ║</span>
+<span class="kw">║  ├─ Admin publishes Merkle root → proves winners              ║</span>
+<span class="kw">║  └─ Winners call claim() with Merkle proof → receive HYPE    ║</span>
+<span class="cm">╠══════════════════════════════════════════════════════════════════╣</span>
+<span class="cm">║  Bridge contract  0x2222...2222                                   ║</span>
+<span class="sel">║  ├─ Balance : 998,581,196 HYPE  (all bridgeable HYPE)        ║</span>
+<span class="sel">║  ├─ Bridge IN: HyperCore sends HYPE → tx FROM 0x2222         ║</span>
+<span class="sel">║  └─ Bridge OUT: you send HYPE TO 0x2222 → goes to HyperCore  ║</span>
+<span class="cm">╚══════════════════════════════════════════════════════════════════╝</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div class="glass-panel" style="padding:24px;">
+        <div class="section-title">Bridge contract 0x2222...2222</div>
+        <div class="info-row">
+          <div class="info-line">
+            <div class="info-key">Address</div>
+            <div class="info-val mono text-accent">0x2222222222222222222222222222222222222222</div>
+          </div>
+          <div class="info-line">
+            <div class="info-key">Balance</div>
+            <div class="info-val text-gold" style="font-weight:700;font-size:18px;">998,581,196 HYPE</div>
+          </div>
+          <div class="info-line">
+            <div class="info-key">Code</div>
+            <div class="info-val mono" style="font-size:11px;">246 chars — minimal contract</div>
+          </div>
+          <div class="info-line">
+            <div class="info-key">Function</div>
+            <div class="info-val" style="font-size:12px;">Receives HYPE → emits LOG2 event. Calldata → REVERT.</div>
+          </div>
+          <div class="info-line">
+            <div class="info-key">Event topic</div>
+            <div class="info-val mono" style="font-size:10px;">0x88a5966d...258749<br/>(custom Hyperliquid — non-standard signature)</div>
+          </div>
+        </div>
+        <div class="code-block" style="margin-top:16px;font-size:11px;">
+<span class="cm">// Decompiled bytecode</span>
+<span class="kw">receive</span>() <span class="kw">external payable</span> {
+  <span class="fn">emit</span> <span class="ev">BridgeDeposit</span>(<span class="ty">msg.sender</span>, <span class="ty">msg.value</span>);
+}
+<span class="kw">fallback</span>() <span class="kw">external</span> { <span class="fn">revert</span>(); }
+        </div>
+      </div>
+
+      <div class="glass-panel" style="padding:24px;">
+        <div class="section-title">HyperCore asset index mapping</div>
+        <div style="margin-bottom:12px;font-size:12px;color:var(--text-muted);">
+          Formula: <code class="mono text-accent">asset_idx = 100_000_000 + int(str(outcomeId) + str(sideId))</code>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Coin</th><th>Outcome</th><th>Side</th><th>Asset Idx</th><th>Price</th></tr></thead>
+            <tbody id="asset-table"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.1);border-radius:8px;font-size:11px;color:var(--text-secondary);">
+          Confirmed by user tx: <span class="mono text-gold">a=100000090</span> = coin <span class="mono text-accent">#90</span> = Hypurr wins
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+      <div class="section-title">Full HIP-4 flow — From your trade to the prize</div>
+      <ul class="flow-list">
+        <li class="flow-item">
+          <div class="flow-num">1</div>
+          <div><strong style="color:var(--brand-accent);">HyperCore L1</strong> — Admin creates the market by calling <code class="mono text-gold">createContest(contestId, entryFee)</code> on the EVM AND opens the outcome token market on HyperCore.</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">2</div>
+          <div><strong style="color:var(--brand-accent);">HyperCore L1</strong> — The EVM prize pool is funded (likely via participant deposits or by the protocol). Each deposit emits <code class="mono text-accent">Deposit(contestId, sideId, depositor, amount)</code>.</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">3</div>
+          <div><strong>You trade</strong> outcome tokens on HyperCore L1 : <code class="mono">Buy #90 (asset 100000090) at 0.99999</code> — no EVM, L1 only.</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">4</div>
+          <div>The market expires. HyperCore determines the outcome (BTC &gt; threshold? who won?)</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">5</div>
+          <div><strong style="color:var(--brand-gold);">EVM</strong> — Admin publishes the <code class="mono text-gold">merkle root</code> on the EVM contract: hashed list of all winners and their amounts.</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">6</div>
+          <div><strong style="color:var(--brand-gold);">EVM</strong> — Winners call <code class="mono text-accent">claim(contestId, sideId, proof[])</code> with their Merkle proof → receive HYPE. Fee <strong class="text-gold">0.9%</strong> deducted.</div>
+        </li>
+        <li class="flow-item">
+          <div class="flow-num">7</div>
+          <div><strong style="color:var(--brand-gold);">EVM</strong> — After the claim period: <code class="mono text-gold">sweepUnclaimed(contestId)</code> recovers unclaimed funds.</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="glass-panel" style="padding:24px;">
+      <div class="section-title">Precompiles & system addresses</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Address</th><th>Type</th><th>Balance</th><th>Code</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono text-accent" style="font-size:11px;">0x2222...2222</td>
+              <td><span class="header-badge badge-gold">Bridge HYPE</span></td>
+              <td class="text-gold" style="font-weight:700;">998M HYPE</td>
+              <td><span class="header-badge badge-success">YES (246b)</span></td>
+              <td style="font-size:12px;">HYPE deposit → HyperCore. All bridgeable HYPE.</td>
+            </tr>
+            <tr>
+              <td class="mono text-accent" style="font-size:11px;">0x2000{assetIdx}...</td>
+              <td><span class="header-badge badge-accent">Bridge Spot</span></td>
+              <td class="text-muted" style="font-size:12px;">variable</td>
+              <td><span class="header-badge badge-muted">no</span></td>
+              <td style="font-size:12px;">ERC20 transfer() for spot tokens. assetIdx = 2 bytes.</td>
+            </tr>
+            <tr>
+              <td class="mono text-accent" style="font-size:11px;">0x0000...0001</td>
+              <td><span class="header-badge badge-muted">Precompile</span></td>
+              <td style="font-size:12px;">1.027 HYPE</td>
+              <td><span class="header-badge badge-muted">no</span></td>
+              <td style="font-size:12px;">ecRecover (standard EVM precompile)</td>
+            </tr>
+            <tr>
+              <td class="mono text-accent" style="font-size:11px;">0x0000...0002</td>
+              <td><span class="header-badge badge-muted">Precompile</span></td>
+              <td style="font-size:12px;">0.0016 HYPE</td>
+              <td><span class="header-badge badge-muted">no</span></td>
+              <td style="font-size:12px;">SHA256 (standard EVM precompile)</td>
+            </tr>
+            <tr>
+              <td class="mono text-accent" style="font-size:11px;">0x0000...0004</td>
+              <td><span class="header-badge badge-muted">Precompile</span></td>
+              <td style="font-size:12px;">0.000 HYPE</td>
+              <td><span class="header-badge badge-muted">no</span></td>
+              <td style="font-size:12px;">Identity (standard EVM precompile)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<!-- /page-wrapper -->
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
+  Liquid Terminal · HIP-4 Reverse Engineering · Generated Mar 23, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+</div>
+
+<script src="../js/markets.js" defer></script>
+</body>
+</html>

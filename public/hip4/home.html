@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIP-4 — Home</title>
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<!-- ═══ STICKY HEADER ═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#83E9FF" stroke-width="1.5" opacity=".4"/>
+        <circle cx="12" cy="12" r="5" fill="#83E9FF" opacity=".8"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+      <div class="brand-name">
+        <span>Liquid</span><span> Terminal</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-muted">Testnet · Chain 998</span>
+      <span class="header-badge badge-gold">0.9% fee</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">
+      <span>HIP-4 Contest Contract</span>
+      <span class="header-badge badge-success">Prediction Markets</span>
+    </div>
+    <div class="hero-address mono">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
+      <span style="color:var(--text-muted)">Contract:</span>
+      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    </div>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#83E9FF" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Balance
+        </div>
+        <div class="stat-value text-accent">94.37 HYPE</div>
+        <div class="stat-sub">Active deposited balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
+          Platform Fee
+        </div>
+        <div class="stat-value text-gold">0.9%</div>
+        <div class="stat-sub">90 bps — immutable</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z" stroke="#83E9FF" stroke-width="2"/></svg>
+          Active contests
+        </div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">IDs : 595, 596, 604, 608</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f9e370" stroke-width="2"/></svg>
+          Ownership
+        </div>
+        <div class="stat-value" style="font-size:14px;font-family:monospace;">0xe21c…0d135</div>
+        <div class="stat-sub">Renounce disabled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#00ff88" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/></svg>
+          Mainnet
+        </div>
+        <div class="stat-value text-error">Not deployed</div>
+        <div class="stat-sub">Testnet only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
+          Bytecode
+        </div>
+        <div class="stat-value">Verified</div>
+        <div class="stat-sub">9 checks CALLER</div>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs-container" aria-label="Sections">
+    <a class="tab-btn active" href="home.html" aria-current="page">Home</a>
+    <a class="tab-btn" href="overview.html">Overview</a>
+    <a class="tab-btn" href="abi.html">Full ABI</a>
+    <a class="tab-btn" href="events.html">Events</a>
+    <a class="tab-btn" href="reverts.html">Revert strings</a>
+    <a class="tab-btn" href="markets.html">Active markets</a>
+    <a class="tab-btn" href="mechanics.html">Mechanics</a>
+    <a class="tab-btn" href="bridge.html">Bridge L1↔EVM</a>
+    <a class="tab-btn" href="txexamples.html">Real txs</a>
+    <a class="tab-btn" href="storage.html">Storage</a>
+    <a class="tab-btn" href="docs.html">Docs</a>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- DISCLAIMERS                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;">
+    <div style="padding:14px 18px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:10px;font-size:12px;color:#fca5a5;display:flex;align-items:flex-start;gap:10px;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:-1px;">&#9888;</span>
+      <div>
+        <strong style="color:white;">Unofficial documentation.</strong>
+        Hyperliquid has published <strong>zero documentation</strong> on HIP-4. No whitepaper, no spec, no API reference. Everything on this site was reverse-engineered from on-chain bytecode, real transaction analysis, and the HyperCore API. This is field work — not official content.
+      </div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(249,227,112,.05);border:1px solid rgba(249,227,112,.15);border-radius:10px;font-size:12px;color:var(--brand-gold);display:flex;align-items:flex-start;gap:10px;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:-1px;">&#9881;</span>
+      <div>
+        <strong style="color:white;">Testnet only.</strong>
+        The HIP-4 contract <code style="color:var(--brand-accent);">0x4fd772e5…744bd</code> exists only on HyperEVM Testnet (chain 998). The same address on mainnet (chain 999) returns empty bytecode. Nothing here applies to mainnet — yet.
+      </div>
+    </div>
+    <div style="padding:14px 18px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.12);border-radius:10px;font-size:12px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:10px;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:-1px;">&#128269;</span>
+      <div>
+        <strong style="color:white;">ABI reconstructed, not verified.</strong>
+        Function and event names are our best guesses based on keccak256 selector matching and calldata decoding. They match all observed on-chain behavior, but without verified Solidity source we can't guarantee the exact naming. One selector (<code style="color:var(--brand-gold);">0xb2447e34</code>) remains unidentified.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- WHAT IS THIS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+    <div class="section-title">What is this?</div>
+    <p style="font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:16px;">
+      This site is a <strong style="color:white;">complete reverse-engineering report</strong> of the HIP-4 prediction market contract on HyperEVM. It covers the full ABI, event signatures, storage layout, access control, real transaction examples, market mechanics, the HyperCore ↔ HyperEVM bridge architecture, and code examples in JavaScript and Python.
+    </p>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px;">
+      HIP-4 is Hyperliquid's prediction market system. It lets users bet on real-world outcomes — crypto prices, custom events, recurring markets — using HYPE tokens. It's the most basic building block in Hyperliquid's on-chain market infrastructure, and as of March 2026, there is <strong style="color:var(--brand-gold);">no public documentation of any kind</strong>.
+    </p>
+
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">What each section covers</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:4px;">
+      <a href="overview.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Overview</div>
+        <div style="font-size:11px;color:var(--text-muted);">Contract info, owner, fees, access control map</div>
+      </a>
+      <a href="abi.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Full ABI</div>
+        <div style="font-size:11px;color:var(--text-muted);">All 15 functions + copy-paste JSON ABI</div>
+      </a>
+      <a href="events.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Events</div>
+        <div style="font-size:11px;color:var(--text-muted);">5 events with topic0, indexed params, decode examples</div>
+      </a>
+      <a href="reverts.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Revert strings</div>
+        <div style="font-size:11px;color:var(--text-muted);">19 revert messages extracted from bytecode</div>
+      </a>
+      <a href="markets.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Active markets</div>
+        <div style="font-size:11px;color:var(--text-muted);">Live contests, questions, outcome prices</div>
+      </a>
+      <a href="mechanics.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Mechanics</div>
+        <div style="font-size:11px;color:var(--text-muted);">Contest lifecycle, market types, deposit flow</div>
+      </a>
+      <a href="bridge.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Bridge L1↔EVM</div>
+        <div style="font-size:11px;color:var(--text-muted);">Architecture, asset index formula, precompiles</div>
+      </a>
+      <a href="txexamples.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Real txs</div>
+        <div style="font-size:11px;color:var(--text-muted);">Decoded calldata from real on-chain transactions</div>
+      </a>
+      <a href="storage.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Storage</div>
+        <div style="font-size:11px;color:var(--text-muted);">Storage slots, inferred struct layout</div>
+      </a>
+      <a href="docs.html" style="text-decoration:none;padding:12px 14px;background:rgba(131,233,255,.06);border:1px solid rgba(131,233,255,.2);border-radius:8px;transition:border-color .15s;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Docs &amp; Code</div>
+        <div style="font-size:11px;color:var(--text-muted);">Full technical docs, JS/Python examples, quick ref</div>
+      </a>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- HOW IT WORKS — SIMPLE                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+    <div class="section-title">How HIP-4 works — the short version</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+      <div style="padding:16px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.12);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">1. Create</div>
+        <div style="font-size:12px;color:var(--text-secondary);">The admin creates a contest — a question with multiple outcomes (sides). Each side becomes a tradeable token on HyperCore L1.</div>
+      </div>
+      <div style="padding:16px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.12);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-gold);text-transform:uppercase;margin-bottom:6px;">2. Trade &amp; deposit</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Users pick a side by depositing HYPE into the EVM contract, or by trading outcome tokens on the L1 order book in USDH.</div>
+      </div>
+      <div style="padding:16px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-success);text-transform:uppercase;margin-bottom:6px;">3. Settle &amp; claim</div>
+        <div style="font-size:12px;color:var(--text-secondary);">The event resolves. Admin posts a Merkle root on the EVM. Winners submit their proof and claim HYPE from the prize pool (minus 0.9% fee).</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- THEORY : USDH vs HYPE                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+    <div class="section-title">
+      Theory — Why trade in USDH but rewards in HYPE?
+      <span class="header-badge badge-gold" style="margin-left:6px;">Unconfirmed</span>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+      This is an <strong style="color:var(--brand-gold);">unconfirmed theory</strong> based on our analysis. Hyperliquid has not explained this design choice.
+    </p>
+
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">What we observe</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;">
+          <span class="header-badge badge-accent" style="flex-shrink:0;margin-top:2px;">L1</span>
+          <div style="font-size:12px;color:var(--text-secondary);">Outcome tokens (#90, #19520, etc.) are traded on the HyperCore L1 order book with <strong style="color:white;">USDH</strong> as the quote currency — exactly like any spot market (BTC/USDH, ETH/USDH).</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;">
+          <span class="header-badge badge-gold" style="flex-shrink:0;margin-top:2px;">EVM</span>
+          <div style="font-size:12px;color:var(--text-secondary);">The prize pool, deposits, and claim payouts are all in <strong style="color:white;">HYPE</strong> — the native gas token of HyperEVM. The <code>deposit()</code> function is <code>payable</code> and uses <code>msg.value</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Our theory on why</div>
+    <ul class="flow-list">
+      <li class="flow-item">
+        <div class="flow-num">1</div>
+        <div><strong style="color:var(--brand-accent);">Architecture constraint.</strong> HyperCore L1 uses USDH as its native quote currency for all spot markets. The order book doesn't know about HYPE as a settlement token — it just prices assets in USDH. That's how the L1 works for every market, HIP-4 is no exception.</div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-num">2</div>
+        <div><strong style="color:var(--brand-gold);">EVM native simplicity.</strong> On HyperEVM, HYPE is the native gas token (like ETH on Ethereum). Using <code>msg.value</code> for deposits is the simplest possible pattern — no ERC20 approve/transferFrom needed, no token contract dependency, less gas, fewer attack vectors.</div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-num">3</div>
+        <div><strong style="color:var(--brand-success);">Incentive alignment.</strong> By paying rewards in HYPE, winners are automatically exposed to the success of the Hyperliquid ecosystem. This creates organic buy pressure on HYPE and aligns participant incentives with the protocol's growth.</div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-num">4</div>
+        <div><strong style="color:white;">Layer separation.</strong> HyperCore (L1) and HyperEVM are two distinct systems connected by the bridge at <code style="color:var(--brand-accent);">0x2222…2222</code>. Each layer uses its own native currency. The L1 side handles price discovery in USDH; the EVM side handles settlement in HYPE. The bridge converts between them when needed.</div>
+      </li>
+    </ul>
+
+    <div style="margin-top:16px;padding:12px 16px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.15);border-radius:8px;font-size:12px;color:var(--text-secondary);">
+      <strong style="color:var(--brand-gold);">Bottom line:</strong> USDH for trading (stable unit, native to L1 order book), HYPE for settlement (native to EVM, aligns incentives). Two layers, two currencies, one bridge connecting them. This is a pattern choice, not a limitation — it's how the dual-layer architecture naturally works.
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- METHODOLOGY                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
+    <div class="section-title">Methodology</div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">How this information was gathered — for transparency and reproducibility.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;">
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Bytecode analysis</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Disassembled the contract bytecode. Extracted function selectors (PUSH4), revert strings, event topic0s, storage slot accesses (SLOAD/SSTORE), and CALLER checks.</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Selector brute-force</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Ran keccak256 against 200+ candidate function signatures to match unknown selectors. Identified <code style="color:var(--brand-success);">publishMerkleRoot</code> and <code style="color:var(--brand-success);">contestExists</code>. One selector remains uncracked.</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Transaction scan</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Scanned blocks 47,900,000–48,200,000 via RPC. Decoded calldata and event logs from real transactions (deposits, createContest, finalizeContest, publishMerkleRoot).</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">HyperCore API</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Queried the <code>{type: "hip4"}</code> endpoint for market metadata: outcomes, questions, side specs, coin prices. Cross-referenced with on-chain data.</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Storage probing</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Read storage slots 0–19 via <code>eth_getStorageAt</code>. Identified owner (slot 0), initialized flag (slot 2). Mappings use dynamic keccak256-derived slots.</div>
+      </div>
+      <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">State reads</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Called view functions (owner, platformFeeBps, getContestPool, getMerkleRoot) across contest IDs 1–700 to map active contests and their state.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- KEY NUMBERS                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <div class="glass-panel" style="padding:24px;">
+    <div class="section-title">Key numbers at a glance</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+      <div style="text-align:center;padding:14px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-accent);">15</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Functions found</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-gold);">5</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Events decoded</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-success);">19</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Revert strings</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-error);">1</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Unknown selector</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-accent);">9</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">CALLER checks</div>
+      </div>
+      <div style="text-align:center;padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.1);border-radius:10px;">
+        <div style="font-size:24px;font-weight:700;color:var(--brand-gold);">29</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Real TXs decoded</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- /page-wrapper -->
+
+<!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
+  Liquid Terminal · HIP-4 Reverse Engineering · Updated Mar 24, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+</div>
+
+</body>
+</html>

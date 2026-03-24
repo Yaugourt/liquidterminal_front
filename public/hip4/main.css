@@ -1,0 +1,362 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand-main:      #0B0E14;
+      --brand-secondary: #151A25;
+      --brand-tertiary:  #051728;
+      --brand-dark:      #0A0D12;
+      --brand-accent:    #83E9FF;
+      --brand-gold:      #f9e370;
+      --brand-success:   #00ff88;
+      --brand-error:     #ef4444;
+      --text-primary:    #ffffff;
+      --text-secondary:  #a1a1aa;
+      --text-muted:      #71717a;
+      --border-subtle:   rgba(255,255,255,0.05);
+      --border-hover:    rgba(255,255,255,0.10);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    button, input, select, textarea, code, kbd, samp, pre {
+      font-family: inherit;
+    }
+
+    body {
+      font-family: inherit;
+      background: var(--brand-main);
+      background-image: radial-gradient(ellipse at top, #1a2c38 0%, var(--brand-main) 50%, #050505 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .page-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* ── Glass Panel ──────────────────────────────────────────── */
+    .glass-panel {
+      background: rgba(21, 26, 37, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+    /* ── Typography ───────────────────────────────────────────── */
+    .text-accent  { color: var(--brand-accent); }
+    .text-gold    { color: var(--brand-gold); }
+    .text-success { color: var(--brand-success); }
+    .text-error   { color: var(--brand-error); }
+    .text-muted   { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+    .mono { font-family: inherit; }
+    .label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: var(--brand-accent);
+      border-radius: 2px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11,14,20,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-name { font-size: 15px; font-weight: 700; }
+    .brand-name span:first-child { color: var(--brand-accent); font-style: italic; }
+    .brand-name span:last-child { color: var(--text-secondary); }
+    .header-badge {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+    .badge-accent  { background: rgba(131,233,255,.08); color: var(--brand-accent); border-color: rgba(131,233,255,.2); }
+    .badge-gold    { background: rgba(249,227,112,.08); color: var(--brand-gold);   border-color: rgba(249,227,112,.2); }
+    .badge-success { background: rgba(0,255,136,.08);  color: var(--brand-success); border-color: rgba(0,255,136,.2); }
+    .badge-error   { background: rgba(239,68,68,.08);  color: var(--brand-error);   border-color: rgba(239,68,68,.2); }
+    .badge-muted   { background: rgba(255,255,255,.04);color: var(--text-secondary);border-color: var(--border-hover); }
+
+    /* ── Hero Stats ───────────────────────────────────────────── */
+    .hero { margin-bottom: 32px; }
+    .hero-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-address {
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-address a { color: var(--brand-accent); text-decoration: none; }
+    .hero-address a:hover { text-decoration: underline; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .stat-card {
+      background: rgba(21,26,37,.4);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color .2s;
+    }
+    .stat-card:hover { border-color: var(--border-hover); }
+    .stat-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .stat-value { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+    .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Tabs ─────────────────────────────────────────────────── */
+    .tabs-container {
+      display: flex;
+      background: var(--brand-tertiary);
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid var(--border-subtle);
+      gap: 4px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 7px 16px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+    }
+    .tab-btn:hover { color: #e4e4e7; background: rgba(255,255,255,.05); }
+    .tab-btn.active { background: var(--brand-accent); color: var(--brand-tertiary); font-weight: 700; }
+    a.tab-btn { text-decoration: none; color: inherit; text-align: center; box-sizing: border-box; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── Table ────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    thead th {
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    tbody tr { border-bottom: 1px solid var(--border-subtle); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.02); }
+    tbody td { padding: 11px 12px; font-size: 13px; color: var(--text-primary); vertical-align: top; }
+
+    /* ── Code Block ───────────────────────────────────────────── */
+    .code-block {
+      background: var(--brand-dark);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #d4d4d4;
+      overflow-x: auto;
+    }
+    .code-block .kw  { color: var(--brand-accent); }
+    .code-block .fn  { color: var(--brand-gold); }
+    .code-block .ty  { color: #c084fc; }
+    .code-block .cm  { color: var(--text-muted); font-style: italic; }
+    .code-block .sel { color: var(--brand-success); }
+    .code-block .ev  { color: #fb923c; }
+
+    /* ── Flow Steps ───────────────────────────────────────────── */
+    .flow-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .flow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .flow-num {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(131,233,255,.12);
+      color: var(--brand-accent);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Revert Strings ───────────────────────────────────────── */
+    .revert-group { margin-bottom: 20px; }
+    .revert-group-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .revert-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .revert-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      background: rgba(239,68,68,.07);
+      color: #fca5a5;
+      border: 1px solid rgba(239,68,68,.2);
+    }
+
+    /* ── Markets ──────────────────────────────────────────────── */
+    .market-card {
+      background: rgba(21,26,37,.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      transition: border-color .2s;
+    }
+    .market-card:hover { border-color: var(--border-hover); }
+    .market-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+    .market-name { font-size: 14px; font-weight: 600; }
+    .market-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .market-sides { display: flex; gap: 6px; flex-wrap: wrap; }
+    .market-side { padding: 3px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+    .side-yes { background: rgba(0,255,136,.1); color: var(--brand-success); border: 1px solid rgba(0,255,136,.2); }
+    .side-no  { background: rgba(239,68,68,.1); color: var(--brand-error); border: 1px solid rgba(239,68,68,.2); }
+    .side-custom { background: rgba(131,233,255,.08); color: var(--brand-accent); border: 1px solid rgba(131,233,255,.2); }
+
+    /* ── Prices Grid ──────────────────────────────────────────── */
+    .prices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+    .price-cell {
+      background: rgba(21,26,37,.4);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      transition: border-color .15s;
+    }
+    .price-cell:hover { border-color: var(--border-hover); }
+    .price-ticker { font-size: 13px; font-weight: 700; color: var(--brand-accent); font-family: inherit; }
+    .price-val { font-size: 16px; font-weight: 700; margin-top: 4px; }
+    .price-bar { height: 3px; border-radius: 2px; margin-top: 8px; background: var(--border-subtle); }
+    .price-fill { height: 100%; border-radius: 2px; }
+
+    /* ── Selector pill ────────────────────────────────────────── */
+    .sel-pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: inherit;
+      font-weight: 600;
+      background: rgba(0,255,136,.08);
+      color: var(--brand-success);
+      border: 1px solid rgba(0,255,136,.2);
+    }
+    .sel-pill.unknown {
+      background: rgba(249,227,112,.08);
+      color: var(--brand-gold);
+      border-color: rgba(249,227,112,.2);
+    }
+
+    /* ── Access chips ─────────────────────────────────────────── */
+    .access-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .access-owner { background: rgba(249,227,112,.1); color: var(--brand-gold); border: 1px solid rgba(249,227,112,.25); }
+    .access-public { background: rgba(0,255,136,.08); color: var(--brand-success); border: 1px solid rgba(0,255,136,.2); }
+    .access-revert { background: rgba(239,68,68,.08); color: var(--brand-error); border: 1px solid rgba(239,68,68,.2); }
+    .access-unknown { background: rgba(255,255,255,.04); color: var(--text-secondary); border: 1px solid var(--border-hover); }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border-subtle); margin: 24px 0; }
+
+    /* ── Info Row ─────────────────────────────────────────────── */
+    .info-row { display: flex; flex-direction: column; gap: 10px; }
+    .info-line { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
+    .info-line:last-child { border-bottom: none; }
+    .info-key { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-secondary); min-width: 160px; flex-shrink: 0; padding-top: 1px; }
+    .info-val { font-size: 13px; color: var(--text-primary); word-break: break-all; }
+
+    /* ── Contests table ───────────────────────────────────────── */
+    .contest-row td:first-child { font-family: inherit; color: var(--brand-accent); font-weight: 700; }
+
+    /* ── Scrollbar ────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 3px; }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .page-wrapper { padding: 20px 14px 60px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .hero-title { font-size: 18px; }
+    }
+  

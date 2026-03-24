@@ -130,6 +130,21 @@ export const seoConfig = {
     keywords: ["HyperLiquid wiki", "crypto guides", "blockchain tutorials", "documentation", "learning resources"],
     path: "/wiki",
   },
+
+  hip4: {
+    title: "HIP-4 Contest — Exploratory documentation",
+    description:
+      "Reverse-engineered HIP-4 prediction markets documentation on HyperEVM testnet (chain 998). ABI, events, mechanics, bridge, and code examples — not official Hyperliquid documentation.",
+    keywords: [
+      "HIP-4",
+      "Hyperliquid",
+      "prediction markets",
+      "HyperEVM",
+      "testnet",
+      "contest contract",
+    ],
+    path: "/hip4",
+  },
   
   tracker: {
     title: "Liquid Tracker - Wallet & Portfolio Tracker",

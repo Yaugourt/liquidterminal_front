@@ -15,7 +15,8 @@ import {
   AppWindow,
   Home,
   CandlestickChart,
-  Zap
+  Zap,
+  FileCode
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -213,6 +214,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/wiki',
         icon: null,
         IconComponent: AppWindow,
+      },
+      {
+        name: 'HIP-4 (testnet)',
+        href: '/hip4/home',
+        icon: null,
+        IconComponent: FileCode,
       },
       {
         name: 'Read List',
