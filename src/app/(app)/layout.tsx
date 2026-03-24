@@ -37,7 +37,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="lg:pl-[220px]">
                 {/* Header - scrolls with page content */}
                 <div>
-                    <Header showFees={true} />
+                    <Header />
                 </div>
 
                 {/* Mobile SearchBar */}

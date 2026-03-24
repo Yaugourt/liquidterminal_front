@@ -20,7 +20,7 @@ const Sidebar = dynamic(
 export function Providers({ children }: { children: React.ReactNode }) {
   const { isOpen, setIsOpen } = useSidebar();
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
+  const isLandingPage = pathname === '/';
   const privyAppId = env.NEXT_PUBLIC_PRIVY_AUDIENCE;
 
   return (
@@ -45,7 +45,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <XpProvider>
           <XpNotificationProvider>
-            {!isHomePage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
+            {!isLandingPage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
             {children}
             <Toaster />
           </XpNotificationProvider>

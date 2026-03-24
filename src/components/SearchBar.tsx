@@ -210,7 +210,7 @@ export function SearchBar({
                   <div className="text-brand-gold text-sm font-medium">
                     {suggestion.alias}
                   </div>
-                  <div className="text-brand-accent text-xs font-mono">
+                  <div className="text-brand-accent text-xs">
                     {suggestion.address.substring(0, 10)}...{suggestion.address.substring(suggestion.address.length - 8)}
                   </div>
                 </div>
