@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HIP-4 — Documentation</title>
+  <title>HIP-4 — Docs &amp; code</title>
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
@@ -22,9 +22,10 @@
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-accent">HIP-4 · HyperEVM</span>
       <span class="header-badge badge-muted">Testnet · Chain 998</span>
-      <span class="header-badge badge-gold">0.9% fee</span>
+      <span class="header-badge badge-muted">V1 + V2</span>
+      <span class="header-badge badge-gold">V1: 0.9% fee</span>
     </div>
   </div>
 </div>
@@ -38,10 +39,17 @@
       <span>HIP-4 Contest Contract</span>
       <span class="header-badge badge-success">Prediction Markets</span>
     </div>
-    <div class="hero-address mono">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
-      <span style="color:var(--text-muted)">Contract:</span>
-      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    <div class="hero-address mono" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-muted">V1</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-success">V2</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x6d86b21e853758f5719408633e6bcb2cfd50cf07</span>
+      </div>
     </div>
 
     <!-- KPI STATS -->
@@ -57,10 +65,10 @@
       <div class="stat-card">
         <div class="stat-label">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
-          Platform Fee
+          Platform fee
         </div>
-        <div class="stat-value text-gold">0.9%</div>
-        <div class="stat-sub">90 bps — immutable</div>
+        <div class="stat-value text-gold">0.9% / implicit</div>
+        <div class="stat-sub">V1: 90 bps view · V2: no bps() — fee from pools</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">
@@ -89,10 +97,10 @@
       <div class="stat-card">
         <div class="stat-label">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
-          Bytecode
+          Versions
         </div>
-        <div class="stat-value">Verified</div>
-        <div class="stat-sub">9 checks CALLER</div>
+        <div class="stat-value text-accent">2</div>
+        <div class="stat-sub">V1 reverse-engineered · V2 Solidity verified</div>
       </div>
     </div>
   </div>
@@ -107,7 +115,7 @@
     <a class="tab-btn" href="bridge.html">Bridge L1↔EVM</a>
     <a class="tab-btn" href="txexamples.html">Real txs</a>
     <a class="tab-btn" href="storage.html">Storage</a>
-    <a class="tab-btn active" href="docs.html" aria-current="page">Docs</a>
+    <a class="tab-btn active" href="docs.html" aria-current="page">Docs &amp; code</a>
   </nav>
 
 
@@ -124,6 +132,9 @@
     <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:16px;">
       There is <strong style="color:var(--brand-gold);">no official documentation</strong> for HIP-4. Everything in this document was reverse-engineered from the on-chain bytecode, real transaction analysis, and the HyperCore API. This is field work — not theory.
     </p>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:16px;">
+      On HyperEVM testnet we track <strong style="color:white;">two deployments</strong>: legacy <strong style="color:var(--brand-accent);">V1</strong> (bytecode + reconstructed ABI) and <strong style="color:var(--brand-success);">V2</strong> (verified Solidity + compiled ABI). Claims, Merkle leaves, and fee accounting differ between versions — see <a href="abi.html#hip4-v1-v2-compare" style="color:var(--brand-accent);text-decoration:underline;">Full ABI — V1 vs V2</a> for the side-by-side table and JSON ABIs (<code class="mono">HIP4Contest.v1.abi</code> / <code class="mono">HIP4Contest.v2.abi</code> next to these pages).
+    </p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
       <div style="padding:16px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.12);border-radius:10px;">
         <div style="font-size:20px;margin-bottom:6px;">1.</div>
@@ -139,7 +150,7 @@
       </div>
     </div>
     <div style="padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;font-size:12px;color:var(--text-muted);">
-      <strong style="color:var(--text-secondary);">The 0.9% fee</strong> is deducted from the reward pool, not from individual deposits. It's hardcoded as a constant (90 basis points) — immutable, no governance can change it.
+      <strong style="color:var(--text-secondary);">Platform fee</strong> on <strong style="color:white;">V1</strong> is explicit: <code class="mono">platformFeeBps()</code> returns 90 — 0.9% skimmed from the published reward pool, immutable on-chain. On <strong style="color:white;">V2</strong> there is no bps getter; the fee is <strong style="color:white;">implicit</strong> from pool totals vs payouts, with owner <code class="mono">withdrawPlatformFee</code> instead of legacy <code class="mono">sweepUnclaimed</code>.
     </div>
   </div>
 
@@ -241,21 +252,23 @@
 
   <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
     <div class="section-title">Code — Connect to the contract</div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">All examples use ethers.js v6. The RPC is public and free — no API key needed.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">All examples below use <strong style="color:var(--text-secondary);">ethers.js v6</strong> and target the <strong style="color:var(--brand-accent);">V1</strong> deployment unless noted. The RPC is public — no API key needed. For <strong style="color:var(--brand-success);">V2</strong>, swap address and use <code class="mono">HIP4Contest.v2.abi</code>.</p>
 
     <div class="code-block" style="margin-bottom:16px;">
 <span class="kw">import</span> { JsonRpcProvider, Contract } <span class="kw">from</span> <span class="sel">"ethers"</span>;
 
 <span class="cm">// HyperEVM Testnet</span>
-<span class="kw">const</span> RPC  = <span class="sel">"https://rpc.hyperliquid-testnet.xyz/evm"</span>;
-<span class="kw">const</span> ADDR = <span class="sel">"0x4fd772e5708da2a7f097f51b3127e515a72744bd"</span>;
+<span class="kw">const</span> RPC     = <span class="sel">"https://rpc.hyperliquid-testnet.xyz/evm"</span>;
+<span class="kw">const</span> ADDR_V1 = <span class="sel">"0x4fd772e5708da2a7f097f51b3127e515a72744bd"</span>;
+<span class="kw">const</span> ADDR_V2 = <span class="sel">"0x6d86b21e853758f5719408633e6bcb2cfd50cf07"</span>;
 
-<span class="cm">// Reconstructed ABI (not from verified source — reverse-engineered)</span>
+<span class="cm">// V1: reconstructed ABI (not verified — reverse-engineered)</span>
+<span class="cm">// On deployed V1, selector 0x71c5ecb1 is the public getter merkleRoots(uint256) — not getMerkleRoot().</span>
 <span class="kw">const</span> ABI = [
   <span class="sel">"function owner() view returns (address)"</span>,
   <span class="sel">"function platformFeeBps() view returns (uint256)"</span>,
   <span class="sel">"function getContestPool(uint256 contestId) view returns (uint256)"</span>,
-  <span class="sel">"function getMerkleRoot(uint256 contestId) view returns (bytes32)"</span>,
+  <span class="sel">"function merkleRoots(uint256 contestId) view returns (bytes32)"</span>,
   <span class="sel">"function deposit(uint256 contestId, uint256 sideId) payable"</span>,
   <span class="sel">"function createContest(uint256 contestId, uint256 entryFee)"</span>,
   <span class="sel">"function publishMerkleRoot(uint256 contestId, bytes32 root, uint256 rewardPool)"</span>,
@@ -271,7 +284,7 @@
 ];
 
 <span class="kw">const</span> provider = <span class="kw">new</span> <span class="fn">JsonRpcProvider</span>(RPC);
-<span class="kw">const</span> contract = <span class="kw">new</span> <span class="fn">Contract</span>(ADDR, ABI, provider);
+<span class="kw">const</span> contract = <span class="kw">new</span> <span class="fn">Contract</span>(ADDR_V1, ABI, provider);
     </div>
   </div>
 
@@ -307,7 +320,7 @@ console.<span class="fn">log</span>(exists); <span class="cm">// false — conte
     <div style="margin-bottom:20px;">
       <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Read the Merkle root (check if contest is finalized)</div>
       <div class="code-block">
-<span class="kw">const</span> root = <span class="kw">await</span> contract.<span class="fn">getMerkleRoot</span>(<span class="sel">595</span>);
+<span class="kw">const</span> root = <span class="kw">await</span> contract.<span class="fn">merkleRoots</span>(<span class="sel">595</span>);
 console.<span class="fn">log</span>(root);
 <span class="cm">// → 0xc8ed36d4... (finalized — root exists)</span>
 <span class="cm">// → 0x00000000... (not finalized — root is zero)</span>
@@ -322,6 +335,7 @@ console.<span class="fn">log</span>(root);
 console.<span class="fn">log</span>(<span class="sel">`Owner: ${owner}`</span>);       <span class="cm">// 0xe21c78037329d06fe0d6fefc4221aaa67cb0d135</span>
 console.<span class="fn">log</span>(<span class="sel">`Fee: ${feeBps} bps`</span>);   <span class="cm">// 90 bps = 0.9%</span>
       </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.5;"><strong style="color:var(--text-secondary);">V2:</strong> there is no <code class="mono">platformFeeBps()</code> — use pool views and the verified ABI. See <a href="abi.html#hip4-v1-v2-compare" style="color:var(--brand-accent);text-decoration:underline;">Full ABI — V1 vs V2</a>.</p>
     </div>
   </div>
 
@@ -392,7 +406,7 @@ contract.<span class="fn">on</span>(<span class="sel">"MerkleRootPublished"</spa
 <span class="kw">import</span> { Wallet, parseEther } <span class="kw">from</span> <span class="sel">"ethers"</span>;
 
 <span class="kw">const</span> signer = <span class="kw">new</span> <span class="fn">Wallet</span>(PRIVATE_KEY, provider);
-<span class="kw">const</span> hip4   = <span class="kw">new</span> <span class="fn">Contract</span>(ADDR, ABI, signer);
+<span class="kw">const</span> hip4   = <span class="kw">new</span> <span class="fn">Contract</span>(ADDR_V1, ABI, signer);
 
 <span class="kw">const</span> contestId = <span class="sel">595</span>;
 <span class="kw">const</span> sideId    = <span class="sel">0</span>;   <span class="cm">// 0 = first outcome</span>
@@ -494,7 +508,7 @@ console.<span class="fn">log</span>(<span class="fn">coinToAssetIdx</span>(<span
   <span class="kw">for</span> (<span class="kw">let</span> id = from; id <= to; id++) {
     <span class="kw">const</span> pool = <span class="kw">await</span> contract.<span class="fn">getContestPool</span>(id);
     <span class="kw">if</span> (pool > <span class="sel">0n</span>) {
-      <span class="kw">const</span> root = <span class="kw">await</span> contract.<span class="fn">getMerkleRoot</span>(id);
+      <span class="kw">const</span> root = <span class="kw">await</span> contract.<span class="fn">merkleRoots</span>(id);
       <span class="kw">const</span> finalized = root !== <span class="sel">"0x"</span> + <span class="sel">"0"</span>.repeat(<span class="sel">64</span>);
       active.push({
         id,
@@ -530,6 +544,7 @@ console.<span class="fn">log</span>(<span class="fn">coinToAssetIdx</span>(<span
     <div style="margin-bottom:20px;">
       <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Read owner (slot 0)</div>
       <div class="code-block">
+<span class="cm">// V1 contract address</span>
 <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="sel">"https://rpc.hyperliquid-testnet.xyz/evm"</span>, {
   <span class="ty">method</span>: <span class="sel">"POST"</span>,
   <span class="ty">headers</span>: { <span class="sel">"Content-Type"</span>: <span class="sel">"application/json"</span> },
@@ -550,9 +565,9 @@ console.<span class="fn">log</span>(<span class="fn">coinToAssetIdx</span>(<span
     </div>
 
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Call getContestPool via eth_call</div>
+      <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Call getContestPool via eth_call (V1)</div>
       <div class="code-block">
-<span class="cm">// selector: 0x2a658bdf + contestId padded to 32 bytes</span>
+<span class="cm">// selector: 0x2a658bdf + contestId padded to 32 bytes · `to` = ADDR_V1</span>
 <span class="kw">const</span> contestId = <span class="sel">595</span>;
 <span class="kw">const</span> data = <span class="sel">"0x2a658bdf"</span> + contestId.<span class="fn">toString</span>(<span class="sel">16</span>).<span class="fn">padStart</span>(<span class="sel">64</span>, <span class="sel">"0"</span>);
 
@@ -583,7 +598,8 @@ console.<span class="fn">log</span>(Number(poolWei) / <span class="sel">1e18</sp
 <span class="kw">from</span> web3 <span class="kw">import</span> Web3
 
 rpc = <span class="sel">"https://rpc.hyperliquid-testnet.xyz/evm"</span>
-addr = <span class="sel">"0x4fd772e5708da2a7f097f51b3127e515a72744bd"</span>
+addr_v1 = <span class="sel">"0x4fd772e5708da2a7f097f51b3127e515a72744bd"</span>
+<span class="cm"># addr_v2 = "0x6d86b21e853758f5719408633e6bcb2cfd50cf07"</span>
 
 w3 = Web3(Web3.HTTPProvider(rpc))
 
@@ -592,7 +608,7 @@ abi = [
      <span class="sel">"stateMutability"</span>: <span class="sel">"view"</span>,
      <span class="sel">"inputs"</span>: [{<span class="sel">"name"</span>: <span class="sel">"contestId"</span>, <span class="sel">"type"</span>: <span class="sel">"uint256"</span>}],
      <span class="sel">"outputs"</span>: [{<span class="sel">"type"</span>: <span class="sel">"uint256"</span>}]},
-    {<span class="sel">"name"</span>: <span class="sel">"getMerkleRoot"</span>, <span class="sel">"type"</span>: <span class="sel">"function"</span>,
+    {<span class="sel">"name"</span>: <span class="sel">"merkleRoots"</span>, <span class="sel">"type"</span>: <span class="sel">"function"</span>,
      <span class="sel">"stateMutability"</span>: <span class="sel">"view"</span>,
      <span class="sel">"inputs"</span>: [{<span class="sel">"name"</span>: <span class="sel">"contestId"</span>, <span class="sel">"type"</span>: <span class="sel">"uint256"</span>}],
      <span class="sel">"outputs"</span>: [{<span class="sel">"type"</span>: <span class="sel">"bytes32"</span>}]},
@@ -604,14 +620,14 @@ abi = [
      <span class="sel">"inputs"</span>: [], <span class="sel">"outputs"</span>: [{<span class="sel">"type"</span>: <span class="sel">"uint256"</span>}]},
 ]
 
-contract = w3.eth.contract(address=addr, abi=abi)
+contract = w3.eth.contract(address=addr_v1, abi=abi)
 
 <span class="cm"># Read contest pool</span>
 pool = contract.functions.getContestPool(<span class="sel">595</span>).call()
 print(f<span class="sel">"Contest #595: {pool / 1e18:.2f} HYPE"</span>)  <span class="cm"># 26.64 HYPE</span>
 
 <span class="cm"># Read merkle root</span>
-root = contract.functions.getMerkleRoot(<span class="sel">595</span>).call()
+root = contract.functions.merkleRoots(<span class="sel">595</span>).call()
 print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm"># c8ed36d4...</span>
 
 <span class="cm"># Scan active contests</span>
@@ -636,11 +652,11 @@ print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm">#
       </li>
       <li class="flow-item">
         <div class="flow-num" style="background:rgba(239,68,68,.12);color:var(--brand-error);">!</div>
-        <div><strong style="color:white;">No source code.</strong> The contract is not verified. The ABI in this doc was reconstructed from bytecode. Function names are our best guesses — they match the keccak256 selectors but we can't be 100% sure.</div>
+        <div><strong style="color:white;">V1 vs V2 provenance.</strong> <strong style="color:var(--brand-accent);">V1</strong> is not verified on-chain; names in this doc were reconstructed from bytecode and calldata. <strong style="color:var(--brand-success);">V2</strong> matches verified Solidity in-repo and the compiled <code class="mono">HIP4Contest.v2.abi</code> file.</div>
       </li>
       <li class="flow-item">
-        <div class="flow-num" style="background:rgba(239,68,68,.12);color:var(--brand-error);">!</div>
-        <div><strong style="color:white;">1 unknown selector remains.</strong> <code style="color:var(--brand-gold);">0xb2447e34</code> takes (uint256,uint256), is owner-only, and we couldn't brute-force the name after 200+ candidates.</div>
+        <div class="flow-num" style="background:rgba(131,233,255,.12);color:var(--brand-accent);">i</div>
+        <div><strong style="color:white;">Selector <code class="mono">0xb2447e34</code>.</strong> On V1 bytecode this owner-only (uint256,uint256) call had no cracked name. On <strong style="color:var(--brand-success);">V2</strong> the same selector is <code class="mono">withdrawPlatformFee(uint256,uint256)</code> (replaces legacy <code class="mono">sweepUnclaimed</code>). See <a href="abi.html#hip4-v1-v2-compare" style="color:var(--brand-accent);text-decoration:underline;">Full ABI — V1 vs V2</a>.</div>
       </li>
       <li class="flow-item">
         <div class="flow-num" style="background:rgba(249,227,112,.12);color:var(--brand-gold);">~</div>
@@ -648,11 +664,11 @@ print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm">#
       </li>
       <li class="flow-item">
         <div class="flow-num" style="background:rgba(249,227,112,.12);color:var(--brand-gold);">~</div>
-        <div><strong style="color:white;">Claim selector unknown.</strong> We know the <code>claim()</code> function exists (from revert strings and the Claimed event), but we haven't found a real claim transaction to extract its selector.</div>
+        <div><strong style="color:white;">Claim surface.</strong> On <strong style="color:var(--brand-success);">V2</strong>, <code class="mono">claim</code> is <code class="mono">0x5d4df3bf</code> with <code class="mono">(contestId, index, recipient, amount, proof[])</code> and per-index bitmap accounting. On <strong style="color:var(--brand-accent);">V1</strong> the public <code class="mono">claim(contestId, sideId, proof[])</code> shape is inferred from events/reverts; a reliable V1 selector was historically hard to pin from live calldata alone — prefer V2 ABI for new integrations.</div>
       </li>
       <li class="flow-item">
         <div class="flow-num" style="background:rgba(249,227,112,.12);color:var(--brand-gold);">~</div>
-        <div><strong style="color:white;">Testnet only.</strong> This contract does <strong>not</strong> exist on mainnet (chain 999). Same address returns empty bytecode on mainnet.</div>
+        <div><strong style="color:white;">Testnet only.</strong> Neither V1 nor V2 HIP-4 contest deployments are live on Hyperliquid mainnet (chain 999). Treat EVM addresses here as testnet-only.</div>
       </li>
       <li class="flow-item">
         <div class="flow-num" style="background:rgba(131,233,255,.12);color:var(--brand-accent);">i</div>
@@ -671,7 +687,8 @@ print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm">#
   <!-- ═══════════════════════════════════════════════════════════════ -->
 
   <div class="glass-panel" style="padding:24px;">
-    <div class="section-title">Quick reference — All selectors</div>
+    <div class="section-title">Quick reference — V1 selectors</div>
+    <p style="font-size:12px;color:var(--text-muted);margin:-6px 0 14px;line-height:1.5;">Table below is for the <strong style="color:var(--text-secondary);">V1</strong> deployment <code class="mono">0x4fd7…744bd</code>. <strong style="color:var(--brand-success);">V2</strong> adds/replaces several entrypoints (e.g. <code class="mono">claim</code> <code class="mono">0x5d4df3bf</code>, <code class="mono">getTotalPaidOut</code>, no <code class="mono">platformFeeBps</code>) — see <a href="abi.html#hip4-v1-v2-compare" style="color:var(--brand-accent);text-decoration:underline;">Full ABI — V1 vs V2</a> and the versioned JSON ABIs.</p>
     <div class="table-wrap">
       <table style="min-width:650px;">
         <thead><tr><th>Selector</th><th>Function</th><th>Access</th><th>Use</th></tr></thead>
@@ -679,10 +696,10 @@ print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm">#
           <tr><td><span class="sel-pill">0x8da5cb5b</span></td><td>owner()</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Read owner address</td></tr>
           <tr><td><span class="sel-pill">0x91d3b00c</span></td><td>platformFeeBps()</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Always returns 90</td></tr>
           <tr><td><span class="sel-pill">0x2a658bdf</span></td><td>getContestPool(uint256)</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Pool balance in wei</td></tr>
-          <tr><td><span class="sel-pill">0x71c5ecb1</span></td><td>getMerkleRoot(uint256)</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">bytes32 root (0x00… if not finalized)</td></tr>
+          <tr><td><span class="sel-pill">0x71c5ecb1</span></td><td>merkleRoots(uint256)</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">bytes32 root (0x00… if not finalized) — use this name in ethers/web3, not getMerkleRoot()</td></tr>
           <tr><td><span class="sel-pill">0xf364c90c</span></td><td>contestExists(uint256,uint256)</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Returns bool (2nd arg ignored)</td></tr>
           <tr><td><span class="sel-pill">0x00aeef8a</span></td><td>deposit(uint256,uint256) payable</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Entry — msg.value must match fee</td></tr>
-          <tr style="background:rgba(249,227,112,.03);"><td><span class="sel-pill unknown">unknown</span></td><td>claim(contestId,sideId,proof[])</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);">Claim reward with Merkle proof</td></tr>
+          <tr style="background:rgba(249,227,112,.03);"><td><span class="sel-pill unknown">V1: elusive</span></td><td>claim (shape per events/reverts)</td><td><span class="access-chip access-public">public</span></td><td style="font-size:12px;color:var(--text-muted);"><strong>V2:</strong> <span class="sel-pill">0x5d4df3bf</span> <code class="mono">claim(uint256,uint256,address,uint256,bytes32[])</code></td></tr>
           <tr><td><span class="sel-pill">0x6dab6b23</span></td><td>createContest(uint256,uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Create new contest + set entry fee</td></tr>
           <tr><td><span class="sel-pill">0xf295f6e4</span></td><td>publishMerkleRoot(uint256,bytes32,uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Post winners root on-chain</td></tr>
           <tr><td><span class="sel-pill">0x3a8ef03b</span></td><td>finalizeContest(uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Mark contest as done</td></tr>
@@ -690,12 +707,12 @@ print(f<span class="sel">"Merkle root: {root.hex()}"</span>)  <span class="cm">#
           <tr><td><span class="sel-pill">0xe50e64d5</span></td><td>sweepUnclaimed(uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Recover leftover funds after expiry</td></tr>
           <tr><td><span class="sel-pill">0xf2fde38b</span></td><td>transferOwnership(address)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Transfer admin rights</td></tr>
           <tr><td><span class="sel-pill">0x715018a6</span></td><td>renounceOwnership()</td><td><span class="access-chip access-revert">REVERTS</span></td><td style="font-size:12px;color:var(--text-muted);">Always reverts — disabled</td></tr>
-          <tr style="background:rgba(249,227,112,.03);"><td><span class="sel-pill unknown">0xb2447e34</span></td><td>???(uint256,uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Unknown — name not cracked</td></tr>
+          <tr style="background:rgba(249,227,112,.03);"><td><span class="sel-pill">0xb2447e34</span></td><td>V1: unnamed · V2: withdrawPlatformFee(uint256,uint256)</td><td><span class="access-chip access-owner">owner</span></td><td style="font-size:12px;color:var(--text-muted);">Same selector on both; V2 name from verified source</td></tr>
         </tbody>
       </table>
     </div>
     <div style="margin-top:16px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;font-size:12px;color:var(--text-muted);">
-      <strong style="color:var(--text-secondary);">Methodology:</strong> ABI reconstructed from bytecode disassembly (PUSH4 selector matching), keccak256 brute-forcing of candidate signatures, real transaction calldata decoding, and event log analysis across blocks 47.9M–48.2M. No official source was used.
+      <strong style="color:var(--text-secondary);">Methodology:</strong> V1 ABI reconstructed from bytecode (PUSH4 selector matching), keccak256 brute-forcing, calldata decoding, and event logs (~48M blocks). V2 ABI from verified Solidity + bytecode cross-check. No official HIP-4 spec was used.
     </div>
   </div>
 
