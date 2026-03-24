@@ -83,6 +83,11 @@ body {
         @apply shadow-xl shadow-black/20;
     }
 
+    /* ===== Glass Panel (cards, sections) ===== */
+    .glass-panel {
+        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
+    }
+
     /* ===== Interactive Elements ===== */
     .interactive-card {
         @apply hover:border-border-hover transition-all duration-200;
@@ -120,6 +125,11 @@ body {
     .interactive-secondary {
         @apply text-text-secondary hover:text-white hover:bg-white/5;
     }
+
+    /* ===== Glassmorphism ===== */
+    .glass-panel {
+        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20;
+    }
 }
 
 /* Hide scrollbar for WebKit browsers */
@@ -134,5 +144,31 @@ body {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
+}
+
+/* Smooth scroll for storytelling landing */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ticker ribbon loading shimmer */
+@keyframes ticker-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-ticker-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: ticker-shimmer 1.5s ease-in-out infinite;
 }
