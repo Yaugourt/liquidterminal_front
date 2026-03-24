@@ -22,9 +22,10 @@
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <span class="header-badge badge-accent">HIP-4 Contract</span>
+      <span class="header-badge badge-accent">HIP-4 · HyperEVM</span>
       <span class="header-badge badge-muted">Testnet · Chain 998</span>
-      <span class="header-badge badge-gold">0.9% fee</span>
+      <span class="header-badge badge-muted">V1 + V2</span>
+      <span class="header-badge badge-gold">V1: 0.9% fee</span>
     </div>
   </div>
 </div>
@@ -38,10 +39,17 @@
       <span>HIP-4 Contest Contract</span>
       <span class="header-badge badge-success">Prediction Markets</span>
     </div>
-    <div class="hero-address mono">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#83E9FF" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#83E9FF" stroke-width="1.5"/></svg>
-      <span style="color:var(--text-muted)">Contract:</span>
-      <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+    <div class="hero-address mono" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-muted">V1</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x4fd772e5708da2a7f097f51b3127e515a72744bd</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="header-badge badge-success">V2</span>
+        <span style="color:var(--text-muted)">Contract:</span>
+        <span style="color:var(--brand-accent)">0x6d86b21e853758f5719408633e6bcb2cfd50cf07</span>
+      </div>
     </div>
 
     <!-- KPI STATS -->
@@ -57,10 +65,10 @@
       <div class="stat-card">
         <div class="stat-label">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#f9e370" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#f9e370" stroke-width="2"/></svg>
-          Platform Fee
+          Platform fee
         </div>
-        <div class="stat-value text-gold">0.9%</div>
-        <div class="stat-sub">90 bps — immutable</div>
+        <div class="stat-value text-gold">0.9% / implicit</div>
+        <div class="stat-sub">V1: 90 bps view · V2: no bps() — fee from pools</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">
@@ -89,10 +97,10 @@
       <div class="stat-card">
         <div class="stat-label">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="#83E9FF" stroke-width="2" stroke-linecap="round"/></svg>
-          Bytecode
+          Versions
         </div>
-        <div class="stat-value">Verified</div>
-        <div class="stat-sub">9 checks CALLER</div>
+        <div class="stat-value text-accent">2</div>
+        <div class="stat-sub">V1 reverse-engineered · V2 Solidity verified</div>
       </div>
     </div>
   </div>
@@ -127,14 +135,14 @@
       <span style="font-size:16px;flex-shrink:0;margin-top:-1px;">&#9881;</span>
       <div>
         <strong style="color:white;">Testnet only.</strong>
-        The HIP-4 contract <code style="color:var(--brand-accent);">0x4fd772e5…744bd</code> exists only on HyperEVM Testnet (chain 998). The same address on mainnet (chain 999) returns empty bytecode. Nothing here applies to mainnet — yet.
+        Two HIP-4 parimutuel deployments live on HyperEVM Testnet (chain <strong>998</strong>): <span class="mono">V1 0x4fd772e5…744bd</span> and <span class="mono">V2 0x6d86b21e…cf07</span> — same owner, genesis-style deploy. Same addresses on mainnet (999) have no code here. Nothing in this doc is official Hyperliquid documentation.
       </div>
     </div>
     <div style="padding:14px 18px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.12);border-radius:10px;font-size:12px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:10px;">
       <span style="font-size:16px;flex-shrink:0;margin-top:-1px;">&#128269;</span>
       <div>
-        <strong style="color:white;">ABI reconstructed, not verified.</strong>
-        Function and event names are our best guesses based on keccak256 selector matching and calldata decoding. They match all observed on-chain behavior, but without verified Solidity source we can't guarantee the exact naming. One selector (<code style="color:var(--brand-gold);">0xb2447e34</code>) remains unidentified.
+        <strong style="color:white;">V1 reconstructed · V2 verified.</strong>
+        <strong>V1</strong> ABI/events are reverse-engineered from bytecode + calldata (naming is our best fit). <strong>V2</strong> matches verified Solidity in-repo (<code class="mono">HIP4Contest.sol</code>) and compiled ABI; selectors checked against bytecode. The V1-only mystery selector <code style="color:var(--brand-gold);">0xb2447e34</code> is <code class="mono">withdrawPlatformFee(uint256,uint256)</code> on V2. See <a href="/hip4/abi#hip4-v1-v2-compare" style="color:var(--brand-accent);text-decoration:underline;">Full ABI — V1 vs V2 table</a>.
       </div>
     </div>
   </div>
@@ -147,25 +155,25 @@
   <div class="glass-panel" style="padding:24px;margin-bottom:20px;">
     <div class="section-title">What is this?</div>
     <p style="font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:16px;">
-      This site is a <strong style="color:white;">complete reverse-engineering report</strong> of the HIP-4 prediction market contract on HyperEVM. It covers the full ABI, event signatures, storage layout, access control, real transaction examples, market mechanics, the HyperCore ↔ HyperEVM bridge architecture, and code examples in JavaScript and Python.
+      This hub documents <strong style="color:white;">HIP-4 on HyperEVM</strong> — the first HIP that runs contest logic in <strong style="color:white;">EVM smart contracts</strong> (create, deposit, Merkle settlement, claims). We now track <strong style="color:white;">two testnet deployments</strong>: legacy <strong>V1</strong> (bytecode reverse-engineered) and <strong>V2</strong> (verified source + ABI). Coverage includes ABIs, events, reverts, storage, real txs, bridge mechanics, live market scan, and JS/Python examples.
     </p>
     <p style="font-size:13px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px;">
-      HIP-4 is Hyperliquid's prediction market system. It lets users bet on real-world outcomes — crypto prices, custom events, recurring markets — using HYPE tokens. It's the most basic building block in Hyperliquid's on-chain market infrastructure, and as of March 2026, there is <strong style="color:var(--brand-gold);">no public documentation of any kind</strong>.
+      HIP-4 is Hyperliquid's parimutuel prediction stack: users back sides with native <strong>HYPE</strong> on the EVM contract while outcomes trade on HyperCore L1. Hyperliquid still publishes <strong style="color:var(--brand-gold);">no official HIP-4 spec</strong> — this site is community field work, indexed and cross-checked on-chain.
     </p>
 
     <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">What each section covers</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:4px;">
       <a href="overview.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Overview</div>
-        <div style="font-size:11px;color:var(--text-muted);">Contract info, owner, fees, access control map</div>
+        <div style="font-size:11px;color:var(--text-muted);">V1 + V2 addresses, owner, fees, access control</div>
       </a>
       <a href="abi.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Full ABI</div>
-        <div style="font-size:11px;color:var(--text-muted);">All 15 functions + copy-paste JSON ABI</div>
+        <div style="font-size:11px;color:var(--text-muted);">V1 vs V2 table, tabs, JSON (V2 = 24 verified fns)</div>
       </a>
       <a href="events.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Events</div>
-        <div style="font-size:11px;color:var(--text-muted);">5 events with topic0, indexed params, decode examples</div>
+        <div style="font-size:11px;color:var(--text-muted);">topic0, V1 DepositReceived vs V2 Deposit, FeesWithdrawn</div>
       </a>
       <a href="reverts.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Revert strings</div>
@@ -173,7 +181,7 @@
       </a>
       <a href="markets.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Active markets</div>
-        <div style="font-size:11px;color:var(--text-muted);">Live contests, questions, outcome prices</div>
+        <div style="font-size:11px;color:var(--text-muted);">RPC scan V1 + V2, HyperCore questions &amp; mids</div>
       </a>
       <a href="mechanics.html" style="text-decoration:none;padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:8px;transition:border-color .15s;">
         <div style="font-size:12px;font-weight:700;color:var(--brand-accent);margin-bottom:4px;">Mechanics</div>
@@ -216,7 +224,7 @@
       </div>
       <div style="padding:16px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--brand-success);text-transform:uppercase;margin-bottom:6px;">3. Settle &amp; claim</div>
-        <div style="font-size:12px;color:var(--text-secondary);">The event resolves. Admin posts a Merkle root on the EVM. Winners submit their proof and claim HYPE from the prize pool (minus 0.9% fee).</div>
+        <div style="font-size:12px;color:var(--text-secondary);">The event resolves. Admin posts a Merkle root on the EVM. Winners claim with proofs — <strong>V1</strong> side-based model vs <strong>V2</strong> per-index leaves + bitmap; platform fee is explicit on V1 (<code class="mono">platformFeeBps</code>) and implicit on V2 (pool accounting).</div>
       </div>
     </div>
   </div>
@@ -288,8 +296,8 @@
         <div style="font-size:12px;color:var(--text-secondary);">Disassembled the contract bytecode. Extracted function selectors (PUSH4), revert strings, event topic0s, storage slot accesses (SLOAD/SSTORE), and CALLER checks.</div>
       </div>
       <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Selector brute-force</div>
-        <div style="font-size:12px;color:var(--text-secondary);">Ran keccak256 against 200+ candidate function signatures to match unknown selectors. Identified <code style="color:var(--brand-success);">publishMerkleRoot</code> and <code style="color:var(--brand-success);">contestExists</code>. One selector remains uncracked.</div>
+        <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Selectors &amp; source</div>
+        <div style="font-size:12px;color:var(--text-secondary);">V1: keccak256 brute-force + calldata decode (<code class="mono">publishMerkleRoot</code>, <code class="mono">contestExists</code>, etc.). V1 owner-only <code class="mono">0xb2447e34</code> was unnamed until V2 ABI named it <code class="mono">withdrawPlatformFee</code>. V2: full interface from verified Solidity + bytecode selector check.</div>
       </div>
       <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">Transaction scan</div>
@@ -305,7 +313,7 @@
       </div>
       <div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border-subtle);border-radius:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--brand-accent);text-transform:uppercase;margin-bottom:6px;">State reads</div>
-        <div style="font-size:12px;color:var(--text-secondary);">Called view functions (owner, platformFeeBps, getContestPool, getMerkleRoot) across contest IDs 1–700 to map active contests and their state.</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Eth_call across contest IDs (pools, merkle roots, <code class="mono">platformFeeBps</code> on V1, <code class="mono">contestRewardPools</code> / getters on V2) to map live contests and published roots.</div>
       </div>
     </div>
   </div>
@@ -319,20 +327,20 @@
     <div class="section-title">Key numbers at a glance</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
       <div style="text-align:center;padding:14px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.1);border-radius:10px;">
-        <div style="font-size:24px;font-weight:700;color:var(--brand-accent);">15</div>
-        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Functions found</div>
+        <div style="font-size:24px;font-weight:700;color:var(--brand-accent);">2</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Deployments (V1+V2)</div>
       </div>
       <div style="text-align:center;padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.1);border-radius:10px;">
-        <div style="font-size:24px;font-weight:700;color:var(--brand-gold);">5</div>
-        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Events decoded</div>
+        <div style="font-size:24px;font-weight:700;color:var(--brand-gold);">24</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">V2 ABI functions (verified)</div>
       </div>
       <div style="text-align:center;padding:14px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:10px;">
-        <div style="font-size:24px;font-weight:700;color:var(--brand-success);">19</div>
-        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Revert strings</div>
+        <div style="font-size:24px;font-weight:700;color:var(--brand-success);">19+</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Revert strings (catalogue)</div>
       </div>
       <div style="text-align:center;padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.1);border-radius:10px;">
-        <div style="font-size:24px;font-weight:700;color:var(--brand-error);">1</div>
-        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Unknown selector</div>
+        <div style="font-size:24px;font-weight:700;color:var(--brand-success);">0</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Unknown on V2 ABI</div>
       </div>
       <div style="text-align:center;padding:14px;background:rgba(131,233,255,.04);border:1px solid rgba(131,233,255,.1);border-radius:10px;">
         <div style="font-size:24px;font-weight:700;color:var(--brand-accent);">9</div>
@@ -340,9 +348,10 @@
       </div>
       <div style="text-align:center;padding:14px;background:rgba(249,227,112,.04);border:1px solid rgba(249,227,112,.1);border-radius:10px;">
         <div style="font-size:24px;font-weight:700;color:var(--brand-gold);">29</div>
-        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Real TXs decoded</div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">Real TXs decoded (V1 era)</div>
       </div>
     </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:14px;line-height:1.5;">V1 reconstructed surface still counts ~15 core functions in the legacy table; the &quot;0 unknown&quot; tile refers to the <strong>verified V2</strong> ABI. Historical V1 mystery <code class="mono">0xb2447e34</code> is resolved against the V2 interface name.</p>
   </div>
 
 </div>
@@ -350,7 +359,7 @@
 
 <!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
 <div style="text-align:center;padding:20px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-subtle);">
-  Liquid Terminal · HIP-4 Reverse Engineering · Updated Mar 24, 2026 · Data: HyperEVM Testnet RPC + HyperCore API
+  Liquid Terminal · HIP-4 (V1 + V2) · Updated Mar 2026 · Data: HyperEVM Testnet RPC + HyperCore API
 </div>
 
 </body>
