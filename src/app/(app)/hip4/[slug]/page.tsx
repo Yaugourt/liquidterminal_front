@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Hip4DocBody } from "@/components/hip4/Hip4DocBody";
-import { getHip4Chapter, HIP4_SLUGS } from "@/lib/hip4-chapters";
+import { Hip4ChapterRouter } from "@/components/hip4/hip4-chapter-registry";
+import { getHip4Chapter, HIP4_SLUGS, type Hip4Slug } from "@/lib/hip4-chapters";
 
 export function generateStaticParams() {
   return HIP4_SLUGS.map((slug) => ({ slug }));
@@ -30,8 +30,9 @@ export default async function Hip4SlugPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  if (!getHip4Chapter(slug)) {
+  const chapter = getHip4Chapter(slug);
+  if (!chapter) {
     notFound();
   }
-  return <Hip4DocBody slug={slug} />;
+  return <Hip4ChapterRouter slug={chapter.slug as Hip4Slug} />;
 }

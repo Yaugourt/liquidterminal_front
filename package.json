@@ -6,7 +6,8 @@
     "dev": "next dev --turbo --hostname 127.0.0.1 --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "sync:hip4": "mkdir -p public/hip4 && echo 'HIP-4 pages are React (src/components/hip4/chapters). Optional: cp ../hip4_docs/dashboard/pages/*.html public/hip4/ only if you still need static HTML mirrors; bundled ABIs live in src/lib/hip4/abi and public/hip4/*.abi.'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

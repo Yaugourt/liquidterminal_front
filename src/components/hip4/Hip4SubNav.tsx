@@ -11,7 +11,7 @@ export function Hip4SubNav() {
 
   return (
     <nav
-      className="flex flex-wrap gap-1.5 border-b border-border-subtle pb-4 mb-6"
+      className="mb-6 rounded-lg bg-brand-dark p-1 flex flex-wrap gap-1"
       aria-label="HIP-4 documentation chapters"
     >
       {HIP4_CHAPTERS.map(({ slug, title }) => {
@@ -22,10 +22,10 @@ export function Hip4SubNav() {
             key={slug}
             href={href}
             className={cn(
-              "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+              "rounded-md px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40",
               active
-                ? "bg-brand-accent/15 text-brand-accent border border-brand-accent/25"
-                : "bg-brand-secondary/40 text-text-secondary border border-border-subtle hover:border-border-hover hover:text-zinc-200"
+                ? "bg-brand-accent text-brand-tertiary shadow-sm"
+                : "tab-inactive text-text-secondary hover:text-zinc-200"
             )}
           >
             {title}
