@@ -278,3 +278,19 @@ export const HIP4_OUTCOME_TYPE_ROWS: [string, string, string][] = [
   ["priceBinary", "outcome 2243", "Above/below threshold at expiry — YES/NO only"],
   ["Recurring", "outcome 2300", "Auto-recreated priceBinary (15m, 1h, 1d, …)"],
 ];
+
+/** Flat TOC for Info API page — order matches [`Hip4InfoApiChapter`](src/components/hip4/chapters/Hip4InfoApiChapter.tsx). */
+export interface Hip4InfoApiTocItem {
+  id: string;
+  label: string;
+}
+
+export const HIP4_INFO_API_TOC_ITEMS: Hip4InfoApiTocItem[] = [
+  { id: "hip4-info-intro", label: "Intro & base URL" },
+  { id: "hip4-rest-block", label: "REST — POST /info" },
+  ...HIP4_REST_INFO_ENDPOINTS.map((s) => ({ id: s.id, label: s.title })),
+  { id: "outcome-types", label: "Outcome types" },
+  { id: "coin-mapping", label: "Coin ID mapping" },
+  { id: "hip4-ws-block", label: "WebSocket" },
+  ...HIP4_WS_EXAMPLES.map((s) => ({ id: s.id, label: s.title })),
+];

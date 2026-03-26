@@ -4,14 +4,17 @@ import { cn } from "@/lib/utils";
 export function Hip4ChapterShell({
   children,
   className,
+  id,
 }: {
   children: ReactNode;
   className?: string;
+  id?: string;
 }) {
   return (
     <div
+      id={id}
       className={cn(
-        "font-inter text-sm text-zinc-300 leading-relaxed space-y-6",
+        "font-inter text-sm text-text-secondary leading-relaxed space-y-6",
         className
       )}
     >
@@ -42,7 +45,8 @@ export function Hip4SectionTitle({
   );
 }
 
-export function Hip4GlassPanel({
+/** Short h3 inside a glass panel — breaks long panels into scannable chunks. */
+export function Hip4SubsectionTitle({
   children,
   className,
 }: {
@@ -50,9 +54,72 @@ export function Hip4GlassPanel({
   className?: string;
 }) {
   return (
-    <div
+    <h3
       className={cn(
-        "rounded-xl border border-border-subtle bg-brand-secondary/40 p-5 sm:p-6",
+        "mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted",
+        className
+      )}
+    >
+      {children}
+    </h3>
+  );
+}
+
+/** Lead paragraph: comfortable line length for body copy. */
+export function Hip4DocLead({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "max-w-prose text-sm leading-relaxed text-text-secondary",
+        className
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
+/** Bulleted list with gold markers — use for “what’s on this page” style copy. */
+export function Hip4DocList({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <ul
+      className={cn(
+        "list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-text-secondary marker:text-brand-gold/75",
+        className
+      )}
+    >
+      {children}
+    </ul>
+  );
+}
+
+export function Hip4GlassPanel({
+  children,
+  className,
+  id,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** Anchor for in-page TOC / deep links */
+  id?: string;
+}) {
+  return (
+    <div
+      id={id}
+      className={cn(
+        "rounded-xl border border-border-subtle bg-brand-secondary/40 p-5 sm:p-6 scroll-mt-28",
         className
       )}
     >

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hip4SubNav } from "@/components/hip4/Hip4SubNav";
+import { Hip4Breadcrumbs } from "@/components/hip4/Hip4Breadcrumbs";
 import { generateMetadata as genMeta, seoConfig } from "@/lib/seo";
 
 export const metadata: Metadata = genMeta(seoConfig.hip4);
@@ -14,13 +15,29 @@ export default function Hip4Layout({
 }) {
   return (
     <>
-      <div className="hip4-docs-root mx-auto w-full max-w-[1200px] border-t border-brand-gold/20 px-4 pb-16 pt-6 lg:px-6">
-        <p className="mb-4 mt-1 text-xs text-text-muted">
-          <span className="text-brand-gold font-medium">HIP-4</span> testnet · Exploratory
-          documentation — not official Hyperliquid documentation.
-        </p>
-        <Hip4SubNav />
-        {children}
+      <div className="hip4-docs-root mx-auto w-full max-w-[1200px] px-4 pb-16 lg:px-6">
+        <header className="pt-6 pb-5">
+          <h1 className="font-outfit text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            <span className="text-brand-gold">HIP-4</span>
+            <span className="text-white"> documentation</span>
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base">
+            Testnet · Exploratory documentation — not official Hyperliquid documentation.
+          </p>
+        </header>
+
+        <div className="border-t border-brand-gold/20 pt-6">
+          <div className="lg:grid lg:grid-cols-[minmax(0,240px)_minmax(0,1fr)] lg:items-start lg:gap-10">
+            <aside className="mb-6 lg:sticky lg:top-24 lg:mb-0 lg:self-start">
+              <Hip4SubNav />
+            </aside>
+
+            <div className="min-w-0">
+              <Hip4Breadcrumbs />
+              {children}
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

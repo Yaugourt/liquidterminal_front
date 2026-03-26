@@ -35,3 +35,9 @@ export const HIP4_SLUGS = HIP4_CHAPTERS.map((c) => c.slug);
 export function getHip4Chapter(slug: string) {
   return HIP4_CHAPTERS.find((c) => c.slug === slug) ?? null;
 }
+
+/** Section id for a slug — used for default-open accordion in mobile nav. */
+export function getHip4SectionForSlug(slug: string): Hip4NavSection | null {
+  const ch = getHip4Chapter(slug);
+  return ch?.section ?? null;
+}

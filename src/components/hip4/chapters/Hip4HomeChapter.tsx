@@ -1,12 +1,16 @@
 import {
   Hip4ChapterShell,
+  Hip4DocLead,
+  Hip4DocList,
   Hip4GlassPanel,
   Hip4SectionTitle,
+  Hip4SubsectionTitle,
 } from "@/components/hip4/Hip4ChapterShell";
 import {
   Hip4PageHeader,
   Hip4SectionCardLink,
 } from "@/components/hip4/Hip4PageHeader";
+import { Hip4Callout } from "@/components/hip4/Hip4Callout";
 import Link from "next/link";
 
 export function Hip4HomeChapter() {
@@ -15,47 +19,65 @@ export function Hip4HomeChapter() {
       <Hip4PageHeader variant="hub" />
 
       <div className="flex flex-col gap-3">
-        <div className="flex gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-xs text-red-200">
-          <span className="shrink-0 text-base" aria-hidden>
-            ⚠
-          </span>
-          <div>
-            <strong className="text-white">Unofficial documentation.</strong> Hyperliquid has
-            published no HIP-4 spec; this site is reverse-engineered from bytecode, txs, and
-            HyperCore API — not official content.
-          </div>
-        </div>
-        <div className="flex gap-3 rounded-lg border border-brand-gold/20 bg-brand-gold/5 p-4 text-xs text-brand-gold">
-          <span className="shrink-0 text-base" aria-hidden>
-            ⚙
-          </span>
-          <div>
-            <strong className="text-white">Testnet only.</strong> Chain <strong>998</strong> for
-            HyperEVM examples — same addresses on mainnet are not validated here.
-          </div>
-        </div>
-        <div className="flex gap-3 rounded-lg border border-brand-gold/25 bg-brand-gold/[0.06] p-4 text-xs text-text-secondary">
-          <span className="shrink-0 text-base text-brand-gold" aria-hidden>
-            🔍
-          </span>
-          <div>
-            <strong className="text-brand-gold">Two tracks.</strong>{" "}
-            <strong className="text-white">HyperCore L1</strong> is the confirmed prediction flow.
-            <strong className="text-white"> HyperEVM contracts</strong> (V1/V2) are documented as a
-            separate, third-party parimutuel experiment — see nav group labels.
-          </div>
-        </div>
+        <Hip4Callout variant="danger" title="Unofficial documentation">
+          <p>
+            Hyperliquid has published no HIP-4 spec; this site is reverse-engineered from bytecode,
+            txs, and HyperCore API — not official content.
+          </p>
+        </Hip4Callout>
+        <Hip4Callout variant="emphasis" title="Testnet & two tracks">
+          <ul className="list-none space-y-2 pl-0">
+            <li className="flex gap-2">
+              <span className="text-brand-gold" aria-hidden>
+                ·
+              </span>
+              <span>
+                <strong className="text-white">Testnet only.</strong> Chain <strong>998</strong> for
+                HyperEVM examples — mainnet addresses are not validated here.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-brand-gold" aria-hidden>
+                ·
+              </span>
+              <span>
+                <strong className="text-white">HyperCore L1</strong> = confirmed prediction flow.{" "}
+                <strong className="text-white">HyperEVM</strong> (V1/V2) = separate third-party
+                parimutuel docs — see sidebar labels.
+              </span>
+            </li>
+          </ul>
+        </Hip4Callout>
       </div>
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>Research & HyperCore</Hip4SectionTitle>
-        <p className="mb-4 text-sm text-text-secondary leading-relaxed">
-          Start here for the <strong className="text-brand-gold">timeline</strong>,{" "}
-          <strong className="text-white">native L1 lifecycle</strong>,{" "}
-          <strong className="text-brand-gold">GitBook-style Info API</strong> (our fields), a compact{" "}
-          <strong className="text-white">data overview</strong>, and{" "}
-          <strong className="text-white">industry comparison</strong>.
-        </p>
+        <Hip4DocLead className="mb-3">
+          Narrative, native lifecycle, API shapes, and market context — start with any item below.
+        </Hip4DocLead>
+        <Hip4SubsectionTitle>What to open first</Hip4SubsectionTitle>
+        <Hip4DocList className="mb-4">
+          <li>
+            <strong className="text-white">Timeline</strong> — how the research unfolded (X
+            archive).
+          </li>
+          <li>
+            <strong className="text-white">HyperCore (L1)</strong> — architecture, lifecycle, pair
+            minting.
+          </li>
+          <li>
+            <strong className="text-brand-gold">Info endpoint</strong> — full{" "}
+            <code className="font-mono text-[11px]">POST /info</code> + WS blocks (GitBook-style).
+          </li>
+          <li>
+            <strong className="text-white">API & data</strong> — one-page tables (URLs, wallets,
+            S3).
+          </li>
+          <li>
+            <strong className="text-white">Industry compare</strong> — HIP-4 vs Polymarket vs
+            Kalshi.
+          </li>
+        </Hip4DocList>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <Hip4SectionCardLink
             href="/hip4/research"
@@ -87,9 +109,11 @@ export function Hip4HomeChapter() {
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>L1 ↔ HyperEVM</Hip4SectionTitle>
-        <p className="mb-4 text-xs text-text-secondary">
-          How Core and the embedded EVM relate — including EvmRawTx and bridge mechanics.
-        </p>
+        <Hip4DocLead className="mb-4 text-xs">
+          How HyperCore and the embedded EVM relate:{" "}
+          <code className="font-mono text-[11px] text-brand-accent">EvmRawTx</code>, bridge
+          mechanics, precompiles.
+        </Hip4DocLead>
         <Hip4SectionCardLink
           href="/hip4/bridge"
           title="Bridge L1↔EVM"
@@ -99,11 +123,11 @@ export function Hip4HomeChapter() {
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>Third-party EVM (unconfirmed)</Hip4SectionTitle>
-        <p className="mb-4 text-sm text-text-secondary leading-relaxed">
-          Reverse-engineered <strong className="text-white">V1</strong> (bytecode) and{" "}
-          <strong className="text-white">V2</strong> (source-aligned ABI in repo). Treat as
-          independent parimutuel contracts — not the official HIP-4 settlement path.
-        </p>
+        <Hip4DocLead className="mb-3 text-xs">
+          <strong className="text-white">V1</strong> from bytecode · <strong className="text-white">V2</strong>{" "}
+          aligned with Solidity in repo. Not the official L1 settlement path.
+        </Hip4DocLead>
+        <Hip4SubsectionTitle>Contract & mechanics</Hip4SubsectionTitle>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <Hip4SectionCardLink
             href="/hip4/overview"
@@ -157,7 +181,7 @@ export function Hip4HomeChapter() {
         Full narrative:{" "}
         <Link
           href="/hip4/HIP4-research-complete.md"
-          className="text-brand-accent underline"
+          className="text-brand-accent underline hover:text-brand-gold"
           target="_blank"
           rel="noopener noreferrer"
         >
