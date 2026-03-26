@@ -2,6 +2,26 @@ import Link from "next/link";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
 import { cn } from "@/lib/utils";
 
+/** Minimal title block for HyperCore-first chapters (no EVM contract stats). */
+export function Hip4ChapterHubHeader({
+  title,
+  subtitle,
+  className,
+}: {
+  title: string;
+  subtitle?: string;
+  className?: string;
+}) {
+  return (
+    <header className={cn("mb-6 space-y-2", className)}>
+      <h1 className="font-outfit text-lg font-semibold text-white sm:text-xl">{title}</h1>
+      {subtitle ? (
+        <p className="max-w-3xl text-xs text-text-secondary leading-relaxed">{subtitle}</p>
+      ) : null}
+    </header>
+  );
+}
+
 const STATS = [
   { label: "Balance", value: "94.37 HYPE", sub: "Active deposited balance", accent: "text-brand-accent" },
   { label: "Platform fee", value: "0.9% / implicit", sub: "V1: 90 bps view · V2: from pools", accent: "text-brand-gold" },
@@ -11,16 +31,53 @@ const STATS = [
   { label: "Versions", value: "2", sub: "V1 reverse-engineered · V2 source + bytecode", accent: "text-brand-accent" },
 ];
 
-export function Hip4PageHeader({ className }: { className?: string }) {
+export function Hip4PageHeader({
+  className,
+  variant = "contracts",
+}: {
+  className?: string;
+  /** `hub`: L1-first landing — no EVM addresses or contest stat grid. */
+  variant?: "contracts" | "hub";
+}) {
+  if (variant === "hub") {
+    return (
+      <header className={cn("mb-8 space-y-4", className)}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="font-outfit text-lg font-semibold text-white sm:text-xl">
+              HIP-4 research
+            </h1>
+            <span className="rounded-md border border-brand-accent/30 bg-brand-accent/10 px-2 py-0.5 text-[11px] font-medium text-brand-accent">
+              HyperCore L1 · community doc
+            </span>
+          </div>
+          <Link
+            href="/hip4/HIP4-research-complete.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-xs text-brand-accent underline hover:text-brand-gold"
+          >
+            Full markdown reference
+          </Link>
+        </div>
+        <p className="max-w-3xl text-xs text-text-secondary leading-relaxed">
+          Official HIP-4 flow is native HyperCore (creation, CLOB, VoteGlobalAction). The HyperEVM
+          parimutuel contracts are documented separately as third-party / unconfirmed — see the EVM
+          section in the nav.
+        </p>
+      </header>
+    );
+  }
+
   return (
     <header className={cn("mb-8 space-y-6", className)}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-lg font-semibold text-white sm:text-xl">
+          <h1 className="font-outfit text-lg font-semibold text-white sm:text-xl">
             HIP-4 Contest Contract
           </h1>
           <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
-            Prediction markets
+            Third-party EVM (testnet)
           </span>
         </div>
         <div className="flex flex-col gap-1 font-mono text-xs text-brand-accent">

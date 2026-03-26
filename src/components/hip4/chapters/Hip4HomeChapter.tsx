@@ -12,7 +12,7 @@ import Link from "next/link";
 export function Hip4HomeChapter() {
   return (
     <Hip4ChapterShell>
-      <Hip4PageHeader />
+      <Hip4PageHeader variant="hub" />
 
       <div className="flex flex-col gap-3">
         <div className="flex gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-xs text-red-200">
@@ -30,39 +30,79 @@ export function Hip4HomeChapter() {
             ⚙
           </span>
           <div>
-            <strong className="text-white">Testnet only.</strong> Chain <strong>998</strong> —
-            same addresses on mainnet have no code here.
+            <strong className="text-white">Testnet only.</strong> Chain <strong>998</strong> for
+            HyperEVM examples — same addresses on mainnet are not validated here.
           </div>
         </div>
-        <div className="flex gap-3 rounded-lg border border-brand-accent/15 bg-brand-accent/5 p-4 text-xs text-zinc-300">
+        <div className="flex gap-3 rounded-lg border border-brand-accent/15 bg-brand-accent/5 p-4 text-xs text-text-secondary">
           <span className="shrink-0 text-base" aria-hidden>
             🔍
           </span>
           <div>
-            <strong className="text-white">V1 reconstructed · V2 from shipped source.</strong>{" "}
-            See{" "}
-            <Link href="/hip4/abi" className="text-brand-accent underline">
-              Full ABI
-            </Link>{" "}
-            for V1 vs V2 comparison.
+            <strong className="text-white">Two tracks.</strong>{" "}
+            <strong className="text-white">HyperCore L1</strong> is the confirmed prediction flow.
+            <strong className="text-white"> HyperEVM contracts</strong> (V1/V2) are documented as a
+            separate, third-party parimutuel experiment — see nav group labels.
           </div>
         </div>
       </div>
 
       <Hip4GlassPanel>
-        <Hip4SectionTitle>What is this?</Hip4SectionTitle>
+        <Hip4SectionTitle>Research & HyperCore</Hip4SectionTitle>
         <p className="mb-4 text-sm text-text-secondary leading-relaxed">
-          Documentation for <strong className="text-white">HIP-4 on HyperEVM</strong> — contest
-          logic in EVM contracts (create, deposit, Merkle settlement, claims). We track{" "}
-          <strong className="text-white">V1</strong> (bytecode) and{" "}
-          <strong className="text-white">V2</strong> (Solidity + ABI in this repo).
+          Start here for the <strong className="text-white">public timeline</strong>,{" "}
+          <strong className="text-white">native L1 lifecycle</strong>,{" "}
+          <strong className="text-white">API / WS / S3 recap</strong>, and the{" "}
+          <strong className="text-white">industry comparison</strong> table.
         </p>
-        <Hip4SectionTitle className="!mb-2">What each section covers</Hip4SectionTitle>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <Hip4SectionCardLink
+            href="/hip4/research"
+            title="Timeline"
+            description="3-day sprint + X archive (10 posts)"
+          />
+          <Hip4SectionCardLink
+            href="/hip4/core"
+            title="HyperCore (L1)"
+            description="Architecture, lifecycle, pair minting, open questions"
+          />
+          <Hip4SectionCardLink
+            href="/hip4/reference"
+            title="API & data"
+            description="outcomeMeta, candleSnapshot, WS, L1 actions, S3"
+          />
+          <Hip4SectionCardLink
+            href="/hip4/compare"
+            title="Industry compare"
+            description="HIP-4 vs Polymarket vs Kalshi"
+          />
+        </div>
+      </Hip4GlassPanel>
+
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>L1 ↔ HyperEVM</Hip4SectionTitle>
+        <p className="mb-4 text-xs text-text-secondary">
+          How Core and the embedded EVM relate — including EvmRawTx and bridge mechanics.
+        </p>
+        <Hip4SectionCardLink
+          href="/hip4/bridge"
+          title="Bridge L1↔EVM"
+          description="Architecture, CoreWriter, precompiles, asset indices"
+        />
+      </Hip4GlassPanel>
+
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>Third-party EVM (unconfirmed)</Hip4SectionTitle>
+        <p className="mb-4 text-sm text-text-secondary leading-relaxed">
+          Reverse-engineered <strong className="text-white">V1</strong> (bytecode) and{" "}
+          <strong className="text-white">V2</strong> (source-aligned ABI in repo). Treat as
+          independent parimutuel contracts — not the official HIP-4 settlement path.
+        </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <Hip4SectionCardLink
             href="/hip4/overview"
-            title="Overview"
-            description="V1 + V2 addresses, owner, fees, access control"
+            title="EVM overview"
+            description="Addresses, owner, fees, access control"
           />
           <Hip4SectionCardLink
             href="/hip4/abi"
@@ -72,7 +112,7 @@ export function Hip4HomeChapter() {
           <Hip4SectionCardLink
             href="/hip4/events"
             title="Events"
-            description="topic0, DepositReceived vs Deposit, FeesWithdrawn"
+            description="topic0, DepositReceived vs Deposit"
           />
           <Hip4SectionCardLink
             href="/hip4/reverts"
@@ -82,17 +122,12 @@ export function Hip4HomeChapter() {
           <Hip4SectionCardLink
             href="/hip4/markets"
             title="Active markets"
-            description="RPC scan V1 + V2, HyperCore mids"
+            description="HyperCore samples + on-chain EVM scan"
           />
           <Hip4SectionCardLink
             href="/hip4/mechanics"
             title="Mechanics"
             description="Contest lifecycle, deposit flow"
-          />
-          <Hip4SectionCardLink
-            href="/hip4/bridge"
-            title="Bridge L1↔EVM"
-            description="Architecture, asset index, precompiles"
           />
           <Hip4SectionCardLink
             href="/hip4/txexamples"
@@ -111,6 +146,18 @@ export function Hip4HomeChapter() {
           />
         </div>
       </Hip4GlassPanel>
+
+      <p className="text-center text-[11px] text-text-muted">
+        Full narrative:{" "}
+        <Link
+          href="/hip4/HIP4-research-complete.md"
+          className="text-brand-accent underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          HIP4-research-complete.md
+        </Link>
+      </p>
     </Hip4ChapterShell>
   );
 }
