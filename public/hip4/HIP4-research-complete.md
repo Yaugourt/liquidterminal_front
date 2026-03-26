@@ -15,7 +15,7 @@ HIP-4 is Hyperliquid's prediction market system. After 3 days of reverse-enginee
 - The official HIP-4 system is **100% HyperCore L1**. No EVM involved.
 - Full lifecycle mapped: `registerTokensAndStandaloneOutcome` → CLOB trading → `VoteGlobalAction` settlement.
 - Native pair minting: YES + NO = 1.00 always. Placing a BUY on YES auto-creates a mirrored ASK on NO.
-- Settlement is instant and automatic — L1 reads the price, closes all positions in one block. No Merkle proof, no claim, no UMA oracle, no dispute window.
+- For **price-linked** outcomes observed on testnet, settlement is instant and automatic — L1 reads the price, closes all positions in one block. No Merkle proof, no claim, no UMA oracle, no dispute window. How subjective or off-price markets (sport, food journal, etc.) settle on L1 is **not yet characterized** (see open questions).
 - Outcome tokens trade as `#`-prefixed coins on the standard CLOB (e.g. `#22430`).
 - Multi-outcome markets (food market) work as independent YES/NO pairs per outcome. Isolated orderbooks.
 - Strike price (targetPrice) is set to the markPx at creation time — markets open at ~50/50 by design.
@@ -597,7 +597,7 @@ Example: L1 shows `User: 0x946b...` but the EVM tx inside is signed by `0xe21c..
 | Feature | HIP-4 (Hyperliquid) | Polymarket | Kalshi |
 |---------|---------------------|------------|--------|
 | **Type** | Native L1 CLOB | Hybrid (off-chain matching, on-chain settlement) | Centralized |
-| **Settlement** | Auto, native L1 (VoteGlobalAction), instant | UMA oracle, dispute window | Platform confirms |
+| **Settlement** | Auto, native L1 (VoteGlobalAction), instant — **price-linked** outcomes (observed) | UMA oracle, dispute window | Platform confirms |
 | **Chain** | HyperCore (0.07s blocks) | Polygon (ERC1155 Conditional Tokens) | N/A |
 | **Trading** | Continuous CLOB, enter/exit anytime | Continuous CLOB, enter/exit anytime | Continuous, enter/exit anytime |
 | **Pair minting** | Native in matching engine | Conditional Token Framework (smart contract) | Internal |
@@ -606,6 +606,8 @@ Example: L1 shows `User: 0x946b...` but the EVM tx inside is signed by `0xe21c..
 | **Composability** | Same engine as perps/spot, unified margin (theory) | Isolated on Polygon | None |
 | **Cost** | Near zero gas | Polygon gas | Platform fees |
 | **Regulation** | Unregulated | Unregulated (non-US) | CFTC-regulated |
+
+**HIP-4 settlement scope:** Instant native L1 settlement (`VoteGlobalAction`) is what we have documented for outcomes resolved from the on-chain **price feed**. Subjective or non-market-linked resolution (sports, food, custom events) is **not confirmed** — see open questions (e.g. HIP-3 feeds, multi-outcome collateral).
 
 Note: Polymarket and Kalshi also offer continuous CLOB trading. The CLOB mechanism is not unique to HIP-4. What is potentially unique is the dual-system (CLOB + parimutuel) and native integration with the trading engine. But the dual-system is a theory based on testnet observations, not confirmed design.
 
