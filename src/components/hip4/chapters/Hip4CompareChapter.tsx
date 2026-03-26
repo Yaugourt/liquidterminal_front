@@ -13,7 +13,7 @@ const ROWS: [string, string, string, string][] = [
   ["Type", "Native L1 CLOB", "Hybrid (off-chain matching, on-chain settlement)", "Centralized"],
   [
     "Settlement",
-    "Auto, native L1 (VoteGlobalAction), instant",
+    "Auto, native L1 (VoteGlobalAction), instant — price-linked outcomes (observed)",
     "UMA oracle, dispute window",
     "Platform confirms",
   ],
@@ -60,8 +60,10 @@ export function Hip4CompareChapter() {
             </p>
             <p>
               CLOB trading exists on several venues; what stands out for HIP-4 under research is{" "}
-              <strong className="text-white">native L1 settlement</strong> and tight coupling with
-              the HyperCore engine.
+              <strong className="text-white">native L1 settlement</strong> for{" "}
+              <strong className="text-white">price-linked</strong> outcomes (observed on testnet) and
+              tight coupling with the HyperCore engine. Subjective or off-price resolution is still
+              an open question — see the research doc.
             </p>
           </>
         }
@@ -78,8 +80,10 @@ export function Hip4CompareChapter() {
           )}
         />
         <p className="mt-4 text-xs text-text-muted leading-relaxed">
-          Polymarket and Kalshi also offer continuous CLOB trading. A “dual system” (CLOB + parimutuel)
-          on Hyperliquid remains a testnet observation, not confirmed design — see the research doc.
+          Instant L1 settlement in the HIP-4 column refers to outcomes resolved from the on-chain
+          price feed; subjective or non-market-linked markets are not confirmed. Polymarket and Kalshi
+          also offer continuous CLOB trading. A “dual system” (CLOB + parimutuel) on Hyperliquid
+          remains a testnet observation, not confirmed design — see the research doc.
         </p>
       </Hip4GlassPanel>
       <Hip4GlassPanel>
