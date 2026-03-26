@@ -23,7 +23,7 @@ export function Hip4SubNav() {
         const chapters = HIP4_CHAPTERS.filter((c) => c.section === sectionId);
         return (
           <div key={sectionId} className="flex flex-col gap-1.5">
-            <div className="px-1 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+            <div className="px-1 text-[10px] font-semibold uppercase tracking-wider text-brand-gold/85">
               {HIP4_NAV_SECTION_LABELS[sectionId as Hip4NavSection]}
             </div>
             <div className="flex flex-wrap gap-1">

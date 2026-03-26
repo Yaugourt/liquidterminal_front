@@ -14,10 +14,10 @@ export default function Hip4Layout({
 }) {
   return (
     <>
-      <div className="hip4-docs-root mx-auto w-full max-w-[1200px] px-4 pb-16 lg:px-6">
-        <p className="mb-4 mt-1 text-xs text-zinc-500">
-          HIP-4 testnet · Exploratory documentation — not official Hyperliquid
-          documentation.
+      <div className="hip4-docs-root mx-auto w-full max-w-[1200px] border-t border-brand-gold/20 px-4 pb-16 pt-6 lg:px-6">
+        <p className="mb-4 mt-1 text-xs text-text-muted">
+          <span className="text-brand-gold font-medium">HIP-4</span> testnet · Exploratory
+          documentation — not official Hyperliquid documentation.
         </p>
         <Hip4SubNav />
         {children}
