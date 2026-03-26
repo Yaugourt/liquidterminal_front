@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
 import { cn } from "@/lib/utils";
@@ -9,14 +10,17 @@ export function Hip4ChapterHubHeader({
   className,
 }: {
   title: string;
-  subtitle?: string;
+  /** String or multiple lines / lists for clearer hierarchy */
+  subtitle?: ReactNode;
   className?: string;
 }) {
   return (
     <header className={cn("mb-6 space-y-2", className)}>
       <h1 className="font-outfit text-lg font-semibold text-white sm:text-xl">{title}</h1>
       {subtitle ? (
-        <p className="max-w-3xl text-xs text-text-secondary leading-relaxed">{subtitle}</p>
+        <div className="max-w-prose space-y-2 text-xs leading-relaxed text-text-secondary">
+          {typeof subtitle === "string" ? <p>{subtitle}</p> : subtitle}
+        </div>
       ) : null}
     </header>
   );
@@ -60,11 +64,18 @@ export function Hip4PageHeader({
             Full markdown reference
           </Link>
         </div>
-        <p className="max-w-3xl text-xs text-text-secondary leading-relaxed">
-          Official HIP-4 flow is native HyperCore (creation, CLOB, VoteGlobalAction). The HyperEVM
-          parimutuel contracts are documented separately as third-party / unconfirmed — see the EVM
-          section in the nav.
-        </p>
+        <div className="max-w-prose space-y-2 text-xs leading-relaxed text-text-secondary">
+          <p>
+            Official HIP-4 flow is native HyperCore: market creation, CLOB trading, and{" "}
+            <code className="font-mono text-[11px] text-brand-accent">VoteGlobalAction</code>{" "}
+            settlement.
+          </p>
+          <p>
+            HyperEVM parimutuel contracts (V1/V2) are documented separately as third-party /
+            unconfirmed — use the <strong className="text-text-secondary">Third-party EVM</strong>{" "}
+            group in the sidebar.
+          </p>
+        </div>
       </header>
     );
   }
@@ -129,7 +140,7 @@ export function Hip4SectionCardLink({
   return (
     <Link
       href={href}
-      className="block rounded-lg border border-border-subtle bg-white/[0.02] p-3 transition-colors hover:border-border-hover"
+      className="block rounded-lg border border-border-subtle bg-white/[0.02] p-3 transition-colors hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40"
     >
       <div className="text-xs font-bold text-brand-accent">{title}</div>
       <div className="mt-1 text-[11px] text-text-secondary">{description}</div>

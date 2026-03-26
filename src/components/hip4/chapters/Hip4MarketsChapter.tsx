@@ -31,7 +31,7 @@ function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
         <TableHeader>
           <TableRow className="border-border-subtle hover:bg-transparent">
             <TableHead className="text-table-header" colSpan={3}>
-              <span className="font-semibold text-zinc-200">{result.label}</span>
+              <span className="font-semibold text-white">{result.label}</span>
               <span className="ml-2 font-mono text-[11px] text-brand-accent">{result.address}</span>
               {result.error ? (
                 <span className="ml-2 text-red-400">RPC: {result.error}</span>

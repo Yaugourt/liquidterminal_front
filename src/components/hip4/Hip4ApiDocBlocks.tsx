@@ -26,7 +26,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
   return (
     <section
       id={spec.id}
-      className="scroll-mt-24 border-b border-border-subtle pb-10 last:border-0 last:pb-0"
+      className="scroll-mt-28 border-b border-border-subtle pb-10 last:border-0 last:pb-0"
     >
       <h2 className="font-outfit text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
 
@@ -111,7 +111,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
             <TabsTrigger
               key={t.id}
               value={t.id}
-              className="rounded-md px-3 py-1.5 text-xs text-text-secondary data-[state=active]:bg-brand-gold/20 data-[state=active]:text-brand-gold data-[state=active]:shadow-none"
+              className="rounded-md px-3 py-1.5 text-xs text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40 data-[state=active]:bg-brand-gold/20 data-[state=active]:text-brand-gold data-[state=active]:shadow-none"
             >
               {t.label}
             </TabsTrigger>
@@ -133,7 +133,7 @@ export function Hip4ApiWsEndpointDoc({ spec }: { spec: Hip4WsExampleSpec }) {
   return (
     <section
       id={spec.id}
-      className="scroll-mt-24 border-b border-border-subtle pb-10 last:border-0 last:pb-0"
+      className="scroll-mt-28 border-b border-border-subtle pb-10 last:border-0 last:pb-0"
     >
       <h2 className="font-outfit text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -164,7 +164,7 @@ export function Hip4ApiWsEndpointDoc({ spec }: { spec: Hip4WsExampleSpec }) {
             <TabsTrigger
               key={t.id}
               value={t.id}
-              className="rounded-md px-3 py-1.5 text-xs text-text-secondary data-[state=active]:bg-brand-gold/20 data-[state=active]:text-brand-gold data-[state=active]:shadow-none"
+              className="rounded-md px-3 py-1.5 text-xs text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40 data-[state=active]:bg-brand-gold/20 data-[state=active]:text-brand-gold data-[state=active]:shadow-none"
             >
               {t.label}
             </TabsTrigger>

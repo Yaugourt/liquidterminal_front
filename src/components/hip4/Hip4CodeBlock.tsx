@@ -22,7 +22,7 @@ export function Hip4CodeBlock({
         </div>
       ) : null}
       <pre
-        className="overflow-x-auto p-4 text-[12px] leading-relaxed font-mono text-zinc-200 scrollbar-thin max-h-[min(70vh,520px)]"
+        className="overflow-x-auto p-4 text-[12px] leading-relaxed font-mono text-white/90 scrollbar-thin max-h-[min(70vh,520px)]"
         tabIndex={0}
       >
         <code>{children}</code>

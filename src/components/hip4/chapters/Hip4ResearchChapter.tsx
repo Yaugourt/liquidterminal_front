@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { Hip4ChapterShell, Hip4GlassPanel } from "@/components/hip4/Hip4ChapterShell";
+import {
+  Hip4ChapterShell,
+  Hip4DocList,
+  Hip4GlassPanel,
+  Hip4SectionTitle,
+} from "@/components/hip4/Hip4ChapterShell";
 import { Hip4ChapterHubHeader } from "@/components/hip4/Hip4PageHeader";
 import { Hip4ResearchTimeline } from "@/components/hip4/Hip4ResearchTimeline";
 
@@ -8,20 +13,37 @@ export function Hip4ResearchChapter() {
     <Hip4ChapterShell>
       <Hip4ChapterHubHeader
         title="Research timeline"
-        subtitle="Day-by-day notes and the public X thread archive. Full prose lives in the markdown reference."
+        subtitle={
+          <>
+            <p>Structured recap of the multi-day sprint and the public X thread list.</p>
+            <p>
+              For long-form prose, diagrams, and raw API notes, keep the markdown file open in
+              parallel.
+            </p>
+          </>
+        }
       />
-      <Hip4GlassPanel className="text-xs text-text-secondary">
-        <p>
-          Canonical write-up:{" "}
-          <Link
-            href="/hip4/HIP4-research-complete.md"
-            className="text-brand-accent underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            HIP4-research-complete.md
-          </Link>
-        </p>
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>Sources</Hip4SectionTitle>
+        <Hip4DocList className="text-xs">
+          <li>
+            <strong className="text-white">Canonical write-up: </strong>
+            <Link
+              href="/hip4/HIP4-research-complete.md"
+              className="text-brand-accent underline hover:text-brand-gold"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              HIP4-research-complete.md
+            </Link>
+          </li>
+          <li>
+            <strong className="text-white">Structured API blocks: </strong>
+            <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
+              Info endpoint
+            </Link>
+          </li>
+        </Hip4DocList>
       </Hip4GlassPanel>
       <Hip4ResearchTimeline />
     </Hip4ChapterShell>

@@ -14,7 +14,7 @@ function InfoRow({ k, children }: PropsWithChildren<{ k: string }>) {
       <div className="text-[11px] font-medium uppercase tracking-wide text-text-secondary">
         {k}
       </div>
-      <div className="text-sm text-zinc-200">{children}</div>
+      <div className="text-sm text-white">{children}</div>
     </div>
   );
 }
@@ -110,7 +110,7 @@ export function Hip4OverviewChapter() {
           </div>
         </div>
         <p className="mt-4 rounded-lg border border-border-subtle bg-white/[0.02] p-3 text-[11px] text-text-secondary">
-          <strong className="text-zinc-300">Bytecode evidence:</strong> CALLER checks against slot 0
+          <strong className="text-text-secondary">Bytecode evidence:</strong> CALLER checks against slot 0
           (owner) on protected paths.
         </p>
       </Hip4GlassPanel>

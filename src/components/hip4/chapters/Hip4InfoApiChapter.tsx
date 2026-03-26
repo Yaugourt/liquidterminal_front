@@ -1,13 +1,18 @@
 import Link from "next/link";
 import {
   Hip4ChapterShell,
+  Hip4DocLead,
+  Hip4DocList,
   Hip4GlassPanel,
   Hip4SectionTitle,
+  Hip4SubsectionTitle,
 } from "@/components/hip4/Hip4ChapterShell";
 import { Hip4ChapterHubHeader } from "@/components/hip4/Hip4PageHeader";
 import { Hip4GoldHighlight } from "@/components/hip4/Hip4GoldHighlight";
 import { Hip4ApiRestEndpointDoc, Hip4ApiWsEndpointDoc } from "@/components/hip4/Hip4ApiDocBlocks";
 import { Hip4CompareTable } from "@/components/hip4/Hip4CompareTable";
+import { Hip4InfoApiToc } from "@/components/hip4/Hip4InfoApiToc";
+import { Hip4BackToTop } from "@/components/hip4/Hip4BackToTop";
 import {
   HIP4_OUTCOME_TYPE_ROWS,
   HIP4_REST_INFO_ENDPOINTS,
@@ -18,93 +23,131 @@ import { HIP4_TESTNET_INFO_URL } from "@/lib/hip4/core-reference-data";
 
 export function Hip4InfoApiChapter() {
   return (
-    <Hip4ChapterShell>
-      <Hip4ChapterHubHeader
-        title="Info endpoint — HIP-4 (testnet)"
-        subtitle="Layout mirrors Hyperliquid GitBook (method, headers, body table, response tabs). Content is our research on prediction / # coins — not an official Hyperliquid page."
-      />
+    <Hip4ChapterShell id="hip4-doc-top">
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_11.5rem] xl:items-start xl:gap-10">
+        <div className="min-w-0 space-y-6">
+          <Hip4ChapterHubHeader
+            title="Info endpoint — HIP-4 (testnet)"
+            subtitle={
+              <>
+                <p>
+                  Same <strong className="text-white">layout pattern</strong> as the official
+                  Hyperliquid GitBook: method badge, headers table, body fields, response tabs.
+                </p>
+                <p>
+                  <strong className="text-white">Content</strong> is Liquid Terminal research on
+                  prediction markets and <Hip4GoldHighlight>#</Hip4GoldHighlight> coins — not an
+                  official Hyperliquid page.
+                </p>
+              </>
+            }
+          />
 
-      <Hip4GlassPanel className="border-brand-gold/20 bg-brand-gold/[0.04]">
-        <p className="text-xs leading-relaxed text-text-secondary">
-          <span className="font-semibold text-brand-gold">Layout reference: </span>
-          official{" "}
-          <Link
-            href={HYPERLIQUID_INFO_SPOT_DOC_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-accent underline hover:text-brand-gold"
-          >
-            Info endpoint → Spot
-          </Link>{" "}
-          on GitBook. We reuse the same documentation pattern for{" "}
-          <Hip4GoldHighlight>HIP-4 fields we rely on</Hip4GoldHighlight> (
-          <code className="font-mono text-[11px] text-brand-accent">outcomeMeta</code>,{" "}
-          <code className="font-mono text-[11px] text-brand-accent">candleSnapshot</code>, WS feeds).
-        </p>
-        <p className="mt-3 text-xs text-text-secondary">
-          Base URL for this chapter:{" "}
-          <Hip4GoldHighlight>
-            <code className="font-mono text-[11px]">{HIP4_TESTNET_INFO_URL}</code>
-          </Hip4GoldHighlight>
-        </p>
-      </Hip4GlassPanel>
+          <Hip4InfoApiToc variant="inline" />
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>REST — POST /info</Hip4SectionTitle>
-        <div className="space-y-12">
-          {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
-            <Hip4ApiRestEndpointDoc key={spec.id} spec={spec} />
-          ))}
+          <Hip4GlassPanel id="hip4-info-intro" className="border-brand-gold/20 bg-brand-gold/[0.04]">
+            <Hip4SubsectionTitle>Official reference</Hip4SubsectionTitle>
+            <Hip4DocList className="mb-0 text-xs">
+              <li>
+                Layout model:{" "}
+                <Link
+                  href={HYPERLIQUID_INFO_SPOT_DOC_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-accent underline hover:text-brand-gold"
+                >
+                  Info endpoint → Spot
+                </Link>{" "}
+                on GitBook.
+              </li>
+              <li>
+                Our fields documented here:{" "}
+                <code className="font-mono text-[11px] text-brand-accent">outcomeMeta</code>,{" "}
+                <code className="font-mono text-[11px] text-brand-accent">candleSnapshot</code>,
+                plus WS subscribe/push examples.
+              </li>
+              <li>
+                Base URL for this chapter:{" "}
+                <Hip4GoldHighlight>
+                  <code className="font-mono text-[11px]">{HIP4_TESTNET_INFO_URL}</code>
+                </Hip4GoldHighlight>
+              </li>
+            </Hip4DocList>
+          </Hip4GlassPanel>
+
+          <Hip4GlassPanel id="hip4-rest-block">
+            <Hip4SectionTitle>REST — POST /info</Hip4SectionTitle>
+            <Hip4DocLead className="mb-6 text-xs">
+              Each block below is one <code className="font-mono text-[11px]">type</code> in the JSON
+              body. Scroll the right-hand <strong className="text-white">On this page</strong> menu
+              (desktop) or use the inline chips above to jump.
+            </Hip4DocLead>
+            <div className="space-y-12">
+              {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
+                <Hip4ApiRestEndpointDoc key={spec.id} spec={spec} />
+              ))}
+            </div>
+          </Hip4GlassPanel>
+
+          <Hip4GlassPanel id="outcome-types">
+            <Hip4SectionTitle>Outcome types</Hip4SectionTitle>
+            <Hip4DocLead className="mb-3 text-xs">
+              How <code className="font-mono text-[11px]">outcomeMeta</code> rows map to market
+              shapes we observed on testnet.
+            </Hip4DocLead>
+            <Hip4CompareTable
+              headers={["Type", "Example", "Description"]}
+              rows={HIP4_OUTCOME_TYPE_ROWS.map((cells, ri) =>
+                cells.map((c, ci) => <span key={`${ri}-${ci}`}>{c}</span>)
+              )}
+            />
+            <p className="mt-4 text-xs text-text-secondary">
+              Multi-outcome <Hip4GoldHighlight>questions</Hip4GoldHighlight> group several outcomes;
+              each outcome still trades as its own YES/NO pair on the CLOB.
+            </p>
+          </Hip4GlassPanel>
+
+          <Hip4GlassPanel id="coin-mapping" className="border-brand-gold/15">
+            <Hip4SectionTitle>Coin ID mapping</Hip4SectionTitle>
+            <Hip4DocLead className="text-xs">
+              Outcome tokens use <Hip4GoldHighlight>#-prefixed</Hip4GoldHighlight> names on the book.
+            </Hip4DocLead>
+            <ul className="mt-3 list-disc space-y-2 pl-5 font-mono text-[11px] text-text-secondary marker:text-brand-gold/70">
+              <li>
+                Outcome <Hip4GoldHighlight>2243</Hip4GoldHighlight> → YES{" "}
+                <Hip4GoldHighlight>#22430</Hip4GoldHighlight>, NO{" "}
+                <Hip4GoldHighlight>#22431</Hip4GoldHighlight>
+              </li>
+              <li>
+                Formula: YES ={" "}
+                <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10)</code>, NO ={" "}
+                <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10 + 1)</code>
+              </li>
+            </ul>
+            <p className="mt-4 border-t border-border-subtle pt-3 text-xs font-medium text-brand-gold">
+              Always pass the full # coin string to candleSnapshot — not the bare outcome id.
+            </p>
+          </Hip4GlassPanel>
+
+          <Hip4GlassPanel id="hip4-ws-block">
+            <Hip4SectionTitle>WebSocket</Hip4SectionTitle>
+            <Hip4DocLead className="mb-6 text-xs">
+              Example subscribe frames and push payloads from our HIP-4 research.{" "}
+              <Hip4GoldHighlight>markPx</Hip4GoldHighlight> on YES legs reads like implied
+              probability.
+            </Hip4DocLead>
+            <div className="space-y-12">
+              {HIP4_WS_EXAMPLES.map((spec) => (
+                <Hip4ApiWsEndpointDoc key={spec.id} spec={spec} />
+              ))}
+            </div>
+          </Hip4GlassPanel>
         </div>
-      </Hip4GlassPanel>
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>Outcome types</Hip4SectionTitle>
-        <Hip4CompareTable
-          headers={["Type", "Example", "Description"]}
-          rows={HIP4_OUTCOME_TYPE_ROWS.map((cells, ri) =>
-            cells.map((c, ci) => <span key={`${ri}-${ci}`}>{c}</span>)
-          )}
-        />
-        <p className="mt-4 text-xs text-text-secondary">
-          Multi-outcome <Hip4GoldHighlight>questions</Hip4GoldHighlight> group several outcomes; each
-          outcome still trades as its own YES/NO pair on the CLOB.
-        </p>
-      </Hip4GlassPanel>
+        <Hip4InfoApiToc variant="sidebar" />
+      </div>
 
-      <Hip4GlassPanel className="border-brand-gold/15">
-        <Hip4SectionTitle>Coin ID mapping</Hip4SectionTitle>
-        <p className="text-xs leading-relaxed text-text-secondary">
-          Outcome tokens use <Hip4GoldHighlight>#-prefixed</Hip4GoldHighlight> names on the book:
-        </p>
-        <ul className="mt-3 list-disc space-y-2 pl-5 font-mono text-[11px] text-text-secondary">
-          <li>
-            Outcome <Hip4GoldHighlight>2243</Hip4GoldHighlight> → YES{" "}
-            <Hip4GoldHighlight>#22430</Hip4GoldHighlight>, NO{" "}
-            <Hip4GoldHighlight>#22431</Hip4GoldHighlight>
-          </li>
-          <li>
-            Formula: YES = <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10)</code>
-            , NO = <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10 + 1)</code>
-          </li>
-        </ul>
-        <p className="mt-3 text-xs font-medium text-brand-gold">
-          Always pass the full # coin string to candleSnapshot — not the bare outcome id.
-        </p>
-      </Hip4GlassPanel>
-
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>WebSocket</Hip4SectionTitle>
-        <p className="mb-6 text-xs text-text-secondary">
-          Streams below are what we used for live HIP-4 book and mark research.{" "}
-          <Hip4GoldHighlight>markPx</Hip4GoldHighlight> on YES legs behaves like implied probability.
-        </p>
-        <div className="space-y-12">
-          {HIP4_WS_EXAMPLES.map((spec) => (
-            <Hip4ApiWsEndpointDoc key={spec.id} spec={spec} />
-          ))}
-        </div>
-      </Hip4GlassPanel>
+      <Hip4BackToTop />
     </Hip4ChapterShell>
   );
 }

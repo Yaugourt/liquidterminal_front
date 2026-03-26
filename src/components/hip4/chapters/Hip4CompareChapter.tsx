@@ -1,5 +1,6 @@
 import {
   Hip4ChapterShell,
+  Hip4DocLead,
   Hip4GlassPanel,
   Hip4SectionTitle,
 } from "@/components/hip4/Hip4ChapterShell";
@@ -51,9 +52,25 @@ export function Hip4CompareChapter() {
     <Hip4ChapterShell>
       <Hip4ChapterHubHeader
         title="Industry comparison"
-        subtitle="High-level contrast with Polymarket and Kalshi. CLOB trading is not unique to HIP-4; native L1 settlement and engine integration are the differentiators under research."
+        subtitle={
+          <>
+            <p>
+              High-level contrast with Polymarket and Kalshi. Rows are simplified; check each
+              platform for legal and product nuance.
+            </p>
+            <p>
+              CLOB trading exists on several venues; what stands out for HIP-4 under research is{" "}
+              <strong className="text-white">native L1 settlement</strong> and tight coupling with
+              the HyperCore engine.
+            </p>
+          </>
+        }
       />
       <Hip4GlassPanel>
+        <Hip4DocLead className="mb-4 text-xs">
+          Read down the <strong className="text-white">Feature</strong> column first; each cell is one
+          sentence max.
+        </Hip4DocLead>
         <Hip4CompareTable
           headers={HEADERS}
           rows={ROWS.map((cells, ri) =>
