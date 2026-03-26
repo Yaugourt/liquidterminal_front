@@ -615,10 +615,11 @@ Note: Polymarket and Kalshi also offer continuous CLOB trading. The CLOB mechani
 
 Routes in the app (grouped nav under `/hip4`):
 
-- `/hip4` — Home (L1-first, links to research / core / reference / compare + EVM annex)
+- `/hip4` — Home (L1-first, links to research / core / info-api / reference / compare + EVM annex)
 - `/hip4/research` — Timeline + tweet archive
 - `/hip4/core` — HyperCore L1 lifecycle, pair mint, open questions
-- `/hip4/reference` — REST / WebSocket / S3 / L1 actions recap
+- `/hip4/info-api` — POST /info + WebSocket (GitBook-style layout; HIP-4 fields)
+- `/hip4/reference` — Compact overview: URLs, channels, L1 actions, wallets, S3
 - `/hip4/compare` — Industry comparison table
 - `/hip4/bridge` — L1 ↔ HyperEVM bridge narrative
 - `/hip4/overview` … `/hip4/docs` — Third-party EVM contract docs (unchanged content, secondary nav group)

@@ -55,7 +55,7 @@ export function Hip4PageHeader({
             href="/hip4/HIP4-research-complete.md"
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 text-xs text-brand-accent underline hover:text-brand-gold"
+            className="shrink-0 text-xs font-medium text-brand-gold underline decoration-brand-gold/40 underline-offset-2 hover:decoration-brand-gold"
           >
             Full markdown reference
           </Link>

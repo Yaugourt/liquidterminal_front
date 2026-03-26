@@ -34,12 +34,12 @@ export function Hip4HomeChapter() {
             HyperEVM examples — same addresses on mainnet are not validated here.
           </div>
         </div>
-        <div className="flex gap-3 rounded-lg border border-brand-accent/15 bg-brand-accent/5 p-4 text-xs text-text-secondary">
-          <span className="shrink-0 text-base" aria-hidden>
+        <div className="flex gap-3 rounded-lg border border-brand-gold/25 bg-brand-gold/[0.06] p-4 text-xs text-text-secondary">
+          <span className="shrink-0 text-base text-brand-gold" aria-hidden>
             🔍
           </span>
           <div>
-            <strong className="text-white">Two tracks.</strong>{" "}
+            <strong className="text-brand-gold">Two tracks.</strong>{" "}
             <strong className="text-white">HyperCore L1</strong> is the confirmed prediction flow.
             <strong className="text-white"> HyperEVM contracts</strong> (V1/V2) are documented as a
             separate, third-party parimutuel experiment — see nav group labels.
@@ -50,10 +50,11 @@ export function Hip4HomeChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>Research & HyperCore</Hip4SectionTitle>
         <p className="mb-4 text-sm text-text-secondary leading-relaxed">
-          Start here for the <strong className="text-white">public timeline</strong>,{" "}
+          Start here for the <strong className="text-brand-gold">timeline</strong>,{" "}
           <strong className="text-white">native L1 lifecycle</strong>,{" "}
-          <strong className="text-white">API / WS / S3 recap</strong>, and the{" "}
-          <strong className="text-white">industry comparison</strong> table.
+          <strong className="text-brand-gold">GitBook-style Info API</strong> (our fields), a compact{" "}
+          <strong className="text-white">data overview</strong>, and{" "}
+          <strong className="text-white">industry comparison</strong>.
         </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <Hip4SectionCardLink
@@ -67,9 +68,14 @@ export function Hip4HomeChapter() {
             description="Architecture, lifecycle, pair minting, open questions"
           />
           <Hip4SectionCardLink
+            href="/hip4/info-api"
+            title="Info endpoint"
+            description="POST /info + WS — same layout as official Spot docs"
+          />
+          <Hip4SectionCardLink
             href="/hip4/reference"
-            title="API & data"
-            description="outcomeMeta, candleSnapshot, WS, L1 actions, S3"
+            title="API & data (overview)"
+            description="URLs, channels, L1 actions, wallets, S3 — quick tables"
           />
           <Hip4SectionCardLink
             href="/hip4/compare"

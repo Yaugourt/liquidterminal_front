@@ -15,12 +15,14 @@ import { Hip4ResearchChapter } from "@/components/hip4/chapters/Hip4ResearchChap
 import { Hip4CoreChapter } from "@/components/hip4/chapters/Hip4CoreChapter";
 import { Hip4ReferenceChapter } from "@/components/hip4/chapters/Hip4ReferenceChapter";
 import { Hip4CompareChapter } from "@/components/hip4/chapters/Hip4CompareChapter";
+import { Hip4InfoApiChapter } from "@/components/hip4/chapters/Hip4InfoApiChapter";
 
 const HIP4_CHAPTER_COMPONENTS: Record<Hip4Slug, ComponentType> = {
   home: Hip4HomeChapter,
   research: Hip4ResearchChapter,
   core: Hip4CoreChapter,
   reference: Hip4ReferenceChapter,
+  "info-api": Hip4InfoApiChapter,
   compare: Hip4CompareChapter,
   overview: Hip4OverviewChapter,
   abi: Hip4AbiChapter,

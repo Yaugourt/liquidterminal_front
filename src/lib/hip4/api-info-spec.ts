@@ -1,0 +1,280 @@
+/**
+ * HIP-4 HyperCore / testnet API — structured for GitBook-style rendering.
+ * Canonical narrative: public/hip4/HIP4-research-complete.md
+ */
+
+export const HYPERLIQUID_INFO_SPOT_DOC_URL =
+  "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/spot";
+
+export interface Hip4ApiHeaderRow {
+  name: string;
+  value: string;
+  required?: boolean;
+}
+
+export interface Hip4ApiBodyFieldRow {
+  name: string;
+  type: string;
+  description: string;
+  required?: boolean;
+}
+
+export interface Hip4ApiResponseTab {
+  id: string;
+  label: string;
+  body: string;
+}
+
+export interface Hip4RestEndpointSpec {
+  id: string;
+  title: string;
+  method: "POST";
+  url: string;
+  intro?: string;
+  headers: Hip4ApiHeaderRow[];
+  bodyFields: Hip4ApiBodyFieldRow[];
+  exampleRequestJson: string;
+  responseTabs: Hip4ApiResponseTab[];
+}
+
+const STANDARD_INFO_HEADERS: Hip4ApiHeaderRow[] = [
+  { name: "Content-Type", value: "application/json", required: true },
+];
+
+export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
+  {
+    id: "outcomeMeta",
+    title: "Retrieve outcome metadata (testnet-only)",
+    method: "POST",
+    url: "https://api.hyperliquid-testnet.xyz/info",
+    intro:
+      "Lists prediction outcomes, side specs, and grouped questions. Not available on mainnet API in our tests — use testnet.",
+    headers: STANDARD_INFO_HEADERS,
+    bodyFields: [
+      {
+        name: "type",
+        type: "String",
+        description: "Must be \"outcomeMeta\".",
+        required: true,
+      },
+    ],
+    exampleRequestJson: JSON.stringify({ type: "outcomeMeta" }, null, 2),
+    responseTabs: [
+      {
+        id: "200",
+        label: "200: OK",
+        body: JSON.stringify(
+          {
+            outcomes: [
+              {
+                outcome: 9,
+                name: "Who will win the HL 100 meter dash?",
+                description: "This race is yet to be scheduled.",
+                sideSpecs: [{ name: "Hypurr" }, { name: "Usain Bolt" }],
+              },
+              {
+                outcome: 2243,
+                name: "Recurring",
+                description:
+                  "class:priceBinary|underlying:BTC|expiry:20260327-0300|targetPrice:71169|period:1d",
+                sideSpecs: [{ name: "Yes" }, { name: "No" }],
+              },
+            ],
+            questions: [
+              {
+                question: 1,
+                name: "What will Hypurr eat the most of in Feb 2026?",
+                description:
+                  "Hypurr has committed to weighing and recording daily food intake in a food journal.",
+                fallbackOutcome: 13,
+                namedOutcomes: [10, 11, 12],
+                settledNamedOutcomes: [],
+              },
+            ],
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  },
+  {
+    id: "candleSnapshot",
+    title: "Retrieve candle snapshot (# coins)",
+    method: "POST",
+    url: "https://api.hyperliquid-testnet.xyz/info",
+    intro:
+      "OHLCV history for a spot-style coin string. For HIP-4 pairs use the full #YES id (trailing zero), not the raw outcome id.",
+    headers: STANDARD_INFO_HEADERS,
+    bodyFields: [
+      { name: "type", type: "String", description: "\"candleSnapshot\".", required: true },
+      {
+        name: "req",
+        type: "Object",
+        description: "Request object — see nested fields.",
+        required: true,
+      },
+      {
+        name: "req.coin",
+        type: "String",
+        description: "e.g. \"#22430\" (YES leg of outcome 2243).",
+        required: true,
+      },
+      {
+        name: "req.interval",
+        type: "String",
+        description: "e.g. \"1d\", \"1h\".",
+        required: true,
+      },
+      {
+        name: "req.startTime",
+        type: "number",
+        description: "Unix ms.",
+        required: true,
+      },
+      {
+        name: "req.endTime",
+        type: "number",
+        description: "Unix ms.",
+        required: true,
+      },
+    ],
+    exampleRequestJson: JSON.stringify(
+      {
+        type: "candleSnapshot",
+        req: {
+          coin: "#22430",
+          endTime: 1774569600000,
+          interval: "1d",
+          startTime: 1746057600000,
+        },
+      },
+      null,
+      2
+    ),
+    responseTabs: [
+      {
+        id: "200",
+        label: "200: OK",
+        body: JSON.stringify(
+          [
+            {
+              T: 1746057600000,
+              c: "0.512",
+              h: "0.52",
+              i: "1d",
+              l: "0.498",
+              n: 120,
+              o: "0.505",
+              t: 1774569600000,
+              v: "1936.0",
+            },
+          ],
+          null,
+          2
+        ),
+      },
+    ],
+  },
+];
+
+export interface Hip4WsExampleSpec {
+  id: string;
+  title: string;
+  url: string;
+  intro?: string;
+  subscriptionExample: string;
+  responseTabs: Hip4ApiResponseTab[];
+}
+
+export const HIP4_WS_EXAMPLES: Hip4WsExampleSpec[] = [
+  {
+    id: "activeSpotAssetCtx",
+    title: "Channel: activeSpotAssetCtx",
+    url: "wss://api.hyperliquid-testnet.xyz/ws",
+    intro:
+      "Subscribe per coin for mark/mid, volume, supply. markPx reads as implied probability on YES legs.",
+    subscriptionExample: JSON.stringify(
+      {
+        method: "subscribe",
+        subscription: { type: "activeSpotAssetCtx", coin: "#22430" },
+      },
+      null,
+      2
+    ),
+    responseTabs: [
+      {
+        id: "push",
+        label: "Example push",
+        body: JSON.stringify(
+          {
+            channel: "activeSpotAssetCtx",
+            data: {
+              coin: "#22430",
+              ctx: {
+                prevDayPx: "0.5",
+                dayNtlVlm: "976.651",
+                markPx: "0.515",
+                midPx: "0.515",
+                circulatingSupply: "1936.0",
+                dayBaseVlm: "1936.0",
+                totalSupply: "184467440737095.53125",
+              },
+            },
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  },
+  {
+    id: "l2Book",
+    title: "Channel: l2Book",
+    url: "wss://api.hyperliquid-testnet.xyz/ws",
+    intro:
+      "levels[0] = bids (desc), levels[1] = asks (asc). Each # coin has its own book; pair minting mirrors across YES/NO.",
+    subscriptionExample: JSON.stringify(
+      {
+        method: "subscribe",
+        subscription: { type: "l2Book", coin: "#22430" },
+      },
+      null,
+      2
+    ),
+    responseTabs: [
+      {
+        id: "push",
+        label: "Example push",
+        body: JSON.stringify(
+          {
+            channel: "l2Book",
+            data: {
+              coin: "#22430",
+              levels: [
+                [
+                  { px: "0.5", sz: "2000.0", n: 2 },
+                  { px: "0.4", sz: "50.0", n: 1 },
+                ],
+                [
+                  { px: "0.53", sz: "2048.0", n: 1 },
+                  { px: "0.53055", sz: "136.0", n: 1 },
+                  { px: "0.56111", sz: "887.0", n: 1 },
+                ],
+              ],
+              time: 1774545317611,
+            },
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  },
+];
+
+export const HIP4_OUTCOME_TYPE_ROWS: [string, string, string][] = [
+  ["Custom", "outcome 9", "Open question, N named outcomes"],
+  ["priceBinary", "outcome 2243", "Above/below threshold at expiry — YES/NO only"],
+  ["Recurring", "outcome 2300", "Auto-recreated priceBinary (15m, 1h, 1d, …)"],
+];

@@ -14,6 +14,7 @@ export const HIP4_CHAPTERS = [
   { slug: "research", title: "Timeline", section: "primary" },
   { slug: "core", title: "HyperCore (L1)", section: "primary" },
   { slug: "reference", title: "API & data", section: "primary" },
+  { slug: "info-api", title: "Info endpoint", section: "primary" },
   { slug: "compare", title: "Industry compare", section: "primary" },
   { slug: "bridge", title: "Bridge L1↔EVM", section: "bridge" },
   { slug: "overview", title: "EVM overview", section: "evm" },

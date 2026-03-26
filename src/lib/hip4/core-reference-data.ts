@@ -5,25 +5,6 @@
 export const HIP4_TESTNET_INFO_URL = "https://api.hyperliquid-testnet.xyz/info";
 export const HIP4_TESTNET_WS_URL = "wss://api.hyperliquid-testnet.xyz/ws";
 
-export interface Hip4InfoEndpointRow {
-  name: string;
-  type: string;
-  notes: string;
-}
-
-export const HIP4_INFO_ENDPOINTS: Hip4InfoEndpointRow[] = [
-  {
-    name: "outcomeMeta",
-    type: "POST /info JSON body",
-    notes: "All outcomes, questions, sideSpecs; testnet only in doc.",
-  },
-  {
-    name: "candleSnapshot",
-    type: "POST /info JSON body",
-    notes: "Use full coin id e.g. #22430 (not raw outcome id).",
-  },
-];
-
 export interface Hip4WsChannelRow {
   channel: string;
   purpose: string;
