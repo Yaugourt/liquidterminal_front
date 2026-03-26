@@ -11,9 +11,17 @@ import { Hip4OverviewChapter } from "@/components/hip4/chapters/Hip4OverviewChap
 import { Hip4RevertsChapter } from "@/components/hip4/chapters/Hip4RevertsChapter";
 import { Hip4StorageChapter } from "@/components/hip4/chapters/Hip4StorageChapter";
 import { Hip4TxexamplesChapter } from "@/components/hip4/chapters/Hip4TxexamplesChapter";
+import { Hip4ResearchChapter } from "@/components/hip4/chapters/Hip4ResearchChapter";
+import { Hip4CoreChapter } from "@/components/hip4/chapters/Hip4CoreChapter";
+import { Hip4ReferenceChapter } from "@/components/hip4/chapters/Hip4ReferenceChapter";
+import { Hip4CompareChapter } from "@/components/hip4/chapters/Hip4CompareChapter";
 
 const HIP4_CHAPTER_COMPONENTS: Record<Hip4Slug, ComponentType> = {
   home: Hip4HomeChapter,
+  research: Hip4ResearchChapter,
+  core: Hip4CoreChapter,
+  reference: Hip4ReferenceChapter,
+  compare: Hip4CompareChapter,
   overview: Hip4OverviewChapter,
   abi: Hip4AbiChapter,
   events: Hip4EventsChapter,

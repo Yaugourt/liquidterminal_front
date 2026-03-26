@@ -75,12 +75,61 @@ function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
   );
 }
 
+function SectionBanner({
+  title,
+  subtitle,
+  tone,
+}: {
+  title: string;
+  subtitle: string;
+  tone: "core" | "evm";
+}) {
+  return (
+    <div
+      className={[
+        "rounded-lg border px-4 py-3",
+        tone === "core"
+          ? "border-brand-accent/25 bg-brand-accent/5"
+          : "border-border-hover bg-brand-secondary/50",
+      ].join(" ")}
+    >
+      <div className="text-xs font-bold uppercase tracking-wider text-white">{title}</div>
+      <p className="mt-1 text-[11px] text-text-secondary leading-relaxed">{subtitle}</p>
+    </div>
+  );
+}
+
 export function Hip4MarketsChapter() {
   const { v1, v2, loading, error, footnote, refresh } = useHip4MarketsScan();
 
   return (
     <Hip4ChapterShell>
       <Hip4PageHeader />
+
+      <SectionBanner
+        tone="core"
+        title="HyperCore — # prediction markets"
+        subtitle="Illustrative asset indices and price grid below. Outcome coins trade as #‑prefixed spot names on the native CLOB — not read from the EVM contest contracts."
+      />
+
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>Sample assets</Hip4SectionTitle>
+        <p className="mb-4 text-xs text-text-secondary">
+          Illustrative mids / indices — not live API data.
+        </p>
+        <Hip4AssetTable />
+      </Hip4GlassPanel>
+
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>Reference price grid</Hip4SectionTitle>
+        <Hip4PricesGrid />
+      </Hip4GlassPanel>
+
+      <SectionBanner
+        tone="evm"
+        title="HyperEVM — third-party parimutuel scan"
+        subtitle="RPC log scan of V1/V2 ContestCreated and pool state. Merkle settlement here is separate from native L1 VoteGlobalAction."
+      />
 
       <div className="flex flex-wrap items-center gap-2">
         <Button
@@ -115,19 +164,6 @@ export function Hip4MarketsChapter() {
           </div>
         )}
         <p className="mt-4 text-[11px] text-text-secondary">{footnote}</p>
-      </Hip4GlassPanel>
-
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>HyperCore sample assets</Hip4SectionTitle>
-        <p className="mb-4 text-xs text-text-secondary">
-          Illustrative mids / indices — not live API data.
-        </p>
-        <Hip4AssetTable />
-      </Hip4GlassPanel>
-
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>Reference price grid</Hip4SectionTitle>
-        <Hip4PricesGrid />
       </Hip4GlassPanel>
     </Hip4ChapterShell>
   );
