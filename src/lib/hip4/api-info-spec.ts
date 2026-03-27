@@ -176,6 +176,115 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
       },
     ],
   },
+  {
+    id: "userFees",
+    title: "User fee schedule (userFees)",
+    method: "POST",
+    url: "https://api.hyperliquid-testnet.xyz/info",
+    intro:
+      "Per-user spot/perp fee rates and the default feeSchedule. Use a sentinel address for base schedule only. Used in HIP-4 fee research to compare outcome fills to userSpotCrossRate.",
+    headers: STANDARD_INFO_HEADERS,
+    bodyFields: [
+      { name: "type", type: "String", description: "\"userFees\".", required: true },
+      {
+        name: "user",
+        type: "String (0x…)",
+        description: "Wallet address; e.g. 0xff…f for default schedule only.",
+        required: true,
+      },
+    ],
+    exampleRequestJson: JSON.stringify(
+      { type: "userFees", user: "0xffffffffffffffffffffffffffffffffffffffff" },
+      null,
+      2
+    ),
+    responseTabs: [
+      {
+        id: "200-base",
+        label: "200: default schedule (sentinel user)",
+        body: JSON.stringify(
+          {
+            feeSchedule: {
+              cross: "0.00045",
+              add: "0.00015",
+              spotCross: "0.0007",
+              spotAdd: "0.0004",
+            },
+            userCrossRate: "0.0",
+            userAddRate: "0.0",
+            userSpotCrossRate: "0.0",
+            userSpotAddRate: "0.0",
+            activeReferralDiscount: "0.0",
+          },
+          null,
+          2
+        ),
+      },
+      {
+        id: "200-trader",
+        label: "200: example trader (HIP-4 fee note)",
+        body: JSON.stringify(
+          {
+            userSpotCrossRate: "0.00056",
+            userSpotAddRate: "0.00032",
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  },
+  {
+    id: "userFillsByTime",
+    title: "User fills by time window (userFillsByTime)",
+    method: "POST",
+    url: "https://api.hyperliquid-testnet.xyz/info",
+    intro:
+      "Historical fills for a user between startTime and endTime (Unix ms). Outcome markets use @-prefixed coin names; fee is often in feeToken (base asset), not USDC — normalize for effective bps.",
+    headers: STANDARD_INFO_HEADERS,
+    bodyFields: [
+      { name: "type", type: "String", description: "\"userFillsByTime\".", required: true },
+      {
+        name: "user",
+        type: "String (0x…)",
+        description: "Wallet address.",
+        required: true,
+      },
+      { name: "startTime", type: "number", description: "Unix ms (inclusive).", required: true },
+      { name: "endTime", type: "number", description: "Unix ms (inclusive).", required: true },
+    ],
+    exampleRequestJson: JSON.stringify(
+      {
+        type: "userFillsByTime",
+        user: "0xae551d73161bac3315c5ade0e2d499a44ebe2236",
+        startTime: 1769956276000,
+        endTime: 1769956277000,
+      },
+      null,
+      2
+    ),
+    responseTabs: [
+      {
+        id: "200",
+        label: "200: example outcome fill",
+        body: JSON.stringify(
+          [
+            {
+              coin: "@10",
+              px: "0.59475",
+              sz: "1000.0",
+              dir: "Buy",
+              crossed: true,
+              fee: "0.56",
+              feeToken: "CHUTORO",
+            },
+          ],
+          null,
+          2
+        ),
+      },
+    ],
+  },
 ];
 
 export interface Hip4WsExampleSpec {

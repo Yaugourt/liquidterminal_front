@@ -61,8 +61,20 @@ export function Hip4ReferenceChapter() {
               Info endpoint (GitBook-style)
             </Link>{" "}
             — <Hip4GoldHighlight>outcomeMeta</Hip4GoldHighlight>,{" "}
-            <Hip4GoldHighlight>candleSnapshot</Hip4GoldHighlight>, WS examples, outcome types, coin
+            <Hip4GoldHighlight>candleSnapshot</Hip4GoldHighlight>,{" "}
+            <Hip4GoldHighlight>userFees</Hip4GoldHighlight>,{" "}
+            <Hip4GoldHighlight>userFillsByTime</Hip4GoldHighlight>, WS examples, outcome types, coin
             mapping.
+          </li>
+          <li>
+            <Link
+              href="/hip4/fees"
+              className="font-semibold text-brand-gold underline decoration-brand-gold/50 underline-offset-2 hover:decoration-brand-gold"
+            >
+              Trading fees (L1)
+            </Link>{" "}
+            — proof chain: <Hip4GoldHighlight>SetOutcomeFeeScale</Hip4GoldHighlight>, spot rails,
+            normalized fills vs <code className="font-mono text-[11px]">userSpotCrossRate</code>.
           </li>
           <li>
             Official layout reference:{" "}

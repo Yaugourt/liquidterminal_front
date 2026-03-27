@@ -66,6 +66,10 @@ export function Hip4HomeChapter() {
             minting.
           </li>
           <li>
+            <strong className="text-white">Trading fees (L1)</strong> — spot-like fees,{" "}
+            <code className="font-mono text-[11px]">SetOutcomeFeeScale</code>, fill normalization.
+          </li>
+          <li>
             <strong className="text-brand-gold">Info endpoint</strong> — full{" "}
             <code className="font-mono text-[11px]">POST /info</code> + WS blocks (GitBook-style).
           </li>
@@ -88,6 +92,11 @@ export function Hip4HomeChapter() {
             href="/hip4/core"
             title="HyperCore (L1)"
             description="Architecture, lifecycle, pair minting, open questions"
+          />
+          <Hip4SectionCardLink
+            href="/hip4/fees"
+            title="Trading fees (L1)"
+            description="Spot-like testnet evidence, userFees, feeToken normalization"
           />
           <Hip4SectionCardLink
             href="/hip4/info-api"

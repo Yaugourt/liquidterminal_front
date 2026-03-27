@@ -16,11 +16,13 @@ import { Hip4CoreChapter } from "@/components/hip4/chapters/Hip4CoreChapter";
 import { Hip4ReferenceChapter } from "@/components/hip4/chapters/Hip4ReferenceChapter";
 import { Hip4CompareChapter } from "@/components/hip4/chapters/Hip4CompareChapter";
 import { Hip4InfoApiChapter } from "@/components/hip4/chapters/Hip4InfoApiChapter";
+import { Hip4FeesChapter } from "@/components/hip4/chapters/Hip4FeesChapter";
 
 const HIP4_CHAPTER_COMPONENTS: Record<Hip4Slug, ComponentType> = {
   home: Hip4HomeChapter,
   research: Hip4ResearchChapter,
   core: Hip4CoreChapter,
+  fees: Hip4FeesChapter,
   reference: Hip4ReferenceChapter,
   "info-api": Hip4InfoApiChapter,
   compare: Hip4CompareChapter,
