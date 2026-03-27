@@ -13,6 +13,7 @@ export const HIP4_CHAPTERS = [
   { slug: "home", title: "Home", section: "primary" },
   { slug: "research", title: "Timeline", section: "primary" },
   { slug: "core", title: "HyperCore (L1)", section: "primary" },
+  { slug: "fees", title: "Trading fees (L1)", section: "primary" },
   { slug: "reference", title: "API & data", section: "primary" },
   { slug: "info-api", title: "Info endpoint", section: "primary" },
   { slug: "compare", title: "Industry compare", section: "primary" },

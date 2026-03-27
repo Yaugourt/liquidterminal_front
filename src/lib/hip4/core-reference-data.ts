@@ -36,6 +36,10 @@ export const HIP4_L1_ACTIONS: Hip4L1ActionRow[] = [
     role: "Settlement — settleFraction 0/1; instant L1 payout, no Merkle claim.",
   },
   {
+    type: "VoteGlobalAction::SetOutcomeFeeScale",
+    role: "Governance — global outcome fee scale (hl-node); cooldown between changes. Not the settle-outcome VoteGlobalAction path.",
+  },
+  {
     type: "voteAppHash",
     role: "Consensus / block validation (example in full doc).",
   },

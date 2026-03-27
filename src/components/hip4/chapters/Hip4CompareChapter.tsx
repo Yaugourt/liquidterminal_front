@@ -43,6 +43,12 @@ const ROWS: [string, string, string, string][] = [
     "Isolated on Polygon",
     "None",
   ],
+  [
+    "Trading fees",
+    "Testnet: spot-like (fills match userSpotCrossRate); hl-node exposes SetOutcomeFeeScale",
+    "Venue / CTF fee model",
+    "Platform fee schedule",
+  ],
   ["Cost", "Near zero gas", "Polygon gas", "Platform fees"],
   ["Regulation", "Unregulated", "Unregulated (non-US)", "CFTC-regulated"],
 ];
