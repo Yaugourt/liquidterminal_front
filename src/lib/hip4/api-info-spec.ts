@@ -62,7 +62,7 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
     responseTabs: [
       {
         id: "200",
-        label: "200: OK",
+        label: "200: OK Successful Response",
         body: JSON.stringify(
           {
             outcomes: [
@@ -155,7 +155,7 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
     responseTabs: [
       {
         id: "200",
-        label: "200: OK",
+        label: "200: OK Successful Response",
         body: JSON.stringify(
           [
             {
@@ -205,7 +205,7 @@ export const HIP4_WS_EXAMPLES: Hip4WsExampleSpec[] = [
     responseTabs: [
       {
         id: "push",
-        label: "Example push",
+        label: "Example push payload",
         body: JSON.stringify(
           {
             channel: "activeSpotAssetCtx",
@@ -245,7 +245,7 @@ export const HIP4_WS_EXAMPLES: Hip4WsExampleSpec[] = [
     responseTabs: [
       {
         id: "push",
-        label: "Example push",
+        label: "Example push payload",
         body: JSON.stringify(
           {
             channel: "l2Book",
