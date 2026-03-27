@@ -36,7 +36,7 @@ export const HIP4_RESEARCH_DAYS: Hip4ResearchDay[] = [
       "Live testnet: YES on HYPE 15m market",
       "VoteGlobalAction discovered — native L1 settlement (no Merkle claim)",
       "registerTokensAndStandaloneOutcome — full L1 lifecycle mapped",
-      "System wallets 0xe92d… / 0xc25c… — strike = markPx at creation",
+      "Early settlement signers 0xe92d… / 0xc25c… — later refined to 8-wallet cluster (Day 4)",
       "First winning prediction (BTC > 70,836); article draft + diagrams",
     ],
   },
@@ -48,6 +48,17 @@ export const HIP4_RESEARCH_DAYS: Hip4ResearchDay[] = [
       "Deployer funding → Block Theory Cap theory; EVM likely not HL team",
       "Multi-outcome = independent YES/NO pairs; pair minting confirmed live",
       "EnigmaValidator joins; outcomeMeta, coin mapping, WebSocket research",
+    ],
+  },
+  {
+    id: "day4",
+    label: "Day 4 — March 27",
+    bullets: [
+      "Eight linked L1 addresses traced as one cluster (@quertyeth, @valtitudexyz)",
+      "Mapped: 0xc25c… HIP-4 operator (create / settle / questions / descriptions / named outcomes)",
+      "Mapped: 0xe92d… oracle (price feed); historical settlement tx proof; recent settle often 0xc25c…",
+      "Six cluster members unmapped (role TBD — hypotheses only)",
+      "No overlap with EVM parimutuel deployer 0xe21c…",
     ],
   },
 ];

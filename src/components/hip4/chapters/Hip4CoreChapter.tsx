@@ -7,6 +7,8 @@ import {
 } from "@/components/hip4/Hip4ChapterShell";
 import { Hip4ChapterHubHeader } from "@/components/hip4/Hip4PageHeader";
 import { Hip4CodeBlock } from "@/components/hip4/Hip4CodeBlock";
+import { Hip4GoldHighlight } from "@/components/hip4/Hip4GoldHighlight";
+import { HIP4_EVM_PARIMUTUEL_DEPLOYER } from "@/lib/hip4/core-reference-data";
 import Link from "next/link";
 
 const ARCH_ASCII = `┌─────────────────────────────────────────────┐
@@ -107,6 +109,51 @@ export function Hip4CoreChapter() {
             Info endpoint
           </Link>
           .
+        </p>
+      </Hip4GlassPanel>
+
+      <Hip4GlassPanel>
+        <Hip4SectionTitle>L1 operator cluster (testnet)</Hip4SectionTitle>
+        <Hip4DocLead className="mb-3 text-xs">
+          We traced <strong className="text-white">eight linked system addresses</strong> on HyperCore
+          testnet that appear to operate the prediction-market admin surface together.{" "}
+          <strong className="text-white">Two roles</strong> are mapped from on-chain activity; the other
+          six remain <Hip4GoldHighlight>unmapped</Hip4GoldHighlight> (validators, bridge, fee routing,
+          or other Core roles — hypotheses only).
+        </Hip4DocLead>
+        <Hip4SubsectionTitle>0xc25c… — HIP-4 operator</Hip4SubsectionTitle>
+        <p className="mb-3 text-xs text-text-secondary">
+          Observed actions (explorer labels — JSON payloads in docs often use lowercase variants such as{" "}
+          <code className="font-mono text-[11px] text-brand-accent">registerTokensAndStandaloneOutcome</code>{" "}
+          and <code className="font-mono text-[11px] text-brand-accent">VoteGlobalAction</code>):
+        </p>
+        <ul className="mb-4 list-disc space-y-1.5 pl-4 text-xs text-text-secondary marker:text-brand-gold/70">
+          <li>Create markets — RegisterTokensAndStandaloneOutcome, RegisterOutcome</li>
+          <li>Settle markets — SettleOutcome (settlement in API research as VoteGlobalAction)</li>
+          <li>Create questions — RegisterQuestion</li>
+          <li>Change copy — ChangeOutcomeDescription, ChangeQuestionDescription</li>
+          <li>Register named outcomes and related tokens</li>
+        </ul>
+        <Hip4SubsectionTitle>0xe92d… — Oracle</Hip4SubsectionTitle>
+        <p className="mb-3 text-xs text-text-secondary">
+          Holds oracle / on-chain price-feed duties. A historical settlement from this wallet was
+          observed (same tx often cited for VoteGlobalAction discovery); more recent settlement traffic
+          has been attributed to <code className="font-mono text-[11px] text-brand-accent">0xc25c…</code>{" "}
+          in our trace — roles may shift on testnet.
+        </p>
+        <Hip4SubsectionTitle>Separation from HyperEVM parimutuel</Hip4SubsectionTitle>
+        <p className="mb-3 text-xs text-text-secondary">
+          None of the eight L1 cluster addresses overlap the third-party parimutuel deployer{" "}
+          <code className="font-mono text-[11px] text-text-muted">{HIP4_EVM_PARIMUTUEL_DEPLOYER}</code>.
+          Official HIP-4 CLOB flow and the EVM contest contracts are operated or owned by distinct
+          entities on testnet.
+        </p>
+        <p className="text-xs text-text-muted">
+          Full table + proof link:{" "}
+          <Link href="/hip4/reference#system-wallets-testnet" className="text-brand-accent hover:underline">
+            API & data — system wallets
+          </Link>
+          . On mainnet, duties would likely be distributed across validators — not guaranteed here.
         </p>
       </Hip4GlassPanel>
 
