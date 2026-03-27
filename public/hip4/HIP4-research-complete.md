@@ -1,6 +1,6 @@
 # HIP-4 Research — Complete Reference for Liquid Terminal
 
-> Last updated: March 26, 2026
+> Last updated: March 27, 2026
 > Authors: Yaugourt (Liquid Terminal), androolloyd (HypurrFi), ExoMonk, EnigmaValidator
 > Status: Active research — testnet only, nothing is final
 
@@ -298,12 +298,24 @@ Each side of a pair has its own independent orderbook. Mirrored orders appear au
 
 ### System wallets (testnet)
 
+Eight **linked** Core addresses traced as one cluster on testnet. **Two roles mapped** from on-chain activity; **six remain unmapped** (validators, bridge, fee routing, or other Core ops — hypotheses only). Explorer action labels below; JSON / API docs often use lowercase variants (e.g. `registerTokensAndStandaloneOutcome`, `VoteGlobalAction`).
+
+**Key finding:** None of these eight addresses overlap the HyperEVM parimutuel deployer `0xe21c78037329d06fe0d6fefc4221aaa67cb0d135`. Official L1 HIP-4 flow and the third-party EVM contest contracts are distinct on testnet.
+
 | Wallet | Role |
 |--------|------|
-| `0xe92d5afedaf9eab98a70b7b0118b7187c1292c5c` | Oracle price feeder + outcome settler + block validator |
-| `0xc25c4a1e3872f4d601d70b5db85604f7039ece56` | Outcome settler (rotating duty) |
+| `0xe8ea5ea785619f4d20b34b34ca1d5c5f68fe60a3` | Cluster (unmapped) — role TBD |
+| `0xe5377a540f412e50e3953374e07ab8677138924f` | Cluster (unmapped) — role TBD |
+| `0xe92d5afedaf9eab98a70b7b0118b7187c1292c5c` | **Oracle** — on-chain price feed. Historical settlement from this wallet observed ([tx](https://app.hyperliquid-testnet.xyz/explorer/tx/0xe3e78e3d72eabe68e561041f8bbfbe000022a6230deddd3a87b0399031ee9853)). Recent settlement traffic often attributed to `0xc25c…` per trace; `voteAppHash` / validation also associated. |
+| `0xc25c4a1e3872f4d601d70b5db85604f7039ece56` | **HIP-4 operator** — RegisterTokensAndStandaloneOutcome, RegisterOutcome, SettleOutcome, RegisterQuestion, ChangeOutcomeDescription, ChangeQuestionDescription; named outcomes / tokens |
+| `0x58e1b0e63c905d5982324fcd9108582623b8132e` | Cluster (unmapped) — role TBD |
+| `0x263294039413b96d25e4173a5f7599f8b3801504` | Cluster (unmapped) — role TBD |
+| `0xef2364db5db6f5539aa0bc111771a94ee47637fc` | Cluster (unmapped) — role TBD |
+| `0xda6816df552c3f9e0fb64979fb357800d690d79b` | Cluster (unmapped) — role TBD |
 
-These wallets handle: oracle/mark price updates for all assets, VoteGlobalAction settlement for prediction markets, and voteAppHash for block validation. All centralized on testnet — expected for testing. Mainnet distribution TBD.
+**Cluster discovery credit:** @quertyeth, @valtitudexyz
+
+All centralized / permissioned on testnet — expected for testing. Mainnet distribution TBD.
 
 ### S3 Data Access
 
@@ -519,7 +531,7 @@ Example: L1 shows `User: 0x946b...` but the EVM tx inside is signed by `0xe21c..
 - Discovered VoteGlobalAction — native L1 settlement mechanism
 - Found market creation tx: `registerTokensAndStandaloneOutcome`
 - Full L1 lifecycle mapped: create → trade → settle, no EVM
-- Identified system wallets (0xe92d... and 0xc25c...) rotating settlement
+- Early settlement signers (0xe92d… vs 0xc25c…); later refined to an 8-wallet cluster (see System wallets)
 - Strike price = markPx at creation (confirmed by oracle price feed analysis)
 - Won first prediction: BTC above 70,836, settled instantly
 - Published article draft and 4 SVG diagrams
@@ -535,6 +547,14 @@ Example: L1 shows `User: 0x946b...` but the EVM tx inside is signed by `0xe21c..
 - Confirmed pair minting mechanics via live orderbook testing
 - EnigmaValidator joins the investigation
 - API research: outcomeMeta endpoint, coin ID mapping, WebSocket feeds
+
+### Day 4 (March 27)
+
+- Traced eight linked L1 addresses as one operator cluster (testnet)
+- Mapped roles: `0xc25c…` — HIP-4 operator (create / settle / questions / descriptions / named outcomes); `0xe92d…` — oracle (price feed), with historical settlement [tx proof](https://app.hyperliquid-testnet.xyz/explorer/tx/0xe3e78e3d72eabe68e561041f8bbfbe000022a6230deddd3a87b0399031ee9853)
+- Six cluster members still unmapped (hypotheses only)
+- Confirmed no address overlap with EVM parimutuel deployer `0xe21c…`
+- Cluster discovery: @quertyeth, @valtitudexyz
 
 ---
 
@@ -632,6 +652,7 @@ Routes in the app (grouped nav under `/hip4`):
 - **androolloyd** (@androolloyd, HypurrFi) — V2 bytecode decompilation via heimdall-rs. HyperCore architecture deep dive ("2 worlds, 1 universe"). "Two jars" theory. HIP-3 data feed insight.
 - **EnigmaValidator** (@EnigmaValidator) — Joining investigation for multi-outcome creation tracing on HyperCore and HIP-4 endpoint research. Minimum order formula discovery. Building Liquidiction.
 - **Yaugourt** (Liquid Terminal) — V1 bytecode analysis, selector brute-force, on-chain testing, pair minting verification, VoteGlobalAction discovery, settlement testing, article and tweet production.
+- **quertyeth** (@quertyeth) / **valtitudexyz** (@valtitudexyz) — Eight-wallet L1 cluster discovery; operator vs oracle role mapping (March 27).
 
 ---
 

@@ -179,11 +179,16 @@ export function Hip4ReferenceChapter() {
         </p>
       </Hip4GlassPanel>
 
-      <Hip4GlassPanel>
+      <Hip4GlassPanel id="system-wallets-testnet">
         <Hip4SectionTitle>System wallets (testnet)</Hip4SectionTitle>
         <Hip4DocLead className="mb-3 text-xs">
-          Addresses observed for oracle / settlement / validation on testnet — not a guarantee for
-          mainnet.
+          Eight linked Core addresses traced as one cluster; two roles mapped (HIP-4 operator + oracle),
+          six unmapped. Testnet only — mainnet distribution unknown. None overlap the HyperEVM
+          parimutuel deployer — see{" "}
+          <Link href="/hip4/core" className="text-brand-accent hover:underline">
+            HyperCore (L1)
+          </Link>
+          .
         </Hip4DocLead>
         <div className="overflow-x-auto rounded-lg border border-border-subtle">
           <Table>
@@ -191,13 +196,30 @@ export function Hip4ReferenceChapter() {
               <TableRow className="border-border-subtle hover:bg-transparent">
                 <TableHead className="text-table-header">Address</TableHead>
                 <TableHead className="text-table-header">Role</TableHead>
+                <TableHead className="text-table-header whitespace-nowrap">Proof</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {HIP4_SYSTEM_WALLETS.map((row) => (
                 <TableRow key={row.address} className="border-border-subtle">
                   <TableCell className="font-mono text-[11px] text-table-cell">{row.address}</TableCell>
-                  <TableCell className="text-table-cell text-text-secondary">{row.role}</TableCell>
+                  <TableCell className="min-w-[200px] text-table-cell text-text-secondary">
+                    {row.role}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-table-cell text-text-secondary">
+                    {row.evidenceUrl ? (
+                      <Link
+                        href={row.evidenceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-accent underline-offset-2 hover:underline"
+                      >
+                        Tx
+                      </Link>
+                    ) : (
+                      <span className="text-text-muted">—</span>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
