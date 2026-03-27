@@ -75,19 +75,25 @@ export function Hip4InfoApiChapter() {
             </Hip4DocList>
           </Hip4GlassPanel>
 
-          <Hip4GlassPanel id="hip4-rest-block">
+          <div id="hip4-rest-block" className="space-y-4">
             <Hip4SectionTitle>REST — POST /info</Hip4SectionTitle>
-            <Hip4DocLead className="mb-6 text-xs">
-              Each block below is one <code className="font-mono text-[11px]">type</code> in the JSON
-              body. Scroll the right-hand <strong className="text-white">On this page</strong> menu
-              (desktop) or use the inline chips above to jump.
+            <Hip4DocLead className="text-xs">
+              Each card below is one <code className="font-mono text-[11px]">type</code> in the JSON
+              body (GitBook-style: headers, body table, collapsible example, response tabs). Use the
+              right-hand <strong className="text-white">On this page</strong> menu (desktop) or the
+              inline chips above to jump.
             </Hip4DocLead>
-            <div className="space-y-12">
+            <div className="space-y-6">
               {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
-                <Hip4ApiRestEndpointDoc key={spec.id} spec={spec} />
+                <div
+                  key={spec.id}
+                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                >
+                  <Hip4ApiRestEndpointDoc spec={spec} />
+                </div>
               ))}
             </div>
-          </Hip4GlassPanel>
+          </div>
 
           <Hip4GlassPanel id="outcome-types">
             <Hip4SectionTitle>Outcome types</Hip4SectionTitle>
@@ -129,19 +135,24 @@ export function Hip4InfoApiChapter() {
             </p>
           </Hip4GlassPanel>
 
-          <Hip4GlassPanel id="hip4-ws-block">
+          <div id="hip4-ws-block" className="space-y-4">
             <Hip4SectionTitle>WebSocket</Hip4SectionTitle>
-            <Hip4DocLead className="mb-6 text-xs">
+            <Hip4DocLead className="text-xs">
               Example subscribe frames and push payloads from our HIP-4 research.{" "}
               <Hip4GoldHighlight>markPx</Hip4GoldHighlight> on YES legs reads like implied
               probability.
             </Hip4DocLead>
-            <div className="space-y-12">
+            <div className="space-y-6">
               {HIP4_WS_EXAMPLES.map((spec) => (
-                <Hip4ApiWsEndpointDoc key={spec.id} spec={spec} />
+                <div
+                  key={spec.id}
+                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                >
+                  <Hip4ApiWsEndpointDoc spec={spec} />
+                </div>
               ))}
             </div>
-          </Hip4GlassPanel>
+          </div>
         </div>
 
         <Hip4InfoApiToc variant="sidebar" />
