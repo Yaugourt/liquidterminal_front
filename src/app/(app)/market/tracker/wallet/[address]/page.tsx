@@ -104,7 +104,7 @@ export default function PublicWalletView({ params }: PublicWalletViewProps) {
       <Card className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <span className="text-sm text-text-muted">Wallet:</span>
-          <span className="font-mono text-white text-sm">{address}</span>
+          <span className="text-white text-sm">{address}</span>
           <Button
             variant="ghost"
             size="sm"

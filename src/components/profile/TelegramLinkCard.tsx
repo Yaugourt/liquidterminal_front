@@ -113,7 +113,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
             <Clock className="h-3.5 w-3.5 text-brand-gold" />
             <span className={cn(
-              "text-xs font-mono font-medium",
+              "text-xs font-medium",
               remainingSeconds < 60 ? "text-rose-400" : "text-brand-gold"
             )}>
               {formattedCountdown}
@@ -183,7 +183,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
                 <h3 className="text-sm font-bold text-white">Telegram Linked</h3>
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               </div>
-              <p className="text-xs text-emerald-400 font-mono">
+              <p className="text-xs text-emerald-400">
                 @{telegramUsername}
               </p>
             </div>

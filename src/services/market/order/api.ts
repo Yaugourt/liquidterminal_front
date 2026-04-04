@@ -1,9 +1,12 @@
-import { getExternal } from '../../api/axios-config';
+import { getExternal, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
 import { TwapOrder, TwapOrderParams, TwapOrderPaginatedResponse, EnrichedTwapOrder } from './types';
 import { fetchSpotTokens } from '../spot/api';
 import { SpotToken } from '../spot/types';
+import { fetchPerpMarkets } from '../perp/api';
+import { PerpMarketData } from '../perp/types';
+import { AllPerpMetasResponse } from '../perpDex/types';
 
 /**
  * Récupère tous les ordres TWAP depuis l'API
@@ -21,50 +24,84 @@ export const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
  */
 export const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<EnrichedTwapOrder[]> => {
   return withErrorHandling(async () => {
-    // Récupérer tous les tokens du spot market
-    const spotResponse = await fetchSpotTokens({ limit: 1000 });
+    // Récupérer spot + perp natifs + raw allPerpMetas en parallèle
+    const [spotResponse, perpResponse, allPerpMetasRaw] = await Promise.all([
+      fetchSpotTokens({ limit: 1000 }),
+      fetchPerpMarkets({ limit: 1000, sortBy: 'volume', sortOrder: 'desc' }).catch(() => ({ data: [] as PerpMarketData[] })),
+      postExternal<AllPerpMetasResponse>(
+        `${API_URLS.HYPERLIQUID_UI_API}/info`,
+        { type: 'allPerpMetas' }
+      ).catch(() => [] as AllPerpMetasResponse),
+    ]);
     const spotTokens = spotResponse.data;
-    
-    // Créer un map pour accès rapide par marketIndex
+
+    // Map spot par marketIndex
     const tokenMap = new Map<number, SpotToken>();
     spotTokens.forEach(token => {
       tokenMap.set(token.marketIndex, token);
     });
-    
+
+    // Map perp natifs par index
+    const perpMap = new Map<number, PerpMarketData>();
+    perpResponse.data.forEach((perp: PerpMarketData) => {
+      perpMap.set(perp.index, perp);
+    });
+
+    // Build HIP-3 name lookup from raw allPerpMetas response
+    // TWAP index formula: assetIndex = 10000 + (slot * 100000) + localIndex
+    // So after subtracting 10000: slot = floor(value / 100000), localIndex = value % 100000
+    // Slot 0 = native perps, slot 1+ = HIP-3 dexs
+    const hip3Universes = new Map<number, string[]>();
+    allPerpMetasRaw.forEach((dex, slot) => {
+      if (!dex || slot === 0) return; // Skip native perps (handled by perpMap)
+      const names = (dex.universe || []).map(a => {
+        const parts = a.name.split(':');
+        return parts.length > 1 ? parts[1] : a.name;
+      });
+      hip3Universes.set(slot, names);
+    });
+
     return twapOrders
       .filter(order => {
         const assetIndex = order.action.twap.a;
-        // Ne garder que les ordres TWAP avec le format 10000 + index
-        return assetIndex >= 10000;
+        // Keep spot TWAPs (>= 10000) and perp TWAPs (< 10000)
+        return assetIndex >= 0;
       })
       .map(order => {
         const assetIndex = order.action.twap.a;
-        
-        // Pour l'index de marché TWAP, enlever le préfixe "10000"
-        // Ex: index 85 → 10085, index 107 → 10107 (10000 + index)
-        const marketIndex = assetIndex - 10000;
-      
-        const token = tokenMap.get(marketIndex);
+        const isSpot = assetIndex >= 10000;
+        const marketIndex = isSpot ? assetIndex - 10000 : assetIndex;
+
+        // Resolve token: spot map > perp native map > HIP-3 metas > fallback
+        const spotToken = isSpot ? tokenMap.get(marketIndex) : null;
+        const perpToken = !isSpot && marketIndex < 100000 ? perpMap.get(marketIndex) : null;
+        // HIP-3: marketIndex >= 100000 → slot = floor(marketIndex / 100000), localIndex = marketIndex % 100000
+        const hip3Slot = Math.floor(marketIndex / 100000);
+        const hip3LocalIndex = marketIndex % 100000;
+        const hip3Name = !spotToken && !perpToken && hip3Slot > 0
+          ? (hip3Universes.get(hip3Slot)?.[hip3LocalIndex] ?? null)
+          : null;
+
         const size = parseFloat(order.action.twap.s);
-        const tokenPrice = token?.price || 0;
+        const tokenPrice = spotToken?.price || perpToken?.price || 0;
         const totalValueUSD = size * tokenPrice;
-        
+
         // Calculer la progression basée sur le temps écoulé vs durée totale
         const startTime = order.time;
         const durationMs = order.action.twap.m * 60 * 1000; // minutes to ms
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
-        
+
         // TWAP envoie un sous-ordre toutes les 30 secondes
         const subOrderIntervalMs = 30 * 1000; // 30 secondes
         const totalSubOrders = Math.ceil(durationMs / subOrderIntervalMs);
         const subOrdersSent = Math.min(totalSubOrders, Math.floor(elapsedTime / subOrderIntervalMs));
-        
+
         // Progression basée sur les sous-ordres envoyés (plus précis que le temps)
         const progressionPercent = Math.min(100, Math.max(0, (subOrdersSent / totalSubOrders) * 100));
-        
-        // Transformer le nom du token si nécessaire
-        let tokenSymbol = token?.name || `Token ${marketIndex}`;
+
+        // Résoudre le nom : spot > perp natif > HIP-3 > fallback
+        let tokenSymbol = spotToken?.name || perpToken?.name || hip3Name || `Token ${marketIndex}`;
         if (tokenSymbol === 'USDT_USDC') {
           tokenSymbol = 'USDT0';
         }

@@ -135,7 +135,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     <Link
                         href={`/explorer/transaction/${tx.hash}`}
                         prefetch={false}
-                        className="text-brand-accent hover:text-white transition-colors font-mono"
+                        className="text-brand-accent hover:text-white transition-colors"
                         title={tx.hash}
                     >
                         {formatHash(tx.hash)}

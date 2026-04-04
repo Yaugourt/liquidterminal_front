@@ -16,7 +16,8 @@ export const useAssistanceFund = (): UseAssistanceFundResult => {
   const { 
     data: balanceData, 
     isLoading: balanceLoading, 
-    error 
+    error,
+    refetch,
   } = useDataFetching<number>({
     fetchFn: async () => {
       // Fetch only HYPE balance (without price dependency)
@@ -42,6 +43,7 @@ export const useAssistanceFund = (): UseAssistanceFundResult => {
   return {
     data,
     isLoading: balanceLoading || hypePriceLoading,
-    error
+    error,
+    refetch,
   };
 };

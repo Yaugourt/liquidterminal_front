@@ -173,7 +173,7 @@ export function UserTable({
               <TableCell>
                 {user.referralCode ? (
                   <div className="flex items-center gap-1">
-                    <code className="text-xs font-mono text-text-secondary bg-zinc-800/50 px-1.5 py-0.5 rounded">
+                    <code className="text-xs text-text-secondary bg-zinc-800/50 px-1.5 py-0.5 rounded">
                       {user.referralCode}
                     </code>
                     <button

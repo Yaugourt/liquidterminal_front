@@ -1,7 +1,6 @@
 import { memo, useState } from "react";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
-import { Trash2, Globe } from "lucide-react";
+import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Project } from "@/services/ecosystem/project/types";
@@ -28,11 +27,13 @@ export const ProjectCard = memo(function ProjectCard({
   const [imageError, setImageError] = useState(false);
   const { user } = useAuthContext();
 
+  const XIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>;
+
   const socialLinks = [
-    { url: project.website, iconName: null, label: "Website", isGlobe: true },
-    { url: project.twitter, iconName: "simple-icons:x", label: "Twitter", isGlobe: false },
-    { url: project.discord, iconName: "ic:baseline-discord", label: "Discord", isGlobe: false },
-    { url: project.telegram, iconName: "ic:baseline-telegram", label: "Telegram", isGlobe: false }
+    { url: project.website, IconComponent: Globe, label: "Website" },
+    { url: project.twitter, IconComponent: XIcon, label: "Twitter" },
+    { url: project.discord, IconComponent: MessageCircle, label: "Discord" },
+    { url: project.telegram, IconComponent: Send, label: "Telegram" }
   ].filter(link => link.url);
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -132,11 +133,7 @@ export const ProjectCard = memo(function ProjectCard({
                   className="text-text-muted hover:text-brand-accent transition-colors"
                   aria-label={link.label}
                 >
-                  {link.isGlobe ? (
-                    <Globe className="w-4 h-4" />
-                  ) : (
-                    <Icon icon={link.iconName!} className="w-4 h-4" />
-                  )}
+                  <link.IconComponent className="w-4 h-4" />
                 </a>
               ))}
             </div>

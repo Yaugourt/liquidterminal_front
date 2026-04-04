@@ -164,7 +164,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             <div className="flex flex-col">
               <span className="text-stat-label">Contract</span>
               <div className="flex items-center gap-2">
-                <span className="text-brand-accent text-xs font-mono">
+                <span className="text-brand-accent text-xs">
                   {truncateAddress(token.contract)}
                 </span>
                 <Copy

@@ -126,7 +126,7 @@ export function TrackedWalletsPreview() {
               </div>
               <div className="bg-brand-secondary/40 backdrop-blur-sm rounded-xl p-4 border border-border-subtle">
                 <p className="text-text-muted text-sm mb-1">Active Wallet</p>
-                <p className="text-sm font-mono text-brand-accent truncate">
+                <p className="text-sm text-brand-accent truncate">
                   {activeWallet ? `${activeWallet.address.slice(0, 6)}...${activeWallet.address.slice(-4)}` : 'None'}
                 </p>
               </div>

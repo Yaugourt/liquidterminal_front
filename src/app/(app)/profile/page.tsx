@@ -178,7 +178,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                 <div className="flex flex-col gap-2 w-full md:w-auto">
                     <div className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-1">Your Referral Link</div>
                     <div className="flex gap-2">
-                        <div className="bg-brand-dark px-4 py-2.5 rounded-lg text-white font-mono text-sm border border-white/5 flex-1 truncate">
+                        <div className="bg-brand-dark px-4 py-2.5 rounded-lg text-white text-sm border border-white/5 flex-1 truncate">
                             liquidterminal.com/ref/{currentUser.name}
                         </div>
                         <Button onClick={copyReferralLink} size="icon" className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary">
@@ -283,7 +283,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                             </div>
                                                             <div className="min-w-0">
                                                                 <div className="font-medium text-sm text-white truncate">{wallet.name}</div>
-                                                                <div className="text-xs text-zinc-500 font-mono truncate">{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</div>
+                                                                <div className="text-xs text-zinc-500 truncate">{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</div>
                                                             </div>
                                                         </div>
                                                     </div>

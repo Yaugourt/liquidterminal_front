@@ -92,7 +92,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 </p>
                 <div className="flex items-center justify-end gap-2 text-white">
                   <Clock className="w-4 h-4 text-brand-gold" />
-                  <span className="text-lg font-mono font-medium tracking-tight">
+                  <span className="text-lg font-medium tracking-tight">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
                   </span>
                 </div>

@@ -29,7 +29,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
 
   const HashDisplay = ({ hash }: { hash: string }) => (
     <div className="flex items-center gap-1.5">
-      <span className="text-white font-mono">
+      <span className="text-white">
         {hash.slice(0, 4)}..{hash.slice(-3)}
       </span>
       <button
@@ -53,7 +53,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
       <Link
         href={`/explorer/address/${address}`}
         prefetch={false}
-        className="text-brand-accent font-mono hover:text-white transition-colors"
+        className="text-brand-accent hover:text-white transition-colors"
       >
         {address.slice(0, 4)}..{address.slice(-3)}
       </Link>
@@ -111,7 +111,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                   <Link
                     href={`/explorer/block/${block.height}`}
                     prefetch={false}
-                    className="text-brand-accent font-mono hover:text-white transition-colors"
+                    className="text-brand-accent hover:text-white transition-colors"
                   >
                     {block.height}
                   </Link>
@@ -194,7 +194,7 @@ export function DataTable({ type, data, emptyMessage }: DataTableProps) {
                 <Link
                   href={`/explorer/block/${tx.block}`}
                   prefetch={false}
-                  className="text-white font-mono hover:text-brand-accent transition-colors"
+                  className="text-white hover:text-brand-accent transition-colors"
                 >
                   {tx.block}
                 </Link>

@@ -118,7 +118,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
                     <div className="flex items-center gap-1">
                       <Link 
                         href={`/explorer/address/${holder.address}`} 
-                        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
+                        className="text-brand-accent text-xs hover:text-white transition-colors"
                       >
                         {formatAddress(holder.address)}
                       </Link>
