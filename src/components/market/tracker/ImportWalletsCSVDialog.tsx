@@ -285,7 +285,7 @@ export function ImportWalletsCSVDialog({
                         <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white font-mono truncate">
+                        <p className="text-sm text-white truncate">
                           {wallet.address || "(empty)"}
                         </p>
                         {wallet.name && (

@@ -165,7 +165,7 @@ export function TrackerStatsBar() {
               <div className="flex flex-col gap-1">
                 <Link
                   href={`/market/tracker/wallet/${item.wallet.user}`}
-                  className="text-sm text-white hover:text-brand-accent transition-colors font-mono truncate"
+                  className="text-sm text-white hover:text-brand-accent transition-colors truncate"
                 >
                   {truncateAddress(item.wallet.user)}
                 </Link>

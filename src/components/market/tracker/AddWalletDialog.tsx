@@ -104,7 +104,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg font-mono focus:border-brand-accent/50"
+              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg focus:border-brand-accent/50"
             />
           </div>
           <div className="space-y-2">

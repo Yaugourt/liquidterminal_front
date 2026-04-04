@@ -192,7 +192,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                                 {new Date(item.addedAt).toLocaleDateString()}
                                                             </span>
                                                         </div>
-                                                        <code className="text-xs text-text-muted pl-6 font-mono">
+                                                        <code className="text-xs text-text-muted pl-6">
                                                             {item.address}
                                                         </code>
                                                         {item.notes && (

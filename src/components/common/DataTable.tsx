@@ -55,6 +55,8 @@ interface DataTableWithColumnsProps<T> {
     columns: Column<T>[];
     isLoading?: boolean;
     error?: Error | null;
+    /** Shown when error is set; Retry button if provided */
+    onErrorRetry?: () => void | Promise<void>;
     emptyMessage?: string;
     className?: string;
     textSize?: "xs" | "sm";
@@ -129,6 +131,7 @@ export function TypedDataTable<T>({
     columns,
     isLoading,
     error,
+    onErrorRetry,
     emptyMessage = "No data available",
     className,
     textSize = "sm",
@@ -142,14 +145,15 @@ export function TypedDataTable<T>({
     hidePageNavigation = false,
 }: DataTableWithColumnsProps<T>) {
     if (isLoading) {
-        return <LoadingState message="Chargement..." size="md" withCard={false} />;
+        return <LoadingState message="Loading…" size="md" withCard={false} />;
     }
 
     if (error) {
         return (
             <ErrorState
-                title="Une erreur est survenue"
-                message="Veuillez réessayer plus tard"
+                title="Could not load data"
+                message={error.message}
+                onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
                 withCard={false}
             />
         );
@@ -216,7 +220,7 @@ export function TypedDataTable<T>({
                                         <div className="flex flex-col items-center justify-center text-center">
                                             <Database className="w-10 h-10 mb-3 text-text-muted" />
                                             <p className="text-text-secondary text-sm mb-1">{emptyMessage}</p>
-                                            <p className="text-text-muted text-xs">Come later</p>
+                                            <p className="text-text-muted text-xs">Check back soon</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>

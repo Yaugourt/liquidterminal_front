@@ -24,4 +24,5 @@ export interface UseAssistanceFundResult {
   data: AssistanceFundData | null;
   isLoading: boolean;
   error: Error | null;
+  refetch: () => Promise<void>;
 }
