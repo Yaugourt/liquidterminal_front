@@ -184,4 +184,135 @@ export interface UseVaultDetailsResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+}
+
+// ==================== INDEXER VAULT TYPES (HypeDexer) ====================
+
+/** Wrapper returned by all /indexer/* backend routes */
+export interface IndexerApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
+/**
+ * Vault summary from GET /indexer/vaults/vaultSummaries.
+ * HypeDexer returns a direct array — no tvl/apr in this endpoint.
+ */
+export interface IndexerVaultSummaryItem {
+  vaultAddress: string;
+  name: string;
+  leader: string;
+  leaderCommission: number;
+  isClosed: boolean;
+  followerCount: number;
+  snapshotTime: number;
+  createTime: number;
+}
+
+/** The API returns IndexerVaultSummaryItem[] directly at response.data */
+export type IndexerVaultSummariesPayload = IndexerVaultSummaryItem[];
+
+/**
+ * Snapshot from GET /indexer/vaults/dailySnapshots or /equitySnapshots.
+ * Both return identical shapes; dailySnapshots also includes a `day` string.
+ */
+export interface VaultEquitySnapshot {
+  time: number;
+  totalDeposits: number;
+  accountValue: number;
+  totalNotional: number;
+  totalRawPnl: number;
+  nPositions: number;
+  followerCount: number;
+}
+
+/** dailySnapshots adds a human-readable date string */
+export interface VaultDailySnapshot extends VaultEquitySnapshot {
+  day: string;
+}
+
+/** The API returns VaultDailySnapshot[] directly at response.data */
+export type IndexerDailySnapshotsPayload = VaultDailySnapshot[];
+
+/** The API returns VaultEquitySnapshot[] directly at response.data */
+export type IndexerEquitySnapshotsPayload = VaultEquitySnapshot[];
+
+/**
+ * Single event from GET /indexer/vaults/vaultLedger.
+ * Deposit: userFrom = depositor, userTo = vaultAddress.
+ * Withdrawal: userFrom = vaultAddress, userTo = recipient.
+ */
+export interface VaultLedgerEntry {
+  time: number;
+  txHash: string;
+  userFrom: string;
+  userTo: string;
+  amount: number;
+  token: string;
+}
+
+/** The API returns VaultLedgerEntry[] directly at response.data */
+export type IndexerVaultLedgerPayload = VaultLedgerEntry[];
+
+/** Follower-count history item inside vaultDetails.portfolio */
+export interface IndexerVaultPortfolioEntry {
+  time: number;
+  followerCount: number;
+  leaderCommission: number;
+}
+
+/**
+ * Vault metadata from GET /indexer/vaults/vaultDetails.
+ * Note: no tvl/apr fields — get those from equitySnapshots or useVaults.
+ */
+export interface IndexerVaultDetailsData {
+  vaultAddress: string;
+  name: string;
+  leader: string;
+  leaderCommission: number;
+  isClosed: boolean;
+  lockupDurationSeconds?: number;
+  allowDeposits?: boolean;
+  followerCount?: number;
+  snapshotTime?: number;
+  createTime?: number;
+  /** Commission + follower count history (NOT financial PnL data) */
+  portfolio?: IndexerVaultPortfolioEntry[];
+}
+
+// ==================== HOOK RESULT TYPES ====================
+
+export interface UseVaultSummariesResult {
+  summaries: IndexerVaultSummaryItem[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseVaultDailySnapshotsResult {
+  snapshots: VaultDailySnapshot[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseVaultEquitySnapshotsResult {
+  snapshots: VaultEquitySnapshot[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseVaultLedgerResult {
+  entries: VaultLedgerEntry[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseVaultIndexerDetailsResult {
+  details: IndexerVaultDetailsData | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
 } 

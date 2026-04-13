@@ -10,3 +10,4 @@
 - Staking holder stats from the backend include `distributionByRange` (holder counts per stake bucket), usable to approximate median stake; averages are skewed upward by validators and large delegators, while median stays comparatively low because outsized stakes sit at the top of a sorted list, not at the midpoint.
 - Cursor/agent environments often lack GitHub HTTPS credentials; `git push` to `origin` may need to be run locally with SSH, `gh auth login`, or a credential helper.
 - Spot and perp auction UI price: when the API returns `currentGas`, that value is shown; otherwise hooks fall back to linear decay from `startGas` to `BASE_PRICE` (500) over the auction window (`useAuctionTiming`, `usePerpAuctionTiming`).
+- `DESIGN_SYSTEM.md` was moved from the repo root to `docs/DESIGN_SYSTEM.md`; reference that path for design system documentation.
