@@ -8,7 +8,13 @@ import {
   VaultsResponse,
   VaultResponse,
   VaultDetailsRequest,
-  VaultDetailsResponse
+  VaultDetailsResponse,
+  IndexerApiResponse,
+  IndexerVaultSummaryItem,
+  VaultDailySnapshot,
+  VaultEquitySnapshot,
+  VaultLedgerEntry,
+  IndexerVaultDetailsData,
 } from './types';
 
 /**
@@ -73,4 +79,99 @@ export const fetchVaultDetails = async (
     const url = `${API_URLS.HYPERLIQUID_API}/info`;
     return await postExternal<VaultDetailsResponse>(url, params);
   }, 'fetching vault details');
+};
+
+// ==================== INDEXER VAULT API (HypeDexer proxy) ====================
+
+/**
+ * Fetches vault summaries from the indexer (one row per vault, sorted by follower count).
+ * Returns a direct array — no tvl/apr in this endpoint.
+ */
+export const fetchIndexerVaultSummaries = async (params?: {
+  includeClosed?: boolean;
+  limit?: number;
+}): Promise<IndexerVaultSummaryItem[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<IndexerApiResponse<IndexerVaultSummaryItem[]>>(
+      ENDPOINTS.INDEXER_VAULT_SUMMARIES,
+      params as Record<string, unknown>
+    );
+    return response.data;
+  }, 'fetching indexer vault summaries');
+};
+
+/**
+ * Fetches vault metadata and portfolio history from the indexer.
+ */
+export const fetchIndexerVaultDetails = async (params: {
+  vaultAddress: string;
+  startTime?: string;
+  endTime?: string;
+  limit?: number;
+}): Promise<IndexerVaultDetailsData> => {
+  return withErrorHandling(async () => {
+    const response = await get<IndexerApiResponse<IndexerVaultDetailsData>>(
+      ENDPOINTS.INDEXER_VAULT_DETAILS,
+      params as Record<string, unknown>
+    );
+    return response.data;
+  }, 'fetching indexer vault details');
+};
+
+/**
+ * Fetches daily account-value snapshots for a vault from the indexer.
+ * Returns a direct array sorted newest-first.
+ */
+export const fetchVaultDailySnapshots = async (params: {
+  vaultAddress: string;
+  startTime?: string;
+  endTime?: string;
+  limit?: number;
+}): Promise<VaultDailySnapshot[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<IndexerApiResponse<VaultDailySnapshot[]>>(
+      ENDPOINTS.INDEXER_VAULT_DAILY_SNAPSHOTS,
+      params as Record<string, unknown>
+    );
+    return response.data;
+  }, 'fetching vault daily snapshots');
+};
+
+/**
+ * Fetches ~hourly equity snapshots for a vault from the indexer.
+ * Returns a direct array sorted newest-first.
+ */
+export const fetchVaultEquitySnapshots = async (params: {
+  vaultAddress: string;
+  startTime?: string;
+  endTime?: string;
+  limit?: number;
+}): Promise<VaultEquitySnapshot[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<IndexerApiResponse<VaultEquitySnapshot[]>>(
+      ENDPOINTS.INDEXER_VAULT_EQUITY_SNAPSHOTS,
+      params as Record<string, unknown>
+    );
+    return response.data;
+  }, 'fetching vault equity snapshots');
+};
+
+/**
+ * Fetches deposit/withdrawal events for a vault from the indexer.
+ * Returns a direct array sorted newest-first.
+ */
+export const fetchVaultLedger = async (params: {
+  vaultAddress: string;
+  user?: string;
+  startTime?: string;
+  endTime?: string;
+  limit?: number;
+}): Promise<VaultLedgerEntry[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<IndexerApiResponse<VaultLedgerEntry[]>>(
+      ENDPOINTS.INDEXER_VAULT_LEDGER,
+      params as Record<string, unknown>
+    );
+    return response.data;
+  }, 'fetching vault ledger');
 }; 

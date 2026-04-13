@@ -54,6 +54,14 @@ export const ENDPOINTS = {
   LIQUIDATIONS_CHART_DATA: '/liquidations/chart-data',
   LIQUIDATIONS_DATA: '/liquidations/data',
   LIQUIDATIONS_ANALYTICS_STATS: '/liquidations/analytics/stats',
+
+  // Indexer vault endpoints (HypeDexer proxy)
+  INDEXER_VAULT_SUMMARIES: '/indexer/vaults/vaultSummaries',
+  INDEXER_VAULT_DETAILS: '/indexer/vaults/vaultDetails',
+  INDEXER_VAULT_DAILY_SNAPSHOTS: '/indexer/vaults/dailySnapshots',
+  INDEXER_VAULT_EQUITY_SNAPSHOTS: '/indexer/vaults/equitySnapshots',
+  INDEXER_USER_VAULT_EQUITIES: '/indexer/vaults/userVaultEquities',
+  INDEXER_VAULT_LEDGER: '/indexer/vaults/vaultLedger',
 } as const;
 
 // Helper functions pour construire les URLs complètes
