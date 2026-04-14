@@ -1,4 +1,3 @@
-export { PriorityFeesFillsTimeseriesChart } from "./PriorityFeesFillsTimeseriesChart";
 export { PriorityFeesKpiRow } from "./PriorityFeesKpiRow";
 export { PriorityFeesWindowSelector } from "./PriorityFeesWindowSelector";
 export { PriorityFeesLeaderboardCard } from "./PriorityFeesLeaderboardCard";

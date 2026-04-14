@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Gauge, Hash, Activity } from "lucide-react";
+import { Gauge, Hash, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/common/StatsCard";
 import { AssetLogo } from "@/components/common/AssetLogo";
@@ -85,14 +85,6 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
         title: "Max priority gas",
         value: formatPriorityFeeNumber(stats?.max_priority_gas),
         icon: <Activity className="w-4 h-4 text-rose-400" />,
-      },
-      {
-        title: "Unique users",
-        value:
-          stats?.unique_users !== undefined && stats.unique_users !== null
-            ? String(stats.unique_users)
-            : "—",
-        icon: <Users className="w-4 h-4 text-text-secondary" />,
       },
     ];
   }, [stats, isLoading, fillCount, run]);
