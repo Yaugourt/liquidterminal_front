@@ -30,8 +30,7 @@ export default function PriorityFeesPage() {
           Priority fees
         </h1>
         <p className="text-sm text-text-secondary max-w-2xl">
-          Priority gas paid on fills, HIP-3 gossip auction slots, and leaderboards — sourced from the
-          Liquid Terminal indexer proxy.
+          Priority gas paid on fills, HIP-3 gossip auction slots, and leaderboards.
         </p>
       </div>
 
