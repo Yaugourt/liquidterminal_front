@@ -30,7 +30,8 @@ export default function PriorityFeesPage() {
           Priority fees
         </h1>
         <p className="text-sm text-text-secondary max-w-2xl">
-          Priority gas paid on fills, HIP-3 gossip auction slots, and leaderboards.
+          Priority gas on fills (HypeDexer <code className="text-xs">priorityGas</code>), gossip
+          auctions, window aggregates, and leaderboards.
         </p>
       </div>
 
@@ -58,6 +59,7 @@ export default function PriorityFeesPage() {
         />
         <PriorityFeesGossipStatusCard
           slots={gossip.data}
+          previousWinners={gossip.previousWinners}
           isLoading={gossip.isLoading}
           error={gossip.error}
           onRetry={() => gossip.refetch()}

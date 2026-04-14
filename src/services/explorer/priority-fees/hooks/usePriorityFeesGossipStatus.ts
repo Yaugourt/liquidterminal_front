@@ -18,12 +18,19 @@ export function usePriorityFeesGossipStatus(): UsePriorityFeesGossipStatusResult
   });
 
   const normalized = useMemo(() => {
-    if (!data) return { slots: null as null, raw: null as unknown };
-    return { slots: data.slots, raw: data.raw };
+    if (!data) {
+      return { slots: null as null, previousWinners: null as null, raw: null as unknown };
+    }
+    return {
+      slots: data.slots,
+      previousWinners: data.previousWinners,
+      raw: data.raw,
+    };
   }, [data]);
 
   return {
     data: normalized.slots,
+    previousWinners: normalized.previousWinners,
     raw: normalized.raw,
     isLoading,
     error,

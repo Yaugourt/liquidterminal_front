@@ -48,7 +48,8 @@ export function PriorityFeesLeaderboardCard({
           Top payers
         </h2>
         <p className="text-xs text-text-muted mt-1">
-          Leaderboard by priority fees in the same window as the chart.
+          HypeDexer <code className="text-[10px]">by=priority_fees</code> — same hours window as the
+          summary above.
         </p>
       </div>
 
@@ -96,6 +97,11 @@ export function PriorityFeesLeaderboardCard({
                     Priority fees
                   </span>
                 </TableHead>
+                <TableHead className="py-3 px-3 text-right">
+                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
+                    Fills
+                  </span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,6 +125,11 @@ export function PriorityFeesLeaderboardCard({
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-right text-sm text-white font-mono">
                       {formatPriorityFeeNumber(rowScore(row))}
+                    </TableCell>
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-secondary font-mono">
+                      {row.fill_count !== undefined && row.fill_count !== null
+                        ? String(row.fill_count)
+                        : "—"}
                     </TableCell>
                   </TableRow>
                 );
