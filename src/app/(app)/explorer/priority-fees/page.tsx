@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   PriorityFeesKpiRow,
-  PriorityFeesFillsTimeseriesChart,
   PriorityFeesLeaderboardCard,
   PriorityFeesGossipStatusCard,
   PriorityFeesHistoryTable,
@@ -45,8 +44,6 @@ export default function PriorityFeesPage() {
       )}
 
       <PriorityFeesKpiRow stats={stats.data} isLoading={stats.isLoading} />
-
-      <PriorityFeesFillsTimeseriesChart hours={hours} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
         <PriorityFeesLeaderboardCard
