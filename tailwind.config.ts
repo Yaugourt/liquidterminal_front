@@ -11,8 +11,10 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				'inter': ['var(--font-inter)', 'Inter', 'sans-serif'],
-				'sans': ['var(--font-inter)', 'Inter', 'sans-serif'],
+				/** Single UI stack site-wide (titles, body, tables, former “mono” slots). */
+				inter: ['var(--font-inter)', 'Inter', 'sans-serif'],
+				sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+				mono: ['var(--font-inter)', 'Inter', 'sans-serif'],
 			},
 			screens: {
 				'custom': '1227px',

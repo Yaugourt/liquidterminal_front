@@ -76,8 +76,7 @@
 
 | Font | CSS Class | Usage |
 |------|-----------|-------|
-| Inter | `font-inter` / `font-sans` | All UI text, titles, branding (default) |
-| Monospace | `font-mono` | Addresses, hashes, code |
+| Inter | `font-inter` / `font-sans` / `font-mono` | Single stack site-wide; `font-mono` no longer switches family (use `tabular-nums` for numeric alignment) |
 
 ### Text Sizes & Weights
 

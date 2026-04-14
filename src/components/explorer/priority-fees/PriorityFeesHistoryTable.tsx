@@ -25,7 +25,7 @@ import {
   isFillSideSell,
 } from "./priority-fees-format";
 
-const FILLS_PAGE_SIZE = 11;
+const FILLS_PAGE_SIZE = 6;
 
 function formatFillTime(t: unknown): string {
   if (typeof t === "number" && Number.isFinite(t)) {
@@ -137,13 +137,13 @@ function RecentFillsSection() {
                     <TableCell className="py-2.5 px-3 text-xs text-text-secondary whitespace-nowrap">
                       {formatFillTime(row.time)}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm text-white font-mono">
+                    <TableCell className="py-2.5 px-3 text-sm text-white tabular-nums">
                       {row.coin ?? "—"}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-sm">
                       <span className={sideClass}>{sideLabel}</span>
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm font-mono text-white">
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-white tabular-nums">
                       {formatPriorityFeeNumber(Number.isFinite(g) ? g : undefined)}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-sm min-w-[140px]">

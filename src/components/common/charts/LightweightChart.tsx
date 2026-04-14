@@ -68,7 +68,7 @@ const LightweightChartComponent = ({
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#525252",
-        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily: "var(--font-inter), Inter, sans-serif",
         fontSize: 10,
       },
       width: initialWidth,

@@ -124,8 +124,8 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 ### Typography
 
-- **All UI copy (titles + body):** `font-inter` / `font-sans` (both map to Inter via `--font-inter`).
-- **Code/Addresses:** `font-mono`
+- **Single stack:** `font-inter`, `font-sans`, and `font-mono` all resolve to Inter (`tailwind.config.ts` + `globals.css` base resets for `code`/`pre`).
+- **Numeric alignment:** prefer `tabular-nums` instead of expecting a different glyph width from `font-mono`.
 
 ### Semantic Colors
 
