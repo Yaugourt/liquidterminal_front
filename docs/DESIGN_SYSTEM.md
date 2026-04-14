@@ -76,8 +76,7 @@
 
 | Font | CSS Class | Usage |
 |------|-----------|-------|
-| Inter | `font-inter` | Body text, UI elements (default) |
-| Higuen Elegant Serif | `font-higuen` | Logo, accent titles, branding |
+| Inter | `font-inter` / `font-sans` | All UI text, titles, branding (default) |
 | Monospace | `font-mono` | Addresses, hashes, code |
 
 ### Text Sizes & Weights
@@ -227,7 +226,7 @@ Sidebar (w-[220px], bg-brand-main, border-r border-border-subtle)
 
 ```tsx
 <div className="px-3 text-label">
-  <span className="text-brand-accent font-higuen">{firstWord} </span>
+  <span className="text-brand-accent font-inter font-semibold">{firstWord} </span>
   <span className="text-text-secondary font-inter">{restOfWords}</span>
 </div>
 ```

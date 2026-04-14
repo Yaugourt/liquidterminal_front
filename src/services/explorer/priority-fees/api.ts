@@ -97,27 +97,6 @@ export function extractFillPriorityGas(row: PriorityFeesFillRow): number {
   return NaN;
 }
 
-/** Live gossip status: `data.current_auctions` (HypeDexer HIP-3 REST). */
-function normalizeGossipStatusSlots(data: unknown): PriorityFeesGossipRecord[] {
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return normalizeArrayPayload(data);
-  }
-  const o = data as Record<string, unknown>;
-  const auctions = o.current_auctions ?? o.currentAuctions;
-  if (Array.isArray(auctions)) return auctions as PriorityFeesGossipRecord[];
-  return normalizeArrayPayload(data);
-}
-
-function extractGossipPreviousWinners(data: unknown): (string | null)[] | null {
-  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
-  const o = data as Record<string, unknown>;
-  const w = o.previous_winners ?? o.previousWinners;
-  if (!Array.isArray(w)) return null;
-  return w.map((item) =>
-    item === null || typeof item === "string" ? item : String(item)
-  ) as (string | null)[];
-}
-
 /** LT forwards `{ rows, total_count }`; legacy unwrap may still be a bare array. */
 function normalizeGossipHistoryPayload(data: unknown): {
   rows: PriorityFeesGossipRecord[];
@@ -289,26 +268,6 @@ export const fetchPriorityFeesLeaderboard = async (
     const data = unwrapPriorityFeesChain(raw);
     return normalizeLeaderboard(data);
   }, "fetching priority fees leaderboard");
-};
-
-/**
- * Live HIP-3 gossip priority-fee auction slots.
- */
-export const fetchPriorityFeesGossipStatus = async (): Promise<{
-  slots: PriorityFeesGossipRecord[];
-  previousWinners: (string | null)[] | null;
-  raw: unknown;
-}> => {
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(ENDPOINTS.INDEXER_HIP3_PRIORITY_FEES_GOSSIP_STATUS);
-    const data = unwrapPriorityFeesChain(raw);
-    const slots = normalizeGossipStatusSlots(data);
-    return {
-      slots,
-      previousWinners: extractGossipPreviousWinners(data),
-      raw: data,
-    };
-  }, "fetching priority fees gossip status");
 };
 
 /**

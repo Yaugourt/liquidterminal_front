@@ -4,32 +4,26 @@ import { useState } from "react";
 import {
   PriorityFeesKpiRow,
   PriorityFeesLeaderboardCard,
-  PriorityFeesGossipStatusCard,
   PriorityFeesHistoryTable,
   PriorityFeesWindowSelector,
 } from "@/components/explorer/priority-fees";
-import {
-  usePriorityFeesStats,
-  usePriorityFeesLeaderboard,
-  usePriorityFeesGossipStatus,
-} from "@/services/explorer/priority-fees";
+import { usePriorityFeesStats, usePriorityFeesLeaderboard } from "@/services/explorer/priority-fees";
 
 export default function PriorityFeesPage() {
   const [hours, setHours] = useState(24);
 
   const stats = usePriorityFeesStats({ hours });
   const leaderboard = usePriorityFeesLeaderboard({ hours, limit: 11 });
-  const gossip = usePriorityFeesGossipStatus();
 
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="font-outfit text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
           Priority fees
         </h1>
         <p className="text-sm text-text-secondary max-w-2xl">
-          Priority gas on fills (HypeDexer <code className="text-xs">priorityGas</code>), gossip
-          auctions, window aggregates, and leaderboards.
+          Priority gas on fills (HypeDexer <code className="text-xs">priorityGas</code>), window
+          aggregates, leaderboards, and recent activity.
         </p>
       </div>
 
@@ -52,16 +46,8 @@ export default function PriorityFeesPage() {
           error={leaderboard.error}
           onRetry={() => leaderboard.refetch()}
         />
-        <PriorityFeesGossipStatusCard
-          slots={gossip.data}
-          previousWinners={gossip.previousWinners}
-          isLoading={gossip.isLoading}
-          error={gossip.error}
-          onRetry={() => gossip.refetch()}
-        />
+        <PriorityFeesHistoryTable />
       </div>
-
-      <PriorityFeesHistoryTable />
     </div>
   );
 }

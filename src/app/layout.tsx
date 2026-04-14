@@ -1,24 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
-
+/** Single UI family: Inter everywhere (Tailwind `font-sans` / `font-inter` use `--font-inter`). */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -104,8 +92,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-brand-main`}>
+    <html lang="en" className={inter.variable}>
+      <body className={`${inter.className} font-sans antialiased bg-brand-main`}>
         <Providers>
           {children}
           <SpeedInsights />

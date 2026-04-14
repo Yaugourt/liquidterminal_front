@@ -124,8 +124,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 ### Typography
 
-- **Titles:** `font-outfit`
-- **Body:** `font-inter`
+- **All UI copy (titles + body):** `font-inter` / `font-sans` (both map to Inter via `--font-inter`).
 - **Code/Addresses:** `font-mono`
 
 ### Semantic Colors

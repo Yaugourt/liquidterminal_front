@@ -68,3 +68,25 @@ export function formatAnnualizedLinearHype(hype: number): string {
   if (hype >= 1000) return `${(hype / 1000).toFixed(2)}K`;
   return formatPriorityFeeNumber(hype);
 }
+
+/**
+ * HypeDexer `SideEnum`: **B = Buy**, **A = Sell** (see OpenAPI on `/fills/recent` `side` param).
+ */
+export function formatFillSideLabel(side: unknown): string {
+  if (side === null || side === undefined || side === "") return "—";
+  const s = String(side).trim();
+  const u = s.toUpperCase();
+  if (u === "B" || u === "BUY") return "Buy";
+  if (u === "A" || u === "SELL") return "Sell";
+  return s;
+}
+
+export function isFillSideBuy(side: unknown): boolean {
+  const s = String(side ?? "").trim().toUpperCase();
+  return s === "B" || s === "BUY";
+}
+
+export function isFillSideSell(side: unknown): boolean {
+  const s = String(side ?? "").trim().toUpperCase();
+  return s === "A" || s === "SELL";
+}

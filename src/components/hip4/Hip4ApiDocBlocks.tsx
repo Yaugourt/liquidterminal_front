@@ -26,7 +26,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
 
   return (
     <section id={spec.id} className="scroll-mt-28">
-      <h2 className="font-outfit text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
+      <h2 className="font-inter text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-border-subtle pb-4">
         <span className="rounded-md bg-emerald-500/20 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
@@ -133,7 +133,7 @@ export function Hip4ApiWsEndpointDoc({ spec }: { spec: Hip4WsExampleSpec }) {
 
   return (
     <section id={spec.id} className="scroll-mt-28">
-      <h2 className="font-outfit text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
+      <h2 className="font-inter text-base font-semibold text-white sm:text-lg">{spec.title}</h2>
       <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-border-subtle pb-4">
         <span className="rounded-md bg-brand-gold/15 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-brand-gold">
           WebSocket
