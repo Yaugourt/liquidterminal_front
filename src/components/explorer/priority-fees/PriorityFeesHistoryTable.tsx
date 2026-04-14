@@ -25,7 +25,7 @@ import {
   isFillSideSell,
 } from "./priority-fees-format";
 
-const FILLS_PAGE_SIZE = 6;
+const FILLS_PAGE_SIZE = 10;
 
 function formatFillTime(t: unknown): string {
   if (typeof t === "number" && Number.isFinite(t)) {
