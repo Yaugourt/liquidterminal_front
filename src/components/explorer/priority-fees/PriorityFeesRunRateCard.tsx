@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { PriorityFeesGossipRecord, PriorityFeesStats } from "@/services/explorer/priority-fees";
 import { computePriorityFeesRunRate } from "@/lib/priority-fees-run-rate";
-import { formatPriorityFeeNumber } from "./priority-fees-format";
+import { formatPriorityFeeNumber, formatPriorityFeesWindowLabel } from "./priority-fees-format";
 
 function formatDays(days: number): string {
   if (days >= 1) return `${days.toFixed(2)}d`;
@@ -59,16 +59,17 @@ export function PriorityFeesRunRateCard({
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
+          <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
             Write gas · run-rate
           </h2>
           <p className="text-xs text-text-muted mt-1 max-w-2xl">
             Totals and projections use the <strong className="text-text-secondary">effective</strong>{" "}
             indexer window from <code className="text-[10px]">time_range</code>, not only the{" "}
-            {selectedWindowHours}h selector. Applies to the selected stats window only.
+            {formatPriorityFeesWindowLabel(selectedWindowHours)} selector. Applies to the selected
+            stats window only.
           </p>
         </div>
-        <p className="text-[11px] text-text-secondary font-mono shrink-0 mt-2 sm:mt-0">{cadenceLine}</p>
+        <p className="text-[11px] text-text-secondary shrink-0 mt-2 sm:mt-0">{cadenceLine}</p>
       </div>
 
       {run?.earlyWindow && (
@@ -86,7 +87,7 @@ export function PriorityFeesRunRateCard({
           <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
             Total write gas
           </p>
-          <p className="mt-1 text-lg font-mono text-white">
+          <p className="mt-1 text-lg text-white">
             {isLoading && !run ? "—" : `${formatPriorityFeeNumber(run?.totalPriorityGasHype ?? 0)} HYPE`}
           </p>
           <p className="text-[11px] text-text-muted mt-1">
@@ -97,7 +98,7 @@ export function PriorityFeesRunRateCard({
           <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
             Effective span
           </p>
-          <p className="mt-1 text-sm font-mono text-white leading-snug">
+          <p className="mt-1 text-sm text-white leading-snug">
             {run?.timeRange
               ? `${new Date(run.timeRange.start).toLocaleString()} → ${new Date(run.timeRange.end).toLocaleString()}`
               : "—"}
@@ -110,7 +111,7 @@ export function PriorityFeesRunRateCard({
           <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
             HYPE / day
           </p>
-          <p className="mt-1 text-lg font-mono text-white">
+          <p className="mt-1 text-lg text-white">
             {isLoading && !run ? "—" : `${formatPriorityFeeNumber(run?.hypePerDay ?? 0)} HYPE`}
           </p>
         </div>
@@ -140,7 +141,7 @@ export function PriorityFeesRunRateCard({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <p className="mt-1 text-lg font-mono text-brand-accent">
+          <p className="mt-1 text-lg text-brand-accent">
             {isLoading && !run
               ? "—"
               : `${formatLargeAnnualized(run?.annualizedLinearHype ?? 0)} HYPE`}

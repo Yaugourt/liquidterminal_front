@@ -9,6 +9,7 @@ import {
   PriorityFeesLeaderboardCard,
   PriorityFeesGossipStatusCard,
   PriorityFeesHistoryTable,
+  PriorityFeesWindowSelector,
 } from "@/components/explorer/priority-fees";
 import {
   usePriorityFeesStats,
@@ -37,6 +38,10 @@ export default function PriorityFeesPage() {
         </p>
       </div>
 
+      <div className="flex justify-end sm:justify-start">
+        <PriorityFeesWindowSelector hours={hours} onHoursChange={setHours} />
+      </div>
+
       <PriorityFeesKpiRow
         stats={stats.data}
         isLoading={stats.isLoading}
@@ -52,8 +57,6 @@ export default function PriorityFeesPage() {
       />
 
       <PriorityFeesOverviewChart
-        hours={hours}
-        onHoursChange={setHours}
         stats={stats.data}
         isLoading={stats.isLoading}
         error={stats.error}

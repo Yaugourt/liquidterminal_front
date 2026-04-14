@@ -16,7 +16,7 @@ import {
   usePriorityFeesFillsTimeseries,
   type PriorityFeesFillsTimeseriesBucketHours,
 } from "@/services/explorer/priority-fees";
-import { formatPriorityFeeNumber } from "./priority-fees-format";
+import { formatPriorityFeeNumber, formatPriorityFeesWindowLabel } from "./priority-fees-format";
 
 const BUCKET_OPTIONS = [1, 6, 24] as const satisfies readonly PriorityFeesFillsTimeseriesBucketHours[];
 
@@ -60,13 +60,16 @@ export function PriorityFeesFillsTimeseriesChart({ hours }: PriorityFeesFillsTim
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
+          <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
             Priority gas by bucket (fills)
           </h2>
           <p className="text-xs text-text-muted mt-1 max-w-2xl">
             Aggregated on the server from fills with <code className="text-[10px]">has_priority_gas</code>.
-            Same <strong className="text-text-secondary">{hours}h</strong> window as above; bucket width
-            selectable. Cached ~90s at the API.
+            Same{" "}
+            <strong className="text-text-secondary">
+              {formatPriorityFeesWindowLabel(hours)}
+            </strong>{" "}
+            window as above; bucket width selectable. Cached ~90s at the API.
           </p>
         </div>
         <div className="inline-flex rounded-lg p-1 border border-border-subtle bg-brand-primary/60 shrink-0">
