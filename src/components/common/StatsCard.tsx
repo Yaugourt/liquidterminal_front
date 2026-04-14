@@ -9,6 +9,8 @@ export interface StatsCardProps {
     change?: number;
     isLoading?: boolean;
     className?: string;
+    /** Applied to the main value span (default: white bold). */
+    valueClassName?: string;
 }
 
 export const StatsCard = memo(function StatsCard({
@@ -17,7 +19,8 @@ export const StatsCard = memo(function StatsCard({
     icon,
     change,
     isLoading,
-    className
+    className,
+    valueClassName,
 }: StatsCardProps) {
     return (
         <Card className={`p-4 ${className || ''}`}>
@@ -36,7 +39,12 @@ export const StatsCard = memo(function StatsCard({
                 <div className="h-7 bg-white/5 animate-pulse rounded w-24" />
             ) : (
                 <div className="flex items-baseline gap-2">
-                    <span className="text-lg max-sm:text-[16px] text-white font-bold tracking-tight">
+                    <span
+                        className={
+                            valueClassName ??
+                            "text-lg max-sm:text-[16px] text-white font-bold tracking-tight"
+                        }
+                    >
                         {value}
                     </span>
                     {change !== undefined && (

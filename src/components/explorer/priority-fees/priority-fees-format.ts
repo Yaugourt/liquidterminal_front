@@ -59,3 +59,12 @@ export function toFiniteNumber(value: unknown): number {
   }
   return 0;
 }
+
+/**
+ * Compact HYPE display for linear annualized burn (e.g. `5.12K` for thousands).
+ */
+export function formatAnnualizedLinearHype(hype: number): string {
+  if (!Number.isFinite(hype)) return "—";
+  if (hype >= 1000) return `${(hype / 1000).toFixed(2)}K`;
+  return formatPriorityFeeNumber(hype);
+}
