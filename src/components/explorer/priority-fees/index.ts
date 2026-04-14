@@ -1,4 +1,3 @@
-export { PriorityFeesRunRateCard } from "./PriorityFeesRunRateCard";
 export { PriorityFeesFillsTimeseriesChart } from "./PriorityFeesFillsTimeseriesChart";
 export { PriorityFeesKpiRow } from "./PriorityFeesKpiRow";
 export { PriorityFeesWindowSelector } from "./PriorityFeesWindowSelector";

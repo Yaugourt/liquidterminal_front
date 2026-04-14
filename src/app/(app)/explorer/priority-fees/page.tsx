@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   PriorityFeesKpiRow,
-  PriorityFeesRunRateCard,
   PriorityFeesFillsTimeseriesChart,
   PriorityFeesLeaderboardCard,
   PriorityFeesGossipStatusCard,
@@ -22,8 +21,6 @@ export default function PriorityFeesPage() {
   const stats = usePriorityFeesStats({ hours });
   const leaderboard = usePriorityFeesLeaderboard({ hours, limit: 11 });
   const gossip = usePriorityFeesGossipStatus();
-
-  const liveCount = gossip.data?.length ?? null;
 
   return (
     <div className="space-y-8">
@@ -47,19 +44,7 @@ export default function PriorityFeesPage() {
         </div>
       )}
 
-      <PriorityFeesKpiRow
-        stats={stats.data}
-        isLoading={stats.isLoading}
-        liveGossipSlots={liveCount}
-        gossipLoading={gossip.isLoading}
-      />
-
-      <PriorityFeesRunRateCard
-        stats={stats.data}
-        isLoading={stats.isLoading}
-        gossipSlots={gossip.data}
-        selectedWindowHours={hours}
-      />
+      <PriorityFeesKpiRow stats={stats.data} isLoading={stats.isLoading} />
 
       <PriorityFeesFillsTimeseriesChart hours={hours} />
 
