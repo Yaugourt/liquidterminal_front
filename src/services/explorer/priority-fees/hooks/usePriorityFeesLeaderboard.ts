@@ -12,7 +12,7 @@ export function usePriorityFeesLeaderboard(
   params: PriorityFeesLeaderboardQuery = {}
 ): UsePriorityFeesLeaderboardResult {
   const hours = params.hours ?? 24;
-  const limit = params.limit ?? 25;
+  const limit = params.limit ?? 11;
   const deps = useMemo(() => [hours, limit], [hours, limit]);
 
   const fetchFn = useCallback(

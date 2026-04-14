@@ -18,7 +18,7 @@ export default function PriorityFeesPage() {
   const [hours, setHours] = useState(24);
 
   const stats = usePriorityFeesStats({ hours });
-  const leaderboard = usePriorityFeesLeaderboard({ hours, limit: 25 });
+  const leaderboard = usePriorityFeesLeaderboard({ hours, limit: 11 });
   const gossip = usePriorityFeesGossipStatus();
 
   const liveCount = gossip.data?.length ?? null;

@@ -45,7 +45,7 @@ export function PriorityFeesLeaderboardCard({
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md h-full flex flex-col">
       <div className="mb-4">
         <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
-          Top payers
+          Top 11 payers
         </h2>
         <p className="text-xs text-text-muted mt-1">
           HypeDexer <code className="text-[10px]">by=priority_fees</code> — same hours window as the

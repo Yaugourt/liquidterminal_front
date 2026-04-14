@@ -284,7 +284,7 @@ export const fetchPriorityFeesLeaderboard = async (
   return withErrorHandling(async () => {
     const raw = await get<unknown>(
       ENDPOINTS.INDEXER_USERS_LEADERBOARD,
-      buildLeaderboardQuery({ hours: params.hours ?? 24, limit: params.limit ?? 25 })
+      buildLeaderboardQuery({ hours: params.hours ?? 24, limit: params.limit ?? 11 })
     );
     const data = unwrapPriorityFeesChain(raw);
     return normalizeLeaderboard(data);

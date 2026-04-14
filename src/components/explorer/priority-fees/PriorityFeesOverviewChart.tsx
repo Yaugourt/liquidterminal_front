@@ -54,8 +54,10 @@ export function PriorityFeesOverviewChart({
             Window summary
           </h2>
           <p className="text-xs text-text-muted mt-1">
-            Aggregates from the indexer for the selected hours (no hourly time series on this
-            endpoint).
+            HypeDexer <code className="text-[10px]">GET /analytics/priority-fees/stats</code> only
+            returns window totals and <code className="text-[10px]">time_range</code> — not per-hour
+            buckets — so there is no line chart data from this call. Totals below match the KPI row
+            for the same hours.
           </p>
         </div>
         <div className="inline-flex rounded-lg p-1 border border-border-subtle bg-brand-primary/60">
