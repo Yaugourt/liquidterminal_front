@@ -178,6 +178,8 @@ export interface PriorityFeesFillsTimeseriesResponse {
   buckets: PriorityFeesFillsTimeseriesBucket[];
   partial: boolean;
   scannedRows: number;
+  /** When partial, explains time budget / upstream / service errors (row-cap-only may omit). */
+  computationNote?: string;
 }
 
 export interface UsePriorityFeesFillsTimeseriesResult {

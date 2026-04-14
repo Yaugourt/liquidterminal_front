@@ -92,7 +92,8 @@ export function PriorityFeesFillsTimeseriesChart({ hours }: PriorityFeesFillsTim
 
       {data?.partial && (
         <div className="mt-3 rounded-lg border border-brand-gold/25 bg-brand-gold/5 px-3 py-2 text-xs text-brand-gold">
-          Partial data: fill scan stopped at {data.scannedRows.toLocaleString("en-US")} rows (safety cap).
+          {data.computationNote ??
+            `Partial data: fill scan stopped at ${data.scannedRows.toLocaleString("en-US")} rows (safety cap).`}
           <button
             type="button"
             onClick={() => refetch()}
