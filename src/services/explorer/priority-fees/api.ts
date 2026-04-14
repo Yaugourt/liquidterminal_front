@@ -10,6 +10,8 @@ import type {
   PriorityFeesGossipHistoryQuery,
   PriorityFeesRecentFillsQuery,
   PriorityFeesFillRow,
+  PriorityFeesFillsTimeseriesQuery,
+  PriorityFeesFillsTimeseriesResponse,
 } from "./types";
 
 function unwrapIndexerData<T>(body: unknown): T {
@@ -273,6 +275,21 @@ export const fetchPriorityFeesStats = async (
     }
     return {};
   }, "fetching priority fees stats");
+};
+
+/**
+ * Server-aggregated priority gas by time bucket from fills (`has_priority_gas`), cached at the API.
+ */
+export const fetchPriorityFeesFillsTimeseries = async (
+  params: PriorityFeesFillsTimeseriesQuery
+): Promise<PriorityFeesFillsTimeseriesResponse> => {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(ENDPOINTS.INDEXER_ANALYTICS_PRIORITY_FEES_FILLS_TIMESERIES, {
+      hours: String(params.hours),
+      bucket_hours: String(params.bucketHours),
+    });
+    return unwrapIndexerData<PriorityFeesFillsTimeseriesResponse>(raw);
+  }, "fetching priority fees fills timeseries");
 };
 
 /**

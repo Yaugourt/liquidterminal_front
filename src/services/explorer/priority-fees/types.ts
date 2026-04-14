@@ -159,3 +159,31 @@ export interface UsePriorityFeesRecentFillsResult {
   refetch: () => void;
 }
 
+export type PriorityFeesFillsTimeseriesBucketHours = 1 | 6 | 24;
+
+export interface PriorityFeesFillsTimeseriesQuery {
+  hours: number;
+  bucketHours: PriorityFeesFillsTimeseriesBucketHours;
+}
+
+export interface PriorityFeesFillsTimeseriesBucket {
+  bucketStart: string;
+  totalGas: number;
+  fillCount: number;
+}
+
+export interface PriorityFeesFillsTimeseriesResponse {
+  bucketHours: number;
+  window: { start: string; end: string };
+  buckets: PriorityFeesFillsTimeseriesBucket[];
+  partial: boolean;
+  scannedRows: number;
+}
+
+export interface UsePriorityFeesFillsTimeseriesResult {
+  data: PriorityFeesFillsTimeseriesResponse | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
