@@ -65,6 +65,8 @@ export const ENDPOINTS = {
 
   /** Analytics — priority gas stats (window + optional coin) */
   INDEXER_ANALYTICS_PRIORITY_FEES_STATS: '/indexer/analytics/priority-fees/stats',
+  /** Aggregated priority gas per time bucket from fills (LT + short Redis cache) */
+  INDEXER_ANALYTICS_PRIORITY_FEES_FILLS_TIMESERIES: '/indexer/analytics/priority-fees/fills-timeseries',
   /** Users leaderboard (use query `by=priority_fees`) */
   INDEXER_USERS_LEADERBOARD: '/indexer/users/leaderboard',
   /** HIP-3 gossip priority-fee auction slots (live) */
