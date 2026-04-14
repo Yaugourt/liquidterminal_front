@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Gauge, Hash, Activity, ArrowDownToLine } from "lucide-react";
+import { Users, Gauge, Hash, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/common/StatsCard";
 import { AssetLogo } from "@/components/common/AssetLogo";
@@ -82,11 +82,6 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
         icon: <Gauge className="w-4 h-4 text-brand-gold" />,
       },
       {
-        title: "Min priority gas",
-        value: formatPriorityFeeNumber(stats?.min_priority_gas),
-        icon: <ArrowDownToLine className="w-4 h-4 text-text-secondary" />,
-      },
-      {
         title: "Max priority gas",
         value: formatPriorityFeeNumber(stats?.max_priority_gas),
         icon: <Activity className="w-4 h-4 text-rose-400" />,
@@ -103,7 +98,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
   }, [stats, isLoading, fillCount, run]);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {cards.map((card, i) => {
         const loading = card.cardLoading ?? isLoading;
         const body = (
