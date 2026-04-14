@@ -15,10 +15,13 @@ export interface PriorityFeesStats {
   total_fills_with_priority?: number;
   fills_with_priority?: number;
   avg_priority_gas?: number | string;
+  min_priority_gas?: number | string;
   max_priority_gas?: number | string;
   unique_users?: number;
   window_hours?: number;
-  /** Hourly or bucketed series when provided */
+  /** HypeDexer: effective window for aggregates (no hourly buckets on this endpoint). */
+  time_range?: { start?: string; end?: string };
+  /** Hourly or bucketed series if upstream adds them later */
   buckets?: PriorityFeesStatsBucket[];
   hourly?: PriorityFeesStatsBucket[];
   by_hour?: PriorityFeesStatsBucket[];
@@ -53,6 +56,8 @@ export interface PriorityFeesLeaderboardEntry {
   total_priority_gas?: number | string;
   priority_fees?: number | string;
   volume?: number | string;
+  /** HypeDexer `by=priority_fees` */
+  fill_count?: number;
 }
 
 export interface PriorityFeesGossipHistoryQuery {
@@ -63,7 +68,10 @@ export interface PriorityFeesGossipHistoryQuery {
   limit?: number;
 }
 
-/** Single gossip slot / history row — upstream-dependent */
+/**
+ * Gossip slot (live) or history row — HypeDexer uses camelCase on HIP-3 REST;
+ * snake_case kept for older payloads.
+ */
 export interface PriorityFeesGossipRecord {
   slot_id?: number;
   slotId?: number;
@@ -71,8 +79,14 @@ export interface PriorityFeesGossipRecord {
   current_gas?: number | string;
   currentGas?: number | string;
   start_gas?: number | string;
+  startGas?: number | string;
+  endGas?: number | string | null;
   end_time?: string;
   endTime?: string;
+  startTime?: string;
+  lastUpdate?: string;
+  durationSeconds?: number;
+  snapshotTs?: string;
   winner?: string;
   cycle_id?: string;
   [key: string]: unknown;
@@ -96,8 +110,10 @@ export interface PriorityFeesFillRow {
   sz?: string | number;
   /** Snake_case (LiquidTerminal / some indexer payloads) */
   priority_gas?: string | number | null;
-  /** CamelCase (HypeDexer OpenAPI) */
+  /** Canonical HypeDexer field: priority fee paid, null if none */
   priorityGas?: string | number | null;
+  block_number?: number | null;
+  blockNumber?: number | null;
   hash?: string;
   tid?: string | number;
 }
@@ -119,6 +135,8 @@ export interface UsePriorityFeesLeaderboardResult {
 
 export interface UsePriorityFeesGossipStatusResult {
   data: PriorityFeesGossipRecord[] | null;
+  /** Previous cycle winners per slot (HypeDexer `previous_winners`) */
+  previousWinners: (string | null)[] | null;
   raw: unknown;
   isLoading: boolean;
   error: Error | null;
@@ -127,6 +145,8 @@ export interface UsePriorityFeesGossipStatusResult {
 
 export interface UsePriorityFeesGossipHistoryResult {
   data: PriorityFeesGossipRecord[];
+  /** Total matching rows when LiquidTerminal forwards HypeDexer `total_count` */
+  totalCount: number | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -139,4 +159,3 @@ export interface UsePriorityFeesRecentFillsResult {
   refetch: () => void;
 }
 
-export type PriorityFeesChartMetric = "total_gas" | "fill_count";

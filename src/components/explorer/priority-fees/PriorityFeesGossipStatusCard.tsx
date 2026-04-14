@@ -7,6 +7,7 @@ import { formatPriorityFeeNumber } from "./priority-fees-format";
 
 export interface PriorityFeesGossipStatusCardProps {
   slots: PriorityFeesGossipRecord[] | null;
+  previousWinners: (string | null)[] | null;
   isLoading: boolean;
   error: Error | null;
   onRetry?: () => void;
@@ -17,12 +18,9 @@ function slotId(slot: PriorityFeesGossipRecord): string {
   return id !== undefined && id !== null ? String(id) : "—";
 }
 
-function currentGas(slot: PriorityFeesGossipRecord): unknown {
-  return slot.current_gas ?? slot.currentGas;
-}
-
 export function PriorityFeesGossipStatusCard({
   slots,
+  previousWinners,
   isLoading,
   error,
   onRetry,
@@ -34,8 +32,15 @@ export function PriorityFeesGossipStatusCard({
           Gossip auctions (live)
         </h2>
         <p className="text-xs text-text-muted mt-1">
-          HIP-3 priority-fee auction slots. Fields depend on indexer payload.
+          HIP-3 priority-fee Dutch auction slots (3-minute cycle). Gas fields from HypeDexer{" "}
+          <code className="text-[10px] text-text-secondary">current_auctions</code>.
         </p>
+        {previousWinners && previousWinners.length > 0 && (
+          <p className="text-[11px] text-text-secondary mt-2 font-mono break-all">
+            Previous cycle:{" "}
+            {previousWinners.map((w, i) => (w === null || w === "" ? `slot ${i}: —` : `${i}: ${w}`)).join(" · ")}
+          </p>
+        )}
       </div>
 
       {error && (
@@ -61,7 +66,8 @@ export function PriorityFeesGossipStatusCard({
           </div>
         ) : !slots || slots.length === 0 ? (
           <div className="flex h-[200px] items-center justify-center text-center text-sm text-text-secondary px-2">
-            No live slots returned. The indexer may use a different shape — check raw payload in devtools.
+            No live slots in <code className="text-xs">current_auctions</code>. Upstream may be empty
+            or the payload shape changed.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -80,12 +86,32 @@ export function PriorityFeesGossipStatusCard({
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-white font-mono">
-                  Gas: {formatPriorityFeeNumber(currentGas(slot))}
+                <div className="text-xs text-text-secondary space-y-1 font-mono">
+                  <div className="flex justify-between gap-2">
+                    <span>Current</span>
+                    <span className="text-white">
+                      {formatPriorityFeeNumber(slot.currentGas ?? slot.current_gas)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between gap-2">
+                    <span>Start</span>
+                    <span className="text-white">
+                      {formatPriorityFeeNumber(slot.startGas ?? slot.start_gas)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between gap-2">
+                    <span>End</span>
+                    <span className="text-white">
+                      {slot.endGas !== undefined && slot.endGas !== null
+                        ? formatPriorityFeeNumber(slot.endGas)
+                        : "—"}
+                    </span>
+                  </div>
                 </div>
-                {(slot.end_time || slot.endTime) && (
-                  <div className="text-xs text-text-muted truncate">
-                    Ends: {String(slot.end_time ?? slot.endTime)}
+                {(slot.lastUpdate || slot.startTime) && (
+                  <div className="text-[10px] text-text-muted truncate space-y-0.5">
+                    {slot.startTime && <div>Start: {String(slot.startTime)}</div>}
+                    {slot.lastUpdate && <div>Updated: {String(slot.lastUpdate)}</div>}
                   </div>
                 )}
                 {typeof slot.winner === "string" && slot.winner && (

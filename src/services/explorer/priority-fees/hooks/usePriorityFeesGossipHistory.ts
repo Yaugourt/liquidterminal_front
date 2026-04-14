@@ -3,7 +3,11 @@
 import { useCallback, useMemo } from "react";
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { fetchPriorityFeesGossipHistory } from "../api";
-import type { PriorityFeesGossipHistoryQuery, UsePriorityFeesGossipHistoryResult } from "../types";
+import type {
+  PriorityFeesGossipHistoryQuery,
+  PriorityFeesGossipRecord,
+  UsePriorityFeesGossipHistoryResult,
+} from "../types";
 
 /**
  * Historical gossip priority-fee auctions (paginated server-side).
@@ -34,15 +38,21 @@ export function usePriorityFeesGossipHistory(
     [offset, limit, slotId, start, end]
   );
 
+  const empty: { rows: PriorityFeesGossipRecord[]; totalCount: number | null } = {
+    rows: [],
+    totalCount: null,
+  };
   const { data, isLoading, error, refetch } = useDataFetching({
     fetchFn,
     refreshInterval: 120_000,
     dependencies: deps,
-    initialData: [],
+    initialData: empty,
   });
 
+  const pack = data ?? empty;
   return {
-    data: data ?? [],
+    data: pack.rows,
+    totalCount: pack.totalCount,
     isLoading,
     error,
     refetch,

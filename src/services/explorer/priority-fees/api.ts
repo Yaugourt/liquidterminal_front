@@ -77,8 +77,66 @@ function looksLikeGossipSlot(o: Record<string, unknown>): boolean {
     "slotId" in o ||
     "current_gas" in o ||
     "currentGas" in o ||
-    "status" in o
+    "status" in o ||
+    "snapshotTs" in o ||
+    "startGas" in o
   );
+}
+
+/**
+ * HypeDexer canonical field is `priorityGas` (null if none); keep `priority_gas` as alias.
+ */
+export function extractFillPriorityGas(row: PriorityFeesFillRow): number {
+  const raw = row.priorityGas ?? row.priority_gas;
+  if (raw === null || raw === undefined) return NaN;
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  if (typeof raw === "string" && raw.trim() !== "") {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  return NaN;
+}
+
+/** Live gossip status: `data.current_auctions` (HypeDexer HIP-3 REST). */
+function normalizeGossipStatusSlots(data: unknown): PriorityFeesGossipRecord[] {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return normalizeArrayPayload(data);
+  }
+  const o = data as Record<string, unknown>;
+  const auctions = o.current_auctions ?? o.currentAuctions;
+  if (Array.isArray(auctions)) return auctions as PriorityFeesGossipRecord[];
+  return normalizeArrayPayload(data);
+}
+
+function extractGossipPreviousWinners(data: unknown): (string | null)[] | null {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const o = data as Record<string, unknown>;
+  const w = o.previous_winners ?? o.previousWinners;
+  if (!Array.isArray(w)) return null;
+  return w.map((item) =>
+    item === null || typeof item === "string" ? item : String(item)
+  ) as (string | null)[];
+}
+
+/** LT forwards `{ rows, total_count }`; legacy unwrap may still be a bare array. */
+function normalizeGossipHistoryPayload(data: unknown): {
+  rows: PriorityFeesGossipRecord[];
+  totalCount: number | null;
+} {
+  if (data && typeof data === "object" && !Array.isArray(data)) {
+    const o = data as Record<string, unknown>;
+    if (Array.isArray(o.rows)) {
+      const tc = o.total_count;
+      return {
+        rows: o.rows as PriorityFeesGossipRecord[],
+        totalCount: typeof tc === "number" && Number.isFinite(tc) ? tc : null,
+      };
+    }
+  }
+  return {
+    rows: normalizeArrayPayload(data),
+    totalCount: null,
+  };
 }
 
 function normalizeArrayPayload(data: unknown): PriorityFeesGossipRecord[] {
@@ -145,16 +203,6 @@ function normalizeFills(data: unknown): PriorityFeesFillRow[] {
   return [];
 }
 
-function priorityGasNumeric(row: PriorityFeesFillRow): number {
-  const raw = row.priority_gas ?? row.priorityGas;
-  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
-  if (typeof raw === "string" && raw.trim() !== "") {
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : NaN;
-  }
-  return NaN;
-}
-
 /** Drop rows with no positive priority gas when the request asked for priority-only fills. */
 function filterPositivePriorityGasRows(
   rows: PriorityFeesFillRow[],
@@ -162,7 +210,7 @@ function filterPositivePriorityGasRows(
 ): PriorityFeesFillRow[] {
   if (!hasFilter) return rows;
   return rows.filter((row) => {
-    const n = priorityGasNumeric(row);
+    const n = extractFillPriorityGas(row);
     return Number.isFinite(n) && n > 0;
   });
 }
@@ -248,13 +296,18 @@ export const fetchPriorityFeesLeaderboard = async (
  */
 export const fetchPriorityFeesGossipStatus = async (): Promise<{
   slots: PriorityFeesGossipRecord[];
+  previousWinners: (string | null)[] | null;
   raw: unknown;
 }> => {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(ENDPOINTS.INDEXER_HIP3_PRIORITY_FEES_GOSSIP_STATUS);
     const data = unwrapPriorityFeesChain(raw);
-    const slots = normalizeArrayPayload(data);
-    return { slots, raw: data };
+    const slots = normalizeGossipStatusSlots(data);
+    return {
+      slots,
+      previousWinners: extractGossipPreviousWinners(data),
+      raw: data,
+    };
   }, "fetching priority fees gossip status");
 };
 
@@ -263,7 +316,7 @@ export const fetchPriorityFeesGossipStatus = async (): Promise<{
  */
 export const fetchPriorityFeesGossipHistory = async (
   params: PriorityFeesGossipHistoryQuery = {}
-): Promise<PriorityFeesGossipRecord[]> => {
+): Promise<{ rows: PriorityFeesGossipRecord[]; totalCount: number | null }> => {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(
       ENDPOINTS.INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY,
@@ -276,7 +329,7 @@ export const fetchPriorityFeesGossipHistory = async (
       })
     );
     const data = unwrapPriorityFeesChain(raw);
-    return normalizeArrayPayload(data);
+    return normalizeGossipHistoryPayload(data);
   }, "fetching priority fees gossip history");
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Flame, Users, Gauge, Hash, Activity, Radio } from "lucide-react";
+import { Flame, Users, Gauge, Hash, Activity, Radio, ArrowDownToLine } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/common/StatsCard";
 import type { PriorityFeesStats } from "@/services/explorer/priority-fees";
@@ -52,6 +52,11 @@ export function PriorityFeesKpiRow({
         icon: <Gauge className="w-4 h-4 text-brand-gold" />,
       },
       {
+        title: "Min priority gas",
+        value: formatPriorityFeeNumber(stats?.min_priority_gas),
+        icon: <ArrowDownToLine className="w-4 h-4 text-text-secondary" />,
+      },
+      {
         title: "Max priority gas",
         value: formatPriorityFeeNumber(stats?.max_priority_gas),
         icon: <Activity className="w-4 h-4 text-rose-400" />,
@@ -77,7 +82,7 @@ export function PriorityFeesKpiRow({
   );
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
       {cards.map((card, i) => (
         <motion.div
           key={card.title}

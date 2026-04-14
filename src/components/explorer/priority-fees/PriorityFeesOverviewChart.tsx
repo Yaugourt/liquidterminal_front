@@ -1,13 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { LightweightChart } from "@/components/common/charts/LightweightChart";
-import type { PriorityFeesStats, PriorityFeesChartMetric } from "@/services/explorer/priority-fees";
-import { statsToChartPoints } from "./priority-fees-chart-series";
+import type { PriorityFeesStats } from "@/services/explorer/priority-fees";
+import { formatPriorityFeeNumber, toFiniteNumber } from "./priority-fees-format";
 
 const HOUR_OPTIONS = [1, 6, 24, 72, 168] as const;
+
+function formatTimeRange(stats: PriorityFeesStats | null): string {
+  const tr = stats?.time_range;
+  if (!tr || typeof tr !== "object") return "—";
+  const start = typeof tr.start === "string" ? tr.start : null;
+  const end = typeof tr.end === "string" ? tr.end : null;
+  if (!start && !end) return "—";
+  if (start && end) {
+    try {
+      return `${new Date(start).toLocaleString()} → ${new Date(end).toLocaleString()}`;
+    } catch {
+      return `${start} → ${end}`;
+    }
+  }
+  return start ?? end ?? "—";
+}
 
 export interface PriorityFeesOverviewChartProps {
   hours: number;
@@ -17,6 +31,10 @@ export interface PriorityFeesOverviewChartProps {
   error: Error | null;
 }
 
+/**
+ * HypeDexer `GET /analytics/priority-fees/stats` returns window aggregates + `time_range` only
+ * (no hourly buckets). This panel surfaces those fields instead of a time-series chart.
+ */
 export function PriorityFeesOverviewChart({
   hours,
   onHoursChange,
@@ -24,62 +42,37 @@ export function PriorityFeesOverviewChart({
   isLoading,
   error,
 }: PriorityFeesOverviewChartProps) {
-  const [metric, setMetric] = useState<PriorityFeesChartMetric>("total_gas");
-
-  const chartData = useMemo(() => statsToChartPoints(stats, metric), [stats, metric]);
-
-  const formatValue = useMemo(
-    () => (v: number) =>
-      metric === "fill_count"
-        ? v.toLocaleString("en-US", { maximumFractionDigits: 0 })
-        : v.toLocaleString("en-US", { maximumFractionDigits: 2 }),
-    [metric]
-  );
+  const fillCount = stats
+    ? toFiniteNumber(stats.total_fills_with_priority ?? stats.fills_with_priority)
+    : 0;
 
   return (
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
-            Priority fees overview
+            Window summary
           </h2>
           <p className="text-xs text-text-muted mt-1">
-            Windowed indexer stats; chart uses hourly buckets when the API returns them.
+            Aggregates from the indexer for the selected hours (no hourly time series on this
+            endpoint).
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex rounded-lg p-1 border border-border-subtle bg-brand-primary/60">
-            {(["total_gas", "fill_count"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setMetric(m)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  metric === m
-                    ? "bg-brand-accent text-brand-tertiary"
-                    : "text-text-secondary hover:text-white"
-                }`}
-              >
-                {m === "total_gas" ? "Gas" : "Fills"}
-              </button>
-            ))}
-          </div>
-          <div className="inline-flex rounded-lg p-1 border border-border-subtle bg-brand-primary/60">
-            {HOUR_OPTIONS.map((h) => (
-              <button
-                key={h}
-                type="button"
-                onClick={() => onHoursChange(h)}
-                className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                  hours === h
-                    ? "bg-brand-accent text-brand-tertiary"
-                    : "text-text-secondary hover:text-white"
-                }`}
-              >
-                {h}h
-              </button>
-            ))}
-          </div>
+        <div className="inline-flex rounded-lg p-1 border border-border-subtle bg-brand-primary/60">
+          {HOUR_OPTIONS.map((h) => (
+            <button
+              key={h}
+              type="button"
+              onClick={() => onHoursChange(h)}
+              className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                hours === h
+                  ? "bg-brand-accent text-brand-tertiary"
+                  : "text-text-secondary hover:text-white"
+              }`}
+            >
+              {h}h
+            </button>
+          ))}
         </div>
       </div>
 
@@ -89,22 +82,58 @@ export function PriorityFeesOverviewChart({
         </div>
       )}
 
-      <div className="mt-6 relative min-h-[280px] w-full">
+      <div className="mt-6 rounded-xl border border-border-subtle bg-brand-primary/30 p-4 sm:p-5">
         {isLoading && !stats ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center glass-panel rounded-xl">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-accent mb-2" />
-            <span className="text-text-muted text-sm">Loading chart…</span>
-          </div>
-        ) : chartData.length === 0 ? (
-          <div className="flex h-[280px] items-center justify-center rounded-xl border border-border-subtle bg-brand-primary/30 text-center px-4">
-            <p className="text-sm text-text-secondary">
-              No hourly buckets in this response for the chart. If totals above show numbers, the
-              indexer returned aggregates only; otherwise check the API response shape.
-            </p>
+          <div className="flex min-h-[160px] flex-col items-center justify-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+            <span className="text-text-muted text-sm">Loading window stats…</span>
           </div>
         ) : (
-          <div className="h-[280px] w-full">
-            <LightweightChart data={chartData} height={280} formatValue={formatValue} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                Effective time range
+              </p>
+              <p className="mt-1 text-sm text-white font-mono leading-snug">
+                {formatTimeRange(stats)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                Total priority gas (window)
+              </p>
+              <p className="mt-1 text-lg text-white font-mono">
+                {formatPriorityFeeNumber(stats?.total_priority_gas)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                Fills with priority
+              </p>
+              <p className="mt-1 text-lg text-white font-mono">
+                {isLoading ? "—" : fillCount.toLocaleString("en-US")}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                Avg / min / max gas
+              </p>
+              <p className="mt-1 text-sm text-white font-mono">
+                {formatPriorityFeeNumber(stats?.avg_priority_gas)} ·{" "}
+                {formatPriorityFeeNumber(stats?.min_priority_gas)} ·{" "}
+                {formatPriorityFeeNumber(stats?.max_priority_gas)}
+              </p>
+            </div>
+            <div className="sm:col-span-2 lg:col-span-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                Unique users
+              </p>
+              <p className="mt-1 text-sm text-white font-mono">
+                {stats?.unique_users !== undefined && stats.unique_users !== null
+                  ? String(stats.unique_users)
+                  : "—"}
+              </p>
+            </div>
           </div>
         )}
       </div>
