@@ -21,8 +21,21 @@
         --sidebar-ring: 191 100% 76%;
     }
 
+    /* Inherit Inter down the tree (portals, third-party roots, etc.). */
+    html {
+        @apply font-sans antialiased;
+    }
+
     body {
         @apply bg-background text-foreground font-sans antialiased;
+    }
+
+    /* UA defaults use monospace for code blocks; align with site typography. */
+    code,
+    kbd,
+    samp,
+    pre {
+        @apply font-sans;
     }
 }
 

@@ -113,7 +113,7 @@ export function PriorityFeesLeaderboardCard({
                     key={`${addr}-${rank}`}
                     className="border-border-subtle hover:bg-white/[0.03]"
                   >
-                    <TableCell className="py-2.5 px-3 text-text-muted text-sm font-mono">
+                    <TableCell className="py-2.5 px-3 text-text-muted text-sm tabular-nums">
                       {rank}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-sm">
@@ -123,10 +123,10 @@ export function PriorityFeesLeaderboardCard({
                         <span className="text-text-muted">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-white font-mono">
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-white tabular-nums">
                       {formatPriorityFeeNumber(rowScore(row))}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-secondary font-mono">
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-secondary tabular-nums">
                       {row.fill_count !== undefined && row.fill_count !== null
                         ? String(row.fill_count)
                         : "—"}
