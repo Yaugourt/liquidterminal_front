@@ -34,6 +34,8 @@ export function usePriorityFeesFillsTimeseries(
     fetchFn,
     refreshInterval: 90_000,
     dependencies: deps,
+    /** Heavy endpoint; avoid hammering the API on 5xx or slow responses. */
+    maxRetries: 1,
   });
 
   return {
