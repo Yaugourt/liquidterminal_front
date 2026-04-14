@@ -62,6 +62,17 @@ export const ENDPOINTS = {
   INDEXER_VAULT_EQUITY_SNAPSHOTS: '/indexer/vaults/equitySnapshots',
   INDEXER_USER_VAULT_EQUITIES: '/indexer/vaults/userVaultEquities',
   INDEXER_VAULT_LEDGER: '/indexer/vaults/vaultLedger',
+
+  /** Analytics — priority gas stats (window + optional coin) */
+  INDEXER_ANALYTICS_PRIORITY_FEES_STATS: '/indexer/analytics/priority-fees/stats',
+  /** Users leaderboard (use query `by=priority_fees`) */
+  INDEXER_USERS_LEADERBOARD: '/indexer/users/leaderboard',
+  /** HIP-3 gossip priority-fee auction slots (live) */
+  INDEXER_HIP3_PRIORITY_FEES_GOSSIP_STATUS: '/indexer/hip3/priority-fees/gossip/status',
+  /** HIP-3 gossip priority-fee auction history */
+  INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY: '/indexer/hip3/priority-fees/gossip/history',
+  /** Recent fills (supports `has_priority_gas`) */
+  INDEXER_FILLS_RECENT: '/indexer/fills/recent',
 } as const;
 
 // Helper functions pour construire les URLs complètes
