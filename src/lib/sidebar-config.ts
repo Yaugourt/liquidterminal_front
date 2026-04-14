@@ -16,7 +16,8 @@ import {
   Home,
   CandlestickChart,
   Zap,
-  FileCode
+  FileCode,
+  Sparkles
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -95,6 +96,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/explorer/liquidations',
         icon: null,
         IconComponent: Zap
+      },
+      {
+        name: 'Priority Fees',
+        href: '/explorer/priority-fees',
+        icon: null,
+        IconComponent: Sparkles
       },
     ]
   },

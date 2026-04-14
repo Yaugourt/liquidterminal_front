@@ -222,6 +222,21 @@ export const seoConfig = {
     path: "/explorer/vaults",
   },
 
+  priorityFees: {
+    title: "Priority Fees - HyperLiquid Explorer",
+    description:
+      "Track HyperLiquid priority gas fees, HIP-3 gossip auction slots, leaderboards, and recent fills with priority gas.",
+    keywords: [
+      "priority fees",
+      "HyperLiquid",
+      "priority gas",
+      "HIP-3",
+      "gossip auctions",
+      "indexer",
+    ],
+    path: "/explorer/priority-fees",
+  },
+
   validators: {
     title: "Validators - HyperLiquid Network Validators",
     description: "Monitor HyperLiquid validators, staking stats, commission rates, and network security metrics.",
