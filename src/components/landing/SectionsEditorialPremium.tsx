@@ -214,7 +214,7 @@ export function SectionsEditorialPremium() {
       >
         <Link href="/" className="flex items-center gap-2.5 min-w-0 shrink">
           <Image src="/logo.svg" alt="Liquid Terminal" width={32} height={32} className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" />
-          <span className="font-higuen text-base sm:text-lg text-white tracking-tight whitespace-nowrap truncate">
+          <span className="font-inter text-base sm:text-lg text-white tracking-tight whitespace-nowrap truncate">
             Liquid <span className="text-[#83E9FF]">Terminal</span>
           </span>
         </Link>
@@ -255,7 +255,7 @@ export function SectionsEditorialPremium() {
             <HeroFadeIn
               as="h2"
               delay={0.35}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-higuen font-normal text-white leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-inter font-normal text-white leading-tight mb-6"
             >
               The Terminal to house all{" "}
               <span className="text-[#83E9FF] drop-shadow-[0_0_20px_rgba(131,233,255,0.3)]">Hyper</span>
@@ -302,7 +302,7 @@ export function SectionsEditorialPremium() {
             <p className="text-[#83E9FF] text-xs font-semibold uppercase tracking-[0.25em] mb-3 font-inter">
               Why Liquid Terminal
             </p>
-            <h2 className="font-higuen text-3xl md:text-4xl lg:text-[2.75rem] text-white leading-tight max-w-2xl mx-auto">
+            <h2 className="font-inter text-3xl md:text-4xl lg:text-[2.75rem] text-white leading-tight max-w-2xl mx-auto">
               One terminal. Zero noise.
             </h2>
             <p className="mt-4 text-[#a1a1aa] text-base max-w-xl mx-auto">
@@ -402,7 +402,7 @@ export function SectionsEditorialPremium() {
       <section id="see-it" className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center mb-10 sm:mb-14 md:mb-20">
           <p className="text-[#83E9FF] text-sm font-semibold uppercase tracking-[0.2em] mb-4">See it in action</p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-higuen text-white max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-inter text-white max-w-2xl mx-auto">
             Built for <span className="text-[#83E9FF]">speed</span> and <span className="text-[#f9e370]">clarity</span>
           </h2>
         </FadeIn>
@@ -430,7 +430,7 @@ export function SectionsEditorialPremium() {
       <section id="get-started" className="relative py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center max-w-2xl mx-auto">
           <p className="text-[#83E9FF] text-sm font-semibold uppercase tracking-[0.2em] mb-4">Get started</p>
-          <h2 className="text-3xl md:text-4xl font-higuen text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-inter text-white mb-6">
             Your <span className="text-[#83E9FF]">terminal</span> awaits
           </h2>
           <p className="text-[#a1a1aa] text-lg mb-10">

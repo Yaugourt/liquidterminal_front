@@ -118,7 +118,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             className="h-6 w-6"
                         />
                         <h1 className="hidden lg:block text-sm font-bold">
-                            <span className="text-brand-accent font-higuen">Liquid </span>
+                            <span className="text-brand-accent font-inter font-semibold">Liquid </span>
                             <span className="text-white font-inter">Terminal</span>
                         </h1>
                     </Link>
@@ -131,7 +131,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <li key={groupIndex} className="space-y-1">
                                 {group.groupName && (
                                     <div className="px-3 text-label">
-                                        <span className="text-brand-accent font-higuen">{group.groupName.split(' ')[0]} </span>
+                                        <span className="text-brand-accent font-inter font-semibold">{group.groupName.split(' ')[0]} </span>
                                         <span className="text-text-secondary font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
                                     </div>
                                 )}
@@ -254,7 +254,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         {isAdmin && (
                             <li className="space-y-1">
                                 <div className="px-3 text-label">
-                                    <span className="text-brand-gold font-higuen">Administration</span>
+                                    <span className="text-brand-gold font-inter font-semibold">Administration</span>
                                 </div>
                                 <ul className="space-y-[2px]">
                                     <li className="relative">

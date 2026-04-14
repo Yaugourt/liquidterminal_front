@@ -67,8 +67,6 @@ export const ENDPOINTS = {
   INDEXER_ANALYTICS_PRIORITY_FEES_STATS: '/indexer/analytics/priority-fees/stats',
   /** Users leaderboard (use query `by=priority_fees`) */
   INDEXER_USERS_LEADERBOARD: '/indexer/users/leaderboard',
-  /** HIP-3 gossip priority-fee auction slots (live) */
-  INDEXER_HIP3_PRIORITY_FEES_GOSSIP_STATUS: '/indexer/hip3/priority-fees/gossip/status',
   /** HIP-3 gossip priority-fee auction history */
   INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY: '/indexer/hip3/priority-fees/gossip/history',
   /** Recent fills (supports `has_priority_gas`) */

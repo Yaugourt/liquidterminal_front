@@ -2,23 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-    font-family: "Higuen_Elegant_Serif";
-    src: url("/fonts/Higuen_Serif.otf") format("opentype");
-    font-weight: normal;
-    font-style: normal;
-}
-
 /* Dark mode only - app is 100% dark themed */
 :root {
     --background: 220 20% 4%; /* #0B0E14 */
     --foreground: 0 0% 93%; /* #ededed */
-}
-
-body {
-    color: hsl(var(--foreground));
-    background: hsl(var(--background));
-    font-family: var(--font-inter), Inter, sans-serif;
 }
 
 @layer base {
@@ -35,7 +22,7 @@ body {
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-sans antialiased;
     }
 }
 

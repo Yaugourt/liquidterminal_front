@@ -133,16 +133,6 @@ export interface UsePriorityFeesLeaderboardResult {
   refetch: () => void;
 }
 
-export interface UsePriorityFeesGossipStatusResult {
-  data: PriorityFeesGossipRecord[] | null;
-  /** Previous cycle winners per slot (HypeDexer `previous_winners`) */
-  previousWinners: (string | null)[] | null;
-  raw: unknown;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
-
 export interface UsePriorityFeesGossipHistoryResult {
   data: PriorityFeesGossipRecord[];
   /** Total matching rows when LiquidTerminal forwards HypeDexer `total_count` */
