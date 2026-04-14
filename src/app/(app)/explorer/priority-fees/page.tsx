@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   PriorityFeesKpiRow,
   PriorityFeesRunRateCard,
-  PriorityFeesOverviewChart,
   PriorityFeesFillsTimeseriesChart,
   PriorityFeesLeaderboardCard,
   PriorityFeesGossipStatusCard,
@@ -42,6 +41,12 @@ export default function PriorityFeesPage() {
         <PriorityFeesWindowSelector hours={hours} onHoursChange={setHours} />
       </div>
 
+      {stats.error && (
+        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-400">
+          {stats.error.message}
+        </div>
+      )}
+
       <PriorityFeesKpiRow
         stats={stats.data}
         isLoading={stats.isLoading}
@@ -54,12 +59,6 @@ export default function PriorityFeesPage() {
         isLoading={stats.isLoading}
         gossipSlots={gossip.data}
         selectedWindowHours={hours}
-      />
-
-      <PriorityFeesOverviewChart
-        stats={stats.data}
-        isLoading={stats.isLoading}
-        error={stats.error}
       />
 
       <PriorityFeesFillsTimeseriesChart hours={hours} />
