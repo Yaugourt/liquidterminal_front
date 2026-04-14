@@ -94,8 +94,10 @@ export interface PriorityFeesFillRow {
   time?: number | string;
   px?: string | number;
   sz?: string | number;
-  priority_gas?: string | number;
-  priorityGas?: string | number;
+  /** Snake_case (LiquidTerminal / some indexer payloads) */
+  priority_gas?: string | number | null;
+  /** CamelCase (HypeDexer OpenAPI) */
+  priorityGas?: string | number | null;
   hash?: string;
   tid?: string | number;
 }

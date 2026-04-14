@@ -98,8 +98,8 @@ export function PriorityFeesOverviewChart({
         ) : chartData.length === 0 ? (
           <div className="flex h-[280px] items-center justify-center rounded-xl border border-border-subtle bg-brand-primary/30 text-center px-4">
             <p className="text-sm text-text-secondary">
-              No time-series buckets in this response. KPIs above still reflect totals for the
-              selected window.
+              No hourly buckets in this response for the chart. If totals above show numbers, the
+              indexer returned aggregates only; otherwise check the API response shape.
             </p>
           </div>
         ) : (

@@ -20,14 +20,24 @@ export function statsToChartPoints(
   for (const b of series) {
     const t =
       typeof b.timestamp === "number"
-        ? b.timestamp
+        ? b.timestamp < 1e12
+          ? b.timestamp * 1000
+          : b.timestamp
         : typeof b.t === "number"
-          ? b.t
-          : b.time
-            ? Date.parse(b.time)
-            : b.hour
-              ? Date.parse(b.hour)
-              : NaN;
+          ? b.t < 1e12
+            ? b.t * 1000
+            : b.t
+          : typeof (b as { ts?: number }).ts === "number"
+            ? (b as { ts: number }).ts < 1e12
+              ? (b as { ts: number }).ts * 1000
+              : (b as { ts: number }).ts
+            : b.time
+              ? Date.parse(b.time)
+              : b.hour
+                ? Date.parse(b.hour)
+                : typeof (b as { start_time?: string }).start_time === "string"
+                  ? Date.parse((b as { start_time: string }).start_time)
+                  : NaN;
     if (!Number.isFinite(t)) continue;
     const v =
       metric === "fill_count"
