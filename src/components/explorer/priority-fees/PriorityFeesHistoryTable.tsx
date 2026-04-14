@@ -319,7 +319,7 @@ export function PriorityFeesHistoryTable() {
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div>
-          <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
+          <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
             History & activity
           </h2>
           <p className="text-xs text-text-muted mt-1">

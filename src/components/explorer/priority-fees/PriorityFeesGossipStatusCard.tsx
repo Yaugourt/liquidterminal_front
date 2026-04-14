@@ -28,7 +28,7 @@ export function PriorityFeesGossipStatusCard({
   return (
     <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md h-full flex flex-col">
       <div className="mb-4">
-        <h2 className="font-outfit text-lg font-semibold text-white tracking-tight">
+        <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
           Gossip auctions (live)
         </h2>
         <p className="text-xs text-text-muted mt-1">

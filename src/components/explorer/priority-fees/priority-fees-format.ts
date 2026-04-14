@@ -1,3 +1,26 @@
+/** Preset window lengths (hours) for stats, leaderboard, and fills timeseries. */
+export const PRIORITY_FEES_WINDOW_HOURS = [1, 6, 24, 72, 168] as const;
+
+export type PriorityFeesWindowHours = (typeof PRIORITY_FEES_WINDOW_HOURS)[number];
+
+/** UI label: short hours stay "Nh"; 24/72/168 use day wording. */
+export function formatPriorityFeesWindowLabel(hours: number): string {
+  switch (hours) {
+    case 1:
+      return "1h";
+    case 6:
+      return "6h";
+    case 24:
+      return "1 day";
+    case 72:
+      return "3 days";
+    case 168:
+      return "7 days";
+    default:
+      return `${hours}h`;
+  }
+}
+
 /**
  * Display helpers for priority-fee numeric fields (may be string from indexer).
  * HypeDexer priority gas can be very small; `maximumFractionDigits: 4` alone rounds
