@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { Flame, Users, Gauge, Hash, Activity, ArrowDownToLine, TrendingUp } from "lucide-react";
+import { Users, Gauge, Hash, Activity, ArrowDownToLine } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/common/StatsCard";
+import { AssetLogo } from "@/components/common/AssetLogo";
 import type { PriorityFeesStats } from "@/services/explorer/priority-fees";
 import { computePriorityFeesRunRate } from "@/lib/priority-fees-run-rate";
 import {
@@ -56,7 +57,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
       {
         title: "Total priority gas",
         value: formatPriorityFeeNumber(stats?.total_priority_gas),
-        icon: <Flame className="w-4 h-4 text-brand-accent" />,
+        icon: <AssetLogo assetName="HYPE_USDC" className="w-4 h-4 shrink-0" />,
       },
       {
         title: "Annualized burn (linear)",
@@ -65,10 +66,8 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
           : run
             ? `${formatAnnualizedLinearHype(run.annualizedLinearHype)} HYPE`
             : "—",
-        icon: <TrendingUp className="w-4 h-4 text-brand-accent" />,
+        icon: <AssetLogo assetName="HYPE_USDC" className="w-4 h-4 shrink-0" />,
         cardLoading: annualizedLoading,
-        valueClassName:
-          "text-lg max-sm:text-[16px] text-brand-accent font-bold tracking-tight",
         tooltip:
           "(Priority gas in indexer window ÷ effective calendar days from time_range) × 365. Not a forecast.",
       },
