@@ -8,7 +8,7 @@ import { usePastAuctionsPerp } from '@/services/market/perpDex/hooks';
  * Hook for fetching perp auction chart data (gas price evolution)
  */
 export const usePerpAuctionChart = (period: ChartPeriod) => {
-  const { auctions, isLoading } = usePastAuctionsPerp();
+  const { auctions, isLoading, error, refetch } = usePastAuctionsPerp();
 
   const data = useMemo(() => {
     if (!auctions || auctions.length === 0) return [];
@@ -58,6 +58,7 @@ export const usePerpAuctionChart = (period: ChartPeriod) => {
   return {
     data,
     isLoading,
-    error: null
+    error,
+    refetch
   };
 };

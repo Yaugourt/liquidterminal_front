@@ -162,20 +162,36 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
 
   // Activer le WebSocket après le chargement initial
   useEffect(() => {
-    if (isLoading) return; // Attendre que l'API ait fini
+    if (isLoading) return;
 
-    // Enregistrer le callback pour les nouvelles liquidations
     setOnLiquidation(handleNewLiquidation);
-    
-    // Connecter le WebSocket
     wsConnect();
 
-    // Cleanup à la déconnexion
     return () => {
       setOnLiquidation(undefined);
       wsDisconnect();
     };
   }, [isLoading, handleNewLiquidation, setOnLiquidation, wsConnect, wsDisconnect]);
+
+  // Periodically refresh stats + chart buckets so the chart stays current
+  useEffect(() => {
+    if (isLoading) return;
+
+    const REFRESH_INTERVAL = 60_000;
+    const intervalId = setInterval(async () => {
+      try {
+        const dataResponse = await fetchLiquidationsData();
+        if (dataResponse.success) {
+          setAllData(dataResponse.periods);
+          setLastUpdated(new Date());
+        }
+      } catch {
+        // Silent — the initial data remains visible; next tick retries
+      }
+    }, REFRESH_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, [isLoading]);
 
   // Filtrer les liquidations par montant minimum (pour le tableau)
   const filteredLiquidations = useMemo(() => {

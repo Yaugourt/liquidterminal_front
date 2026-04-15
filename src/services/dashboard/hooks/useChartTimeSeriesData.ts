@@ -9,14 +9,13 @@ export function useChartTimeSeriesData(
   selectedFilter: FilterType, 
   selectedPeriod: ChartPeriod,
   selectedCurrency: "HYPE" | "USDC"
-): { data: DashboardData[], isLoading: boolean } {
-  // Utiliser le nouveau hook auctions avec une limite élevée pour récupérer toutes les données
-  const { auctions: allAuctions, isLoading: auctionsLoading } = useAuctions({
-    limit: 10000, // Limite élevée pour récupérer toutes les données
-    currency: "ALL" // Récupérer HYPE et USDC
+): { data: DashboardData[], isLoading: boolean, error: Error | null } {
+  const { auctions: allAuctions, isLoading: auctionsLoading, error: auctionsError } = useAuctions({
+    limit: 10000,
+    currency: "ALL"
   });
 
-  const { bridgeData, isLoading: bridgeLoading } = useHLBridge();
+  const { bridgeData, isLoading: bridgeLoading, error: bridgeError } = useHLBridge();
 
   const getDateLimit = useCallback((latestTime: number) => {
     const DAY = 24 * 60 * 60 * 1000;
@@ -130,8 +129,13 @@ export function useChartTimeSeriesData(
       : auctionsLoading
   , [selectedFilter, bridgeLoading, auctionsLoading]);
 
+  const error = useMemo(() =>
+    selectedFilter === "bridge" ? bridgeError : auctionsError
+  , [selectedFilter, bridgeError, auctionsError]);
+
   return {
     data,
-    isLoading
+    isLoading,
+    error
   };
 } 

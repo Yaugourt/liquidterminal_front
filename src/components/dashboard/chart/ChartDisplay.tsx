@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { ChartPeriod } from '@/components/common/charts';
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
 import { LightweightChart } from "@/components/common/charts/LightweightChart";
@@ -11,6 +11,8 @@ import { useNumberFormat } from '@/store/number-format.store';
 interface Props {
   data: DashboardData[];
   isLoading: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
   selectedFilter: FilterType;
   selectedPeriod: ChartPeriod;
   selectedCurrency?: "HYPE" | "USDC";
@@ -51,6 +53,8 @@ const AnimatedPeriodSelector = ({
 export const ChartDisplay = ({
   data,
   isLoading,
+  error,
+  onRetry,
   selectedFilter,
   selectedPeriod,
   selectedCurrency = "USDC",
@@ -204,7 +208,21 @@ export const ChartDisplay = ({
 
       {/* Chart Container - fills remaining space */}
       <div className="flex-1 px-2 pb-2">
-        {isLoading ? (
+        {error ? (
+          <div className="flex flex-col justify-center items-center h-full min-h-[200px] gap-3">
+            <AlertCircle className="h-6 w-6 text-rose-400" />
+            <p className="text-rose-400 text-sm">Failed to load chart data</p>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Retry
+              </button>
+            )}
+          </div>
+        ) : isLoading ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
             <Loader2 className="h-8 w-8 animate-spin text-text-muted" />
           </div>

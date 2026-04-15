@@ -5,8 +5,7 @@ import { useAuctions } from '../hooks/useAuctions';
 
 
 export const useAuctionChart = (period: ChartPeriod, currency: "HYPE" | "USDC") => {
-  // Utiliser le même hook que le dashboard
-  const { auctions: allAuctions, isLoading } = useAuctions({
+  const { auctions: allAuctions, isLoading, error, refetch } = useAuctions({
     limit: 10000,
     currency: "ALL"
   });
@@ -61,6 +60,7 @@ export const useAuctionChart = (period: ChartPeriod, currency: "HYPE" | "USDC") 
   return { 
     data, 
     isLoading, 
-    error: null 
+    error,
+    refetch
   };
 }; 

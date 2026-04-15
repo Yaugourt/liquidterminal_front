@@ -19,20 +19,21 @@ export const AuctionChartSection = ({ chartHeight, marketType }: AuctionChartSec
     availablePeriods: ["7d", "30d", "90d", "1y"]
   });
 
-  // Fetch data from both hooks unconditionally (hooks must be called consistently)
-  const { data: spotData, isLoading: spotLoading } = useAuctionChart(selectedPeriod, selectedCurrency);
-  const { data: perpData, isLoading: perpLoading } = usePerpAuctionChart(selectedPeriod);
+  const { data: spotData, isLoading: spotLoading, error: spotError, refetch: spotRefetch } = useAuctionChart(selectedPeriod, selectedCurrency);
+  const { data: perpData, isLoading: perpLoading, error: perpError, refetch: perpRefetch } = usePerpAuctionChart(selectedPeriod);
 
-  // Select the appropriate data based on market type
   const data = marketType === "spot" ? spotData : perpData;
   const isLoading = marketType === "spot" ? spotLoading : perpLoading;
-  // For perp, currency is always HYPE
+  const error = marketType === "spot" ? spotError : perpError;
+  const refetch = marketType === "spot" ? spotRefetch : perpRefetch;
   const displayCurrency = marketType === "perp" ? "HYPE" : selectedCurrency;
 
   return (
     <AuctionChart
       data={data}
       isLoading={isLoading}
+      error={error}
+      onRetry={refetch}
       selectedCurrency={displayCurrency}
       onCurrencyChange={setSelectedCurrency}
       selectedPeriod={selectedPeriod}

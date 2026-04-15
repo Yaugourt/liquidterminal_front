@@ -6,8 +6,8 @@ import { DashboardData } from "@/components/types/dashboard.types";
 export function useFeesChartData(
   selectedPeriod: ChartPeriod,
   feeType: "all" | "spot"
-): { data: DashboardData[], isLoading: boolean } {
-  const { feesHistory, isLoading } = useFeesHistory();
+): { data: DashboardData[], isLoading: boolean, error: Error | null } {
+  const { feesHistory, isLoading, error } = useFeesHistory();
 
   const data = useMemo(() => {
     if (!feesHistory || feesHistory.length === 0) return [];
@@ -71,6 +71,7 @@ export function useFeesChartData(
 
   return {
     data,
-    isLoading
+    isLoading,
+    error
   };
 } 

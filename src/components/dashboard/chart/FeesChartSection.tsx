@@ -13,7 +13,7 @@ export const FeesChartSection = () => {
     availablePeriods: ["7d", "30d", "90d", "1y"]
   });
 
-  const { data, isLoading } = useFeesChartData(selectedPeriod, selectedFeeType);
+  const { data, isLoading, error } = useFeesChartData(selectedPeriod, selectedFeeType);
 
   return (
     <div className="flex flex-col">
@@ -28,6 +28,7 @@ export const FeesChartSection = () => {
         <ChartDisplay
           data={data}
           isLoading={isLoading}
+          error={error}
           selectedFilter="fees"
           selectedPeriod={selectedPeriod}
           onPeriodChange={handlePeriodChange}

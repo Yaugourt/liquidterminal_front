@@ -44,7 +44,7 @@ export const ChartSection = () => {
   const feesData = useFeesChartData(selectedPeriod, selectedFeeType);
   const normalData = useChartTimeSeriesData(selectedFilter, selectedPeriod, selectedCurrency);
 
-  const { data, isLoading } = selectedFilter === "fees" ? feesData : normalData;
+  const { data, isLoading, error } = selectedFilter === "fees" ? feesData : normalData;
 
   return (
     <div className="flex flex-col h-full">
@@ -59,6 +59,7 @@ export const ChartSection = () => {
         <ChartDisplay
           data={data}
           isLoading={isLoading}
+          error={error}
           selectedFilter={selectedFilter}
           selectedPeriod={selectedPeriod}
           selectedCurrency={selectedCurrency}

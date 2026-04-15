@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from 'react';
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod } from '@/components/common/charts';
@@ -16,6 +16,8 @@ interface AuctionDataPoint {
 interface AuctionChartProps {
   data: AuctionDataPoint[];
   isLoading: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
   selectedCurrency: "HYPE" | "USDC";
   onCurrencyChange: (currency: "HYPE" | "USDC") => void;
   selectedPeriod: ChartPeriod;
@@ -28,6 +30,8 @@ interface AuctionChartProps {
 export const AuctionChart = ({
   data,
   isLoading,
+  error,
+  onRetry,
   selectedCurrency,
   onCurrencyChange,
   selectedPeriod,
@@ -145,7 +149,21 @@ export const AuctionChart = ({
 
       {/* Chart Container */}
       <div className="absolute inset-0 pt-16 pb-2 px-2">
-        {isLoading ? (
+        {error ? (
+          <div className="flex flex-col justify-center items-center h-full gap-3">
+            <AlertCircle className="h-6 w-6 text-rose-400" />
+            <p className="text-rose-400 text-sm">Failed to load auction data</p>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Retry
+              </button>
+            )}
+          </div>
+        ) : isLoading ? (
           <div className="flex justify-center items-center h-full">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
           </div>
