@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { useLiquidationsContext, CHART_PERIOD_OPTIONS } from "./LiquidationsContext";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
@@ -196,7 +196,8 @@ export const LiquidationsChartSection = () => {
     chartBuckets, 
     chartLoading, 
     chartPeriod,
-    setChartPeriod
+    setChartPeriod,
+    error
   } = useLiquidationsContext();
 
   // Transformer les buckets en données de chart
@@ -320,7 +321,12 @@ export const LiquidationsChartSection = () => {
 
       {/* Chart */}
       <div className="flex-1 min-h-0">
-        {chartLoading ? (
+        {error && !chartBuckets.length ? (
+          <div className="flex flex-col justify-center items-center h-full min-h-[200px] gap-2">
+            <AlertCircle className="h-6 w-6 text-rose-400" />
+            <p className="text-rose-400 text-sm">Failed to load liquidation data</p>
+          </div>
+        ) : chartLoading ? (
           <div className="flex justify-center items-center h-full min-h-[200px]">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
           </div>

@@ -1,6 +1,6 @@
 ## Learned User Preferences
 
-- Use English for code comments, JSDoc, and developer-facing strings in the repo; avoid French in those surfaces unless the user explicitly asks for French user-facing copy.
+- Use English for code comments, JSDoc, and developer-facing strings in the repo; avoid French in those surfaces unless the user explicitly asks for French user-facing copy. In Cursor chat, reply in French when the user writes in French (explanations, summaries, git workflow).
 - When the user asks for git operations, they often want scoped commits (e.g. only HIP-4 or only perpdex files), not the whole dirty working tree.
 - For extrapolated metrics (e.g. annualized priority-fee run-rates), prefer **honest framing**: show the **real observation window** (dates or day count) and avoid implying “all history” unless storage actually spans it; keep recommendations direct and low-fluff.
 
@@ -15,3 +15,5 @@
 - HypeDexer `GET /analytics/priority-fees/stats` documents window-level aggregates plus `time_range` only (no per-hour buckets in the repo OpenAPI export and Mintlify fragments checked for this flow). `GET /analytics/fills/stats` leaves `data` as an untyped object—do not assume hourly time series without a real JSON sample or another documented endpoint. Indexer **fills list** queries on LiquidTerminal validate `limit` up to **1000** (HypeDexer/OpenAPI cap—not 2000). For priority fees and similar micro-amount fields (`priorityGas`, etc.), UI formatters need enough decimal precision; a fixed low `maximumFractionDigits` can round values like `0.00002` to `0` and look like missing data.
 - For priority-fee rates or “annualized” style math, derive the window from **`data.time_range` (start → end)**, not from the `hours` query alone—live responses can **truncate** history when indexer coverage is limited. `GET /hip3/priority-fees/gossip/history` may return **empty** `data` in some environments; do not assume read/gossip totals exist without a non-empty sample or another source. Competitor-style **annualized HYPE** figures often use **linear run-rate**: `(total in window / calendar days covered) × 365`; early after a launch that is **high-variance** unless the window is long enough to label confidently.
 - In Cursor, the **Ports** tab badge is the **count of forwarded ports**, not a literal TCP port number (e.g. 13).
+- Local edits under `.cursor/hooks/state/` (e.g. continual-learning index/state) can cause `git pull` to refuse merging; stash or discard those paths before pulling, or resolve conflicts against the version you want to keep.
+- Chart/data-viz audit output for this app may live at `docs/CHART_AUDIT_REPORT.md` (inventory, severity tiers, benchmarks) when that workflow is run.
