@@ -1,6 +1,10 @@
-import { memo, useState, useRef, useEffect } from "react";
+"use client";
+
+import { memo, useState, useId } from "react";
 import { TrendingUp, BarChart3 } from "lucide-react";
+import { motion } from "framer-motion";
 import { ChartPeriod } from "@/components/common/charts/types/chart";
+import { PeriodSelector } from "@/components/common/charts";
 import { ValidatorChartTabs, ChartTabType } from "./ValidatorChartTabs";
 import { HoldersDistributionChart } from "./HoldersDistributionChart";
 import { UnstakingScheduleChart } from "./UnstakingScheduleChart";
@@ -11,169 +15,145 @@ interface ValidatorChartSectionProps {
 }
 
 /**
- * Section affichant les graphiques des validateurs avec tabs
+ * Aurora-styled section displaying validator charts with tabs and controls.
  */
-export const ValidatorChartSection = memo(function ValidatorChartSection({ 
-  chartHeight = 250 
+export const ValidatorChartSection = memo(function ValidatorChartSection({
+  chartHeight = 250
 }: ValidatorChartSectionProps) {
   const [activeChart, setActiveChart] = useState<ChartTabType>('distribution');
   const [chartType, setChartType] = useState<'line' | 'bar'>('bar');
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>('7d');
   const [barCount, setBarCount] = useState<number>(10);
+  const uid = useId().replace(/:/g, "");
 
   const renderChart = () => {
     switch (activeChart) {
       case 'distribution':
         return <HoldersDistributionChart height={chartHeight} />;
       case 'unstaking':
-        return chartType === 'bar' ? 
-          <UnstakingScheduleChart height={chartHeight} barCount={barCount} /> : 
-          <StakingLineChart height={chartHeight} period={selectedPeriod} />;
+        return chartType === 'bar'
+          ? <UnstakingScheduleChart height={chartHeight} barCount={barCount} />
+          : <StakingLineChart height={chartHeight} period={selectedPeriod} />;
       default:
         return null;
     }
   };
 
-  const AnimatedPeriodSelector = ({ 
-    selectedPeriod, 
-    onPeriodChange, 
-    availablePeriods 
-  }: { 
-    selectedPeriod: ChartPeriod; 
-    onPeriodChange: (period: ChartPeriod) => void; 
-    availablePeriods: ChartPeriod[]; 
-  }) => {
-    const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-    const containerRef = useRef<HTMLDivElement>(null);
-    const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
-
-    useEffect(() => {
-      const selectedButton = buttonRefs.current[selectedPeriod];
-      if (selectedButton && containerRef.current) {
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const buttonRect = selectedButton.getBoundingClientRect();
-        
-        setIndicatorStyle({
-          left: buttonRect.left - containerRect.left,
-          width: buttonRect.width,
-        });
-      }
-    }, [selectedPeriod]);
-
-    return (
-      <div 
-        ref={containerRef}
-        className="relative flex bg-brand-dark rounded-lg p-1 border border-border-subtle"
-      >
-        <div
-          className="absolute top-1 bottom-1 bg-brand-accent rounded-md transition-all duration-300 ease-out"
-          style={{
-            left: indicatorStyle.left + 2,
-            width: indicatorStyle.width - 4,
-          }}
-        />
-        {availablePeriods.map((period) => (
+  // Aurora pill for the Line/Bar chart-type toggle
+  const ChartTypeToggle = () => (
+    <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+      {(['line', 'bar'] as const).map((type) => {
+        const isActive = chartType === type;
+        return (
           <button
-            key={period}
-            ref={(el) => { 
-              buttonRefs.current[period] = el; 
-            }}
-            onClick={() => onPeriodChange(period)}
-            className={`relative z-10 px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${
-              selectedPeriod === period ? 'text-brand-tertiary font-bold' : 'text-text-secondary hover:text-zinc-200'
-            }`}
+            key={type}
+            onClick={() => setChartType(type)}
+            className="relative flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold"
           >
-            {period === '1y' ? 'All Time' : period}
+            {isActive && (
+              <motion.span
+                layoutId={`validator-type-${uid}`}
+                className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+              />
+            )}
+            <span
+              className={`relative z-10 flex items-center gap-1 capitalize ${
+                isActive ? "text-white" : "text-text-secondary hover:text-white"
+              }`}
+            >
+              {type === 'line' ? <TrendingUp size={12} /> : <BarChart3 size={12} />}
+              {type}
+            </span>
           </button>
-        ))}
-      </div>
-    );
-  };
+        );
+      })}
+    </div>
+  );
 
+  // Aurora pill for "next N days" bar-count selector
   const BarCountSelector = () => {
     const barCounts = [7, 10, 15, 30, 60, 90];
-    
     return (
-      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-        {barCounts.map((count) => (
-          <button
-            key={count}
-            onClick={() => setBarCount(count)}
-            className={`px-2 py-1 text-xs font-medium transition-all rounded-md ${
-              barCount === count
-                ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'tab-inactive'
-            }`}
-          >
-            {count}
-          </button>
-        ))}
+      <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        {barCounts.map((count) => {
+          const isActive = barCount === count;
+          return (
+            <button
+              key={count}
+              onClick={() => setBarCount(count)}
+              className="relative rounded-lg px-2 py-1 text-[11px] font-semibold tabular-nums min-w-[24px]"
+            >
+              {isActive && (
+                <motion.span
+                  layoutId={`validator-barcount-${uid}`}
+                  className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                />
+              )}
+              <span
+                className={`relative z-10 ${
+                  isActive ? "text-white" : "text-text-secondary hover:text-white"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
     );
   };
 
   const ChartControls = () => {
     if (activeChart !== 'unstaking') return null;
-    
+
     return (
-      <div className="flex items-center gap-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-          <button
-            onClick={() => setChartType('line')}
-            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
-              chartType === 'line'
-                ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'tab-inactive'
-            }`}
-          >
-            <TrendingUp size={12} />
-            Line
-          </button>
-          <button
-            onClick={() => setChartType('bar')}
-            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-medium transition-all rounded-md ${
-              chartType === 'bar'
-                ? 'bg-brand-accent text-brand-tertiary font-bold'
-                : 'tab-inactive'
-            }`}
-          >
-            <BarChart3 size={12} />
-            Bar
-          </button>
-        </div>
-        
+      <div className="flex items-center gap-2 flex-wrap">
+        <ChartTypeToggle />
+
         {chartType === 'line' && (
-          <AnimatedPeriodSelector
-            selectedPeriod={selectedPeriod}
-            onPeriodChange={setSelectedPeriod}
-            availablePeriods={['7d', '30d', '90d', '1y']}
+          <PeriodSelector
+            selected={selectedPeriod}
+            onChange={setSelectedPeriod}
+            options={['7d', '30d', '90d', '1y'] as const}
+            labels={{ '1y': 'All Time' } as Partial<Record<ChartPeriod, string>>}
+            variant="aurora"
           />
         )}
-        
-        {chartType === 'bar' && (
-          <BarCountSelector />
-        )}
+
+        {chartType === 'bar' && <BarCountSelector />}
       </div>
     );
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="p-4">
-        {/* Header with tabs */}
-        <div className="flex items-center justify-between mb-4">
-          <ValidatorChartTabs 
-            activeTab={activeChart} 
-            onTabChange={setActiveChart} 
-          />
+    <div className="relative w-full h-full flex flex-col overflow-hidden">
+      {/* Ambient glow — cyan-leaning to stay coherent with validator staking accent */}
+      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-gold/[0.06] blur-3xl" />
+
+      <div className="relative z-10 p-4">
+        {/* Header with tabs + context-sensitive controls */}
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              <span className="h-1 w-1 rounded-full bg-brand-accent" />
+              Validators
+            </div>
+            <ValidatorChartTabs
+              activeTab={activeChart}
+              onTabChange={setActiveChart}
+            />
+          </div>
           <ChartControls />
         </div>
 
-        {/* Chart Container */}
+        {/* Chart container */}
         <div style={{ height: chartHeight }} className="relative">
           {renderChart()}
         </div>
       </div>
     </div>
   );
-}); 
+});

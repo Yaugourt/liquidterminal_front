@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
-import { LightweightChart } from "@/components/common/charts/LightweightChart";
+import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 
@@ -66,10 +66,10 @@ export const ChartDisplay = ({
 
   const getChartColor = () => {
     switch (selectedFilter) {
-      case "bridge": return "#83e9ff"; // Main Cyan
-      case "fees": return "#f9e370"; // Accent Yellow
-      case "strict": return "#f9e370"; // Accent Yellow
-      default: return "#83e9ff"; // Default Cyan
+      case "bridge": return "#83e9ff";
+      case "fees": return "#f9e370";
+      case "strict": return "#f9e370";
+      default: return "#83e9ff";
     }
   };
 
@@ -93,7 +93,7 @@ export const ChartDisplay = ({
     setHoverTime(time);
   }, []);
 
-  // Format data for LightweightChart
+  // Format data for the Aurora chart
   const chartData = useMemo(() => {
     return data.map((item: DashboardData) => ({
       time: item.time,
@@ -102,12 +102,18 @@ export const ChartDisplay = ({
   }, [data]);
 
   return (
-    <div className="w-full h-full flex flex-col min-h-[300px]">
+    <div className="relative w-full h-full flex flex-col min-h-[300px]">
+      {/* Ambient color glow — keyed off chart color so each filter gets its own mood */}
+      <div
+        className="pointer-events-none absolute -top-16 right-0 h-48 w-48 rounded-full blur-3xl opacity-40"
+        style={{ background: `${mainColor}22` }}
+      />
+
       {/* Header */}
-      <div className="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4">
+      <div className="relative z-10 flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            <h2 className="text-sm text-white font-bold uppercase tracking-wider">
+            <h2 className="text-[11px] text-text-secondary font-semibold uppercase tracking-[0.18em]">
               {getTitle()}
             </h2>
 
@@ -118,7 +124,7 @@ export const ChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted">
+                  <span className="text-label text-text-muted tabular-nums">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -132,40 +138,38 @@ export const ChartDisplay = ({
             )}
 
             {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
-              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
-                <button
-                  onClick={() => onCurrencyChange("USDC")}
-                  className={`px-2 py-0.5 text-label rounded ${selectedCurrency === "USDC" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+                {(["USDC", "HYPE"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => onCurrencyChange(c)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
+                      selectedCurrency === c
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
+                        : "text-text-secondary hover:text-white"
                     }`}
-                >
-                  USDC
-                </button>
-                <button
-                  onClick={() => onCurrencyChange("HYPE")}
-                  className={`px-2 py-0.5 text-label rounded ${selectedCurrency === "HYPE" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                    }`}
-                >
-                  HYPE
-                </button>
+                  >
+                    {c}
+                  </button>
+                ))}
               </div>
             )}
 
             {selectedFilter === "fees" && onFeeTypeChange && (
-              <div className="flex items-center bg-brand-dark rounded-md p-0.5 border border-border-subtle">
-                <button
-                  onClick={() => onFeeTypeChange("all")}
-                  className={`px-2 py-0.5 text-label rounded ${selectedFeeType === "all" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
+              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+                {(["all", "spot"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => onFeeTypeChange(t)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold capitalize transition-colors ${
+                      selectedFeeType === t
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
+                        : "text-text-secondary hover:text-white"
                     }`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => onFeeTypeChange("spot")}
-                  className={`px-2 py-0.5 text-label rounded ${selectedFeeType === "spot" ? "bg-white/10 text-white" : "text-text-muted hover:text-white/80"
-                    }`}
-                >
-                  Spot
-                </button>
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -174,12 +178,13 @@ export const ChartDisplay = ({
             selected={selectedPeriod}
             onChange={onPeriodChange}
             options={availablePeriods}
+            variant="aurora"
           />
         </div>
       </div>
 
       {/* Chart Container - fills remaining space */}
-      <div className="flex-1 px-2 pb-2">
+      <div className="relative z-10 flex-1 px-2 pb-2">
         {error ? (
           <ChartError onRetry={onRetry} />
         ) : isLoading ? (
@@ -187,7 +192,7 @@ export const ChartDisplay = ({
         ) : chartData.length === 0 ? (
           <ChartEmpty suggestion="Try selecting a different time period" />
         ) : (
-          <LightweightChart
+          <AuroraAreaChart
             data={chartData}
             lineColor={mainColor}
             formatValue={formatYAxisValue}

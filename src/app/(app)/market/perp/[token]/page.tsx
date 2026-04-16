@@ -6,7 +6,7 @@ import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { TradingLayout } from "@/layouts/TradingLayout";
-import { TokenCard, TokenData, OrderBook, TokenInfoSidebar, RecentTrades } from "@/components/market/token";
+import { TokenCard, TokenData, OrderBook, RecentTrades } from "@/components/market/token";
 import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
 import { getPerpCoinId } from "@/services/market/token/utils";
 
@@ -134,11 +134,6 @@ export default function PerpTokenPage() {
           symbol={token.name}
           perpCoinId={coinId} // Use perpCoinId for WebSocket
           tokenNameProp={token.name}
-        />
-      }
-      infoSidebarSlot={
-        <TokenInfoSidebar
-          token={tokenData}
         />
       }
       bottomSectionSlot={

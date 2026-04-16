@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { ChartLoading, ChartEmpty, ChartError, HistogramChart, DataFreshness } from "@/components/common/charts";
+import { useState, useMemo, useCallback, useId } from "react";
+import { motion } from "framer-motion";
+import {
+  ChartLoading,
+  ChartEmpty,
+  ChartError,
+  DataFreshness,
+  AuroraHistogramChart,
+} from "@/components/common/charts";
 import { useLiquidationsContext, CHART_PERIOD_OPTIONS } from "./LiquidationsContext";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
@@ -12,13 +19,13 @@ export const LiquidationsChartSection = () => {
   const [selectedChart, setSelectedChart] = useState<LiquidationChartType>("volume");
   const [hoverValue, setHoverValue] = useState<number | null>(null);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
-  
+  const layoutId = useId().replace(/:/g, "");
+
   const { format: dateFormat } = useDateFormat();
-  
-  // Utilise les données du chart depuis le Context (période indépendante)
-  const { 
-    chartBuckets, 
-    chartLoading, 
+
+  const {
+    chartBuckets,
+    chartLoading,
     chartPeriod,
     setChartPeriod,
     error,
@@ -34,7 +41,7 @@ export const LiquidationsChartSection = () => {
       const longRatio = bucket.totalVolume > 0 ? bucket.longVolume / bucket.totalVolume : 0.5;
       const color = longRatio > 0.5 ? "#10b981" : "#f43f5e"; // emerald for longs, rose for shorts
       const value = selectedChart === 'volume' ? bucket.totalVolume : bucket.liquidationsCount;
-      
+
       return {
         time: bucket.timestampMs,
         value: isNaN(value) ? 0 : value,
@@ -80,32 +87,50 @@ export const LiquidationsChartSection = () => {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col p-4">
+    <div className="relative w-full h-full flex flex-col p-4 overflow-hidden">
+      {/* Ambient rose/emerald glow — mirrors the long/short bipolar nature of liquidations */}
+      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-rose-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-emerald-500/[0.08] blur-3xl" />
+
       {/* Header */}
-      <div className="flex-shrink-0 pb-4">
+      <div className="relative z-10 flex-shrink-0 pb-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                <span className="h-1 w-1 rounded-full bg-rose-400" />
                 Liquidations
-              </h2>
+              </div>
               <DataFreshness lastUpdated={lastUpdated} />
             </div>
 
-            {/* Volume/Count Tabs */}
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-              {chartTabs.map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setSelectedChart(tab.key)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedChart === tab.key
-                    ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-                    : 'tab-inactive'
-                    }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+            {/* Volume/Count pill tabs */}
+            <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+              {chartTabs.map((tab) => {
+                const isActive = selectedChart === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => setSelectedChart(tab.key)}
+                    className="relative rounded-lg px-3 py-1 text-[11px] font-semibold whitespace-nowrap"
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId={`liq-chart-tab-${layoutId}`}
+                        className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                      />
+                    )}
+                    <span
+                      className={`relative z-10 ${
+                        isActive ? "text-white" : "text-text-secondary hover:text-white"
+                      }`}
+                    >
+                      {tab.label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Value Display */}
@@ -113,13 +138,13 @@ export const LiquidationsChartSection = () => {
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-white tracking-tight tabular-nums">
                   {hoverValue !== null ? formatYAxisValue(hoverValue) : (
-                    selectedChart === 'volume' 
+                    selectedChart === 'volume'
                       ? formatYAxisValue(displayValue)
                       : `${displayValue} liquidations`
                   )}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted">
+                  <span className="text-label text-text-muted tabular-nums">
                     {formatDateTime(new Date(hoverTime), dateFormat)}
                   </span>
                 )}
@@ -127,27 +152,39 @@ export const LiquidationsChartSection = () => {
             )}
           </div>
 
-          {/* Period Selector (right side) */}
-          <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
-            {CHART_PERIOD_OPTIONS.map(option => (
-              <button
-                key={option.value}
-                onClick={() => setChartPeriod(option.value)}
-                className={`px-2 py-1 rounded-md text-label transition-all ${
-                  chartPeriod === option.value
-                    ? 'bg-rose-500/20 text-rose-400 font-bold'
-                    : 'tab-inactive'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+          {/* Period Selector — rose-accented aurora pill */}
+          <div className="flex items-center rounded-xl border border-rose-500/20 bg-black/30 p-1">
+            {CHART_PERIOD_OPTIONS.map((option) => {
+              const isActive = chartPeriod === option.value;
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => setChartPeriod(option.value)}
+                  className="relative rounded-lg px-2.5 py-1 text-[11px] font-semibold tabular-nums whitespace-nowrap min-w-[28px]"
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId={`liq-period-${layoutId}`}
+                      className="absolute inset-0 rounded-lg bg-rose-500/15 ring-1 ring-rose-400/30"
+                      transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                    />
+                  )}
+                  <span
+                    className={`relative z-10 ${
+                      isActive ? "text-rose-300" : "text-text-secondary hover:text-white"
+                    }`}
+                  >
+                    {option.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="flex-1 min-h-0">
+      <div className="relative z-10 flex-1 min-h-0">
         {error && !chartBuckets.length ? (
           <ChartError message="Failed to load liquidation data" />
         ) : chartLoading ? (
@@ -155,8 +192,9 @@ export const LiquidationsChartSection = () => {
         ) : chartData.length === 0 ? (
           <ChartEmpty message="No liquidation data available" />
         ) : (
-          <HistogramChart
+          <AuroraHistogramChart
             data={chartData}
+            defaultColor="#f43f5e"
             formatValue={formatYAxisValue}
             onCrosshairMove={handleCrosshairMove}
           />
