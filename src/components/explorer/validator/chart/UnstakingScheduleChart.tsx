@@ -1,13 +1,14 @@
-import { memo, useState } from "react";
+"use client";
+
+import { memo, useId, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
+import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
 import { useUnstakingStatsForChartWithDays } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 
-// Types pour le tooltip et les données
 interface TooltipProps {
   active?: boolean;
   payload?: Array<{
@@ -32,21 +33,22 @@ interface UnstakingScheduleChartProps {
   height?: number;
   barCount?: number;
 }
+
 /**
- * Chart en barres pour afficher les tokens qui vont être débloqués par heure sur 10 jours
+ * Aurora-styled bar chart for upcoming unstaking events over N days.
  */
-export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({ 
+export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
   height = 200,
   barCount = 10
 }: UnstakingScheduleChartProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
-  // Récupérer les stats d'unstaking avec données formatées pour la chart selon le nombre de barres
+  const uid = useId().replace(/:/g, "");
+  const gradientId = `unstake-${uid}`;
+
   const { chartData, isLoading, error } = useUnstakingStatsForChartWithDays(barCount);
-  
-  // Calculer la largeur des barres selon le nombre
+
   const getBarSize = (count: number) => {
     if (count <= 7) return 60;
     if (count <= 15) return 40;
@@ -54,23 +56,45 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     if (count <= 60) return 15;
     return 10;
   };
-  
+
   const maxBarSize = getBarSize(barCount);
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       const date = new Date(data.date);
-      
+
       return (
-        <div className="bg-brand-secondary/95 backdrop-blur-md border border-border-subtle rounded-lg p-3 shadow-xl shadow-black/40">
-          <p className="text-brand-accent font-medium mb-1">
+        <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
             {formatDate(date, dateFormat)}
-          </p>
-          <p className="text-white text-sm">{`Tokens: ${formatNumber(data.totalTokens, format)} HYPE`}</p>
-          <p className="text-brand-gold text-sm">{`${Math.round(data.transactionCount)} transaction${data.transactionCount > 1 ? 's' : ''}`}</p>
-          <p className="text-white text-xs">{`${Math.round(data.uniqueUsers)} user${data.uniqueUsers > 1 ? 's' : ''}`}</p>
+          </div>
+          <div className="mt-2 space-y-1 text-xs">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 text-text-secondary">
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: chartColors.cyan, boxShadow: `0 0 8px ${chartColors.cyanArea}` }}
+                />
+                <span>Tokens</span>
+              </div>
+              <span className="font-semibold text-white tabular-nums">
+                {formatNumber(data.totalTokens, format)} HYPE
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-text-secondary">Transactions</span>
+              <span className="font-semibold text-brand-gold tabular-nums">
+                {Math.round(data.transactionCount)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-text-secondary">Users</span>
+              <span className="font-semibold text-white tabular-nums">
+                {Math.round(data.uniqueUsers)}
+              </span>
+            </div>
+          </div>
         </div>
       );
     }
@@ -111,19 +135,20 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
 
   return (
     <div style={{ height }} className="w-full">
-              <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            margin={{
-              top: 8,
-              right: 8,
-              left: 8,
-              bottom: 20,
-            }}
-          >
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={chartData}
+          margin={{ top: 8, right: 8, left: 8, bottom: 20 }}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={chartColors.cyan} stopOpacity={0.95} />
+              <stop offset="100%" stopColor={chartColors.cyan} stopOpacity={0.25} />
+            </linearGradient>
+          </defs>
           <CartesianGrid {...rechartsGridDefaults} />
-          <XAxis 
-            dataKey="day" 
+          <XAxis
+            dataKey="day"
             {...rechartsAxisDefaults}
             fontSize={barCount > 30 ? 10 : 11}
             angle={barCount > 15 ? -45 : 0}
@@ -132,25 +157,28 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
             interval={barCount <= 7 ? 0 : barCount <= 15 ? "preserveStartEnd" : Math.ceil(barCount / 8)}
             minTickGap={barCount > 30 ? 30 : 20}
           />
-          <YAxis 
+          <YAxis
             {...rechartsAxisDefaults}
             tickFormatter={(value) => formatLargeNumber(value)}
           />
-          <Tooltip 
-            content={<CustomTooltip />} 
-            cursor={false}
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ fill: "rgba(255,255,255,0.04)" }}
             allowEscapeViewBox={{ x: false, y: false }}
           />
-          <Bar 
-            dataKey="totalTokens" 
-            radius={[2, 2, 0, 0]}
-            opacity={0.8}
+          <Bar
+            dataKey="totalTokens"
+            radius={[3, 3, 0, 0]}
+            fill={`url(#${gradientId})`}
+            stroke={chartColors.cyan}
+            strokeOpacity={0.4}
+            strokeWidth={1}
             maxBarSize={maxBarSize}
           >
-            {chartData.map((entry: ChartDataPoint, index: number) => (
-              <Cell 
-                key={`cell-${index}`} 
-                className={hoveredIndex === index ? "fill-brand-accent/80" : "fill-brand-accent"}
+            {chartData.map((_entry: ChartDataPoint, index: number) => (
+              <Cell
+                key={`cell-${index}`}
+                fillOpacity={hoveredIndex === index ? 0.6 : 1}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               />
@@ -160,4 +188,4 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       </ResponsiveContainer>
     </div>
   );
-}); 
+});

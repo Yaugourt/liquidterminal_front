@@ -49,8 +49,8 @@ export function UniversalTokenTable({
     const router = useRouter();
     const { format } = useNumberFormat();
 
-    // Configuration par défaut selon le mode - 24h change est toujours le défaut
-    const initialSortField = 'change24h';
+    // Default sort: volume (highest first with desc)
+    const initialSortField = 'volume';
 
     const [sortField, setSortField] = useState<SpotSortableFields | PerpSortableFields>(initialSortField);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");

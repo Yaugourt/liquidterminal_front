@@ -1,14 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useId } from "react";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { LightweightChart } from "@/components/common/charts/LightweightChart";
+import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
 import { useVaultDailySnapshots } from "@/services/explorer/vault/hooks/useVaultDailySnapshots";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 
 const TABS = ["Account Value", "TVL History"] as const;
 type Tab = (typeof TABS)[number];
+
+const formatTvl = (v: number) =>
+  v >= 1e6
+    ? `$${(v / 1e6).toFixed(2)}M`
+    : v >= 1e3
+    ? `$${(v / 1e3).toFixed(1)}K`
+    : `$${v.toFixed(2)}`;
 
 interface VaultDetailChartsProps {
   vaultAddress: string;
@@ -16,6 +23,7 @@ interface VaultDetailChartsProps {
 
 export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const [activeTab, setActiveTab] = useState<Tab>("Account Value");
+  const layoutId = useId().replace(/:/g, "");
 
   const { snapshots: equitySnaps, isLoading: equityLoading, error: equityError } =
     useVaultEquitySnapshots({ vaultAddress, limit: 500 });
@@ -46,36 +54,63 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const isLoading = activeTab === "Account Value" ? equityLoading : dailyLoading;
   const error = activeTab === "Account Value" ? equityError : dailyError;
   const chartData = activeTab === "Account Value" ? accountValueData : tvlData;
+  const lineColor = activeTab === "Account Value" ? "#83e9ff" : "#f9e370";
+  const glowColor =
+    activeTab === "Account Value" ? "bg-brand-accent/10" : "bg-brand-gold/10";
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.35 }}
-      className="glass-panel p-4"
+      className="glass-panel relative overflow-hidden p-4"
     >
+      {/* Ambient color glow tied to active tab */}
+      <div
+        className={`pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full ${glowColor} blur-3xl transition-colors`}
+      />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-white/[0.03] blur-3xl" />
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white">Charts</h3>
-        <div className="flex gap-1 bg-brand-primary/60 rounded-lg p-1">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-[11px] font-medium px-3 py-1.5 rounded-md transition-all ${
-                activeTab === tab
-                  ? "bg-brand-accent/15 text-brand-accent"
-                  : "text-text-muted hover:text-text-secondary"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+      <div className="relative z-10 flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+          <span
+            className="h-1 w-1 rounded-full"
+            style={{ background: lineColor }}
+          />
+          Charts
+        </div>
+        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="relative rounded-lg px-3 py-1 text-[11px] font-semibold whitespace-nowrap"
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId={`vault-detail-tab-${layoutId}`}
+                    className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  />
+                )}
+                <span
+                  className={`relative z-10 ${
+                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                  }`}
+                >
+                  {tab}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Chart */}
-      <div className="h-56">
+      <div className="relative z-10 h-56">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
@@ -90,17 +125,11 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
             <p className="text-text-muted text-sm">No data available for this period.</p>
           </div>
         ) : (
-          <LightweightChart
+          <AuroraAreaChart
             data={chartData}
             height={224}
-            lineColor={activeTab === "Account Value" ? "#83e9ff" : "#f9e370"}
-            formatValue={(v) =>
-              v >= 1e6
-                ? `$${(v / 1e6).toFixed(2)}M`
-                : v >= 1e3
-                ? `$${(v / 1e3).toFixed(1)}K`
-                : `$${v.toFixed(2)}`
-            }
+            lineColor={lineColor}
+            formatValue={formatTvl}
           />
         )}
       </div>

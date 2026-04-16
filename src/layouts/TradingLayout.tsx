@@ -8,7 +8,12 @@ interface TradingLayoutProps {
     tokenInfoSlot: ReactNode;
     chartSlot: ReactNode;
     orderBookSlot: ReactNode;
-    infoSidebarSlot: ReactNode;
+    /**
+     * Optional right-side info panel. When omitted, chart + orderbook expand
+     * to fill the row (the token details now live inside the top TokenCard
+     * as a collapsible panel).
+     */
+    infoSidebarSlot?: ReactNode;
     bottomSectionSlot: ReactNode;
 }
 
@@ -19,13 +24,21 @@ export function TradingLayout({
     infoSidebarSlot,
     bottomSectionSlot
 }: TradingLayoutProps) {
+    const hasSidebar = Boolean(infoSidebarSlot);
+
     return (
         <>
             {/* Token Overview Card */}
             {tokenInfoSlot}
 
             {/* Trading Interface Layout */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 xl:items-stretch">
+            <div
+                className={
+                    hasSidebar
+                        ? "grid grid-cols-1 xl:grid-cols-12 gap-4 xl:items-stretch"
+                        : "grid grid-cols-1 xl:grid-cols-10 gap-4 xl:items-stretch"
+                }
+            >
                 {/* Chart Section (Main) */}
                 <div className="xl:col-span-7 flex flex-col">
                     {chartSlot}
@@ -36,10 +49,12 @@ export function TradingLayout({
                     {orderBookSlot}
                 </div>
 
-                {/* Info Sidebar Section (Right) */}
-                <div className="xl:col-span-2">
-                    {infoSidebarSlot}
-                </div>
+                {/* Info Sidebar Section (Right) — optional */}
+                {hasSidebar && (
+                    <div className="xl:col-span-2">
+                        {infoSidebarSlot}
+                    </div>
+                )}
             </div>
 
             {/* Bottom Section (Tables/History) */}

@@ -1,6 +1,8 @@
-import { memo } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
+"use client";
+
+import { memo, useId } from "react";
+import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
 import { useUnstakingStatsForChartWithPeriod } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
@@ -11,7 +13,6 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 
-// Types pour le tooltip
 interface TooltipProps {
   active?: boolean;
   payload?: Array<{
@@ -29,30 +30,55 @@ interface StakingLineChartProps {
   period?: ChartPeriod;
 }
 
-
-export const StakingLineChart = memo(function StakingLineChart({ 
+/**
+ * Aurora-styled area chart for historical unstaking/staking activity.
+ */
+export const StakingLineChart = memo(function StakingLineChart({
   period = '7d'
 }: StakingLineChartProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  
-  // Récupérer les stats d'unstaking avec données formatées pour la chart selon la période
+  const uid = useId().replace(/:/g, "");
+  const gradientId = `staking-area-${uid}`;
+
   const { chartData: filteredData, isLoading, error } = useUnstakingStatsForChartWithPeriod(period);
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       const date = new Date(data.date);
-      
+
       return (
-        <div className="bg-brand-secondary/95 backdrop-blur-md border border-border-subtle rounded-lg p-3 shadow-xl shadow-black/40">
-          <p className="text-brand-accent font-medium mb-1">
+        <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
             {formatDate(date, dateFormat)}
-          </p>
-          <p className="text-white text-sm">{`Tokens: ${formatNumber(data.totalTokens, format)} HYPE`}</p>
-          <p className="text-brand-gold text-sm">{`${Math.round(data.transactionCount)} transaction${data.transactionCount > 1 ? 's' : ''}`}</p>
-          <p className="text-white text-xs">{`${Math.round(data.uniqueUsers)} user${data.uniqueUsers > 1 ? 's' : ''}`}</p>
+          </div>
+          <div className="mt-2 space-y-1 text-xs">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 text-text-secondary">
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: chartColors.cyan, boxShadow: `0 0 8px ${chartColors.cyanArea}` }}
+                />
+                <span>Tokens</span>
+              </div>
+              <span className="font-semibold text-white tabular-nums">
+                {formatNumber(data.totalTokens, format)} HYPE
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-text-secondary">Transactions</span>
+              <span className="font-semibold text-brand-gold tabular-nums">
+                {Math.round(data.transactionCount)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-text-secondary">Users</span>
+              <span className="font-semibold text-white tabular-nums">
+                {Math.round(data.uniqueUsers)}
+              </span>
+            </div>
+          </div>
         </div>
       );
     }
@@ -73,45 +99,57 @@ export const StakingLineChart = memo(function StakingLineChart({
 
   return (
     <div className="w-full h-full">
-              <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={filteredData}
-            margin={{
-              top: 8,
-              right: 8,
-              left: 8,
-              bottom: period === '1y' ? 18 : 35,
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={filteredData}
+          margin={{
+            top: 8,
+            right: 8,
+            left: 8,
+            bottom: period === '1y' ? 18 : 35,
+          }}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={chartColors.cyan} stopOpacity={0.45} />
+              <stop offset="100%" stopColor={chartColors.cyan} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid {...rechartsGridDefaults} />
+          <XAxis
+            dataKey="day"
+            {...rechartsAxisDefaults}
+            angle={-45}
+            textAnchor="end"
+            height={40}
+            interval={period === '1y' ? Math.ceil(filteredData.length / 8) : "preserveStartEnd"}
+            minTickGap={period === '1y' ? 30 : 20}
+          />
+          <YAxis
+            {...rechartsAxisDefaults}
+            tickFormatter={(value) => formatLargeNumber(value)}
+          />
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ stroke: "rgba(131,233,255,0.35)", strokeDasharray: "3 3" }}
+            allowEscapeViewBox={{ x: false, y: false }}
+          />
+          <Area
+            type="monotone"
+            dataKey="totalTokens"
+            stroke={chartColors.cyan}
+            strokeWidth={2}
+            fill={`url(#${gradientId})`}
+            isAnimationActive={false}
+            activeDot={{
+              r: 4,
+              fill: chartColors.cyan,
+              stroke: chartColors.labelBg,
+              strokeWidth: 2,
             }}
-          >
-            <CartesianGrid {...rechartsGridDefaults} />
-            <XAxis 
-              dataKey="day" 
-              {...rechartsAxisDefaults}
-              angle={-45}
-              textAnchor="end"
-              height={40}
-              interval={period === '1y' ? Math.ceil(filteredData.length / 8) : "preserveStartEnd"}
-              minTickGap={period === '1y' ? 30 : 20}
-            />
-            <YAxis 
-              {...rechartsAxisDefaults}
-              tickFormatter={(value) => formatLargeNumber(value)}
-            />
-            <Tooltip 
-              content={<CustomTooltip />} 
-              cursor={false}
-              allowEscapeViewBox={{ x: false, y: false }}
-            />
-            <Line 
-              type="monotone"
-              dataKey="totalTokens" 
-              className="stroke-brand-accent"
-              strokeWidth={2}
-              dot={{ className: 'fill-brand-accent', strokeWidth: 2, r: 3 }}
-              activeDot={{ r: 5, className: 'fill-brand-accent' }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
-}); 
+});

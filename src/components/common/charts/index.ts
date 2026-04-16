@@ -1,6 +1,6 @@
-export { LightweightChart } from './LightweightChart';
-export { HistogramChart } from './HistogramChart';
-export type { HistogramDataPoint } from './HistogramChart';
+export { AuroraAreaChart } from './AuroraAreaChart';
+export { AuroraHistogramChart } from './AuroraHistogramChart';
+export type { HistogramDataPoint } from './AuroraHistogramChart';
 export { ChartSkeleton } from './ChartSkeleton';
 export { PeriodSelector } from './PeriodSelector';
 export { ChartLoading, ChartEmpty, ChartError } from './ChartStates';

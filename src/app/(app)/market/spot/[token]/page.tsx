@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { SpotToken } from "@/services/market/spot/types";
 import { getToken } from "@/services/market/spot/api";
 import { Button } from "@/components/ui/button";
-import { TokenCard, TokenData, OrderBook, TokenInfoSidebar } from "@/components/market/token";
+import { TokenCard, TokenData, OrderBook } from "@/components/market/token";
 import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
 import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
@@ -51,6 +51,21 @@ export default function TokenPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'twap' | 'holders'>('twap');
+    // Remember which tabs have been opened so we mount them once and toggle
+    // visibility from then on (no refetch on every tab switch).
+    const [visitedTabs, setVisitedTabs] = useState<Set<'twap' | 'holders'>>(
+        () => new Set(['twap'])
+    );
+
+    const selectTab = (tab: 'twap' | 'holders') => {
+        setActiveTab(tab);
+        setVisitedTabs((prev) => {
+            if (prev.has(tab)) return prev;
+            const next = new Set(prev);
+            next.add(tab);
+            return next;
+        });
+    };
 
     useEffect(() => {
         setTitle(`${tokenName} - Market`);
@@ -121,7 +136,8 @@ export default function TokenPage() {
                         change24h: token.change24h,
                         volume24h: token.volume,
                         marketCap: token.marketCap,
-                        marketIndex: token.marketIndex
+                        marketIndex: token.marketIndex,
+                        contract: token.tokenId,
                     } as TokenData}
                     className="mb-6"
                 />
@@ -139,7 +155,7 @@ export default function TokenPage() {
                         <div className="flex justify-start items-center">
                             <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
                                 <button
-                                    onClick={() => setActiveTab('twap')}
+                                    onClick={() => selectTab('twap')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
                                         ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                                         : 'tab-inactive'
@@ -148,7 +164,7 @@ export default function TokenPage() {
                                     TWAP
                                 </button>
                                 <button
-                                    onClick={() => setActiveTab('holders')}
+                                    onClick={() => selectTab('holders')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
                                         ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
                                         : 'tab-inactive'
@@ -168,27 +184,22 @@ export default function TokenPage() {
                     tokenNameProp={token.name}
                 />
             }
-            infoSidebarSlot={
-                <TokenInfoSidebar
-                    token={{
-                        symbol: `${token.name}/USDC`,
-                        name: token.name,
-                        type: 'spot',
-                        price: token.price,
-                        change24h: token.change24h,
-                        volume24h: token.volume,
-                        marketCap: token.marketCap,
-                        marketIndex: token.marketIndex,
-                        contract: token.tokenId
-                    } as TokenData}
-                />
-            }
             bottomSectionSlot={
-                activeTab === 'twap' ? (
-                    <TokenTwapSection tokenName={token.name} />
-                ) : (
-                    <HoldersSection tokenName={tokenName} tokenPrice={token.price} token={token} />
-                )
+                // Both tabs are mounted once they've been visited, then just
+                // toggled with `hidden` so switching tabs no longer refetches
+                // the underlying data.
+                <>
+                    {visitedTabs.has('twap') && (
+                        <div className={activeTab === 'twap' ? '' : 'hidden'}>
+                            <TokenTwapSection tokenName={token.name} />
+                        </div>
+                    )}
+                    {visitedTabs.has('holders') && (
+                        <div className={activeTab === 'holders' ? '' : 'hidden'}>
+                            <HoldersSection tokenName={tokenName} tokenPrice={token.price} token={token} />
+                        </div>
+                    )}
+                </>
             }
         />
     );

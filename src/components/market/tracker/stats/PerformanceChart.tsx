@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { motion } from "framer-motion";
 import { PerformanceSection } from "./performance/PerformanceSection";
 import { DistributionSection } from "./performance/DistributionSection";
 import { Eye, EyeOff } from "lucide-react";
@@ -24,40 +25,56 @@ export function PerformanceChart({
 }: PerformanceChartProps) {
   const [activeTab, setActiveTab] = useState<PerformanceTab>('performance');
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
+  const uid = useId().replace(/:/g, "");
+
+  const tabs: { key: PerformanceTab; label: string }[] = [
+    { key: 'performance', label: 'Performance' },
+    { key: 'distribution', label: 'Distribution' }
+  ];
 
   return (
     <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden relative">
-
-      {/* Tab Buttons Inlined */}
-      <div className="absolute top-3 left-4 z-10">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-          {[
-            { key: 'performance', label: 'Performance' },
-            { key: 'distribution', label: 'Distribution' }
-          ].map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as "performance" | "distribution")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === tab.key
-                ? 'bg-brand-accent text-brand-tertiary font-bold shadow-sm'
-                : 'text-text-secondary hover:text-white'
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* Aurora pill tabs */}
+      <div className="absolute top-3 left-4 z-20">
+        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className="relative rounded-lg px-3 py-1 text-[11px] font-semibold whitespace-nowrap"
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId={`perf-tab-${uid}`}
+                    className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  />
+                )}
+                <span
+                  className={`relative z-10 ${
+                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                  }`}
+                >
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Hide small balances toggle - only visible on Distribution tab */}
+      {/* Hide small balances — only on Distribution, Aurora style */}
       {activeTab === 'distribution' && (
-        <div className="absolute top-3 right-4 z-10">
+        <div className="absolute top-3 right-4 z-20">
           <button
             onClick={() => setHideSmallBalances(!hideSmallBalances)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all border ${hideSmallBalances
-              ? 'bg-brand-accent/20 border-brand-accent/50 text-brand-accent'
-              : 'bg-brand-tertiary border-border-subtle text-text-secondary hover:text-white hover:border-border-hover'
-              }`}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+              hideSmallBalances
+                ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
+                : "border-border-subtle bg-black/30 text-text-secondary hover:text-white hover:border-border-hover"
+            }`}
             title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
           >
             {hideSmallBalances ? <EyeOff size={12} /> : <Eye size={12} />}
