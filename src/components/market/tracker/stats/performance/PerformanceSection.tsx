@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { useChartFormat, useChartData, ChartPeriod } from "@/components/common/charts";
+import { useChartFormat, useChartData, ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, chartColors, rechartsAxisDefaults, rechartsGridDefaults, rechartsTooltipContainer } from "@/components/common/charts";
 import {
   LineChart,
   Line,
@@ -30,33 +29,6 @@ const chartPeriodToApiPeriod: Record<ChartPeriod, ApiPeriod> = {
   '90d': 'month',
   '1y': 'allTime',
   'allTime': 'allTime'
-};
-
-const AnimatedPeriodSelector = ({
-  selectedPeriod,
-  onPeriodChange,
-  availablePeriods
-}: {
-  selectedPeriod: ChartPeriod;
-  onPeriodChange: (period: ChartPeriod) => void;
-  availablePeriods: ChartPeriod[];
-}) => {
-  return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-      {availablePeriods.map((period) => (
-        <button
-          key={period}
-          onClick={() => onPeriodChange(period)}
-          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${selectedPeriod === period
-            ? 'bg-brand-accent text-brand-tertiary font-bold shadow-sm'
-            : 'text-text-secondary hover:text-white'
-            }`}
-        >
-          {period}
-        </button>
-      ))}
-    </div>
-  );
 };
 
 interface PerformanceSectionProps {
@@ -106,11 +78,11 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
       const value = payload[0].value;
       const formattedValue = formatValue(value, formatOptions);
       return (
-        <div className="bg-brand-tertiary border border-[#83E9FF4D] p-2 rounded-md">
-          <p className="text-white text-xs">
+        <div className={rechartsTooltipContainer}>
+          <p className="text-text-muted text-[10px] tabular-nums">
             {new Date(Number(label)).toLocaleDateString()}
           </p>
-          <p className="text-brand-accent font-medium">
+          <p className="text-brand-accent text-xs font-medium tabular-nums mt-0.5">
             {formattedValue}
           </p>
         </div>
@@ -124,31 +96,27 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
       <div className="absolute top-2 right-3 sm:right-6 z-10">
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p className={`text-sm font-medium ${pnlPercentage >= 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]'}`}>
-              {pnlPercentage >= 0 ? '+' : ''}{pnlPercentage.toFixed(2)}%
+            <p className={`text-sm font-medium ${pnlPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <span className="tabular-nums">{pnlPercentage >= 0 ? '+' : ''}{pnlPercentage.toFixed(2)}%</span>
             </p>
           </div>
-          <AnimatedPeriodSelector
-            selectedPeriod={selectedPeriod}
-            onPeriodChange={setSelectedPeriod}
-            availablePeriods={availablePeriods}
+          <PeriodSelector
+            selected={selectedPeriod}
+            onChange={setSelectedPeriod}
+            options={availablePeriods}
           />
         </div>
       </div>
 
       <div className="absolute inset-0 p-4 pt-12">
         {isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-          </div>
+          <ChartLoading />
         ) : chartData.data.length === 0 ? (
-          <div className="flex justify-center items-center h-full">
-            <p className="text-[#FFFFFF80]">No data available</p>
-          </div>
+          <ChartEmpty />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData.data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#83E9FF1A" />
+              <CartesianGrid {...rechartsGridDefaults} />
               <XAxis
                 dataKey="timestamp"
                 tickFormatter={(time) => {
@@ -158,12 +126,10 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
                   }
                   return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
                 }}
-                stroke="#FFFFFF99"
-                fontSize={12}
+                {...rechartsAxisDefaults}
               />
               <YAxis
-                stroke="#FFFFFF99"
-                fontSize={12}
+                {...rechartsAxisDefaults}
                 tickFormatter={(value) => formatValue(value, formatOptions)}
                 domain={['dataMin', 'dataMax']}
                 padding={{ top: 20, bottom: 20 }}
@@ -172,10 +138,10 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke="#83E9FF"
+                stroke={chartColors.cyan}
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: "#83E9FF" }}
+                activeDot={{ r: 4, fill: chartColors.cyan }}
               />
             </LineChart>
           </ResponsiveContainer>

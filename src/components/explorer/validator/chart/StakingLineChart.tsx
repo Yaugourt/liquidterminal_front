@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
 import { useUnstakingStatsForChartWithPeriod } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
@@ -82,14 +83,10 @@ export const StakingLineChart = memo(function StakingLineChart({
               bottom: period === '1y' ? 18 : 35,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" className="stroke-brand-accent/10" />
+            <CartesianGrid {...rechartsGridDefaults} />
             <XAxis 
               dataKey="day" 
-              className="stroke-brand-gold"
-              fontSize={11}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: '#FFFFFF' }}
+              {...rechartsAxisDefaults}
               angle={-45}
               textAnchor="end"
               height={40}
@@ -97,11 +94,7 @@ export const StakingLineChart = memo(function StakingLineChart({
               minTickGap={period === '1y' ? 30 : 20}
             />
             <YAxis 
-              className="stroke-brand-gold"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: '#FFFFFF' }}
+              {...rechartsAxisDefaults}
               tickFormatter={(value) => formatLargeNumber(value)}
             />
             <Tooltip 

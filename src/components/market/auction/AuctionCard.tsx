@@ -106,7 +106,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 <span>{auctionState.progressPercentage.toFixed(0)}% Complete</span>
                 <span>End</span>
               </div>
-              <div className="h-2 bg-black/20 rounded-full overflow-hidden border border-border-subtle">
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden border border-border-hover">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ease-out ${
                     auctionState.progressPercentage < 30 ? 'bg-gradient-to-r from-red-500 to-red-400' :

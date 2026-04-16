@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useMemo, useCallback } from 'react';
-import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
 import { LightweightChart } from "@/components/common/charts/LightweightChart";
 import { Card } from '@/components/ui/card';
 
@@ -91,7 +90,7 @@ export const AuctionChart = ({
 
             {displayValue !== null && (
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-white tracking-tight">
+                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
@@ -132,45 +131,22 @@ export const AuctionChart = ({
             )}
           </div>
 
-          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1">
-            {availablePeriods.map((period) => (
-              <button
-                key={period}
-                onClick={() => onPeriodChange(period)}
-                className={`px-2 py-1 text-xs font-medium transition-colors duration-200 whitespace-nowrap rounded-md ${selectedPeriod === period ? 'text-brand-tertiary bg-brand-accent font-bold' : 'text-text-secondary hover:text-zinc-200'
-                  }`}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
+          <PeriodSelector
+            selected={selectedPeriod}
+            onChange={onPeriodChange}
+            options={availablePeriods}
+          />
         </div>
       </div>
 
       {/* Chart Container */}
       <div className="absolute inset-0 pt-16 pb-2 px-2">
         {error ? (
-          <div className="flex flex-col justify-center items-center h-full gap-3">
-            <AlertCircle className="h-6 w-6 text-rose-400" />
-            <p className="text-rose-400 text-sm">Failed to load auction data</p>
-            {onRetry && (
-              <button
-                onClick={onRetry}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
-              >
-                <RefreshCw className="h-3 w-3" />
-                Retry
-              </button>
-            )}
-          </div>
+          <ChartError message="Failed to load auction data" onRetry={onRetry} />
         ) : isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-          </div>
+          <ChartLoading />
         ) : (!data || data.length === 0) ? (
-          <div className="flex justify-center items-center h-full">
-            <p className="text-text-muted">No data available</p>
-          </div>
+          <ChartEmpty />
         ) : (
           <LightweightChart
             data={chartData}

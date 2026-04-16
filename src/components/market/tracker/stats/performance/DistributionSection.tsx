@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Loader2 } from "lucide-react";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { HyperliquidBalance } from "@/services/market/tracker/types";
+import { ChartLoading, ChartEmpty, rechartsTooltipContainer } from "@/components/common/charts";
 
 // Types pour le tooltip
 interface TooltipProps {
@@ -118,9 +118,7 @@ export function DistributionSection({
   if (isLoading) {
     return (
       <div className="absolute inset-0 p-4 pt-12">
-        <div className="flex justify-center items-center h-full">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-        </div>
+        <ChartLoading />
       </div>
     );
   }
@@ -128,9 +126,7 @@ export function DistributionSection({
   if (distributionData.length === 0) {
     return (
       <div className="absolute inset-0 p-4 pt-12">
-        <div className="flex justify-center items-center h-full">
-          <p className="text-[#FFFFFF80]">No spot assets available</p>
-        </div>
+        <ChartEmpty message="No spot assets available" />
       </div>
     );
   }
@@ -139,18 +135,18 @@ export function DistributionSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-brand-tertiary border border-[#83E9FF4D] p-3 rounded-md shadow-lg">
-          <div className="flex items-center gap-2 mb-2">
+        <div className={rechartsTooltipContainer}>
+          <div className="flex items-center gap-1.5 mb-1.5">
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
               style={{ backgroundColor: data.color }}
             />
-            <span className="text-white font-medium">{data.name}</span>
+            <span className="text-white text-xs font-medium">{data.name}</span>
           </div>
-          <div className="text-brand-accent text-sm font-medium">
+          <div className="text-brand-accent text-xs font-semibold tabular-nums">
             {data.percentage.toFixed(1)}%
           </div>
-          <div className="text-[#FFFFFF80] text-xs">
+          <div className="text-text-muted text-[10px] tabular-nums">
             {formatCurrency(data.value)}
           </div>
         </div>
@@ -170,8 +166,8 @@ export function DistributionSection({
                 data={distributionData}
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={100}
+                innerRadius="35%"
+                outerRadius="62%"
                 paddingAngle={2}
                 dataKey="value"
               >
@@ -189,7 +185,7 @@ export function DistributionSection({
           <div className="h-full flex flex-col justify-center">
             <div className="grid grid-cols-2 gap-2 max-h-full">
               {distributionData.map((asset) => (
-                <div key={asset.name} className="flex items-center gap-2 p-1.5 rounded-md hover:bg-[#FFFFFF0A] transition-colors">
+                <div key={asset.name} className="flex items-center gap-2 p-1.5 rounded-md hover:bg-white/5 transition-colors">
                   <div
                     className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                     style={{ backgroundColor: asset.color }}
@@ -199,11 +195,11 @@ export function DistributionSection({
                       <span className="text-white text-xs font-medium truncate">
                         {asset.name}
                       </span>
-                      <span className="text-white text-xs font-medium ml-1">
+                      <span className="text-white text-xs font-medium ml-1 tabular-nums">
                         {asset.percentage.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="text-[#FFFFFF80] text-xs truncate">
+                    <div className="text-text-muted text-xs truncate tabular-nums">
                       {formatCurrency(asset.value)}
                     </div>
                   </div>
