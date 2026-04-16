@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
 import { useUnstakingStatsForChartWithDays } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
@@ -120,14 +121,11 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
               bottom: 20,
             }}
           >
-          <CartesianGrid strokeDasharray="3 3" className="stroke-brand-accent/10" />
+          <CartesianGrid {...rechartsGridDefaults} />
           <XAxis 
             dataKey="day" 
-            className="stroke-brand-gold"
+            {...rechartsAxisDefaults}
             fontSize={barCount > 30 ? 10 : 11}
-            tickLine={false}
-            axisLine={false}
-            tick={{ fill: '#FFFFFF' }}
             angle={barCount > 15 ? -45 : 0}
             textAnchor={barCount > 15 ? "end" : "middle"}
             height={barCount > 15 ? 40 : 25}
@@ -135,11 +133,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
             minTickGap={barCount > 30 ? 30 : 20}
           />
           <YAxis 
-            className="stroke-brand-gold"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tick={{ fill: '#FFFFFF' }}
+            {...rechartsAxisDefaults}
             tickFormatter={(value) => formatLargeNumber(value)}
           />
           <Tooltip 

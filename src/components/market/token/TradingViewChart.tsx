@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { createChart, ColorType, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, CandlestickData, CandlestickSeries, Time } from 'lightweight-charts';
 import { useTokenCandles, useTokenWebSocket, marketIndexToCoinId } from '@/services/market/token';
 import { TokenCandle } from '@/services/market/token/types';
 import { Card } from '@/components/ui/card';
+import { lwcDefaults, chartColors } from '@/components/common/charts/chartTheme';
+import { ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
 
 interface TradingViewChartProps {
   symbol: string;
@@ -106,39 +108,29 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
     // Only create chart if it doesn't exist
     if (!chartRef.current) {
       const chart = createChart(containerRef.current, {
-        layout: {
-          background: { type: ColorType.Solid, color: 'transparent' },
-          textColor: '#A1A1AA', // zinc-400
-          fontFamily: "var(--font-inter), Inter, sans-serif",
-          fontSize: 10,
-        },
-        grid: {
-          vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
-          horzLines: { color: 'rgba(255, 255, 255, 0.05)' },
-        },
+        ...lwcDefaults,
         crosshair: {
-          mode: 1,
+          ...lwcDefaults.crosshair,
           vertLine: {
-            color: 'rgba(131, 233, 255, 0.3)', // brand-accent with opacity
+            color: `${chartColors.cyan}4D`,
             width: 1,
             style: 2,
-            labelBackgroundColor: '#0B0E14', // brand-main
+            labelBackgroundColor: chartColors.labelBg,
           },
           horzLine: {
-            color: 'rgba(131, 233, 255, 0.3)', // brand-accent with opacity
+            color: `${chartColors.cyan}4D`,
             width: 1,
             style: 2,
-            labelBackgroundColor: '#0B0E14', // brand-main
+            labelBackgroundColor: chartColors.labelBg,
           },
         },
         rightPriceScale: {
-          borderColor: 'rgba(255, 255, 255, 0.05)',
-          textColor: '#A1A1AA', // zinc-400
+          ...lwcDefaults.rightPriceScale,
+          borderColor: chartColors.gridLine,
         },
         timeScale: {
-          borderColor: 'rgba(255, 255, 255, 0.05)',
-          timeVisible: true,
-          secondsVisible: false,
+          ...lwcDefaults.timeScale,
+          borderColor: chartColors.gridLine,
           rightOffset: 12,
           barSpacing: 10,
           fixLeftEdge: false,
@@ -148,14 +140,13 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
         },
       });
 
-      // Add candlestick series
       const candlestickSeries = chart.addSeries(CandlestickSeries, {
-        upColor: '#00ff88', // brand-success
-        downColor: '#ef4444', // red-500
-        borderDownColor: '#ef4444',
-        borderUpColor: '#00ff88',
-        wickDownColor: '#ef4444',
-        wickUpColor: '#00ff88',
+        upColor: chartColors.emerald,
+        downColor: chartColors.rose,
+        borderDownColor: chartColors.rose,
+        borderUpColor: chartColors.emerald,
+        wickDownColor: chartColors.rose,
+        wickUpColor: chartColors.emerald,
       });
 
       chartRef.current = chart;
@@ -289,17 +280,15 @@ export function TradingViewChart({ marketIndex, tokenName, className, coinId: di
         </select>
       </div>
 
-      {(isLoading || (!candles || candles.length === 0)) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-brand-secondary/60 backdrop-blur-md z-10">
-          <div className="flex flex-col items-center">
-            <div className="w-8 h-8 border-2 border-brand-accent border-t-transparent rounded-full animate-spin mb-2"></div>
-            <span className="text-text-secondary text-sm">
-              {isLoading ? 'Loading chart data...' : 'No data available'}
-            </span>
-            {error && (
-              <span className="text-rose-400 text-xs mt-1">Error: {error}</span>
-            )}
-          </div>
+      {(isLoading || error || !candles || candles.length === 0) && (
+        <div className="absolute inset-0 bg-brand-secondary/60 backdrop-blur-md z-10 flex items-center justify-center">
+          {error ? (
+            <ChartError message={typeof error === 'string' ? error : 'Failed to load chart data'} />
+          ) : isLoading ? (
+            <ChartLoading />
+          ) : (
+            <ChartEmpty message="No candle data available" />
+          )}
         </div>
       )}
       <div

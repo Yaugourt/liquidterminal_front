@@ -1,6 +1,5 @@
 export { VaultStatsCard } from './VaultStatsCard';
 export { VaultSection } from './VaultSection';
-export { VaultChartSection } from './VaultChartSection';
 
 // v2 components
 export { VaultKpiBar } from './VaultKpiBar';

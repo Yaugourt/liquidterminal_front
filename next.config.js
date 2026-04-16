@@ -46,6 +46,10 @@ const nextConfig = {
         ];
     },
     
+    experimental: {
+        optimizePackageImports: ['recharts', 'lucide-react', 'framer-motion'],
+    },
+
     images: {
         // ✅ Image optimization enabled
         remotePatterns: [

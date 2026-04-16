@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
 import { LightweightChart } from "@/components/common/charts/LightweightChart";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
@@ -22,33 +21,6 @@ interface Props {
   selectedFeeType?: "all" | "spot";
   onFeeTypeChange?: (feeType: "all" | "spot") => void;
 }
-
-const AnimatedPeriodSelector = ({
-  selectedPeriod,
-  onPeriodChange,
-  availablePeriods
-}: {
-  selectedPeriod: ChartPeriod;
-  onPeriodChange: (period: ChartPeriod) => void;
-  availablePeriods: ChartPeriod[];
-}) => {
-  return (
-    <div className="flex w-fit bg-brand-dark rounded-lg p-1 border border-border-subtle">
-      {availablePeriods.map((period) => (
-        <button
-          key={period}
-          onClick={() => onPeriodChange(period)}
-          className={`px-2 py-1 rounded-md text-label transition-all ${selectedPeriod === period
-              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
-              : 'tab-inactive'
-            }`}
-        >
-          {period}
-        </button>
-      ))}
-    </div>
-  );
-};
 
 export const ChartDisplay = ({
   data,
@@ -142,7 +114,7 @@ export const ChartDisplay = ({
             {/* Value Display */}
             {displayValue !== null && (
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight">
+                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
@@ -198,10 +170,10 @@ export const ChartDisplay = ({
             )}
           </div>
 
-          <AnimatedPeriodSelector
-            selectedPeriod={selectedPeriod}
-            onPeriodChange={onPeriodChange}
-            availablePeriods={availablePeriods}
+          <PeriodSelector
+            selected={selectedPeriod}
+            onChange={onPeriodChange}
+            options={availablePeriods}
           />
         </div>
       </div>
@@ -209,27 +181,11 @@ export const ChartDisplay = ({
       {/* Chart Container - fills remaining space */}
       <div className="flex-1 px-2 pb-2">
         {error ? (
-          <div className="flex flex-col justify-center items-center h-full min-h-[200px] gap-3">
-            <AlertCircle className="h-6 w-6 text-rose-400" />
-            <p className="text-rose-400 text-sm">Failed to load chart data</p>
-            {onRetry && (
-              <button
-                onClick={onRetry}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
-              >
-                <RefreshCw className="h-3 w-3" />
-                Retry
-              </button>
-            )}
-          </div>
+          <ChartError onRetry={onRetry} />
         ) : isLoading ? (
-          <div className="flex justify-center items-center h-full min-h-[200px]">
-            <Loader2 className="h-8 w-8 animate-spin text-text-muted" />
-          </div>
+          <ChartLoading />
         ) : chartData.length === 0 ? (
-          <div className="flex justify-center items-center h-full min-h-[200px]">
-            <p className="text-text-muted text-sm">No data available</p>
-          </div>
+          <ChartEmpty suggestion="Try selecting a different time period" />
         ) : (
           <LightweightChart
             data={chartData}

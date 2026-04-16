@@ -3,15 +3,13 @@
 import { useEffect, useRef, useCallback, memo } from "react";
 import {
   createChart,
-  ColorType,
   IChartApi,
   ISeriesApi,
   AreaData,
   Time,
-  CrosshairMode,
-  LineStyle,
   AreaSeries,
 } from "lightweight-charts";
+import { lwcDefaults, chartColors } from "./chartTheme";
 
 export interface ChartDataPoint {
   time: number; // timestamp in milliseconds
@@ -65,49 +63,18 @@ const LightweightChartComponent = ({
     const initialHeight = height || container.clientHeight || 200;
 
     chartRef.current = createChart(container, {
-      layout: {
-        background: { type: ColorType.Solid, color: "transparent" },
-        textColor: "#525252",
-        fontFamily: "var(--font-inter), Inter, sans-serif",
-        fontSize: 10,
-      },
+      ...lwcDefaults,
       width: initialWidth,
       height: initialHeight,
       grid: {
-        vertLines: { visible: false },
+        ...lwcDefaults.grid,
         horzLines: {
+          ...(lwcDefaults.grid?.horzLines as object),
           visible: showGrid,
-          color: "rgba(255, 255, 255, 0.05)",
-          style: LineStyle.Dashed,
-        },
-      },
-      crosshair: {
-        mode: CrosshairMode.Magnet,
-        vertLine: {
-          color: "rgba(255, 255, 255, 0.1)",
-          width: 1,
-          style: LineStyle.Solid,
-          labelVisible: false,
-        },
-        horzLine: {
-          color: "rgba(255, 255, 255, 0.1)",
-          width: 1,
-          style: LineStyle.Solid,
-          labelVisible: true,
-          labelBackgroundColor: "#0B0E14",
-        },
-      },
-      rightPriceScale: {
-        borderVisible: false,
-        scaleMargins: {
-          top: 0.15,
-          bottom: 0.1,
         },
       },
       timeScale: {
-        borderVisible: false,
-        timeVisible: true,
-        secondsVisible: false,
+        ...lwcDefaults.timeScale,
         tickMarkFormatter: (time: Time) => {
           const date = new Date((time as number) * 1000);
           return date.toLocaleDateString("en-US", {
@@ -115,15 +82,6 @@ const LightweightChartComponent = ({
             day: "numeric",
           });
         },
-      },
-      handleScale: {
-        axisPressedMouseMove: { time: true, price: false },
-      },
-      handleScroll: {
-        mouseWheel: true,
-        pressedMouseMove: true,
-        horzTouchDrag: true,
-        vertTouchDrag: false,
       },
     });
 
@@ -138,7 +96,7 @@ const LightweightChartComponent = ({
       crosshairMarkerVisible: true,
       crosshairMarkerRadius: 4,
       crosshairMarkerBackgroundColor: lineColor,
-      crosshairMarkerBorderColor: "#0B0E14",
+      crosshairMarkerBorderColor: chartColors.labelBg,
       crosshairMarkerBorderWidth: 2,
       priceFormat: {
         type: "custom",

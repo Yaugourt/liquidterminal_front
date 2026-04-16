@@ -1,5 +1,6 @@
 import { memo, useMemo, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
 import { useHoldersStats } from "@/services/explorer/validator/hooks/useHoldersStats";
 import { HoldersDistributionRange } from "@/services/explorer/validator/types/holders";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -87,21 +88,13 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
               bottom: 8,
             }}
           >
-          <CartesianGrid strokeDasharray="3 3" className="stroke-brand-accent/10" />
+          <CartesianGrid {...rechartsGridDefaults} />
           <XAxis 
             dataKey="range" 
-            stroke="#FFFFFF"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tick={{ fill: '#FFFFFF' }}
+            {...rechartsAxisDefaults}
           />
           <YAxis 
-            stroke="#FFFFFF"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            tick={{ fill: '#FFFFFF' }}
+            {...rechartsAxisDefaults}
             tickFormatter={(value) => formatLargeNumber(value)}
           />
           <Tooltip 
