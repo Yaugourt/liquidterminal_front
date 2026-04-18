@@ -38,12 +38,9 @@ function assertLtData<T>(body: unknown): T {
   return r.data as T;
 }
 
-function toQuery(params: unknown): Record<string, unknown> {
-  if (!params || typeof params !== "object" || Array.isArray(params)) {
-    return {};
-  }
+function toQuery(params: Record<string, string | number | undefined | null>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(params as Record<string, unknown>)) {
+  for (const [k, v] of Object.entries(params)) {
     if (v === undefined || v === null || v === "") continue;
     out[k] = v;
   }
@@ -185,30 +182,4 @@ export async function fetchHip3UserFills(address: string, params?: Hip3UserFills
     const raw = await get<unknown>(`${HIP3}/users/${enc}/fills`, toQuery(params ?? {}));
     return assertLtData<Hip3FillRow[]>(raw);
   }, "fetching HIP-3 user fills");
-}
-
-/** HIP-3 gossip priority-fee auction status (indexer). */
-export async function fetchHip3GossipStatus(): Promise<Record<string, unknown>> {
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(`${HIP3}/priority-fees/gossip/status`);
-    return assertLtData<Record<string, unknown>>(raw);
-  }, "fetching HIP-3 gossip status");
-}
-
-/** HIP-3 gossip priority-fee auction history (indexer). */
-export async function fetchHip3GossipHistory(params?: {
-  limit?: number;
-  offset?: number;
-  order?: string;
-}): Promise<unknown[]> {
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(`${HIP3}/priority-fees/gossip/history`, toQuery(params ?? {}));
-    const d = assertLtData<unknown>(raw);
-    if (Array.isArray(d)) return d;
-    if (d && typeof d === "object" && "items" in d) {
-      const items = (d as { items: unknown }).items;
-      if (Array.isArray(items)) return items;
-    }
-    return [];
-  }, "fetching HIP-3 gossip history");
 }
