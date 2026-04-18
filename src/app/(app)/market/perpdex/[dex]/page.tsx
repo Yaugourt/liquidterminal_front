@@ -19,12 +19,6 @@ import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { PerpDexMarketsTable } from "@/components/market/perpDex";
-import {
-  LiveHyperliquidBanner,
-  PerpDexDexIndexedAnalytics,
-  PerpDexDexIndexedTraders,
-} from "@/components/market/perpDex/analytics";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { toast } from "sonner";
 import {
@@ -52,11 +46,6 @@ export default function PerpDexDetailPage() {
       marketsSortOrder
     );
   }, [dex, marketsSortField, marketsSortOrder]);
-
-  const coinOptions = useMemo(
-    () => (dex?.assetsWithMarketData ?? []).map((a) => a.name).filter(Boolean),
-    [dex?.assetsWithMarketData]
-  );
 
   const handleMarketsSort = useCallback((field: PerpDexMarketsSortField) => {
     setMarketsSortField((prevField) => {
@@ -94,11 +83,11 @@ export default function PerpDexDetailPage() {
 
   if (error || !dex) {
     return (
-      <div className="p-8 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
+      <div className="p-8 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
         <div className="flex flex-col items-center justify-center text-center">
-          <Database className="w-12 h-12 mb-4 text-text-muted" />
+          <Database className="w-12 h-12 mb-4 text-zinc-600" />
           <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
-          <p className="text-text-secondary mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
+          <p className="text-zinc-400 mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
           <Button onClick={() => router.push('/market/perpdex')} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to PerpDexs
@@ -109,7 +98,7 @@ export default function PerpDexDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <>
       {/* Back button and title */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -150,7 +139,7 @@ export default function PerpDexDetailPage() {
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* 24h Volume */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Activity className="h-3 w-3 text-brand-accent" />
@@ -170,7 +159,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Open Interest */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand-accent" />
@@ -190,7 +179,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Avg Funding */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Zap className="h-3 w-3 text-brand-accent" />
@@ -203,7 +192,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Active Markets */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Scale className="h-3 w-3 text-brand-accent" />
@@ -213,7 +202,7 @@ export default function PerpDexDetailPage() {
           <span className="text-white font-bold text-lg">
             {dex.activeAssets}
             {dex.activeAssets !== dex.totalAssets && (
-              <span className="text-text-muted text-sm font-normal ml-1">
+              <span className="text-zinc-500 text-sm font-normal ml-1">
                 / {dex.totalAssets}
               </span>
             )}
@@ -221,7 +210,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* OI Cap */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand-accent" />
@@ -239,7 +228,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Fee Scale */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand-accent" />
@@ -255,7 +244,7 @@ export default function PerpDexDetailPage() {
       {/* Addresses */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Deployer Card */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Database className="h-3 w-3 text-brand-accent" />
@@ -272,7 +261,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Fee Recipient Card */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand-accent" />
@@ -294,10 +283,10 @@ export default function PerpDexDetailPage() {
             address={dex.oracleUpdater!}
             label="Oracle Updater"
             copyMessage="Oracle updater address copied"
-            className="text-text-secondary text-sm"
+            className="text-zinc-400 text-sm"
           />
         ) : dex.subDeployers.length > 0 ? (
-          <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20">
+          <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
                 <Wallet className="h-3 w-3 text-brand-accent" />
@@ -315,67 +304,34 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-text-secondary text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-zinc-400 text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>
                     ))}
                     {sub.addresses.length > 2 && (
-                      <span className="text-text-muted text-label">+{sub.addresses.length - 2}</span>
+                      <span className="text-zinc-600 text-label">+{sub.addresses.length - 2}</span>
                     )}
                   </div>
                 </div>
               ))}
               {dex.subDeployers.length > 4 && (
-                <span className="text-text-muted text-xs">+{dex.subDeployers.length - 4} more permissions</span>
+                <span className="text-zinc-600 text-xs">+{dex.subDeployers.length - 4} more permissions</span>
               )}
             </div>
           </div>
         ) : null}
       </div>
 
-      <Tabs defaultValue="markets" className="w-full">
-        <TabsList className="bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl mb-2 flex flex-wrap h-auto gap-1">
-          <TabsTrigger
-            value="markets"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all text-sm"
-          >
-            Markets (live)
-          </TabsTrigger>
-          <TabsTrigger
-            value="analytics"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all text-sm"
-          >
-            Indexed analytics
-          </TabsTrigger>
-          <TabsTrigger
-            value="traders"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all text-sm"
-          >
-            Traders
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="markets" className="mt-0 space-y-4">
-          <LiveHyperliquidBanner />
-          <PerpDexMarketsTable
-            assets={sortedMarketsAssets}
-            totalAssets={dex.totalAssets}
-            activeAssets={dex.activeAssets}
-            sortField={marketsSortField}
-            sortOrder={marketsSortOrder}
-            onSort={handleMarketsSort}
-          />
-        </TabsContent>
-
-        <TabsContent value="analytics" className="mt-0">
-          <PerpDexDexIndexedAnalytics dexId={dex.name} coinOptions={coinOptions} />
-        </TabsContent>
-
-        <TabsContent value="traders" className="mt-0">
-          <PerpDexDexIndexedTraders dexId={dex.name} />
-        </TabsContent>
-      </Tabs>
-    </div>
+      {/* Markets table with live data */}
+      <PerpDexMarketsTable
+        assets={sortedMarketsAssets}
+        totalAssets={dex.totalAssets}
+        activeAssets={dex.activeAssets}
+        sortField={marketsSortField}
+        sortOrder={marketsSortOrder}
+        onSort={handleMarketsSort}
+      />
+    </>
   );
 }
