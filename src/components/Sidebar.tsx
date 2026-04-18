@@ -137,7 +137,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                 )}
                                 <ul className="space-y-[2px]">
                                     {group.items.map((item) => {
-                                        const isActive = pathname === item.href || (item.children && item.children.some(child => pathname === child.href));
+                                        const isActive =
+                                            pathname === item.href ||
+                                            (item.href.startsWith("/market/") &&
+                                                pathname.startsWith(`${item.href}/`)) ||
+                                            (item.children && item.children.some((child) => pathname === child.href));
                                         const isOpen = openSubmenu === item.name;
                                         return (
                                             <li key={item.name} className="relative">

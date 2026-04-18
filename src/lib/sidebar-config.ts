@@ -17,7 +17,8 @@ import {
   CandlestickChart,
   Zap,
   FileCode,
-  Sparkles
+  Sparkles,
+  Users
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -153,6 +154,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/market/perpdex',
         icon: null,
         IconComponent: Building2
+      },
+      {
+        name: 'Builders',
+        href: '/market/builders',
+        icon: null,
+        IconComponent: Users
       },
       {
         name: 'Tracker',

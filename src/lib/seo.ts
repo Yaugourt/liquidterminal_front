@@ -201,6 +201,14 @@ export const seoConfig = {
     path: "/market/perp/auction",
   },
 
+  marketBuilders: {
+    title: "Builders - Referral & Fee Stats",
+    description:
+      "Explore HyperLiquid referral builders: global volume and fee stats, top builders by activity, and per-builder detail with top users.",
+    keywords: ["HyperLiquid builders", "referral fees", "builder fees", "DEX builders", "indexer"],
+    path: "/market/builders",
+  },
+
   dashboard: {
     title: "Dashboard - Your HyperLiquid Overview",
     description: "Personalized dashboard for your HyperLiquid activity. Track your portfolio, positions, transactions, and more.",
