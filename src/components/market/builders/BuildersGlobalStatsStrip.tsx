@@ -34,6 +34,13 @@ export function BuildersGlobalStatsStrip({ stats, isLoading, error }: BuildersGl
   if (!stats) return null;
 
   const { current, timeframe } = stats;
+  if (!current) {
+    return (
+      <div className="glass-panel border border-border-subtle rounded-2xl p-4 text-center text-text-muted text-sm">
+        Global stats are unavailable (unexpected response shape).
+      </div>
+    );
+  }
 
   const items: { label: string; value: string }[] = [
     {
