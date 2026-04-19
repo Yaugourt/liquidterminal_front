@@ -91,18 +91,23 @@ export async function axiosWithConfig<T>(
   config: AxiosRequestConfig,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { useCache = true, retryOnError = true } = options;
-  
+  const { useCache = true, retryOnError = true, timeoutMs } = options;
+
+  const requestConfig: ExtendedAxiosRequestConfig = {
+    ...config,
+    ...(timeoutMs !== undefined ? { timeout: timeoutMs } : {}),
+  };
+
   // Generate cache key
   const cacheKey = generateCacheKey(
-    config.method || 'GET',
-    config.url || '',
-    config.params,
-    config.data
+    requestConfig.method || 'GET',
+    requestConfig.url || '',
+    requestConfig.params,
+    requestConfig.data
   );
 
   // Check cache for GET requests
-  if (useCache && config.method?.toLowerCase() === 'get') {
+  if (useCache && requestConfig.method?.toLowerCase() === 'get') {
     const cached = getCache<T>(cacheKey);
     if (cached) return cached;
   }
@@ -112,11 +117,11 @@ export async function axiosWithConfig<T>(
 
   while (retries <= MAX_RETRIES) {
     try {
-      const response = await client(config);
+      const response = await client(requestConfig);
       const data = response.data;
 
       // Cache successful GET responses
-      if (useCache && config.method?.toLowerCase() === 'get') {
+      if (useCache && requestConfig.method?.toLowerCase() === 'get') {
         setCache(cacheKey, data);
       }
 
