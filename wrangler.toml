@@ -7,7 +7,3 @@ compatibility_flags = ["nodejs_compat"]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
-[vars]
-NEXT_PUBLIC_ENVIRONMENT = "production"
-NEXT_PUBLIC_API = "https://liquidterminal.up.railway.app"
-NEXT_PUBLIC_PRIVY_AUDIENCE = "cm4cl0h2003xd10qwvd8w53wz"
