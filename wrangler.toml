@@ -1,7 +1,11 @@
 name = "liquidterminal-front"
-compatibility_date = "2025-04-19"
+main = ".open-next/worker.js"
+compatibility_date = "2026-04-19"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".open-next/assets"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 [vars]
 NEXT_PUBLIC_ENVIRONMENT = "production"
