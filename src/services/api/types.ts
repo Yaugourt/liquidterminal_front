@@ -4,6 +4,8 @@ export interface RequestOptions {
   useCache?: boolean;
   retryOnError?: boolean;
   skipAuth?: boolean;
+  /** Per-request axios timeout (ms); default comes from the client instance (often 10s). */
+  timeoutMs?: number;
 }
 
 export interface CacheEntry<T = unknown> {
