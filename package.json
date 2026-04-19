@@ -5,8 +5,6 @@
   "scripts": {
     "dev": "next dev --turbo --hostname 127.0.0.1 --port 3000",
     "build": "next build",
-    "build:cf": "opennextjs-cloudflare build",
-    "deploy": "opennextjs-cloudflare build && wrangler deploy",
     "start": "next start",
     "lint": "eslint .",
     "sync:hip4": "mkdir -p public/hip4 && echo 'HIP-4 pages are React (src/components/hip4/chapters). Optional: cp ../hip4_docs/dashboard/pages/*.html public/hip4/ only if you still need static HTML mirrors; bundled ABIs live in src/lib/hip4/abi and public/hip4/*.abi.'"
@@ -55,7 +53,6 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "15.5.9",
-    "@opennextjs/cloudflare": "^1.19.1",
     "@types/d3-color": "^3.1.3",
     "@types/d3-path": "^3.1.1",
     "@types/lodash": "^4.17.21",
@@ -69,8 +66,7 @@
     "postcss": "^8",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.18",
-    "typescript": "^5",
-    "wrangler": "^4.83.0"
+    "typescript": "^5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
