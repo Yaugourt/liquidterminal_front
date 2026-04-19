@@ -71,5 +71,17 @@
     "tailwindcss": "^3.4.18",
     "typescript": "^5",
     "wrangler": "^4.83.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@reown/appkit",
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "sharp",
+      "unrs-resolver",
+      "utf-8-validate",
+      "workerd"
+    ]
   }
 }
