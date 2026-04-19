@@ -79,9 +79,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: { url: "/favicon.svg", type: "image/svg+xml" },
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: { url: "/logo.svg", type: "image/svg+xml" },
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
   },
   manifest: "/site.webmanifest",
 };
