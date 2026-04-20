@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { BuilderCoinBreakdownRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -33,15 +34,20 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
     <div className="glass-panel p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-white font-semibold text-sm">{label ?? "Top Coins"}</h2>
-        <span className="text-text-muted text-xs">{sorted.length} coins</span>
+        {sorted.length > 0 && (
+          <span className="text-text-muted text-xs">{sorted.length} coins</span>
+        )}
       </div>
 
       {isLoading && sorted.length === 0 ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Loading coins…" size="sm" withCard={false} />
       ) : sorted.length === 0 ? (
-        <p className="text-text-muted text-sm text-center py-8">No data for this window.</p>
+        <EmptyState
+          title="No data"
+          description="No coin data for this window."
+          withCard={false}
+          className="h-[120px]"
+        />
       ) : (
         <div className="space-y-3">
           {sorted.map((coin, i) => {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { SearchBar } from "@/components/common/SearchBar";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 import type { BuilderListRow } from "@/services/indexer/builders/types";
 
@@ -19,8 +20,11 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
   const displayName = selected ? formatBuilderDisplayName(selected.name) : "—";
 
   const filtered = builders.filter((b) => {
+    if (!search) return true;
     const s = search.toLowerCase();
-    return b.name.toLowerCase().includes(s) || b.address.toLowerCase().includes(s);
+    const name = (b.name ?? "").toLowerCase();
+    const addr = (b.address ?? "").toLowerCase();
+    return name.includes(s) || addr.includes(s);
   });
 
   return (
@@ -44,36 +48,40 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
       {open && (
         <div className="absolute top-full left-0 mt-1 w-80 glass-panel border border-border-hover z-50 shadow-2xl">
           <div className="p-2 border-b border-border-subtle">
-            <input
-              className="w-full bg-transparent text-sm text-white placeholder:text-text-muted outline-none px-2 py-1"
+            <SearchBar
+              onSearch={setSearch}
               placeholder="Search builder…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              autoFocus
+              debounceMs={150}
             />
           </div>
           <div className="max-h-64 overflow-y-auto">
-            {filtered.slice(0, 50).map((b) => (
-              <button
-                key={b.address}
-                className={`w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 transition-colors text-left ${
-                  b.address === selectedAddress ? "bg-brand-accent/10" : ""
-                }`}
-                onClick={() => {
-                  onSelect(b.address);
-                  setOpen(false);
-                  setSearch("");
-                }}
-              >
-                <div className="w-6 h-6 rounded-full bg-brand-accent/10 flex items-center justify-center text-[10px] font-bold text-brand-accent shrink-0">
-                  {b.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-white text-sm truncate">{b.name}</p>
-                  <p className="text-text-muted text-xs font-mono">{b.address.slice(0, 12)}…</p>
-                </div>
-              </button>
-            ))}
+            {filtered.slice(0, 50).map((b) => {
+              const name = formatBuilderDisplayName(b.name);
+              return (
+                <button
+                  key={b.address}
+                  className={`w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 transition-colors text-left ${
+                    b.address === selectedAddress ? "bg-brand-accent/10" : ""
+                  }`}
+                  onClick={() => {
+                    onSelect(b.address);
+                    setOpen(false);
+                    setSearch("");
+                  }}
+                >
+                  <div className="w-6 h-6 rounded-full bg-brand-accent/10 flex items-center justify-center text-[10px] font-bold text-brand-accent shrink-0">
+                    {name !== "—" ? name.charAt(0).toUpperCase() : "?"}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white text-sm truncate">{name}</p>
+                    <p className="text-text-muted text-xs font-mono">{b.address.slice(0, 12)}…</p>
+                  </div>
+                </button>
+              );
+            })}
+            {filtered.length === 0 && (
+              <p className="text-text-muted text-sm text-center py-4">No results</p>
+            )}
           </div>
         </div>
       )}
