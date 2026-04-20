@@ -24,7 +24,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   const top = useMemo(
-    () => [...rows].sort((a, b) => (b.totalVolume ?? 0) - (a.totalVolume ?? 0)).slice(0, 15),
+    () => [...rows].sort((a, b) => (b.totalVolume ?? 0) - (a.totalVolume ?? 0)).slice(0, 12),
     [rows]
   );
 
@@ -55,7 +55,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
             <span className="h-1 w-1 rounded-full bg-brand-accent" />
             Volume vs Builder Fees
             <span className="text-text-muted/60">·</span>
-            <span>Top 15 · {timeframe}</span>
+            <span>Top 10 · {timeframe}</span>
           </div>
           <div className="mt-1 flex items-baseline gap-3">
             <span className="text-[22px] font-bold text-white tabular-nums tracking-tight">
