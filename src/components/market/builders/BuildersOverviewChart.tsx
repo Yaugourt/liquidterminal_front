@@ -211,7 +211,6 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
                     startAngle={90}
                     endAngle={-270}
                     activeShape={ActiveArc}
-                    activeIndex={activeIdx ?? undefined}
                     onMouseEnter={(_, idx) => setActiveIdx(idx)}
                     onMouseLeave={() => setActiveIdx(null)}
                     stroke="transparent"
