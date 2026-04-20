@@ -1,5 +1,6 @@
 export { BuildersGlobalStatsStrip } from "./BuildersGlobalStatsStrip";
 export { BuildersOverviewChart } from "./BuildersOverviewChart";
+export { BuildersFlowChart } from "./BuildersFlowChart";
 export { BuildersTopTable } from "./BuildersTopTable";
 export { BuildersAllTable } from "./BuildersAllTable";
 export { BuilderUsersTable } from "./BuilderUsersTable";

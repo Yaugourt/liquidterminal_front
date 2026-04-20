@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
   TableHeadLabel,
+  SortableTableHead,
 } from "@/components/ui/table";
 import { ScrollableTable } from "@/components/common/ScrollableTable";
 import type { BuilderUserRow } from "@/services/indexer/builders/types";
@@ -23,36 +24,52 @@ interface BuilderIntelligenceUsersTableProps {
   limit?: number;
 }
 
+type SortKey = "fees" | "volume";
+
+function pickFees(u: BuilderUserRow): number {
+  if (typeof u.totalBuilderFees === "number") return u.totalBuilderFees;
+  if (typeof u.builderFees === "number") return u.builderFees;
+  return 0;
+}
+
+function pickVolume(u: BuilderUserRow): number {
+  return (u.totalVolume as number) ?? (u.volume as number) ?? 0;
+}
+
 export function BuilderIntelligenceUsersTable({
   users,
   isLoading,
   limit = 15,
 }: BuilderIntelligenceUsersTableProps) {
   const { format } = useNumberFormat();
+  const [sortKey, setSortKey] = useState<SortKey>("fees");
+  const [sortAsc, setSortAsc] = useState(false);
 
-  const totalFees = useMemo(
-    () =>
-      users.reduce((acc, u) => {
-        const fees =
-          typeof u.totalBuilderFees === "number"
-            ? u.totalBuilderFees
-            : typeof u.builderFees === "number"
-              ? u.builderFees
-              : 0;
-        return acc + fees;
-      }, 0),
-    [users]
-  );
+  const totalFees = useMemo(() => users.reduce((acc, u) => acc + pickFees(u), 0), [users]);
 
-  const rows = users.slice(0, limit);
+  const sorted = useMemo(() => {
+    return [...users].sort((a, b) => {
+      const va = sortKey === "fees" ? pickFees(a) : pickVolume(a);
+      const vb = sortKey === "fees" ? pickFees(b) : pickVolume(b);
+      return sortAsc ? va - vb : vb - va;
+    });
+  }, [users, sortKey, sortAsc]);
+
+  const rows = sorted.slice(0, limit);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) setSortAsc((v) => !v);
+    else {
+      setSortKey(key);
+      setSortAsc(false);
+    }
+  };
 
   return (
     <div className="glass-panel p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-white font-semibold text-sm">Top Users</h2>
-        {users.length > 0 && (
-          <span className="text-text-muted text-xs">{users.length} users</span>
-        )}
+        {users.length > 0 && <span className="text-text-muted text-xs">{users.length} users</span>}
       </div>
 
       {isLoading && users.length === 0 ? (
@@ -69,33 +86,35 @@ export function BuilderIntelligenceUsersTable({
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-border-subtle">
-                <TableHead className="py-2 px-3 w-8">
+                <TableHead className="w-8">
                   <TableHeadLabel>#</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-3">
+                <TableHead>
                   <TableHeadLabel>User</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-3">
-                  <TableHeadLabel align="right">Rev</TableHeadLabel>
-                </TableHead>
-                <TableHead className="py-2 px-3 hidden sm:table-cell">
-                  <TableHeadLabel align="right">Volume</TableHeadLabel>
-                </TableHead>
-                <TableHead className="py-2 px-3 hidden md:table-cell">
-                  <TableHeadLabel align="right">Share</TableHeadLabel>
+                <SortableTableHead
+                  label="Revenue"
+                  isActive={sortKey === "fees"}
+                  sortDirection={sortKey === "fees" ? (sortAsc ? "asc" : "desc") : undefined}
+                  onClick={() => handleSort("fees")}
+                />
+                <SortableTableHead
+                  className="hidden sm:table-cell"
+                  label="Volume"
+                  isActive={sortKey === "volume"}
+                  sortDirection={sortKey === "volume" ? (sortAsc ? "asc" : "desc") : undefined}
+                  onClick={() => handleSort("volume")}
+                />
+                <TableHead className="hidden md:table-cell">
+                  <TableHeadLabel>Share</TableHeadLabel>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.map((u, idx) => {
                 const addr = ((u.user ?? u.address ?? "—") as string);
-                const fees =
-                  typeof u.totalBuilderFees === "number"
-                    ? u.totalBuilderFees
-                    : typeof u.builderFees === "number"
-                      ? u.builderFees
-                      : 0;
-                const vol = (u.totalVolume as number) ?? 0;
+                const fees = pickFees(u);
+                const vol = pickVolume(u);
                 const share = totalFees > 0 ? (fees / totalFees) * 100 : 0;
 
                 return (
@@ -103,8 +122,8 @@ export function BuilderIntelligenceUsersTable({
                     key={addr + idx}
                     className="border-border-subtle hover:bg-white/[0.02] transition-colors"
                   >
-                    <TableCell className="py-2 px-3 text-text-muted text-xs font-bold">{idx + 1}</TableCell>
-                    <TableCell className="py-2 px-3">
+                    <TableCell className="text-text-muted text-xs font-bold">{idx + 1}</TableCell>
+                    <TableCell>
                       <div className="flex items-center gap-1.5">
                         <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[9px] text-text-muted shrink-0">
                           {addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
@@ -114,23 +133,23 @@ export function BuilderIntelligenceUsersTable({
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2 px-3 text-right text-sm text-brand-gold tabular-nums">
+                    <TableCell className="text-brand-gold tabular-nums">
                       {formatNumber(fees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
                     </TableCell>
-                    <TableCell className="py-2 px-3 text-right text-sm text-text-secondary tabular-nums hidden sm:table-cell">
+                    <TableCell className="text-text-secondary tabular-nums hidden sm:table-cell">
                       {vol > 0
                         ? formatNumber(vol, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
                         : "—"}
                     </TableCell>
-                    <TableCell className="py-2 px-3 hidden md:table-cell">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <TableCell className="hidden md:table-cell">
+                      <div className="flex items-center gap-1.5">
                         <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-brand-accent/50 rounded-full"
                             style={{ width: `${Math.min(share, 100)}%` }}
                           />
                         </div>
-                        <span className="text-text-muted text-xs w-8 text-right tabular-nums">
+                        <span className="text-text-muted text-xs w-8 text-left tabular-nums">
                           {share.toFixed(1)}%
                         </span>
                       </div>
