@@ -4,23 +4,12 @@ import { motion } from "framer-motion";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { VariationBadge } from "./VariationBadge";
 
 interface BuilderDetailStatsGridProps {
   stats: BuilderDetailStatsPayload | null;
   isLoading: boolean;
   error: Error | null;
-}
-
-function VariationBadge({ pct }: { pct?: number | null }) {
-  if (pct === undefined || pct === null || !Number.isFinite(pct)) return null;
-  const positive = pct >= 0;
-  return (
-    <span className={`inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md ${positive ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"}`}>
-      {positive ? <TrendingUp className="w-2.5 h-2.5" /> : <TrendingDown className="w-2.5 h-2.5" />}
-      {positive ? "+" : ""}{pct.toFixed(1)}%
-    </span>
-  );
 }
 
 const cardVariants = {
