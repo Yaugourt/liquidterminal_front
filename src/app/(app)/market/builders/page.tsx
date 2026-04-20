@@ -1,33 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import {
-  useBuildersGlobalStats,
   useBuildersList,
+  useBuildersStatsAllTimeframes,
   useBuildersTop,
   type BuildersTimeframe,
 } from "@/services/indexer/builders";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BuildersGlobalStatsStrip, BuildersTopTable, BuildersAllTable } from "@/components/market/builders";
+import {
+  BuildersGlobalStatsStrip,
+  BuildersTopTable,
+  BuildersAllTable,
+} from "@/components/market/builders";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 
 export default function MarketBuildersPage() {
   const { setTitle } = usePageTitle();
-  const [hubTf, setHubTf] = useState<BuildersTimeframe>("24h");
+  const [tf, setTf] = useState<BuildersTimeframe>("24h");
 
-  const global = useBuildersGlobalStats(hubTf);
-  const top = useBuildersTop({ timeframe: hubTf, sort: "volume", limit: 25 });
+  // Une seule requête pour toutes les timeframes — switch côté client, zéro re-fetch
+  const allTf = useBuildersStatsAllTimeframes();
+  const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
   const list = useBuildersList();
 
-  useEffect(() => {
-    setTitle("Builders - Market");
-  }, [setTitle]);
+  const currentStats = useMemo(() => {
+    if (!allTf.stats) return null;
+    const slice = allTf.stats[tf];
+    if (!slice) return null;
+    return { timeframe: tf, ...slice };
+  }, [allTf.stats, tf]);
+
+  useEffect(() => { setTitle("Builders - Market"); }, [setTitle]);
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      className="space-y-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Builders</h1>
@@ -36,26 +52,29 @@ export default function MarketBuildersPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {TIMEFRAMES.map((tf) => (
+          {TIMEFRAMES.map((t) => (
             <Button
-              key={tf}
+              key={t}
               type="button"
               size="sm"
-              variant={hubTf === tf ? "default" : "outline"}
+              onClick={() => setTf(t)}
               className={
-                hubTf === tf
-                  ? "bg-brand-accent/20 text-brand-accent border-brand-accent/40"
-                  : "border-border-subtle text-text-secondary hover:bg-white/5"
+                tf === t
+                  ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/40 hover:bg-brand-accent/30"
+                  : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
               }
-              onClick={() => setHubTf(tf)}
             >
-              {tf}
+              {t}
             </Button>
           ))}
         </div>
       </div>
 
-      <BuildersGlobalStatsStrip stats={global.stats} isLoading={global.isLoading} error={global.error} />
+      <BuildersGlobalStatsStrip
+        stats={currentStats}
+        isLoading={allTf.isLoading}
+        error={allTf.error}
+      />
 
       <Tabs defaultValue="top" className="w-full">
         <TabsList className="bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl mb-4">
@@ -69,12 +88,12 @@ export default function MarketBuildersPage() {
             value="all"
             className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all"
           >
-            All builders
+            All builders ({list.builders.length > 0 ? list.builders.length : "…"})
           </TabsTrigger>
         </TabsList>
         <TabsContent value="top" className="mt-0 space-y-2">
           <p className="text-text-muted text-xs px-1">
-            Sorted by volume · window {top.data?.timeframe ?? hubTf}
+            Sorted by volume · window {top.data?.timeframe ?? tf}
           </p>
           <BuildersTopTable
             rows={top.data?.builders ?? []}
@@ -83,9 +102,13 @@ export default function MarketBuildersPage() {
           />
         </TabsContent>
         <TabsContent value="all" className="mt-0">
-          <BuildersAllTable builders={list.builders} isLoading={list.isLoading} error={list.error} />
+          <BuildersAllTable
+            builders={list.builders}
+            isLoading={list.isLoading}
+            error={list.error}
+          />
         </TabsContent>
       </Tabs>
-    </div>
+    </motion.div>
   );
 }
