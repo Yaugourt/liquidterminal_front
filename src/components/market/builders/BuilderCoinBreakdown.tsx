@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -14,29 +14,62 @@ interface BuilderCoinBreakdownProps {
   label?: string;
 }
 
+type SortKey = "volume" | "fees" | "users";
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "volume", label: "Volume" },
+  { key: "fees", label: "Fees" },
+  { key: "users", label: "Users" },
+];
+
 export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBreakdownProps) {
   const { format } = useNumberFormat();
+  const [sortKey, setSortKey] = useState<SortKey>("volume");
 
-  const sorted = useMemo(
-    () =>
-      [...coins]
-        .sort((a, b) => ((b.totalVolume as number) ?? 0) - ((a.totalVolume as number) ?? 0))
-        .slice(0, 10),
-    [coins]
-  );
+  const sorted = useMemo(() => {
+    const pick = (c: BuilderCoinBreakdownRow) => {
+      if (sortKey === "volume") return (c.totalVolume as number) ?? 0;
+      if (sortKey === "fees") return (c.totalBuilderFees as number) ?? 0;
+      return (c.uniqueUsers as number) ?? 0;
+    };
+    return [...coins]
+      .sort((a, b) => pick(b) - pick(a))
+      .slice(0, 10);
+  }, [coins, sortKey]);
 
-  const maxVolume = useMemo(
-    () => Math.max(...sorted.map((c) => (c.totalVolume as number) ?? 0), 1),
-    [sorted]
-  );
+  const maxValue = useMemo(() => {
+    const pick = (c: BuilderCoinBreakdownRow) => {
+      if (sortKey === "volume") return (c.totalVolume as number) ?? 0;
+      if (sortKey === "fees") return (c.totalBuilderFees as number) ?? 0;
+      return (c.uniqueUsers as number) ?? 0;
+    };
+    return Math.max(...sorted.map(pick), 1);
+  }, [sorted, sortKey]);
+
+  const formatByKey = (v: number) => {
+    if (sortKey === "users") return formatNumber(v, format, { maximumFractionDigits: 0 });
+    return formatNumber(v, format, { maximumFractionDigits: sortKey === "fees" ? 2 : 0, currency: "$", showCurrency: true });
+  };
 
   return (
     <div className="glass-panel p-5 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-white font-semibold text-sm">{label ?? "Top Coins"}</h2>
-        {sorted.length > 0 && (
-          <span className="text-text-muted text-xs">{sorted.length} coins</span>
-        )}
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
+          {SORT_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              onClick={() => setSortKey(opt.key)}
+              className={`relative rounded-md px-2.5 py-0.5 text-[10px] font-semibold transition-colors ${
+                sortKey === opt.key
+                  ? "bg-brand-accent/15 text-brand-accent"
+                  : "text-text-secondary hover:text-white"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {isLoading && sorted.length === 0 ? (
@@ -51,9 +84,16 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
       ) : (
         <div className="space-y-3">
           {sorted.map((coin, i) => {
-            const vol = (coin.totalVolume as number) ?? 0;
+            const pickVal =
+              sortKey === "volume"
+                ? (coin.totalVolume as number) ?? 0
+                : sortKey === "fees"
+                  ? (coin.totalBuilderFees as number) ?? 0
+                  : (coin.uniqueUsers as number) ?? 0;
             const fees = (coin.totalBuilderFees as number) ?? 0;
-            const pct = (vol / maxVolume) * 100;
+            const vol = (coin.totalVolume as number) ?? 0;
+            const users = (coin.uniqueUsers as number) ?? 0;
+            const pct = (pickVal / maxValue) * 100;
             return (
               <motion.div
                 key={(coin.coin as string) ?? i}
@@ -62,23 +102,30 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
                 transition={{ delay: i * 0.04 }}
                 className="space-y-1.5"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-text-muted text-xs w-4 tabular-nums">{i + 1}</span>
-                    <span className="text-white text-sm font-medium">{(coin.coin as string) ?? "—"}</span>
-                    {coin.uniqueUsers !== undefined && (
-                      <span className="text-text-muted text-xs">{coin.uniqueUsers as number} users</span>
-                    )}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-text-muted text-xs w-4 tabular-nums shrink-0">{i + 1}</span>
+                    <span className="text-white text-sm font-medium truncate">{(coin.coin as string) ?? "—"}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-white text-sm tabular-nums">
-                      {formatNumber(vol, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
-                    </p>
-                    {fees > 0 && (
-                      <p className="text-brand-gold text-xs tabular-nums">
-                        {formatNumber(fees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
+                  <div className="flex items-center gap-3 text-right shrink-0">
+                    <div className="flex flex-col items-end">
+                      <p className="text-white text-sm tabular-nums">
+                        {formatByKey(pickVal)}
                       </p>
-                    )}
+                      <p className="text-text-muted text-[10px] tabular-nums">
+                        {sortKey !== "volume" && (
+                          <span>Vol {formatNumber(vol, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}</span>
+                        )}
+                        {sortKey === "volume" && fees > 0 && (
+                          <span className="text-brand-gold">
+                            {formatNumber(fees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })} fees
+                          </span>
+                        )}
+                        {sortKey === "users" && (
+                          <span> · {users} users</span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">

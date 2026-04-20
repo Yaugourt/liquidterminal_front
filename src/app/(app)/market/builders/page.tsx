@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import {
   BuildersGlobalStatsStrip,
   BuildersOverviewChart,
+  BuildersFlowChart,
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
@@ -80,11 +81,19 @@ export default function MarketBuildersPage() {
         error={allTf.error}
       />
 
-      {/* Charts — distribution histogram + cumulative area */}
-      <BuildersOverviewChart
-        rows={top.data?.builders ?? []}
-        isLoading={top.isLoading}
-      />
+      {/* Charts — market share donut + flow comparison */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <BuildersOverviewChart
+          rows={top.data?.builders ?? []}
+          isLoading={top.isLoading}
+          timeframe={tf}
+        />
+        <BuildersFlowChart
+          rows={top.data?.builders ?? []}
+          isLoading={top.isLoading}
+          timeframe={tf}
+        />
+      </div>
 
       {/* Table tabs */}
       <Tabs defaultValue="top" className="w-full">

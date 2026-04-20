@@ -6,10 +6,9 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
-  TableHeadLabel,
+  SortableTableHead,
 } from "@/components/ui/table";
 import { ScrollableTable } from "@/components/common/ScrollableTable";
 import { SearchBar } from "@/components/common/SearchBar";
@@ -25,28 +24,46 @@ interface BuildersAllTableProps {
   error: Error | null;
 }
 
+type SortKey = "name" | "address" | "referrerStage";
 const PAGE_SIZE = 25;
 
 export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTableProps) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [page, setPage] = useState(0);
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortAsc, setSortAsc] = useState(true);
 
   const handleSearch = useCallback((query: string) => {
     setQ(query);
     setPage(0);
   }, []);
 
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) setSortAsc((v) => !v);
+    else {
+      setSortKey(key);
+      setSortAsc(true);
+      setPage(0);
+    }
+  };
+
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return builders;
-    return builders.filter(
-      (b) =>
-        (b.name ?? "").toLowerCase().includes(s) ||
-        (b.address ?? "").toLowerCase().includes(s) ||
-        (b.referredBy ?? "").toLowerCase().includes(s)
-    );
-  }, [builders, q]);
+    const base = !s
+      ? builders
+      : builders.filter(
+          (b) =>
+            (b.name ?? "").toLowerCase().includes(s) ||
+            (b.address ?? "").toLowerCase().includes(s) ||
+            (b.referredBy ?? "").toLowerCase().includes(s)
+        );
+    return [...base].sort((a, b) => {
+      const va = (a[sortKey] ?? "").toString().toLowerCase();
+      const vb = (b[sortKey] ?? "").toString().toLowerCase();
+      return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+  }, [builders, q, sortKey, sortAsc]);
 
   if (error) {
     return <ErrorState title="Failed to load builders" message={error.message} withCard={false} />;
@@ -87,15 +104,25 @@ export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTabl
             <Table>
               <TableHeader>
                 <TableRow className="border-border-subtle hover:bg-transparent">
-                  <TableHead className="py-3 px-4">
-                    <TableHeadLabel>Name</TableHeadLabel>
-                  </TableHead>
-                  <TableHead className="py-3 px-4 hidden md:table-cell">
-                    <TableHeadLabel>Address</TableHeadLabel>
-                  </TableHead>
-                  <TableHead className="py-3 px-4">
-                    <TableHeadLabel>Stage</TableHeadLabel>
-                  </TableHead>
+                  <SortableTableHead
+                    label="Name"
+                    isActive={sortKey === "name"}
+                    sortDirection={sortKey === "name" ? (sortAsc ? "asc" : "desc") : undefined}
+                    onClick={() => handleSort("name")}
+                  />
+                  <SortableTableHead
+                    className="hidden md:table-cell"
+                    label="Address"
+                    isActive={sortKey === "address"}
+                    sortDirection={sortKey === "address" ? (sortAsc ? "asc" : "desc") : undefined}
+                    onClick={() => handleSort("address")}
+                  />
+                  <SortableTableHead
+                    label="Stage"
+                    isActive={sortKey === "referrerStage"}
+                    sortDirection={sortKey === "referrerStage" ? (sortAsc ? "asc" : "desc") : undefined}
+                    onClick={() => handleSort("referrerStage")}
+                  />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -108,7 +135,7 @@ export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTabl
                       className="border-b border-border-subtle hover:bg-white/[0.02] cursor-pointer transition-colors"
                       onClick={() => router.push(`/market/builders/${encodeURIComponent(b.address)}`)}
                     >
-                      <TableCell className="py-3 px-4">
+                      <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-[10px] font-bold text-brand-accent shrink-0">
                             {initial}
@@ -116,10 +143,10 @@ export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTabl
                           <span className="text-white text-sm font-medium">{name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3 px-4 text-xs text-text-secondary font-mono hidden md:table-cell">
+                      <TableCell className="text-xs text-text-secondary font-mono hidden md:table-cell">
                         {b.address}
                       </TableCell>
-                      <TableCell className="py-3 px-4">
+                      <TableCell>
                         <span className="text-xs text-text-muted px-2 py-0.5 rounded-full bg-white/5 border border-border-subtle">
                           {b.referrerStage ?? "—"}
                         </span>
