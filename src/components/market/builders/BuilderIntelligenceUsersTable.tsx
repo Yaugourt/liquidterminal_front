@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Table,
   TableBody,
@@ -9,7 +10,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableHeadLabel,
 } from "@/components/ui/table";
+import { ScrollableTable } from "@/components/common/ScrollableTable";
 import type { BuilderUserRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -47,34 +50,39 @@ export function BuilderIntelligenceUsersTable({
     <div className="glass-panel p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-white font-semibold text-sm">Top Users</h2>
-        <span className="text-text-muted text-xs">{users.length} users</span>
+        {users.length > 0 && (
+          <span className="text-text-muted text-xs">{users.length} users</span>
+        )}
       </div>
 
       {isLoading && users.length === 0 ? (
-        <div className="flex justify-center py-8">
-          <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
-        </div>
+        <LoadingState message="Loading users…" size="sm" withCard={false} />
       ) : users.length === 0 ? (
-        <p className="text-text-muted text-sm text-center py-8">No data for this window.</p>
+        <EmptyState
+          title="No data"
+          description="No user data for this window."
+          withCard={false}
+          className="h-[120px]"
+        />
       ) : (
-        <div className="overflow-auto">
+        <ScrollableTable>
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-border-subtle">
-                <TableHead className="py-2 px-2 w-8">
-                  <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">#</span>
+                <TableHead className="py-2 px-3 w-8">
+                  <TableHeadLabel>#</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-2">
-                  <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">User</span>
+                <TableHead className="py-2 px-3">
+                  <TableHeadLabel>User</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-2 text-right">
-                  <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Rev</span>
+                <TableHead className="py-2 px-3">
+                  <TableHeadLabel align="right">Rev</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-2 text-right hidden sm:table-cell">
-                  <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Volume</span>
+                <TableHead className="py-2 px-3 hidden sm:table-cell">
+                  <TableHeadLabel align="right">Volume</TableHeadLabel>
                 </TableHead>
-                <TableHead className="py-2 px-2 text-right hidden md:table-cell">
-                  <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Share</span>
+                <TableHead className="py-2 px-3 hidden md:table-cell">
+                  <TableHeadLabel align="right">Share</TableHeadLabel>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -95,26 +103,26 @@ export function BuilderIntelligenceUsersTable({
                     key={addr + idx}
                     className="border-border-subtle hover:bg-white/[0.02] transition-colors"
                   >
-                    <TableCell className="py-2 px-2 text-text-muted text-xs font-bold">{idx + 1}</TableCell>
-                    <TableCell className="py-2 px-2">
+                    <TableCell className="py-2 px-3 text-text-muted text-xs font-bold">{idx + 1}</TableCell>
+                    <TableCell className="py-2 px-3">
                       <div className="flex items-center gap-1.5">
                         <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[9px] text-text-muted shrink-0">
-                          {addr.slice(2, 3).toUpperCase()}
+                          {addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
                         </div>
                         <span className="text-xs text-text-secondary font-mono truncate max-w-[100px]">
                           {addr.slice(0, 8)}…{addr.slice(-4)}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2 px-2 text-right text-sm text-brand-gold tabular-nums">
+                    <TableCell className="py-2 px-3 text-right text-sm text-brand-gold tabular-nums">
                       {formatNumber(fees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
                     </TableCell>
-                    <TableCell className="py-2 px-2 text-right text-sm text-text-secondary tabular-nums hidden sm:table-cell">
+                    <TableCell className="py-2 px-3 text-right text-sm text-text-secondary tabular-nums hidden sm:table-cell">
                       {vol > 0
                         ? formatNumber(vol, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
                         : "—"}
                     </TableCell>
-                    <TableCell className="py-2 px-2 hidden md:table-cell">
+                    <TableCell className="py-2 px-3 hidden md:table-cell">
                       <div className="flex items-center justify-end gap-1.5">
                         <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
                           <div
@@ -132,7 +140,7 @@ export function BuilderIntelligenceUsersTable({
               })}
             </TableBody>
           </Table>
-        </div>
+        </ScrollableTable>
       )}
     </div>
   );
