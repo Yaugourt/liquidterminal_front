@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   BuildersGlobalStatsStrip,
+  BuildersOverviewChart,
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
@@ -23,7 +24,6 @@ export default function MarketBuildersPage() {
   const { setTitle } = usePageTitle();
   const [tf, setTf] = useState<BuildersTimeframe>("24h");
 
-  // Une seule requête pour toutes les timeframes — switch côté client, zéro re-fetch
   const allTf = useBuildersStatsAllTimeframes();
   const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
   const list = useBuildersList();
@@ -35,20 +35,23 @@ export default function MarketBuildersPage() {
     return { timeframe: tf, ...slice };
   }, [allTf.stats, tf]);
 
-  useEffect(() => { setTitle("Builders - Market"); }, [setTitle]);
+  useEffect(() => {
+    setTitle("Builders - Market");
+  }, [setTitle]);
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Builders</h1>
           <p className="text-text-secondary text-sm mt-1 max-w-2xl">
-            Referral builders on HyperLiquid: global activity, top builders by volume, and the full directory.
+            Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -70,12 +73,20 @@ export default function MarketBuildersPage() {
         </div>
       </div>
 
+      {/* Stats strip — 4 cards with icons + variation badges */}
       <BuildersGlobalStatsStrip
         stats={currentStats}
         isLoading={allTf.isLoading}
         error={allTf.error}
       />
 
+      {/* Charts — distribution histogram + cumulative area */}
+      <BuildersOverviewChart
+        rows={top.data?.builders ?? []}
+        isLoading={top.isLoading}
+      />
+
+      {/* Table tabs */}
       <Tabs defaultValue="top" className="w-full">
         <TabsList className="bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl mb-4">
           <TabsTrigger

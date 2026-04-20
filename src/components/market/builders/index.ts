@@ -1,4 +1,5 @@
 export { BuildersGlobalStatsStrip } from "./BuildersGlobalStatsStrip";
+export { BuildersOverviewChart } from "./BuildersOverviewChart";
 export { BuildersTopTable } from "./BuildersTopTable";
 export { BuildersAllTable } from "./BuildersAllTable";
 export { BuilderUsersTable } from "./BuilderUsersTable";
@@ -8,6 +9,5 @@ export { BuilderCoinBreakdown } from "./BuilderCoinBreakdown";
 export { BuilderIntelligenceKpis } from "./BuilderIntelligenceKpis";
 export { BuilderIntelligenceUsersTable } from "./BuilderIntelligenceUsersTable";
 export { BuilderIntelligenceSecondaryStats } from "./BuilderIntelligenceSecondaryStats";
-export { TradersLeaderboardTable } from "./TradersLeaderboardTable";
 export { VariationBadge } from "./VariationBadge";
 export { formatBuilderDisplayName } from "./formatBuilderDisplayName";

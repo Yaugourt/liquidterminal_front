@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { label: "Overview", href: "/market/builders" },
   { label: "Intelligence", href: "/market/builders/intelligence" },
-  { label: "Leaderboard", href: "/market/builders/leaderboard" },
 ];
 
 const ETH_ADDRESS = /^\/market\/builders\/0x[a-fA-F0-9]{40}/i;
