@@ -26,50 +26,6 @@ function unwrapIndexerData<T>(body: unknown): T {
   return body as T;
 }
 
-/** Keys HypeDexer OpenAPI `APIResponse` may use; peel until we hit the business payload. */
-const HYPE_DEXER_ENVELOPE_KEYS = new Set([
-  "success",
-  "message",
-  "data",
-  "total_count",
-  "execution_time_ms",
-  "next_cursor",
-  "has_more",
-]);
-
-function isHypeDexerEnvelope(o: Record<string, unknown>): boolean {
-  if (!("data" in o)) return false;
-  const keys = Object.keys(o);
-  return keys.length > 0 && keys.every((k) => HYPE_DEXER_ENVELOPE_KEYS.has(k));
-}
-
-/**
- * Removes LiquidTerminal `{ success, data }` then any nested HypeDexer APIResponse wrappers.
- * Keeps older backends working when they already send the leaf payload.
- */
-function unwrapPriorityFeesChain(body: unknown): unknown {
-  const first = unwrapIndexerData<unknown>(body);
-  let cur: unknown = first;
-  for (let i = 0; i < 6; i++) {
-    if (!cur || typeof cur !== "object" || Array.isArray(cur)) break;
-    const o = cur as Record<string, unknown>;
-    if (o.success === false) {
-      throw new Error(
-        typeof o.message === "string"
-          ? o.message
-          : typeof o.error === "string"
-            ? o.error
-            : "Indexer upstream error"
-      );
-    }
-    if (isHypeDexerEnvelope(o)) {
-      cur = o.data;
-      continue;
-    }
-    break;
-  }
-  return cur;
-}
 
 function looksLikeGossipSlot(o: Record<string, unknown>): boolean {
   return (
@@ -246,7 +202,7 @@ export const fetchPriorityFeesStats = async (
 ): Promise<PriorityFeesStats> => {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(ENDPOINTS.INDEXER_ANALYTICS_PRIORITY_FEES_STATS, buildStatsQuery(params));
-    const data = unwrapPriorityFeesChain(raw);
+    const data = unwrapIndexerData<unknown>(raw);
     if (data && typeof data === "object" && !Array.isArray(data)) {
       return data as PriorityFeesStats;
     }
@@ -265,7 +221,7 @@ export const fetchPriorityFeesLeaderboard = async (
       ENDPOINTS.INDEXER_USERS_LEADERBOARD,
       buildLeaderboardQuery({ hours: params.hours ?? 24, limit: params.limit ?? 11 })
     );
-    const data = unwrapPriorityFeesChain(raw);
+    const data = unwrapIndexerData<unknown>(raw);
     return normalizeLeaderboard(data);
   }, "fetching priority fees leaderboard");
 };
@@ -287,7 +243,7 @@ export const fetchPriorityFeesGossipHistory = async (
         end_time: params.end_time,
       })
     );
-    const data = unwrapPriorityFeesChain(raw);
+    const data = unwrapIndexerData<unknown>(raw);
     return normalizeGossipHistoryPayload(data);
   }, "fetching priority fees gossip history");
 };
@@ -310,7 +266,7 @@ export const fetchPriorityFeesRecentFills = async (
         has_priority_gas: wantPriorityOnly ? true : params.has_priority_gas,
       })
     );
-    const data = unwrapPriorityFeesChain(raw);
+    const data = unwrapIndexerData<unknown>(raw);
     const rows = normalizeFills(data);
     return filterPositivePriorityGasRows(rows, wantPriorityOnly);
   }, "fetching recent priority-related fills");
