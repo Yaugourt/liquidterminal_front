@@ -24,7 +24,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   const top = useMemo(
-    () => [...rows].sort((a, b) => (b.totalVolume ?? 0) - (a.totalVolume ?? 0)).slice(0, 12),
+    () => [...rows].sort((a, b) => (b.totalVolume ?? 0) - (a.totalVolume ?? 0)).slice(0, 10),
     [rows]
   );
 
