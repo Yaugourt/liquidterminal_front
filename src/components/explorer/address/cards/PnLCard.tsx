@@ -5,6 +5,7 @@ import { PnLCardProps, PnLVariation } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES, PERIODS } from "./constants";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { NumberFormatType } from "@/store/number-format.store";
+import { cn } from "@/lib/utils";
 
 const getVariation = (
     history: [number, string][] | undefined,
@@ -46,10 +47,6 @@ const getVariation = (
 const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
     const [pnlMode, setPnlMode] = useState<'percent' | 'dollar'>('percent');
 
-    const handlePnLModeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-        setPnlMode(e.target.value as 'percent' | 'dollar');
-    }, []);
-
     const renderPeriod = useCallback(({ key, label }: typeof PERIODS[0]) => {
         const periodData = portfolio?.find?.(entry => entry[0] === key)?.[1];
         const variation = getVariation(periodData?.accountValueHistory, key, pnlMode, format);
@@ -62,9 +59,9 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
                 <div className={
                     variation.numericValue !== null 
                         ? variation.numericValue >= 0 
-                            ? "text-[#4ADE80] text-sm font-medium" 
-                            : "text-[#FF5757] text-sm font-medium"
-                        : "text-white text-sm font-medium"
+                            ? "text-emerald-400 text-sm font-medium tabular-nums" 
+                            : "text-rose-400 text-sm font-medium tabular-nums"
+                        : "text-white text-sm font-medium tabular-nums"
                 }>
                     {variation.value !== null ? variation.value : '-'}
                 </div>
@@ -74,23 +71,38 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
 
     return (
         <Card className={CARD_BASE_CLASSES}>
-            {/* Header avec titre décalé et bouton à droite */}
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
                     <TrendingUp size={16} className="text-brand-gold" />
-                    <h3 className="text-white text-[16px] font-inter">PNL</h3>
+                    <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">PNL</h3>
                 </div>
-                <select
-                    className="bg-brand-tertiary text-brand-gold border border-[#83E9FF4D] rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-brand-accent mr-4"
-                    value={pnlMode}
-                    onChange={handlePnLModeChange}
+                <div
+                    role="group"
+                    aria-label="PnL unit"
+                    className="mr-4 flex items-center rounded-md border border-border-subtle bg-black/30 p-0.5"
                 >
-                    <option value="percent">%</option>
-                    <option value="dollar">$</option>
-                </select>
+                    {(['percent', 'dollar'] as const).map((mode) => {
+                        const isActive = pnlMode === mode;
+                        return (
+                            <button
+                                key={mode}
+                                type="button"
+                                onClick={() => setPnlMode(mode)}
+                                aria-pressed={isActive}
+                                className={cn(
+                                    "rounded px-2 py-0.5 text-[11px] font-semibold transition-colors",
+                                    isActive
+                                        ? "bg-brand-gold/10 text-brand-gold"
+                                        : "text-text-muted hover:text-white"
+                                )}
+                            >
+                                {mode === 'percent' ? '%' : '$'}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
 
-            {/* PnL breakdown en grille 2x2 */}
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {isLoading ? (
                     <div className="col-span-2 flex justify-center items-center p-4">
