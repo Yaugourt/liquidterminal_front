@@ -40,7 +40,7 @@ export default function BuildersIntelligencePage() {
   }, [list.builders, selectedAddress]);
 
   useEffect(() => {
-    setTitle("Builder Intelligence");
+    setTitle("Builder Analytics");
   }, [setTitle]);
 
   const userRows = users.data?.users ?? [];
@@ -55,7 +55,7 @@ export default function BuildersIntelligencePage() {
     >
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Builder Intelligence</h1>
+          <h1 className="text-2xl font-bold text-white">Builder Analytics</h1>
           <p className="text-text-secondary text-sm mt-1 max-w-2xl">
             Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure.
           </p>
