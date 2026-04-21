@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { ChartLoading, ChartEmpty } from "@/components/common/charts";
 import type { Hip4MarketRow } from "@/services/indexer/hip4";
 
-function compactUsd(n: number) {
+function compactUsd(n: number | null | undefined) {
+  if (n == null || !Number.isFinite(n)) return "—";
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
   if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
   if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
@@ -132,7 +133,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
 
                   <div className="text-center">
                     <span className={`tabular-nums text-[11px] font-semibold ${pctColor(row.mid_price)}`}>
-                      {row.mid_price !== null ? `${(row.mid_price * 100).toFixed(1)}%` : "—"}
+                      {row.mid_price != null ? `${(row.mid_price * 100).toFixed(1)}%` : "—"}
                     </span>
                   </div>
 

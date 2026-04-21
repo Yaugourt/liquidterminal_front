@@ -12,7 +12,8 @@ import type { Hip4FillRow } from "@/services/indexer/hip4";
 type SortKey = "time" | "notional" | "px" | "fee";
 type SortDir = "asc" | "desc";
 
-function compactUsd(n: number) {
+function compactUsd(n: number | null | undefined) {
+  if (n == null || !Number.isFinite(n)) return "—";
   if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
   if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
   return `$${n.toFixed(2)}`;
@@ -92,9 +93,9 @@ export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
                       {row.side === "B" || row.side === "buy" ? "Buy" : "Sell"}
                     </span>
                   </TableCell>
-                  <TableCell className="py-2 px-3 text-xs tabular-nums text-white">{(row.px * 100).toFixed(2)}%</TableCell>
-                  <TableCell className="py-2 px-3 text-xs tabular-nums text-text-secondary">{compactUsd(row.notional)}</TableCell>
-                  <TableCell className="py-2 px-3 text-xs tabular-nums text-brand-gold">{compactUsd(row.fee)}</TableCell>
+                  <TableCell className="py-2 px-3 text-xs tabular-nums text-white">{row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}</TableCell>
+                  <TableCell className="py-2 px-3 text-xs tabular-nums text-text-secondary">{row.notional != null ? compactUsd(row.notional) : "—"}</TableCell>
+                  <TableCell className="py-2 px-3 text-xs tabular-nums text-brand-gold">{row.fee != null ? compactUsd(row.fee) : "—"}</TableCell>
                   <TableCell className="py-2 px-3 text-[11px] text-text-muted font-mono">{shortAddress(row.user)}</TableCell>
                   <TableCell className="py-2 px-3 text-[10px] text-text-muted tabular-nums">
                     {new Date(row.time).toLocaleTimeString()}

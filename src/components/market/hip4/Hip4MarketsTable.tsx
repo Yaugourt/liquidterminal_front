@@ -13,8 +13,8 @@ import type { Hip4MarketRow } from "@/services/indexer/hip4";
 type SortKey = "name" | "total_volume" | "volume_24h" | "open_interest" | "mid_price";
 type SortDir = "asc" | "desc";
 
-function compactUsd(n: number | null) {
-  if (n === null || n === undefined) return "—";
+function compactUsd(n: number | null | undefined) {
+  if (n == null || !Number.isFinite(n)) return "—";
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
   if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
   if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
@@ -22,7 +22,7 @@ function compactUsd(n: number | null) {
 }
 
 function pctBadge(px: number | null) {
-  if (px === null) return <span className="text-text-muted">—</span>;
+  if (px == null || !Number.isFinite(px)) return <span className="text-text-muted">—</span>;
   const pct = px * 100;
   const cls = pct >= 70 ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/25"
     : pct >= 50 ? "bg-brand-gold/15 text-brand-gold border-brand-gold/25"
