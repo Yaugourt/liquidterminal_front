@@ -131,10 +131,10 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                     {name}
                   </span>
 
-                  {/* Volume: label always readable (not clipped inside narrow bar) */}
-                  <div className="relative flex h-6 min-w-0 items-center justify-end pr-2">
+                  {/* Volume: label in cell; overflow-hidden so $ text cannot paint over the Fees column */}
+                  <div className="relative z-0 flex h-6 min-w-0 items-center justify-end overflow-hidden rounded-l-md pr-2">
                     <span
-                      className="pointer-events-none absolute right-2 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+                      className="pointer-events-none relative z-10 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
                       title={compactUsd(vol)}
                     >
                       {compactUsd(vol)}
@@ -148,16 +148,25 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                         background: `linear-gradient(90deg, rgba(131,233,255,${0.15 + volRatio * 0.5}), rgba(131,233,255,${0.35 + volRatio * 0.55}))`,
                         boxShadow: volRatio > 0.6 ? "inset 0 0 12px rgba(131,233,255,0.35)" : "none",
                       }}
-                      className="h-full w-full rounded-l-md"
+                      className="absolute inset-0 h-full w-full rounded-l-md"
                       aria-hidden
                     />
                   </div>
 
-                  {/* Center — fees amount */}
-                  <div className="text-center">
-                    <span className="tabular-nums text-[11px] font-semibold text-brand-gold">
+                  {/* Fees: above volume overflow; amount + thin bar so fees stay scannable */}
+                  <div className="relative z-[1] flex min-h-[28px] min-w-0 flex-col items-center justify-center gap-0.5 px-0.5">
+                    <span className="tabular-nums text-[11px] font-semibold text-brand-gold drop-shadow-[0_1px_1px_rgba(0,0,0,0.65)]">
                       {compactUsd(fees)}
                     </span>
+                    <div className="h-1 w-full max-w-[76px] overflow-hidden rounded-full bg-white/[0.06]">
+                      <motion.div
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${feesRatio * 100}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.05 }}
+                        className="h-full rounded-full bg-gradient-to-r from-brand-gold/90 to-brand-gold/50"
+                        aria-hidden
+                      />
+                    </div>
                   </div>
 
                   {/* Fee efficiency: bar decorative; bps fixed at end so always legible */}
