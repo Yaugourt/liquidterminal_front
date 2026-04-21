@@ -31,6 +31,17 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
   const maxVol = Math.max(...top.map((r) => r.totalVolume ?? 0), 1);
   const maxFees = Math.max(...top.map((r) => r.totalBuilderFees ?? 0), 1);
 
+  /** Max bps among top 10 — scales the efficiency bar (0–1) like vol/fees bars. */
+  const maxBpsAmongTop = useMemo(() => {
+    let m = 0;
+    for (const r of top) {
+      const v = r.totalVolume ?? 0;
+      const f = r.totalBuilderFees ?? 0;
+      if (v > 0) m = Math.max(m, (f / v) * 10000);
+    }
+    return m > 0 ? m : 1;
+  }, [top]);
+
   const totals = useMemo(() => {
     const vol = top.reduce((s, r) => s + (r.totalVolume ?? 0), 0);
     const fees = top.reduce((s, r) => s + (r.totalBuilderFees ?? 0), 0);
@@ -105,6 +116,8 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
               const fees = row.totalBuilderFees ?? 0;
               const volRatio = vol / maxVol;
               const feesRatio = fees / maxFees;
+              const bpsValue = vol > 0 ? (fees / vol) * 10000 : 0;
+              const bpsBarRatio = maxBpsAmongTop > 0 ? Math.min(bpsValue / maxBpsAmongTop, 1) : 0;
               const name = formatBuilderDisplayNameOrAddress(row.builderName, row.builder);
               const isHovered = hoverIdx === i;
               const rankColor =
@@ -153,41 +166,48 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                     />
                   </div>
 
-                  {/* Fees: above volume overflow; amount + thin bar so fees stay scannable */}
-                  <div className="relative z-[1] flex min-h-[28px] min-w-0 flex-col items-center justify-center gap-0.5 px-0.5">
-                    <span className="tabular-nums text-[11px] font-semibold text-brand-gold drop-shadow-[0_1px_1px_rgba(0,0,0,0.65)]">
+                  {/* Fees: same pattern as Volume — full-height bar (scale from right) + $ on top, overflow-hidden */}
+                  <div className="relative z-[1] flex h-6 min-w-0 items-center justify-end overflow-hidden rounded-md px-1">
+                    <span
+                      className="pointer-events-none relative z-10 text-[10px] font-semibold tabular-nums text-brand-gold whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
+                      title={compactUsd(fees)}
+                    >
                       {compactUsd(fees)}
                     </span>
-                    <div className="h-1 w-full max-w-[76px] overflow-hidden rounded-full bg-white/[0.06]">
-                      <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: `${feesRatio * 100}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.05 }}
-                        className="h-full rounded-full bg-gradient-to-r from-brand-gold/90 to-brand-gold/50"
-                        aria-hidden
-                      />
-                    </div>
-                  </div>
-
-                  {/* Fee efficiency: bar (share of row) then bps flush after bar — like volume label after bar */}
-                  <div className="flex h-6 w-full min-w-0 items-center gap-1.5 pl-2">
                     <motion.div
-                      initial={{ width: "0%" }}
-                      animate={{ width: `${feesRatio * 100}%` }}
-                      transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: feesRatio }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.05 }}
                       style={{
-                        background: `linear-gradient(90deg, rgba(249,227,112,${0.35 + feesRatio * 0.55}), rgba(249,227,112,${0.15 + feesRatio * 0.5}))`,
-                        boxShadow: feesRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.35)" : "none",
+                        transformOrigin: "right center",
+                        background: `linear-gradient(90deg, rgba(249,227,112,${0.25 + feesRatio * 0.45}), rgba(249,227,112,${0.45 + feesRatio * 0.45}))`,
+                        boxShadow: feesRatio > 0.5 ? "inset 0 0 10px rgba(249,227,112,0.25)" : "none",
                       }}
-                      className="h-6 min-w-0 shrink-0 rounded-r-md"
+                      className="absolute inset-0 h-full w-full rounded-md"
                       aria-hidden
                     />
+                  </div>
+
+                  {/* Fee efficiency: same pattern as Volume — bar scales from right; bps always in cell (never clipped) */}
+                  <div className="relative flex h-6 min-w-0 items-center justify-end overflow-hidden rounded-r-md pl-2 pr-2">
                     <span
-                      className="shrink-0 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap"
-                      title={vol > 0 ? `${((fees / vol) * 10000).toFixed(4)} bps` : undefined}
+                      className="pointer-events-none relative z-10 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
+                      title={vol > 0 ? `${bpsValue.toFixed(4)} bps` : undefined}
                     >
-                      {vol > 0 ? `${((fees / vol) * 10000).toFixed(2)} bps` : "—"}
+                      {vol > 0 ? `${bpsValue.toFixed(2)} bps` : "—"}
                     </span>
+                    <motion.div
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: bpsBarRatio }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
+                      style={{
+                        transformOrigin: "right center",
+                        background: `linear-gradient(90deg, rgba(180,190,120,${0.35 + bpsBarRatio * 0.4}), rgba(249,227,112,${0.2 + bpsBarRatio * 0.45}))`,
+                        boxShadow: bpsBarRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.3)" : "none",
+                      }}
+                      className="absolute inset-0 h-full w-full rounded-r-md"
+                      aria-hidden
+                    />
                   </div>
                 </motion.div>
               );
