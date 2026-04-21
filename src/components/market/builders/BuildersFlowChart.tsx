@@ -169,23 +169,21 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                     </div>
                   </div>
 
-                  {/* Fee efficiency: bar decorative; bps fixed at end so always legible */}
-                  <div className="flex h-6 min-w-0 items-center gap-2 pl-2">
-                    <div className="relative min-h-[24px] min-w-0 flex-1">
-                      <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: `${feesRatio * 100}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
-                        style={{
-                          background: `linear-gradient(90deg, rgba(249,227,112,${0.35 + feesRatio * 0.55}), rgba(249,227,112,${0.15 + feesRatio * 0.5}))`,
-                          boxShadow: feesRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.35)" : "none",
-                        }}
-                        className="h-6 max-w-full rounded-r-md"
-                        aria-hidden
-                      />
-                    </div>
+                  {/* Fee efficiency: bar (share of row) then bps flush after bar — like volume label after bar */}
+                  <div className="flex h-6 w-full min-w-0 items-center gap-1.5 pl-2">
+                    <motion.div
+                      initial={{ width: "0%" }}
+                      animate={{ width: `${feesRatio * 100}%` }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
+                      style={{
+                        background: `linear-gradient(90deg, rgba(249,227,112,${0.35 + feesRatio * 0.55}), rgba(249,227,112,${0.15 + feesRatio * 0.5}))`,
+                        boxShadow: feesRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.35)" : "none",
+                      }}
+                      className="h-6 min-w-0 shrink-0 rounded-r-md"
+                      aria-hidden
+                    />
                     <span
-                      className="shrink-0 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap w-[4.25rem] text-right"
+                      className="shrink-0 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap"
                       title={vol > 0 ? `${((fees / vol) * 10000).toFixed(4)} bps` : undefined}
                     >
                       {vol > 0 ? `${((fees / vol) * 10000).toFixed(2)} bps` : "—"}
