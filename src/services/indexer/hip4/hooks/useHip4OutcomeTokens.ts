@@ -11,7 +11,7 @@ export function useHip4OutcomeTokens(params?: Hip4OutcomeTokensQuery): UseHip4Ou
   });
 
   return {
-    tokens: data ?? [],
+    tokens: Array.isArray(data) ? data : [],
     isLoading,
     error,
     refetch,

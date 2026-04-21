@@ -28,7 +28,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   const top = useMemo(
-    () => [...markets].sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0)).slice(0, 10),
+    () => [...(Array.isArray(markets) ? markets : [])].sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0)).slice(0, 10),
     [markets]
   );
 

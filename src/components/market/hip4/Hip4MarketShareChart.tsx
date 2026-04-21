@@ -44,7 +44,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
   const layoutId = useId().replace(/:/g, "");
 
   const { slices, total } = useMemo(() => {
-    if (!markets.length) return { slices: [], total: 0 };
+    if (!Array.isArray(markets) || !markets.length) return { slices: [], total: 0 };
     // Group by class
     const byClass: Record<string, number> = {};
     for (const m of markets) {

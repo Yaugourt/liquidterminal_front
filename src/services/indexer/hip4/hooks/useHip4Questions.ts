@@ -11,7 +11,7 @@ export function useHip4Questions(params?: Hip4QuestionsQuery): UseHip4QuestionsR
   });
 
   return {
-    questions: data ?? [],
+    questions: Array.isArray(data) ? data : [],
     isLoading,
     error,
     refetch,
