@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { BarChart3, DollarSign } from "lucide-react";
 import { ChartLoading, ChartEmpty } from "@/components/common/charts";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
-import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+import { formatBuilderDisplayNameOrAddress } from "./formatBuilderDisplayName";
 
 interface BuildersFlowChartProps {
   rows: BuilderTopRow[];
@@ -105,7 +105,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
               const fees = row.totalBuilderFees ?? 0;
               const volRatio = vol / maxVol;
               const feesRatio = fees / maxFees;
-              const name = formatBuilderDisplayName(row.builderName);
+              const name = formatBuilderDisplayNameOrAddress(row.builderName, row.builder);
               const isHovered = hoverIdx === i;
               const rankColor =
                 i === 0 ? "text-brand-gold" : i === 1 ? "text-zinc-300" : i === 2 ? "text-amber-600" : "text-text-muted";
@@ -131,8 +131,14 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                     {name}
                   </span>
 
-                  {/* Volume bar (right aligned) */}
-                  <div className="relative flex h-6 items-center justify-end pr-2">
+                  {/* Volume: label always readable (not clipped inside narrow bar) */}
+                  <div className="relative flex h-6 min-w-0 items-center justify-end pr-2">
+                    <span
+                      className="pointer-events-none absolute right-2 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+                      title={compactUsd(vol)}
+                    >
+                      {compactUsd(vol)}
+                    </span>
                     <motion.div
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: volRatio }}
@@ -142,12 +148,9 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                         background: `linear-gradient(90deg, rgba(131,233,255,${0.15 + volRatio * 0.5}), rgba(131,233,255,${0.35 + volRatio * 0.55}))`,
                         boxShadow: volRatio > 0.6 ? "inset 0 0 12px rgba(131,233,255,0.35)" : "none",
                       }}
-                      className="h-full w-full rounded-l-md flex items-center justify-end pr-2"
-                    >
-                      <span className="text-[10px] font-semibold tabular-nums text-white whitespace-nowrap">
-                        {compactUsd(vol)}
-                      </span>
-                    </motion.div>
+                      className="h-full w-full rounded-l-md"
+                      aria-hidden
+                    />
                   </div>
 
                   {/* Center — fees amount */}
@@ -157,23 +160,27 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                     </span>
                   </div>
 
-                  {/* Fees efficiency bar (left aligned) */}
-                  <div className="relative flex h-6 items-center justify-start pl-2">
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: feesRatio }}
-                      transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
-                      style={{
-                        transformOrigin: "left center",
-                        background: `linear-gradient(90deg, rgba(249,227,112,${0.35 + feesRatio * 0.55}), rgba(249,227,112,${0.15 + feesRatio * 0.5}))`,
-                        boxShadow: feesRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.35)" : "none",
-                      }}
-                      className="h-full w-full rounded-r-md flex items-center justify-start pl-2"
+                  {/* Fee efficiency: bar decorative; bps fixed at end so always legible */}
+                  <div className="flex h-6 min-w-0 items-center gap-2 pl-2">
+                    <div className="relative min-h-[24px] min-w-0 flex-1">
+                      <motion.div
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${feesRatio * 100}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 + 0.1 }}
+                        style={{
+                          background: `linear-gradient(90deg, rgba(249,227,112,${0.35 + feesRatio * 0.55}), rgba(249,227,112,${0.15 + feesRatio * 0.5}))`,
+                          boxShadow: feesRatio > 0.6 ? "inset 0 0 12px rgba(249,227,112,0.35)" : "none",
+                        }}
+                        className="h-6 max-w-full rounded-r-md"
+                        aria-hidden
+                      />
+                    </div>
+                    <span
+                      className="shrink-0 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap w-[4.25rem] text-right"
+                      title={vol > 0 ? `${((fees / vol) * 10000).toFixed(4)} bps` : undefined}
                     >
-                      <span className="text-[10px] font-semibold tabular-nums text-brand-tertiary whitespace-nowrap">
-                        {vol > 0 ? `${((fees / vol) * 10000).toFixed(2)} bps` : "—"}
-                      </span>
-                    </motion.div>
+                      {vol > 0 ? `${((fees / vol) * 10000).toFixed(2)} bps` : "—"}
+                    </span>
                   </div>
                 </motion.div>
               );
@@ -186,7 +193,9 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
               <>
                 <span>
                   <span className="text-text-secondary">#{hoverIdx + 1}</span>{" "}
-                  <span className="font-semibold text-white">{formatBuilderDisplayName(top[hoverIdx].builderName)}</span>
+                  <span className="font-semibold text-white">
+                    {formatBuilderDisplayNameOrAddress(top[hoverIdx].builderName, top[hoverIdx].builder)}
+                  </span>
                 </span>
                 <span>
                   <span className="text-brand-accent">Vol {compactUsd(top[hoverIdx].totalVolume ?? 0)}</span>
