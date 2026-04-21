@@ -31,8 +31,11 @@ interface Hip4RecentFillsProps {
 export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
   const [sortKey, setSortKey] = useState<SortKey>("time");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 25;
 
   const handleSort = (key: SortKey) => {
+    setPage(0);
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortKey(key); setSortDir("desc"); }
   };
@@ -65,7 +68,17 @@ export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
       {rows.length === 0 ? (
         <EmptyState title="No fills yet" description="Prediction market fills will appear here." icon={<Activity className="h-6 w-6" />} withCard={false} />
       ) : (
-        <ScrollableTable>
+        <ScrollableTable
+          pagination={{
+            total: rows.length,
+            page,
+            rowsPerPage: PAGE_SIZE,
+            rowsPerPageOptions: [25, 50],
+            onPageChange: setPage,
+            onRowsPerPageChange: () => {},
+            hidePageNavigation: false,
+          }}
+        >
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -85,7 +98,7 @@ export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.slice(0, 100).map((row, i) => (
+              {rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => (
                 <TableRow key={`${row.hash}-${i}`} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
                   <TableCell className="py-2 px-3 text-xs font-semibold text-white">{row.coin}</TableCell>
                   <TableCell className="py-2 px-3">

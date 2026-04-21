@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollableTable } from "@/components/common/ScrollableTable";
@@ -14,6 +15,9 @@ interface Hip4SettlementsTableProps {
 }
 
 export function Hip4SettlementsTable({ settlements, isLoading }: Hip4SettlementsTableProps) {
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 25;
+
   if (isLoading && settlements.length === 0) return <LoadingState message="Loading settlements..." withCard />;
 
   return (
@@ -32,7 +36,17 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       {settlements.length === 0 ? (
         <EmptyState title="No settlements yet" description="Market resolutions will appear here." icon={<CheckCircle2 className="h-6 w-6" />} withCard={false} />
       ) : (
-        <ScrollableTable>
+        <ScrollableTable
+          pagination={{
+            total: settlements.length,
+            page,
+            rowsPerPage: PAGE_SIZE,
+            rowsPerPageOptions: [25, 50],
+            onPageChange: setPage,
+            onRowsPerPageChange: () => {},
+            hidePageNavigation: false,
+          }}
+        >
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -43,7 +57,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
               </TableRow>
             </TableHeader>
             <TableBody>
-              {settlements.map((row, i) => {
+              {settlements.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => {
                 const winner = row.winner_side === 0 ? "Yes" : row.winner_side === 1 ? "No" : "—";
                 const winColor = row.winner_side === 0 ? "text-emerald-400 bg-emerald-500/10" : row.winner_side === 1 ? "text-rose-400 bg-rose-500/10" : "text-text-muted bg-white/5";
                 return (
