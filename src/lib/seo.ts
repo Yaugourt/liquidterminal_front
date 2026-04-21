@@ -209,6 +209,14 @@ export const seoConfig = {
     path: "/market/builders",
   },
 
+  marketHip4: {
+    title: "HIP-4 - Prediction Markets",
+    description:
+      "Live HIP-4 prediction markets on HyperLiquid — outcome probabilities, trading volume, open interest, fills, and market resolutions.",
+    keywords: ["HIP-4", "prediction markets", "HyperLiquid outcomes", "binary markets", "DEX predictions"],
+    path: "/market/hip4",
+  },
+
   dashboard: {
     title: "Dashboard - Your HyperLiquid Overview",
     description: "Personalized dashboard for your HyperLiquid activity. Track your portfolio, positions, transactions, and more.",
