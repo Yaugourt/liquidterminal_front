@@ -162,7 +162,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         IconComponent: Users
       },
       {
-        name: 'HIP-4 Markets',
+        name: 'HIP-4 (testnet)',
         href: '/market/hip4',
         icon: null,
         IconComponent: Sparkles

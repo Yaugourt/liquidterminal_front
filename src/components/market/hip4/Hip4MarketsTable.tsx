@@ -44,14 +44,22 @@ export function Hip4MarketsTable({ markets, isLoading, error }: Hip4MarketsTable
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("total_volume");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 25;
 
   const handleSort = (key: SortKey) => {
+    setPage(0);
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
       setSortDir("desc");
     }
+  };
+
+  const handleSearch = (q: string) => {
+    setPage(0);
+    setSearch(q);
   };
 
   const rows = useMemo(() => {
@@ -100,13 +108,23 @@ export function Hip4MarketsTable({ markets, isLoading, error }: Hip4MarketsTable
           All Markets
           <span className="text-text-muted/60">· {rows.length}</span>
         </div>
-        <SearchBar onSearch={setSearch} placeholder="Search markets..." debounceMs={200} />
+        <SearchBar onSearch={handleSearch} placeholder="Search markets..." debounceMs={200} />
       </div>
 
       {rows.length === 0 ? (
         <EmptyState title="No markets found" description="Try a different search." icon={<BarChart3 className="h-6 w-6" />} withCard={false} />
       ) : (
-        <ScrollableTable>
+        <ScrollableTable
+          pagination={{
+            total: rows.length,
+            page,
+            rowsPerPage: PAGE_SIZE,
+            rowsPerPageOptions: [25, 50],
+            onPageChange: setPage,
+            onRowsPerPageChange: () => {},
+            hidePageNavigation: false,
+          }}
+        >
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -127,9 +145,9 @@ export function Hip4MarketsTable({ markets, isLoading, error }: Hip4MarketsTable
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((row, i) => (
+              {rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => (
                 <TableRow key={row.outcome_id} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
-                  <TableCell className="py-2.5 px-3 text-text-muted text-xs tabular-nums">{i + 1}</TableCell>
+                  <TableCell className="py-2.5 px-3 text-text-muted text-xs tabular-nums">{page * PAGE_SIZE + i + 1}</TableCell>
                   <TableCell className="py-2.5 px-3">
                     <div className="font-semibold text-white text-xs truncate max-w-[200px]">{row.name ?? row.coin}</div>
                     <div className="text-[10px] text-text-muted">{row.coin}</div>
