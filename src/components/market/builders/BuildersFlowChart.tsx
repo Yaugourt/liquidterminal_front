@@ -174,7 +174,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                         className="relative h-6 min-w-0 max-w-full overflow-visible rounded-r-md"
                       >
                         <span
-                          className="pointer-events-none absolute left-1.5 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-text-secondary whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+                          className="pointer-events-none absolute left-1.5 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap [text-shadow:0_0_1px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9),0_0_8px_rgba(0,0,0,0.45)]"
                           title={vol > 0 ? `${((fees / vol) * 10000).toFixed(4)} bps` : undefined}
                         >
                           {vol > 0 ? `${((fees / vol) * 10000).toFixed(2)} bps` : "—"}
