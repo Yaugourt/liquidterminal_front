@@ -11,7 +11,7 @@ export function useHip4Markets(params?: Hip4MarketsQuery): UseHip4MarketsResult 
   });
 
   return {
-    markets: data ?? [],
+    markets: Array.isArray(data) ? data : [],
     isLoading,
     error,
     refetch,

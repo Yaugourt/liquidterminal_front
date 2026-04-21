@@ -56,7 +56,7 @@ export function Hip4MarketsTable({ markets, isLoading, error }: Hip4MarketsTable
 
   const rows = useMemo(() => {
     const q = search.toLowerCase();
-    const filtered = markets.filter((m) => {
+    const filtered = (Array.isArray(markets) ? markets : []).filter((m) => {
       const label = (m.name ?? m.coin ?? "").toLowerCase();
       return !q || label.includes(q) || (m.class ?? "").toLowerCase().includes(q);
     });

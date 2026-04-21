@@ -11,7 +11,7 @@ export function useHip4Fills(params?: Hip4FillsQuery): UseHip4FillsResult {
   });
 
   return {
-    fills: data ?? [],
+    fills: Array.isArray(data) ? data : [],
     isLoading,
     error,
     refetch,

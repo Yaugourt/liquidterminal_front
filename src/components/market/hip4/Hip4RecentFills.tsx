@@ -37,7 +37,7 @@ export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
   };
 
   const rows = useMemo(() => {
-    return [...fills].sort((a, b) => {
+    return [...(Array.isArray(fills) ? fills : [])].sort((a, b) => {
       const va = sortKey === "time" ? new Date(a.time).getTime() : (a[sortKey] ?? 0);
       const vb = sortKey === "time" ? new Date(b.time).getTime() : (b[sortKey] ?? 0);
       if (va < vb) return sortDir === "asc" ? -1 : 1;

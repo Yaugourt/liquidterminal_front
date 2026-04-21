@@ -11,7 +11,7 @@ export function useHip4Settlements(params?: Hip4SettlementsQuery): UseHip4Settle
   });
 
   return {
-    settlements: data ?? [],
+    settlements: Array.isArray(data) ? data : [],
     isLoading,
     error,
     refetch,
