@@ -66,7 +66,8 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
         <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
       </div>
       <button
-        onClick={onLogin}
+        type="button"
+        onClick={() => onLogin()}
         className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold py-2.5 rounded-lg transition-colors"
       >
         Login
