@@ -123,22 +123,25 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
   if (categoriesLoading || resourcesLoading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-400">Loading resources...</p>
+      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border-subtle bg-brand-dark/40 py-16 text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-brand-accent" />
+        <p className="text-sm text-text-muted">Loading resources…</p>
       </div>
     );
   }
 
   if (categoriesWithResources.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-400">Select category or all the category</p>
+      <div className="rounded-2xl border border-border-subtle bg-brand-dark/40 py-16 text-center">
+        <p className="text-sm text-text-muted">
+          Select at least one category to see resources.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="pt-4 space-y-12">
+    <div className="space-y-12">
       
       {categoriesWithResources.map((category) => {
         const displayCount = expandedCategories[category.id] || 4;
@@ -149,17 +152,20 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
         return (
           <div key={category.id}>
             {/* Category header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-white">{category.title}</h2>
-                <span className="px-3 py-1 bg-[#F9E37020] text-[#F9E370] rounded-full text-xs font-medium">
-                  {category.resources.length} resources
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <h2 className="truncate text-lg font-semibold tracking-tight text-white">
+                  {category.title}
+                </h2>
+                <span className="shrink-0 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-gold">
+                  {category.resources.length} {category.resources.length === 1 ? "resource" : "resources"}
                 </span>
               </div>
+              <div className="hidden h-px flex-1 bg-gradient-to-r from-border-subtle to-transparent sm:block" />
             </div>
 
-            {/* Resources grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Resources grid — tuned for both full-width (no sidebar) and lg+ sidebar layouts */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
               {displayedResources.map((resource) => (
                 <ResourceCard 
                   key={resource.id} 
@@ -173,12 +179,12 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
             {/* Show more/less buttons */}
             {(hasMore || canShowLess) && (
-              <div className="flex justify-center mt-8 gap-4">
+              <div className="mt-8 flex justify-center gap-3">
                 {canShowLess && (
                   <Button
                     onClick={() => handleShowLess(category.id)}
                     variant="outline"
-                    className="border-[#83E9FF4D] hover:border-[#83E9FF80] text-white hover:bg-[#83E9FF20]"
+                    className="border-border-subtle bg-brand-dark/40 text-text-secondary hover:border-border-hover hover:bg-white/5 hover:text-white"
                   >
                     Show less
                   </Button>
@@ -186,7 +192,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                 {hasMore && (
                   <Button
                     onClick={() => handleShowMore(category.id)}
-                    className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
+                    className="bg-brand-accent font-medium text-brand-tertiary hover:bg-brand-accent/90"
                   >
                     Show more
                   </Button>

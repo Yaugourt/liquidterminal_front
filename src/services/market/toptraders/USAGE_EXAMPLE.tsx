@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { useTopTraders, TopTradersSortType } from '@/services/market/toptraders';
-import { formatLargeNumber } from '@/lib/numberFormatting';
+import { formatLargeNumber } from '@/lib/formatters/numberFormatting';
 import { Loader2 } from 'lucide-react';
 import {
   Table,

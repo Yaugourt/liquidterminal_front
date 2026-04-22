@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import { GitBranch, ChevronRight } from "lucide-react";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
 import { Loader2 } from "lucide-react";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-
 interface VaultSubVaultsProps {
   childAddresses: string[];
 }

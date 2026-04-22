@@ -1,5 +1,6 @@
 "use client";
 
+import type * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
@@ -92,8 +93,8 @@ export function Hip4SubNav() {
           return (
             <details
               key={`${sectionId}-${slug}`}
-              defaultOpen={openDefault}
               className="group rounded-lg border border-border-subtle bg-brand-dark/80"
+              {...({ defaultOpen: openDefault } as React.HTMLAttributes<HTMLDetailsElement>)}
             >
               <summary
                 className={cn(

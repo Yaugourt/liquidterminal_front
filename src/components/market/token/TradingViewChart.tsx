@@ -405,6 +405,8 @@ export function TradingViewChart({
       volumeRef.current = null;
       lastPriceLineRef.current = null;
     };
+  // Right scale mode is updated by the dedicated `priceScaleMode` effect after init.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Push historical data when candles change ─────────────────────────

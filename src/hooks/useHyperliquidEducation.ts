@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 
+interface SubChapter {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+}
+
 interface Chapter {
   id: number;
   title: string;
   description: string;
+  subChapters?: SubChapter[];
 }
 
 interface HyperliquidEducation {

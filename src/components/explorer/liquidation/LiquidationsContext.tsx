@@ -61,6 +61,9 @@ interface LiquidationsContextValue {
   
   // Last update info
   lastUpdated: Date | null;
+
+  /** Manual refresh: refetch table + stats/chart without toggling initial loading (keeps WS connected). */
+  refreshData: () => Promise<void>;
 }
 
 const defaultStats: LiquidationStats = {
@@ -193,6 +196,25 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(intervalId);
   }, [isLoading]);
 
+  const refreshData = useCallback(async () => {
+    try {
+      const [liquidationsResponse, dataResponse] = await Promise.all([
+        fetchRecentLiquidations({ limit: 1000, hours: 2 }),
+        fetchLiquidationsData(),
+      ]);
+      if (liquidationsResponse.success) {
+        setLiquidations(liquidationsResponse.data);
+      }
+      if (dataResponse.success) {
+        setAllData(dataResponse.periods);
+      }
+      setLastUpdated(new Date());
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to load data"));
+    }
+  }, []);
+
   // Filtrer les liquidations par montant minimum (pour le tableau)
   const filteredLiquidations = useMemo(() => {
     if (minAmount === 0) return liquidations;
@@ -227,6 +249,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     chartPeriod,
     setChartPeriod,
     lastUpdated,
+    refreshData,
   };
 
   return (

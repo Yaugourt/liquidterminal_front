@@ -52,6 +52,7 @@ export function SafeImage({
     }
 
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- intentional fallback when Next/Image fails for this URL
       <img
         src={src}
         alt={alt}
@@ -93,6 +94,7 @@ export function SafeImage({
   } catch {
     // Si Next.js Image échoue à la construction, utiliser <img> natif
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- last-resort native img when Image throws at render
       <img
         src={src}
         alt={alt}

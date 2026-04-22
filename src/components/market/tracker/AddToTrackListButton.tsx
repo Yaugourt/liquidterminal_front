@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useWallets } from "@/store/use-wallets";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
   // Truncate address for display
   const truncatedAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-  const handleAddToTrackList = async () => {
+  const handleAddToTrackList = useCallback(async () => {
     if (!authenticated) {
       setShowLoginModal(true);
       return;
@@ -58,15 +58,15 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
     } finally {
       setIsAdding(false);
     }
-  };
+  }, [authenticated, addWallet, address, truncatedAddress]);
 
   // After login, automatically add wallet
   useEffect(() => {
     if (authenticated && showLoginModal && !isTracked) {
       setShowLoginModal(false);
-      handleAddToTrackList();
+      void handleAddToTrackList();
     }
-  }, [authenticated, showLoginModal, isTracked]);
+  }, [authenticated, showLoginModal, isTracked, handleAddToTrackList]);
 
   // If already tracked, show "Tracked" button
   if (isTracked) {

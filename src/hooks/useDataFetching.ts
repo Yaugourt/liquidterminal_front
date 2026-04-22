@@ -134,7 +134,8 @@ export function useDataFetching<T>({
         clearInterval(intervalIdRef.current);
       }
     };
-  }, [refreshInterval, ...stableDependencies]); // Use stable dependencies
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchData is stable via useCallback; spreading stableDependencies is intentional
+  }, [refreshInterval, ...stableDependencies]);
 
   return {
     data,

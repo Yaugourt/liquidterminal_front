@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface AssetLogoProps {
     assetName: string;
@@ -23,11 +24,13 @@ export function AssetLogo({ assetName, isDelisted, className = "w-6 h-6", showTi
     }
 
     return (
-        <div className={`${className} rounded-full overflow-hidden flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
-            <img
+        <div className={`${className} relative rounded-full overflow-hidden flex items-center justify-center ${isDelisted ? 'opacity-50' : ''}`}>
+            <Image
                 src={logoUrl}
                 alt={assetName}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="96px"
                 onError={() => setHasError(true)}
             />
         </div>

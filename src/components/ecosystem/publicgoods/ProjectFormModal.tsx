@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -92,6 +92,18 @@ export function ProjectFormModal({
     const [screenshotPreviews, setScreenshotPreviews] = useState<string[]>([]);
     const [techInput, setTechInput] = useState("");
 
+    const resetForm = useCallback(() => {
+        setFormData(INITIAL_FORM_DATA);
+        setLogo(null);
+        setLogoPreview("");
+        setBanner(null);
+        setBannerPreview("");
+        setScreenshots([]);
+        setScreenshotPreviews([]);
+        setTechInput("");
+        setActiveTab("project");
+    }, []);
+
     // Pre-fill form with project data in edit mode
     useEffect(() => {
         if (mode === 'edit' && project) {
@@ -129,7 +141,7 @@ export function ProjectFormModal({
         if (!isOpen || (mode === 'create' && !project)) {
             resetForm();
         }
-    }, [isOpen, mode]);
+    }, [isOpen, mode, project, resetForm]);
 
     const updateField = (field: string, value: string | string[]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -327,18 +339,6 @@ export function ProjectFormModal({
                 : "Failed to update project. Please try again."
             );
         }
-    };
-
-    const resetForm = () => {
-        setFormData(INITIAL_FORM_DATA);
-        setLogo(null);
-        setLogoPreview("");
-        setBanner(null);
-        setBannerPreview("");
-        setScreenshots([]);
-        setScreenshotPreviews([]);
-        setTechInput("");
-        setActiveTab("project");
     };
 
     const tabs = ["project", "impact", "team", "support", "preview"];
