@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const webpack = require('webpack');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
 });
@@ -101,15 +99,6 @@ const nextConfig = {
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    },
-
-    webpack: (config) => {
-        config.plugins.push(
-            new webpack.IgnorePlugin({
-                resourceRegExp: /^@farcaster\/mini-app-solana$/,
-            })
-        );
-        return config;
     },
 };
 
