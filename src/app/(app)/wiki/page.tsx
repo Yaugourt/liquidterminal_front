@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { EducationContent } from "@/components/wiki/EducationContent";
-import { EducationSidebar } from "@/components/wiki/EducationSidebar";
 import { ResourcesSection } from "@/components/wiki/ResourcesSection";
 import { CategoryFilter } from "@/components/wiki/CategoryFilter";
+import { CategorySidebar } from "@/components/wiki/CategorySidebar";
 import { EducationModal } from "@/components/wiki/EducationModal";
 import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
 import { SearchBar } from "@/components/common/SearchBar";
@@ -20,7 +20,7 @@ export default function EducationPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
 
-  const { info: hyperliquidInfo, loading: infoLoading } = useHyperliquidInfo();
+  const { info: hyperliquidInfo } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();
 
   const { categories } = useEducationalCategories({
@@ -39,68 +39,76 @@ export default function EducationPage() {
     setSelectedCategories(categories);
   };
 
-  // Transform data for the sidebar
-  const sidebarInfo = hyperliquidInfo ? {
-    title: hyperliquidInfo.title,
-    description: hyperliquidInfo.description,
-    colors: hyperliquidInfo.colors,
-    consensus: hyperliquidInfo.consensus,
-    executionLayer: hyperliquidInfo.executionLayer,
-    foundationCreation: hyperliquidInfo.foundationCreation,
-    mainnetLaunch: hyperliquidInfo.mainnetLaunch,
-    links: {
-      websiteLink: hyperliquidInfo.links.website,
-      appLink: hyperliquidInfo.links.app,
-      documentationLink: hyperliquidInfo.links.documentation,
-      twitterLink: hyperliquidInfo.links.twitter,
-      twitterFoundationLink: hyperliquidInfo.links.twitterFoundation,
-      discordLink: hyperliquidInfo.links.discord,
-      telegramLink: hyperliquidInfo.links.telegram,
-      githubLink: hyperliquidInfo.links.github,
-    }
-  } : null;
+  // Only `colors` + `links` from the public info are still surfaced by the UI;
+  // everything else (consensus, layers, dates) is now embedded in chapter stats.
+  const educationInfo = hyperliquidInfo
+    ? {
+        title: hyperliquidInfo.title,
+        description: hyperliquidInfo.description,
+        colors: hyperliquidInfo.colors,
+        links: {
+          websiteLink: hyperliquidInfo.links.website,
+          appLink: hyperliquidInfo.links.app,
+          documentationLink: hyperliquidInfo.links.documentation,
+          twitterLink: hyperliquidInfo.links.twitter,
+          twitterFoundationLink: hyperliquidInfo.links.twitterFoundation,
+          discordLink: hyperliquidInfo.links.discord,
+          telegramLink: hyperliquidInfo.links.telegram,
+          githubLink: hyperliquidInfo.links.github,
+        },
+      }
+    : null;
 
   return (
     <>
-      {/* Main content area */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1">
-          {hyperliquidEducation && !educationLoading && (
-            <EducationContent chapters={hyperliquidEducation.chapters} />
-          )}
-        </div>
-        <div className="w-full lg:w-[320px]">
-          {sidebarInfo && !infoLoading && <EducationSidebar info={sidebarInfo} />}
+      {/* Unified fundamentals card: hero + scrollable chapter tabs + content + resources footer */}
+      {hyperliquidEducation && !educationLoading && (
+        <EducationContent
+          chapters={hyperliquidEducation.chapters}
+          info={educationInfo}
+        />
+      )}
+
+      {/* Resources browser: sticky category sidebar on lg+, stacked on smaller screens */}
+      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]">
+        {/* Left: persistent category sidebar (lg+) */}
+        <CategorySidebar
+          selectedCategories={selectedCategories}
+          onCategoryChange={handleCategoryChange}
+          className="hidden lg:block lg:sticky lg:top-4 lg:self-start"
+        />
+
+        {/* Right: search + actions + resources */}
+        <div className="min-w-0 space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-1 sm:min-w-0">
+              {/* Dropdown variant only below lg */}
+              <CategoryFilter
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+                className="lg:hidden"
+              />
+              <SearchBar
+                onSearch={setSearchQuery}
+                placeholder="Search in resources..."
+                className="w-full sm:max-w-none sm:flex-1 lg:max-w-[420px]"
+              />
+            </div>
+            <div className="flex items-center gap-2 sm:shrink-0">
+              <UserSubmissionModal onSuccess={() => window.location.reload()} />
+              <ProtectedAction requiredRole="MODERATOR" user={user}>
+                <EducationModal onSuccess={() => window.location.reload()} />
+              </ProtectedAction>
+            </div>
+          </div>
+
+          <ResourcesSection
+            selectedCategoryIds={selectedCategories}
+            sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
-
-      {/* Category filter, Search bar and Admin Add Resource Button */}
-      <div className="flex items-center gap-4 max-[599px]:grid max-[599px]:grid-cols-1 max-[599px]:gap-4">
-        <div className="flex items-center gap-4">
-          <CategoryFilter
-            selectedCategories={selectedCategories}
-            onCategoryChange={handleCategoryChange}
-          />
-          <SearchBar
-            onSearch={setSearchQuery}
-            placeholder="Search in resources..."
-            className="w-full sm:w-[320px]"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <UserSubmissionModal onSuccess={() => window.location.reload()} />
-          <ProtectedAction requiredRole="MODERATOR" user={user}>
-            <EducationModal onSuccess={() => window.location.reload()} />
-          </ProtectedAction>
-        </div>
-      </div>
-
-      {/* Resources section */}
-      <ResourcesSection
-        selectedCategoryIds={selectedCategories}
-        sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
-        searchQuery={searchQuery}
-      />
     </>
   );
 }

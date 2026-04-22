@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import { useHip4Markets, useHip4Questions, useHip4Fills, useHip4Settlements } from "@/services/indexer/hip4";
-import { Button } from "@/components/ui/button";
 import {
   Hip4GlobalStatsStrip,
   Hip4MarketShareChart,

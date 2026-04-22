@@ -38,9 +38,9 @@ function assertLtData<T>(body: unknown): T {
   return r.data as T;
 }
 
-function toQuery(params: Record<string, string | number | undefined | null>): Record<string, unknown> {
+function toQuery(params: object): Record<string, unknown> {
   const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(params)) {
+  for (const [k, v] of Object.entries(params as Record<string, unknown>)) {
     if (v === undefined || v === null || v === "") continue;
     out[k] = v;
   }

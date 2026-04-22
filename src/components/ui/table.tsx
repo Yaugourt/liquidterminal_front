@@ -68,7 +68,18 @@ interface SortableTableHeadProps extends React.ThHTMLAttributes<HTMLTableCellEle
 
 const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHeadProps>(
   ({ className, label, isActive, sortDirection, onClick, highlight = "gold", ...props }, ref) => (
-    <TableHead ref={ref} className={className} {...props}>
+    <TableHead
+      ref={ref}
+      className={className}
+      aria-sort={
+        isActive && sortDirection
+          ? sortDirection === "asc"
+            ? "ascending"
+            : "descending"
+          : undefined
+      }
+      {...props}
+    >
       <button
         type="button"
         onClick={(e) => {
@@ -85,13 +96,6 @@ const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHe
               : "!text-brand-gold"
             : ""
         )}
-        aria-sort={
-          isActive && sortDirection
-            ? sortDirection === "asc"
-              ? "ascending"
-              : "descending"
-            : undefined
-        }
       >
         {label}
         {onClick &&

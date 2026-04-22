@@ -8,6 +8,9 @@ export const DAILY_TASK_ROUTES: Record<DailyTaskType, string> = {
   READ_RESOURCE: '/wiki',
   ADD_WALLET: '/market/tracker',
   EXPLORE_LEADERBOARD: '/profile?tab=leaderboard',
+  SUBMIT_RESOURCE: '/ecosystem/project',
+  CREATE_READLIST: '/wiki/readlist',
+  CREATE_WALLETLIST: '/market/tracker/public-lists',
 };
 
 /**

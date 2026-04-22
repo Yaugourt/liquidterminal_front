@@ -53,8 +53,8 @@ export default function TokenPage() {
     const [activeTab, setActiveTab] = useState<'twap' | 'holders'>('twap');
     // Remember which tabs have been opened so we mount them once and toggle
     // visibility from then on (no refetch on every tab switch).
-    const [visitedTabs, setVisitedTabs] = useState<Set<'twap' | 'holders'>>(
-        () => new Set(['twap'])
+    const [visitedTabs, setVisitedTabs] = useState<Set<"twap" | "holders">>(
+        () => new Set<"twap" | "holders">(["twap"])
     );
 
     const selectTab = (tab: 'twap' | 'holders') => {

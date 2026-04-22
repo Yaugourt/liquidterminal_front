@@ -66,7 +66,7 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
   const layoutId = useId().replace(/:/g, "");
 
   // Top 10 by metric + "Others" aggregate
-  const { slices, topRows, total, othersValue } = useMemo(() => {
+  const { slices, topRows, total } = useMemo(() => {
     if (!rows.length) return { slices: [], topRows: [], total: 0, othersValue: 0 };
     const sorted = [...rows].sort((a, b) => ((b[metric] as number) ?? 0) - ((a[metric] as number) ?? 0));
     const total = sorted.reduce((s, r) => s + ((r[metric] as number) ?? 0), 0);
