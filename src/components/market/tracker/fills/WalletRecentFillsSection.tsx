@@ -52,8 +52,8 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
     : "flex flex-col";
 
   const tableContainerClass = needsScroll
-    ? "overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1"
-    : "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent";
+    ? "overflow-auto scrollbar-brand flex-1"
+    : "overflow-x-auto scrollbar-brand";
 
   const formatCurrency = (value: string | number) => {
     return formatAssetValue(Number(value), format);

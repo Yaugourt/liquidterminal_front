@@ -96,7 +96,7 @@ export function UserTable({
   }
 
   return (
-    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <div className="overflow-x-auto scrollbar-brand">
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow className="hover:bg-transparent">

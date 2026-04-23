@@ -45,7 +45,7 @@ export const StatusTabs = memo(function StatusTabs({
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
       {tabs.map(tab => (
         <button
           key={tab.id}

@@ -105,7 +105,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'json':
         return (
-          <pre className="text-white bg-white/5 p-2 rounded text-xs overflow-x-auto font-inter">
+          <pre className="text-white bg-white/5 p-2 rounded text-xs overflow-x-auto scrollbar-brand font-inter">
             {stringValue}
           </pre>
         );

@@ -109,7 +109,7 @@ export function DataTable({
 
     return (
         <div>
-            <div className={cn("overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent rounded-lg", className)}>
+            <div className={cn("overflow-x-auto scrollbar-brand rounded-lg", className)}>
                 {children}
             </div>
 

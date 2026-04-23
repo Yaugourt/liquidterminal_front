@@ -89,7 +89,7 @@ export function TopTradersTable() {
 
       {/* Table */}
       <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="overflow-x-auto scrollbar-brand">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-border-subtle hover:bg-transparent">

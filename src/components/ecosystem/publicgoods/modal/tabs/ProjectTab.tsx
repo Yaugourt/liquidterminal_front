@@ -79,12 +79,12 @@ export function ProjectTab({
       <div>
         <Label htmlFor="category" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Category *</Label>
         <Select value={formData.category} onValueChange={(val) => updateField('category', val)}>
-          <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
+          <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+          <SelectContent>
             {CATEGORIES.map(cat => (
-              <SelectItem key={cat} value={cat} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+              <SelectItem key={cat} value={cat}>
                 {cat}
               </SelectItem>
             ))}

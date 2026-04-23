@@ -82,13 +82,13 @@ export function UserEditModal({
               value={editForm.role || 'USER'}
               onValueChange={(value) => onFormChange({ ...editForm, role: value as "USER" | "MODERATOR" | "ADMIN" })}
             >
-              <SelectTrigger className="bg-[#0A0D12] border-border-subtle text-white text-sm h-9">
+              <SelectTrigger className="text-sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-brand-secondary border-border-hover">
-                <SelectItem value="USER" className="text-white hover:bg-white/5 text-sm">User</SelectItem>
-                <SelectItem value="MODERATOR" className="text-white hover:bg-white/5 text-sm">Moderator</SelectItem>
-                <SelectItem value="ADMIN" className="text-white hover:bg-white/5 text-sm">Administrator</SelectItem>
+              <SelectContent>
+                <SelectItem value="USER">User</SelectItem>
+                <SelectItem value="MODERATOR">Moderator</SelectItem>
+                <SelectItem value="ADMIN">Administrator</SelectItem>
               </SelectContent>
             </Select>
           </div>

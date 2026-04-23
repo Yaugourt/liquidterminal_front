@@ -41,14 +41,14 @@ export function UserFilters({
       <div className="flex items-center gap-2">
         <Filter className="w-4 h-4 text-text-muted hidden sm:block" />
         <Select value={selectedRole} onValueChange={onRoleChange}>
-          <SelectTrigger className="w-full sm:w-36 bg-[#0A0D12] border-border-subtle text-white text-sm h-9">
+          <SelectTrigger className="w-full sm:w-36 text-sm">
             <SelectValue placeholder="All roles" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-border-hover">
-            <SelectItem value="all" className="text-white hover:bg-white/5 text-sm">All roles</SelectItem>
-            <SelectItem value="USER" className="text-white hover:bg-white/5 text-sm">User</SelectItem>
-            <SelectItem value="MODERATOR" className="text-white hover:bg-white/5 text-sm">Moderator</SelectItem>
-            <SelectItem value="ADMIN" className="text-white hover:bg-white/5 text-sm">Admin</SelectItem>
+          <SelectContent>
+            <SelectItem value="all">All roles</SelectItem>
+            <SelectItem value="USER">User</SelectItem>
+            <SelectItem value="MODERATOR">Moderator</SelectItem>
+            <SelectItem value="ADMIN">Admin</SelectItem>
           </SelectContent>
         </Select>
       </div>

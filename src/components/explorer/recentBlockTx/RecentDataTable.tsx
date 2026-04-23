@@ -138,7 +138,7 @@ export function RecentDataTable() {
           </div>
         ) : (
           <div className="space-y-0">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <div className="overflow-x-auto scrollbar-brand">
               <DataTable
                 type={activeTab}
                 data={currentData.data}

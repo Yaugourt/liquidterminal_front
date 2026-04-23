@@ -195,7 +195,7 @@ export function UniversalTokenTable({
 
     return (
         <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
-            <div className={`overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent ${mode === 'compact' ? 'flex-1' : ''}`}>
+            <div className={`overflow-x-auto scrollbar-brand ${mode === 'compact' ? 'flex-1' : ''}`}>
                 <Table className={mode === 'compact' ? 'h-full' : ''}>
                     <TableHeader>
                         <TableRow className="border-b border-border-subtle hover:bg-transparent">

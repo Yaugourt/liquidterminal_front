@@ -2,7 +2,6 @@
 
 import { useTokenWebSocket } from "@/services/market/token";
 import { cn } from "@/lib/utils";
-import "@/styles/scrollbar.css";
 import { Card } from "@/components/ui/card";
 
 interface RecentTradesProps {
@@ -55,7 +54,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                 </div>
 
                 {/* Trades List */}
-                <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent min-h-0">
+                <div className="flex-1 overflow-y-auto pr-1 scrollbar-brand min-h-0">
                     {isLoading && displayTrades.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-text-secondary text-sm">
                             Connecting to live trades...

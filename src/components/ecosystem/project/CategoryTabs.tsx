@@ -20,7 +20,7 @@ export const CategoryTabs = memo(function CategoryTabs({
 
   if (isLoading) {
     return (
-      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="h-8 w-20 bg-white/5 rounded-md animate-pulse" />
         ))}
@@ -39,7 +39,7 @@ export const CategoryTabs = memo(function CategoryTabs({
   }
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1 w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1 w-fit max-w-full overflow-x-auto scrollbar-brand">
       {/* Tab "All" */}
       <button
         onClick={() => onTabChange('all')}

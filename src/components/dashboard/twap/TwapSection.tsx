@@ -113,7 +113,7 @@ const TwapTabButtons = memo(({
 
         <div
           ref={scrollContainerRef}
-          className="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth"
+          className="flex items-center gap-1 overflow-x-auto scrollbar-hide scroll-smooth"
         >
           {tabs.map(tab => (
             <button

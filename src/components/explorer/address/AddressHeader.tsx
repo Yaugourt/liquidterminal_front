@@ -44,7 +44,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-[#83E9FF4D] scrollbar-track-transparent">
+      <div className="flex items-center gap-3 overflow-x-auto scrollbar-brand">
         <div className="hidden sm:block">
           <code className="text-brand-accent text-base font-medium">{address}</code>
         </div>

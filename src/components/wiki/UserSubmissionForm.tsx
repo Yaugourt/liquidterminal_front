@@ -141,10 +141,10 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     onValueChange={setCategoryId}
                     disabled={isRateLimited || isLoading}
                 >
-                    <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg">
+                    <SelectTrigger>
                         <SelectValue placeholder="Sélectionner une catégorie" />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+                    <SelectContent>
                         {categories?.map(cat => (
                             <SelectItem
                                 key={cat.id}

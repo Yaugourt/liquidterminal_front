@@ -42,7 +42,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
       <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">
         Headers
       </h3>
-      <div className="mt-2 overflow-x-auto rounded-lg border border-border-subtle">
+      <div className="mt-2 overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
         <Table>
           <TableHeader>
             <TableRow className="border-border-subtle hover:bg-transparent">
@@ -65,7 +65,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
       </div>
 
       <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">Body</h3>
-      <div className="mt-2 overflow-x-auto rounded-lg border border-border-subtle">
+      <div className="mt-2 overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
         <Table>
           <TableHeader>
             <TableRow className="border-border-subtle hover:bg-transparent">

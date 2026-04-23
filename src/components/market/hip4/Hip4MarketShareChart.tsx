@@ -166,7 +166,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 max-h-[260px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <div className="flex flex-col gap-1.5 max-h-[260px] overflow-y-auto pr-1 scrollbar-brand">
               {slices.map((s, i) => {
                 const pct = total > 0 ? (s.value / total) * 100 : 0;
                 const isActive = activeIdx === i;

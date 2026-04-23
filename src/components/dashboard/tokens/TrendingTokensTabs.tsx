@@ -65,7 +65,7 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
   return (
     <div className="w-full h-full flex flex-col">
       {/* Header avec TabSelector - Style V2 Pills */}
-      <div className="flex items-center gap-2 p-4 border-b border-border-subtle overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 p-4 border-b border-border-subtle overflow-x-auto scrollbar-hide">
         <div className="flex min-w-0">
           <PillTabs
             tabs={tabs.map(t => ({ value: t.key, label: t.label }))}

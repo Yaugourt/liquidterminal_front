@@ -99,7 +99,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
             <span className="pl-2 text-left">Fee Efficiency</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent" onMouseLeave={() => setHoverIdx(null)}>
+          <div className="flex-1 overflow-y-auto pr-1 scrollbar-brand" onMouseLeave={() => setHoverIdx(null)}>
             {top.map((row, i) => {
               const vol = row.totalVolume ?? 0;
               const fees = row.totalBuilderFees ?? 0;

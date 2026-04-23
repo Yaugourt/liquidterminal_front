@@ -87,12 +87,12 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
       <div>
         <Label htmlFor="developmentStatus" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Development Status *</Label>
         <Select value={formData.developmentStatus} onValueChange={(val) => updateField('developmentStatus', val)}>
-          <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
+          <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+          <SelectContent>
             {DEVELOPMENT_STATUSES.map(status => (
-              <SelectItem key={status.value} value={status.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+              <SelectItem key={status.value} value={status.value}>
                 {status.label}
               </SelectItem>
             ))}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -19,15 +20,17 @@ interface CreateListModalProps {
 }
 
 export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }: CreateListModalProps) {
+  const [isPublic, setIsPublic] = useState(false);
+
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     onSubmit({
       name: formData.get('name') as string,
       description: formData.get('description') as string || undefined,
-      isPublic: formData.get('isPublic') === 'on'
+      isPublic,
     });
-  }, [onSubmit]);
+  }, [onSubmit, isPublic]);
 
   if (!isOpen) return null;
 
@@ -62,10 +65,9 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
             </div>
             <div className="p-3 bg-brand-dark border border-border-subtle rounded-lg">
               <label className="flex items-center gap-3 text-white/80 text-sm cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="isPublic"
-                  className="w-4 h-4 rounded border-border-hover bg-brand-dark text-brand-accent focus:ring-brand-accent focus:ring-offset-0"
+                <Checkbox
+                  checked={isPublic}
+                  onCheckedChange={(checked) => setIsPublic(checked === true)}
                 />
                 <span>Make this list public</span>
               </label>

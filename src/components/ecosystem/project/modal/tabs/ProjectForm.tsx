@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, X } from "lucide-react";
 import { Category } from "@/services/ecosystem/project/types";
 
@@ -73,11 +74,10 @@ export function ProjectForm({
           <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-border-subtle rounded-lg p-2">
             {categories.map((category) => (
               <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 p-1 rounded">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={projectForm.categoryIds.includes(category.id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
+                  onCheckedChange={(checked) => {
+                    if (checked === true) {
                       setProjectForm(prev => ({
                         ...prev,
                         categoryIds: [...prev.categoryIds, category.id]
@@ -89,7 +89,6 @@ export function ProjectForm({
                       }));
                     }
                   }}
-                  className="rounded border-border-hover bg-brand-dark text-brand-accent focus:ring-brand-accent"
                 />
                 <span className="text-white/80 text-sm">{category.name}</span>
               </label>

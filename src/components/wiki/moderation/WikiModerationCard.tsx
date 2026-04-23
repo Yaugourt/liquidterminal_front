@@ -187,7 +187,7 @@ export function WikiModerationCard() {
                         No pending resources
                     </div>
                 ) : (
-                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-brand">
                         {resources.map(resource => (
                             <PendingResourceItem
                                 key={resource.id}

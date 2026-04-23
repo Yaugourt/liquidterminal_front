@@ -66,7 +66,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                 <p className="text-white text-xs uppercase tracking-wide font-medium">Hash</p>
               </div>
               <div className="flex items-center gap-1.5 ml-6">
-                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                <p className="text-white break-all text-sm font-medium overflow-x-auto py-1 scrollbar-brand">
                   {blockDetails.hash}
                 </p>
                 <button
@@ -91,7 +91,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
               <div className="flex items-center gap-1.5 ml-6">
                 <Link
                   href={`/explorer/address/${blockDetails.proposer}`}
-                  className="text-brand-accent break-all text-sm font-medium overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:text-brand-accent/80 transition-colors"
+                  className="text-brand-accent break-all text-sm font-medium overflow-x-auto py-1 scrollbar-brand hover:text-brand-accent/80 transition-colors"
                 >
                   {blockDetails.proposer}
                 </Link>

@@ -132,13 +132,11 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="bg-brand-secondary border-border-hover rounded-xl shadow-xl shadow-black/20"
                   align="end"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {canEdit && onEdit && (
                     <DropdownMenuItem
-                      className="interactive-secondary cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -151,7 +149,6 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   )}
                   {canReview && onReview && (
                     <DropdownMenuItem
-                      className="text-brand-accent hover:text-white hover:bg-white/5 cursor-pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -164,7 +161,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   )}
                   {canDelete && onDelete && (
                     <DropdownMenuItem
-                      className="text-rose-400 hover:text-white hover:bg-rose-500/10 cursor-pointer"
+                      className="text-rose-400 focus:text-rose-300 focus:bg-rose-500/10"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

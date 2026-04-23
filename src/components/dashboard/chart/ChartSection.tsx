@@ -14,7 +14,7 @@ const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsProps) =
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto no-scrollbar">
+    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle overflow-x-auto scrollbar-hide">
       {tabs.map(tab => (
         <button
           key={tab.key}

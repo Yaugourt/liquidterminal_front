@@ -132,7 +132,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
         </div>
       </div>
 
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1 min-h-0">
+      <div className="overflow-x-auto scrollbar-brand flex-1 min-h-0">
         <Table className="h-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">

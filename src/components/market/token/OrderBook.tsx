@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token";
 import { cn } from "@/lib/utils";
-import "@/styles/scrollbar.css";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Card } from "@/components/ui/card";
 
@@ -114,7 +113,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent min-h-0">
+            <div className="flex-1 overflow-y-auto pr-1 scrollbar-brand min-h-0">
 
               {/* Asks (Sell orders) - 7 ordres */}
               <div className="space-y-1 mb-3">
@@ -187,7 +186,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
             </div>
 
             {/* Trades - Scrollable */}
-            <div className="h-[402px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <div className="h-[402px] overflow-y-auto pr-1 scrollbar-brand">
               <div className="space-y-1">
                 {displayTrades.slice(0, 50).map((trade, index) => {
                   // Handle real trades from WebSocket

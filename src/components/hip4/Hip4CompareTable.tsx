@@ -21,7 +21,7 @@ export function Hip4CompareTable({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border-subtle bg-brand-secondary/30 overflow-x-auto scrollbar-thin",
+        "rounded-xl border border-border-subtle bg-brand-secondary/30 overflow-x-auto scrollbar-brand",
         className
       )}
     >

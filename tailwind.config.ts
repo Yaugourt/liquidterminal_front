@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import scrollbar from "tailwind-scrollbar";
 
 export default {
 	darkMode: ["class"],
@@ -7,7 +6,7 @@ export default {
 		"./src/**/*.{js,ts,jsx,tsx}",
 	],
 
-	plugins: [scrollbar],
+	plugins: [],
 	theme: {
 		extend: {
 			fontFamily: {

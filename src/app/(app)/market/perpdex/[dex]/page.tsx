@@ -293,7 +293,7 @@ export default function PerpDexDetailPage() {
               </div>
               <span className="text-stat-label">Sub-Deployers ({dex.subDeployers.length})</span>
             </div>
-            <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-brand">
               {dex.subDeployers.slice(0, 4).map((sub, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs">
                   <span className="text-brand-accent shrink-0">{sub.permission}</span>

@@ -26,7 +26,7 @@ function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
   if (!result) return null;
   const visible = result.rows.filter((r) => r.pool > 0n || r.root);
   return (
-    <div className="overflow-x-auto rounded-lg border border-border-subtle">
+    <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
       <Table>
         <TableHeader>
           <TableRow className="border-border-subtle hover:bg-transparent">

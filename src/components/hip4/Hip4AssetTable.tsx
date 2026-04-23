@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export function Hip4AssetTable() {
   return (
-    <div className="rounded-xl border border-border-subtle bg-brand-secondary/30 overflow-x-auto scrollbar-thin">
+    <div className="rounded-xl border border-border-subtle bg-brand-secondary/30 overflow-x-auto scrollbar-brand">
       <Table>
         <TableHeader>
           <TableRow className="border-border-subtle hover:bg-transparent">

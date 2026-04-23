@@ -269,7 +269,7 @@ export function ImportWalletsCSVDialog({
               </div>
 
               {/* Wallet List */}
-              <div className="max-h-[300px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div className="max-h-[300px] overflow-y-auto space-y-2 scrollbar-brand">
                 {parsedWallets.map((wallet, index) => (
                   <div
                     key={index}
