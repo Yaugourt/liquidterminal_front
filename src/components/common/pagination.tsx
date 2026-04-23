@@ -60,12 +60,12 @@ export function Pagination({
           onValueChange={handleChangeRowsPerPage}
           disabled={disabled}
         >
-          <SelectTrigger className="h-8 w-[70px] bg-brand-secondary border-border-hover text-white hover:bg-brand-secondary/80 focus:ring-brand-accent">
+          <SelectTrigger className="h-8 w-[70px]">
             <SelectValue placeholder={rowsPerPage} />
           </SelectTrigger>
-          <SelectContent className="bg-brand-secondary border-border-hover text-white">
+          <SelectContent>
             {rowsPerPageOptions.map((opt) => (
-              <SelectItem key={opt} value={opt.toString()} className="focus:bg-white/10 focus:text-brand-accent">
+              <SelectItem key={opt} value={opt.toString()}>
                 {opt}
               </SelectItem>
             ))}

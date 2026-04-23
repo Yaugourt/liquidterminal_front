@@ -141,7 +141,7 @@ export function TopTradersPreview() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto flex-1">
+      <div className="overflow-x-auto scrollbar-brand flex-1">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">

@@ -62,12 +62,12 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                     value={form.categoryId}
                     onValueChange={(value) => setForm(prev => ({ ...prev, categoryId: value }))}
                 >
-                    <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg">
+                    <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+                    <SelectContent>
                         {categories?.map(cat => (
-                            <SelectItem key={cat.id} value={String(cat.id)} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                            <SelectItem key={cat.id} value={String(cat.id)}>
                                 {cat.name}
                             </SelectItem>
                         ))}

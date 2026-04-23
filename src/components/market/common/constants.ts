@@ -10,7 +10,7 @@ export const COLORS = {
 
 export const STYLES = {
   table: {
-    container: "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
+    container: "overflow-x-auto scrollbar-brand",
     row: "border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer",
     cell: {
       base: "py-2",

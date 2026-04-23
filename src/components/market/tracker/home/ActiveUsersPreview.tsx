@@ -177,7 +177,7 @@ export function ActiveUsersPreview() {
           </div>
         </div>
         <Select value={hours.toString()} onValueChange={(val) => handleHoursChange(Number(val))}>
-          <SelectTrigger className="w-[120px] bg-brand-secondary/40 border-border-subtle text-white">
+          <SelectTrigger className="w-[120px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -191,7 +191,7 @@ export function ActiveUsersPreview() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto flex-1">
+      <div className="overflow-x-auto scrollbar-brand flex-1">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">

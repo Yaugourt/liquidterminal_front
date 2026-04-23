@@ -78,7 +78,7 @@ function RecentFillsSection() {
         </div>
       )}
 
-      <div className="rounded-xl border border-border-subtle overflow-x-auto">
+      <div className="rounded-xl border border-border-subtle overflow-x-auto scrollbar-brand">
         {isLoading && data.length === 0 ? (
           <div className="flex h-[220px] items-center justify-center flex-col gap-2">
             <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />

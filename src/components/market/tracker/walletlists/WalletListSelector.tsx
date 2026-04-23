@@ -83,7 +83,7 @@ export function WalletListSelector({
         </div>
 
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
-          <SelectTrigger className="w-full sm:w-[320px] bg-brand-dark border-border-subtle text-white rounded-lg hover:border-border-hover transition-all">
+          <SelectTrigger className="w-full sm:w-[320px]">
             <div className="flex items-center gap-2 truncate">
               <List className="w-4 h-4 shrink-0 text-brand-accent" />
               <SelectValue>
@@ -97,7 +97,7 @@ export function WalletListSelector({
             </div>
           </SelectTrigger>
 
-          <SelectContent className="bg-brand-secondary border-border-hover text-white max-h-[400px] rounded-xl shadow-xl shadow-black/20">
+          <SelectContent className="max-h-[400px]">
             {/* Search input */}
             {userLists.length > 5 && (
               <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-subtle">

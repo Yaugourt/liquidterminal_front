@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { Menu, Settings, Shield, MessageCircle, Github, BookOpen } from "lucide-react"
+import { Settings, Shield, MessageCircle, Github, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { SidebarToggle } from "@/components/common/SidebarToggle"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
@@ -81,7 +82,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -97,14 +98,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-3 border-b border-border-subtle">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="lg:hidden hover:bg-white/5"
+                    <SidebarToggle
                         onClick={() => setIsOpen(false)}
-                    >
-                        <Menu className="h-5 w-5 text-brand-accent" />
-                    </Button>
+                        className="lg:hidden"
+                        label="Close navigation"
+                    />
+
                     <Link
                         href="/dashboard"
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -125,7 +124,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-brand">
                     <ul className="space-y-4">
                         {navigationGroups.map((group, groupIndex) => (
                             <li key={groupIndex} className="space-y-1">

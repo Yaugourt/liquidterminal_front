@@ -25,16 +25,14 @@ export function SettingsSelector() {
           <Settings className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[220px] bg-brand-secondary border-border-hover shadow-xl shadow-black/40">
-        {/* Section Format des nombres */}
+      <DropdownMenuContent align="end" className="w-[220px]">
         <div className="px-2 py-1.5">
-          <h3 className="text-xs font-medium text-brand-accent uppercase tracking-wide">Numbers</h3>
+          <h3 className="text-label text-brand-accent">Numbers</h3>
         </div>
         {Object.entries(NUMBER_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
-            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${numberFormat === key ? 'text-brand-accent' : 'text-white/80'
-              }`}
+            className={`flex justify-between items-center ${numberFormat === key ? 'text-brand-accent' : ''}`}
             onClick={() => setNumberFormat(key as NumberFormatType)}
           >
             <span>{value.example}</span>
@@ -44,17 +42,15 @@ export function SettingsSelector() {
           </DropdownMenuItem>
         ))}
 
-        <DropdownMenuSeparator className="bg-white/10" />
+        <DropdownMenuSeparator />
 
-        {/* Section Format des dates */}
         <div className="px-2 py-1.5">
-          <h3 className="text-xs font-medium text-brand-accent uppercase tracking-wide">Dates</h3>
+          <h3 className="text-label text-brand-accent">Dates</h3>
         </div>
         {Object.entries(DATE_FORMATS).map(([key, value]) => (
           <DropdownMenuItem
             key={key}
-            className={`flex justify-between items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-white/5 ${dateFormat === key ? 'text-brand-accent' : 'text-white/80'
-              }`}
+            className={`flex justify-between items-center ${dateFormat === key ? 'text-brand-accent' : ''}`}
             onClick={() => setDateFormat(key as DateFormatType)}
           >
             <div className="flex flex-col">

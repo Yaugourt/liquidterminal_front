@@ -23,7 +23,7 @@ export function ScrollableTable({
 }: ScrollableTableProps) {
   return (
     <div className={cn("flex flex-col h-full", className)}>
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex-1">
+      <div className="overflow-x-auto scrollbar-brand flex-1">
         {children}
       </div>
       {pagination && (

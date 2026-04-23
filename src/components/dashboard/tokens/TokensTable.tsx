@@ -83,7 +83,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
     if (isLoading) {
         return (
             <div className="w-full h-full flex flex-col">
-                <div className="overflow-x-auto custom-scrollbar flex-1">
+                <div className="overflow-x-auto scrollbar-brand flex-1">
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
@@ -104,7 +104,7 @@ export const TokensTable = memo(({ type, data, isLoading, onSort, activeSort = "
 
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="overflow-x-auto custom-scrollbar flex-1">
+            <div className="overflow-x-auto scrollbar-brand flex-1">
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">

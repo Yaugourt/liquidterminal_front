@@ -179,7 +179,7 @@ export function PublicWalletListPreviewDialog({
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-text-secondary">Wallets in this list:</h3>
-              <div className="h-[300px] border border-border-hover rounded-lg overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              <div className="h-[300px] border border-border-hover rounded-lg overflow-y-auto scrollbar-brand">
                 <div className="p-3 space-y-2">
                   {fullList.items.map((item, index) => (
                     <div

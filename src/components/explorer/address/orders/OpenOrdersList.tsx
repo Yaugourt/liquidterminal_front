@@ -59,7 +59,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
 
   return (
     <div className="space-y-0">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="overflow-x-auto scrollbar-brand">
         <Table className="w-full">
           <TableHeader>
             <TableRow className="border-b border-border-subtle hover:bg-transparent">

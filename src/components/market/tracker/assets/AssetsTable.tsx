@@ -96,7 +96,7 @@ export function AssetsTable({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="overflow-x-auto scrollbar-brand">
         <Table>
           <TableHeaderComponent 
             type={type} 

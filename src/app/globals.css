@@ -132,19 +132,43 @@
     }
 }
 
-/* Hide scrollbar for WebKit browsers */
-.overflow-x-auto::-webkit-scrollbar {
-    display: none;
-}
+/* ===== Scrollbars ===== */
 
-/* Hide scrollbar for API providers slide */
+/* Hide scrollbar entirely (used for ticker/slide tracks). */
 .scrollbar-hide {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+    display: none;
+}
+
+/*
+ * Thin brand scrollbar — single source of truth.
+ * Use `scrollbar-brand` on any scroll container that should show our styled bar.
+ */
+.scrollbar-brand {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.scrollbar-brand::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-brand::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-brand::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.scrollbar-brand::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* Smooth scroll for storytelling landing */

@@ -21,7 +21,7 @@ function ParamTable({
   rows: { param: string; type: string; indexed: string; pos: string }[];
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border-subtle">
+    <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
       <Table>
         <TableHeader>
           <TableRow className="border-border-subtle hover:bg-transparent">

@@ -124,7 +124,7 @@ export function Hip4ReferenceChapter() {
           </Link>
           .
         </Hip4DocLead>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -153,7 +153,7 @@ export function Hip4ReferenceChapter() {
           research. Full JSON payloads:{" "}
           <code className="font-mono text-[11px] text-text-muted">HIP4-research-complete.md</code>.
         </Hip4DocLead>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -190,7 +190,7 @@ export function Hip4ReferenceChapter() {
           </Link>
           .
         </Hip4DocLead>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
@@ -232,7 +232,7 @@ export function Hip4ReferenceChapter() {
         <Hip4DocLead className="mb-3 text-xs">
           Datasets and paths referenced in research (fills, EVM blocks). Requester pays where noted.
         </Hip4DocLead>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">

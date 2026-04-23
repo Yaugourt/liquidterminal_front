@@ -167,7 +167,7 @@ export function WalletContentTabs({
   return (
     <div className="flex gap-3 items-center">
       {/* Scrollable tabs container */}
-      <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="flex-1 overflow-x-auto scrollbar-brand">
         <Tabs
           value={activeWalletId?.toString() || ""}
           onValueChange={onWalletChange}

@@ -60,12 +60,12 @@ export function TeamTab({
         <div>
           <Label htmlFor="teamSize" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Team Size *</Label>
           <Select value={formData.teamSize} onValueChange={(val) => updateField('teamSize', val)}>
-            <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
+            <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select team size" />
             </SelectTrigger>
-            <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+            <SelectContent>
               {TEAM_SIZES.map(size => (
-                <SelectItem key={size.value} value={size.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                <SelectItem key={size.value} value={size.value}>
                   {size.label}
                 </SelectItem>
               ))}
@@ -76,12 +76,12 @@ export function TeamTab({
         <div>
           <Label htmlFor="experienceLevel" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Experience Level *</Label>
           <Select value={formData.experienceLevel} onValueChange={(val) => updateField('experienceLevel', val)}>
-            <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
+            <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select experience" />
             </SelectTrigger>
-            <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+            <SelectContent>
               {EXPERIENCE_LEVELS.map(level => (
-                <SelectItem key={level.value} value={level.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                <SelectItem key={level.value} value={level.value}>
                   {level.label}
                 </SelectItem>
               ))}

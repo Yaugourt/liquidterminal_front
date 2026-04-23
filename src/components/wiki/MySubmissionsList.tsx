@@ -90,7 +90,7 @@ export function MySubmissionsList() {
             </div>
 
             {/* List */}
-            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 scrollbar-brand">
                 {submissions.map(resource => (
                     <SubmissionItem key={resource.id} resource={resource} />
                 ))}

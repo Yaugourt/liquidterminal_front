@@ -86,7 +86,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
             <span className="pl-2">Open Interest</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent" onMouseLeave={() => setHoverIdx(null)}>
+          <div className="flex-1 overflow-y-auto pr-1 scrollbar-brand" onMouseLeave={() => setHoverIdx(null)}>
             {top.map((row, i) => {
               const vol = row.total_volume ?? 0;
               const oi = row.open_interest ?? 0;

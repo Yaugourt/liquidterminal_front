@@ -41,7 +41,7 @@ export function Hip4TxexamplesChapter() {
         <p className="mb-4 text-xs text-text-secondary">
           Shapes observed on testnet; verify against your own traces.
         </p>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">

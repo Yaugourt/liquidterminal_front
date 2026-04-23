@@ -58,7 +58,7 @@ export function PillTabs({
             ref={containerRef}
             className={cn(
                 "relative flex items-center gap-1 p-1 bg-brand-dark/30 rounded-lg",
-                "w-fit max-w-full overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
+                "w-fit max-w-full overflow-x-auto scrollbar-brand",
                 "sm:w-fit sm:overflow-x-visible",
                 className
             )}

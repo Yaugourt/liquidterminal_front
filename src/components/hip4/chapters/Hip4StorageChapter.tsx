@@ -32,7 +32,7 @@ export function Hip4StorageChapter() {
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>V1 — proxy / implementation slots (summary)</Hip4SectionTitle>
-        <div className="overflow-x-auto rounded-lg border border-border-subtle">
+        <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">

@@ -274,7 +274,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                 <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
                                             </div>
                                         ) : displayedWallets.length > 0 ? (
-                                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                                            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-brand">
                                                 {displayedWallets.map(wallet => (
                                                     <div key={`${wallet.id}-${wallet.address}`} className="flex justify-between items-center p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                                                         <div className="flex items-center gap-3 min-w-0">

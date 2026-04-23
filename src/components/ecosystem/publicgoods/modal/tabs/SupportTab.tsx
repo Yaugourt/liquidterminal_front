@@ -68,12 +68,12 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
         <div>
           <Label htmlFor="budgetRange" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Budget Range</Label>
           <Select value={formData.budgetRange} onValueChange={(val) => updateField('budgetRange', val)}>
-            <SelectTrigger className="bg-brand-dark border-border-subtle text-white rounded-lg mt-1">
+            <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select budget range" />
             </SelectTrigger>
-            <SelectContent className="bg-brand-secondary border-border-hover rounded-xl">
+            <SelectContent>
               {BUDGET_RANGES.map(range => (
-                <SelectItem key={range.value} value={range.value} className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg">
+                <SelectItem key={range.value} value={range.value}>
                   {range.label}
                 </SelectItem>
               ))}
