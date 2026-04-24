@@ -58,12 +58,21 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
             </TableHeader>
             <TableBody>
               {settlements.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => {
-                const winner = row.winner_side === 0 ? "Yes" : row.winner_side === 1 ? "No" : "—";
-                const winColor = row.winner_side === 0 ? "text-emerald-400 bg-emerald-500/10" : row.winner_side === 1 ? "text-rose-400 bg-rose-500/10" : "text-text-muted bg-white/5";
+                const winner = row.winner_name ?? (row.winner_side === 0 ? "Yes" : row.winner_side === 1 ? "No" : "—");
+                const isYes = row.winner_name === "Yes" || (row.winner_name == null && row.winner_side === 0);
+                const isNo = row.winner_name === "No" || (row.winner_name == null && row.winner_side === 1);
+                const winColor = isYes
+                  ? "text-emerald-400 bg-emerald-500/10"
+                  : isNo
+                  ? "text-rose-400 bg-rose-500/10"
+                  : row.winner_name
+                  ? "text-brand-accent bg-brand-accent/10"
+                  : "text-text-muted bg-white/5";
+                const marketLabel = row.question_name ?? row.coin ?? `#${row.outcome_id}`;
                 return (
                   <TableRow key={`${row.outcome_id}-${i}`} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
                     <TableCell className="py-2.5 px-3">
-                      <span className="text-xs font-semibold text-white">{row.coin ?? `#${row.outcome_id}`}</span>
+                      <span className="text-xs font-semibold text-white line-clamp-1">{marketLabel}</span>
                     </TableCell>
                     <TableCell className="py-2.5 px-3">
                       <span className="text-xs tabular-nums text-brand-accent">

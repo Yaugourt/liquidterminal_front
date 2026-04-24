@@ -26,9 +26,11 @@ function shortAddress(addr: string) {
 interface Hip4RecentFillsProps {
   fills: Hip4FillRow[];
   isLoading: boolean;
+  /** Map of `coin` → human-readable `display_name` (derived from markets-enriched). */
+  marketNameIndex?: Record<string, string>;
 }
 
-export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
+export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4RecentFillsProps) {
   const [sortKey, setSortKey] = useState<SortKey>("time");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(0);
@@ -100,7 +102,7 @@ export function Hip4RecentFills({ fills, isLoading }: Hip4RecentFillsProps) {
             <TableBody>
               {rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => (
                 <TableRow key={`${row.hash}-${i}`} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
-                  <TableCell className="py-2 px-3 text-xs font-semibold text-white">{row.coin}</TableCell>
+                  <TableCell className="py-2 px-3 text-xs font-semibold text-white truncate max-w-[180px]">{marketNameIndex?.[row.coin] || row.coin}</TableCell>
                   <TableCell className="py-2 px-3">
                     <span className={`text-[11px] font-semibold ${row.side === "B" || row.side === "buy" ? "text-emerald-400" : "text-rose-400"}`}>
                       {row.side === "B" || row.side === "buy" ? "Buy" : "Sell"}

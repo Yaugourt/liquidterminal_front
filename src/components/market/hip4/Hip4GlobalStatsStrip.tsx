@@ -4,11 +4,14 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, CheckCircle2, TrendingUp, Layers } from "lucide-react";
 import { StatsCard } from "@/components/common/StatsCard";
-import type { Hip4MarketRow, Hip4QuestionRow } from "@/services/indexer/hip4";
+import type {
+  Hip4MarketEnrichedRow,
+  Hip4QuestionWithOutcomesRow,
+} from "@/services/indexer/hip4";
 
 interface Hip4GlobalStatsStripProps {
-  markets: Hip4MarketRow[];
-  questions: Hip4QuestionRow[];
+  markets: Hip4MarketEnrichedRow[];
+  questions: Hip4QuestionWithOutcomesRow[];
   isLoading: boolean;
 }
 

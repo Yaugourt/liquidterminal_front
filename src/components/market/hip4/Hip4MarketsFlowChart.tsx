@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ChartLoading, ChartEmpty } from "@/components/common/charts";
-import type { Hip4MarketRow } from "@/services/indexer/hip4";
+import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 
 function compactUsd(n: number | null | undefined) {
   if (n == null || !Number.isFinite(n)) return "—";
@@ -21,7 +21,7 @@ function pctColor(px: number | null) {
 }
 
 interface Hip4MarketsFlowChartProps {
-  markets: Hip4MarketRow[];
+  markets: Hip4MarketEnrichedRow[];
   isLoading: boolean;
 }
 
@@ -94,7 +94,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
               const oiRatio = oi / maxOI;
               const isHovered = hoverIdx === i;
               const rankColor = i === 0 ? "text-brand-gold" : i === 1 ? "text-zinc-300" : i === 2 ? "text-amber-600" : "text-text-muted";
-              const label = row.name ?? row.coin;
+              const label = row.display_name || row.coin || `#${row.outcome_id}`;
 
               return (
                 <motion.div
@@ -162,7 +162,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
           <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-muted tabular-nums">
             {hoverIdx !== null && top[hoverIdx] ? (
               <>
-                <span className="font-semibold text-white truncate max-w-[200px]">{top[hoverIdx].name ?? top[hoverIdx].coin}</span>
+                <span className="font-semibold text-white truncate max-w-[200px]">{top[hoverIdx].display_name || top[hoverIdx].coin || `#${top[hoverIdx].outcome_id}`}</span>
                 <span>
                   <span className="text-brand-accent">Vol {compactUsd(top[hoverIdx].total_volume ?? 0)}</span>
                   <span className="mx-2 text-text-muted/50">·</span>

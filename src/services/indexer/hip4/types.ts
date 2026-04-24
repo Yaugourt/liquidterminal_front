@@ -2,17 +2,25 @@
 
 // ─── Data interfaces ────────────────────────────────────────────────────────
 
-export interface Hip4MarketRow {
+export interface Hip4ParsedSide {
+  name: string;
+}
+
+export interface Hip4MarketEnrichedRow {
   outcome_id: number;
   question_id: number | null;
-  coin: string;
-  /** e.g. "BTC", "ETH", "crypto", "sports" */
+  coin: string | null;
   class: string | null;
+  class_normalized: string;
   underlying: string | null;
   name: string | null;
   side: number | null;
   side_name: string | null;
-  /** mid price 0–1 */
+  parsed_sides: Hip4ParsedSide[] | null;
+  token_name: string | null;
+  question_name: string | null;
+  question_description: string | null;
+  display_name: string;
   mid_price: number | null;
   volume_24h: number | null;
   total_volume: number | null;
@@ -20,18 +28,36 @@ export interface Hip4MarketRow {
   open_interest: number | null;
   is_settled: boolean;
   settled_at: string | null;
+  expiry: string | null;
+  period: string | null;
+  target_price: number | null;
 }
 
-export interface Hip4QuestionRow {
-  question_id: number;
+export interface Hip4QuestionOutcome {
+  outcome_id: number;
+  side_name: string | null;
+  display_name: string;
+  mid_price: number | null;
+  volume_24h: number | null;
+  total_volume: number | null;
+  open_interest: number | null;
+  is_settled: boolean;
+  settled_at: string | null;
+}
+
+export interface Hip4QuestionWithOutcomesRow {
+  question_id: number | null;
   title: string | null;
   description: string | null;
   class: string | null;
   underlying: string | null;
-  outcome_count: number | null;
-  total_volume: number | null;
+  outcome_count: number;
+  total_volume: number;
   created_at: string | null;
   resolved_at: string | null;
+  status: "live" | "settled";
+  singleton_outcome_id: number | null;
+  outcomes: Hip4QuestionOutcome[];
 }
 
 export interface Hip4FillRow {
@@ -48,14 +74,6 @@ export interface Hip4FillRow {
   tid?: number;
 }
 
-export interface Hip4FeeRow {
-  date: string;
-  user: string;
-  coin: string;
-  total_fees: number;
-  fill_count: number;
-}
-
 export interface Hip4SettlementRow {
   outcome_id: number;
   coin: string | null;
@@ -63,58 +81,13 @@ export interface Hip4SettlementRow {
   settled_at: string;
   winner_side: number | null;
   tx_hash: string | null;
-}
-
-export interface Hip4OutcomeTokenRow {
-  outcome_id: number;
-  coin: string;
-  side: number | null;
-  side_name: string | null;
-  description: string | null;
-  underlying: string | null;
-}
-
-export interface Hip4FeeScaleRow {
-  time: string;
-  outcome_id: number | null;
-  taker_fee_bps: number | null;
-  maker_fee_bps: number | null;
-  tx_hash: string | null;
-}
-
-export interface Hip4UserActionRow {
-  time: string;
-  user: string;
-  action_type: string;
-  outcome_id: number | null;
-  coin: string | null;
-  amount: number | null;
-  tx_hash: string | null;
+  winner_name: string | null;
+  question_name: string | null;
 }
 
 // ─── Query interfaces ────────────────────────────────────────────────────────
 
-export interface Hip4FillsQuery {
-  user?: string;
-  coin?: string;
-  outcome_id?: number;
-  start?: string;
-  end?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface Hip4FeesQuery {
-  user?: string;
-  coin?: string;
-  start?: string;
-  end?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface Hip4MarketsQuery {
-  outcome_id?: number;
+export interface Hip4MarketsEnrichedQuery {
   class?: string;
   underlying?: string;
   question_id?: number;
@@ -122,8 +95,18 @@ export interface Hip4MarketsQuery {
   offset?: number;
 }
 
-export interface Hip4QuestionsQuery {
+export interface Hip4QuestionsWithOutcomesQuery {
   question_id?: number;
+  limit?: number;
+  offset?: number;
+}
+
+export interface Hip4FillsQuery {
+  user?: string;
+  coin?: string;
+  outcome_id?: number;
+  start?: string;
+  end?: string;
   limit?: number;
   offset?: number;
 }
@@ -136,41 +119,17 @@ export interface Hip4SettlementsQuery {
   offset?: number;
 }
 
-export interface Hip4OutcomeTokensQuery {
-  outcome_id?: number;
-  coin?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface Hip4FeeScalesQuery {
-  start?: string;
-  end?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface Hip4UserActionsQuery {
-  user?: string;
-  action_type?: string;
-  outcome_id?: number;
-  start?: string;
-  end?: string;
-  limit?: number;
-  offset?: number;
-}
-
 // ─── Hook result interfaces ──────────────────────────────────────────────────
 
-export interface UseHip4MarketsResult {
-  markets: Hip4MarketRow[];
+export interface UseHip4MarketsEnrichedResult {
+  markets: Hip4MarketEnrichedRow[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
 }
 
-export interface UseHip4QuestionsResult {
-  questions: Hip4QuestionRow[];
+export interface UseHip4QuestionsWithOutcomesResult {
+  questions: Hip4QuestionWithOutcomesRow[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -185,13 +144,6 @@ export interface UseHip4FillsResult {
 
 export interface UseHip4SettlementsResult {
   settlements: Hip4SettlementRow[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
-
-export interface UseHip4OutcomeTokensResult {
-  tokens: Hip4OutcomeTokenRow[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;

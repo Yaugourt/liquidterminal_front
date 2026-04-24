@@ -4,7 +4,8 @@ import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { ChartLoading, ChartEmpty } from "@/components/common/charts";
-import type { Hip4MarketRow } from "@/services/indexer/hip4";
+import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
+import { categorizeMarket, CATEGORY_LABELS } from "@/lib/hip4-category";
 
 const SLICE_PALETTE = [
   "#83E9FF", "#f9e370", "#a78bfa", "#10b981", "#f43f5e",
@@ -36,7 +37,7 @@ function ActiveArc({ cx = 0, cy = 0, innerRadius = 0, outerRadius = 0, startAngl
 }
 
 interface Hip4MarketShareChartProps {
-  markets: Hip4MarketRow[];
+  markets: Hip4MarketEnrichedRow[];
   isLoading: boolean;
 }
 
@@ -46,13 +47,13 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
 
   const { slices, total } = useMemo(() => {
     if (!Array.isArray(markets) || !markets.length) return { slices: [], total: 0 };
-    // Group by class
-    const byClass: Record<string, number> = {};
+    const byCategory: Record<string, number> = {};
     for (const m of markets) {
-      const key = m.class ?? "Other";
-      byClass[key] = (byClass[key] ?? 0) + (m.total_volume ?? 0);
+      const category = categorizeMarket(m);
+      const label = CATEGORY_LABELS[category];
+      byCategory[label] = (byCategory[label] ?? 0) + (m.total_volume ?? 0);
     }
-    const sorted = Object.entries(byClass).sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(byCategory).sort((a, b) => b[1] - a[1]);
     const total = sorted.reduce((s, [, v]) => s + v, 0);
     const slices = sorted.slice(0, 10).map(([name, value], i) => ({
       name,
