@@ -40,7 +40,8 @@ function truncateAddress(addr: string | null | undefined, start = 6, end = 4): s
   return `${addr.slice(0, start)}…${addr.slice(-end)}`;
 }
 
-function truncateHash(hash: string): string {
+function truncateHash(hash: string | null | undefined): string {
+  if (!hash) return "-";
   if (hash.length <= 10) return hash;
   return `${hash.slice(0, 6)}…`;
 }
