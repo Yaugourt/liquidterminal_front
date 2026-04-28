@@ -32,19 +32,19 @@ export function EvmSection() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatsCard
           title="Blocks Indexed"
-          value={formatLargeNumber(stats?.blocks_indexed)}
+          value={formatLargeNumber(stats?.total_blocks)}
           icon={<Layers className="w-4 h-4 text-brand-accent" />}
           isLoading={isLoading && !stats}
         />
         <StatsCard
           title="Txs Indexed"
-          value={formatLargeNumber(stats?.txs_indexed)}
+          value={formatLargeNumber(stats?.total_transactions)}
           icon={<Hash className="w-4 h-4 text-brand-accent" />}
           isLoading={isLoading && !stats}
         />
         <StatsCard
           title="Logs Indexed"
-          value={formatLargeNumber(stats?.logs_indexed)}
+          value={formatLargeNumber(stats?.total_logs)}
           icon={<FileText className="w-4 h-4 text-brand-accent" />}
           isLoading={isLoading && !stats}
         />

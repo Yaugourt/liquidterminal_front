@@ -83,13 +83,13 @@ export function ExplorerKpiBar() {
     },
     {
       title: "EVM Blocks",
-      value: formatLargeNumber(stats?.blocks_indexed),
+      value: formatLargeNumber(stats?.total_blocks),
       icon: <Layers className="w-4 h-4 text-brand-accent" />,
       isLoading: evmLoading && !stats,
     },
     {
       title: "EVM Txs",
-      value: formatLargeNumber(stats?.txs_indexed),
+      value: formatLargeNumber(stats?.total_transactions),
       icon: <Hash className="w-4 h-4 text-brand-accent" />,
       isLoading: evmLoading && !stats,
     },

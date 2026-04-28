@@ -46,10 +46,10 @@ function truncateHash(hash: string | null | undefined): string {
   return `${hash.slice(0, 6)}…`;
 }
 
-function formatTxTime(timeMs?: number): string {
-  if (!timeMs) return "-";
+function formatTxTime(blockTime?: string): string {
+  if (!blockTime) return "-";
   try {
-    return formatDistanceToNowStrict(new Date(timeMs), { addSuffix: true });
+    return formatDistanceToNowStrict(new Date(blockTime), { addSuffix: true });
   } catch {
     return "-";
   }
@@ -100,11 +100,11 @@ export function EvmRecentTxsTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              transactions.map((tx) => (
-                <TableRow key={tx.hash} className="hover:bg-white/[0.02]">
+              transactions.map((tx, i) => (
+                <TableRow key={`${tx.tx_hash}-${i}`} className="hover:bg-white/[0.02]">
                   <TableCell>
                     <span className="font-mono text-brand-accent text-sm">
-                      {truncateHash(tx.hash)}
+                      {truncateHash(tx.tx_hash)}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -118,7 +118,7 @@ export function EvmRecentTxsTable() {
                     </span>
                   </TableCell>
                   <TableCell className="text-text-secondary text-sm">
-                    {formatTxTime(tx.time_ms)}
+                    {formatTxTime(tx.block_time)}
                   </TableCell>
                 </TableRow>
               ))
