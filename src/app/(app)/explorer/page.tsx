@@ -2,7 +2,7 @@
 
 import { ExplorerKpiBar } from "@/components/explorer/ExplorerKpiBar";
 import { RecentDataTable } from "@/components/explorer/recentBlockTx/RecentDataTable";
-import { ExplorerVolumeChart } from "@/components/explorer/ExplorerVolumeChart";
+import { TransfersDeployTable } from "@/components/explorer/TransfersDeployTable";
 import { EvmSection } from "@/components/explorer/evm/EvmSection";
 import { EvmBridgeEventsTable } from "@/components/explorer/evm/EvmBridgeEventsTable";
 import { ValidatorsSample } from "@/components/explorer/ValidatorsSample";
@@ -28,7 +28,7 @@ export default function Explorer() {
           <RecentDataTable />
         </Card>
         <Card>
-          <ExplorerVolumeChart />
+          <TransfersDeployTable />
         </Card>
       </div>
 
