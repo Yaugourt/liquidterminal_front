@@ -14,6 +14,15 @@ export default function Home() {
 
   return (
     <>
+      <div className="space-y-2">
+        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+          Liquid Terminal
+        </h1>
+        <p className="text-sm text-text-secondary max-w-2xl">
+          Your real-time command center for the HyperLiquid ecosystem — live market stats, trending tokens, top vaults, validators, and active TWAPs at a glance.
+        </p>
+      </div>
+
       {/* Stats Grid */}
       <StatsGrid />
 
