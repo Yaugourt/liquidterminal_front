@@ -89,7 +89,7 @@ export async function fetchEvmBridgeEvents(params?: {
 }): Promise<EvmBridgeEvent[]> {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(
-      `${EVM}/bridge-events`,
+      `${EVM}/bridge/events`,
       toQuery(params ?? {}),
       EVM_GET_OPTIONS
     );
@@ -102,7 +102,7 @@ export async function fetchEvmLedgerTransfers(params?: {
 }): Promise<EvmLedgerTransfer[]> {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(
-      `${EVM}/ledger-transfers`,
+      `${EVM}/ledger/transfers`,
       toQuery(params ?? {}),
       EVM_GET_OPTIONS
     );
