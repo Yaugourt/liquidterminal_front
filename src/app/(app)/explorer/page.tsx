@@ -1,11 +1,12 @@
 "use client";
 
-import {
-  StatsGrid,
-  RecentDataTable,
-  ValidatorsTable,
-  TransfersDeployTable
-} from "@/components/explorer";
+import { ExplorerKpiBar } from "@/components/explorer/ExplorerKpiBar";
+import { RecentDataTable } from "@/components/explorer/recentBlockTx/RecentDataTable";
+import { ExplorerVolumeChart } from "@/components/explorer/ExplorerVolumeChart";
+import { EvmSection } from "@/components/explorer/evm/EvmSection";
+import { EvmBridgeEventsTable } from "@/components/explorer/evm/EvmBridgeEventsTable";
+import { ValidatorsSample } from "@/components/explorer/ValidatorsSample";
+import { VaultsSample } from "@/components/explorer/VaultsSample";
 import { Card } from "@/components/ui/card";
 
 export default function Explorer() {
@@ -20,23 +21,31 @@ export default function Explorer() {
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <StatsGrid />
+      <ExplorerKpiBar />
 
-      {/* Recent Data Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <RecentDataTable />
         </Card>
         <Card>
-          <TransfersDeployTable />
+          <ExplorerVolumeChart />
         </Card>
       </div>
 
-      {/* Validators Table */}
+      <EvmSection />
+
       <Card>
-        <ValidatorsTable />
+        <EvmBridgeEventsTable />
       </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card>
+          <ValidatorsSample />
+        </Card>
+        <Card>
+          <VaultsSample />
+        </Card>
+      </div>
     </>
   );
 }
