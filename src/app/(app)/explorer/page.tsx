@@ -11,6 +11,15 @@ import { Card } from "@/components/ui/card";
 export default function Explorer() {
   return (
     <>
+      <div className="space-y-2">
+        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+          Explorer
+        </h1>
+        <p className="text-sm text-text-secondary max-w-2xl">
+          HyperLiquid on-chain explorer — live network stats, recent transactions, token deployments, and validators.
+        </p>
+      </div>
+
       {/* Stats Grid */}
       <StatsGrid />
 

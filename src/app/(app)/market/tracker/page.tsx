@@ -23,6 +23,15 @@ export default function TrackerHome() {
 
   return (
     <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+          Wallet Tracker
+        </h1>
+        <p className="text-sm text-text-secondary max-w-2xl">
+          Track wallets across HyperLiquid — top traders, public lists, most active users, and your personal watchlist.
+        </p>
+      </div>
+
       {/* Stats Bar */}
       <TrackerStatsBar />
 
