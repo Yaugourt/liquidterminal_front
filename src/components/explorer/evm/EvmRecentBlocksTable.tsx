@@ -31,9 +31,10 @@ function BlocksSkeleton() {
   );
 }
 
-function formatBlockTime(blockTimeMs: number): string {
+function formatBlockTime(blockTime: string | undefined): string {
+  if (!blockTime) return "-";
   try {
-    return formatDistanceToNowStrict(new Date(blockTimeMs), { addSuffix: true });
+    return formatDistanceToNowStrict(new Date(blockTime), { addSuffix: true });
   } catch {
     return "-";
   }

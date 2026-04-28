@@ -1,7 +1,11 @@
 export interface EvmStats {
-  blocks_indexed: number;
-  txs_indexed: number;
-  logs_indexed: number;
+  total_blocks: number;
+  total_transactions: number;
+  total_logs: number;
+  first_block?: number;
+  last_block?: number;
+  first_block_time?: string;
+  last_block_time?: string;
 }
 
 export interface EvmDailyStatEntry {
@@ -12,28 +16,38 @@ export interface EvmDailyStatEntry {
 
 export interface EvmBlock {
   block_number: number;
-  block_time: number;
+  block_time: string;
   tx_count: number;
+  block_hash?: string;
+  parent_hash?: string;
+  gas_limit?: string;
   gas_used?: string;
-  miner?: string;
+  base_fee_per_gas?: string;
+  system_tx_count?: number;
 }
 
 export interface EvmTransaction {
-  hash: string;
+  tx_hash: string;
   block_number: number;
   from_addr: string;
   to_addr: string | null;
-  value: string;
+  value_wei: string;
+  block_time?: string;
   gas_used?: number;
-  time_ms?: number;
+  tx_type?: number;
+  tx_index?: number;
+  is_system_tx?: boolean;
 }
 
 export interface EvmBridgeEvent {
-  type: "deposit" | "withdrawal";
-  address: string;
-  amount: string;
-  tx_hash: string;
-  time_ms: number;
+  event_type: string;
+  user_addr: string;
+  amount: number;
+  time: string;
+  block_height?: number;
+  validator?: string;
+  destination?: string;
+  nonce?: number;
 }
 
 export interface EvmLedgerTransfer {

@@ -40,9 +40,10 @@ function truncateAddress(addr: string | null | undefined, start = 6, end = 4): s
   return `${addr.slice(0, start)}…${addr.slice(-end)}`;
 }
 
-function formatEventTime(timeMs: number): string {
+function formatEventTime(time: string | undefined): string {
+  if (!time) return "-";
   try {
-    return formatDistanceToNowStrict(new Date(timeMs), { addSuffix: true });
+    return formatDistanceToNowStrict(new Date(time), { addSuffix: true });
   } catch {
     return "-";
   }
@@ -94,28 +95,28 @@ export function EvmBridgeEventsTable() {
               </TableRow>
             ) : (
               events.map((event, i) => (
-                <TableRow key={`${event.tx_hash}-${i}`} className="hover:bg-white/[0.02]">
+                <TableRow key={`${event.user_addr}-${i}`} className="hover:bg-white/[0.02]">
                   <TableCell>
                     <span
                       className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
-                        event.type === "deposit"
+                        event.event_type === "deposit"
                           ? "bg-brand-success/10 text-brand-success"
                           : "bg-rose-500/10 text-rose-400"
                       }`}
                     >
-                      {event.type === "deposit" ? "Deposit" : "Withdrawal"}
+                      {event.event_type === "deposit" ? "Deposit" : "Withdrawal"}
                     </span>
                   </TableCell>
                   <TableCell>
                     <span className="font-mono text-text-secondary text-sm">
-                      {truncateAddress(event.address)}
+                      {truncateAddress(event.user_addr)}
                     </span>
                   </TableCell>
                   <TableCell className="text-white text-sm font-medium">
                     {event.amount}
                   </TableCell>
                   <TableCell className="text-text-secondary text-sm">
-                    {formatEventTime(event.time_ms)}
+                    {formatEventTime(event.time)}
                   </TableCell>
                 </TableRow>
               ))
