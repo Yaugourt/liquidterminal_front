@@ -32,7 +32,7 @@ export function ExplorerVolumeChart() {
   );
 
   return (
-    <div className="p-4 h-full flex flex-col min-h-[280px]">
+    <div className="p-4 flex flex-col" style={{ minHeight: 280 }}>
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-white">Trading Volume</h3>
         <p className="text-xs text-text-secondary mt-0.5">10-day daily volume</p>
@@ -40,7 +40,7 @@ export function ExplorerVolumeChart() {
       {isLoading && chartData.length === 0 ? (
         <div className="flex-1 bg-white/5 animate-pulse rounded-xl" />
       ) : (
-        <div className="flex-1">
+        <div style={{ height: 220 }}>
           <AuroraAreaChart
             data={chartData}
             lineColor={chartColors.cyan}
