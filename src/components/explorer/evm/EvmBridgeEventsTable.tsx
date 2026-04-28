@@ -34,7 +34,8 @@ function BridgeSkeleton() {
   );
 }
 
-function truncateAddress(addr: string, start = 6, end = 4): string {
+function truncateAddress(addr: string | null | undefined, start = 6, end = 4): string {
+  if (!addr) return "-";
   if (addr.length <= start + end + 2) return addr;
   return `${addr.slice(0, start)}…${addr.slice(-end)}`;
 }
