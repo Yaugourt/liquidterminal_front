@@ -1,8 +1,9 @@
-import { Plus, BookOpen, Search, Loader2 } from "lucide-react";
+import { Plus, BookOpen, Search, Loader2, Globe, Lock, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ReadListItemCard } from "./ReadListItemCard";
 import { useLinkPreviewsBatch } from "@/services/wiki/linkPreview/hooks/hooks";
 
@@ -18,25 +19,30 @@ interface ReadListContentProps {
   isMounted?: boolean;
 }
 
-// Skeleton component for loading state
 const ReadListItemSkeleton = () => (
-  <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-0 overflow-hidden h-full animate-pulse">
-    <div className="w-full h-40 bg-white/5 flex-shrink-0"></div>
-    <div className="p-3 space-y-2">
-      <div className="flex items-start justify-between gap-2">
-        <div className="h-5 bg-white/5 rounded w-20"></div>
+  <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-0 overflow-hidden animate-pulse">
+    <div className="w-full h-40 bg-white/5"></div>
+    <div className="p-4 space-y-2.5">
+      <div className="flex items-center justify-between">
+        <div className="h-5 bg-white/5 rounded w-24"></div>
         <div className="w-3 h-3 bg-white/5 rounded"></div>
       </div>
       <div className="h-4 bg-white/5 rounded w-full"></div>
       <div className="h-3 bg-white/5 rounded w-3/4"></div>
       <div className="h-3 bg-white/5 rounded w-1/2"></div>
-      <div className="flex items-center justify-between pt-2">
-        <div className="h-3 bg-white/5 rounded w-24"></div>
-        <div className="h-3 bg-white/5 rounded w-16"></div>
+      <div className="flex items-center justify-between pt-2 border-t border-border-subtle/50">
+        <div className="h-3 bg-white/5 rounded w-20"></div>
+        <div className="h-5 bg-white/5 rounded w-14"></div>
       </div>
     </div>
   </div>
 );
+
+const TABS = [
+  { key: "all" as const, label: "All" },
+  { key: "unread" as const, label: "Unread" },
+  { key: "read" as const, label: "Read" },
+];
 
 export function ReadListContent({
   activeList,
@@ -53,7 +59,6 @@ export function ReadListContent({
   const [activeTab, setActiveTab] = useState<"all" | "read" | "unread">("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Extract URLs for batch preview loading
   const urls = useMemo(() => {
     if (!items || !Array.isArray(items)) return [];
     return items
@@ -61,205 +66,264 @@ export function ReadListContent({
       .filter((url): url is string => !!url && url.startsWith('http'));
   }, [items]);
 
-  // Load link previews in batch
   const { getPreview } = useLinkPreviewsBatch(urls);
-  
 
-
-  // Utiliser directement les items avec leurs ressources
   useEffect(() => {
-    if (items && Array.isArray(items)) {
-      setEnrichedItems(items);
-    } else {
-      setEnrichedItems([]);
-    }
+    setEnrichedItems(Array.isArray(items) ? items : []);
   }, [items]);
 
-  // Filtrer les items selon le tab actif et la recherche
-  const getFilteredItems = () => {
+  const filteredItems = useMemo(() => {
     let filtered = enrichedItems;
-    
-    // Filtre par statut de lecture
-    switch (activeTab) {
-      case "read":
-        filtered = filtered.filter(item => item.isRead);
-        break;
-      case "unread":
-        filtered = filtered.filter(item => !item.isRead);
-        break;
-      default:
-        // "all" - pas de filtre
-        break;
-    }
-    
-    // Filtre par recherche
+    if (activeTab === "read") filtered = filtered.filter(item => item.isRead);
+    if (activeTab === "unread") filtered = filtered.filter(item => !item.isRead);
     if (searchTerm.trim()) {
-      filtered = filtered.filter(item => 
-        item.resource?.url?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+      const q = searchTerm.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.resource?.url?.toLowerCase().includes(q) ||
+        item.notes?.toLowerCase().includes(q)
       );
     }
-    
     return filtered;
-  };
+  }, [enrichedItems, activeTab, searchTerm]);
 
-  const filteredItems = getFilteredItems();
-
-  // Calculer les statistiques
   const totalItems = enrichedItems.length;
   const readItems = enrichedItems.filter(item => item.isRead).length;
   const unreadItems = totalItems - readItems;
+  const readProgress = totalItems > 0 ? (readItems / totalItems) * 100 : 0;
 
-  // Adopter l'approche wallet : pas de rendu si pas monté
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
 
   if (!activeList) {
     return (
-      <div className="text-center py-16">
-        <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-          <BookOpen className="w-8 h-8 text-brand-accent" />
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-8"
+      >
+        <div className="w-20 h-20 mx-auto mb-5 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
+          <BookOpen className="w-10 h-10 text-brand-accent" />
         </div>
-        <h3 className="text-white font-semibold mb-2">No read list selected</h3>
-        <p className="text-text-secondary">Create a read list to get started</p>
+        <h3 className="text-white font-semibold text-lg mb-2">No read list selected</h3>
+        <p className="text-text-secondary text-sm max-w-xs">Select a list from the sidebar or create a new one to get started</p>
         <Button
           onClick={onCreateList}
-          className="mt-4 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="mt-6 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create Read List
         </Button>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="space-y-4 p-4 border-b border-border-subtle">
-        {/* Header info */}
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-white text-xl font-bold">{activeList.name}</h1>
-            {activeList.description && (
-              <p className="text-text-secondary mt-1 text-sm">{activeList.description}</p>
-            )}
-            <div className="flex items-center gap-4 mt-3 text-xs">
-              <span className="text-text-secondary"><span className="text-white font-medium">{totalItems}</span> total</span>
-              <span className="text-text-secondary"><span className="text-emerald-400 font-medium">{readItems}</span> read</span>
-              <span className="text-text-secondary"><span className="text-[#F9E370] font-medium">{unreadItems}</span> unread</span>
-              {activeList.isPublic && (
-                <span className="bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md text-label">
+      <div className="p-5 border-b border-border-subtle space-y-4 bg-gradient-to-r from-brand-accent/3 to-transparent">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-white text-xl font-bold truncate">{activeList.name}</h1>
+              {activeList.isPublic ? (
+                <span className="flex items-center gap-1 text-label bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md border border-brand-accent/20">
+                  <Globe className="w-3 h-3" />
                   Public
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-label bg-white/5 text-text-muted px-2 py-0.5 rounded-md">
+                  <Lock className="w-3 h-3" />
+                  Private
                 </span>
               )}
             </div>
+            {activeList.description && (
+              <p className="text-text-secondary mt-1 text-sm line-clamp-1">{activeList.description}</p>
+            )}
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="text-center">
+              <div className="text-white font-bold text-lg leading-none">{totalItems}</div>
+              <div className="text-text-muted text-xs mt-0.5">total</div>
+            </div>
+            <div className="w-px h-8 bg-border-subtle" />
+            <div className="text-center">
+              <div className="text-emerald-400 font-bold text-lg leading-none">{readItems}</div>
+              <div className="text-text-muted text-xs mt-0.5">read</div>
+            </div>
+            <div className="w-px h-8 bg-border-subtle" />
+            <div className="text-center">
+              <div className="text-[#F9E370] font-bold text-lg leading-none">{unreadItems}</div>
+              <div className="text-text-muted text-xs mt-0.5">unread</div>
+            </div>
           </div>
         </div>
 
-        {/* Search and filters */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted w-4 h-4" />
+        {/* Progress bar */}
+        {totalItems > 0 && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-text-muted">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                {Math.round(readProgress)}% complete
+              </span>
+              <span>{readItems}/{totalItems} read</span>
+            </div>
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-emerald-500 to-brand-accent rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${readProgress}%` }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Search + Tabs */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-between">
+          <div className="relative w-full sm:w-60">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-3.5 h-3.5" />
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search articles..."
-              className="pl-10 bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+              placeholder="Search resources..."
+              className="pl-9 h-9 bg-brand-dark border-border-subtle text-white text-sm rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             />
           </div>
-          
-          <div className="flex items-center gap-2">
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
-              {[
-                { key: "all", label: "All" },
-                { key: "unread", label: "Unread" },
-                { key: "read", label: "Read" }
-              ].map((filter, index) => (
-                <Button
-                  key={`${filter.key}-${index}`}
-                  onClick={() => setActiveTab(filter.key as "all" | "read" | "unread")}
-                  size="sm"
-                  variant="ghost"
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                    activeTab === filter.key
-                      ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
-                      : "tab-inactive"
+
+          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-0.5 self-start">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`relative px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors ${activeTab === tab.key
+                  ? "text-brand-tertiary"
+                  : "text-text-muted hover:text-white"
                   }`}
-                >
-                  {filter.label}
-                </Button>
-              ))}
-            </div>
+              >
+                {activeTab === tab.key && (
+                  <motion.div
+                    layoutId="active-tab"
+                    className="absolute inset-0 bg-brand-accent rounded-md"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+                <span className="relative z-10">{tab.label}</span>
+                {tab.key === "unread" && unreadItems > 0 && (
+                  <span className={`relative z-10 ml-1.5 text-label px-1.5 py-0.5 rounded-full ${activeTab === tab.key ? "bg-brand-tertiary/20 text-brand-tertiary" : "bg-white/10 text-text-muted"}`}>
+                    {unreadItems}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Items Grid */}
-      <div className="flex-1 overflow-auto p-6">
-        {itemsLoading && filteredItems.length === 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <ReadListItemSkeleton key={`skeleton-${index}`} />
-            ))}
-          </div>
-        ) : filteredItems.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <ReadListItemCard
-                  key={`item-${item.id}`}
-                  item={item}
-                  preview={getPreview(item.resource?.url || '')}
-                  onRemoveItem={onRemoveItem}
-                  onToggleRead={onToggleRead}
-                />
+      {/* Items */}
+      <div className="flex-1 overflow-auto p-5">
+        <AnimatePresence mode="wait">
+          {itemsLoading && filteredItems.length === 0 ? (
+            <motion.div
+              key="skeleton"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <ReadListItemSkeleton key={i} />
               ))}
-            </div>
-            
-            {/* Load More Button */}
-            {itemsPagination?.hasNext && onLoadMore && (
-              <div className="flex justify-center mt-8">
-                <Button
-                  onClick={onLoadMore}
-                  disabled={itemsLoading}
-                  className="bg-[#83E9FF] hover:bg-[#83E9FF]/90 text-[#051728] font-semibold rounded-lg px-6 py-2"
+            </motion.div>
+          ) : filteredItems.length > 0 ? (
+            <motion.div
+              key={`items-${activeTab}-${searchTerm}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {filteredItems.map((item, i) => (
+                  <motion.div
+                    key={`item-${item.id}`}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(i * 0.05, 0.3) }}
+                  >
+                    <ReadListItemCard
+                      item={item}
+                      preview={getPreview(item.resource?.url || '')}
+                      onRemoveItem={onRemoveItem}
+                      onToggleRead={onToggleRead}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+
+              {itemsPagination?.hasNext && onLoadMore && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-center mt-8"
                 >
-                  {itemsLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    `Load More (${itemsPagination.total - filteredItems.length} remaining)`
-                  )}
-                </Button>
+                  <Button
+                    onClick={onLoadMore}
+                    disabled={itemsLoading}
+                    className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg px-6"
+                  >
+                    {itemsLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      `Load More (${itemsPagination.total - filteredItems.length} remaining)`
+                    )}
+                  </Button>
+                </motion.div>
+              )}
+
+              {itemsLoading && filteredItems.length > 0 && (
+                <div className="flex justify-center mt-4">
+                  <Loader2 className="w-5 h-5 animate-spin text-brand-accent" />
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex flex-col items-center justify-center py-20 text-center"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-brand-accent" />
               </div>
-            )}
-            
-            {/* Loading indicator when loading more */}
-            {itemsLoading && filteredItems.length > 0 && (
-              <div className="flex justify-center mt-4">
-                <Loader2 className="w-5 h-5 animate-spin text-[#83E9FF]" />
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-              <BookOpen className="w-8 h-8 text-brand-accent" />
-            </div>
-            <h3 className="text-white text-lg font-semibold mb-2">No items found</h3>
-            <p className="text-text-secondary">
-              {items && items.length > 0 
-                ? "No items match your current filters" 
-                : "Add resources to your read list to get started"
-              }
-            </p>
-          </div>
-        )}
+              <h3 className="text-white text-base font-semibold mb-2">No items found</h3>
+              <p className="text-text-secondary text-sm max-w-xs">
+                {searchTerm
+                  ? `No results for "${searchTerm}"`
+                  : items && items.length > 0
+                    ? "No items match the current filter"
+                    : "Add resources from the Wiki to get started"
+                }
+              </p>
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="mt-4 text-sm text-brand-accent hover:text-brand-accent/80 transition-colors"
+                >
+                  Clear search
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
-} 
+}

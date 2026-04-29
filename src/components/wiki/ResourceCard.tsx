@@ -1,15 +1,16 @@
 "use client";
 
-import { ExternalLink, Plus, BookOpen, Trash2, Flag, Clock, CheckCircle, XCircle } from "lucide-react";
+import { ExternalLink, Plus, BookOpen, Trash2, Flag, Clock, CheckCircle, XCircle, Search, ListPlus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useState, memo, useCallback } from "react";
+import { Input } from "@/components/ui/input";
+import { useState, memo, useCallback, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
@@ -47,30 +48,39 @@ const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; 
 export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
+  const [addingToListId, setAddingToListId] = useState<number | null>(null);
   const [showReadLists, setShowReadLists] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [listSearch, setListSearch] = useState("");
   const { readLists, addItemToReadList } = useReadLists();
   const { user, authenticated } = useAuthContext();
 
-  // Load link preview
   const { data: preview, isLoading: previewLoading } = useLinkPreview(
     resource.url && resource.url.startsWith('http') ? resource.url : ''
   );
 
+  const filteredLists = useMemo(() => {
+    if (!listSearch.trim()) return readLists;
+    return readLists.filter(l => l.name.toLowerCase().includes(listSearch.toLowerCase()));
+  }, [readLists, listSearch]);
+
   const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
       setIsAddingToList(true);
+      setAddingToListId(readListId);
       const readList = readLists.find(list => list.id === readListId);
       await addItemToReadList(readListId, {
         resourceId: parseInt(resource.id),
         notes: `Added from ${resource.title}`
       });
       setShowReadLists(false);
+      setListSearch("");
       readListMessages.success.addedToList(readList?.name || 'Read List');
     } catch (error) {
       handleReadListApiError(error);
     } finally {
       setIsAddingToList(false);
+      setAddingToListId(null);
     }
   }, [readLists, addItemToReadList, resource.id, resource.title]);
 
@@ -82,12 +92,25 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
     }
   }, [onDelete, resource.id]);
 
+  const handleOpenModal = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (authenticated) {
+      setListSearch("");
+      setShowReadLists(true);
+    }
+  }, [authenticated]);
+
+  const handleCloseModal = useCallback(() => {
+    setShowReadLists(false);
+    setListSearch("");
+  }, []);
+
   const status = resource.status || 'APPROVED';
   const StatusIcon = statusConfig[status].icon;
 
   return (
     <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
-      {/* Status badge (top left) */}
       {showStatus && status !== 'APPROVED' && (
         <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${statusConfig[status].color}`}>
           <StatusIcon className="w-3 h-3" />
@@ -95,7 +118,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
         </div>
       )}
 
-      {/* Delete button for admins */}
       <ProtectedAction requiredRole="ADMIN" user={user}>
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
           <Button
@@ -118,7 +140,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
           rel="noopener noreferrer"
           className="block"
         >
-          {/* Image section */}
           <div className="relative w-full overflow-hidden bg-gradient-to-br from-brand-dark to-brand-secondary" style={{ aspectRatio: '16/9' }}>
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
               <Image
@@ -147,7 +168,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
             )}
           </div>
 
-          {/* Content section */}
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-brand-accent transition-colors">
@@ -172,7 +192,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                   <span className="text-xs text-text-muted">Loading...</span>
                 )}
 
-                {/* Report button */}
                 {authenticated && (
                   <Button
                     size="sm"
@@ -189,23 +208,16 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                   </Button>
                 )}
 
-                {/* Add to read list button */}
                 <Button
                   size="sm"
                   variant="ghost"
                   disabled={!authenticated}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (authenticated) {
-                      setShowReadLists(!showReadLists);
-                    }
-                  }}
-                  className={`p-1.5 h-auto rounded-lg ${authenticated
-                    ? "text-brand-accent hover:bg-brand-accent/10"
+                  onClick={handleOpenModal}
+                  className={`p-1.5 h-auto rounded-lg transition-all ${authenticated
+                    ? "text-brand-accent hover:bg-brand-accent/10 hover:scale-110"
                     : "text-text-muted cursor-not-allowed"
                     }`}
-                  title={authenticated ? "Add to read list" : "Login required to add to read list"}
+                  title={authenticated ? "Add to read list" : "Login required"}
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </Button>
@@ -214,58 +226,133 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
           </div>
         </a>
 
-        {/* Read Lists Modal */}
-        <Dialog open={showReadLists && authenticated} onOpenChange={(open) => !open && setShowReadLists(false)}>
-          <DialogContent className="max-w-sm bg-brand-secondary border-border-hover p-6 z-[9999]">
-            <DialogHeader>
-              <DialogTitle className="text-sm font-bold text-white mb-4">Add to read list:</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2">
-              {readLists.length === 0 ? (
-                <div className="text-sm text-text-muted py-4 text-center">
-                  No read lists available
+        {/* Add to Read List Modal */}
+        <Dialog open={showReadLists && authenticated} onOpenChange={(open) => !open && handleCloseModal()}>
+          <DialogContent className="max-w-sm bg-brand-secondary border-border-hover p-0 z-[9999] overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-5 pt-5 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0">
+                    <ListPlus className="w-4 h-4 text-brand-accent" />
+                  </div>
+                  <div className="min-w-0">
+                    <DialogTitle className="text-sm font-bold text-white">Add to Read List</DialogTitle>
+                    <p className="text-xs text-text-muted mt-0.5 truncate">
+                      {preview?.title || resource.title}
+                    </p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {readLists.map((readList) => (
-                    <button
-                      key={`readlist-${readList.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddToReadList(readList.id);
-                      }}
-                      disabled={isAddingToList}
-                      className="w-full text-left px-4 py-3 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-colors border border-border-subtle hover:border-border-hover"
-                    >
-                      <BookOpen className="w-5 h-5 text-brand-accent flex-shrink-0" />
-                      <div className="flex-1">
-                        <div className="font-medium">{readList.name}</div>
-                        {readList.description && (
-                          <div className="text-xs text-text-muted mt-1">{readList.description}</div>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+              </DialogHeader>
             </div>
-            <DialogFooter className="mt-6 pt-4 border-t border-border-subtle flex justify-end">
+
+            {/* Search */}
+            {readLists.length > 3 && (
+              <div className="px-4 pt-3 pb-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
+                  <Input
+                    value={listSearch}
+                    onChange={e => setListSearch(e.target.value)}
+                    placeholder="Search lists..."
+                    className="pl-9 h-8 text-xs bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* List */}
+            <div className="px-4 py-3 max-h-[280px] overflow-y-auto space-y-1.5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border-subtle">
+              <AnimatePresence mode="wait">
+                {readLists.length === 0 ? (
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="text-center py-8"
+                  >
+                    <div className="w-10 h-10 mx-auto mb-3 bg-brand-accent/10 rounded-xl flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-brand-accent" />
+                    </div>
+                    <p className="text-sm text-text-muted">No read lists yet</p>
+                    <p className="text-xs text-text-muted mt-1 opacity-70">Create one on the Read List page</p>
+                  </motion.div>
+                ) : filteredLists.length === 0 ? (
+                  <motion.div
+                    key="no-results"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-6 text-sm text-text-muted"
+                  >
+                    No lists match &quot;{listSearch}&quot;
+                  </motion.div>
+                ) : (
+                  <motion.div key="list" className="space-y-1.5">
+                    {filteredLists.map((readList, i) => (
+                      <motion.button
+                        key={`readlist-${readList.id}`}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.04 }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToReadList(readList.id);
+                        }}
+                        disabled={isAddingToList}
+                        className="w-full text-left px-3.5 py-2.5 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand-accent/30 group/item"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-brand-accent/20 transition-colors">
+                          {addingToListId === readList.id ? (
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                              className="w-4 h-4 border-2 border-brand-accent/30 border-t-brand-accent rounded-full"
+                            />
+                          ) : (
+                            <BookOpen className="w-4 h-4 text-brand-accent" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm truncate">{readList.name}</div>
+                          {readList.description && (
+                            <div className="text-xs text-text-muted mt-0.5 truncate">{readList.description}</div>
+                          )}
+                        </div>
+                        <div className="flex-shrink-0 flex items-center gap-1.5">
+                          {readList.isPublic && (
+                            <span className="text-label bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded">
+                              Public
+                            </span>
+                          )}
+                          <span className="text-xs text-text-muted tabular-nums">
+                            {readList.itemsCount ?? 0}
+                          </span>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Footer */}
+            <div className="px-4 pb-4 pt-2 border-t border-border-subtle flex justify-end">
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setShowReadLists(false);
+                  handleCloseModal();
                 }}
                 className="px-4 py-2 text-sm interactive-secondary rounded-lg transition-colors"
               >
                 Cancel
               </button>
-            </DialogFooter>
+            </div>
           </DialogContent>
         </Dialog>
 
-        {/* Report Modal */}
         <ReportResourceModal
           resourceId={parseInt(resource.id)}
           resourceTitle={preview?.title || resource.title}
