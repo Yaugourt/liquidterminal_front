@@ -145,7 +145,7 @@ export function CategoryFilter({
           </button>
 
           {/* Options */}
-          <div className="max-h-64 overflow-y-auto p-1">
+          <div className="max-h-64 overflow-y-auto p-1 pr-0.5 scrollbar-brand">
             {categories.map((category) => {
               const isActive = selectedCategories.includes(category.id);
               return (

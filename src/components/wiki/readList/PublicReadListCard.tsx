@@ -2,17 +2,17 @@
 
 import { useState, memo } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Copy,
-  User,
-  Calendar,
-  FileText,
   CheckCircle,
-  Loader2
+  Loader2,
+  BookOpen,
+  Globe,
+  ChevronRight,
 } from "lucide-react";
 import { PublicReadList } from "@/services/wiki/readList/types";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
 
 interface PublicReadListCardProps {
   readList: PublicReadList;
@@ -30,14 +30,12 @@ export const PublicReadListCard = memo(function PublicReadListCard({
   const [isCopying, setIsCopying] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (isCopying) return;
-
     setIsCopying(true);
     try {
-      if (onCopy) {
-        await onCopy();
-      }
+      if (onCopy) await onCopy();
       setHasCopied(true);
       setTimeout(() => setHasCopied(false), 2000);
     } finally {
@@ -45,92 +43,92 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     }
   };
 
-  const handleSelect = () => {
-    if (onSelect) {
-      onSelect();
-    }
-  };
+  const timeAgo = formatDistanceToNow(new Date(readList.updatedAt), { addSuffix: true });
+  const initial = (readList.creator.name || "?").charAt(0).toUpperCase();
 
   return (
-    <div
-      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-all duration-200 cursor-pointer group shadow-xl shadow-black/20 ${isSelected
-        ? 'border-brand-accent/50'
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-colors duration-200 cursor-pointer group shadow-xl shadow-black/20 overflow-hidden ${isSelected
+        ? 'border-brand-accent/40'
         : 'border-border-subtle hover:border-border-hover'
         }`}
-      onClick={handleSelect}
+      onClick={onSelect}
     >
-      <div className="p-4 pb-3">
-        <div className="flex items-start justify-between">
+      {/* Top accent bar */}
+      <div className={`h-0.5 w-full transition-all duration-300 ${isSelected ? 'bg-brand-accent' : 'bg-transparent group-hover:bg-brand-accent/40'}`} />
+
+      <div className="p-4 space-y-3">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/20 transition-colors">
+            <BookOpen className="w-5 h-5 text-brand-accent" />
+          </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
-              {readList.name}
-            </h3>
-            {readList.description && (
-              <p className="text-sm text-text-secondary mt-1 line-clamp-2">
-                {readList.description}
-              </p>
-            )}
-          </div>
-          <Badge
-            variant="secondary"
-            className="ml-2 bg-[#F9E370]/10 text-[#F9E370] border-none text-xs"
-          >
-            {readList.itemsCount} items
-          </Badge>
-        </div>
-      </div>
-
-      <div className="px-4 pb-4">
-        {/* Creator Info */}
-        <div className="flex items-center text-sm text-white/80 mb-3">
-          <User className="w-4 h-4 mr-2 text-text-muted" />
-          <span className="truncate">{readList.creator.name}</span>
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center justify-between text-xs text-text-muted mb-4 py-2 border-t border-border-subtle">
-          <div className="flex items-center">
-            <Calendar className="w-3 h-3 mr-1" />
-            <span>
-              {formatDistanceToNow(new Date(readList.updatedAt), { addSuffix: true })}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <FileText className="w-3 h-3 mr-1" />
-            <span>{readList.itemsCount} resources</span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
-            disabled={isCopying}
-            className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg transition-colors"
-            size="sm"
-          >
-            {isCopying ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Copying...
-              </>
-            ) : hasCopied ? (
-              <>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Copied!
-              </>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
+                {readList.name}
+              </h3>
+              <Globe className="w-3 h-3 text-brand-accent/60 flex-shrink-0" />
+            </div>
+            {readList.description ? (
+              <p className="text-xs text-text-secondary mt-0.5 line-clamp-2">{readList.description}</p>
             ) : (
-              <>
-                <Copy className="w-4 h-4 mr-2" />
-                Copy List
-              </>
+              <p className="text-xs text-text-muted mt-0.5 italic">No description</p>
             )}
-          </Button>
+          </div>
         </div>
+
+        {/* Creator */}
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-brand-accent/20 flex items-center justify-center text-brand-accent font-bold text-xs flex-shrink-0">
+            {initial}
+          </div>
+          <span className="text-xs text-text-secondary truncate">{readList.creator.name}</span>
+          <span className="text-text-muted text-xs">·</span>
+          <span className="text-xs text-text-muted">{timeAgo}</span>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex items-center justify-between py-2 border-t border-border-subtle/60">
+          <span className="text-xs text-text-muted">
+            <span className="text-white font-semibold">{readList.itemsCount}</span> resources
+          </span>
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
+            className="flex items-center gap-1 text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
+          >
+            View list
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* Copy button */}
+        <Button
+          onClick={handleCopy}
+          disabled={isCopying}
+          className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-xl transition-all"
+          size="sm"
+        >
+          {isCopying ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+              Copying...
+            </>
+          ) : hasCopied ? (
+            <>
+              <CheckCircle className="w-3.5 h-3.5 mr-2" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5 mr-2" />
+              Copy List
+            </>
+          )}
+        </Button>
       </div>
-    </div>
+    </motion.div>
   );
-}); 
+});

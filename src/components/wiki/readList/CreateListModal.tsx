@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Globe, Lock, BookOpen, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -21,80 +23,159 @@ interface CreateListModalProps {
 
 export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }: CreateListModalProps) {
   const [isPublic, setIsPublic] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
     onSubmit({
-      name: formData.get('name') as string,
-      description: formData.get('description') as string || undefined,
+      name: name.trim(),
+      description: description.trim() || undefined,
       isPublic,
     });
-  }, [onSubmit, isPublic]);
+  }, [onSubmit, isPublic, name, description]);
+
+  const handleClose = () => {
+    setName("");
+    setDescription("");
+    setIsPublic(false);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-brand-secondary border-border-hover sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-white">Create Read List</DialogTitle>
-        </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="bg-brand-secondary border-border-hover sm:max-w-md p-0 overflow-hidden">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center flex-shrink-0">
+                <BookOpen className="w-5 h-5 text-brand-accent" />
+              </div>
+              <div>
+                <DialogTitle className="text-white font-bold">Create Read List</DialogTitle>
+                <p className="text-xs text-text-muted mt-0.5">Organize your reading with a curated list</p>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider block mb-1">Name</label>
+          <div className="px-6 py-5 space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+                Name <span className="text-rose-400">*</span>
+              </label>
               <Input
                 name="name"
-                placeholder="Read list name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="e.g. DeFi Deep Dives"
                 required
                 minLength={2}
                 maxLength={255}
-                className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 h-10"
               />
             </div>
-            <div>
-              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider block mb-1">Description</label>
+
+            <div className="space-y-1.5">
+              <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+                Description
+                <span className="ml-1.5 text-text-muted normal-case font-normal">(optional)</span>
+              </label>
               <textarea
                 name="description"
-                placeholder="Description (optional)"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="What is this list about?"
                 maxLength={500}
-                className="w-full p-3 bg-brand-dark border border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px]"
+                className="w-full p-3 bg-brand-dark border border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px] text-sm resize-none"
                 rows={3}
               />
+              <p className="text-xs text-text-muted text-right">{description.length}/500</p>
             </div>
-            <div className="p-3 bg-brand-dark border border-border-subtle rounded-lg">
-              <label className="flex items-center gap-3 text-white/80 text-sm cursor-pointer">
+
+            {/* Visibility toggle */}
+            <div
+              className={`p-4 rounded-xl border cursor-pointer transition-all ${isPublic
+                ? "bg-brand-accent/5 border-brand-accent/25"
+                : "bg-brand-dark border-border-subtle hover:border-border-hover"
+                }`}
+              onClick={() => setIsPublic(!isPublic)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isPublic ? "bg-brand-accent/20" : "bg-white/5"}`}>
+                    {isPublic ? (
+                      <Globe className="w-4 h-4 text-brand-accent" />
+                    ) : (
+                      <Lock className="w-4 h-4 text-text-muted" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">
+                      {isPublic ? "Public list" : "Private list"}
+                    </p>
+                    <p className="text-xs text-text-muted mt-0.5">
+                      {isPublic
+                        ? "Visible to everyone · earns +20 XP"
+                        : "Only you can see this · earns +15 XP"
+                      }
+                    </p>
+                  </div>
+                </div>
                 <Checkbox
                   checked={isPublic}
                   onCheckedChange={(checked) => setIsPublic(checked === true)}
+                  onClick={e => e.stopPropagation()}
                 />
-                <span>Make this list public</span>
-              </label>
+              </div>
             </div>
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="text-rose-400 text-sm"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="flex gap-2 justify-end mt-6 pt-4 border-t border-border-subtle">
+
+          {/* Footer */}
+          <div className="flex gap-2 justify-end px-6 pb-6 pt-2 border-t border-border-subtle">
             <Button
               type="button"
               variant="ghost"
-              onClick={onClose}
+              onClick={handleClose}
               className="interactive-secondary rounded-lg"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
-              disabled={isLoading}
+              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg min-w-[100px]"
+              disabled={isLoading || !name.trim()}
             >
-              {isLoading ? 'Creating...' : 'Create'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create List'
+              )}
             </Button>
           </div>
-          {error && (
-            <p className="text-rose-400 text-sm mt-2">{error}</p>
-          )}
         </form>
       </DialogContent>
     </Dialog>
   );
-} 
+}

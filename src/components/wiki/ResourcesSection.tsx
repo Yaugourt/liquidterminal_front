@@ -17,15 +17,15 @@ interface ResourcesSectionProps {
 
 export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuery = "" }: ResourcesSectionProps) {
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
-  
+
   // Fetch categories and resources using the education service
   const { categories: serverCategories, isLoading: categoriesLoading } = useEducationalCategories();
   const { resources: serverResources, isLoading: resourcesLoading, refetch: refetchResources } = useEducationalResourcesByCategories(selectedCategoryIds);
-  
+
   // Local state for optimistic updates
   const [localCategories, setLocalCategories] = useState<EducationalCategory[]>([]);
   const [localResources, setLocalResources] = useState<EducationalResource[]>([]);
-  
+
   // Delete resource hook
   const { deleteResource, isLoading: isDeleting } = useDeleteEducationalResource();
 
@@ -60,7 +60,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
   const handleDeleteResource = useCallback(async (resourceId: number) => {
     // Optimistic update - remove from local state immediately
     setLocalResources(prev => prev.filter(resource => resource.id !== resourceId));
-    
+
     try {
       const success = await deleteResource(resourceId);
       if (success) {
@@ -84,14 +84,14 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
   // Helper function to check if resource matches search query
   const matchesSearch = (resource: EducationalResource, categoryName: string) => {
     if (!searchQuery.trim()) return true;
-    
+
     const query = searchQuery.toLowerCase();
     const searchableText = [
       resource.url.toLowerCase(),
       categoryName.toLowerCase(),
       resource.categories.map(cat => cat.category.name).join(' ').toLowerCase()
     ].join(' ');
-    
+
     return searchableText.includes(query);
   };
 
@@ -100,7 +100,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
     .filter(cat => selectedCategoryIds.length > 0 && selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = localResources
-        .filter(resource => 
+        .filter(resource =>
           resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id) &&
           matchesSearch(resource, category.name)
         )
@@ -111,7 +111,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
           url: resource.url,
           image: '/api/placeholder/400/200' // Default image since API doesn't provide images
         }));
-      
+
       return {
         id: category.id,
         title: category.name,
@@ -142,12 +142,12 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
   return (
     <div className="space-y-12">
-      
+
       {categoriesWithResources.map((category) => {
-        const displayCount = expandedCategories[category.id] || 4;
+        const displayCount = expandedCategories[category.id] || 6;
         const displayedResources = category.resources.slice(0, displayCount);
         const hasMore = displayCount < category.resources.length;
-        const canShowLess = displayCount > 4;
+        const canShowLess = displayCount > 6;
 
         return (
           <div key={category.id}>
@@ -167,9 +167,9 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
             {/* Resources grid — tuned for both full-width (no sidebar) and lg+ sidebar layouts */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
               {displayedResources.map((resource) => (
-                <ResourceCard 
-                  key={resource.id} 
-                  resource={resource} 
+                <ResourceCard
+                  key={resource.id}
+                  resource={resource}
                   categoryColor={sectionColor}
                   onDelete={handleDeleteResource}
                   isDeleting={isDeleting}
