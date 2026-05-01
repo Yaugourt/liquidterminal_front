@@ -198,6 +198,13 @@ html {
 }
 
 /* ─── USDH widget — Liquid Terminal theme ──────────────────────────── */
+
+/* Force widget to fill its container */
+.usdh-stretch-container .usdh-widget {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
 /* Strip the widget's own outer card bg so it blends into our glass-panel */
 .usdh-widget.dark {
   --usdh-bg: 21 26 37; /* matches glass-panel bg — no nested card effect */
