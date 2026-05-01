@@ -199,28 +199,40 @@ html {
 
 /* ─── USDH widget — Liquid Terminal theme ──────────────────────────── */
 
-/* Force widget to fill its container */
-.usdh-stretch-container .usdh-widget {
-  width: 100% !important;
-  max-width: 100% !important;
+/* Inter font — matches the rest of LT */
+.usdh-widget {
+  font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Strip the widget's own outer card bg so it blends into our glass-panel */
+/* Subtle cyan glow on the swap CTA button */
+.usdh-widget .bg-usdh-cta-bg {
+  box-shadow: 0 0 24px rgb(131 233 255 / 0.18);
+}
+
 .usdh-widget.dark {
-  --usdh-bg: 21 26 37; /* matches glass-panel bg — no nested card effect */
-  --usdh-surface: 15 19 28;
-  --usdh-surface-2: 10 13 20;
-  --usdh-border: 45 55 75;
-  --usdh-border-strong: 65 80 100;
-  --usdh-text: 250 250 250;
-  --usdh-text-2: 210 220 235;
-  --usdh-text-muted: 161 161 170;
-  --usdh-text-soft: 113 113 122;
+  /* ── Surfaces ── */
+  --usdh-bg: 11 14 20;           /* brand-main #0B0E14 — blends with page */
+  --usdh-surface: 21 26 37;      /* brand-secondary #151A25 — input cards */
+  --usdh-surface-2: 15 19 28;    /* slightly darker — secondary areas */
+
+  /* ── Borders — white/5 solid equivalent on dark ── */
+  --usdh-border: 30 38 55;
+  --usdh-border-strong: 50 63 92;
+
+  /* ── Text ── */
+  --usdh-text: 255 255 255;
+  --usdh-text-2: 220 226 240;
+  --usdh-text-muted: 161 161 170;   /* text-secondary #a1a1aa */
+  --usdh-text-soft: 113 113 122;    /* text-muted #71717a */
   --usdh-text-faint: 82 82 91;
-  --usdh-placeholder: 82 82 91;
+  --usdh-placeholder: 65 72 95;
+
+  /* ── CTA — brand-accent #83E9FF on brand-tertiary #051728 ── */
   --usdh-cta-bg: 131 233 255;
-  --usdh-cta-bg-hover: 100 210 235;
+  --usdh-cta-bg-hover: 107 212 237;
   --usdh-cta-text: 5 23 40;
+
+  /* ── Slippage chips ── */
   --usdh-chip-bg: 21 26 37;
   --usdh-chip-active-bg: 131 233 255;
   --usdh-chip-active-text: 5 23 40;
