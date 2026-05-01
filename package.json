@@ -32,6 +32,9 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@solana-program/system": "^0.10.0",
+    "@tanstack/react-query": "^5.100.7",
+    "@usdh-kit/sdk": "file:../usdh-kit/packages/sdk",
+    "@usdh-kit/widget": "file:../usdh-kit/packages/widget",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.14.0",
@@ -49,6 +52,8 @@
     "recharts": "^3.8.1",
     "sonner": "^2.0.6",
     "tailwind-merge": "^2.6.0",
+    "viem": "^2.48.7",
+    "wagmi": "^3.6.9",
     "zod": "^4.1.13",
     "zustand": "^5.0.3"
   },

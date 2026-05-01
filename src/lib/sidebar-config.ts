@@ -18,7 +18,8 @@ import {
   Zap,
   FileCode,
   Sparkles,
-  Users
+  Users,
+  ArrowRightLeft,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -160,6 +161,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/market/builders',
         icon: null,
         IconComponent: Users
+      },
+      {
+        name: 'USDH Swap',
+        href: '/usdh',
+        icon: null,
+        IconComponent: ArrowRightLeft
       },
       {
         name: 'HIP-4 (testnet)',
