@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Card } from "@/components/ui/card";
 import { WalletConnectButton } from "./WalletConnectButton";
 
 const USDHSwap = dynamic(
@@ -11,14 +10,15 @@ const USDHSwap = dynamic(
 
 export function UsdhSwapWidget() {
   return (
-    <Card className="p-6 space-y-4">
+    <div className="glass-panel p-6 space-y-5">
       <div className="flex items-center justify-between">
         <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
           Wallet
         </p>
         <WalletConnectButton />
       </div>
-      <div className="flex justify-center">
+      {/* [&_.usdh-widget]:w-full forces the widget to fill the column */}
+      <div className="[&_.usdh-widget]:w-full [&_.usdh-widget]:max-w-none">
         <USDHSwap
           network="mainnet"
           theme="dark"
@@ -28,6 +28,6 @@ export function UsdhSwapWidget() {
           }}
         />
       </div>
-    </Card>
+    </div>
   );
 }

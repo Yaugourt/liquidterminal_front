@@ -198,8 +198,9 @@ html {
 }
 
 /* ─── USDH widget — Liquid Terminal theme ──────────────────────────── */
+/* Strip the widget's own outer card bg so it blends into our glass-panel */
 .usdh-widget.dark {
-  --usdh-bg: 21 26 37;
+  --usdh-bg: 21 26 37; /* matches glass-panel bg — no nested card effect */
   --usdh-surface: 15 19 28;
   --usdh-surface-2: 10 13 20;
   --usdh-border: 45 55 75;
