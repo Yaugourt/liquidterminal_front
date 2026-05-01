@@ -1,5 +1,6 @@
 import { UsdhSwapWidget } from "@/components/usdh/UsdhSwapWidget";
 import { UsdhInfoCard } from "@/components/usdh/UsdhInfoCard";
+import { WalletConnectButton } from "@/components/usdh/WalletConnectButton";
 
 export default function UsdhPage() {
   return (
@@ -14,11 +15,20 @@ export default function UsdhPage() {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-        <div className="w-full lg:w-3/5">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Widget column — natural 480px width */}
+        <div className="shrink-0 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
+              Wallet
+            </span>
+            <WalletConnectButton />
+          </div>
           <UsdhSwapWidget />
         </div>
-        <div className="w-full lg:w-2/5">
+
+        {/* Info column — fills remaining space */}
+        <div className="flex-1 min-w-0">
           <UsdhInfoCard />
         </div>
       </div>
