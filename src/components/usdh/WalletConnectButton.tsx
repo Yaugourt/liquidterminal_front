@@ -4,10 +4,21 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut } from "lucide-react";
 
+const EVM_EXCLUDED = ["phantom", "solana", "backpack"];
+
+function isEvmConnector(name: string, id: string): boolean {
+  const lower = (name + id).toLowerCase();
+  return !EVM_EXCLUDED.some((kw) => lower.includes(kw));
+}
+
 export function WalletConnectButton() {
   const { address, isConnected } = useAccount();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
+
+  const evmConnectors = connectors.filter((c) =>
+    isEvmConnector(c.name, c.id ?? "")
+  );
 
   if (isConnected && address) {
     return (
@@ -29,7 +40,7 @@ export function WalletConnectButton() {
 
   return (
     <div className="flex gap-2 flex-wrap">
-      {connectors.map((connector) => (
+      {evmConnectors.map((connector) => (
         <Button
           key={connector.id}
           size="sm"
