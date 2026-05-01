@@ -17,8 +17,7 @@ export function UsdhSwapWidget() {
         </p>
         <WalletConnectButton />
       </div>
-      {/* [&_.usdh-widget]:w-full forces the widget to fill the column */}
-      <div className="[&_.usdh-widget]:w-full [&_.usdh-widget]:max-w-none">
+      <div className="usdh-stretch-container">
         <USDHSwap
           network="mainnet"
           theme="dark"

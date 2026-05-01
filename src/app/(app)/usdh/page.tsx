@@ -14,9 +14,13 @@ export default function UsdhPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full items-start max-w-5xl">
-        <UsdhSwapWidget />
-        <UsdhInfoCard />
+      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
+        <div className="w-full lg:w-3/5">
+          <UsdhSwapWidget />
+        </div>
+        <div className="w-full lg:w-2/5">
+          <UsdhInfoCard />
+        </div>
       </div>
     </>
   );
