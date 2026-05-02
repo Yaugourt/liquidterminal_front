@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, Radio } from "lucide-react";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
@@ -31,12 +32,21 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
   const title = question.title || "Untitled market";
   const badge = categoryBadge(question.class, question.underlying);
 
-  return (
+  const primaryOutcome = question.outcomes[0];
+  const primaryCoin = primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null;
+  const href = primaryCoin ? `/market/hip4/${encodeURIComponent(primaryCoin)}` : null;
+
+  const yesProb =
+    primaryOutcome?.mid_price != null && Number.isFinite(primaryOutcome.mid_price)
+      ? (primaryOutcome.mid_price * 100).toFixed(1)
+      : null;
+
+  const inner = (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.03, 0.3), duration: 0.25 }}
-      className="glass-panel relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-hover transition-colors"
+      className="glass-panel relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-hover transition-colors cursor-pointer"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -84,6 +94,9 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
 
       <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-text-muted border-t border-border-subtle">
         <span className="tabular-nums">{compactUsd(question.total_volume)} vol</span>
+        {yesProb && !settled && (
+          <span className="tabular-nums font-semibold text-emerald-400">{yesProb}% Yes</span>
+        )}
         {question.resolved_at && settled && (
           <span className="tabular-nums">
             {new Date(question.resolved_at).toLocaleDateString()}
@@ -92,4 +105,9 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
       </div>
     </motion.div>
   );
+
+  if (href) {
+    return <Link href={href} className="block h-full">{inner}</Link>;
+  }
+  return inner;
 }
