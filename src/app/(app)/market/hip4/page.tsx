@@ -53,9 +53,9 @@ export default function MarketHip4Page() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-gold bg-brand-gold/10 border border-brand-gold/20 px-2.5 py-1 rounded-lg">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-gold animate-pulse" />
-            Testnet
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
+            Mainnet
           </span>
         </div>
       </div>

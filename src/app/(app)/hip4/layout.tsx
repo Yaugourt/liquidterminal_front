@@ -22,7 +22,7 @@ export default function Hip4Layout({
             <span className="text-white"> documentation</span>
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base">
-            Testnet · Exploratory documentation — not official Hyperliquid documentation.
+            Exploratory documentation — not official Hyperliquid documentation.
           </p>
         </header>
 

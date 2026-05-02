@@ -1,7 +1,7 @@
-/** HIP-4 HyperEVM testnet deployment metadata (replaces public/hip4/hip4-contracts.js). */
+/** HIP-4 HyperEVM mainnet deployment metadata (replaces public/hip4/hip4-contracts.js). */
 export const HIP4_CONFIG = {
-  chainId: 998,
-  rpc: "https://evmrpc-jp.hyperpc.app/4e56cb9a171f495e98934bfc3c8c98e7",
+  chainId: 999,
+  rpc: "https://rpc.hyperliquid.xyz/evm",
   contestCreatedTopic:
     "0x4093d35f3fc3bca9a1883a4abb54061b542732f2edc3a6c1ef95f416f69a1062",
   merkleRootSelector: "0x71c5ecb1",

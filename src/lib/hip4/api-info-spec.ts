@@ -1,5 +1,5 @@
 /**
- * HIP-4 HyperCore / testnet API — structured for GitBook-style rendering.
+ * HIP-4 HyperCore / mainnet API — structured for GitBook-style rendering.
  * Canonical narrative: public/hip4/HIP4-research-complete.md
  */
 
@@ -44,11 +44,11 @@ const STANDARD_INFO_HEADERS: Hip4ApiHeaderRow[] = [
 export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
   {
     id: "outcomeMeta",
-    title: "Retrieve outcome metadata (testnet-only)",
+    title: "Retrieve outcome metadata",
     method: "POST",
-    url: "https://api.hyperliquid-testnet.xyz/info",
+    url: "https://api.hyperliquid.xyz/info",
     intro:
-      "Lists prediction outcomes, side specs, and grouped questions. Not available on mainnet API in our tests — use testnet.",
+      "Lists prediction outcomes, side specs, and grouped questions.",
     headers: STANDARD_INFO_HEADERS,
     bodyFields: [
       {
@@ -102,7 +102,7 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
     id: "candleSnapshot",
     title: "Retrieve candle snapshot (# coins)",
     method: "POST",
-    url: "https://api.hyperliquid-testnet.xyz/info",
+    url: "https://api.hyperliquid.xyz/info",
     intro:
       "OHLCV history for a spot-style coin string. For HIP-4 pairs use the full #YES id (trailing zero), not the raw outcome id.",
     headers: STANDARD_INFO_HEADERS,
@@ -180,7 +180,7 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
     id: "userFees",
     title: "User fee schedule (userFees)",
     method: "POST",
-    url: "https://api.hyperliquid-testnet.xyz/info",
+    url: "https://api.hyperliquid.xyz/info",
     intro:
       "Per-user spot/perp fee rates and the default feeSchedule. Use a sentinel address for base schedule only. Used in HIP-4 fee research to compare outcome fills to userSpotCrossRate.",
     headers: STANDARD_INFO_HEADERS,
@@ -238,7 +238,7 @@ export const HIP4_REST_INFO_ENDPOINTS: Hip4RestEndpointSpec[] = [
     id: "userFillsByTime",
     title: "User fills by time window (userFillsByTime)",
     method: "POST",
-    url: "https://api.hyperliquid-testnet.xyz/info",
+    url: "https://api.hyperliquid.xyz/info",
     intro:
       "Historical fills for a user between startTime and endTime (Unix ms). Outcome markets use @-prefixed coin names; fee is often in feeToken (base asset), not USDC — normalize for effective bps.",
     headers: STANDARD_INFO_HEADERS,
@@ -300,7 +300,7 @@ export const HIP4_WS_EXAMPLES: Hip4WsExampleSpec[] = [
   {
     id: "activeSpotAssetCtx",
     title: "Channel: activeSpotAssetCtx",
-    url: "wss://api.hyperliquid-testnet.xyz/ws",
+    url: "wss://api.hyperliquid.xyz/ws",
     intro:
       "Subscribe per coin for mark/mid, volume, supply. markPx reads as implied probability on YES legs.",
     subscriptionExample: JSON.stringify(
@@ -340,7 +340,7 @@ export const HIP4_WS_EXAMPLES: Hip4WsExampleSpec[] = [
   {
     id: "l2Book",
     title: "Channel: l2Book",
-    url: "wss://api.hyperliquid-testnet.xyz/ws",
+    url: "wss://api.hyperliquid.xyz/ws",
     intro:
       "levels[0] = bids (desc), levels[1] = asks (asc). Each # coin has its own book; pair minting mirrors across YES/NO.",
     subscriptionExample: JSON.stringify(

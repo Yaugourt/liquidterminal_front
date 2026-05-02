@@ -20,7 +20,7 @@ export async function generateMetadata({
   return {
     title: `${ch.title} — HIP-4`,
     description:
-      "Exploratory HIP-4 prediction markets documentation on HyperEVM testnet. Reverse-engineered; not official Hyperliquid documentation.",
+      "Exploratory HIP-4 prediction markets documentation on HyperEVM mainnet. Reverse-engineered; not official Hyperliquid documentation.",
   };
 }
 

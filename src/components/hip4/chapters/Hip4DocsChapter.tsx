@@ -7,7 +7,7 @@ import {
 import { Hip4CodeBlock } from "@/components/hip4/Hip4CodeBlock";
 import { Hip4PageHeader } from "@/components/hip4/Hip4PageHeader";
 
-const FETCH_RPC = `const res = await fetch("https://rpc.hyperliquid-testnet.xyz/evm", {
+const FETCH_RPC = `const res = await fetch("https://rpc.hyperliquid.xyz/evm", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
