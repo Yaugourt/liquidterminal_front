@@ -1,4 +1,5 @@
 export { Hip4GlobalStatsStrip } from "./Hip4GlobalStatsStrip";
+export { Hip4MarketDetailHeader } from "./Hip4MarketDetailHeader";
 export { Hip4MarketShareChart } from "./Hip4MarketShareChart";
 export { Hip4MarketsFlowChart } from "./Hip4MarketsFlowChart";
 export { Hip4MarketGrid } from "./Hip4MarketGrid";
