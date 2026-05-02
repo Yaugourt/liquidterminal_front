@@ -93,7 +93,7 @@ export function Hip4ReferenceChapter() {
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>Base URLs</Hip4SectionTitle>
-        <Hip4SubsectionTitle>Testnet (this doc)</Hip4SubsectionTitle>
+        <Hip4SubsectionTitle>Mainnet</Hip4SubsectionTitle>
         <ul className="space-y-3 text-xs">
           <li>
             <span className="block text-text-muted">REST</span>
@@ -179,8 +179,8 @@ export function Hip4ReferenceChapter() {
         </p>
       </Hip4GlassPanel>
 
-      <Hip4GlassPanel id="system-wallets-testnet">
-        <Hip4SectionTitle>System wallets (testnet)</Hip4SectionTitle>
+      <Hip4GlassPanel id="system-wallets">
+        <Hip4SectionTitle>System wallets</Hip4SectionTitle>
         <Hip4DocLead className="mb-3 text-xs">
           Eight linked Core addresses traced as one cluster; two roles mapped (HIP-4 operator + oracle),
           six unmapped. Testnet only — mainnet distribution unknown. None overlap the HyperEVM

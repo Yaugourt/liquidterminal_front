@@ -27,7 +27,7 @@ export function Hip4InfoApiChapter() {
       <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_11.5rem] xl:items-start xl:gap-10">
         <div className="min-w-0 space-y-6">
           <Hip4ChapterHubHeader
-            title="Info endpoint — HIP-4 (testnet)"
+            title="Info endpoint — HIP-4"
             subtitle={
               <>
                 <p>

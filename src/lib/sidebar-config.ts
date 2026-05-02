@@ -169,7 +169,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         IconComponent: ArrowRightLeft
       },
       {
-        name: 'HIP-4 (testnet)',
+        name: 'HIP-4',
         href: '/market/hip4',
         icon: null,
         IconComponent: Sparkles
@@ -241,12 +241,6 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/wiki',
         icon: null,
         IconComponent: AppWindow,
-      },
-      {
-        name: 'HIP-4 (testnet)',
-        href: '/hip4/home',
-        icon: null,
-        IconComponent: FileCode,
       },
       {
         name: 'Read List',

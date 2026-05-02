@@ -113,7 +113,7 @@ export function Hip4CoreChapter() {
       </Hip4GlassPanel>
 
       <Hip4GlassPanel>
-        <Hip4SectionTitle>L1 operator cluster (testnet)</Hip4SectionTitle>
+        <Hip4SectionTitle>L1 operator cluster</Hip4SectionTitle>
         <Hip4DocLead className="mb-3 text-xs">
           We traced <strong className="text-white">eight linked system addresses</strong> on HyperCore
           testnet that appear to operate the prediction-market admin surface together.{" "}
@@ -150,7 +150,7 @@ export function Hip4CoreChapter() {
         </p>
         <p className="text-xs text-text-muted">
           Full table + proof link:{" "}
-          <Link href="/hip4/reference#system-wallets-testnet" className="text-brand-accent hover:underline">
+          <Link href="/hip4/reference#system-wallets" className="text-brand-accent hover:underline">
             API & data — system wallets
           </Link>
           . On mainnet, duties would likely be distributed across validators — not guaranteed here.

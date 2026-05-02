@@ -2,8 +2,12 @@
  * HyperCore L1 + testnet API reference rows (source: public/hip4/HIP4-research-complete.md).
  */
 
-export const HIP4_TESTNET_INFO_URL = "https://api.hyperliquid-testnet.xyz/info";
-export const HIP4_TESTNET_WS_URL = "wss://api.hyperliquid-testnet.xyz/ws";
+export const HIP4_INFO_URL = "https://api.hyperliquid.xyz/info";
+export const HIP4_WS_URL = "wss://api.hyperliquid.xyz/ws";
+/** @deprecated use HIP4_INFO_URL */
+export const HIP4_TESTNET_INFO_URL = HIP4_INFO_URL;
+/** @deprecated use HIP4_WS_URL */
+export const HIP4_TESTNET_WS_URL = HIP4_WS_URL;
 
 export interface Hip4WsChannelRow {
   channel: string;
@@ -77,7 +81,7 @@ export const HIP4_SYSTEM_WALLETS: Hip4SystemWalletRow[] = [
     address: "0xe92d5afedaf9eab98a70b7b0118b7187c1292c5c",
     role: "Oracle — on-chain price feed. Historical settlement from this wallet observed (proof). Recent settlement traffic often attributed to 0xc25c… per testnet trace; also voteAppHash / validation activity observed.",
     evidenceUrl:
-      "https://app.hyperliquid-testnet.xyz/explorer/tx/0xe3e78e3d72eabe68e561041f8bbfbe000022a6230deddd3a87b0399031ee9853",
+      "https://app.hyperliquid.xyz/explorer/tx/0xe3e78e3d72eabe68e561041f8bbfbe000022a6230deddd3a87b0399031ee9853",
   },
   {
     address: "0xc25c4a1e3872f4d601d70b5db85604f7039ece56",

@@ -58,7 +58,7 @@ export const HIP4_FEES_DEPLOYER_SHARE_SAMPLES = JSON.stringify(
   2
 );
 
-export const HIP4_FEES_CURL_USER_FEES_BASE = `curl -s https://api.hyperliquid-testnet.xyz/info \\
+export const HIP4_FEES_CURL_USER_FEES_BASE = `curl -s https://api.hyperliquid.xyz/info \\
   -H 'Content-Type: application/json' \\
   --data '{"type":"userFees","user":"0xffffffffffffffffffffffffffffffffffffffff"}'`;
 
@@ -80,7 +80,7 @@ export const HIP4_FEES_JSON_USER_FEES_BASE = JSON.stringify(
   2
 );
 
-export const HIP4_FEES_CURL_USER_FILLS = `curl -s https://api.hyperliquid-testnet.xyz/info \\
+export const HIP4_FEES_CURL_USER_FILLS = `curl -s https://api.hyperliquid.xyz/info \\
   -H 'Content-Type: application/json' \\
   --data '{"type":"userFillsByTime","user":"0xae551d73161bac3315c5ade0e2d499a44ebe2236","startTime":1769956276000,"endTime":1769956277000}'`;
 
