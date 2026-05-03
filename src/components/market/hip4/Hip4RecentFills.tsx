@@ -34,7 +34,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
   const [sortKey, setSortKey] = useState<SortKey>("time");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 25;
+  const [pageSize, setPageSize] = useState(40);
 
   const handleSort = (key: SortKey) => {
     setPage(0);
@@ -74,10 +74,10 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
           pagination={{
             total: rows.length,
             page,
-            rowsPerPage: PAGE_SIZE,
-            rowsPerPageOptions: [25, 50],
+            rowsPerPage: pageSize,
+            rowsPerPageOptions: [5, 10, 25, 40, 50],
             onPageChange: setPage,
-            onRowsPerPageChange: () => {},
+            onRowsPerPageChange: (n) => { setPageSize(n); setPage(0); },
             hidePageNavigation: false,
           }}
         >
@@ -100,7 +100,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => (
+              {rows.slice(page * pageSize, (page + 1) * pageSize).map((row, i) => (
                 <TableRow key={`${row.hash}-${i}`} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
                   <TableCell className="py-2 px-3 text-xs font-semibold text-white truncate max-w-[180px]">{marketNameIndex?.[row.coin] || row.coin}</TableCell>
                   <TableCell className="py-2 px-3">

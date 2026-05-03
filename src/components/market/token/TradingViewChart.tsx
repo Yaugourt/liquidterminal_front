@@ -457,10 +457,21 @@ export function TradingViewChart({
   // ── Push overlay candle data; draw strike line once data is set ───────
   useEffect(() => {
     if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
+    if (!candles || candles.length === 0) return;
     try {
+      // Clip overlay to the main series time range so both series share the same axis window.
+      // Without this, BTC (42 days of history) extends the time axis far left of the HIP-4
+      // candles, making it appear the outcome candles are "frozen" when panning.
+      const sortedMain = [...candles].sort((a, b) => a.t - b.t);
+      const mainStart = Math.floor(sortedMain[0].t / 1000);
+      const mainEnd = Math.floor(sortedMain[sortedMain.length - 1].t / 1000);
+
       const data = [...overlayCandles]
         .sort((a, b) => a.t - b.t)
+        .filter((c) => { const t = Math.floor(c.t / 1000); return t >= mainStart && t <= mainEnd; })
         .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
+
+      if (data.length === 0) return;
       overlayLineRef.current.setData(data);
 
       // Strike price horizontal line
@@ -477,7 +488,7 @@ export function TradingViewChart({
     } catch {
       // series may not be ready yet
     }
-  }, [overlayCandles, overlayStrikePrice]);
+  }, [overlayCandles, overlayStrikePrice, candles]);
 
   // ── Push historical data when candles change ─────────────────────────
   useEffect(() => {
