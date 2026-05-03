@@ -473,18 +473,12 @@ export function TradingViewChart({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayPerpCoinId]);
 
-  // ── Push overlay data, clipped to main series time range ─────────────
+  // ── Push overlay data (full history, no clipping) ────────────────────
   useEffect(() => {
     if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
-    if (!candles || candles.length === 0) return;
     try {
-      const sorted = [...candles].sort((a, b) => a.t - b.t);
-      const mainStart = Math.floor(sorted[0].t / 1000);
-      const mainEnd = Math.floor(sorted[sorted.length - 1].t / 1000);
-
       const data = [...overlayCandles]
         .sort((a, b) => a.t - b.t)
-        .filter((c) => { const t = Math.floor(c.t / 1000); return t >= mainStart && t <= mainEnd; })
         .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
 
       if (data.length === 0) return;
@@ -507,7 +501,7 @@ export function TradingViewChart({
     } catch (e) {
       console.error("Error updating overlay:", e);
     }
-  }, [overlayCandles, overlayStrikePrice, candles]);
+  }, [overlayCandles, overlayStrikePrice]);
 
   // ── Real-time updates from websocket ─────────────────────────────────
   useEffect(() => {
