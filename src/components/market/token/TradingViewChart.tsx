@@ -9,6 +9,7 @@ import {
   CandlestickSeries,
   HistogramData,
   HistogramSeries,
+  LineSeries,
   Time,
   LineStyle,
   CrosshairMode,
@@ -36,6 +37,10 @@ interface TradingViewChartProps {
   className?: string;
   /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
   coinId?: string;
+  /** Perp coin to overlay as a line on a separate price scale (e.g., "BTC") */
+  overlayPerpCoinId?: string;
+  /** Strike price drawn as a horizontal line on the overlay scale */
+  overlayStrikePrice?: number;
 }
 
 type TimeframeType =
@@ -174,11 +179,14 @@ export function TradingViewChart({
   tokenName,
   className,
   coinId: directCoinId,
+  overlayPerpCoinId,
+  overlayStrikePrice,
 }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const overlayLineRef = useRef<ISeriesApi<"Line"> | null>(null);
   const lastPriceLineRef = useRef<IPriceLine | null>(null);
   const lastCandleRef = useRef<CandlestickData<Time> | null>(null);
 
@@ -227,6 +235,10 @@ export function TradingViewChart({
 
   const { candles, isLoading, error } = useTokenCandles({
     coin: coinId,
+    interval: selectedTimeframe,
+  });
+  const { candles: overlayCandles } = useTokenCandles({
+    coin: overlayPerpCoinId ?? null,
     interval: selectedTimeframe,
   });
   const { price: currentPrice, isLoading: wsLoading } = useTokenWebSocket(coinId || "");
@@ -431,6 +443,70 @@ export function TradingViewChart({
     }
   }, [candles]);
 
+  // ── Create / destroy overlay series when overlayPerpCoinId changes ──
+  useEffect(() => {
+    if (!chartRef.current) return;
+    if (!overlayPerpCoinId) {
+      if (overlayLineRef.current) {
+        try { chartRef.current.removeSeries(overlayLineRef.current); } catch { /* ignore */ }
+        overlayLineRef.current = null;
+      }
+      return;
+    }
+    if (overlayLineRef.current) return;
+    const line = chartRef.current.addSeries(LineSeries, {
+      color: "rgba(251,191,36,0.75)",
+      lineWidth: 1,
+      priceScaleId: "overlay",
+      priceLineVisible: false,
+      lastValueVisible: true,
+      crosshairMarkerVisible: false,
+    });
+    chartRef.current.priceScale("overlay").applyOptions({
+      scaleMargins: { top: 0.05, bottom: 0.25 },
+      visible: false,
+    });
+    overlayLineRef.current = line;
+  // overlayLineRef is stable; we only need to re-run when the prop changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overlayPerpCoinId]);
+
+  // ── Push overlay data, clipped to main series time range ─────────────
+  useEffect(() => {
+    if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
+    if (!candles || candles.length === 0) return;
+    try {
+      const sorted = [...candles].sort((a, b) => a.t - b.t);
+      const mainStart = Math.floor(sorted[0].t / 1000);
+      const mainEnd = Math.floor(sorted[sorted.length - 1].t / 1000);
+
+      const data = [...overlayCandles]
+        .sort((a, b) => a.t - b.t)
+        .filter((c) => { const t = Math.floor(c.t / 1000); return t >= mainStart && t <= mainEnd; })
+        .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
+
+      if (data.length === 0) return;
+      overlayLineRef.current.setData(data);
+
+      if (overlayStrikePrice != null) {
+        if (lastPriceLineRef.current) {
+          try { overlayLineRef.current.removePriceLine(lastPriceLineRef.current); } catch { /* ignore */ }
+          lastPriceLineRef.current = null;
+        }
+        lastPriceLineRef.current = overlayLineRef.current.createPriceLine({
+          price: overlayStrikePrice,
+          color: "rgba(251,191,36,0.5)",
+          lineWidth: 1,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: false,
+          title: "",
+        });
+      }
+    } catch (e) {
+      console.error("Error updating overlay:", e);
+    }
+  }, [overlayCandles, overlayStrikePrice, candles]);
+
   // ── Real-time updates from websocket ─────────────────────────────────
   useEffect(() => {
     if (!currentPrice || !candleRef.current || !volumeRef.current || !lastCandleRef.current || !coinId) {
@@ -505,6 +581,13 @@ export function TradingViewChart({
           />
           {isConnected ? "Live" : "—"}
         </span>
+
+        {overlayPerpCoinId && (
+          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] bg-amber-400/10 text-amber-400 border border-amber-400/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            {overlayPerpCoinId}
+          </span>
+        )}
 
         {/* Timeframe selector (desktop: quick pills + more popover) */}
         <div className="hidden min-[620px]:flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
