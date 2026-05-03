@@ -110,6 +110,8 @@ export default function Hip4MarketDetailPage() {
           <TradingViewChart
             symbol={activeCoin}
             coinId={activeCoin}
+            overlayPerpCoinId={market?.underlying ?? undefined}
+            overlayStrikePrice={market?.target_price ?? undefined}
           />
         </div>
         <div>
