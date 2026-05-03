@@ -76,14 +76,21 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
                     </TableCell>
                     <TableCell className="py-2.5 px-3">
                       <span className="text-xs tabular-nums text-brand-accent">
-                        {row.settled_px != null ? `${(row.settled_px * 100).toFixed(2)}%` : "—"}
+                        {row.settled_px != null
+                          ? row.settled_px >= 10
+                            ? `$${row.settled_px.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                            : `${(row.settled_px * 100).toFixed(1)}¢`
+                          : "—"}
                       </span>
                     </TableCell>
                     <TableCell className="py-2.5 px-3">
                       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${winColor}`}>{winner}</span>
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-[11px] text-text-muted tabular-nums">
-                      {new Date(row.settled_at).toLocaleDateString()}
+                      {(() => {
+                        const d = new Date(row.settled_at);
+                        return isNaN(d.getTime()) ? "—" : d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" }) + " UTC";
+                      })()}
                     </TableCell>
                   </TableRow>
                 );

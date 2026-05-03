@@ -77,7 +77,8 @@ export interface Hip4FillRow {
 export interface Hip4SettlementRow {
   outcome_id: number;
   coin: string | null;
-  settled_px: number | null;
+  settled_px: number | null;       // underlying asset price (e.g. 78212.4 for BTC)
+  settle_fraction: number | null;  // YES fraction at settlement (0.0 = NO won, 1.0 = YES won)
   settled_at: string;
   winner_side: number | null;
   tx_hash: string | null;
