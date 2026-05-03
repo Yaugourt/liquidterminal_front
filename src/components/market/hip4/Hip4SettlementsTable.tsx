@@ -16,7 +16,7 @@ interface Hip4SettlementsTableProps {
 
 export function Hip4SettlementsTable({ settlements, isLoading }: Hip4SettlementsTableProps) {
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(40);
+  const [pageSize, setPageSize] = useState(10);
 
   if (isLoading && settlements.length === 0) return <LoadingState message="Loading settlements..." withCard />;
 
