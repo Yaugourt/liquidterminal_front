@@ -21,6 +21,7 @@ export interface Hip4MarketEnrichedRow {
   question_name: string | null;
   question_description: string | null;
   display_name: string;
+  short_name: string;
   mid_price: number | null;
   volume_24h: number | null;
   total_volume: number | null;
@@ -57,6 +58,9 @@ export interface Hip4QuestionWithOutcomesRow {
   resolved_at: string | null;
   status: "live" | "settled";
   singleton_outcome_id: number | null;
+  expiry: string | null;
+  period: string | null;
+  target_price: number | null;
   outcomes: Hip4QuestionOutcome[];
 }
 

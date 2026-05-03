@@ -33,7 +33,7 @@ export default function MarketHip4Page() {
   const marketNameIndex = useMemo(() => {
     const idx: Record<string, string> = {};
     for (const m of enriched.markets) {
-      if (m.coin) idx[m.coin] = m.display_name;
+      if (m.coin) idx[m.coin] = m.short_name || m.display_name;
     }
     return idx;
   }, [enriched.markets]);
@@ -61,9 +61,9 @@ export default function MarketHip4Page() {
       </div>
 
       <Hip4GlobalStatsStrip
-        markets={enriched.markets}
         questions={questions.questions}
-        isLoading={enriched.isLoading}
+        settlements={settlements.settlements}
+        isLoading={enriched.isLoading || questions.isLoading}
       />
 
       <Hip4MarketGrid

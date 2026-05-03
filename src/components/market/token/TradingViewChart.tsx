@@ -9,6 +9,7 @@ import {
   CandlestickSeries,
   HistogramData,
   HistogramSeries,
+  LineSeries,
   Time,
   LineStyle,
   CrosshairMode,
@@ -36,6 +37,8 @@ interface TradingViewChartProps {
   className?: string;
   /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
   coinId?: string;
+  /** When set, renders a secondary line series of the underlying perp price (e.g., "BTC") on the left scale. */
+  overlayPerpCoinId?: string;
 }
 
 type TimeframeType =
@@ -174,11 +177,13 @@ export function TradingViewChart({
   tokenName,
   className,
   coinId: directCoinId,
+  overlayPerpCoinId,
 }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const overlayLineRef = useRef<ISeriesApi<"Line"> | null>(null);
   const lastPriceLineRef = useRef<IPriceLine | null>(null);
   const lastCandleRef = useRef<CandlestickData<Time> | null>(null);
 
@@ -230,6 +235,11 @@ export function TradingViewChart({
     interval: selectedTimeframe,
   });
   const { price: currentPrice, isLoading: wsLoading } = useTokenWebSocket(coinId || "");
+
+  const { candles: overlayCandles } = useTokenCandles({
+    coin: overlayPerpCoinId ?? null,
+    interval: selectedTimeframe,
+  });
 
   // ── Derived stats over the loaded candle history ─────────────────────
   const stats = useMemo(() => {
@@ -409,6 +419,40 @@ export function TradingViewChart({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Overlay perp line series — created once after chart init ─────────
+  useEffect(() => {
+    if (!overlayPerpCoinId || !chartRef.current || overlayLineRef.current) return;
+    const line = chartRef.current.addSeries(LineSeries, {
+      color: "rgba(249,227,112,0.65)",
+      lineWidth: 1,
+      priceScaleId: "overlay_left",
+      priceLineVisible: false,
+      lastValueVisible: false,
+      crosshairMarkerVisible: false,
+    });
+    chartRef.current.priceScale("overlay_left").applyOptions({
+      scaleMargins: { top: 0.05, bottom: 0.25 },
+      borderVisible: false,
+      visible: true,
+      textColor: "rgba(249,227,112,0.5)",
+    });
+    overlayLineRef.current = line;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Push overlay candle data when it arrives ──────────────────────────
+  useEffect(() => {
+    if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
+    try {
+      const data = [...overlayCandles]
+        .sort((a, b) => a.t - b.t)
+        .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
+      overlayLineRef.current.setData(data);
+    } catch {
+      // series may not be ready yet
+    }
+  }, [overlayCandles]);
+
   // ── Push historical data when candles change ─────────────────────────
   useEffect(() => {
     if (!candleRef.current || !volumeRef.current) return;
@@ -505,6 +549,14 @@ export function TradingViewChart({
           />
           {isConnected ? "Live" : "—"}
         </span>
+
+        {/* Overlay perp badge */}
+        {overlayPerpCoinId && (
+          <span className="inline-flex items-center gap-1 rounded-md border border-brand-gold/30 bg-brand-gold/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-brand-gold">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
+            {overlayPerpCoinId} Perp
+          </span>
+        )}
 
         {/* Timeframe selector (desktop: quick pills + more popover) */}
         <div className="hidden min-[620px]:flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">

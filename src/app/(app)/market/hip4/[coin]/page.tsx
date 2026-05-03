@@ -55,6 +55,7 @@ export default function Hip4MarketDetailPage() {
           <TradingViewChart
             symbol={coin}
             coinId={coin}
+            overlayPerpCoinId={market?.underlying ?? undefined}
           />
         </div>
         <div>

@@ -5,13 +5,13 @@ import { motion } from "framer-motion";
 import { BarChart3, CheckCircle2, TrendingUp, Layers } from "lucide-react";
 import { StatsCard } from "@/components/common/StatsCard";
 import type {
-  Hip4MarketEnrichedRow,
   Hip4QuestionWithOutcomesRow,
+  Hip4SettlementRow,
 } from "@/services/indexer/hip4";
 
 interface Hip4GlobalStatsStripProps {
-  markets: Hip4MarketEnrichedRow[];
   questions: Hip4QuestionWithOutcomesRow[];
+  settlements: Hip4SettlementRow[];
   isLoading: boolean;
 }
 
@@ -23,14 +23,13 @@ function compactUsd(n: number | null | undefined) {
   return `$${n.toFixed(0)}`;
 }
 
-export function Hip4GlobalStatsStrip({ markets, questions, isLoading }: Hip4GlobalStatsStripProps) {
+export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4GlobalStatsStripProps) {
   const stats = useMemo(() => {
-    const activeMarkets = markets.filter((m) => !m.is_settled).length;
-    const settledMarkets = markets.filter((m) => m.is_settled).length;
-    const totalVolume = markets.reduce((s, m) => s + (m.total_volume ?? 0), 0);
-    const volume24h = markets.reduce((s, m) => s + (m.volume_24h ?? 0), 0);
-    return { activeMarkets, settledMarkets, totalVolume, volume24h, questions: questions.length };
-  }, [markets, questions]);
+    const activeMarkets = questions.filter((q) => q.status === "live").length;
+    const settledMarkets = settlements.length;
+    const totalVolume = questions.reduce((s, q) => s + (q.total_volume ?? 0), 0);
+    return { activeMarkets, settledMarkets, totalVolume, questions: questions.length };
+  }, [questions, settlements]);
 
   const cards = [
     {
@@ -46,8 +45,8 @@ export function Hip4GlobalStatsStrip({ markets, questions, isLoading }: Hip4Glob
       valueClassName: "text-lg font-bold text-violet-400 tracking-tight",
     },
     {
-      title: "Volume 24h",
-      value: isLoading ? "—" : compactUsd(stats.volume24h),
+      title: "Total Volume",
+      value: isLoading ? "—" : compactUsd(stats.totalVolume),
       icon: <TrendingUp className="h-4 w-4 text-brand-gold" />,
       valueClassName: "text-lg font-bold text-brand-gold tracking-tight",
     },
