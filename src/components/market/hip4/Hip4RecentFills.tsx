@@ -100,12 +100,25 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.slice(page * pageSize, (page + 1) * pageSize).map((row, i) => (
+              {rows.slice(page * pageSize, (page + 1) * pageSize).map((row, i) => {
+                const isBuy = row.side === "B" || row.side === "buy";
+                const outcomeIdx = row.outcome_id != null && row.outcome_id >= 10 ? row.outcome_id % 10 : null;
+                const outcomeName = outcomeIdx === 0 ? "Yes" : outcomeIdx === 1 ? "No" : null;
+                return (
                 <TableRow key={`${row.hash}-${i}`} className="border-border-subtle hover:bg-white/[0.02] transition-colors">
-                  <TableCell className="py-2 px-3 text-xs font-semibold text-white truncate max-w-[180px]">{marketNameIndex?.[row.coin] || row.coin}</TableCell>
+                  <TableCell className="py-2 px-3 max-w-[180px]">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-xs font-semibold text-white truncate">{marketNameIndex?.[row.coin] || row.coin}</span>
+                      {outcomeName && (
+                        <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${outcomeName === "Yes" ? "bg-emerald-500/15 text-emerald-400" : "bg-rose-500/15 text-rose-400"}`}>
+                          {outcomeName}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell className="py-2 px-3">
-                    <span className={`text-[11px] font-semibold ${row.side === "B" || row.side === "buy" ? "text-emerald-400" : "text-rose-400"}`}>
-                      {row.side === "B" || row.side === "buy" ? "Buy" : "Sell"}
+                    <span className={`text-[11px] font-semibold ${isBuy ? "text-emerald-400" : "text-rose-400"}`}>
+                      {isBuy ? "Buy" : "Sell"}
                     </span>
                   </TableCell>
                   <TableCell className="py-2 px-3 text-xs tabular-nums text-white">{row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}</TableCell>
@@ -116,7 +129,8 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
                     {new Date(row.time).toLocaleTimeString()}
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </ScrollableTable>
