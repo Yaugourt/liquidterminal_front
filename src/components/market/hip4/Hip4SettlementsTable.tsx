@@ -16,7 +16,7 @@ interface Hip4SettlementsTableProps {
 
 export function Hip4SettlementsTable({ settlements, isLoading }: Hip4SettlementsTableProps) {
   const [page, setPage] = useState(0);
-  const PAGE_SIZE = 25;
+  const [pageSize, setPageSize] = useState(40);
 
   if (isLoading && settlements.length === 0) return <LoadingState message="Loading settlements..." withCard />;
 
@@ -40,10 +40,10 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
           pagination={{
             total: settlements.length,
             page,
-            rowsPerPage: PAGE_SIZE,
-            rowsPerPageOptions: [25, 50],
+            rowsPerPage: pageSize,
+            rowsPerPageOptions: [5, 10, 25, 40, 50],
             onPageChange: setPage,
-            onRowsPerPageChange: () => {},
+            onRowsPerPageChange: (n) => { setPageSize(n); setPage(0); },
             hidePageNavigation: false,
           }}
         >
@@ -57,7 +57,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
               </TableRow>
             </TableHeader>
             <TableBody>
-              {settlements.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((row, i) => {
+              {settlements.slice(page * pageSize, (page + 1) * pageSize).map((row, i) => {
                 const winner = row.winner_name ?? (row.winner_side === 0 ? "Yes" : row.winner_side === 1 ? "No" : "—");
                 const isYes = row.winner_name === "Yes" || (row.winner_name == null && row.winner_side === 0);
                 const isNo = row.winner_name === "No" || (row.winner_name == null && row.winner_side === 1);
