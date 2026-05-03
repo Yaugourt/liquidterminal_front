@@ -34,7 +34,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
   const [sortKey, setSortKey] = useState<SortKey>("time");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(40);
+  const [pageSize, setPageSize] = useState(10);
 
   const handleSort = (key: SortKey) => {
     setPage(0);

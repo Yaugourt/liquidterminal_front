@@ -11,8 +11,6 @@ import {
 } from "@/services/indexer/hip4";
 import {
   Hip4GlobalStatsStrip,
-  Hip4MarketShareChart,
-  Hip4MarketsFlowChart,
   Hip4MarketGrid,
   Hip4RecentFills,
   Hip4SettlementsTable,
@@ -70,17 +68,6 @@ export default function MarketHip4Page() {
         questions={questions.questions}
         isLoading={questions.isLoading}
       />
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <Hip4MarketShareChart
-          markets={enriched.markets}
-          isLoading={enriched.isLoading}
-        />
-        <Hip4MarketsFlowChart
-          markets={enriched.markets}
-          isLoading={enriched.isLoading}
-        />
-      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <Hip4RecentFills
