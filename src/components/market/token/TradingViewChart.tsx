@@ -9,7 +9,6 @@ import {
   CandlestickSeries,
   HistogramData,
   HistogramSeries,
-  LineSeries,
   Time,
   LineStyle,
   CrosshairMode,
@@ -37,10 +36,6 @@ interface TradingViewChartProps {
   className?: string;
   /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
   coinId?: string;
-  /** When set, renders a secondary line series of the underlying perp price (e.g., "BTC") on the left scale. */
-  overlayPerpCoinId?: string;
-  /** Strike/target price drawn as a dotted horizontal line on the overlay scale. */
-  overlayStrikePrice?: number;
 }
 
 type TimeframeType =
@@ -179,14 +174,11 @@ export function TradingViewChart({
   tokenName,
   className,
   coinId: directCoinId,
-  overlayPerpCoinId,
-  overlayStrikePrice,
 }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
-  const overlayLineRef = useRef<ISeriesApi<"Line"> | null>(null);
   const lastPriceLineRef = useRef<IPriceLine | null>(null);
   const lastCandleRef = useRef<CandlestickData<Time> | null>(null);
 
@@ -238,11 +230,6 @@ export function TradingViewChart({
     interval: selectedTimeframe,
   });
   const { price: currentPrice, isLoading: wsLoading } = useTokenWebSocket(coinId || "");
-
-  const { candles: overlayCandles } = useTokenCandles({
-    coin: overlayPerpCoinId ?? null,
-    interval: selectedTimeframe,
-  });
 
   // ── Derived stats over the loaded candle history ─────────────────────
   const stats = useMemo(() => {
@@ -422,74 +409,6 @@ export function TradingViewChart({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Overlay perp line series — created once after chart init ─────────
-  useEffect(() => {
-    if (!overlayPerpCoinId || !chartRef.current || overlayLineRef.current) return;
-
-    // Use the built-in "left" scale so lightweight-charts renders the left axis natively
-    chartRef.current.applyOptions({
-      leftPriceScale: {
-        visible: true,
-        borderVisible: false,
-        scaleMargins: { top: 0.05, bottom: 0.25 },
-        textColor: "rgba(249,227,112,0.6)",
-      },
-    });
-
-    const line = chartRef.current.addSeries(LineSeries, {
-      color: "rgba(249,227,112,0.7)",
-      lineWidth: 1,
-      priceScaleId: "left",
-      priceLineVisible: true,
-      priceLineColor: "rgba(249,227,112,0.4)",
-      priceLineStyle: LineStyle.Dashed,
-      lastValueVisible: true,
-      crosshairMarkerVisible: true,
-      crosshairMarkerRadius: 3,
-      crosshairMarkerBorderColor: "rgba(249,227,112,0.9)",
-      crosshairMarkerBackgroundColor: "rgba(249,227,112,0.9)",
-    });
-
-    overlayLineRef.current = line;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ── Push overlay candle data; draw strike line once data is set ───────
-  useEffect(() => {
-    if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
-    if (!candles || candles.length === 0) return;
-    try {
-      // Clip overlay to the main series time range so both series share the same axis window.
-      // Without this, BTC (42 days of history) extends the time axis far left of the HIP-4
-      // candles, making it appear the outcome candles are "frozen" when panning.
-      const sortedMain = [...candles].sort((a, b) => a.t - b.t);
-      const mainStart = Math.floor(sortedMain[0].t / 1000);
-      const mainEnd = Math.floor(sortedMain[sortedMain.length - 1].t / 1000);
-
-      const data = [...overlayCandles]
-        .sort((a, b) => a.t - b.t)
-        .filter((c) => { const t = Math.floor(c.t / 1000); return t >= mainStart && t <= mainEnd; })
-        .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
-
-      if (data.length === 0) return;
-      overlayLineRef.current.setData(data);
-
-      // Strike price horizontal line
-      if (overlayStrikePrice != null && Number.isFinite(overlayStrikePrice)) {
-        overlayLineRef.current.createPriceLine({
-          price: overlayStrikePrice,
-          color: "rgba(249,199,79,0.55)",
-          lineWidth: 1,
-          lineStyle: LineStyle.Dotted,
-          axisLabelVisible: true,
-          title: "Strike",
-        });
-      }
-    } catch {
-      // series may not be ready yet
-    }
-  }, [overlayCandles, overlayStrikePrice, candles]);
-
   // ── Push historical data when candles change ─────────────────────────
   useEffect(() => {
     if (!candleRef.current || !volumeRef.current) return;
@@ -586,14 +505,6 @@ export function TradingViewChart({
           />
           {isConnected ? "Live" : "—"}
         </span>
-
-        {/* Overlay perp badge */}
-        {overlayPerpCoinId && (
-          <span className="inline-flex items-center gap-1 rounded-md border border-brand-gold/30 bg-brand-gold/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-brand-gold">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
-            {overlayPerpCoinId} Perp
-          </span>
-        )}
 
         {/* Timeframe selector (desktop: quick pills + more popover) */}
         <div className="hidden min-[620px]:flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
