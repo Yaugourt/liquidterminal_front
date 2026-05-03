@@ -457,14 +457,16 @@ export function TradingViewChart({
     const line = chartRef.current.addSeries(LineSeries, {
       color: "rgba(251,191,36,0.75)",
       lineWidth: 1,
-      priceScaleId: "overlay",
+      priceScaleId: "left",
       priceLineVisible: false,
       lastValueVisible: true,
       crosshairMarkerVisible: false,
     });
-    chartRef.current.priceScale("overlay").applyOptions({
+    chartRef.current.priceScale("left").applyOptions({
       scaleMargins: { top: 0.05, bottom: 0.25 },
-      visible: false,
+      visible: true,
+      borderVisible: false,
+      textColor: "rgba(251,191,36,0.7)",
     });
     overlayLineRef.current = line;
   // overlayLineRef is stable; we only need to re-run when the prop changes
@@ -495,11 +497,11 @@ export function TradingViewChart({
         }
         lastPriceLineRef.current = overlayLineRef.current.createPriceLine({
           price: overlayStrikePrice,
-          color: "rgba(251,191,36,0.5)",
+          color: "rgba(251,191,36,0.7)",
           lineWidth: 1,
           lineStyle: LineStyle.Dashed,
-          axisLabelVisible: false,
-          title: "",
+          axisLabelVisible: true,
+          title: "Strike",
         });
       }
     } catch (e) {
