@@ -56,6 +56,7 @@ export default function Hip4MarketDetailPage() {
             symbol={coin}
             coinId={coin}
             overlayPerpCoinId={market?.underlying ?? undefined}
+            overlayStrikePrice={market?.target_price ?? undefined}
           />
         </div>
         <div>

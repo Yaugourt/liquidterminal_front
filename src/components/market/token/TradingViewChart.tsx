@@ -39,6 +39,8 @@ interface TradingViewChartProps {
   coinId?: string;
   /** When set, renders a secondary line series of the underlying perp price (e.g., "BTC") on the left scale. */
   overlayPerpCoinId?: string;
+  /** Strike/target price drawn as a dotted horizontal line on the overlay scale. */
+  overlayStrikePrice?: number;
 }
 
 type TimeframeType =
@@ -178,6 +180,7 @@ export function TradingViewChart({
   className,
   coinId: directCoinId,
   overlayPerpCoinId,
+  overlayStrikePrice,
 }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -422,25 +425,36 @@ export function TradingViewChart({
   // ── Overlay perp line series — created once after chart init ─────────
   useEffect(() => {
     if (!overlayPerpCoinId || !chartRef.current || overlayLineRef.current) return;
+
+    // Use the built-in "left" scale so lightweight-charts renders the left axis natively
+    chartRef.current.applyOptions({
+      leftPriceScale: {
+        visible: true,
+        borderVisible: false,
+        scaleMargins: { top: 0.05, bottom: 0.25 },
+        textColor: "rgba(249,227,112,0.6)",
+      },
+    });
+
     const line = chartRef.current.addSeries(LineSeries, {
-      color: "rgba(249,227,112,0.65)",
+      color: "rgba(249,227,112,0.7)",
       lineWidth: 1,
-      priceScaleId: "overlay_left",
-      priceLineVisible: false,
-      lastValueVisible: false,
-      crosshairMarkerVisible: false,
+      priceScaleId: "left",
+      priceLineVisible: true,
+      priceLineColor: "rgba(249,227,112,0.4)",
+      priceLineStyle: LineStyle.Dashed,
+      lastValueVisible: true,
+      crosshairMarkerVisible: true,
+      crosshairMarkerRadius: 3,
+      crosshairMarkerBorderColor: "rgba(249,227,112,0.9)",
+      crosshairMarkerBackgroundColor: "rgba(249,227,112,0.9)",
     });
-    chartRef.current.priceScale("overlay_left").applyOptions({
-      scaleMargins: { top: 0.05, bottom: 0.25 },
-      borderVisible: false,
-      visible: true,
-      textColor: "rgba(249,227,112,0.5)",
-    });
+
     overlayLineRef.current = line;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Push overlay candle data when it arrives ──────────────────────────
+  // ── Push overlay candle data; draw strike line once data is set ───────
   useEffect(() => {
     if (!overlayLineRef.current || !overlayCandles || overlayCandles.length === 0) return;
     try {
@@ -448,10 +462,22 @@ export function TradingViewChart({
         .sort((a, b) => a.t - b.t)
         .map((c) => ({ time: Math.floor(c.t / 1000) as Time, value: parseFloat(c.c) }));
       overlayLineRef.current.setData(data);
+
+      // Strike price horizontal line
+      if (overlayStrikePrice != null && Number.isFinite(overlayStrikePrice)) {
+        overlayLineRef.current.createPriceLine({
+          price: overlayStrikePrice,
+          color: "rgba(249,199,79,0.55)",
+          lineWidth: 1,
+          lineStyle: LineStyle.Dotted,
+          axisLabelVisible: true,
+          title: "Strike",
+        });
+      }
     } catch {
       // series may not be ready yet
     }
-  }, [overlayCandles]);
+  }, [overlayCandles, overlayStrikePrice]);
 
   // ── Push historical data when candles change ─────────────────────────
   useEffect(() => {
