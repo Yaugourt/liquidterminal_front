@@ -11,6 +11,7 @@ import {
 } from "@/services/indexer/hip4";
 import {
   Hip4GlobalStatsStrip,
+  Hip4AnalyticsChart,
   Hip4MarketGrid,
   Hip4RecentFills,
   Hip4SettlementsTable,
@@ -63,6 +64,8 @@ export default function MarketHip4Page() {
         settlements={settlements.settlements}
         isLoading={enriched.isLoading || questions.isLoading}
       />
+
+      <Hip4AnalyticsChart />
 
       <Hip4MarketGrid
         questions={questions.questions}

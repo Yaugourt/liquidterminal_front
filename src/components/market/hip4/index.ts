@@ -8,3 +8,4 @@ export { Hip4QuestionCard } from "./Hip4QuestionCard";
 export { Hip4OutcomeBar } from "./Hip4OutcomeBar";
 export { Hip4RecentFills } from "./Hip4RecentFills";
 export { Hip4SettlementsTable } from "./Hip4SettlementsTable";
+export { Hip4AnalyticsChart } from "./Hip4AnalyticsChart";

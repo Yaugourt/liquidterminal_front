@@ -5,10 +5,12 @@ import type {
   Hip4QuestionWithOutcomesRow,
   Hip4FillRow,
   Hip4SettlementRow,
+  Hip4AnalyticsBucket,
   Hip4MarketsEnrichedQuery,
   Hip4QuestionsWithOutcomesQuery,
   Hip4FillsQuery,
   Hip4SettlementsQuery,
+  Hip4AnalyticsQuery,
 } from "./types";
 
 const HIP4 = "/indexer/hip4";
@@ -72,4 +74,16 @@ export async function fetchHip4Settlements(
     const raw = await get<unknown>(`${HIP4}/settlements`, toQuery(params ?? {}));
     return assertLtData<Hip4SettlementRow[]>(raw);
   }, "fetching HIP-4 settlements");
+}
+
+/** Time-bucketed analytics — volume, fills, fees, unique traders. */
+export async function fetchHip4Analytics(
+  params?: Hip4AnalyticsQuery
+): Promise<Hip4AnalyticsBucket[]> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(`${HIP4}/analytics`, toQuery(params ?? {}));
+    // LT backend wraps the HypeDexer response as { success, data: { status, count, data: [...] } }
+    const envelope = assertLtData<{ status: string; count: number; data: Hip4AnalyticsBucket[] }>(raw);
+    return Array.isArray(envelope) ? envelope : (envelope.data ?? []);
+  }, "fetching HIP-4 analytics");
 }
