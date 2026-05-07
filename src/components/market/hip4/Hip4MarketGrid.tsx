@@ -149,7 +149,7 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {visible.map((q, i) => (
               <Hip4QuestionCard
-                key={q.question_id ?? `singleton-${q.singleton_outcome_id}`}
+                key={q.question_id ?? q.singleton_outcome_id ?? `idx-${i}`}
                 question={q}
                 index={i}
               />

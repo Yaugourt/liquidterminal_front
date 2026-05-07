@@ -90,6 +90,23 @@ export interface Hip4SettlementRow {
   question_name: string | null;
 }
 
+export interface Hip4AnalyticsBucket {
+  bucket: string;
+  coin?: string;
+  fills: number;
+  volume: number;
+  buy_volume: number;
+  sell_volume: number;
+  fees_usdc: number;
+  unique_users: number;
+}
+
+export interface Hip4AnalyticsResponse {
+  status: "live" | "not_yet_live";
+  count: number;
+  data: Hip4AnalyticsBucket[];
+}
+
 // ─── Query interfaces ────────────────────────────────────────────────────────
 
 export interface Hip4MarketsEnrichedQuery {
@@ -149,6 +166,24 @@ export interface UseHip4FillsResult {
 
 export interface UseHip4SettlementsResult {
   settlements: Hip4SettlementRow[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export type Hip4AnalyticsInterval = "1h" | "4h" | "1d";
+
+export interface Hip4AnalyticsQuery {
+  interval?: Hip4AnalyticsInterval;
+  coin?: string;
+  outcome_id?: number;
+  start?: string;
+  end?: string;
+  limit?: number;
+}
+
+export interface UseHip4AnalyticsResult {
+  buckets: Hip4AnalyticsBucket[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
