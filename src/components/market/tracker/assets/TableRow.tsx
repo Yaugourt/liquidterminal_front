@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { TableRow as UITableRow, TableCell } from "@/components/ui/table";
 import { HoldingDisplay, PerpHoldingDisplay } from "@/components/types/wallet.types";
-import { TokenIcon } from "@/components/common/TokenIcon";
+import { TokenIcon, chartPalette } from "@/components/common";
 
 interface SpotRowProps {
   holding: HoldingDisplay;
@@ -46,7 +46,7 @@ export const SpotTableRow = memo(function SpotTableRow({
       </TableCell>
       <TableCell 
         className="text-sm font-medium" 
-        style={{color: holding.pnlPercentage < 0 ? '#f87171' : '#4ade80'}}
+        style={{color: holding.pnlPercentage < 0 ? chartPalette.roseSoft : chartPalette.emeraldLight}}
       >
         {formatPercent(holding.pnlPercentage)}
       </TableCell>

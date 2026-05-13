@@ -41,7 +41,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         {/* Stats */}
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5 text-text-secondary">
-            <Wallet size={14} className="text-[#83E9FF]" />
+            <Wallet size={14} className="text-brand-accent" />
             <span className="text-white font-medium">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
@@ -64,7 +64,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         <div className="flex gap-2 pt-2">
           <Button
             onClick={() => onPreview(list)}
-            className="flex-1 bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
+            className="flex-1 bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
           >
             <Eye className="mr-2 h-4 w-4" />
             View & Copy

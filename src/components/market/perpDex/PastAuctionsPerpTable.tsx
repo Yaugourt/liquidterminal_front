@@ -17,7 +17,7 @@ import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { useDateFormat, DateFormatType } from "@/store/date-format.store";
 import { PastAuctionPerp } from "@/services/market/perpDex/types";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import { TableEmptyState } from "@/components/ui/table-states";
 import { LoadingState } from "@/components/ui/loading-state";
 

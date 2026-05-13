@@ -1,9 +1,10 @@
 "use client";
 
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface PublicGoodsGridProps<T> {
     isLoading: boolean;
@@ -30,10 +31,7 @@ export function PublicGoodsGrid<T>({
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <div className="flex flex-col items-center">
-                    <Loader2 className="w-6 h-6 text-brand-accent animate-spin mb-2" />
-                    <span className="text-text-muted text-sm">Loading projects...</span>
-                </div>
+                <LoadingState message="Loading projects..." size="sm" withCard={false} />
             </div>
         );
     }

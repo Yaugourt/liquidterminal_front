@@ -52,7 +52,7 @@ export function UserAccountCompact() {
                     "stat-card flex items-center gap-1.5 cursor-pointer transition-colors",
                     user?.telegramUsername
                         ? "text-emerald-400 hover:border-emerald-500/40"
-                        : "text-[#0088cc] hover:border-[#0088cc]/40"
+                        : "text-brand-telegram hover:border-brand-telegram/40"
                 )}
                 title={user?.telegramUsername ? `Telegram: @${user.telegramUsername}` : 'Connect Telegram'}
             >

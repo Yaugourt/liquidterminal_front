@@ -1,4 +1,5 @@
 export { AuroraAreaChart } from './AuroraAreaChart';
+export type { AuroraDataPoint } from './AuroraAreaChart';
 export { AuroraHistogramChart } from './AuroraHistogramChart';
 export type { HistogramDataPoint } from './AuroraHistogramChart';
 export { ChartSkeleton } from './ChartSkeleton';

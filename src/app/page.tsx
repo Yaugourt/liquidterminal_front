@@ -21,8 +21,8 @@ export default function HomePage() {
       <JsonLd data={websiteSchema} />
       <Suspense
         fallback={
-          <div className="h-screen w-full overflow-hidden flex items-center justify-center bg-[#0B0E14]">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#83E9FF]/30 border-t-[#83E9FF]" />
+          <div className="h-screen w-full overflow-hidden flex items-center justify-center bg-brand-main">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-brand-accent/30 border-t-brand-accent" />
           </div>
         }
       >

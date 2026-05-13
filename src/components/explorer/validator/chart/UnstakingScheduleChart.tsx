@@ -2,7 +2,7 @@
 
 import { memo, useId, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
+import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common";
 import { useUnstakingStatsForChartWithDays } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
@@ -65,7 +65,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
             {formatDate(date, dateFormat)}
           </div>

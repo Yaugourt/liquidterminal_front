@@ -29,7 +29,7 @@ export function TrackerNavigation({ activeTab, onChange }: TrackerNavigationProp
         }))}
         activeTab={activeTab}
         onTabChange={(val) => onChange(val as "wallets" | "lists")}
-        className="bg-[#FFFFFF0A]"
+        className="bg-white/4"
       />
     </div>
   );

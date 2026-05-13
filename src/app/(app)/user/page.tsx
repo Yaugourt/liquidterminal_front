@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2, ShieldX } from 'lucide-react';
+import { ShieldX } from 'lucide-react';
 import { UserManagement } from '@/components/user/UserManagement';
 import { WikiModerationCard } from '@/components/wiki/moderation/WikiModerationCard';
-import { ProtectedAction } from '@/components/common/ProtectedAction';
+import { ProtectedAction } from '@/components/common';
+import { LoadingState } from '@/components/ui/loading-state';
 import { useAuthContext } from '@/contexts/auth.context';
 
 export default function UserPage() {
@@ -16,10 +17,7 @@ export default function UserPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF] mb-3" />
-          <span className="text-zinc-500 text-sm">Loading...</span>
-        </div>
+        <LoadingState message="Loading..." size="md" withCard={false} />
       </div>
     );
   }
@@ -28,7 +26,7 @@ export default function UserPage() {
   if (!user || user.role !== 'ADMIN') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-[#151A25]/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 text-center shadow-xl shadow-black/20 max-w-md">
+        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 text-center shadow-xl shadow-black/20 max-w-md">
           <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto mb-4">
             <ShieldX className="h-8 w-8 text-rose-400" />
           </div>
@@ -38,7 +36,7 @@ export default function UserPage() {
           </p>
           <Button
             onClick={() => router.push('/')}
-            className="bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/80 font-medium"
+            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 font-medium"
           >
             Return to Home
           </Button>

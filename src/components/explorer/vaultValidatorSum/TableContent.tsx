@@ -1,5 +1,5 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { NumberFormatType } from "@/store/number-format.store";
@@ -11,7 +11,7 @@ import { Liquidation } from "@/services/explorer/liquidation";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/formatters/dateFormatting";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { PaginationProps } from "@/components/common/pagination";
+import { PaginationProps } from "@/components/common";
 
 
 interface TableContentProps {

@@ -5,10 +5,10 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { EducationalCategory, EducationalResource } from "@/services/wiki/types";
-import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { useCreateEducationalCategory } from "@/services/wiki";
+import { CategoryForm, type CategoryFormData, ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Plus } from "lucide-react";
-import { CategoryForm } from "./forms/CategoryForm";
 import { ResourceForm } from "./forms/ResourceForm";
 import { CsvUploadForm } from "./forms/CsvUploadForm";
 
@@ -21,9 +21,30 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
   const [activeTab, setActiveTab] = useState("category");
   const { user } = useAuthContext();
 
+  // Category form state (managed locally — common <CategoryForm> is presentational).
+  const [categoryForm, setCategoryForm] = useState<CategoryFormData>({ name: "", description: "" });
+  const { createCategory, isLoading: creatingCategory } = useCreateEducationalCategory();
+
   const handleSuccess = (item?: EducationalCategory | EducationalResource) => {
     onSuccess?.(item);
     setOpen(false);
+  };
+
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!categoryForm.name.trim()) return;
+    try {
+      const created = await createCategory({
+        name: categoryForm.name,
+        description: categoryForm.description || undefined,
+      });
+      if (created) {
+        setCategoryForm({ name: "", description: "" });
+        handleSuccess(created.data);
+      }
+    } catch {
+      // Error handled silently
+    }
   };
 
   return (
@@ -61,7 +82,13 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
             </TabsList>
 
             <TabsContent value="category" className="mt-6">
-              <CategoryForm onSuccess={handleSuccess} onCancel={() => setOpen(false)} />
+              <CategoryForm
+                value={categoryForm}
+                onChange={setCategoryForm}
+                onSubmit={handleCategorySubmit}
+                onCancel={() => setOpen(false)}
+                isSubmitting={creatingCategory}
+              />
             </TabsContent>
 
             <TabsContent value="resource" className="mt-6">

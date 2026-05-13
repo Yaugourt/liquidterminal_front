@@ -8,7 +8,7 @@ import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsC
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
-import { SearchBar } from "@/components/common/SearchBar";
+import { SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";

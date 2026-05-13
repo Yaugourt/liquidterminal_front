@@ -28,10 +28,10 @@ export function AddressHeader({ address }: AddressHeaderProps) {
   return (
     <div className="mb-3 p-2">
       <div className="flex items-center gap-3 mb-1">
-        <span className="text-[#FFFFFF] text-xs tracking-wide font-medium uppercase">Address</span>
+        <span className="text-white text-xs tracking-wide font-medium uppercase">Address</span>
         {alias && !aliasLoading && (
           <div className="flex items-center gap-2">
-            <span className="text-[#83E9FF33] text-xs">•</span>
+            <span className="text-brand-accent/20 text-xs">•</span>
             <span className="text-brand-gold text-xs font-medium bg-brand-gold/10 px-2 py-0.5 rounded-md border border-brand-gold/20">
               {alias}
             </span>
@@ -39,7 +39,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
         )}
         {aliasLoading && (
           <div className="flex items-center gap-2">
-            <span className="text-[#83E9FF33] text-xs">•</span>
+            <span className="text-brand-accent/20 text-xs">•</span>
             <div className="h-4 w-20 bg-brand-accent/20 rounded-md animate-pulse"></div>
           </div>
         )}
@@ -55,7 +55,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
           <Tooltip open={showCopied}>
             <TooltipTrigger asChild>
               <button
-                className="group p-1.5 hover:bg-[#1E3851] rounded-lg transition-all flex-shrink-0"
+                className="group p-1.5 hover:bg-brand-tertiary rounded-lg transition-all flex-shrink-0"
                 onClick={copyToClipboard}
                 title="Copy address to clipboard"
               >

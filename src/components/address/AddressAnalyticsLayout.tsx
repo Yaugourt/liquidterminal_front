@@ -19,7 +19,7 @@ import { AddressTransactionList } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import {
   OrdersSection,
-  TwapSection,
+  AddressTwapSection,
 } from "@/components/explorer/address/orders";
 import { WalletRecentFillsSection } from "@/components/market/tracker/fills";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
@@ -168,7 +168,7 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
     case "orders":
       return <OrdersSection address={address} />;
     case "twap":
-      return <TwapSection address={address} />;
+      return <AddressTwapSection address={address} />;
     case "fills":
       return <WalletRecentFillsSection address={address} />;
     case "vaults":

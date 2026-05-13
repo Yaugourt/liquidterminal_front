@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { UnstakingStatsResponse, UseUnstakingStatsWithChartResult, UnstakingDailyStats, UnstakingTotalStats, UpcomingUnstakingStats } from '../../types/staking';
 import { fetchUnstakingStats } from '../../staking';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { ChartPeriod } from '@/components/common/charts/types/chart';
+import { ChartPeriod } from '@/components/common';
 
 /**
  * Hook interne pour récupérer les statistiques d'unstaking par jour

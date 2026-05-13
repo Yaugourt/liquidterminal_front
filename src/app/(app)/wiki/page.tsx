@@ -7,8 +7,7 @@ import { CategoryFilter } from "@/components/wiki/CategoryFilter";
 import { CategorySidebar } from "@/components/wiki/CategorySidebar";
 import { EducationModal } from "@/components/wiki/EducationModal";
 import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
-import { SearchBar } from "@/components/common/SearchBar";
-import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { SearchBar, ProtectedAction, chartPalette } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useHyperliquidInfo } from "@/hooks/useHyperliquidInfo";
 import { useHyperliquidEducation } from "@/hooks/useHyperliquidEducation";
@@ -104,7 +103,7 @@ export default function EducationPage() {
 
           <ResourcesSection
             selectedCategoryIds={selectedCategories}
-            sectionColor={hyperliquidInfo?.colors[0] || "#83E9FF"}
+            sectionColor={hyperliquidInfo?.colors[0] || chartPalette.accent}
             searchQuery={searchQuery}
           />
         </div>

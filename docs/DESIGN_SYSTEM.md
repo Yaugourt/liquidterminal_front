@@ -42,6 +42,29 @@
 | `brand-gold` | `#f9e370` | `text-brand-gold` | Secondary accent (gold) |
 | `brand-success` | `#00ff88` | `text-brand-success` | Success states |
 | `brand-error` | `#ef4444` | `text-brand-error` | Error states |
+| `brand-warning` | `#f59e0b` | `text-brand-warning` | Warning states |
+| `brand-telegram` | `#0088cc` | `text-brand-telegram` / `bg-brand-telegram` | External brand color (Telegram). Reserved for `TelegramLinkCard` and Telegram-flavored CTAs. |
+
+### RGB CSS Variables (animations with dynamic alpha)
+
+For animations that need a runtime-computed opacity (radial-gradient with hover state, box-shadow glow, etc.), use the RGB components defined in [`src/app/globals.css`](../src/app/globals.css):
+
+| Variable | Token | Usage |
+|----------|-------|-------|
+| `--brand-accent-rgb` | `brand-accent` | `rgb(var(--brand-accent-rgb) / 0.12)` — animated glow |
+| `--brand-gold-rgb` | `brand-gold` | idem for gold accents |
+| `--brand-success-rgb` | `brand-success` | idem |
+| `--brand-error-rgb` | `brand-error` | idem |
+| `--chart-up-rgb` | `chartPalette.up` (emerald) | candlestick/alerts |
+| `--chart-down-rgb` | `chartPalette.down` (rose) | candlestick/alerts |
+| `--chart-violet-rgb` | `chartPalette.violet` | multi-series charts |
+
+**Static opacities** still use Tailwind classes: `bg-brand-accent/30`, `text-white/50`, etc.
+**Dynamic opacities** (alpha computed at runtime from a ratio, hover state, etc.) use `rgb(var(--*-rgb) / X)`.
+
+### Chart Palette (multi-series)
+
+Charts with 3+ series cannot fit into "gold + blue shades" alone. The official secondary palette is centralized in [`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts) — see `chartPalette.multiSeries[]`. Hex literals in chart contexts MUST source from this file; everywhere else in `src/components/` they are forbidden (ESLint rule).
 
 ### Text Colors
 
@@ -179,6 +202,54 @@ The project uses **shadcn/ui** components, customized for the dark theme. Key co
 | Badge | `src/components/ui/badge.tsx` | Status indicators |
 | Tooltip | `src/components/ui/tooltip.tsx` | Info tooltips with cyan border |
 | Select | `src/components/ui/select.tsx` | Dropdown selection |
+| InlineSpinner | `src/components/ui/inline-spinner.tsx` | Small spinner for buttons/badges; use `<LoadingState>` for full-block loaders |
+| LoadingState | `src/components/ui/loading-state.tsx` | Block-level "Loading…" with optional card wrap |
+
+### Common primitives (Lot 4)
+
+Imported from `@/components/common` (single barrel). Adding a new common component? Export it from `src/components/common/index.ts` (the barrel) — direct sub-path imports are blocked by ESLint.
+
+| Component | Purpose |
+|-----------|---------|
+| `<FadeIn>` / `<HeroFadeIn>` | Scroll-triggered / initial-load fade-in (uses IntersectionObserver — no framer-motion dependency) |
+| `staggeredCardVariants` | Framer-motion variants for the "cards arrive in cascade" pattern (KPI rows, leaderboards) |
+| `<TooltipIcon>` | "`?`/`i` icon with tooltip" inline helper |
+| `<FormField>` | Form field wrapper (uppercase label + slot + error/helper) |
+| `<FormSection>` | Group of fields with optional title |
+| `<FormFooter>` | Cancel/Submit pair with `pt-4 border-t` styling |
+| `<FormModal>` | Standardised Dialog + DialogHeader for form-bearing modals (compose `<Tabs>` or `<FormSection>` inside as needed) |
+| `<CategoryForm>` | Concrete shared form for "name + description" (lifted-state) |
+| `useSortablePagination<T,F>` | Hook for tri-state column sort + paginated data |
+| `<SortableTableHead>` | Clickable column header with ArrowUpDown/Up/Down |
+| `<TablePaginationFooter>` | "Page N of M" + prev/next + windowed number buttons |
+| `<SortablePaginatedTableCard<T,F>>` | Top-level card composition for "Top X" / leaderboard tables — used by `TopTradersPreview`, `ActiveUsersPreview` |
+
+### Shared chart palette
+
+For charts with multi-series colors that don't fit "gold + blue shades", source from
+[`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts):
+
+- `chartPalette.accent` / `.gold` — brand cyan / gold
+- `chartPalette.up` / `.down` — candlestick green (emerald) / red (rose)
+- `chartPalette.violet` / `.cyanVariant` / `.emeraldLight` / `.roseSoft` / etc. — secondary chart hues
+- `chartPalette.multiSeries[]` — 10-color rotation for donuts / pies / stacked bars
+- `chartPalette.brandMain` / `.brandSecondary` / `.brandTertiary` / `.brandDark` — JS-side aliases for brand backgrounds
+- `chartColors.*` — internal palette used by Recharts / lightweight-charts options
+
+Hex literals are forbidden everywhere else in `src/components/**` (ESLint enforced).
+For dynamic alpha animations, see [RGB CSS Variables](#rgb-css-variables-animations-with-dynamic-alpha) above.
+
+### TWAP shared logic
+
+The progression math for time-weighted-average-price orders lives in
+[`src/services/twap`](../src/services/twap):
+
+- `calculateRealTimeProgression(twap)` — pure function, computes `{ progression, remainingValue, remainingAmount, isCompleted }`
+- `getRemainingTime(twap)` — "1h 23m" / "Completed" formatted string
+- `useTwapRealTime(twaps)` — polling hook (50 ms tick) returning a `Map<id, TwapRealTimeData>`
+
+Used by `dashboard/twap/TwapTable` and `explorer/address/orders/UserTwapTable`. Each call site
+keeps its own progress-bar palette (different by design).
 
 ---
 
@@ -774,19 +845,44 @@ When updating existing components, replace:
 
 ---
 
+## Governance (ESLint enforced — Lot 0)
+
+The following rules are enforced by [`eslint.config.mjs`](../eslint.config.mjs) on `src/components/**` and `src/app/**`:
+
+| Rule | Why |
+|---|---|
+| **No hex literal** (`"#83E9FF"`, etc.) | Use Tailwind tokens (`brand-accent`) or `chartTheme.ts` for charts. |
+| **No Tailwind arbitrary hex** (`text-[#83E9FF]`, `bg-[#xxx]`, `border-[#xxx]`, etc.) | Use tokens; for dynamic opacities use `rgb(var(--brand-accent-rgb) / X)`. |
+| **No `<input type="checkbox">`** | Use `<Checkbox>` from `@/components/ui/checkbox`. |
+| **No direct `Loader2` import** in app code | Use `<ChartSkeleton>` / `<ChartLoading>` (`@/components/common`) or `<LoadingState>` (`@/components/ui/loading-state`). |
+| **Barrel-only imports for `@/components/common`** | Import from `@/components/common`, not `@/components/common/StatsCard`. Missing exports → add to the barrel. |
+
+**SSOT overrides** (rules disabled — these files are the canonical implementations): `chartTheme.ts`, `ChartSkeleton.tsx`, `ChartStates.tsx`, `ui/loading-state.tsx`, `ui/checkbox.tsx`, `ui/sonner.tsx`.
+
+### Adding a new common component
+
+1. Implement in `src/components/common/<Name>.tsx` (or `common/<category>/<Name>.tsx`).
+2. Export from `src/components/common/index.ts` (the barrel).
+3. Document it in this file (section `Component Library`).
+4. Update `CLAUDE.md` / `AGENTS.md` if a non-obvious behavioral convention applies.
+
+---
+
 ## File Reference
 
 | Purpose | Location |
 |---------|----------|
 | Tailwind tokens | `tailwind.config.ts` |
 | Global CSS & utilities | `src/app/globals.css` |
+| ESLint config (governance rules) | `eslint.config.mjs` |
 | Sidebar component | `src/components/Sidebar.tsx` |
 | Sidebar config | `src/lib/sidebar-config.ts` |
 | Header component | `src/components/Header.tsx` |
-| UI components | `src/components/ui/` |
+| UI primitives (shadcn) | `src/components/ui/` |
+| Common components (barrel) | `src/components/common/index.ts` |
+| Chart palette SSOT | `src/components/common/charts/chartTheme.ts` |
 | Number formatting | `src/lib/formatters/numberFormatting.ts` |
 | Date formatting | `src/lib/formatters/dateFormatting.ts` |
-| Common components | `src/components/common/` |
 
 ---
 

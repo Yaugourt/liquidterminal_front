@@ -18,7 +18,7 @@ interface PreviewTabProps {
 export function PreviewTab({ formData }: PreviewTabProps) {
   return (
     <div className="space-y-6">
-      <div className="bg-[#112941] p-4 rounded-lg border border-[#1E3851]">
+      <div className="bg-brand-tertiary p-4 rounded-lg border border-brand-tertiary">
         <h3 className="text-lg font-semibold text-white mb-4">Review Your Submission</h3>
         
         <div className="space-y-4">
@@ -56,7 +56,7 @@ export function PreviewTab({ formData }: PreviewTabProps) {
             <div className="flex flex-wrap gap-1 mt-1">
               {formData.technologies.length > 0 ? (
                 formData.technologies.map(tech => (
-                  <Badge key={tech} variant="outline" className="border-[#1E3851] text-gray-300">
+                  <Badge key={tech} variant="outline" className="border-brand-tertiary text-gray-300">
                     {tech}
                   </Badge>
                 ))
@@ -71,7 +71,7 @@ export function PreviewTab({ formData }: PreviewTabProps) {
             <div className="flex flex-wrap gap-1 mt-1">
               {formData.targetUsers.length > 0 ? (
                 formData.targetUsers.map(user => (
-                  <Badge key={user} variant="outline" className="border-[#1E3851] text-gray-300 capitalize">
+                  <Badge key={user} variant="outline" className="border-brand-tertiary text-gray-300 capitalize">
                     {user}
                   </Badge>
                 ))
@@ -88,7 +88,7 @@ export function PreviewTab({ formData }: PreviewTabProps) {
                 {formData.supportTypes.map(type => {
                   const supportType = SUPPORT_TYPES.find(s => s.value === type);
                   return (
-                    <Badge key={type} variant="outline" className="border-[#1E3851] text-gray-300">
+                    <Badge key={type} variant="outline" className="border-brand-tertiary text-gray-300">
                       {supportType?.icon} {supportType?.label}
                     </Badge>
                   );
@@ -104,7 +104,7 @@ export function PreviewTab({ formData }: PreviewTabProps) {
                 {formData.contributorTypes.map(type => {
                   const contributorType = CONTRIBUTOR_TYPES.find(c => c.value === type);
                   return (
-                    <Badge key={type} variant="outline" className="border-[#1E3851] text-gray-300">
+                    <Badge key={type} variant="outline" className="border-brand-tertiary text-gray-300">
                       {contributorType?.icon} {contributorType?.label}
                     </Badge>
                   );

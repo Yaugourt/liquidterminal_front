@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { GitBranch, ChevronRight } from "lucide-react";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
-import { Loader2 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 interface VaultSubVaultsProps {
   childAddresses: string[];
 }
@@ -32,7 +32,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
 
       {isLoading ? (
         <div className="flex items-center gap-2 text-text-muted">
-          <Loader2 className="w-4 h-4 animate-spin text-brand-accent" />
+          <InlineSpinner className="text-brand-accent" />
           <span className="text-sm">Loading sub-vaults…</span>
         </div>
       ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -70,9 +70,8 @@ export function PriorityFeesLeaderboardCard({
 
       <div className="flex-1 min-h-[240px] rounded-xl border border-border-subtle overflow-hidden">
         {isLoading && entries.length === 0 ? (
-          <div className="flex h-[240px] items-center justify-center flex-col gap-2">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-            <span className="text-text-muted text-sm">Loading leaderboard…</span>
+          <div className="flex h-[240px]">
+            <LoadingState message="Loading leaderboard…" size="sm" withCard={false} />
           </div>
         ) : entries.length === 0 ? (
           <div className="flex h-[240px] items-center justify-center px-4 text-center text-sm text-text-secondary">

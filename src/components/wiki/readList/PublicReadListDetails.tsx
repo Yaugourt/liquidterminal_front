@@ -11,8 +11,9 @@ import {
   Copy,
   CheckCircle,
   Globe,
-  Loader2,
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { chartPalette } from "@/components/common";
 import { PublicReadList, ReadListItem } from "@/services/wiki/readList/types";
 import { formatDistanceToNow } from "date-fns";
 import { ResourceCard } from "../ResourceCard";
@@ -221,7 +222,7 @@ export function PublicReadListDetails({
                       description: item.notes || '',
                       image: ''
                     }}
-                    categoryColor="#83E9FF"
+                    categoryColor={chartPalette.accent}
                   />
                 </motion.div>
               ))}
@@ -233,7 +234,7 @@ export function PublicReadListDetails({
       {/* Loading indicator */}
       {loading && (
         <div className="flex justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-brand-accent" />
+          <InlineSpinner className="w-5 h-5 text-brand-accent" />
         </div>
       )}
     </motion.div>

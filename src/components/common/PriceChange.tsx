@@ -17,8 +17,8 @@ export function PriceChange({
 }: PriceChangeProps) {
   // Détermine la couleur en fonction de la valeur
   const getColorClass = (change: number) => {
-    if (change > 0) return "text-[#52C41A]"; // Vert
-    if (change < 0) return "text-[#FF4D4F]"; // Rouge
+    if (change > 0) return "text-emerald-500"; // Vert
+    if (change < 0) return "text-rose-500"; // Rouge
     return "text-white";
   };
 
@@ -51,8 +51,8 @@ export function PriceChange({
 }
 
 export function getPriceChangeColor(value: number): string {
-  if (value > 0) return "text-[#52C41A]"; // Vert
-  if (value < 0) return "text-[#FF4D4F]"; // Rouge
+  if (value > 0) return "text-emerald-500"; // Vert
+  if (value < 0) return "text-rose-500"; // Rouge
   return "text-white";
 }
 

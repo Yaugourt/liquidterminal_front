@@ -13,7 +13,7 @@ export function StakingTabButtons({ activeSubTab, onSubTabChange }: StakingTabBu
   ];
 
   return (
-    <div className="flex items-center bg-[#FFFFFF0A] rounded-md p-0.5 w-fit">
+    <div className="flex items-center bg-white/4 rounded-md p-0.5 w-fit">
       {tabs.map(tab => (
         <button
           key={tab.key}
@@ -21,7 +21,7 @@ export function StakingTabButtons({ activeSubTab, onSubTabChange }: StakingTabBu
           className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
             activeSubTab === tab.key
               ? 'bg-brand-accent text-brand-tertiary shadow-sm'
-              : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+              : 'text-white hover:text-white hover:bg-white/4'
           }`}
         >
           {tab.label}

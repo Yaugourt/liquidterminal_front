@@ -81,7 +81,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           <Switch
             checked={group.visible}
             onCheckedChange={() => onToggleGroup(group.id)}
-            className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B]"
+            className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-slate-500"
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
                 <Switch
                   checked={item.visible}
                   onCheckedChange={() => onToggleItem(group.id, item.id)}
-                  className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-[#64748B] scale-75"
+                  className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-slate-500 scale-75"
                 />
               </div>
             );

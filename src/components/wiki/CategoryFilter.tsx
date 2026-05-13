@@ -119,7 +119,7 @@ export function CategoryFilter({
         <div
           className={cn(
             "absolute top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-subtle",
-            "bg-gradient-to-br from-[#111826]/95 via-brand-secondary/90 to-[#0B0E14]/95",
+            "bg-gradient-to-br from-brand-secondary/95 via-brand-secondary/90 to-brand-main/95",
             "shadow-xl shadow-black/30 backdrop-blur-md",
           )}
         >

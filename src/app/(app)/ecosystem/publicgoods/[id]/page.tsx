@@ -3,7 +3,8 @@
 import { useState, use } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
 import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
 import { ProjectHeader } from "@/components/ecosystem/publicgoods/ProjectHeader";
@@ -85,10 +86,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="w-6 h-6 text-brand-accent animate-spin mb-2" />
-          <span className="text-zinc-500 text-sm">Loading project...</span>
-        </div>
+        <LoadingState message="Loading project..." size="sm" withCard={false} />
       </div>
     );
   }

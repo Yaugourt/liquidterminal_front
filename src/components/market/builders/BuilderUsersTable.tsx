@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeadLabel,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { ScrollableTable } from "@/components/common";
 import type { BuilderUserRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";

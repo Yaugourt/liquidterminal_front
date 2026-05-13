@@ -56,7 +56,7 @@ export function DeleteWalletDialog({
             Are you sure you want to delete this wallet?
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4 flex items-center gap-3 text-[#FF5252]">
+        <div className="py-4 flex items-center gap-3 text-rose-400">
           <AlertCircle className="h-5 w-5" />
           <p>This action is irreversible. The wallet &quot;{walletToDelete?.name}&quot; will be permanently deleted.</p>
         </div>
@@ -72,7 +72,7 @@ export function DeleteWalletDialog({
           <Button
             onClick={handleConfirmDelete}
             disabled={isLoading}
-            className="bg-[#FF5252] text-white hover:bg-[#FF5252]/90"
+            className="bg-rose-400 text-white hover:bg-rose-400/90"
           >
             {isLoading ? "Deleting..." : "Delete"}
           </Button>

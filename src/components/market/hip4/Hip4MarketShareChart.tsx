@@ -3,14 +3,13 @@
 import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
-import { ChartLoading, ChartEmpty } from "@/components/common/charts";
+import { ChartLoading, ChartEmpty, chartPalette, chartColors } from "@/components/common";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 import { categorizeMarket, CATEGORY_LABELS } from "@/lib/hip4-category";
 
-const SLICE_PALETTE = [
-  "#83E9FF", "#f9e370", "#a78bfa", "#10b981", "#f43f5e",
-  "#fb923c", "#ec4899", "#22d3ee", "#eab308", "#8b5cf6",
-];
+const SLICE_PALETTE = chartPalette.multiSeries;
+const SLICE_FALLBACK = chartColors.textMuted;
+const SLICE_OTHERS_COLOR = "rgb(82 82 91)";
 
 function compactUsd(n: number | null | undefined) {
   if (n == null || !Number.isFinite(n)) return "—";
@@ -27,7 +26,7 @@ interface ActiveShapeProps {
   fill?: string;
 }
 
-function ActiveArc({ cx = 0, cy = 0, innerRadius = 0, outerRadius = 0, startAngle = 0, endAngle = 0, fill = "#fff" }: ActiveShapeProps) {
+function ActiveArc({ cx = 0, cy = 0, innerRadius = 0, outerRadius = 0, startAngle = 0, endAngle = 0, fill = chartPalette.white }: ActiveShapeProps) {
   return (
     <g>
       <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius + 8} startAngle={startAngle} endAngle={endAngle} fill={fill} />
@@ -58,10 +57,10 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
     const slices = sorted.slice(0, 10).map(([name, value], i) => ({
       name,
       value,
-      color: SLICE_PALETTE[i] ?? "#71717a",
+      color: SLICE_PALETTE[i] ?? SLICE_FALLBACK,
     }));
     const othersValue = sorted.slice(10).reduce((s, [, v]) => s + v, 0);
-    if (othersValue > 0) slices.push({ name: "Others", value: othersValue, color: "#52525b" });
+    if (othersValue > 0) slices.push({ name: "Others", value: othersValue, color: SLICE_OTHERS_COLOR });
     return { slices, total };
   }, [markets]);
 

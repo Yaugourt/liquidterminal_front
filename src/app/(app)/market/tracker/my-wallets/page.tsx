@@ -8,7 +8,7 @@ import { WalletTabs } from "@/components/market/tracker";
 import { PortfolioStats, PerformanceChart } from "@/components/market/tracker/stats";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletAssetsNavigation } from "@/components/market/tracker/WalletAssetsNavigation";
-import { OrdersSection, TwapSection } from "@/components/explorer/address/orders";
+import { OrdersSection, AddressTwapSection } from "@/components/explorer/address/orders";
 import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
@@ -78,10 +78,10 @@ export default function MyWallets() {
 
         {/* Telegram Alert Banner - only show if authenticated and not linked */}
         {authenticated && !currentUser?.telegramUsername && (
-          <div className="mb-6 p-4 rounded-xl bg-[#0088cc]/10 border border-[#0088cc]/20 flex items-center justify-between">
+          <div className="mb-6 p-4 rounded-xl bg-brand-telegram/10 border border-brand-telegram/20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-[#0088cc]/20 flex items-center justify-center">
-                <TelegramIcon className="h-5 w-5 text-[#0088cc]" />
+              <div className="h-9 w-9 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
+                <TelegramIcon className="h-5 w-5 text-brand-telegram" />
               </div>
               <div>
                 <p className="text-sm font-medium text-white">Get wallet alerts on Telegram</p>
@@ -90,7 +90,7 @@ export default function MyWallets() {
             </div>
             <Button
               onClick={() => router.push('/profile')}
-              className="bg-[#0088cc] hover:bg-[#0088cc]/90 text-white text-sm"
+              className="bg-brand-telegram hover:bg-brand-telegram/90 text-white text-sm"
             >
               <TelegramIcon className="h-4 w-4 mr-2" />
               Connect
@@ -131,20 +131,20 @@ export default function MyWallets() {
           activeWallet?.address ? (
             <OrdersSection address={activeWallet.address} />
           ) : (
-            <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+            <div className="bg-brand-tertiary border-2 border-brand-accent/30 rounded-lg p-8 text-center">
               <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
-              <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
+              <p className="text-white/50 text-sm">No wallet selected</p>
             </div>
           )
         )}
 
         {activeAssetsTab === "twap" && (
           activeWallet?.address ? (
-            <TwapSection address={activeWallet.address} />
+            <AddressTwapSection address={activeWallet.address} />
           ) : (
-            <div className="bg-brand-tertiary border-2 border-[#83E9FF4D] rounded-lg p-8 text-center">
+            <div className="bg-brand-tertiary border-2 border-brand-accent/30 rounded-lg p-8 text-center">
               <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
-              <p className="text-[#FFFFFF80] text-sm">No wallet selected</p>
+              <p className="text-white/50 text-sm">No wallet selected</p>
             </div>
           )
         )}

@@ -7,7 +7,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { usePagination } from "@/hooks/core/usePagination";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 
 export function TransfersTable() {
     const transfersPagination = usePagination({ initialRowsPerPage: 5 });

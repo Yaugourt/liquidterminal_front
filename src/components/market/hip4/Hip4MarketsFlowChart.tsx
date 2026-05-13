@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ChartLoading, ChartEmpty } from "@/components/common/charts";
+import { ChartLoading, ChartEmpty } from "@/components/common";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 
 function compactUsd(n: number | null | undefined) {

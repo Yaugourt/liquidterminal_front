@@ -14,7 +14,8 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { OpenOrder } from '@/services/explorer/address/types';
 import { Pagination } from '@/components/common';
 import { formatNumberValue } from '@/services/explorer/address';
-import { Loader2, Database } from "lucide-react";
+import { Database } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface OpenOrdersListProps {
   orders: OpenOrder[];
@@ -37,10 +38,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-          <span className="text-[#FFFFFF80] text-sm">Loading orders...</span>
-        </div>
+        <LoadingState message="Loading orders..." size="sm" withCard={false} />
       </div>
     );
   }
@@ -49,9 +47,9 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
     return (
       <div className="flex justify-center items-center h-[200px]">
         <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-8 h-8 mb-3 text-[#83E9FF4D]" />
-          <p className="text-[#FF5757] text-sm mb-1">Error loading orders</p>
-          <p className="text-[#FFFFFF80] text-xs">Please try again later</p>
+          <Database className="w-8 h-8 mb-3 text-brand-accent/30" />
+          <p className="text-rose-400 text-sm mb-1">Error loading orders</p>
+          <p className="text-white/50 text-xs">Please try again later</p>
         </div>
       </div>
     );
@@ -109,9 +107,9 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
               <TableRow>
                 <TableCell colSpan={8} className="py-8">
                   <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-[#83E9FF4D]" />
+                    <Database className="w-10 h-10 mb-3 text-brand-accent/30" />
                     <p className="text-white text-sm mb-1">No open orders found</p>
-                    <p className="text-[#FFFFFF80] text-xs">Your active orders will appear here</p>
+                    <p className="text-white/50 text-xs">Your active orders will appear here</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -121,7 +119,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
       </div>
 
       {orders.length > 0 && (
-        <div className="border-t border-[#FFFFFF1A] px-4 py-2">
+        <div className="border-t border-white/10 px-4 py-2">
           <Pagination
             total={orders.length}
             page={page}

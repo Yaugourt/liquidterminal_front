@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { useOverviewDailyVolume10d } from "@/services/indexer/overview";
-import { AuroraAreaChart, type ChartDataPoint } from "@/components/common/charts/AuroraAreaChart";
-import { chartColors } from "@/components/common/charts/chartTheme";
+import { AuroraAreaChart, type AuroraDataPoint } from "@/components/common";
+import { chartColors } from "@/components/common";
 
 function formatVolumeUSD(value: number): string {
   if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1)}B`;
@@ -21,7 +21,7 @@ function parseDateToMs(dateStr: string): number {
 export function ExplorerVolumeChart() {
   const { data, isLoading } = useOverviewDailyVolume10d();
 
-  const chartData = useMemo((): ChartDataPoint[] =>
+  const chartData = useMemo((): AuroraDataPoint[] =>
     data
       .map((entry) => ({
         time: parseDateToMs(entry.date),

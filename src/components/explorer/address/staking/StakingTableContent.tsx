@@ -1,5 +1,5 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 import { CopyButton } from "@/components/ui/copy-button";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
@@ -62,7 +62,7 @@ export function StakingTableContent({
           </TableHeader>
           <TableBody>
             {delegationsData.delegations.map((delegation: ValidatorDelegation, index: number) => (
-              <TableRow key={`${delegation.validator}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+              <TableRow key={`${delegation.validator}-${index}`} className="border-b border-white/10 hover:bg-white/4">
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
                     <div className="flex flex-col">
@@ -133,7 +133,7 @@ export function StakingTableContent({
           </TableHeader>
           <TableBody>
             {historyData.history.map((tx: FormattedDelegatorHistoryItem) => (
-              <TableRow key={tx.hash} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+              <TableRow key={tx.hash} className="border-b border-white/10 hover:bg-white/4">
                 <TableCell className="py-3 px-4">
                   <div className="flex items-center gap-2">
                     <span className="text-brand-accent text-sm">
@@ -144,8 +144,8 @@ export function StakingTableContent({
                 </TableCell>
                 <TableCell className="py-3 px-4">
                   <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${tx.type === 'Undelegate'
-                    ? 'bg-[#FF575720] text-[#FF5757] border border-[#FF575740]'
-                    : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
+                    ? 'bg-rose-400/12 text-rose-400 border border-rose-400/25'
+                    : 'bg-emerald-400/12 text-emerald-400 border border-emerald-400/25'
                     }`}>
                     {tx.type}
                   </span>
@@ -215,16 +215,16 @@ export function StakingTableContent({
           </TableHeader>
           <TableBody>
             {rewardsData.rewards.map((reward: FormattedDelegatorRewardItem, index: number) => (
-              <TableRow key={`${reward.source}-${reward.timestamp}-${index}`} className="border-b border-[#FFFFFF1A] hover:bg-[#FFFFFF0A]">
+              <TableRow key={`${reward.source}-${reward.timestamp}-${index}`} className="border-b border-white/10 hover:bg-white/4">
                 <TableCell className="py-3 px-4">
                   <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${reward.source === 'commission'
-                    ? 'bg-[#F9E37020] text-[#F9E370] border border-[#F9E37040]'
-                    : 'bg-[#4ADE8020] text-[#4ADE80] border border-[#4ADE8040]'
+                    ? 'bg-brand-gold text-brand-gold border border-brand-gold'
+                    : 'bg-emerald-400/12 text-emerald-400 border border-emerald-400/25'
                     }`}>
                     {reward.source === 'commission' ? 'Commission' : 'Delegation'}
                   </span>
                 </TableCell>
-                <TableCell className="py-3 px-4 text-[#4ADE80]">
+                <TableCell className="py-3 px-4 text-emerald-400">
                   {formatNumber(reward.amount, format, { maximumFractionDigits: 6 })} HYPE
                 </TableCell>
                 <TableCell className="py-3 px-4 text-white">

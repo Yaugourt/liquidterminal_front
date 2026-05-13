@@ -81,7 +81,7 @@ function AuroraBarTooltip({
   const color = first?.payload?.color ?? defaultColor;
 
   return (
-    <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[140px]">
+    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[140px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
         {formatTime(ts)}
       </div>

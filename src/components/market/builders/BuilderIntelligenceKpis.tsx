@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { TrendingUp, Users, BarChart3, Coins } from "lucide-react";
 import { VariationBadge } from "./VariationBadge";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";

@@ -42,6 +42,9 @@ export default {
 					success: '#00ff88',
 					error: '#ef4444',
 					warning: '#f59e0b',
+					// External brand colors (third-party services).
+					// Document new additions in docs/DESIGN_SYSTEM.md.
+					telegram: '#0088cc',
 				},
 				// Semantic text colors
 				'text-primary': '#ffffff',

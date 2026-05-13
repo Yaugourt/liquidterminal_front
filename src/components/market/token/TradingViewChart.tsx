@@ -15,7 +15,6 @@ import {
   CrosshairMode,
   ColorType,
   IPriceLine,
-  PriceScaleMode,
 } from "lightweight-charts";
 import { motion, AnimatePresence } from "framer-motion";
 import { Radio, ChevronDown } from "lucide-react";
@@ -24,11 +23,24 @@ import {
   useTokenWebSocket,
   marketIndexToCoinId,
 } from "@/services/market/token";
-import { TokenCandle } from "@/services/market/token/types";
 import { Card } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ChartLoading, ChartEmpty, ChartError } from "@/components/common/charts";
-import { chartColors } from "@/components/common/charts/chartTheme";
+import { ChartLoading, ChartEmpty, ChartError } from "@/components/common";
+import { chartColors } from "@/components/common";
+import {
+  TIMEFRAMES,
+  QUICK_TIMEFRAMES,
+  PRICE_SCALE_OPTIONS,
+  toPriceScaleMode,
+  convertToCandlestickData,
+  convertToVolumeData,
+  getIntervalSeconds,
+  formatCompactUsd,
+  formatPrice,
+  type TimeframeType,
+  type PriceScaleModeKey,
+} from "./tradingViewChart/chart-helpers";
+import { TimeframePopover } from "./tradingViewChart/TimeframePopover";
+import { ToolbarStat } from "./tradingViewChart/ToolbarStat";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -41,128 +53,6 @@ interface TradingViewChartProps {
   overlayPerpCoinId?: string;
   /** Strike price drawn as a horizontal line on the overlay scale */
   overlayStrikePrice?: number;
-}
-
-type TimeframeType =
-  | "1m"
-  | "3m"
-  | "5m"
-  | "15m"
-  | "30m"
-  | "1h"
-  | "2h"
-  | "4h"
-  | "8h"
-  | "12h"
-  | "1d"
-  | "3d"
-  | "1w"
-  | "1M";
-
-const TIMEFRAMES: readonly TimeframeType[] = [
-  "1m",
-  "3m",
-  "5m",
-  "15m",
-  "30m",
-  "1h",
-  "2h",
-  "4h",
-  "8h",
-  "12h",
-  "1d",
-  "3d",
-  "1w",
-  "1M",
-] as const;
-
-// Quick-access bar: 5 most-used timeframes. The rest live in the "more" popover.
-const QUICK_TIMEFRAMES: readonly TimeframeType[] = ["1h", "1d", "1w"] as const;
-
-const TIMEFRAME_GROUPS: { label: string; items: readonly TimeframeType[] }[] = [
-  { label: "Minutes", items: ["1m", "3m", "5m", "15m", "30m"] },
-  { label: "Hours", items: ["1h", "2h", "4h", "8h", "12h"] },
-  { label: "Days & up", items: ["1d", "3d", "1w", "1M"] },
-];
-
-// Price scale mode — lets the user switch the Y axis between linear,
-// logarithmic, and percentage views. Persisted in localStorage.
-type PriceScaleModeKey = "normal" | "log" | "percent";
-
-const PRICE_SCALE_OPTIONS: {
-  key: PriceScaleModeKey;
-  label: string;
-  title: string;
-}[] = [
-  { key: "normal", label: "Lin", title: "Linear scale" },
-  { key: "log", label: "Log", title: "Logarithmic scale" },
-  { key: "percent", label: "%", title: "Percentage scale" },
-];
-
-const toPriceScaleMode = (k: PriceScaleModeKey): PriceScaleMode => {
-  switch (k) {
-    case "log":
-      return PriceScaleMode.Logarithmic;
-    case "percent":
-      return PriceScaleMode.Percentage;
-    case "normal":
-    default:
-      return PriceScaleMode.Normal;
-  }
-};
-
-// Helpers ──────────────────────────────────────────────────────────────
-const convertToCandlestickData = (candle: TokenCandle): CandlestickData<Time> => ({
-  time: Math.floor(candle.t / 1000) as Time,
-  open: parseFloat(candle.o),
-  high: parseFloat(candle.h),
-  low: parseFloat(candle.l),
-  close: parseFloat(candle.c),
-});
-
-const convertToVolumeData = (candle: TokenCandle): HistogramData<Time> => {
-  const up = parseFloat(candle.c) >= parseFloat(candle.o);
-  return {
-    time: Math.floor(candle.t / 1000) as Time,
-    value: parseFloat(candle.v),
-    color: up ? "rgba(16,185,129,0.35)" : "rgba(244,63,94,0.35)",
-  };
-};
-
-const getIntervalSeconds = (interval: TimeframeType): number => {
-  const value = parseInt(interval);
-  const unit = interval.slice(-1);
-  switch (unit) {
-    case "m":
-      return value * 60;
-    case "h":
-      return value * 3600;
-    case "d":
-      return value * 86400;
-    case "w":
-      return value * 604800;
-    case "M":
-      return value * 2592000;
-    default:
-      return 86400;
-  }
-};
-
-function formatCompactUsd(n: number) {
-  if (!Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
-}
-
-function formatPrice(n: number) {
-  if (!Number.isFinite(n)) return "—";
-  const abs = Math.abs(n);
-  if (abs >= 1000) return n.toFixed(2);
-  if (abs >= 1) return n.toFixed(3);
-  if (abs >= 0.01) return n.toFixed(4);
-  return n.toFixed(6);
 }
 
 interface HoverInfo {
@@ -766,101 +656,3 @@ export function TradingViewChart({
   );
 }
 
-// ── Timeframe "more" popover ───────────────────────────────────────────
-function TimeframePopover({
-  open,
-  onOpenChange,
-  selected,
-  onSelect,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  selected: TimeframeType;
-  onSelect: (t: TimeframeType) => void;
-}) {
-  const isSelectedInQuick = (QUICK_TIMEFRAMES as readonly string[]).includes(selected);
-  // When the current TF isn't in the quick bar, the trigger becomes the visible
-  // indicator and shows the active TF label in accent.
-  const triggerLabel = isSelectedInQuick ? null : selected;
-
-  return (
-    <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label="More timeframes"
-          className={`relative ml-0.5 flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[10.5px] font-semibold tabular-nums transition-colors ${triggerLabel
-            ? "bg-brand-accent/15 text-brand-accent ring-1 ring-brand-accent/40"
-            : open
-              ? "text-white bg-white/5"
-              : "text-text-secondary hover:text-white"
-            }`}
-        >
-          {triggerLabel ? <span>{triggerLabel}</span> : <span>···</span>}
-          <ChevronDown
-            className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
-          />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        sideOffset={6}
-        className="w-auto min-w-[220px] rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md p-2 shadow-2xl shadow-black/40"
-      >
-        <div className="flex flex-col gap-2">
-          {TIMEFRAME_GROUPS.map((group) => (
-            <div key={group.label}>
-              <div className="px-1 pb-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-text-muted">
-                {group.label}
-              </div>
-              <div className="grid grid-cols-5 gap-1">
-                {group.items.map((t) => {
-                  const isActive = selected === t;
-                  return (
-                    <button
-                      key={t}
-                      onClick={() => onSelect(t)}
-                      className={`relative rounded-md px-2 py-1 text-[11px] font-semibold tabular-nums transition-colors ${isActive
-                        ? "bg-brand-accent/15 text-brand-accent ring-1 ring-brand-accent/40"
-                        : "text-text-secondary hover:bg-white/5 hover:text-white"
-                        }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-// ── Small toolbar stat pill ────────────────────────────────────────────
-function ToolbarStat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "emerald" | "rose" | "accent";
-}) {
-  const dot =
-    tone === "emerald"
-      ? "bg-emerald-400"
-      : tone === "rose"
-        ? "bg-rose-400"
-        : "bg-brand-accent";
-  return (
-    <div className="flex items-center gap-1.5 rounded-md border border-border-subtle bg-white/[0.02] px-1.5 py-0.5 sm:gap-2 sm:px-2">
-      <span className={`h-1 w-1 rounded-full ${dot}`} />
-      <span className="text-[9px] font-semibold uppercase tracking-wider text-text-muted">
-        {label}
-      </span>
-      <span className="text-[11px] font-semibold text-white tabular-nums">{value}</span>
-    </div>
-  );
-}

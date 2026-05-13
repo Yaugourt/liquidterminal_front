@@ -6,6 +6,21 @@
 :root {
     --background: 220 20% 4%; /* #0B0E14 */
     --foreground: 0 0% 93%; /* #ededed */
+
+    /*
+     * RGB components of brand/chart tokens.
+     * Used by animations that need dynamic alpha (radial-gradient with
+     * runtime-computed opacity, box-shadow with hover state, etc).
+     * Usage: rgb(var(--brand-accent-rgb) / 0.12)
+     * SSOT — must match tailwind.config.ts brand colors and chartTheme.ts.
+     */
+    --brand-accent-rgb: 131 233 255;  /* #83E9FF */
+    --brand-gold-rgb: 249 227 112;    /* #f9e370 */
+    --brand-success-rgb: 0 255 136;   /* #00ff88 */
+    --brand-error-rgb: 239 68 68;     /* #ef4444 */
+    --chart-up-rgb: 16 185 129;       /* emerald #10b981 */
+    --chart-down-rgb: 244 63 94;      /* rose #f43f5e */
+    --chart-violet-rgb: 167 139 250;  /* #a78bfa */
 }
 
 @layer base {
@@ -124,11 +139,6 @@
     /* Pattern 4: Liens/boutons secondary */
     .interactive-secondary {
         @apply text-text-secondary hover:text-white hover:bg-white/5;
-    }
-
-    /* ===== Glassmorphism ===== */
-    .glass-panel {
-        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20;
     }
 }
 

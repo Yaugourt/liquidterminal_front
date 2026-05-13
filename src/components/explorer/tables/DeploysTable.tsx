@@ -7,7 +7,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { StatusBadge } from "@/components/ui/status-badge";
 import { usePagination } from "@/hooks/core/usePagination";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 
 export function DeploysTable() {
     const deploysPagination = usePagination({ initialRowsPerPage: 5 });

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChartDisplay } from "./ChartDisplay";
 import { FeesTabsButton } from "./FeesTabsButton";
-import { useChartPeriod } from '@/components/common/charts';
+import { useChartPeriod } from '@/components/common';
 import { useFeesChartData } from "@/services/dashboard";
 
 export const FeesChartSection = () => {

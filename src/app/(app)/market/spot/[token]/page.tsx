@@ -13,7 +13,7 @@ import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
 import { useTokenDetails } from "@/services/market/token";
 import { TradingLayout } from "@/layouts/TradingLayout";
-import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+import { ChartSkeleton } from "@/components/common";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(

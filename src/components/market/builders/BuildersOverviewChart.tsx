@@ -4,22 +4,21 @@ import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { ChartLoading, ChartEmpty } from "@/components/common/charts";
+import { ChartLoading, ChartEmpty, chartPalette, chartColors } from "@/components/common";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 
 type Metric = "totalVolume" | "totalBuilderFees" | "fillCount";
 
 const METRICS: { key: Metric; label: string; color: string; glow: string }[] = [
-  { key: "totalVolume", label: "Volume", color: "#83E9FF", glow: "rgba(131,233,255,0.35)" },
-  { key: "totalBuilderFees", label: "Builder Fees", color: "#f9e370", glow: "rgba(249,227,112,0.32)" },
-  { key: "fillCount", label: "Fills", color: "#a78bfa", glow: "rgba(167,139,250,0.32)" },
+  { key: "totalVolume", label: "Volume", color: chartPalette.accent, glow: "rgb(var(--brand-accent-rgb) / 0.35)" },
+  { key: "totalBuilderFees", label: "Builder Fees", color: chartPalette.gold, glow: "rgb(var(--brand-gold-rgb) / 0.32)" },
+  { key: "fillCount", label: "Fills", color: chartPalette.violet, glow: "rgb(var(--chart-violet-rgb) / 0.32)" },
 ];
 
-const SLICE_PALETTE = [
-  "#83E9FF", "#f9e370", "#a78bfa", "#10b981", "#f43f5e",
-  "#fb923c", "#ec4899", "#22d3ee", "#eab308", "#8b5cf6",
-];
+const SLICE_PALETTE = chartPalette.multiSeries;
+const SLICE_FALLBACK = chartColors.textMuted;
+const SLICE_OTHERS_COLOR = "rgb(82 82 91)"; // zinc-600 — neutral, distinct from palette
 
 function compactUsd(n: number) {
   if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
@@ -45,7 +44,7 @@ interface ActiveShapeProps {
 }
 
 function ActiveArc(props: ActiveShapeProps) {
-  const { cx = 0, cy = 0, innerRadius = 0, outerRadius = 0, startAngle = 0, endAngle = 0, fill = "#fff" } = props;
+  const { cx = 0, cy = 0, innerRadius = 0, outerRadius = 0, startAngle = 0, endAngle = 0, fill = chartPalette.white } = props;
   return (
     <g>
       <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius + 8} startAngle={startAngle} endAngle={endAngle} fill={fill} />
@@ -78,10 +77,10 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
       name: formatBuilderDisplayName(r.builderName),
       address: r.builder,
       value: (r[metric] as number) ?? 0,
-      color: SLICE_PALETTE[i] ?? "#71717a",
+      color: SLICE_PALETTE[i] ?? SLICE_FALLBACK,
     }));
     if (othersValue > 0) {
-      slices.push({ name: "Others", address: "others", value: othersValue, color: "#52525b" });
+      slices.push({ name: "Others", address: "others", value: othersValue, color: SLICE_OTHERS_COLOR });
     }
     return { slices, topRows: top, total, othersValue };
   }, [rows, metric]);

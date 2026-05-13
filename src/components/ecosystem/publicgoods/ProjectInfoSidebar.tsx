@@ -33,13 +33,13 @@ export function ProjectInfoSidebar({
                 <div className="space-y-3">
                     {project.discordContact && (
                         <div className="flex items-center gap-2">
-                            <MessageCircle className="w-4 h-4 text-[#5865F2]" />
+                            <MessageCircle className="w-4 h-4 text-indigo-500" />
                             <span className="text-text-secondary text-sm">{project.discordContact}</span>
                         </div>
                     )}
                     {project.telegramContact && (
                         <div className="flex items-center gap-2">
-                            <Send className="w-4 h-4 text-[#0088CC]" />
+                            <Send className="w-4 h-4 text-brand-telegram" />
                             <span className="text-text-secondary text-sm">{project.telegramContact}</span>
                         </div>
                     )}

@@ -4,7 +4,7 @@ import { TransactionListProps } from "@/components/types/explorer.types";
 import { useSpotTokens } from '@/services/market/spot/hooks/useSpotMarket';
 import { usePerpMarkets } from '@/services/market/perp/hooks/usePerpMarket';
 import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components/ui/table";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 import { TransactionRow } from "./TransactionRow";
 
 export function AddressTransactionList({ transactions, isLoading, error, currentAddress }: TransactionListProps) {

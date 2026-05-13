@@ -1,11 +1,13 @@
+import { chartColors, chartPalette } from "@/components/common";
+
 export const COLORS = {
-  positive: "#4ADE80",
-  negative: "#F87171",
-  neutral: "#FFFFFF",
-  primary: "#83E9FF",
-  textSecondary: "#FFFFFF99",
+  positive: chartPalette.emeraldLight,
+  negative: "rgb(248 113 113)", // tailwind rose-400 equivalent
+  neutral: "rgb(255 255 255)",
+  primary: chartPalette.accent,
+  textSecondary: "rgb(255 255 255 / 0.6)",
   border: "rgba(255, 255, 255, 0.05)",
-  background: "#0B0E14",
+  background: chartColors.labelBg, // = brand-main #0B0E14
 } as const;
 
 export const STYLES = {

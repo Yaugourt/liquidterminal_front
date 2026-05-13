@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import { StakingTabButtons, StakingTableContent } from "./staking";
 import { useValidatorDelegations } from "@/services/explorer/validator/hooks/validator/useValidatorDelegations";
 import { useStakingValidationsPaginated } from "@/services/explorer/validator/hooks/staking/useStakingValidationsPaginated";
@@ -149,7 +149,7 @@ export function StakingTable({ address }: StakingTableProps) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6">
           <div className="flex items-baseline gap-2">
             <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
-            <span className="text-[#4ADE80] text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-emerald-400 text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(stakingBalance, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">
@@ -171,7 +171,7 @@ export function StakingTable({ address }: StakingTableProps) {
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
-            <span className="text-[#F9E370] text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-brand-gold text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(pendingWithdrawal, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-white text-xs font-normal ml-1">

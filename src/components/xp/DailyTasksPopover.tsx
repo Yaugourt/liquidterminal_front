@@ -7,9 +7,9 @@ import {
   Circle,
   Gift,
   ChevronRight,
-  Loader2,
   ExternalLink
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import {
   Popover,
   PopoverContent,
@@ -35,7 +35,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
   if (isLoading && dailyTasks.length === 0) {
     return (
       <div className={cn("flex items-center gap-1.5", className)}>
-        <Loader2 className="h-3 w-3 animate-spin text-text-muted" />
+        <InlineSpinner className="h-3 w-3 text-text-muted" />
       </div>
     );
   }
@@ -76,7 +76,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
 
           {/* Bonus indicator if not all completed */}
           {!allDailyTasksCompleted && !dailyBonusClaimed && (
-            <span className="text-label text-[#F9E370]">
+            <span className="text-label text-brand-gold">
               +{dailyBonusXp}
             </span>
           )}
@@ -182,16 +182,16 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
             <div className={cn(
               "flex items-center gap-2 p-2 rounded-lg",
               allDailyTasksCompleted
-                ? "bg-[#F9E370]/20 border border-[#F9E370]/30"
+                ? "bg-brand-gold/20 border border-brand-gold/30"
                 : "bg-white/5 border border-border-subtle"
             )}>
               <Gift className={cn(
                 "h-4 w-4",
-                allDailyTasksCompleted ? "text-[#F9E370]" : "text-text-muted"
+                allDailyTasksCompleted ? "text-brand-gold" : "text-text-muted"
               )} />
               <span className={cn(
                 "text-xs",
-                allDailyTasksCompleted ? "text-[#F9E370] font-medium" : "text-text-secondary"
+                allDailyTasksCompleted ? "text-brand-gold font-medium" : "text-text-secondary"
               )}>
                 {allDailyTasksCompleted
                   ? `Bonus unlocked! +${dailyBonusXp} XP`

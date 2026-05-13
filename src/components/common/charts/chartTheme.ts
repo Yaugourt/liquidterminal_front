@@ -2,6 +2,8 @@ import { ColorType, CrosshairMode, LineStyle } from "lightweight-charts";
 import type { DeepPartial, ChartOptions } from "lightweight-charts";
 
 // ── Color palette ──────────────────────────────────────────────────────
+// SSOT for chart colors. This is the ONLY file in src/components allowed
+// to contain hex literals (enforced by ESLint override).
 export const chartColors = {
   bg: "transparent",
   textMuted: "#71717a",
@@ -18,6 +20,51 @@ export const chartColors = {
   cyanArea: "rgba(131, 233, 255, 0.30)",
   goldArea: "rgba(249, 227, 112, 0.30)",
 } as const;
+
+/**
+ * chartPalette — official secondary palette for charts.
+ *
+ * UI tokens stay brand-accent (cyan) + brand-gold. Charts that need more
+ * differentiation (multi-series donut, candlestick up/down, flow charts)
+ * MUST source colors from here instead of inlining hex literals.
+ *
+ * Sync with CSS variables in globals.css (--chart-up-rgb, --chart-down-rgb,
+ * --chart-violet-rgb) which are used for dynamic-alpha animations.
+ */
+export const chartPalette = {
+  accent: chartColors.cyan,        // brand-accent
+  gold: chartColors.gold,          // brand-gold
+  up: chartColors.emerald,         // candlestick green / positive
+  down: chartColors.rose,          // candlestick red / negative
+  violet: "#a78bfa",
+  cyanVariant: "#6bd4f0",          // slightly desaturated cyan (chart-specific)
+  emeraldLight: "#4ade80",         // emerald-400 (also covers #34d399 close enough)
+  roseLight: "#ff5252",
+  roseSoft: "#f87171",             // rose-400 — used by Hip4Prices / TableRow PnL
+  amber: "#fbbf24",
+  pink: "#ec4899",
+  /** JS-side brand background tokens (mirrors tailwind.config.ts `brand.*`). */
+  brandMain: "#0B0E14",
+  brandSecondary: "#151A25",
+  brandTertiary: "#051728",
+  brandDark: "#0A0D12",
+  white: "rgb(255 255 255)",
+  /** 10-color palette for multi-series charts (donuts, pies, stacked bars). */
+  multiSeries: [
+    chartColors.cyan,    // 0
+    chartColors.gold,    // 1
+    "#a78bfa",           // 2 violet
+    "#6bd4f0",           // 3 cyan variant
+    chartColors.emerald, // 4
+    chartColors.rose,    // 5
+    "#fb923c",           // 6 orange
+    "#ec4899",           // 7 pink
+    "#eab308",           // 8 yellow
+    "#8b5cf6",           // 9 purple
+  ] as readonly string[],
+} as const;
+
+export type ChartPalette = typeof chartPalette;
 
 // ── Recharts axis / grid shared props ──────────────────────────────────
 export const rechartsAxisDefaults = {

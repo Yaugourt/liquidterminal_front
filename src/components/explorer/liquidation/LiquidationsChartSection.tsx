@@ -8,7 +8,8 @@ import {
   ChartError,
   DataFreshness,
   AuroraHistogramChart,
-} from "@/components/common/charts";
+  chartPalette,
+} from "@/components/common";
 import { useLiquidationsContext, CHART_PERIOD_OPTIONS } from "./LiquidationsContext";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
@@ -39,7 +40,7 @@ export const LiquidationsChartSection = () => {
     return chartBuckets.map((bucket) => {
       // Couleur basée sur la direction dominante
       const longRatio = bucket.totalVolume > 0 ? bucket.longVolume / bucket.totalVolume : 0.5;
-      const color = longRatio > 0.5 ? "#10b981" : "#f43f5e"; // emerald for longs, rose for shorts
+      const color = longRatio > 0.5 ? chartPalette.up : chartPalette.down; // emerald for longs, rose for shorts
       const value = selectedChart === 'volume' ? bucket.totalVolume : bucket.liquidationsCount;
 
       return {
@@ -194,7 +195,7 @@ export const LiquidationsChartSection = () => {
         ) : (
           <AuroraHistogramChart
             data={chartData}
-            defaultColor="#f43f5e"
+            defaultColor={chartPalette.down}
             formatValue={formatYAxisValue}
             onCrosshairMove={handleCrosshairMove}
           />

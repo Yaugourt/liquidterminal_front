@@ -134,7 +134,7 @@ export function WalletListTabs({
         </Button>
         <Button
           onClick={onCreateList}
-          className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
+          className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Create List
@@ -245,9 +245,9 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 hover:bg-[#FFFFFF0A] rounded"
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-white/4 rounded"
         >
-          <GripVertical className="w-3 h-3 text-[#FFFFFF80]" />
+          <GripVertical className="w-3 h-3 text-white/50" />
         </div>
 
         <div className="flex flex-col items-start">

@@ -3,9 +3,9 @@
 import { Card } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable } from "@/components/common";
 
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import { usePagination } from "@/hooks/core/usePagination";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
 import { useDateFormat } from "@/store/date-format.store";

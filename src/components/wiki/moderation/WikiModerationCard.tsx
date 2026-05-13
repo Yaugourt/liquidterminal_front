@@ -11,10 +11,10 @@ import {
     CheckCircle,
     XCircle,
     ExternalLink,
-    Loader2,
     RefreshCw,
     Clock
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { toast } from "sonner";
 
 function PendingResourceItem({
@@ -71,7 +71,7 @@ function PendingResourceItem({
                         disabled={isApproving || isRejecting}
                         className="bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20"
                     >
-                        {isApproving ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3 mr-1" />}
+                        {isApproving ? <InlineSpinner className="w-3 h-3" /> : <CheckCircle className="w-3 h-3 mr-1" />}
                         Approuver
                     </Button>
                     <Button
@@ -100,7 +100,7 @@ function PendingResourceItem({
                             disabled={isRejecting}
                             className="bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20"
                         >
-                            {isRejecting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Confirmer le rejet"}
+                            {isRejecting ? <InlineSpinner className="w-3 h-3" /> : "Confirmer le rejet"}
                         </Button>
                         <Button
                             size="sm"
@@ -179,7 +179,7 @@ export function WikiModerationCard() {
             <div className="p-4">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-8">
-                        <Loader2 className="w-5 h-5 animate-spin text-brand-accent" />
+                        <InlineSpinner className="w-5 h-5 text-brand-accent" />
                     </div>
                 ) : resources.length === 0 ? (
                     <div className="text-center py-8 text-text-muted text-sm">

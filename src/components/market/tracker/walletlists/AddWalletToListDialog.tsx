@@ -123,7 +123,7 @@ export function AddWalletToListDialog({
           <Button
             onClick={handleAddWallet}
             disabled={isLoading}
-            className="bg-brand-accent text-brand-tertiary hover:bg-[#6bd4f0] font-medium"
+            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent font-medium"
           >
             {isLoading ? "Adding..." : "Add to List"}
           </Button>

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod } from '@/components/common';
 import { useAuctions } from '../hooks/useAuctions';
 
 

@@ -118,11 +118,11 @@ export function CreateWalletListDialog({
 
           <div className="flex items-center justify-between p-4 bg-brand-dark border border-border-subtle rounded-xl hover:border-border-hover transition-all">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-[#F9E370]/10'}`}>
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-brand-gold/10'}`}>
                 {isPublic ? (
                   <Users size={20} className="text-emerald-400" />
                 ) : (
-                  <Lock size={20} className="text-[#F9E370]" />
+                  <Lock size={20} className="text-brand-gold" />
                 )}
               </div>
               <div>

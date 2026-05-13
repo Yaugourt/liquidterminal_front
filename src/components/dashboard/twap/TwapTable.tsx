@@ -1,5 +1,6 @@
-import { memo, useState, useEffect } from "react";
-import { Loader2, Database, Copy, Check } from "lucide-react";
+import { memo, useState } from "react";
+import { Database, Copy, Check } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import {
@@ -12,51 +13,17 @@ import {
   TableHeadLabel,
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { ScrollableTable } from "@/components/common";
+import { getRemainingTime, useTwapRealTime, type TwapRealTimeData } from "@/services/twap";
 import { TwapTableProps, TwapTableData } from "./types";
 import Link from "next/link";
-
-// Types for real-time data
-interface RealTimeData {
-  progression: number;
-  remainingValue: number;
-  remainingAmount: number;
-  isCompleted: boolean;
-}
 
 const formatAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-
-// Utility function to calculate real-time TWAP progression
-const calculateRealTimeProgression = (twap: TwapTableData): RealTimeData => {
-  const startTime = twap.time;
-  const durationMs = twap.duration * 60 * 1000; // minutes to ms
-  const currentTime = Date.now();
-  const elapsedTime = currentTime - startTime;
-
-  // Calculate smooth progression based on elapsed time (not suborders)
-  const timeProgressionPercent = Math.min(100, Math.max(0, (elapsedTime / durationMs) * 100));
-
-  // Calculate remaining quantity and value based on smooth time progression
-  const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
-  const originalAmount = parseFloat(twap.amount);
-  const remainingAmount = originalAmount * (remainingPercent / 100);
-
-  // For value calculation, use the remaining amount with current token price
-  const remainingValue = remainingAmount * (twap.value / parseFloat(twap.amount));
-
-  return {
-    progression: timeProgressionPercent,
-    remainingValue: Math.max(0, remainingValue),
-    remainingAmount: remainingAmount,
-    isCompleted: timeProgressionPercent >= 100
-  };
-};
-
 // Composant mémorisé pour la cellule Value unifiée (Type + Value)
-const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
+const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, TwapRealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const value = realTime ? realTime.remainingValue : twap.value;
 
@@ -78,7 +45,7 @@ const ValueCell = memo(ValueCellComponent);
 ValueCell.displayName = 'ValueCell';
 
 // Composant mémorisé pour la cellule Token (dynamique)
-const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData>, format: NumberFormatType }) => {
+const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableData, realTimeData: Map<string, TwapRealTimeData>, format: NumberFormatType }) => {
   const realTime = realTimeData.get(twap.id);
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
 
@@ -93,32 +60,10 @@ const TokenCell = memo(TokenCellComponent);
 TokenCell.displayName = 'TokenCell';
 
 // Composant mémorisé pour la cellule Progression (dynamique)
-const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, RealTimeData> }) => {
+const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, realTimeData: Map<string, TwapRealTimeData> }) => {
   const realTime = realTimeData.get(twap.id);
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
-
-  const getRemainingTime = () => {
-    const startTime = twap.time;
-    const durationMs = twap.duration * 60 * 1000;
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const remainingMs = Math.max(0, durationMs - elapsedTime);
-
-    if (remainingMs === 0) return "Completed";
-
-    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
-      return `${minutes}m ${seconds}s`;
-    } else {
-      return `${seconds}s`;
-    }
-  };
 
   const getProgressColor = (progression: number) => {
     if (progression < 30) return "bg-emerald-500";
@@ -131,7 +76,7 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
           <span className="text-label text-text-muted">
-            {getRemainingTime()}
+            {getRemainingTime(twap)}
           </span>
           <span className="text-label text-white">
             {roundedProgression.toFixed(1)}%
@@ -196,34 +141,7 @@ export const TwapTable = memo(({
 }: TwapTableProps) => {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const { format } = useNumberFormat();
-  const [realTimeData, setRealTimeData] = useState<Map<string, RealTimeData>>(new Map());
-
-  // Real-time update effect
-  useEffect(() => {
-    if (!twaps || twaps.length === 0) return;
-
-    const updateRealTimeData = () => {
-      const newRealTimeData = new Map();
-
-      twaps.forEach(twap => {
-        // Only update active TWAP orders (not completed, cancelled, or errored)
-        if (!twap.ended && !twap.error) {
-          const realTimeCalc = calculateRealTimeProgression(twap);
-          newRealTimeData.set(twap.id, realTimeCalc);
-        }
-      });
-
-      setRealTimeData(newRealTimeData);
-    };
-
-    // Initial calculation
-    updateRealTimeData();
-
-    // Update every 50ms for ultra real-time precision
-    const interval = setInterval(updateRealTimeData, 50);
-
-    return () => clearInterval(interval);
-  }, [twaps]);
+  const realTimeData = useTwapRealTime(twaps);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -239,10 +157,7 @@ export const TwapTable = memo(({
     <div className="w-full h-full flex flex-col">
       {isLoading ? (
         <div className="flex justify-center items-center h-[200px]">
-          <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-text-muted text-sm">Chargement...</span>
-          </div>
+          <LoadingState message="Chargement..." size="sm" withCard={false} />
         </div>
       ) : error ? (
         <div className="flex justify-center items-center h-[200px]">

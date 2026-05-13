@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { BarChart3, DollarSign, Users, Zap } from "lucide-react";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import type { BuildersGlobalStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";

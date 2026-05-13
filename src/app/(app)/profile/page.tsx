@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button";
 import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard, XpEarnGuide } from "@/components/xp";
 import { Shield, Users, Wallet, BookOpen, Copy, Activity, List, LucideIcon, Flame, Send } from "lucide-react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { usePrivy } from "@privy-io/react-auth";
@@ -121,7 +122,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
     if (!currentUser) return (
         <div className="flex items-center justify-center min-h-[50vh]">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+            <LoadingState size="md" withCard={false} />
         </div>
     );
 
@@ -130,7 +131,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
             {/* Header Profile */}
             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-brand-secondary/60 backdrop-blur-md p-6 rounded-2xl border border-white/5 shadow-xl shadow-black/20">
                 <div className="flex items-center gap-4">
-                    <Avatar className="h-20 w-20 ring-2 ring-[#F9E370] ring-offset-2 ring-offset-brand-secondary">
+                    <Avatar className="h-20 w-20 ring-2 ring-brand-gold ring-offset-2 ring-offset-brand-secondary">
                         {privyUser?.twitter?.profilePictureUrl ? (
                             <Image
                                 src={getProfilePictureUrl(privyUser.twitter.profilePictureUrl)!}
@@ -141,7 +142,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                 unoptimized
                             />
                         ) : (
-                            <AvatarFallback className="bg-brand-dark text-[#F9E370] text-3xl font-bold">
+                            <AvatarFallback className="bg-brand-dark text-brand-gold text-3xl font-bold">
                                 {currentUser.name?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         )}
@@ -149,15 +150,15 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     <div>
                         <div className="flex items-center gap-2">
                             <h1 className="text-2xl font-bold text-white">{currentUser.name}</h1>
-                            {currentUser.verified && <Shield className="h-5 w-5 text-[#F9E370]" />}
+                            {currentUser.verified && <Shield className="h-5 w-5 text-brand-gold" />}
                         </div>
                         <p className="text-zinc-400 capitalize">{currentUser.role.toLowerCase()} Member</p>
                         <div className="flex items-center gap-2 mt-2">
                             {isLoadingXp ? (
-                                <Loader2 className="h-4 w-4 animate-spin text-brand-accent" />
+                                <InlineSpinner className="text-brand-accent" />
                             ) : xpStats ? (
                                 <>
-                                    <span className="px-2 py-0.5 bg-[#F9E370]/10 text-[#F9E370] text-xs rounded-md border border-[#F9E370]/20 font-medium">
+                                    <span className="px-2 py-0.5 bg-brand-gold/10 text-brand-gold text-xs rounded-md border border-brand-gold/20 font-medium">
                                         Lvl {xpStats.level}
                                     </span>
                                     <span className="px-2 py-0.5 bg-brand-accent/10 text-brand-accent text-xs rounded-md border border-brand-accent/20 font-medium">
@@ -218,7 +219,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     </TabsTrigger>
                     <TabsTrigger
                         value="xp-history"
-                        className="text-zinc-400 data-[state=active]:bg-[#F9E370] data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
+                        className="text-zinc-400 data-[state=active]:bg-brand-gold data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
                     >
                         XP History
                     </TabsTrigger>
@@ -270,8 +271,8 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                         </div>
 
                                         {isLoadingListItems ? (
-                                            <div className="flex items-center justify-center py-12 border border-dashed border-white/5 rounded-xl">
-                                                <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+                                            <div className="border border-dashed border-white/5 rounded-xl py-12">
+                                                <LoadingState size="sm" withCard={false} />
                                             </div>
                                         ) : displayedWallets.length > 0 ? (
                                             <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-brand">
@@ -354,7 +355,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                         <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
                             <div className="p-4 border-b border-white/5">
                                 <h3 className="flex items-center gap-2 text-white font-semibold">
-                                    <BookOpen className="h-5 w-5 text-[#F9E370]" />
+                                    <BookOpen className="h-5 w-5 text-brand-gold" />
                                     Knowledge Base
                                 </h3>
                             </div>
@@ -362,7 +363,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                 <TabsList className="w-full grid grid-cols-2 bg-brand-dark/50 rounded-none border-b border-white/5 p-1">
                                     <TabsTrigger
                                         value="readlists"
-                                        className="text-zinc-400 data-[state=active]:bg-[#F9E370]/10 data-[state=active]:text-[#F9E370] data-[state=active]:font-semibold rounded-md text-xs transition-all"
+                                        className="text-zinc-400 data-[state=active]:bg-brand-gold/10 data-[state=active]:text-brand-gold data-[state=active]:font-semibold rounded-md text-xs transition-all"
                                     >
                                         <BookOpen className="w-3 h-3 mr-1" />
                                         Read Lists
@@ -381,8 +382,8 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                             {readLists.map(list => (
                                                 <div key={list.id} className="flex justify-between items-center p-3 bg-brand-dark rounded-xl border border-white/5 hover:border-white/10 transition-colors">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
-                                                            <BookOpen className="h-4 w-4 text-[#F9E370]" />
+                                                        <div className="h-8 w-8 rounded-lg bg-brand-gold/10 flex items-center justify-center">
+                                                            <BookOpen className="h-4 w-4 text-brand-gold" />
                                                         </div>
                                                         <div>
                                                             <div className="font-medium text-sm text-white">{list.name}</div>
@@ -401,7 +402,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                     ) : (
                                         <div className="text-center py-8">
                                             <p className="text-zinc-500">No reading lists created yet.</p>
-                                            <Button className="mt-4 bg-[#F9E370] text-brand-tertiary hover:bg-[#F9E370]/90 font-semibold rounded-lg" asChild>
+                                            <Button className="mt-4 bg-brand-gold text-brand-tertiary hover:bg-brand-gold/90 font-semibold rounded-lg" asChild>
                                                 <a href="/wiki">Explore Wiki</a>
                                             </Button>
                                         </div>
@@ -439,7 +440,7 @@ export default function ProfilePage() {
     return (
         <Suspense fallback={
             <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+                <LoadingState size="md" withCard={false} />
             </div>
         }>
             <ProfileTabs />

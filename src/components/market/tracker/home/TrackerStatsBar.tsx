@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { Loader2, TrendingUp, DollarSign, Activity, Trophy, Crown, Zap } from "lucide-react";
+import { TrendingUp, DollarSign, Activity, Trophy, Crown, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 /**
  * Barre de statistiques et wallets notables pour la home page du tracker
@@ -117,7 +118,7 @@ export function TrackerStatsBar() {
     return (
       <Card className="p-6">
         <div className="flex items-center justify-center gap-3">
-          <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
+          <InlineSpinner className="w-5 h-5 text-brand-accent" />
           <span className="text-text-muted text-sm">Loading tracker stats...</span>
         </div>
       </Card>

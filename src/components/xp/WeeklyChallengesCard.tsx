@@ -12,10 +12,10 @@ import {
   Wallet,
   Clock,
   Trophy,
-  Loader2,
   Star,
   ExternalLink
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { WeeklyChallengeType } from "@/services/xp/types";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -70,7 +70,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
   if (isLoading && weeklyChallenges.length === 0) {
     return (
       <div className={cn("flex items-center justify-center p-4", className)}>
-        <Loader2 className="h-5 w-5 animate-spin text-[#F9E370]" />
+        <InlineSpinner className="h-5 w-5 text-brand-gold" />
       </div>
     );
   }
@@ -83,15 +83,15 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
         "bg-brand-secondary/60 border border-border-subtle",
         className
       )}>
-        <Trophy className="h-4 w-4 text-[#F9E370]" />
+        <Trophy className="h-4 w-4 text-brand-gold" />
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <span className="text-xs text-text-secondary">Weekly</span>
-            <span className="text-xs text-[#F9E370] font-medium">{completedCount}/{weeklyChallenges.length}</span>
+            <span className="text-xs text-brand-gold font-medium">{completedCount}/{weeklyChallenges.length}</span>
           </div>
           <div className="h-1.5 bg-brand-dark rounded-full overflow-hidden mt-1">
             <div
-              className="h-full bg-gradient-to-r from-[#F9E370] to-purple-500 transition-all"
+              className="h-full bg-gradient-to-r from-brand-gold to-purple-500 transition-all"
               style={{ width: `${(completedCount / Math.max(weeklyChallenges.length, 1)) * 100}%` }}
             />
           </div>
@@ -117,8 +117,8 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#F9E370]/20 to-purple-500/20 flex items-center justify-center border border-[#F9E370]/30">
-            <Trophy className="h-4 w-4 text-[#F9E370]" />
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-gold/20 to-purple-500/20 flex items-center justify-center border border-brand-gold/30">
+            <Trophy className="h-4 w-4 text-brand-gold" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Weekly Challenges</h3>
@@ -137,9 +137,9 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
 
       {/* XP Summary */}
       <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
-        <Star className="h-4 w-4 text-[#F9E370]" />
+        <Star className="h-4 w-4 text-brand-gold" />
         <span className="text-sm text-text-secondary">XP Earned:</span>
-        <span className="text-sm font-bold text-[#F9E370]">{totalXpEarned}</span>
+        <span className="text-sm font-bold text-brand-gold">{totalXpEarned}</span>
         <span className="text-sm text-text-muted">/ {totalXpAvailable}</span>
       </div>
 

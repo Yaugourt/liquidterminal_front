@@ -10,10 +10,10 @@ import {
   Wallet,
   Trophy,
   Gift,
-  Loader2,
   Send,
   ListPlus
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { DailyTaskType } from "@/services/xp/types";
 
 interface DailyTasksWidgetProps {
@@ -35,7 +35,7 @@ const TASK_COLORS: Record<DailyTaskType, string> = {
   LOGIN: "text-emerald-400",
   READ_RESOURCE: "text-cyan-400",
   ADD_WALLET: "text-brand-accent",
-  EXPLORE_LEADERBOARD: "text-[#F9E370]",
+  EXPLORE_LEADERBOARD: "text-brand-gold",
   SUBMIT_RESOURCE: "text-purple-400",
   CREATE_READLIST: "text-pink-400",
   CREATE_WALLETLIST: "text-blue-400",
@@ -54,7 +54,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   if (isLoading && dailyTasks.length === 0) {
     return (
       <div className={cn("flex items-center justify-center p-4", className)}>
-        <Loader2 className="h-5 w-5 animate-spin text-[#F9E370]" />
+        <InlineSpinner className="h-5 w-5 text-brand-gold" />
       </div>
     );
   }
@@ -93,7 +93,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
           {dailyTasksCompletedCount}/{dailyTasks.length}
         </span>
         {!allDailyTasksCompleted && (
-          <span className="text-xs text-[#F9E370]">+{dailyBonusXp} bonus</span>
+          <span className="text-xs text-brand-gold">+{dailyBonusXp} bonus</span>
         )}
       </div>
     );
@@ -124,11 +124,11 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
           <div className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full",
             allDailyTasksCompleted
-              ? "bg-[#F9E370]/20 border border-[#F9E370]/40 animate-pulse"
-              : "bg-[#F9E370]/10 border border-[#F9E370]/20"
+              ? "bg-brand-gold/20 border border-brand-gold/40 animate-pulse"
+              : "bg-brand-gold/10 border border-brand-gold/20"
           )}>
-            <Gift className="h-3.5 w-3.5 text-[#F9E370]" />
-            <span className="text-xs font-bold text-[#F9E370]">+{dailyBonusXp} XP</span>
+            <Gift className="h-3.5 w-3.5 text-brand-gold" />
+            <span className="text-xs font-bold text-brand-gold">+{dailyBonusXp} XP</span>
           </div>
         )}
         {dailyBonusClaimed && (
@@ -192,13 +192,13 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
       <div className="mt-4 pt-4 border-t border-border-subtle">
         <div className="flex items-center justify-between text-xs mb-2">
           <span className="text-text-secondary">Daily progress</span>
-          <span className="text-[#F9E370] font-medium">
+          <span className="text-brand-gold font-medium">
             {Math.round((dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100)}%
           </span>
         </div>
         <div className="h-2 bg-brand-dark rounded-full overflow-hidden border border-border-subtle">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 to-[#F9E370] transition-all duration-500"
+            className="h-full bg-gradient-to-r from-emerald-500 to-brand-gold transition-all duration-500"
             style={{ width: `${(dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100}%` }}
           />
         </div>

@@ -1,3 +1,3 @@
 export { TabSelector } from './TabSelector';
-export { DataTable } from './DataTable';
+export { BlockTxTable } from './BlockTxTable';
 export { RecentDataTable } from './RecentDataTable';

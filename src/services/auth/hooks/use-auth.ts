@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { authService, User, AuthError, LoginCredentials } from "../index";
+import { registerPrivyAccessTokenGetter, registerPrivyLogout } from "../../api/privy.service";
 
 export function useAuth() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -13,6 +14,17 @@ export function useAuth() {
   useEffect(() => {
     setIsInitialized(true);
   }, []);
+
+  // Bridge Privy SDK methods to module-level registry so axios interceptors
+  // (outside React) can fetch tokens and trigger logout without touching localStorage.
+  useEffect(() => {
+    registerPrivyAccessTokenGetter(getAccessToken);
+    registerPrivyLogout(privyLogout);
+    return () => {
+      registerPrivyAccessTokenGetter(null);
+      registerPrivyLogout(null);
+    };
+  }, [getAccessToken, privyLogout]);
 
   const ensureUserInitialized = useCallback(async () => {
     if (!authenticated || !privyUser) return false;
@@ -45,41 +57,23 @@ export function useAuth() {
   }, [authenticated, privyUser, getAccessToken]);
 
   const logout = useCallback(async () => {
-    // Reset state first
     setUser(null);
     setUserProcessed(false);
     setError(null);
-    
-    // Clear all tokens and cache
+
     if (typeof window !== 'undefined') {
-      // Clear all Privy-related keys + authToken from localStorage
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.includes('privy') || key === 'authToken')) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
-      
-      // Clear axios cache
       try {
-        const { clearCache } = await import('../../api/axios-config');
+        const [{ clearCache }, { clearAuthTokens }] = await Promise.all([
+          import('../../api/axios-config'),
+          import('../../api/privy.service'),
+        ]);
         clearCache();
-      } catch {
-        // Silent fail
-      }
-      
-      // Clear auth tokens via service
-      try {
-        const { clearAuthTokens } = await import('../../api/privy.service');
         clearAuthTokens();
       } catch {
         // Silent fail
       }
     }
-    
-    // Logout from Privy
+
     privyLogout();
   }, [privyLogout]);
 
@@ -114,28 +108,13 @@ export function useAuth() {
       setUser(null);
       setError(null);
       
-      // Clear any cached tokens before login
       if (typeof window !== 'undefined') {
-        const keysToRemove: string[] = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.includes('privy') || key === 'authToken')) {
-            keysToRemove.push(key);
-          }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-        
-        // Clear axios cache to force fresh requests
         try {
-          const { clearCache } = await import('../../api/axios-config');
+          const [{ clearCache }, { clearAuthTokens }] = await Promise.all([
+            import('../../api/axios-config'),
+            import('../../api/privy.service'),
+          ]);
           clearCache();
-        } catch {
-          // Silent fail
-        }
-        
-        // Clear auth tokens via service
-        try {
-          const { clearAuthTokens } = await import('../../api/privy.service');
           clearAuthTokens();
         } catch {
           // Silent fail

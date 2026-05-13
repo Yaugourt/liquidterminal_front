@@ -44,9 +44,9 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
 
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-4 shadow-xl shadow-black/20">
-            <div className="h-10 w-10 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-[#F9E370]" />
+          <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-brand-gold/20 rounded-xl p-4 shadow-xl shadow-black/20">
+            <div className="h-10 w-10 rounded-lg bg-brand-gold/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
               <p className="font-bold text-white">
@@ -85,12 +85,12 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
     if (stats && previousLevel.current !== null && stats.level > previousLevel.current) {
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-[#F9E370]/20 border border-[#F9E370]/50 rounded-xl p-4 shadow-xl shadow-[#F9E370]/10 animate-pulse">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#F9E370] to-purple-500 flex items-center justify-center">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-brand-gold/20 border border-brand-gold/50 rounded-xl p-4 shadow-xl shadow-brand-gold/10 animate-pulse">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-gold to-purple-500 flex items-center justify-center">
               <Star className="h-6 w-6 text-brand-tertiary fill-brand-tertiary" />
             </div>
             <div>
-              <p className="font-bold text-[#F9E370] text-lg">
+              <p className="font-bold text-brand-gold text-lg">
                 Level Up! 🎉
               </p>
               <p className="text-sm text-white">
@@ -130,12 +130,12 @@ export function useXpRefetch() {
 export function showXpGainToast(amount: number, action: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-[#F9E370]/20 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
-          <Star className="h-4 w-4 text-[#F9E370]" />
+      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-brand-gold/20 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-brand-gold/10 flex items-center justify-center">
+          <Star className="h-4 w-4 text-brand-gold" />
         </div>
         <div>
-          <p className="font-bold text-[#F9E370]">+{amount} XP</p>
+          <p className="font-bold text-brand-gold">+{amount} XP</p>
           <p className="text-xs text-text-secondary">{action}</p>
         </div>
       </div>
@@ -166,7 +166,7 @@ export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGra
           <p className="font-bold text-emerald-400">Daily Task Completed!</p>
           <p className="text-xs text-text-secondary">{taskName} +{xpGranted} XP</p>
           {bonusGranted && bonusGranted > 0 && (
-            <p className="text-xs text-[#F9E370]">All tasks bonus: +{bonusGranted} XP!</p>
+            <p className="text-xs text-brand-gold">All tasks bonus: +{bonusGranted} XP!</p>
           )}
         </div>
       </div>
@@ -188,14 +188,14 @@ export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGra
 export function showWeeklyChallengeToast(xpReward: number, challengeName: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-[#F9E370]/20 border border-[#F9E370]/30 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-[#F9E370]/10 flex items-center justify-center">
-          <TrendingUp className="h-4 w-4 text-[#F9E370]" />
+      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-brand-gold/20 border border-brand-gold/30 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-brand-gold/10 flex items-center justify-center">
+          <TrendingUp className="h-4 w-4 text-brand-gold" />
         </div>
         <div>
-          <p className="font-bold text-[#F9E370]">Weekly Challenge Complete!</p>
+          <p className="font-bold text-brand-gold">Weekly Challenge Complete!</p>
           <p className="text-xs text-text-secondary">{challengeName}</p>
-          <p className="text-xs text-[#F9E370]">+{xpReward} XP</p>
+          <p className="text-xs text-brand-gold">+{xpReward} XP</p>
         </div>
       </div>
     ),

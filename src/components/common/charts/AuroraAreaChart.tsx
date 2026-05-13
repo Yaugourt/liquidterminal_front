@@ -12,13 +12,17 @@ import {
 } from "recharts";
 import { chartColors } from "./chartTheme";
 
-export interface ChartDataPoint {
+/**
+ * Aurora-specific data shape (uses `time` as the x-axis key).
+ * Distinct from the generic `ChartDataPoint` in `types/chart.ts` which uses `timestamp`.
+ */
+export interface AuroraDataPoint {
   time: number;
   value: number;
 }
 
 interface AuroraAreaChartProps {
-  data: ChartDataPoint[];
+  data: AuroraDataPoint[];
   height?: number;
   lineColor?: string;
   /**
@@ -56,7 +60,7 @@ function defaultFormatTime(ms: number) {
 
 interface TooltipPayloadItem {
   value?: number | string;
-  payload?: ChartDataPoint;
+  payload?: AuroraDataPoint;
 }
 
 interface AuroraTooltipProps {
@@ -85,7 +89,7 @@ function AuroraTooltip({
   if (!Number.isFinite(value)) return null;
 
   return (
-    <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[140px]">
+    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[140px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
         {formatTime(ts)}
       </div>

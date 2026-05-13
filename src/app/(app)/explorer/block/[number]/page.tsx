@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation"
 import { useBlockDetails } from "@/services/explorer"
 import { use, useCallback } from "react"
 import { BlockHeader, BlockTransactionList as TransactionList } from "@/components/explorer"
-import { Loader2, AlertCircle } from "lucide-react"
+import { AlertCircle } from "lucide-react"
+import { LoadingState } from "@/components/ui/loading-state"
 
 interface BlockDetailsProps {
     params: Promise<{
@@ -30,10 +31,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-[400px]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
-                    <p className="text-white text-lg">Loading block details...</p>
-                </div>
+                <LoadingState message="Loading block details..." size="md" withCard={false} />
             </div>
         );
     }

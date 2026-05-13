@@ -2,11 +2,11 @@ import { Card } from "@/components/ui/card";
 import { UserTwapTable } from "./UserTwapTable";
 import { useUserTwapOrders } from "@/services/explorer/address";
 
-interface TwapSectionProps {
+interface AddressTwapSectionProps {
   address: string;
 }
 
-export function TwapSection({ address }: TwapSectionProps) {
+export function AddressTwapSection({ address }: AddressTwapSectionProps) {
   // Hook pour récupérer les TWAP orders (logique métier intégrée)
   const {
     orders: twapOrders,

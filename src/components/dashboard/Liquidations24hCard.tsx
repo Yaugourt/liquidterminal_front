@@ -4,13 +4,13 @@ import { Card } from "@/components/ui/card";
 import { useLiquidations24h } from "@/services/dashboard";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { 
-  Zap, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign 
+import {
+  Zap,
+  TrendingUp,
+  TrendingDown,
+  DollarSign
 } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 interface Liquidations24hCardProps {
   className?: string;
@@ -49,7 +49,7 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
 
       {isLoading ? (
         <div className="flex items-center justify-center h-20">
-          <Loader2 className="w-5 h-5 text-white/20 animate-spin" />
+          <InlineSpinner className="w-5 h-5 text-white/20" />
         </div>
       ) : (
         <>

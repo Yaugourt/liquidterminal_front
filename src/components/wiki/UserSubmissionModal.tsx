@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Plus } from "lucide-react";
 import { UserSubmissionForm } from "./UserSubmissionForm";
