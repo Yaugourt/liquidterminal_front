@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { env } from '@/lib/env';
-import { WebSocketClient } from '@/services/core/WebSocketClient';
+import { WebSocketClient } from '@/lib/websocket-client';
 import { 
   Liquidation, 
   LiquidationWSStore, 

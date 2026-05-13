@@ -5,34 +5,42 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { BarChart3, Layers, Building2, TrendingUp, Activity, Wifi, WifiOff } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
-import { LoadingState } from "@/components/ui/loading-state";
-import { ErrorState } from "@/components/ui/error-state";
+import { StatsPanel } from "@/components/common";
 
-/**
- * Carte affichant les statistiques globales des PerpDexs (HIP-3) avec données live
- */
+interface InlineStatProps {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+  valueClassName?: string;
+}
+
+function InlineStat({ icon, label, value, valueClassName }: InlineStatProps) {
+  return (
+    <div>
+      <div className="text-stat-label mb-1 flex items-center">
+        <span className="mr-1.5">{icon}</span>
+        {label}
+      </div>
+      <div className={valueClassName ?? "text-white font-bold text-lg"}>{value}</div>
+    </div>
+  );
+}
+
+const usdFormat = { minimumFractionDigits: 0, maximumFractionDigits: 0, currency: '$', showCurrency: true } as const;
+
 export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
   const { globalStats, isLoading, error, wsConnected } = usePerpDexMarketData();
   const { format } = useNumberFormat();
-
-  if (error) {
-    return (
-      <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 h-full">
-        <ErrorState title="Failed to load stats" withCard={false} />
-      </div>
-    );
-  }
+  const avgFunding = globalStats?.avgFunding ?? 0;
 
   return (
-    <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 h-full flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center">
-            <BarChart3 size={16} className="text-brand-accent" />
-          </div>
-          <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">HIP-3 Overview</h3>
-        </div>
+    <StatsPanel
+      title="HIP-3 Overview"
+      icon={<BarChart3 size={16} className="text-brand-accent" />}
+      isLoading={isLoading}
+      error={error}
+      errorTitle="Failed to load stats"
+      headerAction={
         <div className="flex items-center gap-2">
           {wsConnected ? (
             <Wifi className="h-3 w-3 text-emerald-400" />
@@ -43,101 +51,48 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
             LIVE
           </span>
         </div>
-      </div>
-
-      {/* Stats */}
-      {isLoading ? (
-        <LoadingState message="" size="sm" withCard={false} />
-      ) : (
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm flex-1 content-center">
-          {/* Total Dexs */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <Building2 className="h-3 w-3 text-brand-accent mr-1.5" />
-              Active DEXs
-            </div>
-            <div className="text-white font-bold text-lg">
-              {globalStats?.totalDexs || 0}
-            </div>
-          </div>
-
-          {/* Active Markets */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <Layers className="h-3 w-3 text-brand-accent mr-1.5" />
-              Active Markets
-            </div>
-            <div className="text-white font-bold text-lg">
+      }
+    >
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm content-center h-full">
+        <InlineStat
+          icon={<Building2 className="h-3 w-3 text-brand-accent" />}
+          label="Active DEXs"
+          value={globalStats?.totalDexs || 0}
+        />
+        <InlineStat
+          icon={<Layers className="h-3 w-3 text-brand-accent" />}
+          label="Active Markets"
+          value={
+            <>
               {globalStats?.activeMarkets || 0}
               <span className="text-text-muted text-xs font-normal ml-1">
                 / {globalStats?.totalAssets || 0}
               </span>
-            </div>
-          </div>
-
-          {/* 24h Volume */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
-              24h Volume
-            </div>
-            <div className="text-white font-bold text-lg">
-              {globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              }) : '$0'}
-            </div>
-          </div>
-
-          {/* Open Interest */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <TrendingUp className="h-3 w-3 text-brand-accent mr-1.5" />
-              Open Interest
-            </div>
-            <div className="text-white font-bold text-lg">
-              {globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              }) : '$0'}
-            </div>
-          </div>
-
-          {/* Total OI Cap */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <BarChart3 className="h-3 w-3 text-brand-accent mr-1.5" />
-              Total OI Cap
-            </div>
-            <div className="text-white font-bold text-lg">
-              {globalStats?.totalOiCap ? formatNumber(globalStats.totalOiCap, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              }) : '$0'}
-            </div>
-          </div>
-
-          {/* Avg Funding */}
-          <div>
-            <div className="text-stat-label mb-1 flex items-center">
-              <Activity className="h-3 w-3 text-brand-accent mr-1.5" />
-              Avg Funding
-            </div>
-            <div className={`font-bold text-lg ${(globalStats?.avgFunding || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {globalStats?.avgFunding 
-                ? `${(globalStats.avgFunding * 100).toFixed(4)}%`
-                : '0.0000%'}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </>
+          }
+        />
+        <InlineStat
+          icon={<Activity className="h-3 w-3 text-brand-accent" />}
+          label="24h Volume"
+          value={globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, usdFormat) : "$0"}
+        />
+        <InlineStat
+          icon={<TrendingUp className="h-3 w-3 text-brand-accent" />}
+          label="Open Interest"
+          value={globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, usdFormat) : "$0"}
+        />
+        <InlineStat
+          icon={<BarChart3 className="h-3 w-3 text-brand-accent" />}
+          label="Total OI Cap"
+          value={globalStats?.totalOiCap ? formatNumber(globalStats.totalOiCap, format, usdFormat) : "$0"}
+        />
+        <InlineStat
+          icon={<Activity className="h-3 w-3 text-brand-accent" />}
+          label="Avg Funding"
+          value={globalStats?.avgFunding ? `${(globalStats.avgFunding * 100).toFixed(4)}%` : "0.0000%"}
+          valueClassName={`font-bold text-lg ${avgFunding >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+        />
+      </div>
+    </StatsPanel>
   );
 });
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -10,10 +10,13 @@ import {
   TableHeader,
   TableRow,
   TableCell,
-  SortableTableHead,
   TableHeadLabel,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common";
+import {
+  ScrollableTable,
+  SortableTableHead,
+  useSortablePagination,
+} from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,7 +31,7 @@ interface BuildersTopTableProps {
   error: Error | null;
 }
 
-type SortKey = "name" | "totalVolume" | "totalBuilderFees" | "uniqueUsers" | "fillCount";
+type SortField = "name" | "totalVolume" | "totalBuilderFees" | "uniqueUsers" | "fillCount";
 
 const PAGE_SIZE = 25;
 const RANK_COLORS = ["text-brand-gold", "text-zinc-300", "text-amber-600"];
@@ -36,39 +39,30 @@ const RANK_COLORS = ["text-brand-gold", "text-zinc-300", "text-amber-600"];
 export function BuildersTopTable({ rows, isLoading, error }: BuildersTopTableProps) {
   const router = useRouter();
   const { format } = useNumberFormat();
-  const [page, setPage] = useState(0);
-  const [sortKey, setSortKey] = useState<SortKey>("totalVolume");
-  const [sortAsc, setSortAsc] = useState(false);
 
-  const sorted = useMemo(() => {
-    return [...rows].sort((a, b) => {
-      if (sortKey === "name") {
-        const na = formatBuilderDisplayName(a.builderName).toLowerCase();
-        const nb = formatBuilderDisplayName(b.builderName).toLowerCase();
-        return sortAsc ? na.localeCompare(nb) : nb.localeCompare(na);
-      }
-      const va = (a[sortKey] as number) ?? 0;
-      const vb = (b[sortKey] as number) ?? 0;
-      return sortAsc ? va - vb : vb - va;
-    });
-  }, [rows, sortKey, sortAsc]);
-
-  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
-  const pageRows = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const {
+    page,
+    setPage,
+    sortField,
+    sortDirection,
+    handleColumnSort,
+    paginatedData: pageRows,
+    sortedData,
+    startIndex,
+  } = useSortablePagination<BuilderTopRow, SortField>({
+    data: rows,
+    itemsPerPage: PAGE_SIZE,
+    getSortValue: (row, field) => {
+      if (field === "name") return formatBuilderDisplayName(row.builderName).toLowerCase();
+      return (row[field] as number) ?? 0;
+    },
+    initialSort: { field: "totalVolume", direction: "desc" },
+  });
 
   const maxVolume = useMemo(
     () => Math.max(...rows.map((r) => r.totalVolume ?? 0), 1),
     [rows]
   );
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) setSortAsc((v) => !v);
-    else {
-      setSortKey(key);
-      setSortAsc(false);
-      setPage(0);
-    }
-  };
 
   if (error) {
     return <ErrorState title="Failed to load top builders" message={error.message} withCard={false} />;
@@ -93,9 +87,9 @@ export function BuildersTopTable({ rows, isLoading, error }: BuildersTopTablePro
     <div className="glass-panel rounded-2xl border border-border-subtle overflow-hidden">
       <ScrollableTable
         pagination={
-          totalPages > 1
+          sortedData.length > PAGE_SIZE
             ? {
-                total: sorted.length,
+                total: sortedData.length,
                 page,
                 rowsPerPage: PAGE_SIZE,
                 rowsPerPageOptions: [25],
@@ -112,44 +106,54 @@ export function BuildersTopTable({ rows, isLoading, error }: BuildersTopTablePro
               <TableHead className="w-10">
                 <TableHeadLabel>#</TableHeadLabel>
               </TableHead>
-              <SortableTableHead
-                label="Builder"
-                isActive={sortKey === "name"}
-                sortDirection={sortKey === "name" ? (sortAsc ? "asc" : "desc") : undefined}
-                onClick={() => handleSort("name")}
-              />
-              <SortableTableHead
-                label="Volume"
-                isActive={sortKey === "totalVolume"}
-                sortDirection={sortKey === "totalVolume" ? (sortAsc ? "asc" : "desc") : undefined}
-                onClick={() => handleSort("totalVolume")}
-              />
-              <SortableTableHead
+              <SortableTableHead<SortField>
+                field="name"
+                currentField={sortField}
+                direction={sortDirection}
+                onSort={handleColumnSort}
+              >
+                Builder
+              </SortableTableHead>
+              <SortableTableHead<SortField>
+                field="totalVolume"
+                currentField={sortField}
+                direction={sortDirection}
+                onSort={handleColumnSort}
+              >
+                Volume
+              </SortableTableHead>
+              <SortableTableHead<SortField>
+                field="totalBuilderFees"
+                currentField={sortField}
+                direction={sortDirection}
+                onSort={handleColumnSort}
                 className="hidden sm:table-cell"
-                label="Builder Fees"
-                isActive={sortKey === "totalBuilderFees"}
-                sortDirection={sortKey === "totalBuilderFees" ? (sortAsc ? "asc" : "desc") : undefined}
-                onClick={() => handleSort("totalBuilderFees")}
-              />
-              <SortableTableHead
+              >
+                Builder Fees
+              </SortableTableHead>
+              <SortableTableHead<SortField>
+                field="uniqueUsers"
+                currentField={sortField}
+                direction={sortDirection}
+                onSort={handleColumnSort}
                 className="hidden md:table-cell"
-                label="Users"
-                isActive={sortKey === "uniqueUsers"}
-                sortDirection={sortKey === "uniqueUsers" ? (sortAsc ? "asc" : "desc") : undefined}
-                onClick={() => handleSort("uniqueUsers")}
-              />
-              <SortableTableHead
+              >
+                Users
+              </SortableTableHead>
+              <SortableTableHead<SortField>
+                field="fillCount"
+                currentField={sortField}
+                direction={sortDirection}
+                onSort={handleColumnSort}
                 className="hidden lg:table-cell"
-                label="Fills"
-                isActive={sortKey === "fillCount"}
-                sortDirection={sortKey === "fillCount" ? (sortAsc ? "asc" : "desc") : undefined}
-                onClick={() => handleSort("fillCount")}
-              />
+              >
+                Fills
+              </SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {pageRows.map((row, idx) => {
-              const globalRank = page * PAGE_SIZE + idx;
+              const globalRank = startIndex + idx;
               const label = formatBuilderDisplayName(row.builderName);
               const initial = label === "—" ? row.builder.slice(2, 3) : label.charAt(0);
               const volumePct = (row.totalVolume / maxVolume) * 100;

@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { TrendingUp, Users, BarChart3, Coins } from "lucide-react";
-import { VariationBadge } from "./VariationBadge";
 import { StatsCard } from "@/components/common";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -76,13 +75,9 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
             title={item.label}
             value={item.value}
             icon={item.icon}
+            change={typeof item.pct === "number" && Number.isFinite(item.pct) ? item.pct : undefined}
             valueClassName={item.valueClassName}
           />
-          {item.pct !== null && item.pct !== undefined && (
-            <div className="mt-1 px-4">
-              <VariationBadge pct={item.pct} />
-            </div>
-          )}
         </motion.div>
       ))}
     </div>

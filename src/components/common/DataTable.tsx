@@ -1,7 +1,9 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useCallback, useState } from "react";
 import { Database } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Pagination, PaginationProps } from "./pagination";
+import { Pagination, type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
 import {
     Table,
@@ -15,21 +17,78 @@ import {
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Card } from "@/components/ui/card";
+import { SortableTableHead } from "./tables/SortableTableHead";
+import { TablePaginationFooter } from "./tables/TablePaginationFooter";
+import {
+    useSortablePagination,
+    type SortDirection,
+} from "./tables/useSortablePagination";
+
+// ─── Public types ─────────────────────────────────────────────────────
 
 /**
- * Column definition for typed DataTable
+ * Column definition for `TypedDataTable`. Each column declares a stable
+ * `key` (used as React key + sort field), a header label, and an accessor
+ * that maps a row to a cell node (or to a row property).
+ *
+ * Mark `sortable: true` to make the column header clickable; supply
+ * `getSortValue` (or rely on the column's numeric/string `accessor`) to
+ * extract the value used by the local sort engine.
  */
 export interface Column<T> {
-    header: string;
-    accessor: keyof T | ((item: T) => ReactNode);
+    /**
+     * Stable identifier — used as React key AND as the sort field name.
+     * Optional for backward-compat: falls back to column index when omitted.
+     * REQUIRED when `sortable: true` (used by the sort engine).
+     */
+    key?: string;
+    /** Header label (string or any ReactNode). */
+    header: ReactNode;
+    /**
+     * Maps a row to a cell node. Either a property key (`'name'`) or a
+     * function `(row, index, absoluteIndex) => ReactNode`:
+     * - `index` is the row's position within the current page (0..pageSize-1).
+     * - `absoluteIndex` is the row's position within the full sorted dataset
+     *   when TypedDataTable owns pagination (local mode); equal to `index`
+     *   otherwise. Use it for global "Rank"-style cells.
+     * Function accessors are required for computed cells (formatting,
+     * badges, multiple values).
+     */
+    accessor: keyof T | ((item: T, index: number, absoluteIndex: number) => ReactNode);
+    /** Cell text alignment. */
     align?: "left" | "right" | "center";
+    /** Header alignment (defaults to `align`). */
     headerAlign?: "left" | "right" | "center";
+    /** Extra class on the column's header AND cells. */
     className?: string;
+    /** Fixed column width (e.g. `'140px'`, `'12%'`). Applied via inline style on `<TableHead>`. */
+    width?: string | number;
+    /** When true, the header is clickable and toggles the active sort. */
+    sortable?: boolean;
+    /**
+     * Maps a row to a comparable value for sorting. Required when
+     * `sortable: true` and the `accessor` is a function. If `accessor` is
+     * a `keyof T` and points to a number/string, this is optional.
+     */
+    getSortValue?: (item: T) => number | string;
 }
 
-/**
- * Base props for wrapper-style DataTable (children-based)
- */
+type Density = "compact" | "comfortable";
+
+interface DensityStyles {
+    cellPaddingY: string;
+    cellPaddingX: string;
+    textSize: string;
+}
+
+const DENSITY_STYLES: Record<Density, DensityStyles> = {
+    comfortable: { cellPaddingY: "py-3", cellPaddingX: "px-4", textSize: "text-sm" },
+    compact:     { cellPaddingY: "py-2", cellPaddingX: "px-3", textSize: "text-xs" },
+};
+
+// ─── DataTable wrapper (children-based) ───────────────────────────────
+
 interface DataTableWrapperProps {
     isLoading?: boolean;
     error?: Error | null;
@@ -48,34 +107,11 @@ interface DataTableWrapperProps {
 }
 
 /**
- * Props for typed DataTable with columns
- */
-interface DataTableWithColumnsProps<T> {
-    data: T[];
-    columns: Column<T>[];
-    isLoading?: boolean;
-    error?: Error | null;
-    /** Shown when error is set; Retry button if provided */
-    onErrorRetry?: () => void | Promise<void>;
-    emptyMessage?: string;
-    className?: string;
-    textSize?: "xs" | "sm";
-    // Pagination
-    total?: number;
-    page?: number;
-    rowsPerPage?: number;
-    onPageChange?: (newPage: number) => void;
-    onRowsPerPageChange?: (newRowsPerPage: number) => void;
-    showPagination?: boolean;
-    paginationDisabled?: boolean;
-    hidePageNavigation?: boolean;
-}
-
-
-
-/**
- * DataTable Wrapper - for custom table implementations (children-based)
- * Use this when you want to provide your own table structure
+ * DataTable Wrapper — for custom table implementations (children-based).
+ *
+ * Use when you want to provide your own `<Table>` JSX (full markup
+ * control) but reuse the standard loading/error/empty states + pagination.
+ * For data-driven tables with column configs, prefer `<TypedDataTable>`.
  */
 export function DataTable({
     isLoading,
@@ -91,11 +127,9 @@ export function DataTable({
     if (isLoading) {
         return <LoadingState message={loadingMessage} size="lg" />;
     }
-
     if (error) {
         return <ErrorState title={errorMessage} message={error.message} />;
     }
-
     if (isEmpty) {
         return (
             <EmptyState
@@ -112,7 +146,6 @@ export function DataTable({
             <div className={cn("overflow-x-auto scrollbar-brand rounded-lg", className)}>
                 {children}
             </div>
-
             {pagination && (
                 <div className="px-4 py-3 border-t border-border-subtle">
                     <Pagination {...pagination} />
@@ -122,112 +155,449 @@ export function DataTable({
     );
 }
 
+// ─── TypedDataTable (the canonical primitive) ─────────────────────────
+
+type PaginationVariant = "full" | "compact" | "none";
+
+interface TypedDataTableProps<T> {
+    // ── Data ──────────────────────────────────────────────────────────
+    /** The full dataset for the current page (server-paginated) OR the entire dataset (local pagination). */
+    data: T[];
+    /** Column definitions. See `Column<T>`. */
+    columns: Column<T>[];
+    /** Stable React key per row. Defaults to row index — provide one when rows may reorder (sortable). */
+    getRowKey?: (row: T, index: number) => string | number;
+
+    // ── States ────────────────────────────────────────────────────────
+    /** Replaces the table body with `<LoadingState>`. */
+    isLoading?: boolean;
+    /** Replaces the table body with `<ErrorState>`. */
+    error?: Error | null;
+    /** Retry handler attached to the error state. */
+    onErrorRetry?: () => void | Promise<void>;
+    /** Title for the error state. Defaults to "Could not load data". */
+    errorTitle?: string;
+    /** Empty-state row text. */
+    emptyMessage?: string;
+    /** Empty-state subtitle (below `emptyMessage`). Defaults to "Check back soon". Pass an empty string to hide. */
+    emptyDescription?: string;
+
+    // ── Visual ────────────────────────────────────────────────────────
+    /**
+     * Cell padding + font size preset.
+     * - `"comfortable"` (default): `py-3 px-4 text-sm` — full data tables.
+     * - `"compact"`:                `py-2 px-3 text-xs` — previews, embedded tables.
+     */
+    density?: Density;
+    /** @deprecated Use `density` instead. `'xs' → 'compact'`, `'sm' → 'comfortable'`. */
+    textSize?: "xs" | "sm";
+    /** Sticky table header during vertical scroll. */
+    stickyHeader?: boolean;
+    /** Extra class on the outer wrapper. */
+    className?: string;
+
+    // ── Row interactions ──────────────────────────────────────────────
+    /** Click handler invoked when a row is clicked. Adds `cursor-pointer`. */
+    onRowClick?: (row: T, index: number) => void;
+    /** Extra class on each `<TableRow>`. Function form receives the row + page-local index. */
+    rowClassName?: string | ((row: T, index: number) => string);
+
+    // ── Card mode (optional) ──────────────────────────────────────────
+    /** When set, wraps the table in a `<Card>` with a header (title + icon + subtitle + action slot). */
+    title?: ReactNode;
+    /** Icon shown in a tinted square next to the title. Only rendered when `title` is set. */
+    icon?: ReactNode;
+    /** Subtitle line below the title. Only rendered when `title` is set. */
+    subtitle?: ReactNode;
+    /** Right-aligned slot in the header (e.g. a `<Select>` or `<Button>`). Only rendered when `title` is set. */
+    headerAction?: ReactNode;
+
+    // ── Pagination ────────────────────────────────────────────────────
+    /**
+     * Pagination footer style.
+     * - `"full"` (default when paginating): rows-per-page selector + items range + first/last navigation. Server-paginated tables.
+     * - `"compact"`: "Page N of M" + windowed number buttons. Previews/leaderboards (local pagination friendly).
+     * - `"none"`: no footer.
+     *
+     * If unspecified, defaults to `"full"` whenever `showPagination` is true or `paginate` is true.
+     */
+    paginationVariant?: PaginationVariant;
+    /**
+     * Enable local pagination (slicing `data` client-side). When true:
+     * - You don't need to pass `total`/`page`/`onPageChange` (managed internally).
+     * - Combine with `sortable` columns for full local sort + pagination.
+     */
+    paginate?: boolean;
+    /** Initial sort. Only relevant when at least one column is `sortable`. */
+    initialSort?: { field: string | null; direction: SortDirection };
+    /** Items per page (local mode) or rows-per-page default (controlled mode). */
+    itemsPerPage?: number;
+    /** Rows-per-page selector options for the `"full"` footer. Defaults to `[5, 10, 15, 20]`. */
+    rowsPerPageOptions?: number[];
+    // — Controlled mode (server-side pagination) —
+    /** Total row count (controlled mode). When supplied, the parent owns paging state. */
+    total?: number;
+    /** Current page (0-indexed) for controlled mode. */
+    page?: number;
+    /** Rows per page (controlled mode). */
+    rowsPerPage?: number;
+    /** Controlled page change handler. */
+    onPageChange?: (newPage: number) => void;
+    /** Controlled rows-per-page change handler. */
+    onRowsPerPageChange?: (newRowsPerPage: number) => void;
+    /** @deprecated Use `paginationVariant` (`'none'` disables, anything else enables). */
+    showPagination?: boolean;
+    /** Greys out the pagination footer while a request is in flight. */
+    paginationDisabled?: boolean;
+    /** Hides the first/prev/next/last navigation in the `"full"` footer. */
+    hidePageNavigation?: boolean;
+}
+
 /**
- * TypedDataTable - for data-driven tables with column definitions
- * Use this when you have structured data and column definitions
+ * TypedDataTable — the canonical primitive for data-driven tables.
+ *
+ * **Modes:**
+ * - **Static**: just `data` + `columns` (no sort, no pagination). Drop-in replacement for `<Table>` boilerplate.
+ * - **Sortable**: mark one or more `Column<T>` with `sortable: true`. Tri-state sort
+ *   (desc → asc → unsorted) is managed internally via `useSortablePagination`.
+ * - **Locally paginated**: set `paginate: true`. Combine with sortable columns for
+ *   "Top X" leaderboards. Renders the compact footer by default; switch via `paginationVariant`.
+ * - **Server-paginated**: pass `total`, `page`, `rowsPerPage`, `onPageChange`,
+ *   `onRowsPerPageChange`. Renders the full footer (with rows-per-page selector
+ *   and items range) by default.
+ * - **Card mode**: pass `title` (and optionally `icon`/`subtitle`/`headerAction`)
+ *   to wrap the table in a styled card with a header.
  */
 export function TypedDataTable<T>({
+    // Data
     data,
     columns,
+    getRowKey,
+    // States
     isLoading,
     error,
     onErrorRetry,
+    errorTitle = "Could not load data",
     emptyMessage = "No data available",
+    emptyDescription = "Check back soon",
+    // Visual
+    density,
+    textSize,
+    stickyHeader = false,
     className,
-    textSize = "sm",
-    total = 0,
-    page = 0,
-    rowsPerPage = 5,
+    // Row
+    onRowClick,
+    rowClassName,
+    // Card mode
+    title,
+    icon,
+    subtitle,
+    headerAction,
+    // Pagination
+    paginationVariant,
+    paginate = false,
+    initialSort,
+    itemsPerPage,
+    rowsPerPageOptions,
+    total,
+    page,
+    rowsPerPage,
     onPageChange,
     onRowsPerPageChange,
-    showPagination = false,
+    showPagination,
     paginationDisabled = false,
     hidePageNavigation = false,
-}: DataTableWithColumnsProps<T>) {
-    if (isLoading) {
-        return <LoadingState message="Loading…" size="md" withCard={false} />;
-    }
+}: TypedDataTableProps<T>) {
+    // ── Resolve density (backward-compat with textSize) ──────────────
+    const resolvedDensity: Density = density
+        ?? (textSize === "xs" ? "compact" : "comfortable");
+    const ds = DENSITY_STYLES[resolvedDensity];
 
+    // ── Identify the sort state owner ─────────────────────────────────
+    const hasSortableColumn = columns.some((c) => c.sortable);
+    const hasLocalPagination = paginate;
+
+    // Internal rows-per-page state for local mode + "full" variant.
+    const [localRowsPerPage, setLocalRowsPerPage] = useState<number>(
+        itemsPerPage ?? rowsPerPage ?? 10
+    );
+
+    // Local sort+pagination engine (used when `paginate` or any sortable column).
+    const local = useSortablePagination<T, string>({
+        data: hasSortableColumn || hasLocalPagination ? data : EMPTY,
+        itemsPerPage: hasLocalPagination
+            ? localRowsPerPage
+            : (itemsPerPage ?? rowsPerPage ?? 10),
+        getSortValue: (row, field) => {
+            const col = columns.find((c, i) => (c.key ?? `col-${i}`) === field);
+            if (!col) return "";
+            if (col.getSortValue) return col.getSortValue(row);
+            if (typeof col.accessor === "string" || typeof col.accessor === "number" || typeof col.accessor === "symbol") {
+                const v = row[col.accessor as keyof T];
+                return typeof v === "number" ? v : String(v ?? "");
+            }
+            // Function accessor without explicit getSortValue: fall back to its rendered text.
+            const rendered = (col.accessor as (item: T, index: number) => ReactNode)(row, 0);
+            return typeof rendered === "string" || typeof rendered === "number" ? rendered : "";
+        },
+        initialSort: initialSort
+            ? { field: initialSort.field as string, direction: initialSort.direction }
+            : undefined,
+    });
+
+    // ── Resolve pagination variant ────────────────────────────────────
+    const isControlledPag =
+        total !== undefined &&
+        page !== undefined &&
+        rowsPerPage !== undefined &&
+        onPageChange !== undefined &&
+        onRowsPerPageChange !== undefined;
+
+    const paginationEnabled =
+        paginationVariant !== "none" &&
+        (showPagination ?? (isControlledPag || hasLocalPagination));
+
+    const resolvedVariant: PaginationVariant = paginationVariant
+        ?? (isControlledPag ? "full" : hasLocalPagination ? "compact" : "none");
+
+    // ── Resolve the rows actually rendered ────────────────────────────
+    // Priority: local sort/paginate > raw `data` (caller already prepared it).
+    const rowsToRender = hasSortableColumn
+        ? (hasLocalPagination ? local.paginatedData : local.sortedData)
+        : (hasLocalPagination ? local.paginatedData : data);
+
+    // ── Row click handler memo ────────────────────────────────────────
+    const handleRowClick = useCallback(
+        (row: T, index: number) => onRowClick?.(row, index),
+        [onRowClick]
+    );
+
+    // ── Loading / error short-circuits (skip table chrome entirely) ──
+    if (isLoading) {
+        return wrapInCard(
+            title,
+            icon,
+            subtitle,
+            headerAction,
+            <LoadingState message="Loading…" size="md" withCard={false} />,
+            className
+        );
+    }
     if (error) {
-        return (
+        return wrapInCard(
+            title,
+            icon,
+            subtitle,
+            headerAction,
             <ErrorState
-                title="Could not load data"
+                title={errorTitle}
                 message={error.message}
                 onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
                 withCard={false}
-            />
+            />,
+            className
         );
     }
 
-    return (
-        <div className={cn("w-full h-full flex flex-col", className)}>
-            <ScrollableTable
-                    pagination={showPagination && total > 0 && onPageChange && onRowsPerPageChange ? {
-                        total,
-                        page,
-                        rowsPerPage,
-                        onPageChange,
-                        onRowsPerPageChange,
-                        rowsPerPageOptions: [5, 10, 15, 20],
-                        disabled: paginationDisabled,
-                        hidePageNavigation,
-                    } : undefined}
-                >
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                                {columns.map((column, index) => (
-                                    <TableHead
-                                        key={index}
-                                        className={cn(
-                                            textSize === "xs" ? "py-2" : "py-3",
-                                            "px-4",
-                                            column.className
-                                        )}
+    // ── Compute pagination props for the footer ──────────────────────
+    const fullPaginationProps: PaginationProps | null =
+        resolvedVariant === "full"
+            ? isControlledPag
+                ? {
+                      total: total!,
+                      page: page!,
+                      rowsPerPage: rowsPerPage!,
+                      onPageChange: onPageChange!,
+                      onRowsPerPageChange: onRowsPerPageChange!,
+                      rowsPerPageOptions: rowsPerPageOptions ?? [5, 10, 15, 20],
+                      disabled: paginationDisabled,
+                      hidePageNavigation,
+                  }
+                : hasLocalPagination
+                ? {
+                      total: local.sortedData.length,
+                      page: local.page,
+                      rowsPerPage: localRowsPerPage,
+                      onPageChange: local.setPage,
+                      onRowsPerPageChange: (n: number) => {
+                          setLocalRowsPerPage(n);
+                          local.setPage(0);
+                      },
+                      rowsPerPageOptions: rowsPerPageOptions ?? [5, 10, 15, 20],
+                      disabled: paginationDisabled,
+                      hidePageNavigation,
+                  }
+                : null
+            : null;
+
+    const totalLocalPages = hasLocalPagination
+        ? local.totalPages
+        : isControlledPag
+        ? Math.max(1, Math.ceil(total! / rowsPerPage!))
+        : 1;
+    const currentLocalPage = hasLocalPagination ? local.page : (page ?? 0);
+
+    // ── Table body ───────────────────────────────────────────────────
+    const tableBody = (
+        <ScrollableTable
+            pagination={
+                paginationEnabled && resolvedVariant === "full" && fullPaginationProps
+                    ? fullPaginationProps
+                    : undefined
+            }
+        >
+            <Table>
+                <TableHeader className={cn(stickyHeader && "sticky top-0 bg-brand-secondary z-10")}>
+                    <TableRow className="border-b border-border-subtle hover:bg-transparent">
+                        {columns.map((column, colIdx) => {
+                            const colKey = column.key ?? `col-${colIdx}`;
+                            const widthStyle =
+                                column.width !== undefined
+                                    ? { width: typeof column.width === "number" ? `${column.width}px` : column.width }
+                                    : undefined;
+                            const headAlign = column.headerAlign ?? column.align;
+                            if (column.sortable) {
+                                return (
+                                    <SortableTableHead
+                                        key={colKey}
+                                        field={colKey}
+                                        currentField={local.sortField}
+                                        direction={local.sortDirection}
+                                        onSort={local.handleColumnSort}
+                                        align={headAlign}
+                                        className={cn(ds.cellPaddingY, ds.cellPaddingX, column.className)}
                                     >
-                                        <TableHeadLabel align={column.align}>{column.header}</TableHeadLabel>
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {data.length > 0 ? (
-                                data.map((item, rowIndex) => (
-                                    <TableRow
-                                        key={rowIndex}
-                                        className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors"
-                                    >
-                                        {columns.map((column, colIndex) => (
-                                            <TableCell
-                                                key={colIndex}
-                                                className={cn(
-                                                    textSize === "xs" ? "py-2" : "py-3",
-                                                    "px-4",
-                                                    column.className,
-                                                    `text-${textSize} text-white font-medium`
-                                                )}
-                                            >
-                                                {typeof column.accessor === "function"
-                                                    ? column.accessor(item)
-                                                    : String(item[column.accessor])}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="py-8 border-none">
-                                        <div className="flex flex-col items-center justify-center text-center">
-                                            <Database className="w-10 h-10 mb-3 text-text-muted" />
-                                            <p className="text-text-secondary text-sm mb-1">{emptyMessage}</p>
-                                            <p className="text-text-muted text-xs">Check back soon</p>
-                                        </div>
-                                    </TableCell>
+                                        {column.header}
+                                    </SortableTableHead>
+                                );
+                            }
+                            return (
+                                <TableHead
+                                    key={colKey}
+                                    style={widthStyle}
+                                    className={cn(
+                                        ds.cellPaddingY,
+                                        ds.cellPaddingX,
+                                        headAlign === "right" && "text-right",
+                                        headAlign === "center" && "text-center",
+                                        column.className
+                                    )}
+                                >
+                                    <TableHeadLabel align={headAlign}>{column.header}</TableHeadLabel>
+                                </TableHead>
+                            );
+                        })}
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {rowsToRender.length > 0 ? (
+                        rowsToRender.map((row, rowIndex) => {
+                            const rowExtraClass =
+                                typeof rowClassName === "function"
+                                    ? rowClassName(row, rowIndex)
+                                    : rowClassName;
+                            // Global rank within the full sorted dataset (local mode);
+                            // page-local index otherwise.
+                            const absoluteIndex = (hasSortableColumn || hasLocalPagination)
+                                ? local.startIndex + rowIndex
+                                : rowIndex;
+                            return (
+                                <TableRow
+                                    key={getRowKey ? getRowKey(row, rowIndex) : rowIndex}
+                                    onClick={onRowClick ? () => handleRowClick(row, rowIndex) : undefined}
+                                    className={cn(
+                                        "border-b border-border-subtle hover:bg-white/[0.02] transition-colors",
+                                        onRowClick && "cursor-pointer",
+                                        rowExtraClass
+                                    )}
+                                >
+                                    {columns.map((column, colIdx) => (
+                                        <TableCell
+                                            key={column.key ?? `col-${colIdx}`}
+                                            className={cn(
+                                                ds.cellPaddingY,
+                                                ds.cellPaddingX,
+                                                ds.textSize,
+                                                "text-white font-medium",
+                                                column.align === "right" && "text-right",
+                                                column.align === "center" && "text-center",
+                                                column.className
+                                            )}
+                                        >
+                                            {typeof column.accessor === "function"
+                                                ? column.accessor(row, rowIndex, absoluteIndex)
+                                                : String(row[column.accessor] ?? "")}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </ScrollableTable>
+                            );
+                        })
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length} className="py-8 border-none">
+                                <div className="flex flex-col items-center justify-center text-center">
+                                    <Database className="w-10 h-10 mb-3 text-text-muted" />
+                                    <p className="text-text-secondary text-sm mb-1">{emptyMessage}</p>
+                                    {emptyDescription && (
+                                        <p className="text-text-muted text-xs">{emptyDescription}</p>
+                                    )}
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </ScrollableTable>
+    );
+
+    // ── Compact pagination footer (rendered below the scrollable area)
+    const compactFooter =
+        paginationEnabled && resolvedVariant === "compact" ? (
+            <TablePaginationFooter
+                page={currentLocalPage}
+                totalPages={totalLocalPages}
+                onPageChange={hasLocalPagination ? local.setPage : (onPageChange ?? (() => {}))}
+            />
+        ) : null;
+
+    const tableContent = (
+        <div className={cn("w-full h-full flex flex-col", className)}>
+            {tableBody}
+            {compactFooter}
         </div>
+    );
+
+    return wrapInCard(title, icon, subtitle, headerAction, tableContent, undefined);
+}
+
+// ─── Internal helpers ─────────────────────────────────────────────────
+
+const EMPTY: never[] = [];
+
+function wrapInCard(
+    title: ReactNode,
+    icon: ReactNode,
+    subtitle: ReactNode,
+    headerAction: ReactNode,
+    body: ReactNode,
+    outerClassName: string | undefined,
+): ReactNode {
+    if (title === undefined || title === null) {
+        return body;
+    }
+    return (
+        <Card className={cn("flex flex-col", outerClassName)}>
+            <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                    {icon && <div className="p-2 bg-brand-accent/10 rounded-lg">{icon}</div>}
+                    <div>
+                        <h2 className="text-lg font-semibold text-white">{title}</h2>
+                        {subtitle && <p className="text-text-muted text-sm">{subtitle}</p>}
+                    </div>
+                </div>
+                {headerAction && <div className="shrink-0">{headerAction}</div>}
+            </div>
+            {body}
+        </Card>
     );
 }

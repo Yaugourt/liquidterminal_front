@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ScrollableTable } from "@/components/common";
-import { getRemainingTime, useTwapRealTime, type TwapRealTimeData } from "@/services/twap";
+import { getRemainingTime, useTwapRealTime, type TwapRealTimeData } from "@/services/market/order";
 import { TwapTableProps, TwapTableData } from "./types";
 import Link from "next/link";
 

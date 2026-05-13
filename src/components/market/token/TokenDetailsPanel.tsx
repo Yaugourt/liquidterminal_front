@@ -7,6 +7,7 @@ import { useNumberFormat, type NumberFormatType } from "@/store/number-format.st
 import { useTokenDetails } from "@/services/market/token";
 import { useTokenAuction } from "@/services/market/auction/hooks/useAuctions";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
+import { StatsCard } from "@/components/common";
 import type { TokenData } from "./types";
 
 /**
@@ -118,12 +119,15 @@ function truncateAddressLong(address: string) {
 
 function DetailStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col rounded-lg border border-border-subtle bg-white/[0.02] px-3 py-2">
-      <span className="text-stat-label">{label}</span>
-      <span className="text-white text-sm font-medium tabular-nums truncate">
-        {value}
-      </span>
-    </div>
+    <StatsCard
+      title={label}
+      value={value}
+      density="compact"
+      withCard={false}
+      className="rounded-lg border border-border-subtle bg-white/[0.02] px-3 py-2"
+      titleClassName="text-stat-label"
+      valueClassName="text-white text-sm font-medium tabular-nums truncate"
+    />
   );
 }
 

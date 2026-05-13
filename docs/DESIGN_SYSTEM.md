@@ -1,914 +1,436 @@
-# Liquid Terminal - Design System V3
+# Liquid Terminal — Design System
 
-> Comprehensive design guidelines for maintaining visual consistency across the application.
-
----
-
-## Table of Contents
-
-1. [Color Tokens](#color-tokens)
-2. [Typography](#typography)
-3. [CSS Utility Classes](#css-utility-classes)
-4. [Component Library](#component-library)
-5. [Sidebar](#sidebar)
-6. [Header](#header)
-7. [Cards & Containers](#cards--containers)
-8. [Tables](#tables)
-9. [Buttons](#buttons)
-10. [Inputs & Forms](#inputs--forms)
-11. [Dialogs & Modals](#dialogs--modals)
-12. [Badges & Tags](#badges--tags)
-13. [Tabs](#tabs)
-14. [Loading & States](#loading--states)
-15. [Icons](#icons)
-16. [Spacing & Layout](#spacing--layout)
-17. [Responsive Design](#responsive-design)
-18. [Animation](#animation)
-19. [Migration Checklist](#migration-checklist)
+Règles **prescriptives** pour bâtir une nouvelle page sans diverger. ESLint bloque les principales infractions ; le reste est convention.
 
 ---
 
-## Color Tokens
+## 1. Règles d'or (lis ça avant tout)
 
-### Brand Colors (defined in `tailwind.config.ts`)
-
-| Token | Value | CSS Class | Usage |
-|-------|-------|-----------|-------|
-| `brand-main` | `#0B0E14` | `bg-brand-main` | Main app background |
-| `brand-secondary` | `#151A25` | `bg-brand-secondary` | Cards, panels, sections |
-| `brand-tertiary` | `#051728` | `bg-brand-tertiary` | Dark accents, tabs container |
-| `brand-dark` | `#0A0D12` | `bg-brand-dark` | Deepest backgrounds |
-| `brand-accent` | `#83E9FF` | `text-brand-accent` | Primary accent (cyan) |
-| `brand-gold` | `#f9e370` | `text-brand-gold` | Secondary accent (gold) |
-| `brand-success` | `#00ff88` | `text-brand-success` | Success states |
-| `brand-error` | `#ef4444` | `text-brand-error` | Error states |
-| `brand-warning` | `#f59e0b` | `text-brand-warning` | Warning states |
-| `brand-telegram` | `#0088cc` | `text-brand-telegram` / `bg-brand-telegram` | External brand color (Telegram). Reserved for `TelegramLinkCard` and Telegram-flavored CTAs. |
-
-### RGB CSS Variables (animations with dynamic alpha)
-
-For animations that need a runtime-computed opacity (radial-gradient with hover state, box-shadow glow, etc.), use the RGB components defined in [`src/app/globals.css`](../src/app/globals.css):
-
-| Variable | Token | Usage |
-|----------|-------|-------|
-| `--brand-accent-rgb` | `brand-accent` | `rgb(var(--brand-accent-rgb) / 0.12)` — animated glow |
-| `--brand-gold-rgb` | `brand-gold` | idem for gold accents |
-| `--brand-success-rgb` | `brand-success` | idem |
-| `--brand-error-rgb` | `brand-error` | idem |
-| `--chart-up-rgb` | `chartPalette.up` (emerald) | candlestick/alerts |
-| `--chart-down-rgb` | `chartPalette.down` (rose) | candlestick/alerts |
-| `--chart-violet-rgb` | `chartPalette.violet` | multi-series charts |
-
-**Static opacities** still use Tailwind classes: `bg-brand-accent/30`, `text-white/50`, etc.
-**Dynamic opacities** (alpha computed at runtime from a ratio, hover state, etc.) use `rgb(var(--*-rgb) / X)`.
-
-### Chart Palette (multi-series)
-
-Charts with 3+ series cannot fit into "gold + blue shades" alone. The official secondary palette is centralized in [`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts) — see `chartPalette.multiSeries[]`. Hex literals in chart contexts MUST source from this file; everywhere else in `src/components/` they are forbidden (ESLint rule).
-
-### Text Colors
-
-| Token | Value | CSS Class | Usage |
-|-------|-------|-----------|-------|
-| `text-primary` | `#ffffff` | `text-white` | Main content text |
-| `text-secondary` | `#a1a1aa` | `text-text-secondary` | Labels, headers, secondary text |
-| `text-muted` | `#71717a` | `text-text-muted` | Placeholders, disabled, subtle text |
-
-### Border Colors
-
-| Token | Value | CSS Class | Usage |
-|-------|-------|-----------|-------|
-| `border-subtle` | `rgba(255,255,255,0.05)` | `border-border-subtle` | Default borders |
-| `border-hover` | `rgba(255,255,255,0.1)` | `border-border-hover` | Hover state borders |
-
-### Semantic Colors
-
-| Usage | Color | CSS Class |
-|-------|-------|-----------|
-| Success / Buy / Positive | `emerald-400/500` | `text-emerald-400`, `bg-emerald-500/10` |
-| Error / Sell / Negative | `rose-400/500` | `text-rose-400`, `bg-rose-500/10` |
-| Warning | `orange-400/500` | `text-orange-400`, `bg-orange-500/10` |
-| Link / Active | `brand-accent` | `text-brand-accent` |
-| Admin / Premium | `brand-gold` | `text-brand-gold` |
+1. **Jamais de hex hardcodé.** Tokens Tailwind (`brand-*`) ou `chartPalette` uniquement. ESLint bloque.
+2. **Jamais d'`<input type="checkbox">` natif.** Utilise `<Checkbox>` de `@/components/ui/checkbox`. ESLint bloque.
+3. **Jamais `<Loader2>` direct.** Utilise `<LoadingState>` (block) ou `<InlineSpinner>` (inline). ESLint bloque.
+4. **Tous les imports `common/` passent par le barrel** `@/components/common`. Pas de chemin direct. ESLint bloque.
+5. **Une stat = `<StatsCard>`. Un groupe de stats = `<StatsPanel>`.** Pas de re-implementation.
+6. **Une table = `<TypedDataTable>`.** Pas de `<Table>` brute pour des données structurées.
+7. **Un form modal = `<FormModal>`.** Champs = `<FormField>`, sections = `<FormSection>`, footer = `<FormFooter>`.
+8. **Animations cards staggered = `staggeredCardVariants`.** Fade-in scroll = `<FadeIn>` / `<HeroFadeIn>`.
+9. **Tooltip info = `<TooltipIcon>`.** Pas de Tooltip Radix custom.
+10. **Une nouvelle primitive ?** Tu l'ajoutes au barrel `src/components/common/index.ts` **dans la même PR**, sinon ESLint refuse les imports.
 
 ---
 
-## Typography
+## 2. Couleurs
 
-### Font Families
+### Tokens brand (Tailwind)
 
-| Font | CSS Class | Usage |
-|------|-----------|-------|
-| Inter | `font-inter` / `font-sans` / `font-mono` | Single stack site-wide; `font-mono` no longer switches family (use `tabular-nums` for numeric alignment) |
+| Classe | Hex | Usage |
+|---|---|---|
+| `bg-brand-main` | `#0B0E14` | Background app |
+| `bg-brand-secondary` | `#151A25` | Cards, panels |
+| `bg-brand-tertiary` | `#051728` | Tabs container, accents foncés |
+| `bg-brand-dark` | `#0A0D12` | Backgrounds profonds |
+| `text-brand-accent` | `#83E9FF` | Accent primaire (cyan) — liens, active, sort actif |
+| `text-brand-gold` | `#f9e370` | Accent secondaire (gold) — premium, admin, highlights |
+| `text-brand-success` | `#00ff88` | États succès |
+| `text-brand-error` | `#ef4444` | États erreur |
+| `text-brand-warning` | `#f59e0b` | États warning |
+| `text-brand-telegram` | `#0088cc` | **Réservé Telegram** — pas un accent UI |
 
-### Text Sizes & Weights
+### Texte / Borders
 
-```tsx
-// Page title
-<h1 className="text-xl font-bold text-white font-inter">
+- `text-white` (primaire), `text-text-secondary` (`#a1a1aa`), `text-text-muted` (`#71717a`)
+- `border-border-subtle` (default), `border-border-hover` (hover)
 
-// Section title
-<h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+### Sémantique
 
-// Card title
-<h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
+| Cas | Classes |
+|---|---|
+| Positif / Buy / Up | `text-emerald-400`, `bg-emerald-500/10` |
+| Négatif / Sell / Down | `text-rose-400`, `bg-rose-500/10` |
+| Warning | `text-orange-400`, `bg-orange-500/10` |
+| Link / Active | `text-brand-accent` |
+| Admin / Premium | `text-brand-gold` |
 
-// Body text
-<p className="text-sm text-white">
+### Alpha dynamique (animations)
 
-// Muted text
-<span className="text-xs text-text-muted">
-
-// Labels (use utility class)
-<span className="text-label">  // 10px, semibold, uppercase, tracking-wider
-
-// Table header
-<th className="text-table-header">  // 12px label style
-
-// Stat value
-<span className="text-stat-value">  // sm, white, bold
-```
-
-### Typography Utility Classes (from `globals.css`)
+Pour les rgba calculés au runtime (radial-gradient hover, box-shadow), utilise les CSS vars `--brand-*-rgb` :
 
 ```css
-.text-label      /* 10px, semibold, uppercase, tracking-wider */
-.text-table-header  /* label style, text-secondary, 12px */
-.text-table-cell    /* sm, white */
-.text-stat-label    /* label style, text-secondary */
-.text-stat-value    /* sm, white, bold */
+background: rgb(var(--brand-accent-rgb) / 0.12);
+box-shadow: 0 0 8px rgb(var(--brand-gold-rgb) / 0.5);
+```
+
+Disponibles : `--brand-accent-rgb`, `--brand-gold-rgb`, `--brand-success-rgb`, `--brand-error-rgb`, `--chart-up-rgb`, `--chart-down-rgb`, `--chart-violet-rgb`.
+
+Alpha statique = Tailwind (`bg-brand-accent/30`). Alpha dynamique = CSS var.
+
+### Charts multi-séries
+
+Hex autorisés uniquement dans [`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts). Importe `chartPalette` :
+
+```ts
+import { chartPalette } from "@/components/common/charts/chartTheme";
+// chartPalette.accent, .gold, .up, .down, .violet
+// chartPalette.multiSeries[] — rotation 10 couleurs pour donuts/pies
 ```
 
 ---
 
-## CSS Utility Classes
+## 3. Typography
 
-### Glassmorphism (from `globals.css`)
-
-```tsx
-// Standard panel (60% opacity)
-<div className="glass-panel">
-
-// Uses: bg-brand-secondary/60, backdrop-blur-md, border-border-subtle, shadow-premium, rounded-2xl
-```
-
-### Shadows
-
-```tsx
-// Premium shadow (used on cards)
-<div className="shadow-premium">  // shadow-xl shadow-black/20
-```
-
-### Interactive States
-
-```tsx
-// Card hover effect
-<div className="interactive-card">  // hover:border-border-hover transition-all
-
-// Inactive tab
-<button className="tab-inactive">  // text-text-secondary hover:text-zinc-200 hover:bg-white/5
-
-// Subtle hover
-<div className="hover-subtle">  // hover:bg-white/5 transition-colors
-
-// Secondary interactive
-<button className="interactive-secondary">  // text-text-secondary hover:text-white hover:bg-white/5
-```
-
-### Stat Cards (Header)
-
-```tsx
-// Compact stat display
-<div className="stat-card">
-  // bg-brand-secondary/40, backdrop-blur-sm, border-border-subtle
-  // rounded-lg, px-2 lg:px-3, py-1 lg:py-1.5
-  // hover:border-border-hover
-</div>
-```
+- **Police unique** : `font-inter` (Inter). Pas d'autre famille.
+- **Classes** : `text-xs` `text-sm` `text-base` `text-lg` `text-xl` `text-2xl`. Pas de `text-[10px]` arbitraire **sauf labels uppercase** (convention `text-[10px] uppercase tracking-wider text-text-secondary`).
+- **Tabular nums** : tous les chiffres dans tables/stats → `tabular-nums`.
+- **Utility classes** dans `globals.css` :
+  - `.text-stat-label` — label uppercase compact
+  - `.text-table-header` / `.text-table-cell` — en-têtes et cellules
+  - `.text-label` — micro-labels (chips, badges)
 
 ---
 
-## Component Library
+## 4. Layout d'une page
 
-The project uses **shadcn/ui** components, customized for the dark theme. Key components:
+```tsx
+// src/app/(app)/<section>/page.tsx
+<div className="p-4 md:p-6 space-y-6">
+  <PageHeader title="..." />              {/* H1 + subtitle + actions */}
+  <KpiGrid />                              {/* StatsCard ou StatsPanel */}
+  <MainContent />                          {/* tables, charts, listes */}
+</div>
+```
 
-| Component | Location | Description |
-|-----------|----------|-------------|
-| Button | `src/components/ui/button.tsx` | 6 variants: default, destructive, outline, secondary, ghost, link |
-| Input | `src/components/ui/input.tsx` | Dark styled input with focus states |
-| Dialog | `src/components/ui/dialog.tsx` | Modal with glassmorphism styling |
-| Card | `src/components/ui/card.tsx` | Container component with glass effect |
-| Table | `src/components/ui/table.tsx` | Table components with custom text styles |
-| Badge | `src/components/ui/badge.tsx` | Status indicators |
-| Tooltip | `src/components/ui/tooltip.tsx` | Info tooltips with cyan border |
-| Select | `src/components/ui/select.tsx` | Dropdown selection |
-| InlineSpinner | `src/components/ui/inline-spinner.tsx` | Small spinner for buttons/badges; use `<LoadingState>` for full-block loaders |
-| LoadingState | `src/components/ui/loading-state.tsx` | Block-level "Loading…" with optional card wrap |
-
-### Common primitives (Lot 4)
-
-Imported from `@/components/common` (single barrel). Adding a new common component? Export it from `src/components/common/index.ts` (the barrel) — direct sub-path imports are blocked by ESLint.
-
-| Component | Purpose |
-|-----------|---------|
-| `<FadeIn>` / `<HeroFadeIn>` | Scroll-triggered / initial-load fade-in (uses IntersectionObserver — no framer-motion dependency) |
-| `staggeredCardVariants` | Framer-motion variants for the "cards arrive in cascade" pattern (KPI rows, leaderboards) |
-| `<TooltipIcon>` | "`?`/`i` icon with tooltip" inline helper |
-| `<FormField>` | Form field wrapper (uppercase label + slot + error/helper) |
-| `<FormSection>` | Group of fields with optional title |
-| `<FormFooter>` | Cancel/Submit pair with `pt-4 border-t` styling |
-| `<FormModal>` | Standardised Dialog + DialogHeader for form-bearing modals (compose `<Tabs>` or `<FormSection>` inside as needed) |
-| `<CategoryForm>` | Concrete shared form for "name + description" (lifted-state) |
-| `useSortablePagination<T,F>` | Hook for tri-state column sort + paginated data |
-| `<SortableTableHead>` | Clickable column header with ArrowUpDown/Up/Down |
-| `<TablePaginationFooter>` | "Page N of M" + prev/next + windowed number buttons |
-| `<SortablePaginatedTableCard<T,F>>` | Top-level card composition for "Top X" / leaderboard tables — used by `TopTradersPreview`, `ActiveUsersPreview` |
-
-### Shared chart palette
-
-For charts with multi-series colors that don't fit "gold + blue shades", source from
-[`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts):
-
-- `chartPalette.accent` / `.gold` — brand cyan / gold
-- `chartPalette.up` / `.down` — candlestick green (emerald) / red (rose)
-- `chartPalette.violet` / `.cyanVariant` / `.emeraldLight` / `.roseSoft` / etc. — secondary chart hues
-- `chartPalette.multiSeries[]` — 10-color rotation for donuts / pies / stacked bars
-- `chartPalette.brandMain` / `.brandSecondary` / `.brandTertiary` / `.brandDark` — JS-side aliases for brand backgrounds
-- `chartColors.*` — internal palette used by Recharts / lightweight-charts options
-
-Hex literals are forbidden everywhere else in `src/components/**` (ESLint enforced).
-For dynamic alpha animations, see [RGB CSS Variables](#rgb-css-variables-animations-with-dynamic-alpha) above.
-
-### TWAP shared logic
-
-The progression math for time-weighted-average-price orders lives in
-[`src/services/twap`](../src/services/twap):
-
-- `calculateRealTimeProgression(twap)` — pure function, computes `{ progression, remainingValue, remainingAmount, isCompleted }`
-- `getRemainingTime(twap)` — "1h 23m" / "Completed" formatted string
-- `useTwapRealTime(twaps)` — polling hook (50 ms tick) returning a `Map<id, TwapRealTimeData>`
-
-Used by `dashboard/twap/TwapTable` and `explorer/address/orders/UserTwapTable`. Each call site
-keeps its own progress-bar palette (different by design).
+- **Container** : `space-y-6` entre sections, `gap-3` à `gap-4` dans les grids.
+- **Padding page** : `p-4 md:p-6`.
+- **Grids stats** : `grid grid-cols-2 lg:grid-cols-4 gap-4`. Adapte selon le nombre.
+- **Glassmorphism** : `.glass-panel` (= `bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl`) pour les conteneurs principaux.
 
 ---
 
-## Sidebar
+## 5. Primitives canoniques
 
-**Location**: `src/components/Sidebar.tsx`
-**Config**: `src/lib/sidebar-config.ts`
+**Tout** est exporté depuis `@/components/common`. Aucun chemin direct.
 
-### Structure
+### 5.1 Cards / Stats
 
-```
-Sidebar (w-[220px], bg-brand-main, border-r border-border-subtle)
-├── Header (logo + brand)
-├── Navigation (scrollable)
-│   ├── Group Label (Liquid prefix in cyan, rest in text-secondary)
-│   └── Nav Items
-│       ├── Active: bg-brand-accent/10, text-brand-accent, left indicator bar
-│       ├── Inactive: text-white/80, hover:bg-white/5
-│       └── Children (submenu with border-l)
-├── Admin Section (gold accent for admins only)
-├── Account Section (login button or user card with XP badge)
-├── Customize Button
-└── Social Links
-```
-
-### Active State Pattern
+**`<StatsCard>`** — une stat dans une grille (KPI rows, métriques).
 
 ```tsx
-// Active nav item
-<Link className={cn(
-  "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all",
-  isActive
-    ? "bg-brand-accent/10 text-brand-accent"
-    : "text-white/80 hover:bg-white/5 hover:text-white"
-)}>
-
-// Active indicator bar
-{isActive && (
-  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-brand-accent rounded-r" />
-)}
-```
-
-### Group Label Pattern
-
-```tsx
-<div className="px-3 text-label">
-  <span className="text-brand-accent font-inter font-semibold">{firstWord} </span>
-  <span className="text-text-secondary font-inter">{restOfWords}</span>
-</div>
-```
-
-### Admin Section (Gold Variant)
-
-Uses `text-brand-gold` and `bg-brand-gold/10` instead of accent cyan.
-
----
-
-## Header
-
-**Location**: `src/components/Header.tsx`
-
-### Structure
-
-```
-Header (sticky top-0, backdrop-blur-xl, bg-brand-primary/80)
-├── Left: Search Bar (hidden on mobile)
-└── Right:
-    ├── Stats (stat-card components)
-    │   ├── HYPE Price (with color pulse on trade)
-    │   ├── Buy Pressure (green/red based on value)
-    │   ├── Fees (hourly/daily with gold icons)
-    │   └── Assistance Fund
-    └── Settings Selector
-```
-
-### Stat Card Pattern
-
-```tsx
-<div className={cn(
-  "stat-card",
-  conditionalBorderColor, // e.g., "border-green-500 animate-pulse"
-  "group"
-)}>
-  <div className="flex items-center gap-1.5">
-    <Icon size={11} className="text-brand-accent" />
-    <span className="text-white text-label">Label</span>
-  </div>
-  <div className="text-white text-xs lg:text-sm font-medium group-hover:text-brand-accent transition-colors">
-    {value}
-  </div>
-</div>
-```
-
----
-
-## Cards & Containers
-
-### Glass Panel (Standard Card)
-
-```tsx
-<div className="glass-panel p-4">
-  {/* Content */}
-</div>
-
-// With hover
-<div className="glass-panel p-4 hover:border-border-hover transition-all">
-```
-
-### Stats Card Pattern
-
-```tsx
-<div className="glass-panel p-4 hover:border-border-hover transition-all group">
-  <div className="flex items-center gap-3 mb-2">
-    <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-      <Icon size={16} className="text-brand-accent" />
-    </div>
-    <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">
-      {title}
-    </h3>
-  </div>
-  <span className="text-xl text-white font-bold">{value}</span>
-</div>
-```
-
-### Card Component (shadcn)
-
-```tsx
-<Card>  {/* bg-brand-secondary/60, backdrop-blur-md, border-border-subtle, rounded-2xl */}
-  <CardHeader>
-    <CardTitle>{title}</CardTitle>
-    <CardDescription>{description}</CardDescription>
-  </CardHeader>
-  <CardContent>
-    {content}
-  </CardContent>
-</Card>
-```
-
----
-
-## Tables
-
-### Table Structure
-
-```tsx
-<div className="glass-panel overflow-hidden">
-  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-    <Table className="min-w-[900px] w-full">
-      <TableHeader>
-        <TableRow className="border-b border-border-subtle hover:bg-transparent">
-          <TableHead className="py-3 px-3">
-            <span className="text-table-header">{header}</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-          <TableCell className="py-3 px-3 text-table-cell">
-            {content}
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
-  </div>
-</div>
-```
-
-### Sortable header (site-wide)
-
-**Colonne de tri active :** toujours **`text-brand-gold`** (or), pas le cyan accent — via `SortableTableHead` (défaut `highlight="gold"`) ou `!text-brand-gold` / `table-header-active-gold` sur les headers custom.
-
-```tsx
-import { SortableTableHead } from "@/components/ui/table";
-
-<SortableTableHead
-  label="Volume"
-  onClick={() => handleSort("volume")}
-  isActive={sortField === "volume"}
-  sortDirection={sortOrder}
+<StatsCard
+  title="24h Volume"
+  value={`$${formatLargeNumber(volume)}`}
+  icon={<DollarSign className="h-4 w-4 text-brand-gold" />}
+  iconClassName="bg-brand-gold/10"      // override tint
+  change={12.3}                         // → pill "+12.3%" auto-colorée
+  // change={<>+$12.3K</>} + changeDirection="up"  // delta custom
+  subValue="vs prev. 24h"
+  density="compact"                     // ou "comfortable" (default)
+  withCard={false}                      // bare div quand imbriqué
 />
-// Option rare : forcer le cyan → highlight="accent"
 ```
 
-### Table Empty State
+**`<StatsPanel>`** — Card avec header + groupe de stats.
 
 ```tsx
-<TableRow>
-  <TableCell colSpan={columns} className="text-center py-8">
-    <div className="flex flex-col items-center justify-center">
-      <Database className="w-10 h-10 mb-3 text-text-muted" />
-      <p className="text-text-secondary text-sm mb-1">No data found</p>
-      <p className="text-text-muted text-xs">Try again later</p>
-    </div>
-  </TableCell>
-</TableRow>
+<StatsPanel
+  title="Validator Stats"
+  icon={<Shield size={16} className="text-brand-accent" />}
+  iconVariant="accent"                  // "accent" | "gold"
+  // iconClassName="bg-rose-500/10"     // tint libre
+  isLoading={isLoading}
+  error={error}
+  headerAction={<PeriodSelector />}     // slot droit
+>
+  <div className="grid grid-cols-2 gap-4">
+    {/* stats inside */}
+  </div>
+</StatsPanel>
 ```
 
----
+**Règle** : une stat par card en grille → `<StatsCard>`. Plusieurs stats sous un même header → `<StatsPanel>`.
 
-## Buttons
+### 5.2 Tables
 
-### Variants (from shadcn Button)
-
-```tsx
-// Primary (cyan)
-<Button variant="default">  // bg-primary text-primary-foreground
-
-// Destructive (red)
-<Button variant="destructive">  // bg-destructive
-
-// Outline
-<Button variant="outline">  // border, hover:bg-white/5
-
-// Secondary
-<Button variant="secondary">  // bg-secondary
-
-// Ghost (most common)
-<Button variant="ghost">  // hover:bg-white/5 hover:text-white
-
-// Link
-<Button variant="link">  // text-primary underline
-```
-
-### Sizes
+**`<TypedDataTable>`** — primitive unique pour tables data-driven.
 
 ```tsx
-<Button size="default">  // h-9 px-4
-<Button size="sm">       // h-8 px-3 text-xs
-<Button size="lg">       // h-10 px-8
-<Button size="icon">     // h-9 w-9
-```
+const columns: Column<Row>[] = [
+  {
+    key: "rank",
+    header: "Rank",
+    accessor: (_row, _i, absoluteIndex) => <>#{absoluteIndex + 1}</>,
+  },
+  {
+    key: "volume",
+    header: "Volume",
+    sortable: true,
+    align: "right",
+    getSortValue: (r) => r.volume,
+    accessor: (r) => `$${formatLargeNumber(r.volume)}`,
+  },
+];
 
-### Custom Button Patterns
-
-```tsx
-// Login button (sidebar)
-<Button className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold">
-
-// Icon button
-<button className="p-1.5 rounded-lg hover:bg-white/5 transition-colors">
-  <Icon className="h-4 w-4 text-text-muted hover:text-white" />
-</button>
-```
-
----
-
-## Inputs & Forms
-
-### Input Component
-
-```tsx
-<Input
-  placeholder="Search..."
-  className="w-full pr-10 p-5 text-white placeholder:text-text-muted text-sm rounded-xl"
+<TypedDataTable<Row>
+  title="Top Traders"                   // → Card mode (icon + title + headerAction)
+  icon={<TrendingUp />}
+  data={rows}
+  columns={columns}
+  getRowKey={(r) => r.id}
+  paginate                              // pagination locale
+  itemsPerPage={10}
+  initialSort={{ field: "volume", direction: "desc" }}
+  // ou: paginationVariant="full" + rowsPerPageOptions={[5,10,25,50]}
+  // ou: server pagination → total, page, rowsPerPage, onPageChange, onRowsPerPageChange
 />
-
-// Base styles (from ui/input.tsx):
-// bg-black/20, border-border-hover, focus:border-brand-accent/50
 ```
 
-### Search Bar Pattern
+**Modes** :
+- Static : `data` + `columns`.
+- Sortable : `sortable: true` sur colonnes + tri-state interne (desc → asc → unsorted).
+- Local pagination : `paginate: true` (compact footer par défaut, `paginationVariant="full"` pour rows-per-page selector).
+- Server pagination : `total` + `page` + `rowsPerPage` + handlers (full footer auto).
+- Card mode : pass `title` → wrap auto dans Card avec header.
+
+**Outliers** (motion.tr, WS, layouts custom) → sub-primitives :
 
 ```tsx
-<div className="relative">
-  <Input
-    className="bg-brand-main/80 backdrop-blur-xl border border-border-hover rounded-xl shadow-sm transition-all hover:border-white/20 focus-within:border-brand-accent"
-  />
-  <button className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-gold hover:text-brand-accent">
-    <Search className="h-4 w-4" />
-  </button>
-</div>
+import { useSortablePagination, SortableTableHead, TablePaginationFooter } from "@/components/common";
 ```
 
-### Suggestions Dropdown
+Tri actif = **toujours `text-brand-gold`** (enforced par `SortableTableHead`).
+
+### 5.3 Forms
 
 ```tsx
-<div className="absolute top-full left-0 right-0 mt-1 bg-brand-secondary/95 backdrop-blur-sm border border-border-hover rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
-  <button className="w-full px-4 py-3 text-left hover-subtle">
-    <div className="text-brand-gold text-sm font-medium">{label}</div>
-    <div className="text-brand-accent text-xs font-mono">{subtext}</div>
-  </button>
-</div>
+<FormSection title="General">
+  <FormField label="Name" required error={errors.name}>
+    <Input value={name} onChange={...} />
+  </FormField>
+  <FormField label="Description" as="textarea">
+    <Textarea value={desc} onChange={...} />
+  </FormField>
+</FormSection>
+
+<FormFooter
+  onCancel={onClose}
+  submitLabel="Create"
+  loading={isSubmitting}
+  disabled={!isValid}
+/>
 ```
+
+Champ "nom + description" partagé → `<CategoryForm>`.
+
+### 5.4 Modals
+
+**Form modal** :
+
+```tsx
+<FormModal
+  open={open}
+  onOpenChange={setOpen}
+  title="Edit Project"
+  tabs={[{ id: "general", label: "General" }, { id: "links", label: "Links" }]}
+  currentTab={tab}
+  onTabChange={setTab}
+>
+  {tab === "general" ? <GeneralForm /> : <LinksForm />}
+  <FormFooter ... />
+</FormModal>
+```
+
+Modal non-form → `<Dialog>` shadcn direct (rare).
+
+### 5.5 Animations
+
+| Pattern | API |
+|---|---|
+| Scroll-triggered fade | `<FadeIn>` (IntersectionObserver, pas de framer) |
+| Initial-load fade | `<HeroFadeIn delay={0.2}>` |
+| Cards staggered grid | `staggeredCardVariants` (framer variants) |
+
+```tsx
+import { staggeredCardVariants } from "@/components/common";
+const v = staggeredCardVariants({ delay: 0.06, y: 16 });
+
+<motion.div variants={v} custom={i} initial="hidden" animate="visible">
+  <StatsCard ... />
+</motion.div>
+```
+
+**Layout pill indicator** (active tab/period highlight) : `<motion.div layoutId="...">` inline. Pas de wrapper canonique — chaque usage a son layoutId.
+
+### 5.6 Tooltip
+
+```tsx
+<TooltipIcon text="What this metric means" side="top" />
+// rend : <Info /> + Tooltip avec le texte
+```
+
+### 5.7 États
+
+| Composant | Usage |
+|---|---|
+| `<LoadingState>` | Block-level "Loading…" (cards, sections vides) |
+| `<InlineSpinner>` | Spinner inline (boutons, badges) |
+| `<EmptyState>` | "Aucun résultat" avec icône + texte |
+| `<ErrorState>` | Erreur avec retry optionnel |
+
+`<TypedDataTable>` gère déjà ces 3 états via `isLoading` / `error` / `emptyMessage`.
+
+### 5.8 Adresses
+
+```tsx
+<AddressDisplay address={addr} withCopy />
+// rend : 0x1234...5678 + bouton copy
+```
+
+Jamais de `addr.slice(0,6) + "..." + addr.slice(-4)` manuel.
+
+### 5.9 Pagination standalone
+
+`<Pagination>` — pour les cas hors table. La plupart du temps `<TypedDataTable>` la gère via ses props.
+
+### 5.10 Charts
+
+- **Loading** : `<ChartSkeleton>` (jamais `<Loader2>`).
+- **Couleurs** : `chartPalette` depuis `chartTheme.ts`. Aucun hex hardcodé ailleurs.
+- **Multi-séries** : `chartPalette.multiSeries[]` (10 couleurs).
 
 ---
 
-## Dialogs & Modals
+## 6. Sidebar / Header
 
-### Dialog Content Styling
-
-```tsx
-<DialogContent className="bg-brand-secondary/95 backdrop-blur-xl border border-border-hover shadow-2xl shadow-black/40 rounded-2xl text-white max-w-md">
-  <DialogHeader>
-    <DialogTitle className="flex items-center gap-2 text-white font-inter">
-      <Icon className="h-5 w-5 text-brand-gold" />
-      Title
-    </DialogTitle>
-  </DialogHeader>
-  {/* Content */}
-</DialogContent>
-```
-
-### Overlay
-
-```tsx
-// Default overlay
-<DialogOverlay className="bg-black/80" />
-```
+- **Sidebar** : structure existante, ne pas dupliquer. Ajouter une route → `src/lib/sidebar-config.ts`.
+- **Sidebar item actif** : `text-brand-accent` + `bg-brand-accent/10` + barre gauche `bg-brand-accent`.
+- **Header** : déjà géré dans le layout `(app)`. Stats compactes → `.stat-card` (classe utility globals.css).
 
 ---
 
-## Badges & Tags
-
-### Status Badges
+## 7. Buttons
 
 ```tsx
-// Buy/Success
-<span className="px-2 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-  Buy
-</span>
+<Button variant="default">      {/* cyan primary */}
+<Button variant="outline">      {/* border, hover bg-white/5 */}
+<Button variant="ghost">        {/* hover bg-white/5 — le plus courant */}
+<Button variant="destructive">  {/* rouge */}
+<Button size="sm | default | lg | icon">
+```
 
-// Sell/Error
-<span className="px-2 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-  Sell
-</span>
+CTA login/primary : `bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold`.
 
-// Accent (Cyan)
-<span className="px-2 py-1 rounded-md text-xs font-medium bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
+---
+
+## 8. Badges / Tags
+
+```tsx
+// Statut
+<span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400">
   Active
 </span>
 
-// Premium (Gold)
-<span className="px-2 py-1 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold border border-brand-gold/20">
-  Premium
-</span>
+// Pill numérique (delta)
+<NumericChangePill change={12.3} />  // utilisé par StatsCard auto
 ```
 
-### Percentage Change
-
-```tsx
-// Positive
-<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400">
-  +5.2%
-</span>
-
-// Negative
-<span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-400">
-  -3.1%
-</span>
-```
+Couleurs : emerald (positif), rose (négatif), brand-accent (info), brand-gold (premium), white/5 (neutre).
 
 ---
 
-## Tabs
-
-### Tab Container
+## 9. Tabs
 
 ```tsx
-<div className="flex bg-brand-tertiary rounded-lg p-1 border border-border-subtle">
-  {tabs.map(tab => (
-    <button
-      key={tab.key}
-      onClick={() => setActiveTab(tab.key)}
-      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-        activeTab === tab.key
-          ? 'bg-brand-accent text-brand-tertiary font-bold shadow-sm'
-          : 'tab-inactive'
-      }`}
-    >
-      {tab.label}
-    </button>
-  ))}
-</div>
+<Tabs value={tab} onValueChange={setTab}>
+  <TabsList className="bg-brand-tertiary border border-border-subtle rounded-lg p-0.5">
+    <TabsTrigger value="x" className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent">
+      X
+    </TabsTrigger>
+  </TabsList>
+  <TabsContent value="x">...</TabsContent>
+</Tabs>
 ```
 
-### Period Selector (Chart)
-
-```tsx
-<div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1">
-  {periods.map(period => (
-    <button
-      key={period}
-      onClick={() => onPeriodChange(period)}
-      className={`px-2 py-1 text-xs font-medium transition-colors rounded-md ${
-        selectedPeriod === period
-          ? 'text-brand-tertiary bg-brand-accent font-bold'
-          : 'text-text-secondary hover:text-zinc-200'
-      }`}
-    >
-      {period}
-    </button>
-  ))}
-</div>
-```
+Pour un period selector custom (1h / 4h / 24h), utilise le pattern flex + button, **pas Tabs Radix** (cf. `LiquidationsStatsCard`).
 
 ---
 
-## Loading & States
+## 10. Iconographie
 
-### Loading Spinner
-
-```tsx
-<div className="flex justify-center items-center h-[200px] glass-panel">
-  <div className="flex flex-col items-center">
-    <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-    <span className="text-text-muted text-sm">Loading...</span>
-  </div>
-</div>
-```
-
-### Error State
-
-```tsx
-<div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm backdrop-blur-md">
-  Error: {error.message}
-</div>
-```
-
-### Empty State
-
-```tsx
-<div className="flex flex-col items-center justify-center py-8 glass-panel">
-  <Database className="w-10 h-10 mb-3 text-text-muted" />
-  <p className="text-text-secondary text-sm mb-1">No data found</p>
-  <p className="text-text-muted text-xs">Try again later</p>
-</div>
-```
+- **Lucide React uniquement.** `import { TrendingUp, ... } from "lucide-react"`.
+- **Tailles** : `h-3.5 w-3.5` (mini, dans labels), `h-4 w-4` (boutons, stats), `h-5 w-5` (headers de section).
+- **Couleurs** : passe la classe directement sur l'icône (`<Shield className="text-brand-accent" />`).
 
 ---
 
-## Icons
+## 11. Responsive
 
-### Icon Library
-
-Primary: **Lucide React** (`lucide-react`)
-Secondary: **Iconify** (`@iconify/react`) for social icons
-
-### Icon Sizes
-
-| Context | Size | Class |
-|---------|------|-------|
-| Navigation | 18-20px | `w-5 h-5` |
-| Button | 16px | `w-4 h-4` |
-| Inline/Small | 12-14px | `w-3 h-3` |
-| Stat icons | 11px | `size={11}` |
-| Empty state | 40px | `w-10 h-10` |
-
-### Icon Colors
-
-```tsx
-// Default
-<Icon className="text-text-muted" />
-
-// Accent
-<Icon className="text-brand-accent" />
-
-// Gold (stats, premium)
-<Icon className="text-brand-gold" />
-
-// Interactive
-<Icon className="text-text-muted group-hover:text-white transition-colors" />
-```
+- **Breakpoints** : `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536.
+- **Mobile-first** : classes de base = mobile, override avec préfixe (`md:`, `lg:`).
+- **Grids stats** : `grid-cols-2 lg:grid-cols-4`. **Jamais** `grid-cols-4` sans fallback mobile.
+- **Tables** : colonnes secondaires masquées avec `hidden md:table-cell` ou `hidden lg:table-cell`.
+- **Padding page** : `p-4 md:p-6`.
 
 ---
 
-## Spacing & Layout
+## 12. ESLint enforced
 
-### Page Structure
+`eslint.config.mjs` bloque ces patterns dans `src/components/**` :
 
-```tsx
-<div className="min-h-screen bg-brand-primary text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-primary to-[#050505]">
-  <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-
-  <div className="lg:ml-[220px]">  {/* Offset for sidebar on desktop */}
-    {/* Sticky Header */}
-    <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-primary/80 border-b border-border-subtle">
-      <Header />
-    </div>
-
-    {/* Main Content */}
-    <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-      {/* Page sections */}
-    </main>
-  </div>
-</div>
-```
-
-### Common Spacing
-
-| Use Case | Spacing |
-|----------|---------|
-| Page padding | `px-6 py-8` |
-| Section gap | `space-y-8` |
-| Card padding | `p-4` or `p-6` |
-| Element gap | `gap-2`, `gap-3`, `gap-4` |
-| Tight gap | `gap-1`, `gap-1.5` |
-| Table cell padding | `py-3 px-3` |
-
----
-
-## Responsive Design
-
-### Breakpoints
-
-| Breakpoint | Value | CSS Prefix |
-|------------|-------|------------|
-| Default | 0px | (none) |
-| sm | 640px | `sm:` |
-| md | 768px | `md:` |
-| lg | 1024px | `lg:` |
-| custom | 1227px | `custom:` |
-| xl | 1280px | `xl:` |
-
-### Mobile Patterns
-
-```tsx
-// Sidebar: hidden on mobile, fixed on desktop
-<div className="lg:translate-x-0 -translate-x-full">
-
-// Content offset for sidebar
-<div className="lg:ml-[220px]">
-
-// Stack on mobile, row on desktop
-<div className="flex flex-col md:flex-row gap-4">
-
-// Hidden on mobile
-<div className="hidden lg:block">
-
-// Mobile-only
-<div className="md:hidden">
-```
-
----
-
-## Animation
-
-### Transitions
-
-```tsx
-// Color transitions
-transition-colors
-
-// All properties
-transition-all
-
-// Transform
-transition-transform
-
-// Specific duration
-duration-200, duration-300
-```
-
-### Common Animations
-
-```tsx
-// Spin (loading)
-animate-spin
-
-// Pulse (alerts)
-animate-pulse
-
-// Scale on hover (icons)
-group-hover:scale-105
-group-hover:scale-110
-
-// Fade in (dialogs)
-animate-in fade-in-0
-```
-
-### Framer Motion (for complex animations)
-
-Used in specific components like charts and animated elements.
-
----
-
-## Migration Checklist
-
-When updating existing components, replace:
-
-| Legacy | New Token |
-|--------|-----------|
-| `text-zinc-400` | `text-text-secondary` |
-| `text-zinc-500` | `text-text-muted` |
-| `border-white/5` | `border-border-subtle` |
-| `border-white/10` | `border-border-hover` |
-| `bg-[#151A25]` | `bg-brand-secondary` |
-| `bg-[#0B0E14]` | `bg-brand-main` |
-| `bg-[#83E9FF]` | `bg-brand-accent` |
-| `text-[#83E9FF]` | `text-brand-accent` |
-| `text-[#F9E370]` | `text-brand-gold` |
-| Manual glass styles | `glass-panel` class |
-| Custom shadows | `shadow-premium` |
-
----
-
-## Governance (ESLint enforced — Lot 0)
-
-The following rules are enforced by [`eslint.config.mjs`](../eslint.config.mjs) on `src/components/**` and `src/app/**`:
-
-| Rule | Why |
+| Règle | Exception |
 |---|---|
-| **No hex literal** (`"#83E9FF"`, etc.) | Use Tailwind tokens (`brand-accent`) or `chartTheme.ts` for charts. |
-| **No Tailwind arbitrary hex** (`text-[#83E9FF]`, `bg-[#xxx]`, `border-[#xxx]`, etc.) | Use tokens; for dynamic opacities use `rgb(var(--brand-accent-rgb) / X)`. |
-| **No `<input type="checkbox">`** | Use `<Checkbox>` from `@/components/ui/checkbox`. |
-| **No direct `Loader2` import** in app code | Use `<ChartSkeleton>` / `<ChartLoading>` (`@/components/common`) or `<LoadingState>` (`@/components/ui/loading-state`). |
-| **Barrel-only imports for `@/components/common`** | Import from `@/components/common`, not `@/components/common/StatsCard`. Missing exports → add to the barrel. |
+| Hex hardcodé (`#83E9FF`) | `chartTheme.ts` |
+| Tailwind arbitraire (`text-[#xxx]`) | aucune |
+| `<input type="checkbox">` natif | `ui/checkbox.tsx` |
+| `import { Loader2 } from "lucide-react"` | `ui/loading-state.tsx`, `common/charts/ChartSkeleton.tsx` |
+| `import from "@/components/common/<file>"` (sub-path) | aucune — toujours via barrel |
 
-**SSOT overrides** (rules disabled — these files are the canonical implementations): `chartTheme.ts`, `ChartSkeleton.tsx`, `ChartStates.tsx`, `ui/loading-state.tsx`, `ui/checkbox.tsx`, `ui/sonner.tsx`.
-
-### Adding a new common component
-
-1. Implement in `src/components/common/<Name>.tsx` (or `common/<category>/<Name>.tsx`).
-2. Export from `src/components/common/index.ts` (the barrel).
-3. Document it in this file (section `Component Library`).
-4. Update `CLAUDE.md` / `AGENTS.md` if a non-obvious behavioral convention applies.
+Si l'une de ces règles te gêne légitimement, **discute avant de désactiver**. La règle n'existe que parce qu'on a constaté la divergence sans elle.
 
 ---
 
-## File Reference
+## 13. Checklist : nouvelle page
 
-| Purpose | Location |
-|---------|----------|
-| Tailwind tokens | `tailwind.config.ts` |
-| Global CSS & utilities | `src/app/globals.css` |
-| ESLint config (governance rules) | `eslint.config.mjs` |
-| Sidebar component | `src/components/Sidebar.tsx` |
-| Sidebar config | `src/lib/sidebar-config.ts` |
-| Header component | `src/components/Header.tsx` |
-| UI primitives (shadcn) | `src/components/ui/` |
-| Common components (barrel) | `src/components/common/index.ts` |
-| Chart palette SSOT | `src/components/common/charts/chartTheme.ts` |
-| Number formatting | `src/lib/formatters/numberFormatting.ts` |
-| Date formatting | `src/lib/formatters/dateFormatting.ts` |
+Avant de commit une nouvelle page (`src/app/(app)/.../page.tsx`) :
+
+1. ✅ **Layout** : `p-4 md:p-6 space-y-6`, container vertical.
+2. ✅ **Tokens** : aucun hex hardcodé. `pnpm run lint` passe.
+3. ✅ **Stats** : utilise `<StatsCard>` ou `<StatsPanel>`. Pas de label uppercase + value bold à la main.
+4. ✅ **Tables** : `<TypedDataTable>` avec config columns. Sortable = colonnes `sortable: true` + `getSortValue`.
+5. ✅ **Forms** : `<FormField>` + `<FormSection>` + `<FormFooter>` + `<FormModal>` si modal.
+6. ✅ **Loading** : `<LoadingState>` (block) ou `<ChartSkeleton>` (chart). Jamais `<Loader2>`.
+7. ✅ **Empty / Error** : passe les states à la primitive (TypedDataTable les gère). Sinon `<EmptyState>` / `<ErrorState>`.
+8. ✅ **Animations** : `<FadeIn>` ou `staggeredCardVariants` pour entrées. Pas de motion.div inline ad-hoc.
+9. ✅ **Adresses** : `<AddressDisplay>`. Jamais `.slice(0,6)...slice(-4)`.
+10. ✅ **Tooltips** : `<TooltipIcon text="..." />`.
+11. ✅ **Icons** : Lucide, tailles standard.
+12. ✅ **Responsive** : grids `grid-cols-2 lg:grid-cols-N`, colonnes secondaires `hidden md:table-cell`.
+13. ✅ **Imports** : `@/components/common` (barrel) — jamais sub-path.
+14. ✅ **Type-check** : `npx tsc --noEmit` zéro erreur sur tes fichiers.
+15. ✅ **Lint** : `pnpm run lint` zéro erreur.
 
 ---
 
-## Quick Reference
+## 14. Ajouter une nouvelle primitive commune
 
-### Most Used Patterns
+Procédure :
 
-```tsx
-// Glass card
-<div className="glass-panel p-4 hover:border-border-hover transition-all">
+1. Crée le fichier dans `src/components/common/<NewPrimitive>.tsx` (ou sous-dossier thématique).
+2. **Ajoute l'export au barrel** `src/components/common/index.ts` **dans le même commit** — sinon ESLint refuse l'import depuis n'importe où.
+3. Documente l'API ici (section 5).
+4. Si elle remplace un pattern dupliqué → migre les call-sites (audit `grep`) dans la même PR ou une PR suivante référencée.
 
-// Section title
-<h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
+---
 
-// Address link
-<AddressDisplay address={addr} showCopy={true} />
+## 15. Fichiers de référence
 
-// Loading
-<Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+| Fichier | Rôle |
+|---|---|
+| [`tailwind.config.ts`](../tailwind.config.ts) | Tokens `brand-*`, fonts, breakpoints |
+| [`src/app/globals.css`](../src/app/globals.css) | CSS vars RGB, `.glass-panel`, utility classes |
+| [`src/components/common/index.ts`](../src/components/common/index.ts) | Barrel SSOT |
+| [`src/components/common/charts/chartTheme.ts`](../src/components/common/charts/chartTheme.ts) | Palette charts (hex autorisés ici) |
+| [`eslint.config.mjs`](../eslint.config.mjs) | Règles enforced |
+| [`AGENTS.md`](../AGENTS.md) | Conventions apprises (font, scrollbar, …) |
 
-// Empty icon
-<Database className="w-10 h-10 text-text-muted" />
+---
 
-// Accent link
-<Link className="text-brand-accent hover:text-white transition-colors font-mono text-sm">
-
-// Ghost button
-<Button variant="ghost" size="icon" className="hover:bg-white/5">
-```
+**TL;DR** : avant d'écrire un `<div>`, vérifie qu'il n'existe pas déjà une primitive. Avant d'écrire `#xxxxxx`, vérifie le token Tailwind. Avant d'écrire `<Loader2>`, importe `<LoadingState>`. Le design system n'est plus aspirationnel — il est prescriptif et ESLint le fait respecter.

@@ -1,16 +1,24 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { Copy, Check, Database } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposits';
 import { useVaults } from '@/services/explorer/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
-import { ScrollableTable } from '@/components/common';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { TypedDataTable, type Column } from '@/components/common';
 import { Card } from "@/components/ui/card";
 
 interface VaultDepositListProps {
   address: string;
+}
+
+interface VaultDepositRow {
+  vaultAddress: string;
+  name: string;
+  equity: string;
+  apr: number | null;
+  tvl: number | null;
+  lockedUntilTimestamp?: number;
 }
 
 export function VaultDepositList({ address }: VaultDepositListProps) {
@@ -18,13 +26,11 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
   const { isLoading: vaultsLoading } = useVaults();
   const { format } = useNumberFormat();
 
-  // Pagination state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const total = rows.length;
   const paginatedRows = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
-  // Copy state
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const copyToClipboard = async (text: string) => {
     try {
@@ -36,32 +42,75 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     }
   };
 
-  // Format time lock
   const formatTimeLock = (timestamp?: number) => {
     if (!timestamp) return '-';
     const date = new Date(timestamp);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
 
-  // Format equity
-  const formatEquity = (equity: string) => {
-    return formatNumber(parseFloat(equity), format, { minimumFractionDigits: 2, maximumFractionDigits: 6 });
-  };
+  const formatEquity = (equity: string) =>
+    formatNumber(parseFloat(equity), format, { minimumFractionDigits: 2, maximumFractionDigits: 6 });
 
-  // Format TVL
   const formatTVL = (tvl: number | null) => {
     if (tvl == null) return '-';
     return formatNumber(tvl, format, { currency: '$', showCurrency: true });
   };
 
-  // Format APR
   const formatAPR = (apr: number | null) => {
     if (apr == null) return '-';
     return formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
   };
 
-  // Table style
-  const containerClass = "overflow-hidden flex flex-col";
+  const columns: Column<VaultDepositRow>[] = [
+    {
+      key: "name",
+      header: "Name",
+      accessor: (row) => (
+        <div className="flex items-center gap-1.5">
+          <Link
+            href={`/explorer/address/${row.vaultAddress}`}
+            className="text-white font-inter hover:text-brand-accent transition-colors"
+            title={row.vaultAddress}
+          >
+            {row.name}
+          </Link>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              copyToClipboard(row.vaultAddress);
+            }}
+            className="group p-1 rounded transition-colors"
+          >
+            {copiedAddress === row.vaultAddress ? (
+              <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+            ) : (
+              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+            )}
+          </button>
+        </div>
+      ),
+    },
+    {
+      key: "equity",
+      header: "User deposits",
+      accessor: (row) => <span className="text-white">${formatEquity(row.equity)}</span>,
+    },
+    {
+      key: "apr",
+      header: "APR",
+      accessor: (row) => <span className="text-emerald-400">{formatAPR(row.apr)}</span>,
+    },
+    {
+      key: "tvl",
+      header: "TVL",
+      accessor: (row) => <span className="text-white">{formatTVL(row.tvl)}</span>,
+    },
+    {
+      key: "lock",
+      header: "Time lock",
+      accessor: (row) => <span className="text-white">{formatTimeLock(row.lockedUntilTimestamp)}</span>,
+    },
+  ];
 
   if (isLoading || vaultsLoading) {
     return (
@@ -71,86 +120,23 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     );
   }
 
-  if (error) {
-    return (
-      <Card className="flex items-center justify-center h-[400px] text-rose-500">
-        {error.message}
-      </Card>
-    );
-  }
-
-  if (!rows.length) {
-    return (
-      <Card className="flex items-center justify-center h-[200px]">
-        <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-8 h-8 mb-3 text-brand-accent/30" />
-          <p className="text-white text-sm mb-1">No vault deposits found</p>
-          <p className="text-text-muted text-xs">This address has not deposited in any vault yet.</p>
-        </div>
-      </Card>
-    );
-  }
-
   return (
-    <Card className={containerClass}>
-      <ScrollableTable
-        pagination={total > 10 ? {
-          total,
-          page,
-          rowsPerPage,
-          onPageChange: setPage,
-          onRowsPerPageChange: (newRowsPerPage) => {
-            setRowsPerPage(newRowsPerPage);
-            setPage(0);
-          },
-        } : undefined}
-      >
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent bg-transparent">
-              <TableHead className="py-3 px-4 text-left">Name</TableHead>
-              <TableHead className="py-3 px-4 text-left">User deposits</TableHead>
-              <TableHead className="py-3 px-4 text-left">APR</TableHead>
-              <TableHead className="py-3 px-4 text-left">TVL</TableHead>
-              <TableHead className="py-3 px-4 text-left">Time lock</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="bg-transparent">
-            {paginatedRows.map((row) => (
-              <TableRow key={row.vaultAddress} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                <TableCell className="py-3 px-4 text-sm">
-                  <div className="flex items-center gap-1.5">
-                    <Link
-                      href={`/explorer/address/${row.vaultAddress}`}
-                      className="text-white font-inter hover:text-brand-accent transition-colors"
-                      title={row.vaultAddress}
-                    >
-                      {row.name}
-                    </Link>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        copyToClipboard(row.vaultAddress);
-                      }}
-                      className="group p-1 rounded transition-colors"
-                    >
-                      {copiedAddress === row.vaultAddress ? (
-                        <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-left text-white">${formatEquity(row.equity)}</TableCell>
-                <TableCell className="py-3 px-4 text-sm text-left text-emerald-400">{formatAPR(row.apr)}</TableCell>
-                <TableCell className="py-3 px-4 text-sm text-left text-white">{formatTVL(row.tvl)}</TableCell>
-                <TableCell className="py-3 px-4 text-sm text-left text-white">{formatTimeLock(row.lockedUntilTimestamp)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </ScrollableTable>
+    <Card className="overflow-hidden flex flex-col">
+      <TypedDataTable<VaultDepositRow>
+        data={paginatedRows}
+        columns={columns}
+        getRowKey={(row) => row.vaultAddress}
+        error={error}
+        errorTitle="Failed to load deposits"
+        emptyMessage="No vault deposits found"
+        emptyDescription="This address has not deposited in any vault yet."
+        total={total}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onPageChange={setPage}
+        onRowsPerPageChange={(n) => { setRowsPerPage(n); setPage(0); }}
+        paginationVariant={total > 10 ? "full" : "none"}
+      />
     </Card>
   );
-} 
+}

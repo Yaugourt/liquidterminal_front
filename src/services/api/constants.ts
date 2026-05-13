@@ -1,5 +1,30 @@
 import { env } from "@/lib/env";
 
+/**
+ * Polling intervals for `useDataFetching` and its derivatives.
+ * Calibrated against backend cache TTLs and the global rate limiter (20 req/s burst).
+ * Prefer these to magic numbers so cadence stays consistent across the app.
+ *
+ *   REALTIME — 5s   : ultra-fresh data (EVM blocks). Use sparingly.
+ *   FAST     — 10s  : real-time market widgets where 10s lag is acceptable.
+ *   DEFAULT  — 30s  : safe default; matches most backend Redis TTLs.
+ *   STATIC   — 60s  : slow-moving data (overview snapshots, leaderboards).
+ *   DAILY    — 5min : daily aggregates.
+ *   HOURLY   — 1h   : long-window stats.
+ *   DISABLED — 0    : explicit no-poll (one-shot fetch). Keep as 0 so the hook short-circuits.
+ */
+export const REFRESH_INTERVALS = {
+  REALTIME: 5_000,
+  FAST: 10_000,
+  DEFAULT: 30_000,
+  STATIC: 60_000,
+  DAILY: 300_000,
+  HOURLY: 3_600_000,
+  DISABLED: 0,
+} as const;
+
+export type RefreshInterval = (typeof REFRESH_INTERVALS)[keyof typeof REFRESH_INTERVALS];
+
 // API Base URLs
 export const API_URLS = {
   // Notre backend
