@@ -13,7 +13,7 @@ export const FeesTabsButton = ({ selectedFeeType, onFeeTypeChange }: FeesTabsBut
 
   return (
     <div className="flex justify-start items-center">
-      <div className="flex items-center bg-[#FFFFFF0A] rounded-lg p-1">
+      <div className="flex items-center bg-white/4 rounded-lg p-1">
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -21,7 +21,7 @@ export const FeesTabsButton = ({ selectedFeeType, onFeeTypeChange }: FeesTabsBut
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               selectedFeeType === tab.key
                 ? 'bg-brand-accent text-brand-tertiary shadow-sm'
-                : 'text-white hover:text-white hover:bg-[#FFFFFF0A]'
+                : 'text-white hover:text-white hover:bg-white/4'
             }`}
           >
             {tab.label}

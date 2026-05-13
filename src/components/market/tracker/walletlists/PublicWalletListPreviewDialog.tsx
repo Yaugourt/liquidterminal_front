@@ -13,13 +13,14 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Copy,
-  Loader2,
   Users,
   Calendar,
   Wallet,
   Download,
   ClipboardCopy
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { LoadingState } from "@/components/ui/loading-state";
 import { toast } from "sonner";
 import { getWalletListById } from "@/services/market/tracker/walletlist.service";
 import { useWalletLists } from "@/store/use-wallet-lists";
@@ -136,7 +137,7 @@ export function PublicWalletListPreviewDialog({
             <div className="flex-1 space-y-2">
               <DialogTitle className="text-2xl">{list.name}</DialogTitle>
               <div className="flex items-center gap-3 text-sm">
-                <div className="flex items-center gap-1 text-[#4ADE80]">
+                <div className="flex items-center gap-1 text-emerald-400">
                   <Users size={14} />
                   <span>Public</span>
                 </div>
@@ -160,7 +161,7 @@ export function PublicWalletListPreviewDialog({
           {/* Stats */}
           <div className="flex items-center gap-4 p-3 bg-black/20 border border-border-hover rounded-lg">
             <div className="flex items-center gap-2">
-              <Wallet size={16} className="text-[#83E9FF]" />
+              <Wallet size={16} className="text-brand-accent" />
               <span className="text-white font-medium">{list.itemsCount || 0}</span>
               <span className="text-text-secondary text-sm">
                 wallet{list.itemsCount !== 1 ? 's' : ''}
@@ -173,8 +174,8 @@ export function PublicWalletListPreviewDialog({
 
           {/* Wallets list */}
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF]" />
+            <div className="py-12">
+              <LoadingState size="sm" withCard={false} />
             </div>
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
@@ -184,9 +185,9 @@ export function PublicWalletListPreviewDialog({
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-[#83E9FF]/50 transition-colors"
+                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-brand-accent/50 transition-colors"
                     >
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#83E9FF]/20 text-[#83E9FF] text-xs font-medium shrink-0">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
@@ -249,11 +250,11 @@ export function PublicWalletListPreviewDialog({
             <Button
               onClick={handleCopyList}
               disabled={copying}
-              className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
+              className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
             >
               {copying ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <InlineSpinner className="mr-2" />
                   Copying...
                 </>
               ) : (

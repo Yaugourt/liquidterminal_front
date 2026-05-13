@@ -1,12 +1,13 @@
 import { HIP4_PRICES } from "@/lib/hip4/markets-static-data";
 import { cn } from "@/lib/utils";
+import { chartPalette } from "@/components/common";
 
 export function Hip4PricesGrid() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
       {Object.entries(HIP4_PRICES).map(([ticker, val]) => {
         const pct = (val * 100).toFixed(1);
-        const color = val >= 0.5 ? "#34d399" : "#f87171";
+        const color = val >= 0.5 ? chartPalette.emeraldLight : chartPalette.roseSoft;
         return (
           <div
             key={ticker}

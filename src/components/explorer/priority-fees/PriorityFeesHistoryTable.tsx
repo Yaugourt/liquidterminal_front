@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -80,9 +81,8 @@ function RecentFillsSection() {
 
       <div className="rounded-xl border border-border-subtle overflow-x-auto scrollbar-brand">
         {isLoading && data.length === 0 ? (
-          <div className="flex h-[220px] items-center justify-center flex-col gap-2">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
-            <span className="text-text-muted text-sm">Loading fills…</span>
+          <div className="flex h-[220px]">
+            <LoadingState message="Loading fills…" size="sm" withCard={false} />
           </div>
         ) : data.length === 0 ? (
           <div className="flex h-[220px] items-center justify-center text-sm text-text-secondary px-4 text-center">

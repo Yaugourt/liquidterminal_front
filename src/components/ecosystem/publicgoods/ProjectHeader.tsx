@@ -79,7 +79,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.demoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-[#F9E370] hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-brand-gold hover:text-white transition-colors"
                             >
                                 <Globe className="w-5 h-5" />
                                 Demo
@@ -111,7 +111,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         className="object-cover"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A1F32]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-tertiary/60 to-transparent" />
                 </div>
             )}
         </div>

@@ -72,7 +72,7 @@ export interface TokensHeaderProps {
 /**
  * Types pour les composants Chart
  */
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod } from '@/components/common';
 
 export type FilterType = "bridge" | "strict" | "gas" | "fees";
 

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { BarChart3, Coins, Activity, Users, Layers, Hash } from "lucide-react";
 import { motion } from "framer-motion";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import { useOverviewStats24h } from "@/services/indexer/overview";
 import { useEvmStats } from "@/services/indexer/evm";
 import { useNumberFormat } from "@/store/number-format.store";

@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/table";
 import { useHip4MarketsScan } from "@/hooks/use-hip4-markets-scan";
 import { formatHypeWei, type Hip4ScanDeploymentResult } from "@/services/hip4/markets-scan";
-import { Loader2, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Badge } from "@/components/ui/badge";
 
 function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
@@ -141,7 +142,7 @@ export function Hip4MarketsChapter() {
           className="gap-2 border-border-subtle"
         >
           {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <InlineSpinner />
           ) : (
             <RefreshCw className="h-4 w-4" />
           )}
@@ -154,7 +155,7 @@ export function Hip4MarketsChapter() {
         <Hip4SectionTitle>On-chain contests (RPC)</Hip4SectionTitle>
         {loading && !v1 && !v2 ? (
           <div className="flex items-center gap-2 py-8 text-text-secondary">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+            <InlineSpinner className="h-6 w-6 text-brand-accent" />
             Scanning ContestCreated logs…
           </div>
         ) : (

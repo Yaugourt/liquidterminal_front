@@ -1,6 +1,6 @@
 import { memo, useMemo } from "react";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { TypedDataTable as DataTable, Column } from "@/components/common/DataTable";
+import { TypedDataTable as DataTable, Column } from "@/components/common";
 import { useNumberFormat } from "@/store/number-format.store";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";

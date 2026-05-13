@@ -6,15 +6,15 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useGlobalAliases } from "@/services/explorer";
 
-interface SearchBarProps {
+interface ExplorerSearchBarProps {
   placeholder?: string;
   className?: string;
 }
 
-export function SearchBar({
+export function ExplorerSearchBar({
   placeholder = "Search address, tx hash, block or alias...",
   className,
-}: SearchBarProps) {
+}: ExplorerSearchBarProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);

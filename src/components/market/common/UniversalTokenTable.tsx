@@ -17,7 +17,7 @@ import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
 import { TokenIcon, formatPriceChange } from "@/components/common";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import { TableEmptyState } from "@/components/ui/table-states";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";

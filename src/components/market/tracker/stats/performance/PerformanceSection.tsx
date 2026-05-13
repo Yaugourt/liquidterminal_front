@@ -10,7 +10,7 @@ import {
   ChartEmpty,
   AuroraAreaChart,
   chartColors,
-} from "@/components/common/charts";
+} from "@/components/common";
 import { PortfolioApiResponse } from "@/services/explorer/address/types";
 
 type ApiPeriod = 'day' | 'week' | 'month' | 'allTime';

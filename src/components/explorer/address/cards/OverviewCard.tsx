@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { OverviewCardProps } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES } from "./constants";
 
@@ -18,11 +19,11 @@ const OverviewCardComponent = ({ balances, isLoading, formatCurrency }: Overview
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
                     <Wallet size={16} className="text-brand-gold" />
-                    <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">OVERVIEW</h3>
+                    <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">OVERVIEW</h3>
                 </div>
                 <span className="text-[16px] text-white font-medium font-inter tabular-nums mr-4">
                     {isLoading ? (
-                        <Loader2 className="w-4 h-4 text-brand-accent animate-spin" />
+                        <InlineSpinner className="text-brand-accent" />
                     ) : (
                         formatCurrency(balances.totalBalance)
                     )}

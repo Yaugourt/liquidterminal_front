@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { env } from "@/lib/env";
 import { XpNotificationProvider } from "@/components/xp";
 import { XpProvider } from "@/services/xp";
+import { chartPalette } from "@/components/common";
 
 // Lazy load Sidebar - it's a heavy component (22KB) not needed immediately
 const Sidebar = dynamic(
@@ -28,8 +29,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       appId={privyAppId}
       config={{
         appearance: {
-          accentColor: "#83E9FF",
-          theme: "#051728",
+          accentColor: chartPalette.accent,
+          theme: chartPalette.brandTertiary,
           showWalletLoginFirst: false,
           logo: "/logo.svg",
         },

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useFeesHistory } from "../../market/fees/hooks/useFeesHistory";
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod } from '@/components/common';
 import { DashboardData } from "@/components/types/dashboard.types";
 
 export function useFeesChartData(

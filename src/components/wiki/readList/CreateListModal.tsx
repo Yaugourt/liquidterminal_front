@@ -4,7 +4,8 @@ import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Globe, Lock, BookOpen, Loader2 } from "lucide-react";
+import { Globe, Lock, BookOpen } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
@@ -166,7 +167,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <InlineSpinner className="mr-2" />
                   Creating...
                 </>
               ) : (

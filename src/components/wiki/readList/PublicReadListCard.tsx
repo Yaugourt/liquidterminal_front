@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import {
   Copy,
   CheckCircle,
-  Loader2,
   BookOpen,
   Globe,
   ChevronRight,
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PublicReadList } from "@/services/wiki/readList/types";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
@@ -113,7 +113,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
         >
           {isCopying ? (
             <>
-              <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />
+              <InlineSpinner className="w-3.5 h-3.5 mr-2" />
               Copying...
             </>
           ) : hasCopied ? (

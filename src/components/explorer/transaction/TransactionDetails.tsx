@@ -50,7 +50,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
             </Link>
             <button
               onClick={() => copyToClipboard(stringValue)}
-              className="p-1 hover:bg-[#FFFFFF0A] rounded transition-colors"
+              className="p-1 hover:bg-white/4 rounded transition-colors"
             >
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />

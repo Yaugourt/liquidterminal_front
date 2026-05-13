@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FilterType, FilterButtonsProps } from "@/components/types/dashboard.types";
 import { ChartDisplay } from "./ChartDisplay";
-import { useChartPeriod } from '@/components/common/charts';
+import { useChartPeriod } from '@/components/common';
 import { useChartTimeSeriesData, useFeesChartData } from "@/services/dashboard";
 
 const FilterButtons = ({ selectedFilter, onFilterChange }: FilterButtonsProps) => {

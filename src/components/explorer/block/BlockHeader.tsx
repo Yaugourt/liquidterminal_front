@@ -34,7 +34,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
     <>
       <div className="mb-6">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg text-white font-inter">Block <span className="text-[#F9E370]">{formatNumber(blockDetails.height, numberFormat, { maximumFractionDigits: 0 })}</span></h2>
+          <h2 className="text-lg text-white font-inter">Block <span className="text-brand-gold">{formatNumber(blockDetails.height, numberFormat, { maximumFractionDigits: 0 })}</span></h2>
           <button
             onClick={() => copyToClipboard(blockDetails.height.toString(), 'blockHeight')}
             className="group p-1 rounded transition-colors"

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AuctionChart } from "./AuctionChart";
-import { useChartPeriod } from '@/components/common/charts';
+import { useChartPeriod } from '@/components/common';
 import { useAuctionChart } from "@/services/market/auction/hooks/useAuctionChart";
 import { usePerpAuctionChart } from "@/services/market/auction/hooks/usePerpAuctionChart";
 

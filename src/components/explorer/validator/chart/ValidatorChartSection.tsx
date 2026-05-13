@@ -3,8 +3,8 @@
 import { memo, useState, useId } from "react";
 import { TrendingUp, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
-import { ChartPeriod } from "@/components/common/charts/types/chart";
-import { PeriodSelector } from "@/components/common/charts";
+import { ChartPeriod } from "@/components/common";
+import { PeriodSelector } from "@/components/common";
 import { ValidatorChartTabs, ChartTabType } from "./ValidatorChartTabs";
 import { HoldersDistributionChart } from "./HoldersDistributionChart";
 import { UnstakingScheduleChart } from "./UnstakingScheduleChart";

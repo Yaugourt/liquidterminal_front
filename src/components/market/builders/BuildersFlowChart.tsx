@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, DollarSign } from "lucide-react";
-import { ChartLoading, ChartEmpty } from "@/components/common/charts";
+import { ChartLoading, ChartEmpty } from "@/components/common";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayNameOrAddress } from "./formatBuilderDisplayName";
 

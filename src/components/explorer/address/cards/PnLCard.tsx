@@ -1,6 +1,7 @@
 import { memo, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PnLCardProps, PnLVariation } from "@/components/types/explorer.types";
 import { CARD_BASE_CLASSES, PERIODS } from "./constants";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -74,7 +75,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
                     <TrendingUp size={16} className="text-brand-gold" />
-                    <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">PNL</h3>
+                    <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">PNL</h3>
                 </div>
                 <div
                     role="group"
@@ -106,7 +107,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {isLoading ? (
                     <div className="col-span-2 flex justify-center items-center p-4">
-                        <Loader2 className="w-5 h-5 text-brand-accent animate-spin" />
+                        <InlineSpinner className="w-5 h-5 text-brand-accent" />
                     </div>
                 ) : (
                     PERIODS.map(renderPeriod)

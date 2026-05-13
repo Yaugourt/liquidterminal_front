@@ -1,117 +1,82 @@
 /**
- * Privy Service - Gestion des tokens et authentification Privy
+ * Privy Service — Token retrieval and logout.
+ *
+ * Tokens are NOT read from or persisted to localStorage by our code.
+ * A React-side bridge (AuthProvider) registers Privy SDK's `getAccessToken` here
+ * so axios interceptors can fetch a fresh token from the SDK without leaving React context.
+ * On logout, we clear a strict whitelist of known Privy SDK keys as best-effort.
  */
 
-import { isValidJWT } from './jwt.service';
+type AccessTokenGetter = () => Promise<string | null>;
 
-// Extend Window interface for Privy context
-declare global {
-  interface Window {
-    privy?: {
-      getAccessToken?: () => Promise<string | null>;
-      logout?: () => void;
-    };
-    __PRIVY_CONTEXT__?: {
-      getAccessToken?: () => Promise<string | null>;
-    };
-  }
-}
+let accessTokenGetter: AccessTokenGetter | null = null;
+let privyLogout: (() => void) | null = null;
+
+export const registerPrivyAccessTokenGetter = (getter: AccessTokenGetter | null): void => {
+  accessTokenGetter = getter;
+};
+
+export const registerPrivyLogout = (logout: (() => void) | null): void => {
+  privyLogout = logout;
+};
 
 /**
- * Get token from localStorage fallback
+ * Get Privy access token via the registered SDK getter.
+ * Returns null if no getter has been registered yet (e.g. before AuthProvider mounts).
  */
-const getTokenFromStorage = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  
+export const getPrivyToken = async (): Promise<string | null> => {
+  if (!accessTokenGetter) return null;
   try {
-    // Check privy:pat first
-    const privyPat = localStorage.getItem('privy:pat');
-    if (privyPat) {
-      const cleanToken = privyPat.replace(/^"|"$/g, '');
-      if (isValidJWT(cleanToken)) return cleanToken;
-    }
-    
-    // Fallback to authToken
-    const authToken = localStorage.getItem('authToken');
-    return authToken && isValidJWT(authToken) ? authToken : null;
+    const token = await accessTokenGetter();
+    return token || null;
   } catch {
     return null;
   }
 };
 
-/**
- * Get Privy access token
- */
-export const getPrivyToken = async (): Promise<string | null> => {
-  if (typeof window === 'undefined') return null;
-  
-  try {
-    // Try Privy API first
-    const privy = window.privy;
-    if (privy?.getAccessToken) {
-      const token = await privy.getAccessToken();
-      return token || null;
-    }
-
-    // Try Privy context fallback
-    if (window.__PRIVY_CONTEXT__?.getAccessToken) {
-      const token = await window.__PRIVY_CONTEXT__.getAccessToken();
-      return token || null;
-    }
-
-    // Last resort: localStorage
-    return getTokenFromStorage();
-  } catch {
-    return getTokenFromStorage();
-  }
-};
+const PRIVY_SDK_KEYS_WHITELIST = [
+  'privy:pat',
+  'privy:session',
+  'privy:token',
+  'privy:refresh_token',
+  'privy:embedded-wallet:iframe-ready',
+  'authToken',
+] as const;
 
 /**
- * Clear all auth tokens from storage
+ * Best-effort cleanup of known Privy SDK keys.
+ * Our own code does not write these — this is purely to flush SDK residue.
  */
 export const clearAuthTokens = (): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
-    // Clear specific tokens
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('privy:pat');
-    
-    // Clear all Privy-related keys
-    Object.keys(localStorage)
-      .filter(key => key.includes('privy'))
-      .forEach(key => localStorage.removeItem(key));
+    for (const key of PRIVY_SDK_KEYS_WHITELIST) {
+      localStorage.removeItem(key);
+    }
   } catch {
     // Silent fail
   }
 };
 
-/**
- * Handle user logout
- */
 export const handleLogout = async (): Promise<void> => {
   clearAuthTokens();
-  
+
   if (typeof window === 'undefined') return;
-  
+
   try {
-    // Try Privy logout first
-    const privy = window.privy;
-    if (privy?.logout) {
-      privy.logout();
+    if (privyLogout) {
+      privyLogout();
       return;
     }
   } catch {
-    // Fallback to manual cleanup
+    // Fall through to toast
   }
-  
-  // Show toast notification
+
   try {
     const { toast } = await import('sonner');
-    toast.error('Session expired. Please reconnect.', {
-      duration: 5000
-    });
+    toast.error('Session expired. Please reconnect.', { duration: 5000 });
   } catch {
-    // Toast failed, silent fail
+    // Silent fail
   }
 };

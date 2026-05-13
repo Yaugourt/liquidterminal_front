@@ -52,7 +52,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             <p className="text-white text-sm mb-1 font-inter">Block:</p>
             <Link
               href={`/explorer/block/${transaction.block}`}
-              className="text-[#F9E370] text-base hover:text-[#F9E370]/80 transition-colors font-inter"
+              className="text-brand-gold text-base hover:text-brand-gold/80 transition-colors font-inter"
             >
               {transaction.block}
             </Link>
@@ -69,7 +69,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
               </Link>
               <button
                 onClick={() => copyToClipboard(transaction.user)}
-                className="p-1 hover:bg-[#FFFFFF0A] rounded transition-colors"
+                className="p-1 hover:bg-white/4 rounded transition-colors"
               >
                 {copiedValue === transaction.user ? (
                   <Check className="h-3 w-3 text-green-500" />

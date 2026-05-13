@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState, useId } from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { motion } from "framer-motion";
-import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
+import { AuroraAreaChart, chartPalette } from "@/components/common";
 import { useVaultDetails } from "@/services/explorer/vault/hooks/useVaultDetails";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 
@@ -100,10 +100,7 @@ export function VaultEcosystemChart() {
       {/* Chart area */}
       <div className="relative z-10 min-h-[220px]">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-[220px]">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-text-muted text-sm">Loading chart data…</span>
-          </div>
+          <LoadingState message="Loading chart data…" size="sm" withCard={false} className="h-[220px]" />
         ) : activeTab === "TVL Trend" ? (
           chartError ? (
             <div className="flex items-center justify-center h-[220px]">
@@ -117,7 +114,7 @@ export function VaultEcosystemChart() {
             <div className="h-[220px]">
               <AuroraAreaChart
                 data={tvlChartData}
-                lineColor="#83e9ff"
+                lineColor={chartPalette.accent}
                 formatValue={formatValue}
               />
             </div>

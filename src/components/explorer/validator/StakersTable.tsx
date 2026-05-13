@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { TableEmptyState, TableLoadingState } from "@/components/ui/table-states";
 import { ErrorState } from "@/components/ui/error-state";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { ScrollableTable } from "@/components/common";
 import { usePagination } from "@/hooks/core/usePagination";
 import Link from "next/link";
 

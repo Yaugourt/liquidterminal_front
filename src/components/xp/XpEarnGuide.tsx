@@ -67,8 +67,8 @@ const MISSIONS: MissionItem[] = [
         title: "Public Good Approved",
         description: "Get your submitted project validated by mods.",
         xp: "+500 XP",
-        color: "text-[#F9E370]",
-        bgColor: "bg-[#F9E370]/10"
+        color: "text-brand-gold",
+        bgColor: "bg-brand-gold/10"
     },
     {
         icon: Users,
@@ -97,8 +97,8 @@ export function XpEarnGuide({ className }: { className?: string }) {
             className
         )}>
             <div className="flex items-center gap-2 mb-6">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#F9E370]/20 to-orange-500/20 flex items-center justify-center border border-[#F9E370]/30">
-                    <Zap className="h-4 w-4 text-[#F9E370]" />
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-gold/20 to-orange-500/20 flex items-center justify-center border border-brand-gold/30">
+                    <Zap className="h-4 w-4 text-brand-gold" />
                 </div>
                 <div>
                     <h3 className="text-sm font-bold text-white">Ways to Earn XP</h3>

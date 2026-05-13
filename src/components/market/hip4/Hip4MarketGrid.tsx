@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart3 } from "lucide-react";
-import { SearchBar } from "@/components/common/SearchBar";
+import { SearchBar } from "@/components/common";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";

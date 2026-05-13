@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { TradingLayout } from "@/layouts/TradingLayout";
 import { TokenCard, TokenData, OrderBook, RecentTrades } from "@/components/market/token";
-import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+import { ChartSkeleton } from "@/components/common";
 import { getPerpCoinId } from "@/services/market/token/utils";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
@@ -74,10 +74,7 @@ export default function PerpTokenPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-          <span className="text-zinc-500 text-sm">Loading...</span>
-        </div>
+        <LoadingState message="Loading..." size="sm" withCard={false} />
       </div>
     );
   }

@@ -4,15 +4,15 @@ import { useState, useCallback, useRef } from "react";
 import { usePublicReadLists } from "@/services/wiki/readList/hooks/usePublicReadLists";
 import { PublicReadListCard } from "@/components/wiki/readList/PublicReadListCard";
 import { PublicReadListDetails } from "@/components/wiki/readList/PublicReadListDetails";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import {
-  Loader2,
   BookOpen,
   Search,
   SlidersHorizontal,
   Globe,
   ArrowUpDown,
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PublicReadList } from "@/services/wiki/readList/types";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -286,7 +286,7 @@ export default function PublicReadListsPage() {
           {/* Stats footer */}
           {pagination && !loading && readLists.length > 0 && (
             <div className="flex items-center justify-center gap-1 text-xs text-text-muted pt-1">
-              <Loader2 className={`w-3 h-3 ${loading ? "animate-spin" : "opacity-0"}`} />
+              <InlineSpinner className={`w-3 h-3 ${loading ? "" : "opacity-0 animate-none"}`} />
               Showing {readLists.length} of {pagination.total} lists
             </div>
           )}

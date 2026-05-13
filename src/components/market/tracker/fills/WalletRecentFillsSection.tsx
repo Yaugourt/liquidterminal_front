@@ -8,7 +8,7 @@ import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { formatAge } from "@/services/explorer/address/utils";
-import { Pagination } from "@/components/common/pagination";
+import { Pagination } from "@/components/common";
 import { Card } from "@/components/ui/card";
 
 interface WalletRecentFillsSectionProps {
@@ -65,7 +65,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
     const isLong = dir.toLowerCase().includes('long');
 
     if (isClose) {
-      return <span className="text-[#F9E370]">{dir}</span>;
+      return <span className="text-brand-gold">{dir}</span>;
     } else if (isShort) {
       return <span className="text-rose-400">{dir}</span>;
     } else if (isLong) {
@@ -77,9 +77,9 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   const formatPnl = (pnl: string) => {
     const pnlValue = parseFloat(pnl);
-    if (pnlValue === 0) return <span className="text-[#FFFFFF80]">$0.00</span>;
+    if (pnlValue === 0) return <span className="text-white/50">$0.00</span>;
 
-    const color = pnlValue > 0 ? 'text-[#4ADE80]' : 'text-[#FF5757]';
+    const color = pnlValue > 0 ? 'text-emerald-400' : 'text-rose-400';
     const sign = pnlValue > 0 ? '+' : '';
 
     return (

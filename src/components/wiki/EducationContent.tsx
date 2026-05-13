@@ -2,30 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  BookOpen,
-  Check,
-  Code2,
-  Coins,
-  Copy,
-  Database,
-  FileText,
-  GitBranch,
-  Github,
-  Globe,
-  Hash,
-  Layers,
-  MessageCircle,
-  Send,
-  Sparkles,
-  TrendingUp,
-  Twitter,
-  Waves,
-  Workflow,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
+import { Check, Copy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  CHAPTER_META,
+  DEFAULT_META,
+  DEFAULT_SUB_META,
+} from "./education-meta";
+import {
+  buildResourceLinks,
+  renderParagraph,
+  type EducationInfo,
+} from "./education-helpers";
+import { EducationStatCard } from "./EducationStatCard";
 
 interface SubChapter {
   id: string;
@@ -41,154 +30,14 @@ interface Chapter {
   subChapters?: SubChapter[];
 }
 
-export interface EducationInfo {
-  title?: string;
-  description?: string;
-  colors?: string[];
-  links?: {
-    websiteLink?: string;
-    appLink?: string;
-    documentationLink?: string;
-    twitterLink?: string;
-    twitterFoundationLink?: string;
-    discordLink?: string;
-    telegramLink?: string;
-    githubLink?: string;
-    whitepaperLink?: string;
-  };
-}
-
 interface EducationContentProps {
   chapters: Chapter[];
   info?: EducationInfo | null;
 }
 
-interface StatItem {
-  label: string;
-  value: string;
-  hint?: string;
-}
+export type { EducationInfo };
 
-interface SubChapterMeta {
-  icon: LucideIcon;
-  stats: StatItem[];
-}
-
-interface ChapterMeta {
-  icon: LucideIcon;
-  tagline: string;
-  stats: StatItem[];
-  subChapters?: Record<string, SubChapterMeta>;
-}
-
-/**
- * Per-chapter visual metadata: icon, editorial tagline and key facts.
- * Keyed by chapter title (must match public/hyperliquid-education.json).
- * Falls back gracefully via `DEFAULT_META` if a title is not found, so
- * future chapters render cleanly without requiring a code change.
- */
-const CHAPTER_META: Record<string, ChapterMeta> = {
-  Introduction: {
-    icon: Sparkles,
-    tagline: "A sovereign L1 for fully on-chain finance",
-    stats: [
-      { label: "Founded", value: "2022", hint: "Self-funded, no VC" },
-      { label: "Mainnet", value: "Feb 2023", hint: "Live since launch" },
-      { label: "Architecture", value: "3-layer", hint: "BFT · Core · EVM" },
-    ],
-  },
-  HyperBFT: {
-    icon: Zap,
-    tagline: "Trader-grade consensus, built for latency",
-    stats: [
-      { label: "Median latency", value: "~0.2s", hint: "End-to-end" },
-      { label: "Throughput", value: "200k OPS", hint: "1M+ architectural" },
-      { label: "Finality", value: "1 block", hint: "Deterministic · no reorg" },
-    ],
-  },
-  HyperCore: {
-    icon: Database,
-    tagline: "Fully on-chain order books, zero gas to trade",
-    stats: [
-      { label: "Trading fees", value: "Gas-free", hint: "For end users" },
-      { label: "Matching", value: "On-chain CLOB", hint: "Price-time priority" },
-      { label: "Markets", value: "Perp + Spot", hint: "Unified cross-margin" },
-    ],
-  },
-  HyperEVM: {
-    icon: Code2,
-    tagline: "Ethereum-compatible, HyperCore-aware",
-    stats: [
-      { label: "Small blocks", value: "~2s", hint: "2M gas · fast trades" },
-      { label: "Big blocks", value: "~60s", hint: "30M gas · deployments" },
-      { label: "State", value: "Unified", hint: "Same as HyperCore" },
-    ],
-  },
-  "HyperCore \u2194 HyperEVM": {
-    icon: GitBranch,
-    tagline: "Where DeFi meets a native CLOB",
-    stats: [
-      { label: "Read Precompiles", value: "0x…0800", hint: "No external oracle" },
-      { label: "CoreWriter", value: "0x3333…3333", hint: "EVM → HyperCore" },
-      { label: "Atomicity", value: "Single block", hint: "Cross-layer txs" },
-    ],
-  },
-  $HYPE: {
-    icon: Coins,
-    tagline: "Fuel, stake and governance of the network",
-    stats: [
-      { label: "Total supply", value: "1B HYPE" },
-      { label: "Circulating", value: "~334M", hint: "Unlocks through 2027" },
-      { label: "Genesis", value: "Nov 29 2024", hint: "Community-first drop" },
-    ],
-  },
-  "HIP Framework": {
-    icon: Workflow,
-    tagline: "Binding code upgrades that extend the protocol",
-    stats: [
-      { label: "Live HIPs", value: "3", hint: "More in draft" },
-      { label: "Stake to deploy perp", value: "500k HYPE", hint: "HIP-3 builder" },
-      { label: "HIP-3 volume", value: "$25B+", hint: "First 3 months" },
-    ],
-    subChapters: {
-      "hip-1": {
-        icon: Hash,
-        stats: [
-          { label: "Auction cycle", value: "31h", hint: "Dutch · HYPE gas fee" },
-          { label: "EVM mirror", value: "ERC-20", hint: "Native ↔ HyperEVM" },
-          { label: "Bridges", value: "LZ · CCIP · Wormhole" },
-        ],
-      },
-      "hip-2": {
-        icon: Waves,
-        stats: [
-          { label: "Spread", value: "0.3%", hint: "Guaranteed on-chain" },
-          { label: "Refresh", value: "3s", hint: "Every block cycle" },
-          { label: "Secured by", value: "Consensus", hint: "Not a vault" },
-        ],
-      },
-      "hip-3": {
-        icon: TrendingUp,
-        stats: [
-          { label: "Stake", value: "500k HYPE", hint: "~$15–20M" },
-          { label: "Builder fees", value: "50%", hint: "Per deployed market" },
-          { label: "Open interest", value: "$1B+", hint: "Within 3 months" },
-        ],
-      },
-    },
-  },
-};
-
-const DEFAULT_META: ChapterMeta = {
-  icon: BookOpen,
-  tagline: "Hyperliquid fundamentals",
-  stats: [],
-};
-
-const DEFAULT_SUB_META: SubChapterMeta = {
-  icon: BookOpen,
-  stats: [],
-};
+/* CHAPTER_META block removed — moved to ./education-meta.ts */
 
 export function EducationContent({ chapters, info }: EducationContentProps) {
   const [activeTab, setActiveTab] = useState(chapters[0]?.title || "");
@@ -296,7 +145,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
   if (!activeChapter) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-gradient-to-br from-[#111826]/80 via-brand-secondary/60 to-[#0B0E14]/90 shadow-xl shadow-black/20">
+    <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90 shadow-xl shadow-black/20">
       {/* Ambient glows */}
       <div className="pointer-events-none absolute -top-28 -right-28 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-brand-gold/[0.06] blur-3xl" />
@@ -324,8 +173,8 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
          whole page sideways. Fade edges hint at overflow without a scrollbar. */}
       <div className="relative z-10 px-5 sm:px-6">
         <div className="relative w-fit max-w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 rounded-l-xl bg-gradient-to-r from-[#111826]/90 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 rounded-r-xl bg-gradient-to-l from-[#111826]/90 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 rounded-l-xl bg-gradient-to-r from-brand-secondary/90 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 rounded-r-xl bg-gradient-to-l from-brand-secondary/90 to-transparent" />
           <div
             ref={tabsContainerRef}
             role="tablist"
@@ -504,7 +353,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                         className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-1"
                       >
                         {activeSubMeta.stats.map((stat) => (
-                          <StatCard key={stat.label} stat={stat} />
+                          <EducationStatCard key={stat.label} stat={stat} />
                         ))}
                       </motion.div>
                     </AnimatePresence>
@@ -537,7 +386,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                 {activeMeta.stats.length > 0 && (
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-1">
                     {activeMeta.stats.map((stat) => (
-                      <StatCard key={stat.label} stat={stat} />
+                      <EducationStatCard key={stat.label} stat={stat} />
                     ))}
                   </div>
                 )}
@@ -617,75 +466,3 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
   );
 }
 
-function StatCard({ stat }: { stat: StatItem }) {
-  return (
-    <div className="rounded-xl border border-border-subtle bg-brand-dark/40 p-3 transition-colors hover:border-border-hover">
-      <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
-        {stat.label}
-      </div>
-      <div className="mt-1 text-sm font-bold tracking-tight text-white tabular-nums md:text-[15px]">
-        {stat.value}
-      </div>
-      {stat.hint && (
-        <div className="mt-0.5 text-[10px] leading-snug text-text-muted">
-          {stat.hint}
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface ResourceLink {
-  label: string;
-  url: string;
-  icon: LucideIcon;
-}
-
-function buildResourceLinks(info?: EducationInfo | null): ResourceLink[] {
-  if (!info?.links) return [];
-  const l = info.links;
-  const entries: Array<ResourceLink | null> = [
-    l.websiteLink ? { label: "Website", url: l.websiteLink, icon: Globe } : null,
-    l.appLink ? { label: "App", url: l.appLink, icon: Layers } : null,
-    l.documentationLink
-      ? { label: "Docs", url: l.documentationLink, icon: FileText }
-      : null,
-    l.whitepaperLink
-      ? { label: "Whitepaper", url: l.whitepaperLink, icon: FileText }
-      : null,
-    l.twitterLink ? { label: "X", url: l.twitterLink, icon: Twitter } : null,
-    l.twitterFoundationLink
-      ? { label: "X Foundation", url: l.twitterFoundationLink, icon: Twitter }
-      : null,
-    l.discordLink
-      ? { label: "Discord", url: l.discordLink, icon: MessageCircle }
-      : null,
-    l.telegramLink ? { label: "Telegram", url: l.telegramLink, icon: Send } : null,
-    l.githubLink ? { label: "GitHub", url: l.githubLink, icon: Github } : null,
-  ];
-  return entries.filter((x): x is ResourceLink => x !== null);
-}
-
-/**
- * Highlight inline technical tokens (EVM-style hex addresses, "HyperBFT/Core/EVM",
- * "HIP-N", "HYPE") in brand color without requiring markdown. Keeps the JSON
- * authoring format plain text.
- */
-const HIGHLIGHT_PATTERN =
-  /(0x[a-fA-F0-9]{2,}(?:[…\u2026]+[a-fA-F0-9]*)?|HyperBFT|HyperCore|HyperEVM|HIP-\d+|HYPE|CoreWriter|Read Precompiles?|CLOB)/g;
-
-function renderParagraph(text: string) {
-  const parts = text.split(HIGHLIGHT_PATTERN);
-  return parts.map((part, i) => {
-    if (!part) return null;
-    const isMatch = i % 2 === 1;
-    if (isMatch) {
-      return (
-        <span key={i} className="font-medium text-brand-accent/90">
-          {part}
-        </span>
-      );
-    }
-    return <span key={i}>{part}</span>;
-  });
-}

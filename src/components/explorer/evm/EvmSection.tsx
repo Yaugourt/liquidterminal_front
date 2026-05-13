@@ -2,7 +2,7 @@
 
 import { Layers, Hash, FileText } from "lucide-react";
 import { useEvmStats } from "@/services/indexer/evm";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import { EvmRecentBlocksTable } from "./EvmRecentBlocksTable";
 import { EvmRecentTxsTable } from "./EvmRecentTxsTable";

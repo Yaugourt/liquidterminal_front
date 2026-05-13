@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSubmitResource, useEducationalCategories } from "@/services/wiki";
 import { toast } from "sonner";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { AxiosError } from "axios";
 import { showXpGainToast } from "@/components/xp";
 
@@ -177,7 +178,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                 >
                     {isLoading ? (
                         <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <InlineSpinner className="mr-2" />
                             Envoi...
                         </>
                     ) : (

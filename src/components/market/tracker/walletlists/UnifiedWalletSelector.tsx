@@ -293,7 +293,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                     <Button
                         onClick={onAddWallet}
                         size="sm"
-                        className="w-full sm:w-auto bg-[#F9E370] hover:bg-[#F9E370]/90 text-black font-semibold rounded-lg"
+                        className="w-full sm:w-auto bg-brand-gold hover:bg-brand-gold/90 text-black font-semibold rounded-lg"
                     >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         <span className="hidden sm:inline">Add Wallet</span>

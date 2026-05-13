@@ -95,7 +95,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             disabled={isTogglingRead}
             className={`p-1.5 rounded-lg backdrop-blur-sm border transition-all ${item.isRead
               ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30'
-              : 'bg-brand-dark/80 border-border-hover text-[#F9E370] hover:bg-[#F9E370]/10 hover:border-[#F9E370]/30'
+              : 'bg-brand-dark/80 border-border-hover text-brand-gold hover:bg-brand-gold/10 hover:border-brand-gold/30'
               }`}
             title={item.isRead ? "Mark as unread" : "Mark as read"}
           >
@@ -125,7 +125,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
         <div className="absolute bottom-2 left-2">
           <span className={`text-label px-2 py-1 rounded-md backdrop-blur-sm border ${item.isRead
             ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-            : 'bg-[#F9E370]/10 border-[#F9E370]/20 text-[#F9E370]'
+            : 'bg-brand-gold/10 border-brand-gold/20 text-brand-gold'
             }`}>
             {item.isRead ? 'Read' : 'Unread'}
           </span>

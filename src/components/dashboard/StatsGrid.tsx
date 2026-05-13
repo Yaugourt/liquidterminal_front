@@ -1,5 +1,5 @@
 import { useDashboardStats, DashboardGlobalStats } from "@/services/dashboard";
-import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
+import { StatsCard, StatsCardSkeleton } from "@/components/common";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Users, Activity, Wallet, Shield, Database } from "lucide-react";

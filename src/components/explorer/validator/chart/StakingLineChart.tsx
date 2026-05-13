@@ -2,13 +2,13 @@
 
 import { memo, useId } from "react";
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common/charts";
+import { chartColors, rechartsAxisDefaults, rechartsGridDefaults } from "@/components/common";
 import { useUnstakingStatsForChartWithPeriod } from "@/services/explorer/validator/hooks/staking/useUnstakingStats";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
-import { ChartPeriod } from "@/components/common/charts/types/chart";
+import { ChartPeriod } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -49,7 +49,7 @@ export const StakingLineChart = memo(function StakingLineChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
             {formatDate(date, dateFormat)}
           </div>

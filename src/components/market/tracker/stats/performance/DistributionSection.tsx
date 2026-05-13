@@ -6,7 +6,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { HyperliquidBalance } from "@/services/market/tracker/types";
-import { ChartLoading, ChartEmpty } from "@/components/common/charts";
+import { ChartLoading, ChartEmpty, chartPalette } from "@/components/common";
 
 interface TooltipProps {
   active?: boolean;
@@ -15,20 +15,9 @@ interface TooltipProps {
   }>;
 }
 
-// Donut palette — cyan/gold accents first to anchor the Aurora aesthetic,
-// then a spread of accessible hues for the remainder.
-const COLORS = [
-  '#83E9FF', // brand cyan
-  '#F9E370', // brand gold
-  '#4ADE80', // emerald
-  '#FB7185', // rose
-  '#A78BFA', // violet
-  '#34D399', // emerald-alt
-  '#FBBF24', // amber
-  '#60A5FA', // blue
-  '#F472B6', // pink
-  '#FF5757', // red
-];
+// Donut palette — anchored on the official chartPalette multi-series colors
+// (see src/components/common/charts/chartTheme.ts).
+const COLORS = chartPalette.multiSeries;
 
 interface AssetDistribution {
   name: string;
@@ -129,7 +118,7 @@ export function DistributionSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
+        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
           <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
             <span
               className="h-1.5 w-1.5 rounded-full"

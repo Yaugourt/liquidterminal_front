@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { Loader2, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -147,7 +148,7 @@ export function PortfolioStats({
     return (
       <div className="h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
         <div className="flex items-center justify-center h-full">
-          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
+          <InlineSpinner className="w-6 h-6 text-brand-accent" />
         </div>
       </div>
     );
@@ -186,7 +187,7 @@ export function PortfolioStats({
 
       {isLoading ? (
         <div className="flex justify-center items-center h-32">
-          <Loader2 className="w-6 h-6 text-brand-accent animate-spin" />
+          <InlineSpinner className="w-6 h-6 text-brand-accent" />
         </div>
       ) : error ? (
         <div className="text-rose-400 text-center py-4">

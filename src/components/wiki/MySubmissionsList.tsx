@@ -2,7 +2,8 @@
 
 import { useMySubmissions } from "@/services/wiki";
 import { ResourceStatus } from "@/services/wiki/types";
-import { ExternalLink, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { ExternalLink, Clock, CheckCircle, XCircle } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 
 const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; color: string }> = {
@@ -55,7 +56,7 @@ export function MySubmissionsList() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-5 h-5 animate-spin text-brand-accent" />
+                <InlineSpinner className="w-5 h-5 text-brand-accent" />
             </div>
         );
     }

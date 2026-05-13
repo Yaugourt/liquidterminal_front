@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import { useXpLeaderboard, useXpContext, xpService } from "@/services/xp";
 import { cn } from "@/lib/utils";
-import { Trophy, Medal, Crown, Loader2, User } from "lucide-react";
+import { Trophy, Medal, Crown, User } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Button } from "@/components/ui/button";
 import { usePrivy } from "@privy-io/react-auth";
 import { showXpGainToast } from "./XpNotification";
@@ -100,7 +102,7 @@ export function XpLeaderboard({
       <div className="p-4 border-b border-border-subtle">
         <div className="flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-white font-semibold">
-            <Trophy className="h-5 w-5 text-[#F9E370]" />
+            <Trophy className="h-5 w-5 text-brand-gold" />
             Leaderboard
           </h3>
           <span className="text-sm font-normal text-text-secondary">
@@ -110,8 +112,8 @@ export function XpLeaderboard({
       </div>
       <div className="p-4">
         {isLoading && leaderboard.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+          <div className="py-12">
+            <LoadingState size="md" withCard={false} />
           </div>
         ) : (
           <div className="space-y-4">
@@ -137,7 +139,7 @@ export function XpLeaderboard({
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[#F9E370]">
+                    <p className="font-bold text-brand-gold">
                       {entry.totalXp.toLocaleString()}
                     </p>
                     <p className="text-xs text-text-muted">XP</p>
@@ -173,7 +175,7 @@ export function XpLeaderboard({
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <InlineSpinner className="mr-2" />
                 ) : null}
                 Load More
               </Button>

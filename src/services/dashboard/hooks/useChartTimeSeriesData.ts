@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useHLBridge } from "./useHLBridge";
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod } from '@/components/common';
 import { useAuctions } from "../../market/auction";
 import { AuctionInfo } from "../../market/auction/types";
 

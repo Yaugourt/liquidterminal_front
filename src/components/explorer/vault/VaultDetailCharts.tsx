@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo, useId } from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { motion } from "framer-motion";
-import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
+import { AuroraAreaChart, chartPalette } from "@/components/common";
 import { useVaultDailySnapshots } from "@/services/explorer/vault/hooks/useVaultDailySnapshots";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 
@@ -54,7 +54,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const isLoading = activeTab === "Account Value" ? equityLoading : dailyLoading;
   const error = activeTab === "Account Value" ? equityError : dailyError;
   const chartData = activeTab === "Account Value" ? accountValueData : tvlData;
-  const lineColor = activeTab === "Account Value" ? "#83e9ff" : "#f9e370";
+  const lineColor = activeTab === "Account Value" ? chartPalette.accent : chartPalette.gold;
   const glowColor =
     activeTab === "Account Value" ? "bg-brand-accent/10" : "bg-brand-gold/10";
 
@@ -112,10 +112,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
       {/* Chart */}
       <div className="relative z-10 h-56">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-            <span className="text-text-muted text-sm">Loading chart…</span>
-          </div>
+          <LoadingState message="Loading chart…" size="sm" withCard={false} />
         ) : error ? (
           <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm h-full flex items-center justify-center">
             Failed to load chart data.

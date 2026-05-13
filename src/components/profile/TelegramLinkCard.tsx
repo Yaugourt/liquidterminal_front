@@ -5,7 +5,6 @@ import { useTelegramLink } from "@/services/auth/telegram";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Loader2,
   ExternalLink,
   CheckCircle2,
   XCircle,
@@ -13,6 +12,7 @@ import {
   Unlink,
   AlertCircle
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 // Telegram brand icon (inline SVG)
 const TelegramIcon = ({ className }: { className?: string }) => (
@@ -96,13 +96,13 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
       <div className={cn(
         "p-5 rounded-2xl",
         "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-[#0088cc]/30",
+        "border border-brand-telegram/30",
         className
       )}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="h-10 w-10 rounded-lg bg-[#0088cc]/20 flex items-center justify-center">
-            <TelegramIcon className="h-5 w-5 text-[#0088cc]" />
+          <div className="h-10 w-10 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
+            <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-bold text-white">Link Telegram</h3>
@@ -125,7 +125,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         <div className="p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
           <div className="flex items-center gap-2 mb-2">
             {isPolling && (
-              <Loader2 className="h-4 w-4 animate-spin text-[#0088cc]" />
+              <InlineSpinner className="text-brand-telegram" />
             )}
             <span className="text-sm text-white font-medium">
               Click the button below to open Telegram
@@ -140,7 +140,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         <div className="flex gap-2">
           <Button
             asChild
-            className="flex-1 bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-semibold"
+            className="flex-1 bg-brand-telegram hover:bg-brand-telegram/90 text-white font-semibold"
           >
             <a
               href={deepLink || '#'}
@@ -197,7 +197,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             className="text-text-muted hover:text-rose-400 hover:bg-rose-500/10"
           >
             {isUnlinking ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <InlineSpinner />
             ) : (
               <>
                 <Unlink className="h-4 w-4 mr-1" />
@@ -220,8 +220,8 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
     )}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-[#0088cc]/10 flex items-center justify-center">
-            <TelegramIcon className="h-5 w-5 text-[#0088cc]" />
+          <div className="h-10 w-10 rounded-lg bg-brand-telegram/10 flex items-center justify-center">
+            <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">Link Telegram</h3>
@@ -234,10 +234,10 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         <Button
           onClick={startLinking}
           disabled={isGeneratingLink}
-          className="bg-[#0088cc] hover:bg-[#0088cc]/90 text-white font-semibold"
+          className="bg-brand-telegram hover:bg-brand-telegram/90 text-white font-semibold"
         >
           {isGeneratingLink ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <InlineSpinner />
           ) : (
             <>
               <TelegramIcon className="h-4 w-4 mr-2" />

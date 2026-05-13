@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PublicWalletListCard } from "./PublicWalletListCard";
 import { PublicWalletListPreviewDialog } from "./PublicWalletListPreviewDialog";
 import { getPublicWalletLists } from "@/services/market/tracker/walletlist.service";
@@ -89,9 +90,8 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
 
   if (initialLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-[#83E9FF]" />
-        <p className="text-text-secondary">Loading public lists...</p>
+      <div className="py-20">
+        <LoadingState message="Loading public lists..." size="md" withCard={false} />
       </div>
     );
   }
@@ -139,11 +139,11 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
             <Button
               onClick={handleLoadMore}
               disabled={loading}
-              className="bg-brand-accent hover:bg-[#6bd4f0] text-brand-tertiary font-medium"
+              className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <InlineSpinner className="mr-2" />
                   Loading...
                 </>
               ) : (

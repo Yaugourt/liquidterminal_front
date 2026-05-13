@@ -4,7 +4,7 @@ import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Project } from "@/services/ecosystem/project/types";
-import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 
 interface ProjectCardProps {

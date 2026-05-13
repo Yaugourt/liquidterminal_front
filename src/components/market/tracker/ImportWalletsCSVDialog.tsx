@@ -200,7 +200,7 @@ export function ImportWalletsCSVDialog({
           {!hasWallets && (
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
-                ? "border-brand-accent bg-[#83E9FF10]"
+                ? "border-brand-accent bg-brand-accent/6"
                 : "border-border-hover hover:border-white/20 hover:bg-white/5"
                 }`}
               onDragOver={(e) => {
@@ -337,7 +337,7 @@ export function ImportWalletsCSVDialog({
           <Button
             onClick={handleImport}
             disabled={isImporting || validCount === 0}
-            className="bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90 disabled:opacity-50"
+            className="bg-brand-gold text-black hover:bg-brand-gold/90 disabled:opacity-50"
           >
             {isImporting
               ? "Importing..."

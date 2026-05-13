@@ -1,7 +1,8 @@
 "use client";
 
 import { TableRow, TableCell } from "@/components/ui/table";
-import { Loader2, Database } from "lucide-react";
+import { Database } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 interface TableLoadingStateProps {
   colSpan: number;
@@ -21,7 +22,7 @@ export function TableLoadingState({
         <div className="flex flex-col items-center justify-center">
           {isLoading ? (
             <>
-              <Loader2 className="w-8 h-8 mb-3 text-brand-accent animate-spin" />
+              <InlineSpinner className="w-8 h-8 mb-3 text-brand-accent" />
               <p className="text-text-secondary text-sm">Loading...</p>
             </>
           ) : isEmpty ? (

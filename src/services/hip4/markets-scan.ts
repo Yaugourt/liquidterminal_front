@@ -1,8 +1,10 @@
+import { z } from "zod";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
 
 const CHUNK = 1000;
 const MAX_CHUNKS = 80;
 const BETWEEN_MS = 120;
+const RPC_TIMEOUT_MS = 15_000;
 
 function sleep(ms: number) {
   return new Promise((res) => setTimeout(res, ms));
@@ -13,6 +15,23 @@ function padUint(n: string | bigint) {
   return "0".repeat(64 - h.length) + h;
 }
 
+const HexStringSchema = z.string().regex(/^0x[0-9a-fA-F]*$/, "expected 0x-prefixed hex");
+const RpcLogSchema = z.object({
+  topics: z.array(z.string()).optional(),
+  data: z.string().optional(),
+});
+const RpcLogsSchema = z.array(RpcLogSchema);
+const RpcErrorSchema = z.object({
+  code: z.number().optional(),
+  message: z.string().optional(),
+});
+const RpcEnvelopeSchema = z.object({
+  jsonrpc: z.string().optional(),
+  id: z.union([z.string(), z.number(), z.null()]).optional(),
+  result: z.unknown().optional(),
+  error: RpcErrorSchema.optional(),
+});
+
 function contestIdFromCreatedLog(log: { topics?: string[]; data?: string }) {
   if (log.topics && log.topics.length >= 2) {
     return BigInt(log.topics[1]!);
@@ -22,35 +41,63 @@ function contestIdFromCreatedLog(log: { topics?: string[]; data?: string }) {
   return BigInt("0x" + d.slice(0, 64));
 }
 
-async function rpc(method: string, params: unknown[]) {
-  const res = await fetch(HIP4_CONFIG.rpc, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  const j = (await res.json()) as { error?: { message?: string }; result?: unknown };
-  if (j.error) throw new Error(j.error.message || "RPC error");
-  return j.result;
+async function rpcRaw(method: string, params: unknown[]): Promise<unknown> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), RPC_TIMEOUT_MS);
+  let body: unknown;
+  try {
+    const res = await fetch(HIP4_CONFIG.rpc, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      signal: controller.signal,
+    });
+    body = await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+  const env = RpcEnvelopeSchema.safeParse(body);
+  if (!env.success) {
+    throw new Error(`RPC ${method}: malformed envelope`);
+  }
+  if (env.data.error) {
+    throw new Error(env.data.error.message || `RPC ${method} error`);
+  }
+  return env.data.result;
+}
+
+async function rpcHexString(method: string, params: unknown[]): Promise<string> {
+  const result = await rpcRaw(method, params);
+  const parsed = HexStringSchema.safeParse(result);
+  if (!parsed.success) {
+    throw new Error(`RPC ${method}: expected hex string, got ${typeof result}`);
+  }
+  return parsed.data;
 }
 
 async function latestBlockHex() {
-  const h = (await rpc("eth_blockNumber", [])) as string;
+  const h = await rpcHexString("eth_blockNumber", []);
   return parseInt(h, 16);
 }
 
 async function getLogsChunk(address: string, fromBlock: number, toBlock: number) {
-  return rpc("eth_getLogs", [
+  const result = await rpcRaw("eth_getLogs", [
     {
       address,
       topics: [HIP4_CONFIG.contestCreatedTopic],
       fromBlock: "0x" + fromBlock.toString(16),
       toBlock: "0x" + toBlock.toString(16),
     },
-  ]) as Promise<Array<{ topics?: string[]; data?: string }>>;
+  ]);
+  const parsed = RpcLogsSchema.safeParse(result);
+  if (!parsed.success) {
+    throw new Error("RPC eth_getLogs: malformed logs payload");
+  }
+  return parsed.data;
 }
 
-async function ethCall(to: string, data: string) {
-  return rpc("eth_call", [{ to, data }, "latest"]) as Promise<string>;
+async function ethCall(to: string, data: string): Promise<string> {
+  return rpcHexString("eth_call", [{ to, data }, "latest"]);
 }
 
 function decodeMerkleRoot(result: string) {

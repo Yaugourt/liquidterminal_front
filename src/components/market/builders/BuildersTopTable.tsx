@@ -13,7 +13,7 @@ import {
   SortableTableHead,
   TableHeadLabel,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { ScrollableTable } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";

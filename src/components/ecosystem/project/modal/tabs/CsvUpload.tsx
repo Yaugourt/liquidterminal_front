@@ -41,7 +41,7 @@ export function CsvUpload({
   return (
     <div className="space-y-4 pb-4">
       <div className="text-center">
-        <div className="border-2 border-dashed border-[#1E3851] rounded-lg p-8 hover:border-brand-accent/50 transition-colors">
+        <div className="border-2 border-dashed border-brand-tertiary rounded-lg p-8 hover:border-brand-accent/50 transition-colors">
           <Upload className="mx-auto h-12 w-12 text-brand-accent mb-4" />
           <h3 className="text-lg font-medium text-white mb-2">Upload Projects CSV</h3>
           <p className="text-sm text-gray-400 mb-4">
@@ -136,7 +136,7 @@ export function CsvUpload({
               type="button"
               variant="outline"
               onClick={resetCsvInternal}
-              className="border-[#1E3851] text-white hover:bg-[#112941]"
+              className="border-brand-tertiary text-white hover:bg-brand-tertiary"
             >
               Upload Another
             </Button>
@@ -145,7 +145,7 @@ export function CsvUpload({
       )}
 
       {/* CSV Format Info */}
-      <div className="bg-[#112941]/50 border border-[#1E3851] rounded-lg p-4">
+      <div className="bg-brand-tertiary/50 border border-brand-tertiary rounded-lg p-4">
         <h4 className="text-sm font-medium text-white mb-2">CSV Format</h4>
         <p className="text-xs text-gray-400 mb-2">
           Your CSV file should contain the following columns:

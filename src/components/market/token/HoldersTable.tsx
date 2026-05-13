@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
+import { ScrollableTable } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { LoadingState } from "@/components/ui/loading-state";

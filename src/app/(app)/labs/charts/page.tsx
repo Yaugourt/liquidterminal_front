@@ -1,7 +1,7 @@
 "use client";
 
 import { QuantumCandleChart } from "@/components/labs/charts/QuantumCandleChart";
-import { AuroraAreaChart } from "@/components/labs/charts/AuroraAreaChart";
+import { AuroraEcosystemShowcase } from "@/components/labs/charts/AuroraEcosystemShowcase";
 import { LiquidationFlowChart } from "@/components/labs/charts/LiquidationFlowChart";
 import { OrbitCompositionChart } from "@/components/labs/charts/OrbitCompositionChart";
 import { Sparkles } from "lucide-react";
@@ -45,7 +45,7 @@ export default function ChartsLabPage() {
   return (
     <div className="space-y-10">
       {/* HERO */}
-      <header className="relative overflow-hidden rounded-3xl border border-border-subtle bg-gradient-to-br from-[#111826]/80 via-brand-secondary/60 to-[#0B0E14]/90 p-8">
+      <header className="relative overflow-hidden rounded-3xl border border-border-subtle bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90 p-8">
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-gold/10 blur-3xl" />
         <div className="relative z-10 flex flex-col gap-3">
@@ -96,7 +96,7 @@ export default function ChartsLabPage() {
           <SectionLabel number={c.number} name={c.name} tag={c.tag} summary={c.summary} />
           <div>
             {i === 0 && <QuantumCandleChart />}
-            {i === 1 && <AuroraAreaChart />}
+            {i === 1 && <AuroraEcosystemShowcase />}
             {i === 2 && <LiquidationFlowChart />}
             {i === 3 && <OrbitCompositionChart />}
           </div>

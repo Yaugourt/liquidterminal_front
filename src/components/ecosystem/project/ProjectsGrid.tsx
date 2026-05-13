@@ -9,7 +9,7 @@ import { useAuthContext } from "@/contexts/auth.context";
 import { canCreateProject } from "@/lib/roleHelpers";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/common";
-import { SearchBar } from "@/components/common/SearchBar";
+import { SearchBar } from "@/components/common";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { DollarSign, TrendingUp, BarChart2, Percent } from "lucide-react";
 import { motion } from "framer-motion";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";

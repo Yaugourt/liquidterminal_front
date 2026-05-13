@@ -11,10 +11,10 @@ import {
   Activity,
   Zap,
   Wallet,
-  Loader2,
   Wifi,
   WifiOff
 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -76,7 +76,7 @@ export default function PerpDexDetailPage() {
   if (isLoading && !dex) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+        <LoadingState size="sm" withCard={false} />
       </div>
     );
   }

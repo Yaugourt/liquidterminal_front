@@ -56,7 +56,7 @@ function formatDate(ms: number) {
   });
 }
 
-export function AuroraAreaChart() {
+export function AuroraEcosystemShowcase() {
   const [period, setPeriod] = useState<Period>("90D");
   const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
     spotTvl: true,
@@ -287,7 +287,7 @@ function AuroraTooltip({ active, payload, label, visible }: AuroraTooltipProps) 
   if (!active || !payload || payload.length === 0) return null;
   const ts = Number(label);
   return (
-    <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
+    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
         {formatDate(ts)}
       </div>

@@ -1,4 +1,5 @@
-import { Plus, BookOpen, Search, Loader2, Globe, Lock, CheckCircle2 } from "lucide-react";
+import { Plus, BookOpen, Search, Globe, Lock, CheckCircle2 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ReadList, ReadListItem } from "@/services/wiki";
@@ -154,7 +155,7 @@ export function ReadListContent({
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
-              <div className="text-[#F9E370] font-bold text-lg leading-none">{unreadItems}</div>
+              <div className="text-brand-gold font-bold text-lg leading-none">{unreadItems}</div>
               <div className="text-text-muted text-xs mt-0.5">unread</div>
             </div>
           </div>
@@ -276,7 +277,7 @@ export function ReadListContent({
                   >
                     {itemsLoading ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <InlineSpinner className="mr-2" />
                         Loading...
                       </>
                     ) : (
@@ -288,7 +289,7 @@ export function ReadListContent({
 
               {itemsLoading && filteredItems.length > 0 && (
                 <div className="flex justify-center mt-4">
-                  <Loader2 className="w-5 h-5 animate-spin text-brand-accent" />
+                  <InlineSpinner className="w-5 h-5 text-brand-accent" />
                 </div>
               )}
             </motion.div>

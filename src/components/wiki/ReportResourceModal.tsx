@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useReportResource } from "@/services/wiki";
 import { toast } from "sonner";
-import { Flag, Loader2, AlertCircle } from "lucide-react";
+import { Flag, AlertCircle } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 interface ReportResourceModalProps {
     resourceId: number;
@@ -111,7 +112,7 @@ export function ReportResourceModal({
                         >
                             {isLoading ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    <InlineSpinner className="mr-2" />
                                     Sending...
                                 </>
                             ) : (

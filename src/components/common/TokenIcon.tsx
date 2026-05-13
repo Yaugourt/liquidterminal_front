@@ -39,7 +39,7 @@ const variants = {
   dark: {
     bg: "bg-brand-tertiary",
     text: "text-brand-accent",
-    border: "border-[#83E9FF33]"
+    border: "border-brand-accent/20"
   }
 };
 

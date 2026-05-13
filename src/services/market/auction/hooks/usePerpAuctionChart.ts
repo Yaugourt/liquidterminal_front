@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ChartPeriod } from '@/components/common/charts';
+import { ChartPeriod } from '@/components/common';
 import { usePastAuctionsPerp } from '@/services/market/perpDex/hooks';
 
 /**

@@ -14,9 +14,10 @@ import {
   Wallet,
   Send,
   CheckCircle,
-  Loader2,
   History,
 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Button } from "@/components/ui/button";
 
 interface XpHistoryListProps {
@@ -52,7 +53,7 @@ const ACTION_COLORS: Record<string, string> = {
   CREATE_WALLETLIST: "text-brand-accent bg-brand-accent/10",
   ADD_WALLET_TO_LIST: "text-brand-accent bg-brand-accent/10",
   SUBMIT_PUBLIC_GOOD: "text-amber-400 bg-amber-400/10",
-  PUBLIC_GOOD_APPROVED: "text-[#F9E370] bg-[#F9E370]/10",
+  PUBLIC_GOOD_APPROVED: "text-brand-gold bg-brand-gold/10",
 };
 
 function formatRelativeTime(dateString: string): string {
@@ -105,14 +106,14 @@ export function XpHistoryList({
     <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
         <h3 className="flex items-center gap-2 text-white font-semibold">
-          <History className="h-5 w-5 text-[#F9E370]" />
+          <History className="h-5 w-5 text-brand-gold" />
           XP History
         </h3>
       </div>
       <div className="p-4">
         {isLoadingHistory && transactions.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-accent" />
+          <div className="py-12">
+            <LoadingState size="md" withCard={false} />
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-8">
@@ -157,7 +158,7 @@ export function XpHistoryList({
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-[#F9E370]">
+                      <span className="font-bold text-brand-gold">
                         +{tx.xpAmount}
                       </span>
                       <span className="text-xs text-text-muted ml-1">XP</span>
@@ -178,7 +179,7 @@ export function XpHistoryList({
                   disabled={isLoadingHistory}
                 >
                   {isLoadingHistory ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <InlineSpinner className="mr-2" />
                   ) : null}
                   Load More
                 </Button>

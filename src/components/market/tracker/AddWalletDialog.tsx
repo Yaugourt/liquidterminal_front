@@ -132,7 +132,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           <Button 
             onClick={handleAddWallet}
             disabled={isLoading || hasReachedWalletLimit}
-            className="bg-[#F9E370] hover:bg-[#F9E370]/90 text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-brand-gold hover:bg-brand-gold/90 text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading 
               ? "Adding..." 
@@ -153,7 +153,7 @@ export function AddWalletButton({ onClick }: { onClick: () => void }) {
   return (
     <Button 
       variant="default" 
-      className="ml-auto bg-[#F9E370E5] text-black hover:bg-[#F0D04E]/90"
+      className="ml-auto bg-brand-gold text-black hover:bg-brand-gold/90"
       onClick={onClick}
     >
       <PlusCircle className="mr-2 h-4 w-4" /> Add a wallet

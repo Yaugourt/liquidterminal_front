@@ -10,6 +10,17 @@ import { generateCacheKey, getCache, setCache } from './cache.service';
 const TIMEOUT_MS = 10000;
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY = 1000;
+const REFRESH_CIRCUIT_COOLDOWN_MS = 60_000;
+const RETRY_JITTER_RATIO = 0.2;
+
+// Refresh circuit breaker: once a refresh fails, every subsequent 401 in the
+// cooldown window short-circuits to logout instead of attempting another refresh.
+let refreshCircuitOpenUntil = 0;
+
+const isRefreshCircuitOpen = (): boolean => Date.now() < refreshCircuitOpenUntil;
+const tripRefreshCircuit = (): void => {
+  refreshCircuitOpenUntil = Date.now() + REFRESH_CIRCUIT_COOLDOWN_MS;
+};
 
 // Création des instances Axios
 export const apiClient = axios.create({
@@ -53,7 +64,12 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
     
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      // If refresh is already in progress, add to queue
+      // Circuit open: a previous refresh failed recently. Bail out immediately.
+      if (isRefreshCircuitOpen()) {
+        return Promise.reject(error);
+      }
+
+      // If refresh is already in progress, queue on its outcome.
       if (isTokenRefreshing()) {
         try {
           const token = await handleTokenRefresh();
@@ -70,17 +86,18 @@ apiClient.interceptors.response.use(
 
       try {
         const newToken = await handleTokenRefresh();
-        
+
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = formatAuthHeader(newToken);
         }
         return apiClient(originalRequest);
       } catch (refreshError) {
+        tripRefreshCircuit();
         handleLogout();
         return Promise.reject(refreshError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -141,7 +158,9 @@ export async function axiosWithConfig<T>(
 
       if (!canRetry) break;
 
-      const delay = BASE_RETRY_DELAY * Math.pow(2, retries);
+      const baseDelay = BASE_RETRY_DELAY * Math.pow(2, retries);
+      const jitter = baseDelay * RETRY_JITTER_RATIO * (Math.random() * 2 - 1);
+      const delay = Math.max(0, Math.round(baseDelay + jitter));
       await new Promise(resolve => setTimeout(resolve, delay));
       retries++;
     }

@@ -52,7 +52,7 @@ export function CategorySidebar({
     <aside
       className={cn(
         "relative overflow-hidden rounded-2xl border border-border-subtle",
-        "bg-gradient-to-br from-[#111826]/80 via-brand-secondary/60 to-[#0B0E14]/90",
+        "bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90",
         "shadow-xl shadow-black/20",
         className,
       )}

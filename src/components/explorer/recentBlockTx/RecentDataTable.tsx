@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useExplorerStore } from "@/services/explorer";
 import { Button } from "@/components/ui/button";
-import { Pause, Play, Loader2 } from "lucide-react";
+import { Pause, Play } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-state";
 import { TabSelector } from "./TabSelector";
 // import { ConnectionStatus } from "./ConnectionStatus"; // Removed import
-import { DataTable } from "./DataTable";
-import { Pagination } from "@/components/common/pagination";
+import { BlockTxTable } from "./BlockTxTable";
+import { Pagination } from "@/components/common";
 import { usePagination } from "@/hooks/core/usePagination";
 
 type TabType = 'blocks' | 'transactions';
@@ -131,15 +132,12 @@ export function RecentDataTable() {
       <div className="flex-1">
         {showLoading ? (
           <div className="flex justify-center items-center h-[200px]">
-            <div className="flex flex-col items-center">
-              <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-              <span className="text-text-muted text-sm">Connecting...</span>
-            </div>
+            <LoadingState message="Connecting..." size="sm" withCard={false} />
           </div>
         ) : (
           <div className="space-y-0">
             <div className="overflow-x-auto scrollbar-brand">
-              <DataTable
+              <BlockTxTable
                 type={activeTab}
                 data={currentData.data}
                 emptyMessage={getEmptyMessage()}

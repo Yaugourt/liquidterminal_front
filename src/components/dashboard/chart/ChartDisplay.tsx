@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
+import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError, chartPalette } from '@/components/common';
 import { FilterType, DashboardData } from "@/components/types/dashboard.types";
-import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
+import { AuroraAreaChart } from "@/components/common";
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 
@@ -66,10 +66,10 @@ export const ChartDisplay = ({
 
   const getChartColor = () => {
     switch (selectedFilter) {
-      case "bridge": return "#83e9ff";
-      case "fees": return "#f9e370";
-      case "strict": return "#f9e370";
-      default: return "#83e9ff";
+      case "bridge": return chartPalette.accent;
+      case "fees": return chartPalette.gold;
+      case "strict": return chartPalette.gold;
+      default: return chartPalette.accent;
     }
   };
 

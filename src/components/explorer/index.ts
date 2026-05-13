@@ -17,7 +17,7 @@ export * from './transaction';
 
 // Root exports
 export { TransfersDeployTable } from './TransfersDeployTable';
-export { StatsCard } from '@/components/common/StatsCard';
+export { StatsCard } from '@/components/common';
 export { StatsGrid } from './StatsGrid';
 export { ValidatorsTable } from './vaultValidatorSum/ValidatorsVaults';
 export { RecentDataTable } from './recentBlockTx/RecentDataTable'; 

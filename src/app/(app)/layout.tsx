@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
-import { SearchBar } from "@/components/SearchBar";
-import { SidebarToggle } from "@/components/common/SidebarToggle";
+import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
+import { SidebarToggle } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }, [width]);
 
     return (
-        <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-main to-[#050505]">            {/* Mobile menu button */}
+        <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-secondary via-brand-main to-black">            {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             </div>
@@ -33,7 +33,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
                 {/* Mobile SearchBar */}
                 <div className="p-2 lg:hidden">
-                    <SearchBar placeholder="Search..." />
+                    <ExplorerSearchBar placeholder="Search..." />
                 </div>
 
                 <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2, X } from "lucide-react";
 import { Project } from "@/services/ecosystem/project/types";
-import { ProtectedAction } from "@/components/common/ProtectedAction";
+import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { toast } from "sonner";
 
@@ -71,9 +71,9 @@ export function ProjectBulkActions({
               checked={selectedCount === totalCount && totalCount > 0}
               onCheckedChange={handleSelectAll}
               disabled={isDeleting}
-              className="data-[state=checked]:bg-[#F9E370] data-[state=checked]:border-[#F9E370]"
+              className="data-[state=checked]:bg-brand-gold data-[state=checked]:border-brand-gold"
             />
-            <span className="text-sm text-[#F9E370] font-medium">
+            <span className="text-sm text-brand-gold font-medium">
               Select all ({totalCount})
             </span>
           </div>
@@ -83,7 +83,7 @@ export function ProjectBulkActions({
       {/* Right side - Bulk actions */}
       {selectedCount > 0 && (
         <div className="flex items-center gap-3">
-          <span className="text-sm text-[#F9E370] font-medium">
+          <span className="text-sm text-brand-gold font-medium">
             {selectedCount} project{selectedCount > 1 ? 's' : ''} selected
           </span>
           

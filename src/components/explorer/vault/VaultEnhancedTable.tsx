@@ -13,8 +13,8 @@ import { motion } from "framer-motion";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { DataTable } from "@/components/common/DataTable";
-import { Pagination } from "@/components/common/pagination";
+import { DataTable } from "@/components/common";
+import { Pagination } from "@/components/common";
 import { usePagination } from "@/hooks/core/usePagination";
 import {
   Table,

@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { Gauge, Hash, Activity } from "lucide-react";
 import { motion } from "framer-motion";
-import { StatsCard } from "@/components/common/StatsCard";
-import { AssetLogo } from "@/components/common/AssetLogo";
+import { StatsCard } from "@/components/common";
+import { AssetLogo } from "@/components/common";
 import type { PriorityFeesStats } from "@/services/explorer/priority-fees";
 import { computePriorityFeesRunRate } from "@/lib/priority-fees-run-rate";
 import {

@@ -9,7 +9,8 @@ import { useCreateProject, useCreateCategory, useCategories, useCsvUploadProject
 import { Project } from "@/services/ecosystem/project/types";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
-import { ProjectForm, CategoryForm, CsvUpload } from "./modal";
+import { ProjectForm, CsvUpload } from "./modal";
+import { CategoryForm } from "@/components/common";
 
 interface ProjectModalProps {
   onSuccess?: (project?: Project) => void;
@@ -242,11 +243,13 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
             scrollbarColor: 'rgba(255,255,255,0.1) transparent'
           }}>
             <CategoryForm
-              categoryForm={categoryForm}
-              setCategoryForm={setCategoryForm}
-              handleCategorySubmit={handleCategorySubmit}
-              creatingCategory={creatingCategory}
+              value={categoryForm}
+              onChange={setCategoryForm}
+              onSubmit={handleCategorySubmit}
               onCancel={() => setOpen(false)}
+              isSubmitting={creatingCategory}
+              submitLabel="Create Category"
+              submittingLabel="Creating..."
             />
           </TabsContent>
 

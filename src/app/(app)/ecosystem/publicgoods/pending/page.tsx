@@ -6,7 +6,7 @@ import { ArrowLeft, AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { SearchBar } from "@/components/common/SearchBar";
+import { SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";

@@ -11,7 +11,7 @@ import {
 import { Hip4MarketDetailHeader } from "@/components/market/hip4/Hip4MarketDetailHeader";
 import { Hip4RecentFills } from "@/components/market/hip4";
 import { OrderBook } from "@/components/market/token";
-import { ChartSkeleton } from "@/components/common/charts/ChartSkeleton";
+import { ChartSkeleton } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 
 const TradingViewChart = dynamic(

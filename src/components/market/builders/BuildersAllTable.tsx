@@ -10,8 +10,8 @@ import {
   TableRow,
   SortableTableHead,
 } from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common/ScrollableTable";
-import { SearchBar } from "@/components/common/SearchBar";
+import { ScrollableTable } from "@/components/common";
+import { SearchBar } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";

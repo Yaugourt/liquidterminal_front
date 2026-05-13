@@ -45,7 +45,7 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
         <Card className={CARD_BASE_CLASSES}>
             <div className="flex items-center gap-1.5 ml-4 mb-5">
                 <Info size={16} className="text-brand-gold" />
-                <h3 className="text-[11px] text-[#FFFFFF] font-medium tracking-wide font-inter">MORE INFO</h3>
+                <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">MORE INFO</h3>
             </div>
             <div className="space-y-5 ml-4 mr-4">
                 <div>

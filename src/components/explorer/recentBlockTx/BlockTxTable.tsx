@@ -4,17 +4,17 @@ import { Copy, Check } from "lucide-react";
 import { Block, Transaction } from "@/services/explorer/types";
 import Link from "next/link";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { DataTable as GenericDataTable } from "@/components/common/DataTable";
+import { DataTable as GenericDataTable } from "@/components/common";
 
 type TabType = 'blocks' | 'transactions';
 
-interface DataTableProps {
+interface BlockTxTableProps {
   type: TabType;
   data: Block[] | Transaction[];
   emptyMessage: string;
 }
 
-export function DataTable({ type, data, emptyMessage }: DataTableProps) {
+export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string) => {

@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { ProtectedAction } from '@/components/common/ProtectedAction';
-import { Pagination } from '@/components/common/pagination';
+import { ProtectedAction } from '@/components/common';
+import { Pagination } from '@/components/common';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
 import { AdminUpdateUserInput, AdminUsersQueryParams } from '@/services/auth/user/types';
 import { User } from '@/services/auth/types';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Users, Shield, RefreshCw, ShieldCheck, UserCheck, Loader2 } from 'lucide-react';
+import { Users, Shield, RefreshCw, ShieldCheck, UserCheck } from 'lucide-react';
+import { LoadingState } from '@/components/ui/loading-state';
 import { UserFilters } from './UserFilters';
 import { UserTable } from './UserTable';
 import { UserEditModal } from './UserEditModal';
@@ -20,8 +21,8 @@ function StatsCard({
   icon: Icon,
   title,
   value,
-  iconColor = 'text-[#83e9ff]',
-  iconBg = 'bg-[#83e9ff]/10'
+  iconColor = 'text-brand-accent',
+  iconBg = 'bg-brand-accent/10'
 }: {
   icon: React.ElementType;
   title: string;
@@ -170,7 +171,7 @@ export function UserManagement() {
           <p className="text-rose-400 mb-3 text-sm">Error loading users</p>
           <Button
             onClick={handleRefresh}
-            className="bg-[#83E9FF] text-[#051728] hover:bg-[#83E9FF]/80 text-sm"
+            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 text-sm"
           >
             Retry
           </Button>
@@ -184,10 +185,7 @@ export function UserManagement() {
     return (
       <Card className="p-6">
         <div className="flex justify-center items-center h-[200px]">
-          <div className="flex flex-col items-center">
-            <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-            <span className="text-text-muted text-sm">Loading user...</span>
-          </div>
+          <LoadingState message="Loading user..." size="sm" withCard={false} />
         </div>
       </Card>
     );
@@ -201,7 +199,7 @@ export function UserManagement() {
         <Card className="p-6">
           <div className="flex items-center justify-center h-48">
             <div className="text-center">
-              <Shield className="w-8 h-8 text-[#f9e370] mx-auto mb-3" />
+              <Shield className="w-8 h-8 text-brand-gold mx-auto mb-3" />
               <p className="text-white text-sm">Access restricted to administrators</p>
             </div>
           </div>
@@ -213,8 +211,8 @@ export function UserManagement() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#f9e370]/10 flex items-center justify-center">
-              <Users className="w-5 h-5 text-[#f9e370]" />
+            <div className="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center">
+              <Users className="w-5 h-5 text-brand-gold" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white">User Management</h1>
@@ -240,8 +238,8 @@ export function UserManagement() {
               icon={Users}
               title="Total Users"
               value={pagination?.total || stats.total}
-              iconColor="text-[#83e9ff]"
-              iconBg="bg-[#83e9ff]/10"
+              iconColor="text-brand-accent"
+              iconBg="bg-brand-accent/10"
             />
             <StatsCard
               icon={Shield}
@@ -254,8 +252,8 @@ export function UserManagement() {
               icon={ShieldCheck}
               title="Moderators"
               value={stats.moderators}
-              iconColor="text-[#f9e370]"
-              iconBg="bg-[#f9e370]/10"
+              iconColor="text-brand-gold"
+              iconBg="bg-brand-gold/10"
             />
             <StatsCard
               icon={UserCheck}

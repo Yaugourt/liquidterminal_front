@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, CheckCircle2, TrendingUp, Layers } from "lucide-react";
-import { StatsCard } from "@/components/common/StatsCard";
+import { StatsCard } from "@/components/common";
 import type {
   Hip4QuestionWithOutcomesRow,
   Hip4SettlementRow,

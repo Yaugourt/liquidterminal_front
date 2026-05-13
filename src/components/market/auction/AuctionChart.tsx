@@ -3,8 +3,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
-import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError } from '@/components/common/charts';
-import { AuroraAreaChart } from "@/components/common/charts/AuroraAreaChart";
+import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError, chartPalette } from '@/components/common';
+import { AuroraAreaChart } from "@/components/common";
 import { Card } from '@/components/ui/card';
 
 interface AuctionDataPoint {
@@ -27,7 +27,7 @@ interface AuctionChartProps {
 }
 
 // Auction chart is gold-accented in both market modes
-const AUCTION_COLOR = "#f9e370";
+const AUCTION_COLOR = chartPalette.gold;
 
 export const AuctionChart = ({
   data,

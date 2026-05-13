@@ -5,7 +5,7 @@ import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposi
 import { useVaults } from '@/services/explorer/vault/hooks/useVaults';
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
-import { ScrollableTable } from '@/components/common/ScrollableTable';
+import { ScrollableTable } from '@/components/common';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 
@@ -143,7 +143,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
                   </div>
                 </TableCell>
                 <TableCell className="py-3 px-4 text-sm text-left text-white">${formatEquity(row.equity)}</TableCell>
-                <TableCell className="py-3 px-4 text-sm text-left" style={{ color: '#4ADE80' }}>{formatAPR(row.apr)}</TableCell>
+                <TableCell className="py-3 px-4 text-sm text-left text-emerald-400">{formatAPR(row.apr)}</TableCell>
                 <TableCell className="py-3 px-4 text-sm text-left text-white">{formatTVL(row.tvl)}</TableCell>
                 <TableCell className="py-3 px-4 text-sm text-left text-white">{formatTimeLock(row.lockedUntilTimestamp)}</TableCell>
               </TableRow>

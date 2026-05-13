@@ -1,4 +1,4 @@
-import { StatsCard, StatsCardSkeleton } from "@/components/common/StatsCard";
+import { StatsCard, StatsCardSkeleton } from "@/components/common";
 import { useEffect, useState, useCallback } from "react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";

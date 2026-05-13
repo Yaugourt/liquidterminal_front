@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Users, Edit, Trash2, Shield, ShieldCheck, ShieldX, Loader2, Copy, Check } from 'lucide-react';
+import { Users, Edit, Trash2, Shield, ShieldCheck, ShieldX, Copy, Check } from 'lucide-react';
+import { LoadingState } from '@/components/ui/loading-state';
 import { User } from '@/services/auth/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -56,7 +57,7 @@ export function UserTable({
       case 'ADMIN':
         return <Shield className="w-3 h-3 text-rose-400" />;
       case 'MODERATOR':
-        return <ShieldCheck className="w-3 h-3 text-[#f9e370]" />;
+        return <ShieldCheck className="w-3 h-3 text-brand-gold" />;
       default:
         return <ShieldX className="w-3 h-3 text-text-muted" />;
     }
@@ -68,7 +69,7 @@ export function UserTable({
       case 'ADMIN':
         return 'text-rose-400';
       case 'MODERATOR':
-        return 'text-[#f9e370]';
+        return 'text-brand-gold';
       default:
         return 'text-text-secondary';
     }
@@ -77,10 +78,7 @@ export function UserTable({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[200px]">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-[#83E9FF] mb-2" />
-          <span className="text-text-muted text-sm">Loading users...</span>
-        </div>
+        <LoadingState message="Loading users..." size="sm" withCard={false} />
       </div>
     );
   }
@@ -141,7 +139,7 @@ export function UserTable({
                     checked={user.verified}
                     onCheckedChange={(checked) => onVerifiedChange(user.id, checked)}
                     disabled={isUpdating}
-                    className="data-[state=checked]:bg-[#83E9FF] data-[state=unchecked]:bg-zinc-700 scale-75"
+                    className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-zinc-700 scale-75"
                   />
                   <span className={`text-xs ${user.verified ? 'text-emerald-400' : 'text-text-muted'}`}>
                     {user.verified ? 'Verified' : 'Unverified'}
@@ -152,7 +150,7 @@ export function UserTable({
               {/* Referrals Count */}
               <TableCell>
                 {user.referralCount > 0 ? (
-                  <span className="px-2 py-1 rounded-md text-xs font-bold bg-[#83e9ff]/10 text-[#83e9ff]">
+                  <span className="px-2 py-1 rounded-md text-xs font-bold bg-brand-accent/10 text-brand-accent">
                     {user.referralCount}
                   </span>
                 ) : (
