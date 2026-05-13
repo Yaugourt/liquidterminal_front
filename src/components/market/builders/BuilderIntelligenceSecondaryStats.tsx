@@ -3,6 +3,7 @@
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { StatsCard } from "@/components/common";
 
 interface BuilderIntelligenceSecondaryStatsProps {
   stats: BuilderDetailStatsPayload;
@@ -35,12 +36,15 @@ export function BuilderIntelligenceSecondaryStats({ stats }: BuilderIntelligence
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       {items.map((item) => (
-        <div key={item.label} className="stat-card flex flex-col gap-1">
-          <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-            {item.label}
-          </span>
-          <p className="text-white text-base font-semibold tabular-nums">{item.value}</p>
-        </div>
+        <StatsCard
+          key={item.label}
+          title={item.label}
+          value={item.value}
+          density="compact"
+          withCard={false}
+          className="stat-card"
+          valueClassName="text-white text-base font-semibold tabular-nums"
+        />
       ))}
     </div>
   );

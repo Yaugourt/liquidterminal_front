@@ -130,23 +130,4 @@ export interface PerpAuctionTiming {
   nextAuction: PerpNextAuction;
 }
 
-// ==================== PERP DEXS TYPES ====================
-
-// Réponse API Hyperliquid pour perpDexs
-export interface PerpDex {
-  name: string;
-  fullName: string;
-  deployer: string;
-  oracleUpdater: string;
-  feeRecipient: string | null;
-  assetToStreamingOiCap: [string, string][];
-  gas?: string; // Optionnel pour l'instant, viendra du backend plus tard
-  deployerName?: string; // Nom du deployer (viendra du backend)
-}
-
-export interface UsePerpDexsResult {
-  perpDexs: PerpDex[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-} 
+ 

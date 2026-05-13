@@ -1,13 +1,12 @@
-import { useDataFetching } from "@/hooks/useDataFetching";
+import { useSimpleFetch } from "@/services/common";
+import { REFRESH_INTERVALS } from "@/services/api/constants";
 import { fetchBuildersList } from "../api";
 import type { BuilderListRow, UseBuildersListResult } from "../types";
 
 export function useBuildersList(): UseBuildersListResult {
-  const { data, isLoading, error, refetch } = useDataFetching<BuilderListRow[]>({
+  const { data, isLoading, error, refetch } = useSimpleFetch<BuilderListRow[]>({
     fetchFn: () => fetchBuildersList(),
-    dependencies: [],
-    refreshInterval: 60_000,
-    maxRetries: 3,
+    refreshInterval: REFRESH_INTERVALS.STATIC,
   });
 
   return {

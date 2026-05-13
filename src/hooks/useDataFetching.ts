@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { getErrorMessage } from '@/services/common/utils';
 
 interface UseDataFetchingOptions<T> {
-  fetchFn: () => Promise<T>;
+  /**
+   * Fetch function. Accepts an optional `AbortSignal` — if supplied by the consumer,
+   * the hook will pass a signal that fires when the hook re-fetches or unmounts.
+   * Existing callers that ignore the param remain compatible.
+   */
+  fetchFn: (signal?: AbortSignal) => Promise<T>;
   refreshInterval?: number;
   dependencies?: unknown[];
   maxRetries?: number;
@@ -30,6 +36,7 @@ export function useDataFetching<T>({
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
   const hasInitialDataRef = useRef(false); // NEW: Track if we've loaded data before
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Cleanup effect
   useEffect(() => {
@@ -42,12 +49,24 @@ export function useDataFetching<T>({
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
   }, []);
 
   // Main fetch function with retry logic
   const fetchData = useCallback(async (isRetry = false, isPolling = false) => {
     if (!mountedRef.current) return;
+
+    // Abort the previous in-flight request before starting a new one.
+    if (!isRetry) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      abortControllerRef.current = new AbortController();
+    }
+    const signal = abortControllerRef.current?.signal;
 
     try {
       if (!isRetry) {
@@ -63,26 +82,23 @@ export function useDataFetching<T>({
         setRetryCount(0);
       }
 
-      const result = await fetchFn();
+      const result = await fetchFn(signal);
 
-      if (mountedRef.current) {
+      if (mountedRef.current && !signal?.aborted) {
         setData(result);
         setError(null);
         setRetryCount(0);
         hasInitialDataRef.current = true; // Mark that we have data now
       }
     } catch (err) {
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || signal?.aborted) return;
 
-      // Silent error handling
-      const error = err instanceof Error ? err : new Error('Unknown error occurred');
+      const error = new Error(getErrorMessage(err));
 
       if (retryCount < maxRetries) {
         const nextRetryCount = retryCount + 1;
         setRetryCount(nextRetryCount);
         const retryDelayWithBackoff = retryDelay * Math.pow(2, nextRetryCount - 1);
-
-
 
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
@@ -100,7 +116,7 @@ export function useDataFetching<T>({
         setRetryCount(0);
       }
     } finally {
-      if (mountedRef.current && !isRetry) {
+      if (mountedRef.current && !isRetry && !signal?.aborted) {
         setIsLoading(false);
         setIsInitialLoading(false);
         setIsRefreshing(false);

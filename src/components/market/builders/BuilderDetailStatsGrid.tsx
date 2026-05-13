@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { VariationBadge } from "./VariationBadge";
+import { StatsCard } from "@/components/common";
 
 interface BuilderDetailStatsGridProps {
   stats: BuilderDetailStatsPayload | null;
@@ -70,13 +70,16 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
           variants={cardVariants}
           initial="hidden"
           animate="visible"
-          className="stat-card flex flex-col gap-1.5 p-3 lg:p-4"
         >
-          <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">{item.label}</span>
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <p className="text-white text-lg font-semibold tabular-nums">{item.value}</p>
-            <VariationBadge pct={item.pct} />
-          </div>
+          <StatsCard
+            title={item.label}
+            value={item.value}
+            change={typeof item.pct === "number" && Number.isFinite(item.pct) ? item.pct : undefined}
+            density="compact"
+            withCard={false}
+            className="stat-card"
+            valueClassName="text-white text-lg font-semibold tabular-nums"
+          />
         </motion.div>
       ))}
     </div>

@@ -1,13 +1,15 @@
-import { useDataFetching } from "@/hooks/useDataFetching";
+import { useMemo } from "react";
+import { useParamsFetch } from "@/services/common";
+import { REFRESH_INTERVALS } from "@/services/api/constants";
 import { fetchEvmTransactions } from "../api";
 import type { EvmTransaction, UseEvmTransactionsResult } from "../types";
 
 export function useEvmTransactions(limit = 10): UseEvmTransactionsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<EvmTransaction[]>({
-    fetchFn: () => fetchEvmTransactions({ limit }),
-    dependencies: [limit],
-    refreshInterval: 5_000,
-    maxRetries: 3,
+  const params = useMemo(() => ({ limit }), [limit]);
+  const { data, isLoading, error, refetch } = useParamsFetch<EvmTransaction[], { limit: number }>({
+    fetchFn: (p) => fetchEvmTransactions(p),
+    params,
+    refreshInterval: REFRESH_INTERVALS.REALTIME,
   });
 
   return { transactions: data ?? [], isLoading, error, refetch };

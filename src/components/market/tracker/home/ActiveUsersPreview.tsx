@@ -12,9 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SortablePaginatedTableCard } from "@/components/common";
-
-type SortField = "fill_count" | "total_volume" | "unique_coins" | "last_activity";
+import { TypedDataTable, type Column } from "@/components/common";
 
 function formatRelativeTime(isoDate: string): string {
   const date = new Date(isoDate);
@@ -30,12 +28,6 @@ function formatRelativeTime(isoDate: string): string {
   return `${diffDays}d ago`;
 }
 
-/**
- * Composant Active Users avec pagination et tri par colonnes.
- *
- * Backed by `SortablePaginatedTableCard` — pure config + cell renderers.
- * The window selector (Last 1h, 4h, ...) is wired via the `headerAction` slot.
- */
 export function ActiveUsersPreview() {
   const [hours, setHours] = useState(24);
 
@@ -44,8 +36,64 @@ export function ActiveUsersPreview() {
     limit: 100,
   });
 
+  const columns: Column<ActiveUser>[] = [
+    {
+      key: "rank",
+      header: "Rank",
+      accessor: (_u, _i, absoluteIndex) => (
+        <span className="text-brand-gold font-semibold">#{absoluteIndex + 1}</span>
+      ),
+    },
+    {
+      key: "trader",
+      header: "Trader",
+      accessor: (u) => (
+        <Link
+          href={`/market/tracker/wallet/${u.user}`}
+          className="text-sm text-brand-accent hover:underline"
+        >
+          {u.user.slice(0, 6)}...{u.user.slice(-4)}
+        </Link>
+      ),
+    },
+    {
+      key: "fill_count",
+      header: "Fills",
+      sortable: true,
+      align: "right",
+      getSortValue: (u) => u.fill_count,
+      accessor: (u) => formatLargeNumber(u.fill_count),
+    },
+    {
+      key: "total_volume",
+      header: "Volume",
+      sortable: true,
+      align: "right",
+      getSortValue: (u) => u.total_volume,
+      accessor: (u) => `$${formatLargeNumber(u.total_volume)}`,
+    },
+    {
+      key: "unique_coins",
+      header: "Coins",
+      sortable: true,
+      align: "right",
+      getSortValue: (u) => u.unique_coins,
+      accessor: (u) => u.unique_coins,
+    },
+    {
+      key: "last_activity",
+      header: "Last Active",
+      sortable: true,
+      align: "right",
+      getSortValue: (u) => new Date(u.last_activity).getTime(),
+      accessor: (u) => (
+        <span className="text-text-muted">{formatRelativeTime(u.last_activity)}</span>
+      ),
+    },
+  ];
+
   return (
-    <SortablePaginatedTableCard<ActiveUser, SortField>
+    <TypedDataTable<ActiveUser>
       title="Active Users"
       icon={<Users className="h-5 w-5 text-brand-accent" />}
       subtitle={`${metadata?.totalCount || users.length} users`}
@@ -63,67 +111,16 @@ export function ActiveUsersPreview() {
           </SelectContent>
         </Select>
       }
+      data={users}
+      columns={columns}
+      getRowKey={(u) => u.user}
       isLoading={isLoading}
       error={error}
       onErrorRetry={refetch}
       errorTitle="Failed to load active users"
-      emptyTitle="No active users data available"
-      data={users}
-      getRowKey={(u) => u.user}
-      getSortValue={(u, field) =>
-        field === "last_activity" ? new Date(u.last_activity).getTime() : u[field]
-      }
-      columns={[
-        {
-          key: "rank",
-          label: "Rank",
-          render: (_u, _i, absoluteIndex) => (
-            <span className="text-brand-gold font-semibold">#{absoluteIndex + 1}</span>
-          ),
-        },
-        {
-          key: "trader",
-          label: "Trader",
-          render: (u) => (
-            <Link
-              href={`/market/tracker/wallet/${u.user}`}
-              className="text-sm text-brand-accent hover:underline"
-            >
-              {u.user.slice(0, 6)}...{u.user.slice(-4)}
-            </Link>
-          ),
-        },
-        {
-          key: "fill_count",
-          label: "Fills",
-          sortable: true,
-          align: "right",
-          render: (u) => formatLargeNumber(u.fill_count),
-        },
-        {
-          key: "total_volume",
-          label: "Volume",
-          sortable: true,
-          align: "right",
-          render: (u) => `$${formatLargeNumber(u.total_volume)}`,
-        },
-        {
-          key: "unique_coins",
-          label: "Coins",
-          sortable: true,
-          align: "right",
-          render: (u) => u.unique_coins,
-        },
-        {
-          key: "last_activity",
-          label: "Last Active",
-          sortable: true,
-          align: "right",
-          render: (u) => (
-            <span className="text-text-muted">{formatRelativeTime(u.last_activity)}</span>
-          ),
-        },
-      ]}
+      emptyMessage="No active users data available"
+      paginate
+      itemsPerPage={10}
     />
   );
 }

@@ -1,24 +1,13 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useGlobalAliases } from "@/services/explorer";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { ScrollableTable } from "@/components/common";
+import { TypedDataTable, type Column } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { LoadingState } from "@/components/ui/loading-state";
-import { ErrorState } from "@/components/ui/error-state";
-import { TableEmptyState } from "@/components/ui/table-states";
 
 interface HoldersTableProps {
   holders: Record<string, number>;
@@ -28,6 +17,11 @@ interface HoldersTableProps {
   tokenPrice?: number;
   totalSupply?: number;
   stakedHolders?: Record<string, number>;
+}
+
+interface HolderRow {
+  address: string;
+  amount: number;
 }
 
 const formatAddress = (address: string) => {
@@ -48,13 +42,15 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const holdersArray = Object.entries(holders)
-    .map(([address, amount]) => ({ address, amount }))
-    .sort((a, b) => b.amount - a.amount);
+  const holdersArray = useMemo<HolderRow[]>(
+    () =>
+      Object.entries(holders)
+        .map(([address, amount]) => ({ address, amount }))
+        .sort((a, b) => b.amount - a.amount),
+    [holders]
+  );
 
-  const supplyForCalculation = totalSupply || holdersArray.reduce((sum, holder) => sum + holder.amount, 0);
-
-  // Pagination
+  const supplyForCalculation = totalSupply || holdersArray.reduce((sum, h) => sum + h.amount, 0);
   const startIndex = currentPage * rowsPerPage;
   const paginatedHolders = holdersArray.slice(startIndex, startIndex + rowsPerPage);
 
@@ -68,104 +64,89 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
     }
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <LoadingState message="Loading holders..." size="md" withCard={false} />
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <ErrorState title="Error loading holders" message={error.message} withCard={false} />
-      </Card>
-    );
-  }
+  const columns: Column<HolderRow>[] = [
+    {
+      key: "address",
+      header: "Address",
+      accessor: (holder, index) => (
+        <div className="flex items-center gap-1">
+          <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
+          <div className="flex items-center gap-1">
+            <Link
+              href={`/explorer/address/${holder.address}`}
+              className="text-brand-accent text-xs hover:text-white transition-colors"
+            >
+              {formatAddress(holder.address)}
+            </Link>
+            {getAlias(holder.address) && (
+              <span className="text-text-muted text-xs ml-1">
+                ({getAlias(holder.address)})
+              </span>
+            )}
+            <button
+              onClick={() => copyToClipboard(holder.address)}
+              className="group p-1 rounded transition-colors hover:bg-white/5"
+            >
+              {copiedAddress === holder.address ? (
+                <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              )}
+            </button>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "amount",
+      header: "Amount",
+      accessor: (holder) => (
+        <div className="flex items-center gap-1">
+          <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
+          {stakedHolders && stakedHolders[holder.address] && (
+            <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
+              (staked)
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "value",
+      header: "Value",
+      accessor: (holder) =>
+        tokenPrice
+          ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}`
+          : "N/A",
+    },
+    {
+      key: "percentage",
+      header: "Percentage",
+      accessor: (holder) => formatPercentage(holder.amount, supplyForCalculation, format),
+    },
+  ];
 
   return (
     <Card>
-      <ScrollableTable
-      pagination={holdersArray.length > 0 ? {
-        total: holdersArray.length,
-        page: currentPage,
-        rowsPerPage,
-        onPageChange: setCurrentPage,
-        onRowsPerPageChange: setRowsPerPage,
-        rowsPerPageOptions: [10, 25, 50, 100],
-      } : undefined}
-    >
-      <Table className="table-fixed w-full">
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>Address</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Value</TableHead>
-            <TableHead>Percentage</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedHolders.length > 0 ? (
-            paginatedHolders.map((holder, index) => (
-              <TableRow
-                key={holder.address}
-                className="hover:bg-white/[0.02]"
-              >
-                <TableCell className="text-sm text-white font-medium">
-                  <div className="flex items-center gap-1">
-                    <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
-                    <div className="flex items-center gap-1">
-                      <Link 
-                        href={`/explorer/address/${holder.address}`} 
-                        className="text-brand-accent text-xs hover:text-white transition-colors"
-                      >
-                        {formatAddress(holder.address)}
-                      </Link>
-                      {getAlias(holder.address) && (
-                        <span className="text-text-muted text-xs ml-1">
-                          ({getAlias(holder.address)})
-                        </span>
-                      )}
-                      <button 
-                        onClick={() => copyToClipboard(holder.address)}
-                        className="group p-1 rounded transition-colors hover:bg-white/5"
-                      >
-                        {copiedAddress === holder.address ? (
-                          <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
-                        ) : (
-                          <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm text-white font-medium">
-                  <div className="flex items-center gap-1">
-                    <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
-                    {stakedHolders && stakedHolders[holder.address] && (
-                      <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
-                        (staked)
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm text-white font-medium">
-                  {tokenPrice ? `$${formatNumber(holder.amount * tokenPrice, format, { maximumFractionDigits: 2 })}` : 'N/A'}
-                </TableCell>
-                <TableCell className="text-sm text-white font-medium">
-                  {formatPercentage(holder.amount, supplyForCalculation, format)}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableEmptyState colSpan={4} title="No holders found" description="No data available" />
-          )}
-        </TableBody>
-      </Table>
-    </ScrollableTable>
+      <TypedDataTable<HolderRow>
+        data={paginatedHolders}
+        columns={columns}
+        getRowKey={(holder) => holder.address}
+        isLoading={isLoading}
+        error={error}
+        errorTitle="Error loading holders"
+        emptyMessage="No holders found"
+        emptyDescription="No data available"
+        total={holdersArray.length}
+        page={currentPage}
+        rowsPerPage={rowsPerPage}
+        onPageChange={setCurrentPage}
+        onRowsPerPageChange={setRowsPerPage}
+        rowsPerPageOptions={[10, 25, 50, 100]}
+        paginationVariant={holdersArray.length > 0 ? "full" : "none"}
+      />
     </Card>
   );
 });
 
-HoldersTable.displayName = 'HoldersTable';
+HoldersTable.displayName = "HoldersTable";

@@ -10,5 +10,4 @@ export { BuilderCoinBreakdown } from "./BuilderCoinBreakdown";
 export { BuilderIntelligenceKpis } from "./BuilderIntelligenceKpis";
 export { BuilderIntelligenceUsersTable } from "./BuilderIntelligenceUsersTable";
 export { BuilderIntelligenceSecondaryStats } from "./BuilderIntelligenceSecondaryStats";
-export { VariationBadge } from "./VariationBadge";
 export { formatBuilderDisplayName } from "./formatBuilderDisplayName";

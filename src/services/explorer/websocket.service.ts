@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import { Block, Transaction, ExplorerStore } from './types';
 
-import { WebSocketClient } from '../core/WebSocketClient';
+import { WebSocketClient } from '@/lib/websocket-client';
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
 

@@ -3,7 +3,7 @@ import {
   calculateRealTimeProgression,
   type TwapProgressionInput,
   type TwapRealTimeData,
-} from "../utils";
+} from "../twap-real-time";
 
 /**
  * Polls real-time TWAP progression at 50ms for ultra-smooth UI updates.

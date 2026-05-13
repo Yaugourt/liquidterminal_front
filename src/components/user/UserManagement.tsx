@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { ProtectedAction } from '@/components/common';
+import { ProtectedAction, StatsCard } from '@/components/common';
 import { Pagination } from '@/components/common';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
@@ -15,33 +15,6 @@ import { UserFilters } from './UserFilters';
 import { UserTable } from './UserTable';
 import { UserEditModal } from './UserEditModal';
 import { Card } from "@/components/ui/card";
-
-// Stats Card Component
-function StatsCard({
-  icon: Icon,
-  title,
-  value,
-  iconColor = 'text-brand-accent',
-  iconBg = 'bg-brand-accent/10'
-}: {
-  icon: React.ElementType;
-  title: string;
-  value: string | number;
-  iconColor?: string;
-  iconBg?: string;
-}) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-center gap-3 mb-2">
-        <div className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center transition-transform group-hover:scale-110`}>
-          <Icon size={16} className={iconColor} />
-        </div>
-        <h3 className="text-[11px] text-text-secondary font-semibold uppercase tracking-wider">{title}</h3>
-      </div>
-      <span className="text-xl text-white font-bold tracking-tight">{value}</span>
-    </Card>
-  );
-}
 
 export function UserManagement() {
   const { user: currentUser } = useAuthContext();
@@ -235,32 +208,31 @@ export function UserManagement() {
         <div className="p-4 border-b border-border-subtle">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatsCard
-              icon={Users}
+              icon={<Users size={16} className="text-brand-accent" />}
               title="Total Users"
               value={pagination?.total || stats.total}
-              iconColor="text-brand-accent"
-              iconBg="bg-brand-accent/10"
+              valueClassName="text-xl text-white font-bold tracking-tight"
             />
             <StatsCard
-              icon={Shield}
+              icon={<Shield size={16} className="text-rose-400" />}
+              iconClassName="bg-rose-500/10"
               title="Admins"
               value={stats.admins}
-              iconColor="text-rose-400"
-              iconBg="bg-rose-500/10"
+              valueClassName="text-xl text-white font-bold tracking-tight"
             />
             <StatsCard
-              icon={ShieldCheck}
+              icon={<ShieldCheck size={16} className="text-brand-gold" />}
+              iconClassName="bg-brand-gold/10"
               title="Moderators"
               value={stats.moderators}
-              iconColor="text-brand-gold"
-              iconBg="bg-brand-gold/10"
+              valueClassName="text-xl text-white font-bold tracking-tight"
             />
             <StatsCard
-              icon={UserCheck}
+              icon={<UserCheck size={16} className="text-emerald-400" />}
+              iconClassName="bg-emerald-500/10"
               title="Verified"
               value={stats.verified}
-              iconColor="text-emerald-400"
-              iconBg="bg-emerald-500/10"
+              valueClassName="text-xl text-white font-bold tracking-tight"
             />
           </div>
         </div>

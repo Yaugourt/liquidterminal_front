@@ -13,7 +13,7 @@ import {
   TableHeadLabel,
 } from "@/components/ui/table";
 import { TwapTableData } from "@/services/explorer/address/types";
-import { getRemainingTime, useTwapRealTime, type TwapRealTimeData } from "@/services/twap";
+import { getRemainingTime, useTwapRealTime, type TwapRealTimeData } from "@/services/market/order";
 import Link from "next/link";
 
 // Composant mémorisé pour la cellule Value (dynamique)

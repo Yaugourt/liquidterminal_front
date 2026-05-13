@@ -1,15 +1,14 @@
 import { get, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
-import { 
-  AuctionsResponse, 
-  AuctionParams, 
-  AuctionPaginatedResponse, 
-  AuctionTiming, 
+import {
+  AuctionsResponse,
+  AuctionParams,
+  AuctionPaginatedResponse,
+  AuctionTiming,
   AuctionInfo,
   PerpDeployAuctionStatus,
   PerpAuctionTiming,
-  PerpDex
 } from './types';
 
 /**
@@ -211,15 +210,3 @@ export const fetchPerpAuctionTiming = async (): Promise<PerpAuctionTiming> => {
   }, 'fetching perp auction timing');
 };
 
-/**
- * Récupère la liste des perp dexs déployés
- */
-export const fetchPerpDexs = async (): Promise<PerpDex[]> => {
-  return withErrorHandling(async () => {
-    const response = await postExternal<PerpDex[]>(
-      `${API_URLS.HYPERLIQUID_API}/info`,
-      { type: "perpDexs" }
-    );
-    return response;
-  }, 'fetching perp dexs');
-}; 

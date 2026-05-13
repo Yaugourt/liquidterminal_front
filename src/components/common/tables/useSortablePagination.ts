@@ -47,9 +47,11 @@ interface UseSortablePaginationResult<T, F extends string> {
 /**
  * Shared pagination + tri-state column sort state machine for table cards.
  *
- * Used by `<SortablePaginatedTableCard>` and any table that wants the
- * "Top X" / leaderboard interaction (click header to sort desc, click
- * again for asc, again to clear).
+ * Used internally by `<TypedDataTable>` when at least one column is
+ * `sortable: true` or `paginate: true`. Surfaces the same primitives
+ * (sort field, direction, page, paginated slice) for outlier tables that
+ * need custom row rendering (e.g. `motion.tr`) while keeping a consistent
+ * sort/pagination interaction.
  */
 export function useSortablePagination<T, F extends string>({
   data,

@@ -282,7 +282,7 @@ export interface Transaction {
   };
 }
 
-import { WebSocketClient } from '../core/WebSocketClient';
+import { WebSocketClient } from '@/lib/websocket-client';
 
 export interface ExplorerStore {
   blocks: Block[];

@@ -16,6 +16,9 @@ export { ProtectedAction } from './ProtectedAction';
 
 // Cards / containers
 export { StatsCard, StatsCardSkeleton } from './StatsCard';
+export type { StatsCardProps } from './StatsCard';
+export { StatsPanel } from './StatsPanel';
+export type { StatsPanelProps } from './StatsPanel';
 export { WelcomePrompt } from './WelcomePrompt';
 export { UserAccountCompact } from './UserAccountCompact';
 
