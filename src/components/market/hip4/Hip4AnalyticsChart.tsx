@@ -13,7 +13,9 @@ import {
   YAxis,
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, TrendingDown, Loader2, BarChart2 } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { chartPalette, chartColors } from "@/components/common";
 import { useHip4Analytics } from "@/services/indexer/hip4";
 import type { Hip4AnalyticsInterval } from "@/services/indexer/hip4";
 
@@ -26,9 +28,9 @@ const INTERVALS: { label: string; value: Hip4AnalyticsInterval; limit: number }[
 ];
 
 const VOL_SERIES = {
-  buy_volume: { label: "Buy Vol", color: "#34d399", glow: "rgba(52,211,153,0.35)" },
-  sell_volume: { label: "Sell Vol", color: "#fb7185", glow: "rgba(251,113,133,0.35)" },
-  fees_usdc: { label: "Fees", color: "#f9e370", glow: "rgba(249,227,112,0.30)" },
+  buy_volume: { label: "Buy Vol", color: chartPalette.emeraldLight, glow: "rgb(var(--chart-up-rgb) / 0.35)" },
+  sell_volume: { label: "Sell Vol", color: chartPalette.roseSoft, glow: "rgb(var(--chart-down-rgb) / 0.35)" },
+  fees_usdc: { label: "Fees", color: chartPalette.gold, glow: "rgb(var(--brand-gold-rgb) / 0.30)" },
 } as const;
 
 type VolKey = keyof typeof VOL_SERIES;
@@ -202,7 +204,7 @@ export function Hip4AnalyticsChart() {
         <div className="relative z-10 mt-4 flex-1 min-h-0">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
+              <InlineSpinner className="h-5 w-5 text-brand-accent" />
             </div>
           ) : error ? (
             <div className="flex h-full items-center justify-center text-xs text-rose-400">
@@ -240,14 +242,14 @@ export function Hip4AnalyticsChart() {
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(v) => formatBucket(v, interval)}
-                  tick={{ fill: "#71717a", fontSize: 10 }}
+                  tick={{ fill: chartColors.textMuted, fontSize: 10 }}
                   axisLine={false}
                   tickLine={false}
                   minTickGap={50}
                 />
                 <YAxis
                   tickFormatter={(v) => compactUsd(Number(v))}
-                  tick={{ fill: "#71717a", fontSize: 10 }}
+                  tick={{ fill: chartColors.textMuted, fontSize: 10 }}
                   axisLine={false}
                   tickLine={false}
                   width={62}
@@ -296,7 +298,7 @@ export function Hip4AnalyticsChart() {
         <div className="relative z-10 flex-1 min-h-0">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
-              <Loader2 className="h-5 w-5 animate-spin text-brand-accent" />
+              <InlineSpinner className="h-5 w-5 text-brand-accent" />
             </div>
           ) : data.length === 0 ? (
             <div className="flex h-full items-center justify-center text-xs text-text-muted">
@@ -307,22 +309,22 @@ export function Hip4AnalyticsChart() {
               <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }} barCategoryGap="20%">
                 <defs>
                   <linearGradient id="hip4-g-fills" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#83E9FF" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="#83E9FF" stopOpacity={0.2} />
+                    <stop offset="0%" stopColor={chartPalette.accent} stopOpacity={0.8} />
+                    <stop offset="100%" stopColor={chartPalette.accent} stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(v) => formatBucket(v, interval)}
-                  tick={{ fill: "#71717a", fontSize: 9 }}
+                  tick={{ fill: chartColors.textMuted, fontSize: 9 }}
                   axisLine={false}
                   tickLine={false}
                   minTickGap={50}
                 />
                 <YAxis
                   tickFormatter={(v) => compactNum(Number(v))}
-                  tick={{ fill: "#71717a", fontSize: 9 }}
+                  tick={{ fill: chartColors.textMuted, fontSize: 9 }}
                   axisLine={false}
                   tickLine={false}
                   width={38}
@@ -354,7 +356,7 @@ interface VolumeTooltipProps {
 function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTooltipProps) {
   if (!active || !payload || payload.length === 0 || !label) return null;
   return (
-    <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
+    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
         {formatBucket(label, interval)}
       </div>
@@ -390,7 +392,7 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
   if (!active || !payload || payload.length === 0 || !label) return null;
   const fills = Number(payload.find((x) => x.dataKey === "fills")?.value ?? 0);
   return (
-    <div className="rounded-xl border border-border-hover bg-[#0B0E14]/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
+    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
         {formatBucket(label, interval)}
       </div>
