@@ -4,7 +4,7 @@
 
 /* Dark mode only - app is 100% dark themed */
 :root {
-    --background: 220 20% 4%; /* #0B0E14 */
+    --background: 228 20% 5%; /* #0A0B0F — realigned on V4 --bg-base */
     --foreground: 0 0% 93%; /* #ededed */
 
     /*
@@ -125,11 +125,11 @@
 
     /* États actifs pour les colonnes triables */
     .table-header-active-accent {
-        @apply text-brand-accent;
+        @apply text-brand;
     }
 
     .table-header-active-gold {
-        @apply text-brand-gold;
+        @apply text-gold;
     }
 
     /* V4 ref: data cells render at 12px (between text-xs 11px and text-sm 13px). */
@@ -142,17 +142,21 @@
     }
 
     .text-stat-value {
-        @apply text-sm text-white font-bold;
+        @apply text-sm text-text-primary font-semibold;
     }
 
     /* ===== Shadow Utilities ===== */
+    /* V4 removes ambient shadows. Kept as a no-op so ~112 legacy consumers
+       (`shadow-premium`) don't break; the name is dropped in Phase 5. */
     .shadow-premium {
-        @apply shadow-xl shadow-black/20;
+        box-shadow: none;
     }
 
     /* ===== Glass Panel (cards, sections) ===== */
+    /* V4: solid whisper-navy surface, opaque subtle border, 8px radius.
+       Glassmorphism (blur + translucency + shadow) removed. */
     .glass-panel {
-        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
+        @apply bg-surface border border-border-subtle rounded-lg;
     }
 
     /* ===== Interactive Elements ===== */
@@ -161,7 +165,7 @@
     }
 
     .interactive-button {
-        @apply hover:bg-white/5 transition-colors;
+        @apply hover:bg-surface-2 transition-colors;
     }
 
     /* ===== Text Utilities ===== */
@@ -170,27 +174,29 @@
     }
 
     /* ===== Stat Cards (Header) ===== */
+    /* V4: solid surface, no blur. Padding kept as-is to avoid a header reflow
+       (density is fine here — same reasoning as Card's p-6). */
     .stat-card {
-        @apply bg-brand-secondary/40 backdrop-blur-sm border border-border-subtle 
-           rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all 
-           hover:border-border-hover;
+        @apply bg-surface border border-border-subtle
+           rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all
+           hover:border-border-default;
     }
 
     /* ===== Interactive Hover States ===== */
 
     /* Pattern 1: Onglets/Tabs inactifs */
     .tab-inactive {
-        @apply text-text-secondary hover:text-zinc-200 hover:bg-white/5;
+        @apply text-text-secondary hover:text-text-primary hover:bg-surface-2;
     }
 
     /* Pattern 3: Éléments avec hover léger */
     .hover-subtle {
-        @apply hover:bg-white/5 transition-colors;
+        @apply hover:bg-surface-2 transition-colors;
     }
 
     /* Pattern 4: Liens/boutons secondary */
     .interactive-secondary {
-        @apply text-text-secondary hover:text-white hover:bg-white/5;
+        @apply text-text-secondary hover:text-text-primary hover:bg-surface-2;
     }
 
     /* ===== V4 utility classes ===== */
