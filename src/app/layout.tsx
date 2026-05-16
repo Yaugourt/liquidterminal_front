@@ -101,7 +101,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className} font-sans`}>
-      <body className={`${inter.className} font-sans antialiased bg-brand-main`}>
+      <body className={`${inter.className} font-sans antialiased bg-base`}>
         <Providers>
           {children}
           <SpeedInsights />

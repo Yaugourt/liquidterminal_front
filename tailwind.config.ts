@@ -49,16 +49,21 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				// Brand colors
 				brand: {
-					// V2 legacy (still used by other pages, kept for backwards-compat)
-					main: '#0B0E14',
-					secondary: '#151A25',
+					// V2 legacy names — Phase 1 aliased to V4 tokens so every legacy
+					// consumer (`bg-brand-main`, `text-brand-accent`…) renders V4 with
+					// zero file-by-file edits. Names removed for good in Phase 5.
+					main: 'rgb(var(--bg-base) / <alpha-value>)',
+					secondary: 'rgb(var(--bg-surface) / <alpha-value>)',
+					// `tertiary` NOT aliased: #051728 serves dual duty — `text-brand-tertiary`
+					// (102 occ, navy text on cyan, must stay #051728) and `bg-brand-tertiary`
+					// (24 occ, dark surface). A single alias can't serve both. Phase 5 splits them.
 					tertiary: '#051728',
-					dark: '#0A0D12',
-					accent: '#83E9FF',
-					gold: '#f9e370',
-					success: '#00ff88',
-					error: '#ef4444',
-					warning: '#f59e0b',
+					dark: 'rgb(var(--bg-base) / <alpha-value>)',
+					accent: 'rgb(var(--brand) / <alpha-value>)',
+					gold: 'rgb(var(--gold) / <alpha-value>)',
+					success: 'rgb(var(--success) / <alpha-value>)',
+					error: 'rgb(var(--danger) / <alpha-value>)',
+					warning: 'rgb(var(--warning) / <alpha-value>)',
 					// External brand colors (third-party services).
 					// Document new additions in docs/DESIGN_SYSTEM.md.
 					telegram: '#0088cc',
@@ -87,47 +92,56 @@ export default {
 				// V4 semantic text colors (CSS vars — light mode swap later)
 				'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',     // #E8EAED
 				'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)', // #9CA3AF
-				'text-muted': '#71717a',     // zinc-500 — V2 legacy, unmigrated pages
+				'text-muted': 'rgb(var(--text-tertiary) / <alpha-value>)', // V2 legacy — aliased to V4 text-tertiary
 				// V4 new text tier
 				'text-tertiary': 'rgb(var(--text-tertiary) / <alpha-value>)',
 				// V4 border (whisper navy #1E2535 — opaque, replaces V2 white/5)
 				'border-subtle': 'rgb(var(--border-subtle) / <alpha-value>)',
-				'border-hover': 'rgba(255, 255, 255, 0.1)',
+				'border-hover': 'rgb(var(--border-default) / <alpha-value>)', // V2 legacy — aliased to V4 border-default
 				// V4 borders (whisper navy palette) — `border-border-default`, `border-border-strong`
 				'border-default': 'rgb(var(--border-default) / <alpha-value>)',
 				'border-strong': 'rgb(var(--border-strong) / <alpha-value>)',
-				// shadcn/ui compatibility
+				// shadcn/ui compatibility — Phase 1 aliased to V4 tokens by role.
 				primary: {
-					DEFAULT: '#83E9FF',
-					foreground: '#051728',
+					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
+					foreground: '#051728', // navy text on cyan
 				},
 				secondary: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
 				destructive: {
-					DEFAULT: '#ef4444',
+					DEFAULT: 'rgb(var(--danger) / <alpha-value>)',
 					foreground: '#ffffff',
 				},
 				muted: {
-					DEFAULT: '#151A25',
-					foreground: '#a1a1aa',
+					DEFAULT: 'rgb(var(--bg-surface-2) / <alpha-value>)',
+					foreground: 'rgb(var(--text-secondary) / <alpha-value>)',
 				},
 				accent: {
-					DEFAULT: '#83E9FF',
-					foreground: '#051728',
+					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
+					foreground: '#051728', // navy text on cyan
 				},
 				card: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
 				popover: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
-				input: 'rgba(255, 255, 255, 0.1)',
-				ring: '#83E9FF',
-			}
+				input: 'rgb(var(--border-default) / <alpha-value>)',
+				ring: 'rgb(var(--brand) / <alpha-value>)',
+			},
+			/**
+			 * V4 radius: cards/panels use `rounded-lg` (8px, Tailwind default).
+			 * Many legacy consumers use `rounded-2xl` (default 16px) — override the
+			 * `2xl` key to 8px so they snap to V4 without hunting 267 occurrences.
+			 * `xl` (12px) is intentionally left untouched: it's the modal radius (spec §4.2).
+			 */
+			borderRadius: {
+				'2xl': '8px',
+			},
 		}
 	}
 } satisfies Config;
