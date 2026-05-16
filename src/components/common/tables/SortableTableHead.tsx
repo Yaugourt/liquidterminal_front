@@ -46,20 +46,22 @@ export function SortableTableHead<F extends string>({
       : ArrowUp;
 
   return (
-    <TableHead className={cn("py-3 px-4", align === "right" && "text-right", className)}>
+    <TableHead className={cn("py-2 px-3.5", align === "right" && "text-right", className)}>
       <button
         type="button"
         onClick={() => onSort(field)}
         className={cn(
-          "table-column-head inline-flex items-center gap-0.5 hover:text-text-secondary transition-colors",
-          align === "right" && "w-full justify-end",
+          "table-column-head inline-flex items-center gap-1 hover:text-text-secondary transition-colors",
+          // Right-aligned columns: reverse so the label stays flush-right and
+          // lines up with the numeric cells below — the icon sits to its left.
+          align === "right" && "w-full flex-row-reverse",
           isActive && "!text-brand-gold"
         )}
       >
         {children}
         <Icon
           className={cn(
-            "h-3 w-3 ml-1",
+            "h-3 w-3 shrink-0",
             !isActive && "opacity-50",
             isActive && "text-brand-gold"
           )}

@@ -89,7 +89,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
             <div
                 className={cn(
-                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-brand-main flex flex-col",
+                    "fixed left-0 top-0 h-full w-[220px] max-lg:w-[200px] bg-surface flex flex-col",
                     "border-r border-border-subtle",
                     "transition-transform duration-300 ease-in-out z-50",
                     "lg:translate-x-0",
@@ -97,7 +97,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-3 border-b border-border-subtle">
+                <div className="flex items-center justify-between p-3 border-b border-border-subtle h-14">
                     <SidebarToggle
                         onClick={() => setIsOpen(false)}
                         className="lg:hidden"
@@ -109,32 +109,26 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                         onClick={() => setIsOpen(false)}
                     >
-                        <Image
-                            src="/logo.svg"
-                            alt="Logo"
-                            width={24}
-                            height={24}
-                            className="h-6 w-6"
-                        />
-                        <h1 className="hidden lg:block text-sm font-bold">
-                            <span className="text-brand-accent font-inter font-semibold">Liquid </span>
-                            <span className="text-white font-inter">Terminal</span>
+                        <div className="w-[22px] h-[22px] rounded-md bg-brand text-brand-text-on flex items-center justify-center text-[13px] font-semibold">
+                            L
+                        </div>
+                        <h1 className="hidden lg:block text-sm font-semibold text-text-primary">
+                            Liquid Terminal
                         </h1>
                     </Link>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-2 py-2 overflow-y-auto scrollbar-brand">
-                    <ul className="space-y-4">
+                <nav className="flex-1 px-3 py-2 overflow-y-auto scrollbar-brand">
+                    <ul>
                         {navigationGroups.map((group, groupIndex) => (
-                            <li key={groupIndex} className="space-y-1">
+                            <li key={groupIndex}>
                                 {group.groupName && (
-                                    <div className="px-3 text-label">
-                                        <span className="text-brand-accent font-inter font-semibold">{group.groupName.split(' ')[0]} </span>
-                                        <span className="text-text-secondary font-inter">{group.groupName.split(' ').slice(1).join(' ')}</span>
+                                    <div className="px-2 pt-4 pb-1.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary">
+                                        {group.groupName}
                                     </div>
                                 )}
-                                <ul className="space-y-[2px]">
+                                <ul className="space-y-0.5">
                                     {group.items.map((item) => {
                                         const isActive =
                                             pathname === item.href ||
@@ -143,20 +137,16 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                             (item.children && item.children.some((child) => pathname === child.href));
                                         const isOpen = openSubmenu === item.name;
                                         return (
-                                            <li key={item.name} className="relative">
-                                                {/* Barre verticale active */}
-                                                {isActive && (
-                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-brand-accent rounded-r" />
-                                                )}
+                                            <li key={item.name}>
                                                 {item.children ? (
                                                     <div className="flex items-center">
                                                         <Link
                                                             href={item.href}
                                                             className={cn(
-                                                                "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group flex-1",
+                                                                "flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors relative group flex-1",
                                                                 isActive
-                                                                    ? "bg-brand-accent/10 text-brand-accent"
-                                                                    : "text-white/80 hover:bg-white/5 hover:text-white"
+                                                                    ? "bg-brand/10 text-brand font-medium"
+                                                                    : "text-text-secondary hover:bg-surface-2 hover:text-text-primary"
                                                             )}
                                                             onClick={() => setIsOpen(false)}
                                                         >
@@ -168,14 +158,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                     <Image
                                                                         src={item.icon}
                                                                         alt={item.name}
-                                                                        width={18}
-                                                                        height={18}
+                                                                        width={14}
+                                                                        height={14}
                                                                     />
                                                                 ) : item.IconComponent ? (
-                                                                    <item.IconComponent className="w-5 h-5" />
+                                                                    <item.IconComponent className="w-3.5 h-3.5" />
                                                                 ) : null}
                                                             </div>
-                                                            <span className="text-sm">{item.name}</span>
+                                                            <span className="text-[13px]">{item.name}</span>
                                                         </Link>
                                                         <button
                                                             onClick={(e) => {
@@ -183,10 +173,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                 toggleSubmenu(item.name);
                                                             }}
                                                             className={cn(
-                                                                "p-1 rounded transition-all",
+                                                                "p-1 rounded transition-colors",
                                                                 isActive
-                                                                    ? "text-brand-accent hover:bg-white/5"
-                                                                    : "text-text-secondary hover:bg-white/5 hover:text-white"
+                                                                    ? "text-brand hover:bg-surface-2"
+                                                                    : "text-text-tertiary hover:bg-surface-2 hover:text-text-primary"
                                                             )}
                                                         >
                                                             <span className="text-xs">{isOpen ? '▲' : '▼'}</span>
@@ -196,10 +186,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                     <Link
                                                         href={item.href}
                                                         className={cn(
-                                                            "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
+                                                            "flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors relative group",
                                                             isActive
-                                                                ? "bg-brand-accent/10 text-brand-accent"
-                                                                : "text-white/80 hover:bg-white/5 hover:text-white"
+                                                                ? "bg-brand/10 text-brand font-medium"
+                                                                : "text-text-secondary hover:bg-surface-2 hover:text-text-primary"
                                                         )}
                                                         onClick={() => setIsOpen(false)}
                                                     >
@@ -211,19 +201,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                 <Image
                                                                     src={item.icon}
                                                                     alt={item.name}
-                                                                    width={18}
-                                                                    height={18}
+                                                                    width={16}
+                                                                    height={16}
                                                                 />
                                                             ) : item.IconComponent ? (
-                                                                <item.IconComponent className="w-5 h-5" />
+                                                                <item.IconComponent className="w-4 h-4" />
                                                             ) : null}
                                                         </div>
-                                                        <span className="text-sm">{item.name}</span>
+                                                        <span className="text-[13px]">{item.name}</span>
                                                     </Link>
                                                 )}
                                                 {/* Sous-menu */}
                                                 {item.children && isOpen && (
-                                                    <ul className="ml-7 mt-1 space-y-1 border-l border-border-subtle pl-2">
+                                                    <ul className="ml-6 mt-0.5 space-y-0.5 border-l border-border-subtle pl-2">
                                                         {item.children.map((child: NavigationItem) => {
                                                             const isChildActive = pathname === child.href;
                                                             return (
@@ -231,14 +221,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                                     <Link
                                                                         href={child.href}
                                                                         className={cn(
-                                                                            "flex items-center gap-2 px-2 py-1 rounded-md transition-all",
+                                                                            "flex items-center gap-2 px-2 py-1 rounded transition-colors",
                                                                             isChildActive
-                                                                                ? "bg-brand-accent/10 text-brand-accent font-medium"
-                                                                                : "text-text-secondary hover:bg-white/5 hover:text-white"
+                                                                                ? "bg-brand/10 text-brand font-medium"
+                                                                                : "text-text-tertiary hover:bg-surface-2 hover:text-text-primary"
                                                                         )}
                                                                         onClick={() => setIsOpen(false)}
                                                                     >
-                                                                        {child.IconComponent && <child.IconComponent className="w-4 h-4" />}
+                                                                        {child.IconComponent && <child.IconComponent className="w-3.5 h-3.5" />}
                                                                         <span className="text-xs">{child.name}</span>
                                                                     </Link>
                                                                 </li>
@@ -253,24 +243,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             </li>
                         ))}
 
-                        {/* Admin Section - Only visible to admins */}
+                        {/* Admin Section — gold preserved (legitimate premium/admin tier per V4 spec) */}
                         {isAdmin && (
-                            <li className="space-y-1">
-                                <div className="px-3 text-label">
-                                    <span className="text-brand-gold font-inter font-semibold">Administration</span>
+                            <li>
+                                <div className="px-2 pt-4 pb-1.5 text-[10px] uppercase tracking-[0.08em] font-medium text-gold">
+                                    Administration
                                 </div>
-                                <ul className="space-y-[2px]">
-                                    <li className="relative">
-                                        {pathname === '/user' && (
-                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-brand-gold rounded-r" />
-                                        )}
+                                <ul>
+                                    <li>
                                         <Link
                                             href="/user"
                                             className={cn(
-                                                "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all relative group",
+                                                "flex items-center gap-2.5 px-2 py-1.5 rounded-md transition-colors relative group",
                                                 pathname === '/user'
-                                                    ? "bg-brand-gold/10 text-brand-gold"
-                                                    : "text-white/80 hover:bg-white/5 hover:text-brand-gold"
+                                                    ? "bg-gold/10 text-gold font-medium"
+                                                    : "text-text-secondary hover:bg-surface-2 hover:text-gold"
                                             )}
                                             onClick={() => setIsOpen(false)}
                                         >
@@ -278,9 +265,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                                                 "transition-transform",
                                                 pathname === '/user' ? "scale-110" : "group-hover:scale-105"
                                             )}>
-                                                <Shield className="w-5 h-5" />
+                                                <Shield className="w-3.5 h-3.5" />
                                             </div>
-                                            <span className="text-sm">User Management</span>
+                                            <span className="text-[13px]">User Management</span>
                                         </Link>
                                     </li>
                                 </ul>
@@ -295,7 +282,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsCustomizeOpen(true)}
-                        className="w-full interactive-secondary justify-start gap-2 transition-colors"
+                        className="w-full justify-start gap-2 text-text-secondary hover:text-text-primary hover:bg-surface-2 transition-colors"
                     >
                         <Settings className="w-4 h-4" />
                         <span className="text-xs">Customize Sidebar</span>
@@ -310,9 +297,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group p-1.5 rounded-lg hover-subtle"
+                            className="group p-1.5 rounded-md hover:bg-surface-2 transition-colors"
                         >
-                            <item.Icon className="h-4 w-4 text-text-muted group-hover:text-brand-accent transition-colors" />
+                            <item.Icon className="h-4 w-4 text-text-tertiary group-hover:text-brand transition-colors" />
                         </a>
                     ))}
                 </div>

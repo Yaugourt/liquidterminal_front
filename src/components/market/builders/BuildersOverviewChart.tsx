@@ -3,17 +3,16 @@
 import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { ChartLoading, ChartEmpty, chartPalette, chartColors } from "@/components/common";
+import { ChartLoading, ChartEmpty, ChartWatermark, chartPalette, chartColors } from "@/components/common";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 
 type Metric = "totalVolume" | "totalBuilderFees" | "fillCount";
 
-const METRICS: { key: Metric; label: string; color: string; glow: string }[] = [
-  { key: "totalVolume", label: "Volume", color: chartPalette.accent, glow: "rgb(var(--brand-accent-rgb) / 0.35)" },
-  { key: "totalBuilderFees", label: "Builder Fees", color: chartPalette.gold, glow: "rgb(var(--brand-gold-rgb) / 0.32)" },
-  { key: "fillCount", label: "Fills", color: chartPalette.violet, glow: "rgb(var(--chart-violet-rgb) / 0.32)" },
+const METRICS: { key: Metric; label: string }[] = [
+  { key: "totalVolume", label: "Volume" },
+  { key: "totalBuilderFees", label: "Builder Fees" },
+  { key: "fillCount", label: "Fills" },
 ];
 
 const SLICE_PALETTE = chartPalette.multiSeries;
@@ -102,54 +101,18 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.35 }}
-      className="glass-panel relative overflow-hidden p-6"
+      className="bg-surface border border-border-subtle rounded-lg overflow-hidden"
     >
-      {/* Ambient glow — follows active slice */}
-      <motion.div
-        animate={{
-          background: displayed
-            ? `radial-gradient(circle at 30% 30%, ${displayed.color}33, transparent 60%)`
-            : "radial-gradient(circle at 30% 30%, rgba(131,233,255,0.12), transparent 60%)",
-        }}
-        transition={{ duration: 0.5 }}
-        className="pointer-events-none absolute inset-0 opacity-70"
-      />
-
-      {/* HEADER */}
-      <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <span className="h-1 w-1 rounded-full bg-brand-accent" />
-            Market Share
-            <span className="text-text-muted/60">·</span>
-            <span>Top 10 builders · {timeframe}</span>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${metric}-${displayedValue.toFixed(0)}`}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              className="mt-1 text-[28px] font-bold text-white tabular-nums tracking-tight"
-            >
-              {fmtValue(displayedValue)}
-            </motion.div>
-          </AnimatePresence>
-          <div className="text-[11px] text-text-muted">
-            {displayed ? (
-              <span>
-                <span className="text-white">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total
-              </span>
-            ) : (
-              <span>
-                Top 3 hold <span className="text-brand-accent font-semibold">{topConcentration.toFixed(1)}%</span> · {slices.length} slices
-              </span>
-            )}
-          </div>
+      {/* CARD HEADER — title + tabs (V4 ref: px-3.5 py-3 border-b) */}
+      <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="h-[5px] w-[5px] rounded-full bg-brand shrink-0" />
+          <span className="text-[11px] uppercase tracking-wide font-medium text-text-tertiary truncate">
+            Market Share · Top 10 · {timeframe}
+          </span>
         </div>
-
         {/* Metric pills */}
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center bg-surface-2 rounded-md p-0.5 shrink-0">
           {METRICS.map((m) => (
             <button
               key={m.key}
@@ -157,16 +120,16 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
                 setMetric(m.key);
                 setActiveIdx(null);
               }}
-              className="relative rounded-lg px-3 py-1 text-[11px] font-semibold tabular-nums"
+              className="relative rounded text-[10px] font-medium px-2 py-0.5"
             >
               {metric === m.key && (
                 <motion.span
                   layoutId={`builders-metric-${layoutId}`}
-                  className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                  className="absolute inset-0 rounded bg-brand"
                   transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}
-              <span className={`relative z-10 ${metric === m.key ? "text-white" : "text-text-secondary hover:text-white"}`}>
+              <span className={`relative z-10 ${metric === m.key ? "text-brand-text-on" : "text-text-tertiary hover:text-text-primary"}`}>
                 {m.label}
               </span>
             </button>
@@ -174,8 +137,10 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
         </div>
       </div>
 
-      {/* BODY — donut + legend */}
-      <div className="relative z-10 mt-4 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-4 items-center min-h-[320px]">
+      {/* CARD BODY — watermark + donut + legend */}
+      <div className="relative p-3.5 min-h-[320px]">
+        <ChartWatermark />
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-[minmax(0,200px)_minmax(0,1fr)] gap-5 items-center">
         {isLoading && slices.length === 0 ? (
           <div className="md:col-span-2">
             <ChartLoading />
@@ -240,72 +205,57 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
                     transition={{ duration: 0.2 }}
                     className="flex flex-col items-center text-center px-4"
                   >
-                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-                      {displayed ? displayed.name : "Total"}
+                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+                      {displayed ? displayed.name : `Total ${timeframe}`}
                     </div>
-                    <div className="mt-0.5 text-[20px] font-bold text-white tabular-nums tracking-tight">
+                    <div className="mono mt-0.5 text-[20px] font-semibold text-text-primary tracking-tight">
                       {fmtValue(displayedValue)}
                     </div>
-                    <div className="text-[11px] text-text-secondary tabular-nums">
-                      {displayedPct.toFixed(1)}%
-                    </div>
+                    {displayed ? (
+                      <div className="mono text-[11px] text-text-secondary">
+                        {displayedPct.toFixed(1)}%
+                      </div>
+                    ) : (
+                      <div className="mono text-[10px] text-text-tertiary mt-0.5">
+                        Top 3 hold {topConcentration.toFixed(1)}% · {slices.length} slices
+                      </div>
+                    )}
                   </motion.div>
                 </AnimatePresence>
               </div>
             </div>
 
-            {/* LEGEND */}
-            <div className="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1 scrollbar-brand">
+            {/* LEGEND — V4 ref `.top-list` (compact, color dot squares) */}
+            <div className="flex flex-col gap-1 max-h-[280px] overflow-y-auto pr-1 scrollbar-brand">
               {slices.map((s, i) => {
                 const pct = total > 0 ? (s.value / total) * 100 : 0;
                 const isActive = activeIdx === i;
                 const isOthers = s.address === "others";
-                const initial = s.name !== "—" && s.name.length > 0 ? s.name.charAt(0).toUpperCase() : "?";
+                const isAnonymous = !isOthers && (s.name === "—" || s.name.startsWith("0x"));
                 return (
                   <button
                     key={s.address}
                     onMouseEnter={() => setActiveIdx(i)}
                     onMouseLeave={() => setActiveIdx(null)}
-                    className={`group relative flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all ${
-                      isActive
-                        ? "border-border-hover bg-white/[0.04]"
-                        : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
+                    className={`grid grid-cols-[14px_8px_1fr_auto] gap-2 items-center px-2 py-1.5 rounded-md text-left transition-colors ${
+                      isActive ? "bg-surface-2" : "hover:bg-surface-2"
                     }`}
                   >
-                    <div
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                      style={{
-                        background: `linear-gradient(135deg, ${s.color}40, ${s.color}10)`,
-                        color: s.color,
-                        boxShadow: isActive ? `0 0 14px ${s.color}66` : "none",
-                        transition: "box-shadow 0.25s ease",
-                      }}
+                    <span className="mono text-[10px] text-text-tertiary">{i + 1}</span>
+                    <span
+                      className="h-2 w-2 rounded-[2px] shrink-0"
+                      style={{ background: s.color }}
+                    />
+                    <span
+                      className={`text-[12px] truncate ${
+                        isAnonymous || isOthers ? "text-text-secondary" : "font-medium text-text-primary"
+                      }`}
                     >
-                      {isOthers ? "+" : initial}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-white truncate">
-                          {isOthers ? `+ ${rows.length - 10} others` : `#${i + 1} ${s.name}`}
-                        </span>
-                        <span className="text-xs font-semibold text-white tabular-nums shrink-0">
-                          {fmtValue(s.value)}
-                        </span>
-                      </div>
-                      <div className="mt-1 flex items-center gap-2">
-                        <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/5">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.6, delay: i * 0.04 }}
-                            className="absolute inset-y-0 left-0 rounded-full"
-                            style={{ background: `linear-gradient(90deg, ${s.color}80, ${s.color})` }}
-                          />
-                        </div>
-                        <span className="text-[10px] font-semibold tabular-nums text-text-secondary min-w-[44px] text-right">
-                          {pct.toFixed(1)}%
-                        </span>
-                      </div>
+                      {isOthers ? `+ ${rows.length - 10} others` : s.name}
+                    </span>
+                    <div className="text-right">
+                      <div className="mono text-[12px] text-text-secondary leading-tight">{fmtValue(s.value)}</div>
+                      <div className="mono text-[10px] text-text-tertiary leading-tight">{pct.toFixed(1)}%</div>
                     </div>
                   </button>
                 );
@@ -313,28 +263,15 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
             </div>
           </>
         )}
+        </div>
       </div>
 
-      {/* FOOTER — concentration insight */}
+      {/* CARD FOOTER — V4 pedagogical */}
       {total > 0 && (
-        <div className="relative z-10 mt-4 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-muted">
+        <div className="px-3.5 py-2.5 border-t border-border-subtle flex items-center justify-between text-[10px] text-text-tertiary">
+          <span>{slices.length} builders shown · sorted by {METRICS.find((m) => m.key === metric)?.label.toLowerCase()}</span>
           <span>
-            <span className="text-text-secondary">Total {timeframe}</span>{" "}
-            <span className="font-semibold text-white tabular-nums">{fmtValue(total)}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            {topConcentration >= 60 ? (
-              <>
-                <ArrowUpRight className="h-3 w-3 text-brand-gold" />
-                <span className="text-brand-gold">High concentration</span>
-              </>
-            ) : (
-              <>
-                <ArrowDownRight className="h-3 w-3 text-emerald-400" />
-                <span className="text-emerald-400">Distributed market</span>
-              </>
-            )}
-            <span className="text-text-muted/70">· Top 3: {topConcentration.toFixed(1)}%</span>
+            Top 3: <span className="mono text-text-secondary">{topConcentration.toFixed(1)}%</span>
           </span>
         </div>
       )}

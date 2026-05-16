@@ -18,7 +18,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }, [width]);
 
     return (
-        <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-secondary via-brand-main to-black">            {/* Mobile menu button */}
+        <div className="min-h-screen text-text-primary font-sans">
+            {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             </div>
@@ -26,17 +27,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
             <div className="lg:pl-[220px]">
-                {/* Header - scrolls with page content */}
-                <div>
-                    <Header />
-                </div>
+                {/* Header - sticky V4 chrome */}
+                <Header />
 
                 {/* Mobile SearchBar */}
                 <div className="p-2 lg:hidden">
                     <ExplorerSearchBar placeholder="Search..." />
                 </div>
 
-                <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
+                <main className="px-5 py-5 space-y-4 max-w-[1920px] mx-auto">
                     {children}
                 </main>
             </div>

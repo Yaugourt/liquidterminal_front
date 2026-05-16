@@ -27,7 +27,7 @@ export function ScrollableTable({
         {children}
       </div>
       {pagination && (
-        <div className="border-t border-border-subtle px-4 py-3">
+        <div className="border-t border-border-subtle px-3.5 py-2.5">
           <Pagination {...pagination} />
         </div>
       )}
