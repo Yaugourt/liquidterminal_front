@@ -61,7 +61,7 @@ export function XpBadge({
     }
   };
 
-  // Compact version for header/sidebar
+  // Compact version for header/sidebar — V4 `.header-stat` chip
   if (compact) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -69,43 +69,36 @@ export function XpBadge({
           <button
             onClick={handleClick}
             className={cn(
-              "flex items-center gap-2 px-2.5 py-1.5 rounded-lg",
-              "bg-gradient-to-r from-brand-gold/10 to-purple-500/10",
-              "border border-brand-gold/20 hover:border-brand-gold/40",
-              "transition-all duration-200 hover:scale-105",
-              "group cursor-pointer",
+              "h-8 inline-flex items-center gap-1.5 px-2.5 rounded-md",
+              "bg-surface-2 border border-border-subtle hover:bg-surface-3",
+              "transition-colors cursor-pointer",
               className
             )}
           >
-            {/* Level badge */}
-            <div className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 text-brand-gold fill-brand-gold" />
-              <span className="text-xs font-bold text-brand-gold">
-                {displayStats.level}
-              </span>
-            </div>
-
-            {/* Mini progress */}
-            <div className="w-12 h-1.5 bg-brand-dark rounded-full overflow-hidden border border-border-subtle">
-              <div
-                className="h-full bg-gradient-to-r from-brand-accent to-cyan-400 transition-all duration-500"
-                style={{ width: `${displayStats.progressPercent}%` }}
-              />
-            </div>
+            {/* Level */}
+            <Star className="h-3 w-3 text-gold fill-gold" />
+            <span className="mono text-[12px] font-medium text-text-primary">
+              {displayStats.level}
+            </span>
 
             {/* Streak */}
-            {showStreak && displayStats.loginStreak > 0 && (
-              <div className="flex items-center gap-0.5">
-                <Flame className="h-3 w-3 text-orange-500" />
-                <span className="text-xs font-medium text-orange-400">
+            {showStreak && (
+              <>
+                <Flame
+                  className={cn(
+                    "h-3 w-3",
+                    displayStats.loginStreak > 0 ? "text-warning" : "text-text-tertiary"
+                  )}
+                />
+                <span className="mono text-[12px] font-medium text-text-primary">
                   {displayStats.loginStreak}
                 </span>
-              </div>
+              </>
             )}
           </button>
         </DialogTrigger>
 
-        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+        <DialogContent className="bg-surface border border-border-default rounded-xl text-text-primary max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               <Star className="h-5 w-5 text-brand-gold fill-brand-gold" />

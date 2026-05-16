@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Terminal — Builders (V3, neutral dark + warm cream light)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================
+   LIQUID DESIGN SYSTEM V3
+   Dark = neutral (no blue tint)
+   Light = warm cream (financial paper aesthetic)
+   ============================ */
+:root,
+[data-theme="dark"] {
+  /* === SURFACES (V4 — V1 base + subtle navy hint pour brand identity) === */
+  --bg-base: #0A0B0F;             /* V1 neutral conservé */
+  --bg-surface: #0F1421;          /* whisper de navy vs V1 #11141B */
+  --bg-surface-2: #141B2A;        /* whisper de navy */
+  --bg-surface-3: #1C2436;        /* whisper de navy */
+  
+  /* === BORDERS === */
+  --border-subtle: #1E2535;
+  --border-default: #2C354A;
+  --border-strong: #3D4760;
+  
+  /* === TEXT === */
+  --text-primary: #E8EAED;
+  --text-secondary: #9CA3AF;
+  --text-tertiary: #6B7280;
+  --text-disabled: #4B5563;
+  
+  /* === BRAND === */
+  --brand: #83E9FF;
+  --brand-hover: #A8F0FF;
+  --brand-deep: #1692AD;
+  --brand-bg: rgba(131, 233, 255, 0.10);
+  --brand-bg-strong: rgba(131, 233, 255, 0.20);
+  --brand-border: rgba(131, 233, 255, 0.30);
+  --brand-text-on: #051728;
+  
+  /* === ACTION === */
+  --action: #1692AD;
+  --action-hover: #1FA8C4;
+  --action-text: #FFFFFF;
+  
+  /* === SEMANTIC === */
+  --success: #1FA85B;
+  --success-bg: rgba(31, 168, 91, 0.12);
+  --danger: #E53E3E;
+  --danger-bg: rgba(229, 62, 62, 0.12);
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  
+  /* === GOLD === */
+  --gold: #F9E370;
+  --gold-bg: rgba(249, 227, 112, 0.10);
+}
+
+[data-theme="light"] {
+  /* === SURFACES (classical light, white cards) === */
+  --bg-base: #F4F7FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-2: #EBF1F7;
+  --bg-surface-3: #DCE5EF;
+  --bg-overlay: rgba(15, 23, 42, 0.55);
+  
+  /* === BORDERS === */
+  --border-subtle: #E2E8F0;
+  --border-default: #CBD5E1;
+  --border-strong: #94A3B8;
+  
+  /* === TEXT === */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #94A3B8;
+  --text-disabled: #CBD5E1;
+  
+  /* === BRAND (navy #0F1421 instead of cyan deep #0891B2) === */
+  --brand: #0F1421;
+  --brand-hover: #1A2335;
+  --brand-deep: #051728;
+  --brand-bg: rgba(15, 20, 33, 0.10);
+  --brand-bg-strong: rgba(15, 20, 33, 0.18);
+  --brand-border: rgba(15, 20, 33, 0.30);
+  --brand-text-on: #FFFFFF;
+  
+  /* === ACTION === */
+  --action: #0284C7;
+  --action-hover: #0369A1;
+  --action-text: #FFFFFF;
+  
+  /* === SEMANTIC === */
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.10);
+  --danger: #DC2626;
+  --danger-bg: rgba(220, 38, 38, 0.10);
+  --warning: #D97706;
+  --warning-bg: rgba(217, 119, 6, 0.10);
+  
+  /* === GOLD === */
+  --gold: #B7791F;
+  --gold-bg: rgba(249, 227, 112, 0.30);
+}
+
+/* ============================
+   BASE
+   ============================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+  transition: background 200ms ease, color 200ms ease;
+  min-height: 100vh;
+}
+
+/* V4 — subtle Liquid ambient gradient au sommet (cyan whisper) */
+body {
+  background:
+    radial-gradient(ellipse 100% 50% at 50% -10%, rgba(131, 233, 255, 0.035), transparent 70%),
+    var(--bg-base);
+}
+
+/* Light mode override — ambient navy whisper */
+[data-theme="light"] body {
+  background:
+    radial-gradient(ellipse 100% 50% at 50% -10%, rgba(22, 146, 173, 0.05), transparent 70%),
+    var(--bg-base);
+}
+
+.mono {
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ============================
+   LAYOUT
+   ============================ */
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  padding: 16px 12px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sidebar-logo-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-text-on);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 16px 8px 6px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+}
+
+.sidebar-item:hover {
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+}
+
+.sidebar-item.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.sidebar-item-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* HEADER */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg-base) 92%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-subtle);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.search {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+
+.search input {
+  width: 100%;
+  height: 32px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 0 12px 0 32px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 150ms, background 150ms;
+}
+
+.search input::placeholder { color: var(--text-tertiary); }
+
+.search input:focus {
+  outline: none;
+  border-color: var(--brand);
+  background: var(--bg-surface);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.header-spacer { flex: 1; }
+
+.header-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.header-stat-value {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-2);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms;
+  font-size: 14px;
+}
+
+.icon-btn:hover {
+  background: var(--bg-surface-3);
+  color: var(--text-primary);
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-bg);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--brand-border);
+}
+
+/* MAIN */
+main {
+  padding: 20px 20px 60px;
+  max-width: 1920px;
+}
+
+/* PAGE HEADER */
+.page-tabs {
+  display: inline-flex;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 2px;
+  margin-bottom: 16px;
+}
+
+.page-tab {
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: all 150ms;
+}
+
+.page-tab:hover { color: var(--text-primary); }
+
+.page-tab.active {
+  background: var(--brand);
+  color: var(--brand-text-on);
+}
+
+.page-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.timeframe-tabs {
+  display: inline-flex;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.timeframe-tab {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 150ms;
+}
+
+.timeframe-tab:hover { color: var(--text-primary); }
+
+.timeframe-tab.active {
+  background: var(--brand);
+  color: var(--brand-text-on);
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.stat-delta {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.stat-delta.up { color: var(--success); }
+.stat-delta.down { color: var(--danger); }
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* TWO COL */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.card-body {
+  padding: 14px;
+  position: relative;
+  min-height: 320px;
+}
+
+/* WATERMARK */
+.watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.watermark-text {
+  font-size: 64px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+  opacity: 0.025;
+}
+
+[data-theme="light"] .watermark-text { opacity: 0.05; }
+
+/* MARKET SHARE CARD */
+.market-share-content {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-total {
+  text-align: center;
+  margin-top: -120px;
+  pointer-events: none;
+}
+
+.donut-total-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.donut-total-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.donut-total-pct {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.top-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.top-list-item {
+  display: grid;
+  grid-template-columns: 14px 18px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  transition: background 150ms;
+}
+
+.top-list-item:hover {
+  background: var(--bg-surface-2);
+}
+
+.top-list-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.top-list-rank {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.top-list-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.top-list-name.muted { color: var(--text-secondary); font-weight: 400; }
+
+.top-list-value {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.top-list-pct {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+/* HORIZONTAL BAR CHART */
+.hbar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.hbar-row {
+  display: grid;
+  grid-template-columns: 20px 80px 1fr 70px 60px;
+  gap: 10px;
+  align-items: center;
+  font-size: 11px;
+}
+
+.hbar-rank {
+  color: var(--text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+  font-size: 10px;
+}
+
+.hbar-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hbar-name.muted { color: var(--text-secondary); font-weight: 400; }
+
+.hbar-track {
+  height: 18px;
+  background: var(--bg-surface-2);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hbar-fill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 10px;
+  color: var(--brand-text-on);
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hbar-value {
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.hbar-eff {
+  text-align: right;
+  font-size: 10px;
+}
+
+.hbar-eff-high { color: var(--gold); }
+.hbar-eff-mid { color: var(--text-secondary); }
+.hbar-eff-low { color: var(--text-tertiary); }
+
+/* TABLE */
+.table-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table-sub-tabs {
+  display: inline-flex;
+  background: var(--bg-surface-2);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.table-sub-tab {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.table-sub-tab.active {
+  background: var(--brand);
+  color: var(--brand-text-on);
+}
+
+.table-meta {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.03em;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.data th {
+  text-align: left;
+  padding: 8px 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+table.data th.right { text-align: right; }
+
+table.data td {
+  padding: 8px 14px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+table.data tr:last-child td { border-bottom: none; }
+
+table.data tr:hover td { background: var(--bg-surface-2); }
+
+table.data td.right {
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+table.data td.muted { color: var(--text-secondary); }
+
+.builder-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.builder-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--bg-surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.builder-rank {
+  display: inline-block;
+  width: 22px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.fees-cell {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+[data-theme="light"] .fees-cell {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* TABLE FOOTER */
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.table-pagination {
+  display: flex;
+  gap: 2px;
+}
+
+.table-pagination button {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-2);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.table-pagination button:hover {
+  background: var(--bg-surface-3);
+  color: var(--text-primary);
+}
+
+.table-pagination button.active {
+  background: var(--brand);
+  color: var(--brand-text-on);
+  border-color: var(--brand);
+}
+
+/* CTA BUTTON DEMO */
+.cta-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--action);
+  color: var(--action-text);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 150ms;
+}
+
+.cta-btn:hover { background: var(--action-hover); }
+
+/* INFO BANNER */
+.info-banner {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-banner strong {
+  color: var(--brand);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.info-banner code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-primary);
+  background: var(--bg-surface-2);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">L</div>
+      <span>Liquid Terminal</span>
+    </div>
+    
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⌂</span>
+      <span>Home</span>
+    </div>
+    
+    <div class="sidebar-section-label">Liquid Explorer</div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">▦</span>
+      <span>Dashboard</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">◈</span>
+      <span>Validator</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">◊</span>
+      <span>Vaults</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⌥</span>
+      <span>Liquidations</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⚡</span>
+      <span>Priority Fees</span>
+    </div>
+    
+    <div class="sidebar-section-label">Liquid Market</div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">▽</span>
+      <span>Spot</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">∞</span>
+      <span>Perpetual</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⊞</span>
+      <span>PerpDexs (HIP-3)</span>
+    </div>
+    <div class="sidebar-item active">
+      <span class="sidebar-item-icon">⊕</span>
+      <span>Builders</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⇄</span>
+      <span>USDH Swap</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">⌘</span>
+      <span>HIP-4</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">◎</span>
+      <span>Tracker</span>
+    </div>
+    
+    <div class="sidebar-section-label">Liquid Ecosystem</div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">▶</span>
+      <span>Project</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="sidebar-item-icon">♢</span>
+      <span>Public Goods</span>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <div>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="search">
+        <span class="search-icon">⌕</span>
+        <input type="text" placeholder="Search token, address, tx or block...">
+      </div>
+      <div class="header-spacer"></div>
+      
+      <div class="header-stat">
+        <span style="color: var(--gold);">★</span>
+        <span class="header-stat-value mono">10</span>
+        <span style="color: var(--danger);">●</span>
+        <span class="header-stat-value mono">1</span>
+      </div>
+      
+      <div class="header-stat">
+        <span class="mono">0/4</span>
+        <span style="color: var(--brand);" class="mono">+15</span>
+      </div>
+      
+      <button class="cta-btn">Connect Wallet</button>
+      
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="theme-toggle">☾</button>
+      <button class="icon-btn" title="Telegram">✈</button>
+      <div class="avatar">YG</div>
+      <button class="icon-btn" title="Settings">⚙</button>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <div class="page-tabs">
+        <button class="page-tab active">Overview</button>
+        <button class="page-tab">Analytics</button>
+      </div>
+
+      <div class="page-title-row">
+        <div>
+          <h1 class="page-title">Builders</h1>
+          <p class="page-subtitle">Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory.</p>
+        </div>
+        <div class="timeframe-tabs">
+          <button class="timeframe-tab">1h</button>
+          <button class="timeframe-tab active">24h</button>
+          <button class="timeframe-tab">7d</button>
+          <button class="timeframe-tab">30d</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Volume</span>
+            <span class="stat-delta up mono">+37.3%</span>
+          </div>
+          <div class="stat-value mono">$182,541,344</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Builder Fees</span>
+            <span class="stat-delta up mono">+17.1%</span>
+          </div>
+          <div class="stat-value mono">$124,290</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Unique Users</span>
+            <span class="stat-delta up mono">+8.5%</span>
+          </div>
+          <div class="stat-value mono">16,253</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Fills</span>
+            <span class="stat-delta up mono">+36.4%</span>
+          </div>
+          <div class="stat-value mono">599,105</div>
+        </div>
+      </div>
+
+      <!-- Two col charts -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-row">
+              <span class="card-title-dot"></span>
+              <span class="card-title">Market Share · Top 10 · 24h</span>
+            </div>
+            <div class="page-tabs" style="margin: 0;">
+              <button class="page-tab active" style="padding: 3px 8px; font-size: 10px;">Volume</button>
+              <button class="page-tab" style="padding: 3px 8px; font-size: 10px;">Fees</button>
+              <button class="page-tab" style="padding: 3px 8px; font-size: 10px;">Fills</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="watermark"><span class="watermark-text">LIQUID</span></div>
+            <div class="market-share-content">
+              <div class="donut-wrap">
+                <svg width="180" height="180" viewBox="0 0 180 180">
+                  <g transform="translate(90 90)">
+                    <circle r="70" fill="none" stroke="var(--bg-surface-2)" stroke-width="20"/>
+                    <!-- Phantom 19.6% — brand cyan -->
+                    <circle r="70" fill="none" stroke="#83E9FF" stroke-width="20" 
+                            stroke-dasharray="86.2 354" transform="rotate(-90)"/>
+                    <!-- Rabby 7.5% — deep cyan -->
+                    <circle r="70" fill="none" stroke="#1692AD" stroke-width="20" 
+                            stroke-dasharray="33 407.4" stroke-dashoffset="-86.2" transform="rotate(-90)"/>
+                    <!-- 0xc95... 6.8% — gold -->
+                    <circle r="70" fill="none" stroke="#F9E370" stroke-width="20" 
+                            stroke-dasharray="29.9 410.5" stroke-dashoffset="-119.2" transform="rotate(-90)"/>
+                    <!-- MetaMask 5.7% — violet -->
+                    <circle r="70" fill="none" stroke="#A78BFA" stroke-width="20" 
+                            stroke-dasharray="25.1 415.3" stroke-dashoffset="-149.1" transform="rotate(-90)"/>
+                    <circle r="70" fill="none" stroke="#F472B6" stroke-width="20" 
+                            stroke-dasharray="25.1 415.3" stroke-dashoffset="-174.2" transform="rotate(-90)"/>
+                    <circle r="70" fill="none" stroke="#34D399" stroke-width="20" 
+                            stroke-dasharray="23.8 416.6" stroke-dashoffset="-199.3" transform="rotate(-90)"/>
+                    <circle r="70" fill="none" stroke="#FB923C" stroke-width="20" 
+                            stroke-dasharray="40 400.4" stroke-dashoffset="-223.1" transform="rotate(-90)"/>
+                  </g>
+                </svg>
+                <div class="donut-total">
+                  <div class="donut-total-label">Total 24h</div>
+                  <div class="donut-total-value mono">$181.82M</div>
+                  <div class="donut-total-pct">Top 3 hold 33.9% · 10 slices</div>
+                </div>
+              </div>
+              <div class="top-list">
+                <div class="top-list-item">
+                  <span class="top-list-rank">1</span>
+                  <span class="top-list-dot" style="background:#83E9FF;"></span>
+                  <span class="top-list-name">Phantom</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$35.61M</div>
+                    <div class="top-list-pct mono">19.6%</div>
+                  </div>
+                </div>
+                <div class="top-list-item">
+                  <span class="top-list-rank">2</span>
+                  <span class="top-list-dot" style="background:#1692AD;"></span>
+                  <span class="top-list-name">Rabby</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$13.67M</div>
+                    <div class="top-list-pct mono">7.5%</div>
+                  </div>
+                </div>
+                <div class="top-list-item">
+                  <span class="top-list-rank">3</span>
+                  <span class="top-list-dot" style="background:#F9E370;"></span>
+                  <span class="top-list-name muted">0xc95d…1aca</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$12.38M</div>
+                    <div class="top-list-pct mono">6.8%</div>
+                  </div>
+                </div>
+                <div class="top-list-item">
+                  <span class="top-list-rank">4</span>
+                  <span class="top-list-dot" style="background:#A78BFA;"></span>
+                  <span class="top-list-name">MetaMask</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$10.35M</div>
+                    <div class="top-list-pct mono">5.7%</div>
+                  </div>
+                </div>
+                <div class="top-list-item">
+                  <span class="top-list-rank">5</span>
+                  <span class="top-list-dot" style="background:#F472B6;"></span>
+                  <span class="top-list-name">OneKey</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$10.33M</div>
+                    <div class="top-list-pct mono">5.7%</div>
+                  </div>
+                </div>
+                <div class="top-list-item">
+                  <span class="top-list-rank">6</span>
+                  <span class="top-list-dot" style="background:#34D399;"></span>
+                  <span class="top-list-name">Insilico</span>
+                  <div style="text-align:right;">
+                    <div class="top-list-value mono">$9.82M</div>
+                    <div class="top-list-pct mono">5.4%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-row">
+              <span class="card-title-dot"></span>
+              <span class="card-title">Volume vs Builder Fees · Top 10 · 24h</span>
+            </div>
+            <div class="page-tabs" style="margin: 0;">
+              <button class="page-tab active" style="padding: 3px 8px; font-size: 10px;">Volume</button>
+              <button class="page-tab" style="padding: 3px 8px; font-size: 10px;">Fees</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="watermark"><span class="watermark-text">LIQUID</span></div>
+            <div style="position:relative; z-index:1;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px; padding: 0 4px;">
+                <div>
+                  <div style="font-size:18px; font-weight:600;" class="mono">$122.35M</div>
+                  <div style="font-size:10px; color:var(--text-tertiary); letter-spacing:0.05em; text-transform:uppercase;">$88K fees · top 10</div>
+                </div>
+              </div>
+              <div class="hbar-list">
+                <div class="hbar-row" style="grid-template-columns: 18px 70px 1fr 65px 50px; font-size:10px; color:var(--text-tertiary); letter-spacing:0.05em; text-transform:uppercase; font-weight:500;">
+                  <span>#</span>
+                  <span>Builder</span>
+                  <span style="text-align:left;">Volume</span>
+                  <span style="text-align:right;">Fees</span>
+                  <span style="text-align:right;">Efficiency</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">1</span>
+                  <span class="hbar-name">Phantom</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:100%;">$35.61M</div>
+                  </div>
+                  <span class="hbar-value mono">$37.4K</span>
+                  <span class="hbar-eff hbar-eff-high mono">10.51 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">2</span>
+                  <span class="hbar-name">Rabby</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:38%;">$13.67M</div>
+                  </div>
+                  <span class="hbar-value mono">$5.9K</span>
+                  <span class="hbar-eff hbar-eff-mid mono">4.30 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">3</span>
+                  <span class="hbar-name muted">0xc95d…1aca</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:34%;">$12.38M</div>
+                  </div>
+                  <span class="hbar-value mono">$396</span>
+                  <span class="hbar-eff hbar-eff-low mono">0.32 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">4</span>
+                  <span class="hbar-name">MetaMask</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:29%;">$10.35M</div>
+                  </div>
+                  <span class="hbar-value mono">$21.1K</span>
+                  <span class="hbar-eff hbar-eff-high mono">20.38 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">5</span>
+                  <span class="hbar-name">OneKey</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:29%;">$10.33M</div>
+                  </div>
+                  <span class="hbar-value mono">$9.4K</span>
+                  <span class="hbar-eff hbar-eff-mid mono">9.08 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">6</span>
+                  <span class="hbar-name">Insilico</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:27%;">$9.82M</div>
+                  </div>
+                  <span class="hbar-value mono">$2.0K</span>
+                  <span class="hbar-eff hbar-eff-low mono">1.99 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">7</span>
+                  <span class="hbar-name">Tread</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:27%;">$9.64M</div>
+                  </div>
+                  <span class="hbar-value mono">$3.5K</span>
+                  <span class="hbar-eff hbar-eff-mid mono">3.58 bps</span>
+                </div>
+                <div class="hbar-row">
+                  <span class="hbar-rank">8</span>
+                  <span class="hbar-name muted">0x5a3b…28c2</span>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:22%;">$8.01M</div>
+                  </div>
+                  <span class="hbar-value mono">$4.9K</span>
+                  <span class="hbar-eff hbar-eff-mid mono">6.08 bps</span>
+                </div>
+              </div>
+              <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 10px; color: var(--text-tertiary); display: flex; justify-content: space-between; align-items: center;">
+                <span>10 builders shown · sorted by volume</span>
+                <span style="font-family: 'JetBrains Mono', monospace;">bps = basis points (fees / volume)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div class="table-header-row">
+          <div class="table-sub-tabs">
+            <button class="table-sub-tab active">Top builders</button>
+            <button class="table-sub-tab">All builders (634)</button>
+          </div>
+          <span class="table-meta">Sorted by volume · window 24h</span>
+        </div>
+        <table class="data">
+          <thead>
+            <tr>
+              <th style="width:50px;">#</th>
+              <th>Builder</th>
+              <th class="right">Volume</th>
+              <th class="right">Builder Fees</th>
+              <th class="right">Users</th>
+              <th class="right">Fills</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="builder-rank">1</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#83E9FF22; color:#83E9FF;">P</div>Phantom</div></td>
+              <td class="right">$35,612,754</td>
+              <td class="right fees-cell">$37,414.48</td>
+              <td class="right muted">3,382</td>
+              <td class="right muted">43,704</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">2</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#1692AD33; color:#1692AD;">R</div>Rabby</div></td>
+              <td class="right">$13,669,429</td>
+              <td class="right fees-cell">$5,879.67</td>
+              <td class="right muted">620</td>
+              <td class="right muted">9,833</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">3</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar">?</div><span class="muted">0xc95d…1aca</span></div></td>
+              <td class="right">$12,384,453</td>
+              <td class="right fees-cell">$396.16</td>
+              <td class="right muted">8</td>
+              <td class="right muted">2,656</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">4</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#A78BFA22; color:#A78BFA;">M</div>MetaMask</div></td>
+              <td class="right">$10,350,488</td>
+              <td class="right fees-cell">$21,095.84</td>
+              <td class="right muted">1,156</td>
+              <td class="right muted">12,581</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">5</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#F472B622; color:#F472B6;">O</div>OneKey</div></td>
+              <td class="right">$10,326,622</td>
+              <td class="right fees-cell">$9,371.90</td>
+              <td class="right muted">97</td>
+              <td class="right muted">1,902</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">6</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#34D39922; color:#34D399;">I</div>Insilico</div></td>
+              <td class="right">$9,818,005</td>
+              <td class="right fees-cell">$1,956.50</td>
+              <td class="right muted">189</td>
+              <td class="right muted">12,066</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">7</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#FB923C22; color:#FB923C;">T</div>Tread</div></td>
+              <td class="right">$9,644,753</td>
+              <td class="right fees-cell">$3,452.95</td>
+              <td class="right muted">207</td>
+              <td class="right muted">74,404</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">8</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar">?</div><span class="muted">0x5a3b…28c2</span></div></td>
+              <td class="right">$8,009,220</td>
+              <td class="right fees-cell">$4,871.37</td>
+              <td class="right muted">971</td>
+              <td class="right muted">204,995</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">9</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#1FA85B22; color:#1FA85B;">B</div>Basedapp</div></td>
+              <td class="right">$6,930,068</td>
+              <td class="right fees-cell">$1,650.75</td>
+              <td class="right muted">1,254</td>
+              <td class="right muted">15,614</td>
+            </tr>
+            <tr>
+              <td><span class="builder-rank">10</span></td>
+              <td><div class="builder-cell"><div class="builder-avatar" style="background:#60A5FA22; color:#60A5FA;">D</div>Dreamcash</div></td>
+              <td class="right">$5,600,360</td>
+              <td class="right fees-cell">$1,878.73</td>
+              <td class="right muted">483</td>
+              <td class="right muted">49,967</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span>Items per page: <span class="mono" style="color:var(--text-secondary);">25</span></span>
+          <span class="mono">1–25 of 100</span>
+          <div class="table-pagination">
+            <button>«</button>
+            <button>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>›</button>
+            <button>»</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Info banner -->
+<div class="info-banner">
+  <strong>Liquid V4 · Final</strong>
+  <span>Dark : neutral <code>#0A0B0F</code> · Light : classical blanc, brand=<code>#0F1421</code></span>
+  <span style="color:var(--text-tertiary);">Light mode utilise le navy `#0F1421` comme brand accent (active tabs, links) au lieu du cyan deep.</span>
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('theme-toggle').textContent = next === 'dark' ? '☾' : '☀';
+}
+</script>
+
+</body>
+</html>

@@ -173,10 +173,11 @@ export function ExplorerSearchBar({
   return (
     <div className={`relative ${className}`}>
       <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
         <Input
           ref={inputRef}
           placeholder={placeholder}
-          className="w-full pr-10 p-5 text-white placeholder:text-text-muted text-sm rounded-xl"
+          className="w-full h-8 pl-9 pr-3 py-0 bg-transparent border-0 text-text-primary placeholder:text-text-tertiary text-[13px] rounded-md focus-visible:ring-0 focus-visible:ring-offset-0"
           value={searchValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -184,9 +185,10 @@ export function ExplorerSearchBar({
         />
         <button
           type="submit"
-          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-brand-gold hover:text-brand-accent transition-colors cursor-pointer"
+          aria-label="Search"
+          className="sr-only"
         >
-          <Search className="h-4 w-4" />
+          Search
         </button>
       </form>
 
@@ -194,27 +196,25 @@ export function ExplorerSearchBar({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-brand-secondary/95 backdrop-blur-sm border border-border-hover rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto"
+          className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border-default rounded-md shadow-lg z-50 max-h-60 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => (
             <button
               key={suggestion.address}
               type="button"
-              className={`w-full px-4 py-3 text-left hover-subtle border-none ${index === selectedSuggestion ? 'bg-white/5' : ''
-                } ${index === 0 ? 'rounded-t-xl' : ''} ${index === suggestions.length - 1 ? 'rounded-b-xl' : ''
-                }`}
+              className={`w-full px-3 py-2 text-left transition-colors border-none ${index === selectedSuggestion ? 'bg-surface-2' : 'hover:bg-surface-2'}`}
               onClick={() => handleSearch(suggestion.address)}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-brand-gold text-sm font-medium">
+                  <div className="text-text-primary text-sm font-medium">
                     {suggestion.alias}
                   </div>
-                  <div className="text-brand-accent text-xs">
+                  <div className="mono text-brand text-xs">
                     {suggestion.address.substring(0, 10)}...{suggestion.address.substring(suggestion.address.length - 8)}
                   </div>
                 </div>
-                <ChevronDown className="h-3 w-3 text-white/20 rotate-[-90deg]" />
+                <ChevronDown className="h-3 w-3 text-text-tertiary rotate-[-90deg]" />
               </div>
             </button>
           ))}

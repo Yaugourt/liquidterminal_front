@@ -48,42 +48,27 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 w-full px-2 py-1.5 rounded-lg",
-            "bg-white/5 hover:bg-white/10 border border-border-subtle hover:border-border-hover",
-            "transition-all duration-200 group",
+            "h-8 inline-flex items-center gap-1.5 px-2.5 rounded-md",
+            "bg-surface-2 border border-border-subtle hover:bg-surface-3",
+            "transition-colors",
             className
           )}
         >
-          {/* 4 dots indicator */}
-          <div className="flex items-center gap-0.5">
-            {dailyTasks.map((task) => (
-              <div
-                key={task.type}
-                className={cn(
-                  "h-2 w-2 rounded-full transition-colors",
-                  task.completed
-                    ? "bg-emerald-400"
-                    : "bg-zinc-600 group-hover:bg-zinc-500"
-                )}
-              />
-            ))}
-          </div>
-
           {/* Count */}
-          <span className="text-label text-text-secondary group-hover:text-white/80">
+          <span className="mono text-[12px] font-medium text-text-secondary">
             {dailyTasksCompletedCount}/{dailyTasks.length}
           </span>
 
           {/* Bonus indicator if not all completed */}
           {!allDailyTasksCompleted && !dailyBonusClaimed && (
-            <span className="text-label text-brand-gold">
+            <span className="mono text-[12px] font-medium text-brand">
               +{dailyBonusXp}
             </span>
           )}
 
           {/* Checkmark if all done */}
           {allDailyTasksCompleted && (
-            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+            <CheckCircle2 className="h-3 w-3 text-success" />
           )}
         </button>
       </PopoverTrigger>

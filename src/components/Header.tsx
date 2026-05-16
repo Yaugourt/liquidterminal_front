@@ -1,34 +1,34 @@
 "use client"
 
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar"
-import { SettingsSelector } from "@/components/common"
-import { UserAccountCompact } from "@/components/common"
+import { SettingsSelector, UserAccountCompact, ThemeToggle } from "@/components/common"
 
 interface HeaderProps {
     searchPlaceholder?: string;
-    searchWidth?: string;
     customTitle?: string;
 }
 
 export function Header({
     searchPlaceholder = "Search token, address, tx or block...",
-    searchWidth = "w-[350px]",
 }: HeaderProps) {
     return (
-        <div className="w-full max-w-[1920px] mx-auto">
-            <div className="flex items-center justify-between w-full px-2 sm:px-4 lg:px-6 xl:px-12 py-3 gap-2">
-                <div className="flex items-center gap-3 flex-shrink-0 ml-8 lg:ml-0">
-                    <ExplorerSearchBar
-                        placeholder={searchPlaceholder}
-                        className={`hidden lg:block bg-brand-main/80 backdrop-blur-xl border border-border-hover rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
-                    />
-                </div>
+        <header className="sticky top-0 z-40 h-14 bg-base/95 backdrop-blur-sm border-b border-border-subtle">
+            <div className="flex items-center w-full h-full px-4 gap-3 max-w-[1920px] mx-auto">
+                {/* Search: flex-1 max-w-[480px] per V4 ref */}
+                <ExplorerSearchBar
+                    placeholder={searchPlaceholder}
+                    className="hidden lg:block bg-surface-2 border border-border-subtle rounded-md flex-1 max-w-[480px] ml-8 lg:ml-0 transition-colors hover:border-border-default focus-within:border-brand focus-within:bg-surface"
+                />
 
-                <div className="flex items-center gap-2">
+                {/* Spacer pushes the right cluster to the end */}
+                <div className="flex-1 hidden lg:block" />
+
+                <div className="flex items-center gap-2 ml-auto lg:ml-0">
                     <UserAccountCompact />
+                    <ThemeToggle />
                     <SettingsSelector />
                 </div>
             </div>
-        </div>
+        </header>
     )
 } 
