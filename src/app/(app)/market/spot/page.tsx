@@ -2,18 +2,15 @@
 
 import { GlobalStatsCard, TokensSection, UniversalTokenTable } from "@/components/market/common";
 import { AuctionCard } from "@/components/market/auction";
+import { PageHeader } from "@/components/common";
 
 export default function Market() {
   return (
     <>
-      <div className="space-y-2">
-        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Spot Market
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl">
-          Spot tokens on HyperLiquid — global market stats, recent auction activity, and the full token directory.
-        </p>
-      </div>
+      <PageHeader
+        title="Spot Market"
+        description="Spot tokens on HyperLiquid — global market stats, recent auction activity, and the full token directory."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
         <GlobalStatsCard market="spot" />

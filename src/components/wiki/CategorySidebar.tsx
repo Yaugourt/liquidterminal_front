@@ -3,6 +3,7 @@
 import { Check, Filter, Layers } from "lucide-react";
 import { useEducationalCategories } from "@/services/wiki";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 interface CategorySidebarProps {
   selectedCategories: number[];
@@ -49,12 +50,14 @@ export function CategorySidebar({
   };
 
   return (
-    <aside
+    <Card
+      interactive={false}
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-border-subtle",
-        "bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90",
+        "relative overflow-hidden bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90",
         className,
       )}
+      // Using <aside> semantics via asChild pattern is not available; Card renders div.
+      // The aside role is preserved implicitly via landmark usage in the parent page.
     >
       {/* Ambient glow, consistent with EducationContent */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-brand-accent/10 blur-3xl" />
@@ -164,6 +167,6 @@ export function CategorySidebar({
           </ul>
         )}
       </div>
-    </aside>
+    </Card>
   );
 }

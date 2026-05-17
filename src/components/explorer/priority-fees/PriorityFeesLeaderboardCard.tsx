@@ -1,16 +1,8 @@
 "use client";
 
-import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { AddressDisplay } from "@/components/ui/address-display";
+import { TypedDataTable, type Column } from "@/components/common";
 import type { PriorityFeesLeaderboardEntry } from "@/services/explorer/priority-fees";
 import { formatPriorityFeeNumber } from "./priority-fees-format";
 
@@ -34,6 +26,50 @@ function rowScore(row: PriorityFeesLeaderboardEntry): unknown {
     row.volume
   );
 }
+
+const COLUMNS: Column<PriorityFeesLeaderboardEntry>[] = [
+  {
+    key: "rank",
+    header: "#",
+    accessor: (row, idx) => (
+      <span className="text-text-muted text-sm tabular-nums">{row.rank ?? idx + 1}</span>
+    ),
+  },
+  {
+    key: "user",
+    header: "User",
+    accessor: (row) => {
+      const addr = rowAddress(row);
+      return addr ? (
+        <AddressDisplay address={addr} />
+      ) : (
+        <span className="text-text-muted">—</span>
+      );
+    },
+  },
+  {
+    key: "priority_fees",
+    header: "Priority fees",
+    type: "numeric",
+    accessor: (row) => (
+      <span className="text-sm text-text-primary tabular-nums">
+        {formatPriorityFeeNumber(rowScore(row))}
+      </span>
+    ),
+  },
+  {
+    key: "fill_count",
+    header: "Fills",
+    type: "numeric",
+    accessor: (row) => (
+      <span className="text-sm text-text-secondary tabular-nums">
+        {row.fill_count !== undefined && row.fill_count !== null
+          ? String(row.fill_count)
+          : "—"}
+      </span>
+    ),
+  },
+];
 
 export function PriorityFeesLeaderboardCard({
   entries,
@@ -69,73 +105,16 @@ export function PriorityFeesLeaderboardCard({
       )}
 
       <div className="flex-1 min-h-[240px] rounded-lg border border-border-subtle overflow-hidden">
-        {isLoading && entries.length === 0 ? (
-          <div className="flex h-[240px]">
-            <LoadingState message="Loading leaderboard…" size="sm" withCard={false} />
-          </div>
-        ) : entries.length === 0 ? (
-          <div className="flex h-[240px] items-center justify-center px-4 text-center text-sm text-text-secondary">
-            No leaderboard rows for this window.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    #
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    User
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3 text-right">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Priority fees
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3 text-right">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Fills
-                  </span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entries.map((row, idx) => {
-                const addr = rowAddress(row);
-                const rank = row.rank ?? idx + 1;
-                return (
-                  <TableRow
-                    key={`${addr}-${rank}`}
-                    className="border-border-subtle hover:bg-white/[0.03]"
-                  >
-                    <TableCell className="py-2.5 px-3 text-text-muted text-sm tabular-nums">
-                      {rank}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm">
-                      {addr ? (
-                        <AddressDisplay address={addr} />
-                      ) : (
-                        <span className="text-text-muted">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-primary tabular-nums">
-                      {formatPriorityFeeNumber(rowScore(row))}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-secondary tabular-nums">
-                      {row.fill_count !== undefined && row.fill_count !== null
-                        ? String(row.fill_count)
-                        : "—"}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        )}
+        <TypedDataTable<PriorityFeesLeaderboardEntry>
+          data={entries}
+          columns={COLUMNS}
+          getRowKey={(row, idx) => `${rowAddress(row)}-${row.rank ?? idx}`}
+          isLoading={isLoading && entries.length === 0}
+          emptyMessage="No leaderboard rows for this window."
+          emptyDescription=""
+          density="compact"
+          paginationVariant="none"
+        />
       </div>
     </Card>
   );

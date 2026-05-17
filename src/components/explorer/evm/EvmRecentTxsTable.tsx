@@ -1,38 +1,9 @@
 "use client";
 
 import { useEvmTransactions } from "@/services/indexer/evm";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type { EvmTransaction } from "@/services/indexer/evm";
+import { TypedDataTable, type Column } from "@/components/common";
 import { formatDistanceToNowStrict } from "date-fns";
-
-function TxsSkeleton() {
-  return (
-    <>
-      {[...Array(3)].map((_, i) => (
-        <TableRow key={i} className="hover:bg-transparent">
-          <TableCell>
-            <div className="h-4 w-20 bg-white/5 animate-pulse rounded" />
-          </TableCell>
-          <TableCell>
-            <div className="h-4 w-20 bg-white/5 animate-pulse rounded" />
-          </TableCell>
-          <TableCell>
-            <div className="h-4 w-20 bg-white/5 animate-pulse rounded" />
-          </TableCell>
-          <TableCell>
-            <div className="h-4 w-14 bg-white/5 animate-pulse rounded" />
-          </TableCell>
-        </TableRow>
-      ))}
-    </>
-  );
-}
 
 function truncateAddress(addr: string | null | undefined, start = 6, end = 4): string {
   if (!addr) return "-";
@@ -55,6 +26,46 @@ function formatTxTime(blockTime?: string): string {
   }
 }
 
+const COLUMNS: Column<EvmTransaction>[] = [
+  {
+    key: "tx_hash",
+    header: "Hash",
+    type: "address",
+    accessor: (tx) => (
+      <span className="font-mono text-brand-accent text-sm">
+        {truncateHash(tx.tx_hash)}
+      </span>
+    ),
+  },
+  {
+    key: "from_addr",
+    header: "From",
+    type: "address",
+    accessor: (tx) => (
+      <span className="font-mono text-text-secondary text-sm">
+        {truncateAddress(tx.from_addr)}
+      </span>
+    ),
+  },
+  {
+    key: "to_addr",
+    header: "To",
+    type: "address",
+    accessor: (tx) => (
+      <span className="font-mono text-text-secondary text-sm">
+        {truncateAddress(tx.to_addr)}
+      </span>
+    ),
+  },
+  {
+    key: "block_time",
+    header: "Time",
+    accessor: (tx) => (
+      <span className="text-text-secondary text-sm">{formatTxTime(tx.block_time)}</span>
+    ),
+  },
+];
+
 export function EvmRecentTxsTable() {
   const { transactions, isLoading } = useEvmTransactions(10);
 
@@ -64,68 +75,14 @@ export function EvmRecentTxsTable() {
         <h3 className="text-sm font-semibold text-text-primary">Recent EVM Transactions</h3>
         <p className="text-xs text-text-secondary mt-0.5">Latest indexed HyperEVM transactions</p>
       </div>
-      <div className="overflow-x-auto">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>
-                <span className="text-text-secondary font-semibold uppercase tracking-wider text-[10px]">
-                  Hash
-                </span>
-              </TableHead>
-              <TableHead>
-                <span className="text-text-secondary font-semibold uppercase tracking-wider text-[10px]">
-                  From
-                </span>
-              </TableHead>
-              <TableHead>
-                <span className="text-text-secondary font-semibold uppercase tracking-wider text-[10px]">
-                  To
-                </span>
-              </TableHead>
-              <TableHead>
-                <span className="text-text-secondary font-semibold uppercase tracking-wider text-[10px]">
-                  Time
-                </span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TxsSkeleton />
-            ) : transactions.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-text-secondary text-sm py-6">
-                  No transactions available
-                </TableCell>
-              </TableRow>
-            ) : (
-              transactions.map((tx, i) => (
-                <TableRow key={`${tx.tx_hash}-${i}`} className="hover:bg-white/[0.02]">
-                  <TableCell>
-                    <span className="font-mono text-brand-accent text-sm">
-                      {truncateHash(tx.tx_hash)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-mono text-text-secondary text-sm">
-                      {truncateAddress(tx.from_addr)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-mono text-text-secondary text-sm">
-                      {truncateAddress(tx.to_addr)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-text-secondary text-sm">
-                    {formatTxTime(tx.block_time)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <TypedDataTable<EvmTransaction>
+        data={transactions}
+        columns={COLUMNS}
+        getRowKey={(tx, i) => `${tx.tx_hash}-${i}`}
+        isLoading={isLoading}
+        emptyMessage="No transactions available"
+        emptyDescription=""
+      />
     </div>
   );
 }

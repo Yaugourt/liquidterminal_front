@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, Radio, Clock } from "lucide-react";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
 import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
@@ -10,14 +11,6 @@ import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
 interface Hip4QuestionCardProps {
   question: Hip4QuestionWithOutcomesRow;
   index?: number;
-}
-
-function compactUsd(n: number | null | undefined): string {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
 }
 
 function categoryBadge(cls: string | null, underlying: string | null): string {

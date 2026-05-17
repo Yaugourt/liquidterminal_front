@@ -6,6 +6,7 @@ import { EducationalResource } from "@/services/wiki/types";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import {
     Shield,
     CheckCircle,
@@ -144,9 +145,9 @@ export function WikiModerationCard() {
     };
 
     return (
-        <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
+        <Card>
             {/* Header */}
-            <div className="p-4 border-b border-border-subtle flex items-center justify-between">
+            <CardHeader density="compact" className="border-b border-border-subtle flex-row items-center justify-between space-y-0">
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-amber-500/10 rounded-lg">
                         <Shield className="w-4 h-4 text-amber-400" />
@@ -173,10 +174,10 @@ export function WikiModerationCard() {
                         <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                     </Button>
                 </div>
-            </div>
+            </CardHeader>
 
             {/* Content */}
-            <div className="p-4">
+            <CardContent density="compact">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-8">
                         <InlineSpinner className="w-5 h-5 text-brand-accent" />
@@ -200,7 +201,7 @@ export function WikiModerationCard() {
                         ))}
                     </div>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

@@ -3,23 +3,65 @@
 import { ChevronDown } from "lucide-react";
 import { Hip4CodeBlock } from "@/components/hip4/Hip4CodeBlock";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type {
   Hip4RestEndpointSpec,
   Hip4WsExampleSpec,
+  Hip4ApiHeaderRow,
+  Hip4ApiBodyFieldRow,
 } from "@/lib/hip4/api-info-spec";
+import { TypedDataTable, type Column } from "@/components/common";
 
 function RequiredStar() {
   return <span className="ml-0.5 text-brand-gold">*</span>;
 }
+
+const HEADER_COLUMNS: Column<Hip4ApiHeaderRow>[] = [
+  {
+    key: "name",
+    header: "Name",
+    accessor: (h) => (
+      <span className="font-mono text-[11px] text-table-cell">
+        {h.name}
+        {h.required ? <RequiredStar /> : null}
+      </span>
+    ),
+  },
+  {
+    key: "value",
+    header: "Value",
+    accessor: (h) => (
+      <span className="text-table-cell text-text-secondary">{h.value}</span>
+    ),
+  },
+];
+
+const BODY_COLUMNS: Column<Hip4ApiBodyFieldRow>[] = [
+  {
+    key: "name",
+    header: "Name",
+    accessor: (f) => (
+      <span className="font-mono text-[11px] text-table-cell">
+        {f.name}
+        {f.required ? <RequiredStar /> : null}
+      </span>
+    ),
+  },
+  {
+    key: "type",
+    header: "Type",
+    accessor: (f) => (
+      <span className="text-table-cell text-text-secondary">{f.type}</span>
+    ),
+  },
+  {
+    key: "description",
+    header: "Description",
+    accessor: (f) => (
+      <span className="text-table-cell text-text-secondary">{f.description}</span>
+    ),
+  },
+];
 
 export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec }) {
   const defaultTab = spec.responseTabs[0]?.id ?? "200";
@@ -42,51 +84,23 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
       <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">
         Headers
       </h3>
-      <div className="mt-2 overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border-subtle hover:bg-transparent">
-              <TableHead className="text-table-header">Name</TableHead>
-              <TableHead className="text-table-header">Value</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {spec.headers.map((h) => (
-              <TableRow key={h.name} className="border-border-subtle">
-                <TableCell className="font-mono text-[11px] text-table-cell">
-                  {h.name}
-                  {h.required ? <RequiredStar /> : null}
-                </TableCell>
-                <TableCell className="text-table-cell text-text-secondary">{h.value}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="mt-2">
+        <TypedDataTable<Hip4ApiHeaderRow>
+          data={spec.headers}
+          columns={HEADER_COLUMNS}
+          getRowKey={(h) => h.name}
+          density="compact"
+        />
       </div>
 
       <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">Body</h3>
-      <div className="mt-2 overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border-subtle hover:bg-transparent">
-              <TableHead className="text-table-header">Name</TableHead>
-              <TableHead className="text-table-header">Type</TableHead>
-              <TableHead className="text-table-header">Description</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {spec.bodyFields.map((f) => (
-              <TableRow key={f.name} className="border-border-subtle">
-                <TableCell className="font-mono text-[11px] text-table-cell">
-                  {f.name}
-                  {f.required ? <RequiredStar /> : null}
-                </TableCell>
-                <TableCell className="text-table-cell text-text-secondary">{f.type}</TableCell>
-                <TableCell className="text-table-cell text-text-secondary">{f.description}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="mt-2">
+        <TypedDataTable<Hip4ApiBodyFieldRow>
+          data={spec.bodyFields}
+          columns={BODY_COLUMNS}
+          getRowKey={(f) => f.name}
+          density="compact"
+        />
       </div>
 
       <details className="group mt-4 rounded-lg border border-border-subtle bg-brand-primary/30">

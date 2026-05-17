@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Copy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import {
   CHAPTER_META,
   DEFAULT_META,
@@ -145,7 +146,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
   if (!activeChapter) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90">
+    <Card interactive={false} className="relative overflow-hidden bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90">
       {/* Ambient glows */}
       <div className="pointer-events-none absolute -top-28 -right-28 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-brand-gold/[0.06] blur-3xl" />
@@ -462,7 +463,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 

@@ -3,76 +3,70 @@
 import { useDeploys } from "@/services/explorer";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { TypedDataTable, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { usePagination } from "@/hooks/core/usePagination";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { DataTable } from "@/components/common";
+import type { FormattedDeploy } from "@/services/explorer/types";
 
 export function DeploysTable() {
-    const deploysPagination = usePagination({ initialRowsPerPage: 5 });
-    const { format: dateFormat } = useDateFormat();
-    const { deploys, isLoading, error } = useDeploys();
+  const { format: dateFormat } = useDateFormat();
+  const { deploys, isLoading, error } = useDeploys();
 
-    const allDeploys = deploys || [];
-    const paginatedDeploys = allDeploys.slice(deploysPagination.startIndex, deploysPagination.endIndex);
+  const allDeploys: FormattedDeploy[] = deploys || [];
 
-    return (
-        <DataTable
-            isLoading={isLoading}
-            error={error}
-            isEmpty={allDeploys.length === 0}
-            loadingMessage="Loading deploys..."
-            errorMessage="Failed to load deploys"
-            emptyState={{ title: "No deploys available", description: "Come back later" }}
-            pagination={{
-                total: allDeploys.length,
-                page: deploysPagination.page,
-                rowsPerPage: deploysPagination.rowsPerPage,
-                rowsPerPageOptions: [5, 10, 25, 50],
-                onPageChange: deploysPagination.onPageChange,
-                onRowsPerPageChange: deploysPagination.onRowsPerPageChange,
-                disabled: isLoading
-            }}
-        >
-            <Table className="w-full">
-                <TableHeader>
-                    <TableRow className="hover:bg-transparent">
-                        <TableHead>
-                            <span className="text-text-secondary font-semibold uppercase tracking-wider">Time</span>
-                        </TableHead>
-                        <TableHead>
-                            <span className="text-text-secondary font-semibold uppercase tracking-wider">User</span>
-                        </TableHead>
-                        <TableHead>
-                            <span className="text-text-secondary font-semibold uppercase tracking-wider">Action</span>
-                        </TableHead>
-                        <TableHead>
-                            <span className="text-text-secondary font-semibold uppercase tracking-wider">Hash</span>
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {paginatedDeploys.map((deploy) => (
-                        <TableRow key={deploy.hash} className="hover:bg-white/[0.02]">
-                            <TableCell className="text-text-primary font-medium">
-                                {formatDateTime(deploy.timestamp, dateFormat)}
-                            </TableCell>
-                            <TableCell className="text-sm">
-                                <AddressDisplay address={deploy.user} />
-                            </TableCell>
-                            <TableCell>
-                                <StatusBadge variant={deploy.status === 'error' ? 'error' : 'success'}>
-                                    {deploy.action}
-                                </StatusBadge>
-                            </TableCell>
-                            <TableCell className="text-brand-accent">
-                                <AddressDisplay address={deploy.hash} showCopy={false} showExternalLink={true} className="text-brand-accent" />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </DataTable>
-    );
+  const columns: Column<FormattedDeploy>[] = [
+    {
+      key: "time",
+      header: "Time",
+      accessor: (d) => (
+        <span className="text-text-primary font-medium">
+          {formatDateTime(d.timestamp, dateFormat)}
+        </span>
+      ),
+    },
+    {
+      key: "user",
+      header: "User",
+      accessor: (d) => <AddressDisplay address={d.user} />,
+    },
+    {
+      key: "action",
+      header: "Action",
+      accessor: (d) => (
+        <StatusBadge variant={d.status === "error" ? "error" : "success"}>
+          {d.action}
+        </StatusBadge>
+      ),
+    },
+    {
+      key: "hash",
+      header: "Hash",
+      accessor: (d) => (
+        <AddressDisplay
+          address={d.hash}
+          showCopy={false}
+          showExternalLink
+          className="text-brand-accent"
+        />
+      ),
+    },
+  ];
+
+  return (
+    <TypedDataTable<FormattedDeploy>
+      data={allDeploys}
+      columns={columns}
+      getRowKey={(d) => d.hash}
+      isLoading={isLoading}
+      error={error}
+      errorTitle="Failed to load deploys"
+      emptyMessage="No deploys available"
+      emptyDescription="Come back later"
+      paginate
+      itemsPerPage={5}
+      rowsPerPageOptions={[5, 10, 25, 50]}
+      paginationVariant="full"
+      paginationDisabled={isLoading}
+    />
+  );
 }

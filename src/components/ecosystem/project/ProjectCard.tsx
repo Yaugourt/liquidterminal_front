@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from "@/components/ui/card";
 import { Project } from "@/services/ecosystem/project/types";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
@@ -51,8 +52,10 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-brand-secondary/40 border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
-      }`}>
+    <Card
+      padding="md"
+      className={`hover:border-border-hover group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''}`}
+    >
       {/* Selection checkbox for admins */}
       {showSelection && (
         <ProtectedAction requiredRole="ADMIN" user={user}>
@@ -140,6 +143,6 @@ export const ProjectCard = memo(function ProjectCard({
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
-}); 
+});

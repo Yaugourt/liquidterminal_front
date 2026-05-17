@@ -2,6 +2,7 @@ import { Plus, BookOpen, Search, Globe, Lock, CheckCircle2 } from "lucide-react"
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +22,7 @@ interface ReadListContentProps {
 }
 
 const ReadListItemSkeleton = () => (
-  <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-0 overflow-hidden animate-pulse">
+  <Card className="animate-pulse">
     <div className="w-full h-40 bg-white/5"></div>
     <div className="p-4 space-y-2.5">
       <div className="flex items-center justify-between">
@@ -36,7 +37,7 @@ const ReadListItemSkeleton = () => (
         <div className="h-5 bg-white/5 rounded w-14"></div>
       </div>
     </div>
-  </div>
+  </Card>
 );
 
 const TABS = [

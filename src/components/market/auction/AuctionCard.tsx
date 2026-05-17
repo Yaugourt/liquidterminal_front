@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuctionTiming, usePerpAuctionTiming } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { Card } from "@/components/ui/card";
 
 interface AuctionCardProps {
   marketType: "spot" | "perp";
@@ -15,7 +16,7 @@ interface AuctionCardProps {
 export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCardProps) {
   const spotAuction = useAuctionTiming();
   const perpAuction = usePerpAuctionTiming();
-  
+
   const { auctionState, isLoading, error } = marketType === "spot" ? spotAuction : perpAuction;
   const { format } = useNumberFormat();
 
@@ -31,7 +32,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
   }
 
   return (
-    <div className="flex flex-col h-full bg-brand-secondary/60 border border-border-subtle rounded-lg overflow-hidden">
+    <Card className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
@@ -48,10 +49,10 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             </div>
           </div>
         </div>
-        
+
         <Link
-          href={marketType === "spot" 
-            ? "https://app.hyperliquid.xyz/deploySpot" 
+          href={marketType === "spot"
+            ? "https://app.hyperliquid.xyz/deploySpot"
             : "https://app.hyperliquid.xyz/deployPerp"}
           target="_blank"
           rel="noopener noreferrer"
@@ -70,7 +71,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
           </div>
         ) : (
           <div className="space-y-6">
-            
+
             {/* Price & Timer */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -133,6 +134,6 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 });
