@@ -2,6 +2,7 @@
 
 import { ReactNode, useCallback, useState } from "react";
 import { Database } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Pagination, type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
@@ -26,6 +27,16 @@ import {
 } from "./tables/useSortablePagination";
 
 // ─── Public types ─────────────────────────────────────────────────────
+
+/**
+ * Sémantique d'une colonne — pilote le style V4 automatiquement.
+ * - `numeric` : police mono, aligné à droite.
+ * - `fees`    : police mono + or (`.fees-cell`), aligné à droite — colonne Builder Fees.
+ * - `change`  : police mono, couleur signée (vert/rouge) si la valeur est un nombre.
+ * - `address` : police mono, troncature auto (`0x1234…abcd`) si la valeur est une string.
+ * - `text` / `custom` (défaut) : aucun style auto — comportement historique.
+ */
+export type ColumnType = "text" | "numeric" | "fees" | "change" | "address" | "custom";
 
 /**
  * Column definition for `TypedDataTable`. Each column declares a stable
@@ -72,6 +83,18 @@ export interface Column<T> {
      * a `keyof T` and points to a number/string, this is optional.
      */
     getSortValue?: (item: T) => number | string;
+    /**
+     * Sémantique de la colonne — applique le style V4 (mono, alignement,
+     * or des fees, couleur signée) sans rien styler à la main. Défaut `custom`
+     * = comportement historique inchangé. Voir `ColumnType`.
+     */
+    type?: ColumnType;
+    /**
+     * Formateur optionnel appliqué quand `accessor` est une clé (`keyof T`).
+     * Reçoit la valeur brute + la ligne. Ignoré si `accessor` est une fonction
+     * (la fonction produit déjà le nœud).
+     */
+    format?: (value: unknown, row: T) => ReactNode;
 }
 
 type Density = "compact" | "comfortable";
@@ -251,6 +274,24 @@ interface TypedDataTableProps<T> {
     paginationDisabled?: boolean;
     /** Hides the first/prev/next/last navigation in the `"full"` footer. */
     hidePageNavigation?: boolean;
+
+    // ── Controlled sort (server-side) ─────────────────────────────────
+    /**
+     * Active le tri contrôlé : quand `onSortChange` est fourni, la table ne
+     * trie PAS localement — elle reflète `sortField`/`sortDirection` et émet
+     * l'événement, le parent re-fetch. Pour les tables à tri côté API.
+     */
+    onSortChange?: (field: string, direction: SortDirection) => void;
+    /** Colonne triée active (mode contrôlé). */
+    sortField?: string | null;
+    /** Direction de tri active (mode contrôlé). */
+    sortDirection?: SortDirection;
+
+    // ── Slots & animation ─────────────────────────────────────────────
+    /** Contenu rendu au-dessus de la table (recherche, filtres). L'état reste géré par le parent. */
+    toolbar?: ReactNode;
+    /** Anime l'apparition des lignes (`motion.tr`, stagger léger). */
+    rowMotion?: boolean;
 }
 
 /**
@@ -307,6 +348,11 @@ export function TypedDataTable<T>({
     showPagination,
     paginationDisabled = false,
     hidePageNavigation = false,
+    onSortChange,
+    sortField,
+    sortDirection,
+    toolbar,
+    rowMotion = false,
 }: TypedDataTableProps<T>) {
     // ── Resolve density (backward-compat with textSize) ──────────────
     const resolvedDensity: Density = density
@@ -316,6 +362,20 @@ export function TypedDataTable<T>({
     // ── Identify the sort state owner ─────────────────────────────────
     const hasSortableColumn = columns.some((c) => c.sortable);
     const hasLocalPagination = paginate;
+    // Controlled sort: the parent owns sort state and re-fetches on change.
+    const isControlledSort = onSortChange !== undefined;
+    // Local sort engine runs only when sorting is NOT controlled.
+    const useLocalSort = hasSortableColumn && !isControlledSort;
+
+    // Controlled-sort click handler — toggles desc/asc, defaults desc on a new field.
+    const handleControlledSort = useCallback(
+        (field: string) => {
+            const nextDir: SortDirection =
+                field === sortField && sortDirection === "desc" ? "asc" : "desc";
+            onSortChange?.(field, nextDir);
+        },
+        [sortField, sortDirection, onSortChange]
+    );
 
     // Internal rows-per-page state for local mode + "full" variant.
     const [localRowsPerPage, setLocalRowsPerPage] = useState<number>(
@@ -324,7 +384,7 @@ export function TypedDataTable<T>({
 
     // Local sort+pagination engine (used when `paginate` or any sortable column).
     const local = useSortablePagination<T, string>({
-        data: hasSortableColumn || hasLocalPagination ? data : EMPTY,
+        data: useLocalSort || hasLocalPagination ? data : EMPTY,
         itemsPerPage: hasLocalPagination
             ? localRowsPerPage
             : (itemsPerPage ?? rowsPerPage ?? 10),
@@ -361,8 +421,9 @@ export function TypedDataTable<T>({
         ?? (isControlledPag ? "full" : hasLocalPagination ? "compact" : "none");
 
     // ── Resolve the rows actually rendered ────────────────────────────
-    // Priority: local sort/paginate > raw `data` (caller already prepared it).
-    const rowsToRender = hasSortableColumn
+    // Priority: local sort/paginate > raw `data` (caller already prepared it,
+    // e.g. controlled/server sort — data is pre-sorted by the parent).
+    const rowsToRender = useLocalSort
         ? (hasLocalPagination ? local.paginatedData : local.sortedData)
         : (hasLocalPagination ? local.paginatedData : data);
 
@@ -455,15 +516,18 @@ export function TypedDataTable<T>({
                                 column.width !== undefined
                                     ? { width: typeof column.width === "number" ? `${column.width}px` : column.width }
                                     : undefined;
-                            const headAlign = column.headerAlign ?? column.align;
+                            const headAlign =
+                                column.headerAlign ??
+                                column.align ??
+                                (isNumericType(column.type) ? "right" : undefined);
                             if (column.sortable) {
                                 return (
                                     <SortableTableHead
                                         key={colKey}
                                         field={colKey}
-                                        currentField={local.sortField}
-                                        direction={local.sortDirection}
-                                        onSort={local.handleColumnSort}
+                                        currentField={isControlledSort ? (sortField ?? null) : local.sortField}
+                                        direction={isControlledSort ? (sortDirection ?? "desc") : local.sortDirection}
+                                        onSort={isControlledSort ? handleControlledSort : local.handleColumnSort}
                                         align={headAlign}
                                         className={cn(ds.cellPaddingY, ds.cellPaddingX, column.className)}
                                     >
@@ -498,37 +562,61 @@ export function TypedDataTable<T>({
                                     : rowClassName;
                             // Global rank within the full sorted dataset (local mode);
                             // page-local index otherwise.
-                            const absoluteIndex = (hasSortableColumn || hasLocalPagination)
+                            const absoluteIndex = (useLocalSort || hasLocalPagination)
                                 ? local.startIndex + rowIndex
                                 : rowIndex;
-                            return (
-                                <TableRow
-                                    key={getRowKey ? getRowKey(row, rowIndex) : rowIndex}
-                                    onClick={onRowClick ? () => handleRowClick(row, rowIndex) : undefined}
-                                    className={cn(
-                                        "border-b border-border-subtle hover:bg-white/[0.02] transition-colors",
-                                        onRowClick && "cursor-pointer",
-                                        rowExtraClass
-                                    )}
+                            const rowKey = getRowKey ? getRowKey(row, rowIndex) : rowIndex;
+                            const rowClick = onRowClick
+                                ? () => handleRowClick(row, rowIndex)
+                                : undefined;
+                            const rowClasses = cn(
+                                "border-b border-border-subtle hover:bg-white/[0.02] transition-colors",
+                                onRowClick && "cursor-pointer",
+                                rowExtraClass
+                            );
+                            const cells = columns.map((column, colIdx) => {
+                                const raw =
+                                    typeof column.accessor === "function"
+                                        ? undefined
+                                        : row[column.accessor];
+                                const align =
+                                    column.align ??
+                                    (isNumericType(column.type) ? "right" : undefined);
+                                return (
+                                    <TableCell
+                                        key={column.key ?? `col-${colIdx}`}
+                                        className={cn(
+                                            ds.cellPaddingY,
+                                            ds.cellPaddingX,
+                                            ds.textSize,
+                                            "text-text-primary font-medium",
+                                            cellTypeClass(column.type, raw),
+                                            align === "right" && "text-right",
+                                            align === "center" && "text-center",
+                                            column.className
+                                        )}
+                                    >
+                                        {renderCellContent(column, row, rowIndex, absoluteIndex)}
+                                    </TableCell>
+                                );
+                            });
+                            return rowMotion ? (
+                                <motion.tr
+                                    key={rowKey}
+                                    onClick={rowClick}
+                                    className={rowClasses}
+                                    initial={{ opacity: 0, y: 4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                        duration: 0.15,
+                                        delay: Math.min(rowIndex, 24) * 0.015,
+                                    }}
                                 >
-                                    {columns.map((column, colIdx) => (
-                                        <TableCell
-                                            key={column.key ?? `col-${colIdx}`}
-                                            className={cn(
-                                                ds.cellPaddingY,
-                                                ds.cellPaddingX,
-                                                ds.textSize,
-                                                "text-text-primary font-medium",
-                                                column.align === "right" && "text-right",
-                                                column.align === "center" && "text-center",
-                                                column.className
-                                            )}
-                                        >
-                                            {typeof column.accessor === "function"
-                                                ? column.accessor(row, rowIndex, absoluteIndex)
-                                                : String(row[column.accessor] ?? "")}
-                                        </TableCell>
-                                    ))}
+                                    {cells}
+                                </motion.tr>
+                            ) : (
+                                <TableRow key={rowKey} onClick={rowClick} className={rowClasses}>
+                                    {cells}
                                 </TableRow>
                             );
                         })
@@ -562,6 +650,9 @@ export function TypedDataTable<T>({
 
     const tableContent = (
         <div className={cn("w-full h-full flex flex-col", className)}>
+            {toolbar && (
+                <div className="px-4 py-3 border-b border-border-subtle">{toolbar}</div>
+            )}
             {tableBody}
             {compactFooter}
         </div>
@@ -573,6 +664,66 @@ export function TypedDataTable<T>({
 // ─── Internal helpers ─────────────────────────────────────────────────
 
 const EMPTY: never[] = [];
+
+const NUMERIC_COLUMN_TYPES: ReadonlySet<ColumnType> = new Set([
+    "numeric",
+    "fees",
+    "change",
+]);
+
+/** A `numeric`/`fees`/`change` column — defaults to right-aligned. */
+function isNumericType(type?: ColumnType): boolean {
+    return type !== undefined && NUMERIC_COLUMN_TYPES.has(type);
+}
+
+/** `0x1234…abcd` — applied automatically to `type: "address"` columns. */
+function truncateAddress(value: string): string {
+    return value.length > 14 ? `${value.slice(0, 6)}…${value.slice(-4)}` : value;
+}
+
+/** Style classes auto-derived from a column's `type` (mono, fees gold, signed color). */
+function cellTypeClass(type: ColumnType | undefined, rawValue: unknown): string {
+    switch (type) {
+        case "numeric":
+        case "address":
+            return "mono";
+        case "fees":
+            return "mono fees-cell";
+        case "change":
+            if (typeof rawValue === "number") {
+                return cn(
+                    "mono",
+                    rawValue > 0 && "text-success",
+                    rawValue < 0 && "text-danger",
+                    rawValue === 0 && "text-text-secondary"
+                );
+            }
+            return "mono";
+        default:
+            return "";
+    }
+}
+
+/** Resolves a cell's rendered node: function accessor > `format` > `type` default > raw string. */
+function renderCellContent<T>(
+    column: Column<T>,
+    row: T,
+    rowIndex: number,
+    absoluteIndex: number
+): ReactNode {
+    if (typeof column.accessor === "function") {
+        return column.accessor(row, rowIndex, absoluteIndex);
+    }
+    const raw = row[column.accessor];
+    if (column.format) return column.format(raw, row);
+    if (column.type === "address" && typeof raw === "string") {
+        return truncateAddress(raw);
+    }
+    if (column.type === "change" && typeof raw === "number") {
+        return `${raw > 0 ? "+" : ""}${raw}`;
+    }
+    return String(raw ?? "");
+}
 
 function wrapInCard(
     title: ReactNode,

@@ -6,11 +6,12 @@ import type { DeepPartial, ChartOptions } from "lightweight-charts";
 // to contain hex literals (enforced by ESLint override).
 export const chartColors = {
   bg: "transparent",
-  textMuted: "#71717a",
-  textSecondary: "#a1a1aa",
-  gridLine: "rgba(255, 255, 255, 0.05)",
+  // V4: axis/grid aligned on V4 text & border tokens (spec §8.2).
+  textMuted: "#6B7280",        // --text-tertiary
+  textSecondary: "#9CA3AF",    // --text-secondary
+  gridLine: "rgba(30, 37, 53, 0.5)",  // --border-subtle @ 50%
   crosshair: "rgba(255, 255, 255, 0.1)",
-  labelBg: "#0B0E14",
+  labelBg: "#0F1421",          // --bg-surface
 
   cyan: "#83e9ff",
   gold: "#f9e370",
@@ -49,18 +50,16 @@ export const chartPalette = {
   brandTertiary: "#051728",
   brandDark: "#0A0D12",
   white: "rgb(255 255 255)",
-  /** 10-color palette for multi-series charts (donuts, pies, stacked bars). */
+  /** V4 multi-series palette for donuts/pies/stacked bars (spec §8.1). */
   multiSeries: [
-    chartColors.cyan,    // 0
-    chartColors.gold,    // 1
-    "#a78bfa",           // 2 violet
-    "#6bd4f0",           // 3 cyan variant
-    chartColors.emerald, // 4
-    chartColors.rose,    // 5
-    "#fb923c",           // 6 orange
-    "#ec4899",           // 7 pink
-    "#eab308",           // 8 yellow
-    "#8b5cf6",           // 9 purple
+    "#83E9FF", // 0 brand cyan
+    "#1692AD", // 1 cyan deep
+    "#F9E370", // 2 gold
+    "#A78BFA", // 3 violet
+    "#F472B6", // 4 pink
+    "#34D399", // 5 emerald
+    "#FB923C", // 6 orange
+    "#60A5FA", // 7 blue
   ] as readonly string[],
 } as const;
 
@@ -68,7 +67,11 @@ export type ChartPalette = typeof chartPalette;
 
 // ── Recharts axis / grid shared props ──────────────────────────────────
 export const rechartsAxisDefaults = {
-  tick: { fill: chartColors.textMuted, fontSize: 10 },
+  tick: {
+    fill: chartColors.textMuted,
+    fontSize: 10,
+    fontFamily: "var(--font-mono), monospace",
+  },
   axisLine: false,
   tickLine: false,
 } as const;
@@ -80,7 +83,7 @@ export const rechartsGridDefaults = {
 } as const;
 
 export const rechartsTooltipContainer =
-  "bg-brand-secondary/95 border border-border-subtle rounded-lg px-3 py-2 shadow-xl backdrop-blur-sm" as const;
+  "bg-surface border border-border-default rounded-lg px-3 py-2 shadow-md" as const;
 
 // ── Lightweight Charts shared options ──────────────────────────────────
 export const lwcDefaults: DeepPartial<ChartOptions> = {
