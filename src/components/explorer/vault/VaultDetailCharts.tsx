@@ -63,7 +63,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.35 }}
-      className="glass-panel relative overflow-hidden p-4"
+      className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-4"
     >
       {/* Ambient color glow tied to active tab */}
       <div

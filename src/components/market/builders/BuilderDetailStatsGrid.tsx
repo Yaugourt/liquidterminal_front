@@ -21,7 +21,7 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
   const { format } = useNumberFormat();
 
   if (error) {
-    return <div className="glass-panel border border-rose-500/20 p-4 text-rose-400 text-sm">{error.message}</div>;
+    return <div className="bg-surface border border-rose-500/20 rounded-lg p-4 text-rose-400 text-sm">{error.message}</div>;
   }
 
   if (isLoading && !stats) {

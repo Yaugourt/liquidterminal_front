@@ -39,7 +39,7 @@ export function VaultDetailHeader({
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="glass-panel p-5"
+      className="bg-surface border border-border-subtle rounded-lg p-5"
     >
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         {/* Icon */}

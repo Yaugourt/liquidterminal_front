@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { LoadingState } from "@/components/ui/loading-state";
+import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { BuilderCoinBreakdownRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -52,7 +53,7 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
   };
 
   return (
-    <div className="glass-panel p-5 space-y-4">
+    <Card className="p-5 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-text-primary font-semibold text-sm">{label ?? "Top Coins"}</h2>
         <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
@@ -141,6 +142,6 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
           })}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

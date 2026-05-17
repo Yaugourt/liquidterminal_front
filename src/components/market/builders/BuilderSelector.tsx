@@ -31,7 +31,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="glass-panel px-4 py-3 flex items-center gap-3 min-w-64 hover:border-border-hover transition-all text-left"
+        className="bg-surface border border-border-subtle rounded-lg px-4 py-3 flex items-center gap-3 min-w-64 hover:border-border-hover transition-all text-left"
       >
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-xs font-bold text-brand-accent shrink-0">
           {displayName !== "—" ? displayName.charAt(0).toUpperCase() : "?"}
@@ -46,7 +46,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-80 glass-panel border border-border-hover z-50 shadow-2xl">
+        <div className="absolute top-full left-0 mt-1 w-80 bg-surface border border-border-hover rounded-lg z-50 shadow-2xl">
           <div className="p-2 border-b border-border-subtle">
             <SearchBar
               onSearch={setSearch}

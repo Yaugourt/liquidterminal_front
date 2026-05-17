@@ -81,7 +81,7 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.03, 0.3), duration: 0.25 }}
-      className="glass-panel relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-hover transition-colors cursor-pointer"
+      className="bg-surface border border-border-subtle rounded-lg relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-hover transition-colors cursor-pointer"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">

@@ -89,7 +89,7 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
             value={card.value}
             icon={card.icon}
             isLoading={isLoading}
-            className="glass-panel h-full"
+            className="bg-surface border border-border-subtle rounded-lg h-full"
           />
         </motion.div>
       ))}

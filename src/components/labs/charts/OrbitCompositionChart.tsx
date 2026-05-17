@@ -80,7 +80,7 @@ export function OrbitCompositionChart() {
   const isUp = displayed.change24h >= 0;
 
   return (
-    <div className="glass-panel relative overflow-hidden h-[460px] p-6 flex flex-col">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[460px] p-6 flex flex-col">
       {/* Ambient glow that follows hovered asset */}
       <motion.div
         animate={{

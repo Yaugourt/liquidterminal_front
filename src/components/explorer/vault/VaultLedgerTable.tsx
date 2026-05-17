@@ -122,7 +122,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.35 }}
-      className="glass-panel"
+      className="bg-surface border border-border-subtle rounded-lg"
     >
       <TypedDataTable<VaultLedgerEntry>
         data={filtered}
