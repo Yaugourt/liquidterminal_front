@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, DollarSign } from "lucide-react";
 import { ChartLoading, ChartEmpty, ChartWatermark } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayNameOrAddress } from "./formatBuilderDisplayName";
 
@@ -11,13 +12,6 @@ interface BuildersFlowChartProps {
   rows: BuilderTopRow[];
   isLoading: boolean;
   timeframe: string;
-}
-
-function compactUsd(n: number) {
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
 }
 
 export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowChartProps) {

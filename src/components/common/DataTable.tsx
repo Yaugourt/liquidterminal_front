@@ -105,9 +105,10 @@ interface DensityStyles {
     textSize: string;
 }
 
+// V4 table densities (spec §5.3) — dense rows, the V4 signature.
 const DENSITY_STYLES: Record<Density, DensityStyles> = {
-    comfortable: { cellPaddingY: "py-3", cellPaddingX: "px-4", textSize: "text-sm" },
-    compact:     { cellPaddingY: "py-2", cellPaddingX: "px-3", textSize: "text-xs" },
+    comfortable: { cellPaddingY: "py-2", cellPaddingX: "px-3.5", textSize: "text-sm" },
+    compact:     { cellPaddingY: "py-1.5", cellPaddingX: "px-3", textSize: "text-xs" },
 };
 
 // ─── DataTable wrapper (children-based) ───────────────────────────────
@@ -508,7 +509,7 @@ export function TypedDataTable<T>({
             }
         >
             <Table>
-                <TableHeader className={cn(stickyHeader && "sticky top-0 bg-brand-secondary z-10")}>
+                <TableHeader className={cn("bg-surface-2", stickyHeader && "sticky top-0 z-10")}>
                     <TableRow className="border-b border-border-subtle hover:bg-transparent">
                         {columns.map((column, colIdx) => {
                             const colKey = column.key ?? `col-${colIdx}`;
@@ -570,7 +571,7 @@ export function TypedDataTable<T>({
                                 ? () => handleRowClick(row, rowIndex)
                                 : undefined;
                             const rowClasses = cn(
-                                "border-b border-border-subtle hover:bg-white/[0.02] transition-colors",
+                                "border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors",
                                 onRowClick && "cursor-pointer",
                                 rowExtraClass
                             );
@@ -589,7 +590,7 @@ export function TypedDataTable<T>({
                                             ds.cellPaddingY,
                                             ds.cellPaddingX,
                                             ds.textSize,
-                                            "text-text-primary font-medium",
+                                            "text-text-primary",
                                             cellTypeClass(column.type, raw),
                                             align === "right" && "text-right",
                                             align === "center" && "text-center",

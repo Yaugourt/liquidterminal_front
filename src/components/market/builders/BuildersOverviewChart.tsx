@@ -4,6 +4,7 @@ import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { ChartLoading, ChartEmpty, ChartWatermark, chartPalette, chartColors } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 
@@ -18,13 +19,6 @@ const METRICS: { key: Metric; label: string }[] = [
 const SLICE_PALETTE = chartPalette.multiSeries;
 const SLICE_FALLBACK = chartColors.textMuted;
 const SLICE_OTHERS_COLOR = "rgb(82 82 91)"; // zinc-600 — neutral, distinct from palette
-
-function compactUsd(n: number) {
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 function compactNum(n: number) {
   if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
