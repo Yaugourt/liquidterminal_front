@@ -71,6 +71,11 @@ const eslintConfig = [
               message:
                 "Import depuis '@/components/common' (barrel), pas le fichier interne. Si l'export est manquant, ajoute-le au barrel.",
             },
+            {
+              group: ["@/components/ui/table"],
+              message:
+                "N'utilise pas le <Table> brut. Construis les tableaux avec <TypedDataTable> de '@/components/common' (colonnes typées, tri, pagination, états V4).",
+            },
           ],
           paths: [
             {
@@ -103,6 +108,29 @@ const eslintConfig = [
     ],
     rules: {
       "no-restricted-syntax": "off",
+      "no-restricted-imports": "off",
+    },
+  },
+  /**
+   * `@/components/ui/table` consumers exempts de la règle no-restricted-imports :
+   *   - les primitives qui construisent TypedDataTable lui-même ;
+   *   - les tables legacy non encore migrées (lignes mémoïsées temps réel,
+   *     table de comparaison à matrice JSX) — à migrer/supprimer en cleanup.
+   * Les autres règles (hex, etc.) restent actives sur ces fichiers.
+   */
+  {
+    files: [
+      "src/components/common/DataTable.tsx",
+      "src/components/common/tables/SortableTableHead.tsx",
+      "src/components/explorer/address/AddressTransactionList.tsx",
+      "src/components/explorer/address/TransactionRow.tsx",
+      "src/components/explorer/address/orders/UserTwapTable.tsx",
+      "src/components/hip4/Hip4CompareTable.tsx",
+      "src/components/market/tracker/assets/TableHeader.tsx",
+      "src/components/market/tracker/assets/TableRow.tsx",
+      "src/components/market/tracker/assets/TableLoadingState.tsx",
+    ],
+    rules: {
       "no-restricted-imports": "off",
     },
   },
