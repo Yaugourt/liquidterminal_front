@@ -8,25 +8,25 @@ const statusBadgeVariants = cva(
         variants: {
             variant: {
                 default:
-                    "bg-white/5 text-text-secondary ring-white/10",
+                    "bg-surface-2 text-text-secondary ring-border-subtle",
                 success:
-                    "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
+                    "bg-success/10 text-success ring-success/20",
                 error:
-                    "bg-rose-500/10 text-rose-400 ring-rose-500/20",
+                    "bg-danger/10 text-danger ring-danger/20",
                 warning:
-                    "bg-amber-500/10 text-amber-400 ring-amber-500/20",
+                    "bg-warning/10 text-warning ring-warning/20",
                 info:
-                    "bg-brand-accent/10 text-brand-accent ring-brand-accent/20",
+                    "bg-brand/10 text-brand ring-brand/20",
                 buy:
-                    "bg-emerald-500/10 text-emerald-400 ring-emerald-500/20",
+                    "bg-success/10 text-success ring-success/20",
                 sell:
-                    "bg-rose-500/10 text-rose-400 ring-rose-500/20",
+                    "bg-danger/10 text-danger ring-danger/20",
                 neutral:
-                    "bg-zinc-500/10 text-text-secondary ring-zinc-500/20",
+                    "bg-surface-2 text-text-secondary ring-border-subtle",
                 active:
-                    "bg-brand-accent/10 text-brand-accent ring-brand-accent/20",
+                    "bg-brand/10 text-brand ring-brand/20",
                 inactive:
-                    "bg-zinc-500/10 text-text-muted ring-zinc-500/20",
+                    "bg-surface-2 text-text-tertiary ring-border-subtle",
             },
         },
         defaultVariants: {

@@ -26,8 +26,8 @@ export function ErrorState({
             "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-[300px]",
             className
         )}>
-            <AlertCircle className="w-12 h-12 mb-4 text-rose-500/50" />
-            <p className="text-rose-400 text-lg font-medium mb-2">{title}</p>
+            <AlertCircle className="w-12 h-12 mb-4 text-danger/50" />
+            <p className="text-danger text-lg font-medium mb-2">{title}</p>
             {message && (
                 <p className="text-text-muted text-sm mb-4">{message}</p>
             )}
