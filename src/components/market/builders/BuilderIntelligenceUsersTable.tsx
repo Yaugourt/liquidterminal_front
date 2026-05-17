@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
 import type { BuilderUserRow } from "@/services/indexer/builders/types";
+import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -111,7 +112,7 @@ export function BuilderIntelligenceUsersTable({
   ], [format, totalFees]);
 
   return (
-    <div className="glass-panel p-5 space-y-4">
+    <Card className="p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-text-primary font-semibold text-sm">Top Users</h2>
         {users.length > 0 && <span className="text-text-muted text-xs">{users.length} users</span>}
@@ -126,6 +127,6 @@ export function BuilderIntelligenceUsersTable({
         emptyDescription="No user data for this window."
         initialSort={{ field: "fees", direction: "desc" }}
       />
-    </div>
+    </Card>
   );
 }

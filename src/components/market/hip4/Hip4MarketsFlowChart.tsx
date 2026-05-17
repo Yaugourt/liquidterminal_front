@@ -39,7 +39,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.35 }}
-      className="glass-panel relative overflow-hidden p-6 flex flex-col"
+      className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-6 flex flex-col"
     >
       <div className="pointer-events-none absolute -top-24 left-1/4 h-64 w-64 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />

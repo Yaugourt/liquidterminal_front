@@ -98,7 +98,7 @@ export function Hip4AnalyticsChart() {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       {/* ── Volume area chart ── */}
-      <div className="xl:col-span-2 glass-panel relative overflow-hidden h-[380px] flex flex-col p-6">
+      <div className="xl:col-span-2 bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[380px] flex flex-col p-6">
         <div className="pointer-events-none absolute -top-28 right-0 h-64 w-64 rounded-full bg-emerald-400/8 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 -left-20 h-56 w-56 rounded-full bg-rose-400/8 blur-3xl" />
 
@@ -272,7 +272,7 @@ export function Hip4AnalyticsChart() {
       </div>
 
       {/* ── Activity bar chart (fills + unique users) ── */}
-      <div className="glass-panel relative overflow-hidden h-[380px] flex flex-col p-6">
+      <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[380px] flex flex-col p-6">
         <div className="pointer-events-none absolute -top-20 right-0 h-48 w-48 rounded-full bg-brand-accent/8 blur-3xl" />
 
         <div className="relative z-10 mb-4">

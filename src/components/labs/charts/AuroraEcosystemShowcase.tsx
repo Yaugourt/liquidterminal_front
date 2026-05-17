@@ -80,7 +80,7 @@ export function AuroraEcosystemShowcase() {
     (visible.staked ? display.staked : 0);
 
   return (
-    <div className="glass-panel relative overflow-hidden h-[460px] flex flex-col p-6">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[460px] flex flex-col p-6">
       {/* Ambient color glow */}
       <div className="pointer-events-none absolute -top-32 right-0 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 -left-24 h-64 w-64 rounded-full bg-brand-gold/10 blur-3xl" />

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
 import type { BuilderUserRow } from "@/services/indexer/builders/types";
+import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -119,7 +120,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
   }, [format, totalFees, hasVolume]);
 
   return (
-    <div className="glass-panel rounded-2xl border border-border-subtle overflow-hidden">
+    <Card className="rounded-2xl">
       <TypedDataTable<BuilderUserRow>
         data={users}
         columns={columns}
@@ -131,6 +132,6 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
         emptyDescription="No user data for this window."
         initialSort={{ field: "fees", direction: "desc" }}
       />
-    </div>
+    </Card>
   );
 }

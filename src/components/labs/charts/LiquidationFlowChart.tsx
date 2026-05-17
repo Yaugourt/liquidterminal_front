@@ -31,7 +31,7 @@ export function LiquidationFlowChart() {
   const lastPrice = 3847;
 
   return (
-    <div className="glass-panel relative overflow-hidden h-[460px] flex flex-col p-6">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[460px] flex flex-col p-6">
       {/* Bg glow */}
       <div className="pointer-events-none absolute -top-24 left-1/4 h-64 w-64 rounded-full bg-rose-500/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />

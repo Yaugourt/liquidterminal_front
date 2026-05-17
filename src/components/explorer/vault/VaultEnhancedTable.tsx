@@ -154,7 +154,7 @@ export function VaultEnhancedTable() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.4 }}
-      className="glass-panel"
+      className="bg-surface border border-border-subtle rounded-lg"
     >
       <TypedDataTable<VaultSummary>
         data={filtered}

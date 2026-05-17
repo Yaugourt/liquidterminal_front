@@ -21,7 +21,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.35 }}
-      className="glass-panel p-4"
+      className="bg-surface border border-border-subtle rounded-lg p-4"
     >
       <div className="flex items-center gap-2 mb-4">
         <GitBranch className="w-4 h-4 text-brand-accent" />

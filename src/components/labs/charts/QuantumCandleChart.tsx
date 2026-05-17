@@ -245,7 +245,7 @@ export function QuantumCandleChart() {
   }, [candles, last.close, last.time]);
 
   return (
-    <div className="relative glass-panel overflow-hidden h-[460px] flex flex-col">
+    <div className="relative bg-surface border border-border-subtle rounded-lg overflow-hidden h-[460px] flex flex-col">
       {/* Ambient glow */}
       <div
         className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full opacity-40 blur-3xl"

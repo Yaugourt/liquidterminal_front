@@ -57,7 +57,7 @@ export function VaultEcosystemChart() {
   const isLoading = activeTab === "TVL Trend" ? chartLoading : vaultsLoading;
 
   return (
-    <div className="glass-panel relative overflow-hidden p-4 flex flex-col">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-4 flex flex-col">
       {/* Ambient glow blobs — Aurora aesthetic */}
       <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-gold/[0.06] blur-3xl" />

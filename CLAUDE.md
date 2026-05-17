@@ -96,52 +96,55 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 4. **Type everything** - No `any` types allowed.
 
-## Design System (V3)
+## Design System (V4)
 
-### Color Tokens (use these, not raw colors)
+Le V4 est encodé par une **couche de primitives** : on les compose, on ne
+réimplémente pas la composition. Un changement central se propage partout.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `bg-brand-primary` | `#0B0E14` | Main background |
-| `bg-brand-secondary` | `#151A25` | Cards, sections |
-| `text-text-secondary` | `#a1a1aa` | Labels, headers |
-| `text-text-muted` | `#71717a` | Muted text |
-| `text-brand-accent` | `#83E9FF` | Links, accent |
-| `text-brand-gold` | `#f9e370` | Secondary accent |
-| `border-border-subtle` | `rgba(255,255,255,0.05)` | Light borders |
-| `border-border-hover` | `rgba(255,255,255,0.1)` | Hover borders |
+### Color tokens (use tokens, never raw hex)
 
-### Glass Components (defined in globals.css)
+| Token | Rôle |
+|-------|------|
+| `bg-base` | Fond de page (`#0A0B0F`) |
+| `bg-surface` | Surface des cards/panneaux (`#0F1421`, navy whisper) |
+| `bg-surface-2` / `bg-surface-3` | Surfaces imbriquées, hover, header de table |
+| `text-text-primary` / `-secondary` / `-tertiary` | Hiérarchie de texte (3 niveaux) |
+| `border-border-subtle` / `-default` / `-strong` | Bordures (navy opaque) |
+| `text-brand` / `bg-brand` | Cyan signature `#83E9FF` ; `text-brand-text-on` = navy sur cyan |
+| `text-gold` / `bg-gold` | Or `#F9E370` — réservé à la colonne Builder Fees |
+| `success` / `danger` / `warning` | Sémantique |
 
-```tsx
-<div className="glass-panel">       // Standard cards (60% opacity)
-<div className="glass-card">        // Higher opacity cards (90%)
-<div className="glass-dialog">      // Modals
-<div className="stat-card">         // Stats displays
-<input className="glass-input" />   // Inputs
-<button className="glass-button">   // Buttons
-```
+> Les noms `brand-main/secondary/dark/accent/gold` sont des **alias legacy**
+> (aliasés vers les tokens V4) — ne pas en introduire de nouveaux.
 
-### Typography
+### Primitives — la source unique de composition
 
-- **Single stack:** `font-inter`, `font-sans`, and `font-mono` all resolve to Inter (`tailwind.config.ts` + `globals.css` base resets for `code`/`pre`).
-- **Numeric alignment:** prefer `tabular-nums` instead of expecting a different glyph width from `font-mono`.
+| Besoin | Primitive | Import |
+|--------|-----------|--------|
+| Tableau de données | `<TypedDataTable>` (colonnes typées) | `@/components/common` |
+| Surface / panneau | `<Card>` (+ `CardHeader`/`CardContent`) | `@/components/ui/card` |
+| Chiffre autonome | `<Num value format variant />` | `@/components/common` |
+| En-tête / section de page | `<PageHeader>` / `<PageSection>` | `@/components/common` |
+| Carte de stat | `<StatsCard>` / `<StatsPanel>` | `@/components/common` |
+| Sélecteur de période | `<TimeframeTabs>` | `@/components/common` |
 
-### Semantic Colors
+**Tables — `<TypedDataTable>` est obligatoire** (le `<Table>` brut de
+`@/components/ui/table` est interdit hors `common/` — règle ESLint). Les
+colonnes déclarent un `type` (`numeric` / `fees` / `change` / `address`) qui
+applique automatiquement police mono, alignement, or des fees, couleur signée.
+Tri local (`sortable`+`getSortValue`+`initialSort`) ou serveur (`onSortChange`).
 
-- **Success/Buy:** `emerald-400/500`
-- **Error/Sell:** `rose-400/500`
-- **Accent:** `text-brand-accent`
-- **Warning:** `text-brand-gold`
+### Typographie
 
-### Migration Checklist (when editing components)
+- Inter pour l'UI ; **JetBrains Mono pour tous les chiffres** (classe `.mono`
+  ou `Column.type`/`<Num>` qui l'appliquent). Non négociable.
+- Échelle px fixe dans `tailwind.config.ts` (`text-2xs` 10 … `text-3xl` 28).
 
-Replace legacy classes:
-- `text-zinc-400` → `text-text-secondary`
-- `text-zinc-500` → `text-text-muted`
-- `border-white/5` → `border-border-subtle`
-- `border-white/10` → `border-border-hover`
-- `bg-[#151A25]` → `bg-brand-secondary`
+### Flexibilité
+
+Les primitives sont **fluides** (aucune largeur fixe — elles remplissent
+l'espace donné), avec variantes de densité (`compact`/`comfortable`) et slots
+(`toolbar`, `actions`, `children`). Le look V4 reste verrouillé.
 
 ## Component Patterns
 
@@ -161,37 +164,36 @@ Replace legacy classes:
 </div>
 ```
 
-### Loading State
+### Loading / error / empty states
+
+Ne pas réimplémenter : utiliser `<LoadingState>` / `<ErrorState>` /
+`<EmptyState>` (`@/components/ui/*`). `<TypedDataTable>` gère ces trois états
+nativement via les props `isLoading` / `error` / `emptyMessage`.
+
+### Tables — `<TypedDataTable>` (jamais le `<Table>` brut)
 
 ```tsx
-<div className="flex justify-center items-center h-[200px] glass-panel">
-  <div className="flex flex-col items-center">
-    <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-    <span className="text-text-muted text-sm">Loading...</span>
-  </div>
-</div>
+import { TypedDataTable, type Column } from "@/components/common";
+
+const columns: Column<Row>[] = [
+  { key: "name", header: "Name", accessor: (r) => r.name, sortable: true,
+    getSortValue: (r) => r.name },
+  { key: "volume", header: "Volume", type: "numeric", sortable: true,
+    getSortValue: (r) => r.volume, accessor: (r) => formatNumber(r.volume, fmt) },
+  { key: "fees", header: "Builder Fees", type: "fees",
+    accessor: (r) => formatNumber(r.fees, fmt) },
+];
+
+<TypedDataTable<Row>
+  data={rows} columns={columns}
+  isLoading={isLoading} error={error}
+  paginate itemsPerPage={25}
+  initialSort={{ field: "volume", direction: "desc" }}
+/>
 ```
 
-### Error State
-
-```tsx
-<div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm backdrop-blur-md">
-  Error: {error.message}
-</div>
-```
-
-### Tables (use shadcn Table components)
-
-```tsx
-<TableHead className="py-3 px-3">
-  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-    {header}
-  </span>
-</TableHead>
-<TableCell className="py-3 px-3 text-sm text-white">
-  {content}
-</TableCell>
-```
+`Column.type` (`numeric`/`fees`/`change`/`address`) applique mono, alignement
+et couleur automatiquement. Tri serveur : `onSortChange`/`sortField`/`sortDirection`.
 
 ## Key Files Reference
 

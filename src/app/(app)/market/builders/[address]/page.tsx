@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { usePageTitle } from "@/store/use-page-title";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -49,13 +50,13 @@ export default function BuilderDetailPage() {
 
   if (!valid) {
     return (
-      <div className="glass-panel p-8 text-center max-w-lg mx-auto">
+      <Card className="p-8 text-center max-w-lg mx-auto">
         <h2 className="text-lg font-medium text-white mb-2">Invalid address</h2>
         <p className="text-text-secondary text-sm mb-4">Use a checksummed 0x address (40 hex chars).</p>
         <Button variant="ghost" className="text-brand-accent" onClick={() => router.push("/market/builders")}>
           <ArrowLeft className="h-4 w-4 mr-2" />Back to Builders
         </Button>
-      </div>
+      </Card>
     );
   }
 
@@ -91,7 +92,7 @@ export default function BuilderDetailPage() {
 
       {/* Builder header */}
       {isFirstLoad ? (
-        <div className="glass-panel p-6 animate-pulse">
+        <Card className="p-6 animate-pulse">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-white/5" />
             <div className="space-y-2">
@@ -99,9 +100,9 @@ export default function BuilderDetailPage() {
               <div className="h-4 w-48 bg-white/5 rounded" />
             </div>
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="glass-panel p-6">
+        <Card className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-2xl font-bold text-brand-accent shrink-0">
               {(displayName && displayName !== "—" ? displayName.charAt(0) : address.slice(2, 3)).toUpperCase()}
@@ -140,7 +141,7 @@ export default function BuilderDetailPage() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Stats détaillées */}
@@ -157,7 +158,7 @@ export default function BuilderDetailPage() {
           <h2 className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider px-1">
             Top coins ({tf})
           </h2>
-          <div className="glass-panel rounded-2xl border border-border-subtle overflow-hidden">
+          <Card className="rounded-2xl">
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-border-subtle">
               {stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => (
                 <div key={coin.coin ?? i} className="bg-brand-secondary/60 p-3 text-center">
@@ -170,7 +171,7 @@ export default function BuilderDetailPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </section>
       )}
 
