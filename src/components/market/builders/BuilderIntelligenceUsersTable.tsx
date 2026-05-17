@@ -113,7 +113,7 @@ export function BuilderIntelligenceUsersTable({
   return (
     <div className="glass-panel p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-white font-semibold text-sm">Top Users</h2>
+        <h2 className="text-text-primary font-semibold text-sm">Top Users</h2>
         {users.length > 0 && <span className="text-text-muted text-xs">{users.length} users</span>}
       </div>
 

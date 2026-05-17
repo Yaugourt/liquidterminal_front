@@ -20,7 +20,7 @@ export function Hip4ResearchTimeline() {
         <ul className="space-y-6">
           {HIP4_RESEARCH_DAYS.map((day) => (
             <li key={day.id} className="border-l-2 border-brand-accent/40 pl-4">
-              <div className="text-sm font-semibold text-white">{day.label}</div>
+              <div className="text-sm font-semibold text-text-primary">{day.label}</div>
               <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-text-secondary">
                 {day.bullets.map((b, i) => (
                   <li key={i}>{b}</li>
@@ -40,7 +40,7 @@ export function Hip4ResearchTimeline() {
         <ol className="space-y-4">
           {HIP4_TWEET_ARCHIVE.map((t) => (
             <li key={t.id} className="text-xs">
-              <div className="font-semibold text-white">
+              <div className="font-semibold text-text-primary">
                 {t.url ? (
                   <Link
                     href={t.url}

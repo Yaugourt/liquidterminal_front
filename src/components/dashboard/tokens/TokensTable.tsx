@@ -14,11 +14,11 @@ const TokenRow = memo(({ token, type, format, compact }: TokenRowProps & { forma
         <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
             <div className="flex items-center gap-2">
                 <TokenIcon src={token.logo || null} name={token.name} size="sm" />
-                <span className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>{token.name}</span>
+                <span className={compact ? "text-text-primary text-[11px] font-medium" : "text-text-primary text-xs font-medium"}>{token.name}</span>
             </div>
         </TableCell>
         <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
-            <div className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>
+            <div className={compact ? "text-text-primary text-[11px] font-medium" : "text-text-primary text-xs font-medium"}>
                 {token.price >= 1000000
                     ? formatLargeNumber(token.price, { prefix: '$', decimals: 1 })
                     : token.price >= 1
@@ -38,7 +38,7 @@ const TokenRow = memo(({ token, type, format, compact }: TokenRowProps & { forma
             </div>
         </TableCell>
         <TableCell className={compact ? "py-1 pl-3" : "py-1.5 pl-4"}>
-            <div className={compact ? "text-white text-[11px] font-medium" : "text-white text-xs font-medium"}>
+            <div className={compact ? "text-text-primary text-[11px] font-medium" : "text-text-primary text-xs font-medium"}>
                 {formatLargeNumber(token.volume, { prefix: '$', decimals: 1 })}
             </div>
         </TableCell>

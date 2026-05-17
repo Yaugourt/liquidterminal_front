@@ -28,7 +28,7 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="stat-card animate-pulse h-24 rounded-xl" />
+          <div key={i} className="stat-card animate-pulse h-24 rounded-lg" />
         ))}
       </div>
     );
@@ -78,7 +78,7 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
             density="compact"
             withCard={false}
             className="stat-card"
-            valueClassName="text-white text-lg font-semibold tabular-nums"
+            valueClassName="text-text-primary text-lg font-semibold tabular-nums"
           />
         </motion.div>
       ))}

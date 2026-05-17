@@ -43,7 +43,7 @@ export function BuilderIntelligenceSecondaryStats({ stats }: BuilderIntelligence
           density="compact"
           withCard={false}
           className="stat-card"
-          valueClassName="text-white text-base font-semibold tabular-nums"
+          valueClassName="text-text-primary text-base font-semibold tabular-nums"
         />
       ))}
     </div>

@@ -21,7 +21,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-4 border border-red-500/20 rounded-xl bg-red-500/5">
+      <div className="flex flex-col items-center justify-center h-full p-4 border border-red-500/20 rounded-lg bg-red-500/5">
         <div className="flex items-center gap-2 text-red-400 mb-2">
           <AlertCircle size={18} />
           <span className="text-sm font-medium">Failed to load data</span>
@@ -31,7 +31,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
   }
 
   return (
-    <div className="flex flex-col h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-xl overflow-hidden shadow-xl shadow-black/20">
+    <div className="flex flex-col h-full bg-brand-secondary/60 border border-border-subtle rounded-lg overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
@@ -39,7 +39,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             <Gavel size={16} />
           </div>
           <div>
-            <h3 className="text-xs font-medium text-white tracking-tight">Auction Status</h3>
+            <h3 className="text-xs font-medium text-text-primary tracking-tight">Auction Status</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <div className={`w-1.5 h-1.5 rounded-full ${auctionState.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
               <span className={`text-label ${auctionState.isActive ? 'text-emerald-400' : 'text-amber-400'}`}>
@@ -76,7 +76,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
               <div>
                 <p className="text-xs text-text-muted font-medium mb-1">Current Price</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-white tracking-tight">
+                  <span className="text-lg font-bold text-text-primary tracking-tight">
                     {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     <span className="text-xs font-medium text-text-secondary ml-1">HYPE</span>
                   </span>
@@ -90,7 +90,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 <p className="text-xs text-text-muted font-medium mb-1">
                   {auctionState.isActive ? "Time Remaining" : "Starts In"}
                 </p>
-                <div className="flex items-center justify-end gap-2 text-white">
+                <div className="flex items-center justify-end gap-2 text-text-primary">
                   <Clock className="w-4 h-4 text-brand-gold" />
                   <span className="text-lg font-medium tracking-tight">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
@@ -125,7 +125,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 <div className="flex items-center gap-2">
                   <span className="text-brand-gold font-medium">{auctionState.lastAuctionName}</span>
                   <span className="text-text-secondary">•</span>
-                  <span className="text-white font-medium">{formatNumber(auctionState.lastAuctionPrice, format)} HYPE</span>
+                  <span className="text-text-primary font-medium">{formatNumber(auctionState.lastAuctionPrice, format)} HYPE</span>
                 </div>
               </div>
             </div>

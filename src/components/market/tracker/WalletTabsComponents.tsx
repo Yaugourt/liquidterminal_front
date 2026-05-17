@@ -73,7 +73,7 @@ export function WalletListTabs({
             {/* Tab "All Wallets" */}
             <TabsTrigger
               value="all-wallets"
-              className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg text-text-secondary font-medium hover:text-white transition-colors"
+              className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg text-text-secondary font-medium hover:text-text-primary transition-colors"
             >
               All Wallets
             </TabsTrigger>
@@ -88,12 +88,12 @@ export function WalletListTabs({
               <TabsTrigger
                 key={`list-${list.id || index}`}
                 value={(list.id || index).toString()}
-                className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-white transition-colors"
+                className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-start">
-                    <span className="font-medium text-white">{list.name || 'Unnamed List'}</span>
-                    <span className="text-xs text-white">
+                    <span className="font-medium text-text-primary">{list.name || 'Unnamed List'}</span>
+                    <span className="text-xs text-text-primary">
                       Created: {new Date(list.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -238,7 +238,7 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
       ref={setNodeRef}
       style={style}
       value={wallet.id.toString()}
-      className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-white data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-white transition-colors"
+      className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
     >
       <div className="flex items-center gap-2">
         {/* Drag handle */}
@@ -251,8 +251,8 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
         </div>
 
         <div className="flex flex-col items-start">
-          <span className="font-medium text-white">{wallet.name || 'Unnamed Wallet'}</span>
-          <span className="text-xs text-white">
+          <span className="font-medium text-text-primary">{wallet.name || 'Unnamed Wallet'}</span>
+          <span className="text-xs text-text-primary">
             Added: {new Date(wallet.addedAt).toLocaleDateString()}
           </span>
         </div>

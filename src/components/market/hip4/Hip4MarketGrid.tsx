@@ -127,7 +127,7 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
               onClick={() => handleSort(s)}
               className={`rounded-lg px-2 py-1 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
                 sort === s
-                  ? "bg-white/[0.06] text-white"
+                  ? "bg-white/[0.06] text-text-primary"
                   : "text-text-muted hover:text-text-secondary"
               }`}
             >
@@ -161,7 +161,7 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
               <button
                 type="button"
                 onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}
-                className="rounded-xl border border-border-subtle bg-white/[0.03] px-4 py-2 text-xs font-semibold text-text-secondary hover:border-border-hover hover:text-white transition-colors"
+                className="rounded-lg border border-border-subtle bg-white/[0.03] px-4 py-2 text-xs font-semibold text-text-secondary hover:border-border-hover hover:text-text-primary transition-colors"
               >
                 Load more ({filtered.length - visibleCount} left)
               </button>

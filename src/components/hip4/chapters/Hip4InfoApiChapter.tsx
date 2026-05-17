@@ -31,11 +31,11 @@ export function Hip4InfoApiChapter() {
             subtitle={
               <>
                 <p>
-                  Same <strong className="text-white">layout pattern</strong> as the official
+                  Same <strong className="text-text-primary">layout pattern</strong> as the official
                   Hyperliquid GitBook: method badge, headers table, body fields, response tabs.
                 </p>
                 <p>
-                  <strong className="text-white">Content</strong> is Liquid Terminal research on
+                  <strong className="text-text-primary">Content</strong> is Liquid Terminal research on
                   prediction markets and <Hip4GoldHighlight>#</Hip4GoldHighlight> coins — not an
                   official Hyperliquid page.
                 </p>
@@ -80,14 +80,14 @@ export function Hip4InfoApiChapter() {
             <Hip4DocLead className="text-xs">
               Each card below is one <code className="font-mono text-[11px]">type</code> in the JSON
               body (GitBook-style: headers, body table, collapsible example, response tabs). Use the
-              right-hand <strong className="text-white">On this page</strong> menu (desktop) or the
+              right-hand <strong className="text-text-primary">On this page</strong> menu (desktop) or the
               inline chips above to jump.
             </Hip4DocLead>
             <div className="space-y-6">
               {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
                 <div
                   key={spec.id}
-                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                  className="rounded-lg border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
                 >
                   <Hip4ApiRestEndpointDoc spec={spec} />
                 </div>
@@ -146,7 +146,7 @@ export function Hip4InfoApiChapter() {
               {HIP4_WS_EXAMPLES.map((spec) => (
                 <div
                   key={spec.id}
-                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                  className="rounded-lg border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
                 >
                   <Hip4ApiWsEndpointDoc spec={spec} />
                 </div>

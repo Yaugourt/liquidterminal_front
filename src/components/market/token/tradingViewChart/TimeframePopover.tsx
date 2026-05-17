@@ -40,8 +40,8 @@ export function TimeframePopover({
           className={`relative ml-0.5 flex items-center gap-0.5 rounded-md px-2 py-0.5 text-[10.5px] font-semibold tabular-nums transition-colors ${triggerLabel
             ? "bg-brand-accent/15 text-brand-accent ring-1 ring-brand-accent/40"
             : open
-              ? "text-white bg-white/5"
-              : "text-text-secondary hover:text-white"
+              ? "text-text-primary bg-white/5"
+              : "text-text-secondary hover:text-text-primary"
             }`}
         >
           {triggerLabel ? <span>{triggerLabel}</span> : <span>···</span>}
@@ -70,7 +70,7 @@ export function TimeframePopover({
                       onClick={() => onSelect(t)}
                       className={`relative rounded-md px-2 py-1 text-[11px] font-semibold tabular-nums transition-colors ${isActive
                         ? "bg-brand-accent/15 text-brand-accent ring-1 ring-brand-accent/40"
-                        : "text-text-secondary hover:bg-white/5 hover:text-white"
+                        : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
                         }`}
                     >
                       {t}

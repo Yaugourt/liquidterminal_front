@@ -54,7 +54,7 @@ export function ProjectTab({
           value={formData.name}
           onChange={(e) => updateField('name', e.target.value)}
           placeholder="My Awesome HyperLiquid Tool"
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
       </div>
       
@@ -66,7 +66,7 @@ export function ProjectTab({
           onChange={(e) => updateField('description', e.target.value)}
           placeholder="Describe your project..."
           rows={4}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.description.length >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.description.length >= 100 
@@ -100,7 +100,7 @@ export function ProjectTab({
             value={formData.githubUrl}
             onChange={(e) => updateField('githubUrl', e.target.value)}
             placeholder="https://github.com/username/repo"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
         
@@ -111,7 +111,7 @@ export function ProjectTab({
             value={formData.websiteUrl}
             onChange={(e) => updateField('websiteUrl', e.target.value)}
             placeholder="https://example.com"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ export function ProjectTab({
           value={formData.demoUrl}
           onChange={(e) => updateField('demoUrl', e.target.value)}
           placeholder="https://demo.example.com"
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
       </div>
       
@@ -135,7 +135,7 @@ export function ProjectTab({
             value={formData.discordContact}
             onChange={(e) => updateField('discordContact', e.target.value)}
             placeholder="username#1234"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
         
@@ -146,7 +146,7 @@ export function ProjectTab({
             value={formData.telegramContact}
             onChange={(e) => updateField('telegramContact', e.target.value)}
             placeholder="@username"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
@@ -158,7 +158,7 @@ export function ProjectTab({
         {/* Logo */}
         <div>
           <label htmlFor="logo-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-text-primary hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Logo (max 2MB)</span>
             </div>
@@ -186,7 +186,7 @@ export function ProjectTab({
         {/* Banner */}
         <div>
           <label htmlFor="banner-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-text-primary hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Banner (max 5MB)</span>
             </div>
@@ -214,7 +214,7 @@ export function ProjectTab({
         {/* Screenshots */}
         <div>
           <label htmlFor="screenshots-upload" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle w-fit">
+            <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-text-primary hover-subtle w-fit">
               <Upload className="h-4 w-4 text-brand-accent" />
               <span className="text-sm">Upload Screenshots (max 5, 2MB each)</span>
             </div>

@@ -66,13 +66,13 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
                 />
                 <span>Holders</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.holders, format)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Staked</span>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.staked, format)} HYPE
               </span>
             </div>

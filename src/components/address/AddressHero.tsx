@@ -79,10 +79,10 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-brand-accent/20 shadow-inner shadow-black/30"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand-accent/20 shadow-inner shadow-black/30"
               style={{ background: gradient }}
             >
-              <span className="text-[11px] font-bold uppercase tracking-wider text-white/90">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
                 {address.slice(2, 4)}
               </span>
             </div>
@@ -137,7 +137,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                         )}
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="bg-brand-tertiary border border-brand-accent text-white">
+                    <TooltipContent side="top" className="bg-brand-tertiary border border-brand-accent text-text-primary">
                       <p className="px-1 text-xs font-medium">Copied</p>
                     </TooltipContent>
                   </Tooltip>

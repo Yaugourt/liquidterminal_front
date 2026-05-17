@@ -97,7 +97,7 @@ const TwapTabButtons = memo(({
       {/* Header Title */}
       <div className="flex items-center gap-2 mr-4 flex-shrink-0">
         <Zap size={16} className="text-brand-accent" />
-        <span className="text-sm font-semibold text-white">Active Twaps</span>
+        <span className="text-sm font-semibold text-text-primary">Active Twaps</span>
       </div>
 
       {/* Scrollable Tabs */}
@@ -105,7 +105,7 @@ const TwapTabButtons = memo(({
         {canScrollLeft && (
           <button
             onClick={scrollLeft}
-            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary hover:text-white bg-white/5 rounded-full transition-colors"
+            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary hover:text-text-primary bg-white/5 rounded-full transition-colors"
           >
             <ChevronLeft size={14} />
           </button>
@@ -121,7 +121,7 @@ const TwapTabButtons = memo(({
               onClick={() => setActiveTab(tab.key)}
               className={`flex-shrink-0 px-3 py-1.5 rounded-md text-label transition-all whitespace-nowrap border ${activeTab === tab.key
                   ? 'bg-brand-accent/10 border-brand-accent/20 text-brand-accent shadow-sm'
-                  : 'bg-white/5 border-transparent text-text-secondary hover:text-zinc-200 hover:bg-white/10'
+                  : 'bg-white/5 border-transparent text-text-secondary hover:text-text-primary hover:bg-white/10'
                 }`}
             >
               {tab.label}
@@ -132,7 +132,7 @@ const TwapTabButtons = memo(({
         {canScrollRight && (
           <button
             onClick={scrollRight}
-            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary hover:text-white bg-white/5 rounded-full transition-colors"
+            className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-text-secondary hover:text-text-primary bg-white/5 rounded-full transition-colors"
           >
             <ChevronRight size={14} />
           </button>

@@ -29,7 +29,7 @@ export function ProjectInfoSidebar({
         <div className="space-y-6">
             {/* Contact */}
             <Card className="p-6">
-                <h3 className="text-sm font-bold text-white mb-4">Contact</h3>
+                <h3 className="text-sm font-bold text-text-primary mb-4">Contact</h3>
                 <div className="space-y-3">
                     {project.discordContact && (
                         <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export function ProjectInfoSidebar({
 
             {/* Quick Stats */}
             <Card className="p-6">
-                <h3 className="text-sm font-bold text-white mb-4">Project Info</h3>
+                <h3 className="text-sm font-bold text-text-primary mb-4">Project Info</h3>
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
                         <span className="text-text-muted text-xs">Status</span>
@@ -80,7 +80,7 @@ export function ProjectInfoSidebar({
             {/* Actions */}
             {(canEdit || canDelete || canReview) && (
                 <Card className="p-6">
-                    <h3 className="text-sm font-bold text-white mb-4">Manage Project</h3>
+                    <h3 className="text-sm font-bold text-text-primary mb-4">Manage Project</h3>
                     <div className="space-y-3">
                         {canReview && onReview && (
                             <Button

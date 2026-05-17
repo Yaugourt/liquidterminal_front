@@ -55,7 +55,7 @@ export function DeploysTable() {
                 <TableBody>
                     {paginatedDeploys.map((deploy) => (
                         <TableRow key={deploy.hash} className="hover:bg-white/[0.02]">
-                            <TableCell className="text-white font-medium">
+                            <TableCell className="text-text-primary font-medium">
                                 {formatDateTime(deploy.timestamp, dateFormat)}
                             </TableCell>
                             <TableCell className="text-sm">

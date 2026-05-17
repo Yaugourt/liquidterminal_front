@@ -86,7 +86,7 @@ export function CategoryFilter({
         disabled={isLoading || total === 0}
         className={cn(
           "flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-2.5 text-left transition-all",
-          "bg-brand-secondary/40 backdrop-blur-sm",
+          "bg-brand-secondary/40",
           isOpen
             ? "border-brand-accent/50 shadow-[0_0_15px_-3px_rgba(131,233,255,0.15)]"
             : "border-border-subtle hover:border-border-hover",
@@ -95,7 +95,7 @@ export function CategoryFilter({
       >
         <span className="flex items-center gap-2 min-w-0">
           <Filter className="h-4 w-4 shrink-0 text-brand-accent" />
-          <span className="truncate text-sm font-medium text-white">
+          <span className="truncate text-sm font-medium text-text-primary">
             {getButtonText()}
           </span>
         </span>
@@ -118,7 +118,7 @@ export function CategoryFilter({
       {isOpen && !isLoading && total > 0 && (
         <div
           className={cn(
-            "absolute top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-subtle",
+            "absolute top-full z-50 mt-2 w-full overflow-hidden rounded-lg border border-border-subtle",
             "bg-gradient-to-br from-brand-secondary/95 via-brand-secondary/90 to-brand-main/95",
             "shadow-xl shadow-black/30 backdrop-blur-md",
           )}
@@ -127,7 +127,7 @@ export function CategoryFilter({
           <button
             type="button"
             onClick={handleSelectAll}
-            className="flex w-full items-center justify-between gap-2 border-b border-border-subtle px-4 py-3 text-left text-text-secondary transition-colors hover:bg-white/5 hover:text-white"
+            className="flex w-full items-center justify-between gap-2 border-b border-border-subtle px-4 py-3 text-left text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
           >
             <span className="text-xs font-semibold uppercase tracking-wider">
               {allSelected ? "Deselect all" : "Select all"}
@@ -159,7 +159,7 @@ export function CategoryFilter({
                     isActive && "bg-white/[0.03]",
                   )}
                 >
-                  <span className="truncate text-sm font-medium text-text-secondary transition-colors group-hover:text-white">
+                  <span className="truncate text-sm font-medium text-text-secondary transition-colors group-hover:text-text-primary">
                     {category.name}
                   </span>
                   <span

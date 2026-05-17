@@ -42,9 +42,9 @@ export function PriorityFeesLeaderboardCard({
   onRetry,
 }: PriorityFeesLeaderboardCardProps) {
   return (
-    <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md h-full flex flex-col">
+    <Card className="p-5 border-border-subtle bg-brand-secondary/40 h-full flex flex-col">
       <div className="mb-4">
-        <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
+        <h2 className="font-inter text-lg font-semibold text-text-primary tracking-tight">
           Top 11 payers
         </h2>
         <p className="text-xs text-text-muted mt-1">
@@ -54,7 +54,7 @@ export function PriorityFeesLeaderboardCard({
       </div>
 
       {error && (
-        <div className="mb-3 rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-col gap-2">
+        <div className="mb-3 rounded-lg border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-col gap-2">
           <span>{error.message}</span>
           {onRetry && (
             <button
@@ -68,7 +68,7 @@ export function PriorityFeesLeaderboardCard({
         </div>
       )}
 
-      <div className="flex-1 min-h-[240px] rounded-xl border border-border-subtle overflow-hidden">
+      <div className="flex-1 min-h-[240px] rounded-lg border border-border-subtle overflow-hidden">
         {isLoading && entries.length === 0 ? (
           <div className="flex h-[240px]">
             <LoadingState message="Loading leaderboard…" size="sm" withCard={false} />
@@ -122,7 +122,7 @@ export function PriorityFeesLeaderboardCard({
                         <span className="text-text-muted">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-white tabular-nums">
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-primary tabular-nums">
                       {formatPriorityFeeNumber(rowScore(row))}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-right text-sm text-text-secondary tabular-nums">

@@ -90,7 +90,7 @@ function AuroraBarTooltip({
           className="h-1.5 w-1.5 rounded-full"
           style={{ background: color, boxShadow: `0 0 8px ${hexToRgba(color, 0.45)}` }}
         />
-        <span className="font-semibold text-white tabular-nums">
+        <span className="font-semibold text-text-primary tabular-nums">
           {formatValue ? formatValue(value) : value.toLocaleString()}
         </span>
       </div>

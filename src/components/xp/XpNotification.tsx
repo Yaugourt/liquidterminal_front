@@ -49,7 +49,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
               <TrendingUp className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
-              <p className="font-bold text-white">
+              <p className="font-bold text-text-primary">
                 +{totalXp} XP
               </p>
               <p className="text-sm text-text-secondary">

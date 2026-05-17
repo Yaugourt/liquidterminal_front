@@ -18,7 +18,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
     const StatusIcon = config.icon;
 
     return (
-        <div className="p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors">
+        <div className="p-3 bg-brand-dark rounded-lg border border-border-subtle hover:border-border-hover transition-colors">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -26,7 +26,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                             href={resource.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm font-medium text-white hover:text-brand-accent transition-colors truncate"
+                            className="text-sm font-medium text-text-primary hover:text-brand-accent transition-colors truncate"
                         >
                             {isLoading ? "Loading..." : (preview?.title || resource.url)}
                         </a>

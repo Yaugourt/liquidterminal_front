@@ -41,7 +41,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
 
   // Aurora pill for the Line/Bar chart-type toggle
   const ChartTypeToggle = () => (
-    <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+    <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
       {(['line', 'bar'] as const).map((type) => {
         const isActive = chartType === type;
         return (
@@ -59,7 +59,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             )}
             <span
               className={`relative z-10 flex items-center gap-1 capitalize ${
-                isActive ? "text-white" : "text-text-secondary hover:text-white"
+                isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {type === 'line' ? <TrendingUp size={12} /> : <BarChart3 size={12} />}
@@ -75,7 +75,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
   const BarCountSelector = () => {
     const barCounts = [7, 10, 15, 30, 60, 90];
     return (
-      <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+      <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
         {barCounts.map((count) => {
           const isActive = barCount === count;
           return (
@@ -93,7 +93,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
               )}
               <span
                 className={`relative z-10 ${
-                  isActive ? "text-white" : "text-text-secondary hover:text-white"
+                  isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {count}

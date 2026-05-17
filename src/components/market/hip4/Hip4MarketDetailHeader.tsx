@@ -29,7 +29,7 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
     <div className="space-y-3">
       <Link
         href="/market/hip4"
-        className="inline-flex items-center gap-1.5 text-[11px] text-text-secondary hover:text-white transition-colors"
+        className="inline-flex items-center gap-1.5 text-[11px] text-text-secondary hover:text-text-primary transition-colors"
       >
         <ArrowLeft className="h-3 w-3" />
         HIP-4 Markets
@@ -37,7 +37,7 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
 
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-xl font-semibold text-white leading-snug">{title}</h1>
+          <h1 className="text-xl font-semibold text-text-primary leading-snug">{title}</h1>
           <div className="flex flex-wrap items-center gap-3 text-[11px] text-text-secondary">
             {countdown && (
               <span className="inline-flex items-center gap-1">
@@ -76,7 +76,7 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
               <TrendingUp className="h-3 w-3" />
               <span>Volume</span>
             </div>
-            <div className="text-sm font-semibold text-white tabular-nums">
+            <div className="text-sm font-semibold text-text-primary tabular-nums">
               {compactUsd(market.total_volume)}
             </div>
           </div>

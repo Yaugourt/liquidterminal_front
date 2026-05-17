@@ -27,10 +27,10 @@ export function Hip4MarketCategoryTabs({ value, onChange, counts }: Hip4MarketCa
             type="button"
             onClick={() => onChange(c)}
             whileTap={{ scale: 0.97 }}
-            className={`group relative flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors ${
+            className={`group relative flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
               isActive
                 ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
-                : "border-border-subtle bg-transparent text-text-secondary hover:border-border-hover hover:text-white"
+                : "border-border-subtle bg-transparent text-text-secondary hover:border-border-hover hover:text-text-primary"
             }`}
           >
             <span>{CATEGORY_LABELS[c]}</span>

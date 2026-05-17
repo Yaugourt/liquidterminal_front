@@ -37,7 +37,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
           {displayName !== "—" ? displayName.charAt(0).toUpperCase() : "?"}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-medium text-sm truncate">{displayName}</p>
+          <p className="text-text-primary font-medium text-sm truncate">{displayName}</p>
           <p className="text-text-muted text-xs font-mono truncate">
             {selectedAddress ? `${selectedAddress.slice(0, 10)}…` : "—"}
           </p>
@@ -73,7 +73,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
                     {name !== "—" ? name.charAt(0).toUpperCase() : "?"}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-white text-sm truncate">{name}</p>
+                    <p className="text-text-primary text-sm truncate">{name}</p>
                     <p className="text-text-muted text-xs font-mono">{b.address.slice(0, 12)}…</p>
                   </div>
                 </button>

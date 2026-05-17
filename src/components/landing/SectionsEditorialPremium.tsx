@@ -48,7 +48,7 @@ export function SectionsEditorialPremium() {
       >
         <Link href="/" className="flex items-center gap-2.5 min-w-0 shrink">
           <Image src="/logo.svg" alt="Liquid Terminal" width={32} height={32} className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" />
-          <span className="font-inter text-base sm:text-lg text-white tracking-tight whitespace-nowrap truncate">
+          <span className="font-inter text-base sm:text-lg text-text-primary tracking-tight whitespace-nowrap truncate">
             Liquid <span className="text-brand-accent">Terminal</span>
           </span>
         </Link>
@@ -67,7 +67,7 @@ export function SectionsEditorialPremium() {
           ))}
           <Link
             href="/dashboard"
-            className="hidden sm:inline-flex group ml-1 sm:ml-2 items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-accent/10 border border-brand-accent/25 text-white font-medium text-sm hover:bg-brand-accent/15 hover:border-brand-accent/40 transition-all duration-200"
+            className="hidden sm:inline-flex group ml-1 sm:ml-2 items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-accent/10 border border-brand-accent/25 text-text-primary font-medium text-sm hover:bg-brand-accent/15 hover:border-brand-accent/40 transition-all duration-200"
           >
             <span className="whitespace-nowrap">Open App</span>
             <ArrowRight className="h-4 w-4 text-brand-accent group-hover:translate-x-0.5 transition-transform" />
@@ -89,7 +89,7 @@ export function SectionsEditorialPremium() {
             <HeroFadeIn
               as="h2"
               delay={0.35}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-inter font-normal text-white leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-inter font-normal text-text-primary leading-tight mb-6"
             >
               The Terminal to house all{" "}
               <span className="text-brand-accent drop-shadow-[0_0_20px_rgba(131,233,255,0.3)]">Hyper</span>
@@ -105,16 +105,16 @@ export function SectionsEditorialPremium() {
             <HeroFadeIn delay={0.65} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Link
                 href="#why"
-                className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 backdrop-blur-md border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
+                className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
               >
                 <span className="font-semibold text-white">Explore the Terminal</span>
                 <ArrowDown className="h-5 w-5 text-brand-accent group-hover:translate-y-0.5 transition-transform" />
               </Link>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/[0.12] hover:border-white/25 hover:bg-white/10 transition-all duration-300"
+                className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-white/5 border border-white/[0.12] hover:border-white/25 hover:bg-white/10 transition-all duration-300"
               >
-                <span className="font-semibold text-white">Open App</span>
+                <span className="font-semibold text-text-primary">Open App</span>
                 <ArrowRight className="h-5 w-5 text-brand-accent" />
               </Link>
             </HeroFadeIn>
@@ -136,7 +136,7 @@ export function SectionsEditorialPremium() {
             <p className="text-brand-accent text-xs font-semibold uppercase tracking-[0.25em] mb-3 font-inter">
               Why Liquid Terminal
             </p>
-            <h2 className="font-inter text-3xl md:text-4xl lg:text-[2.75rem] text-white leading-tight max-w-2xl mx-auto">
+            <h2 className="font-inter text-3xl md:text-4xl lg:text-[2.75rem] text-text-primary leading-tight max-w-2xl mx-auto">
               One terminal. Zero noise.
             </h2>
             <p className="mt-4 text-text-secondary text-base max-w-xl mx-auto">
@@ -159,7 +159,7 @@ export function SectionsEditorialPremium() {
                   <div
                     className={[
                       "rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 h-full",
-                      "bg-brand-secondary/40 backdrop-blur-md border border-white/[0.06]",
+                      "bg-brand-secondary/40 border border-white/[0.06]",
                       "hover:border-brand-accent/20 transition-all duration-300",
                       "hover:shadow-[0_0_40px_-8px_rgba(131,233,255,0.04)]",
                     ].join(" ")}
@@ -201,7 +201,7 @@ export function SectionsEditorialPremium() {
                       </div>
                     </div>
 
-                    <h3 className="text-lg font-semibold text-white mb-3 font-inter leading-snug">
+                    <h3 className="text-lg font-semibold text-text-primary mb-3 font-inter leading-snug">
                       {reason.title}
                     </h3>
                     <p className="text-text-secondary text-sm leading-relaxed mb-5 font-inter">
@@ -236,7 +236,7 @@ export function SectionsEditorialPremium() {
       <section id="see-it" className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center mb-10 sm:mb-14 md:mb-20">
           <p className="text-brand-accent text-sm font-semibold uppercase tracking-[0.2em] mb-4">See it in action</p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-inter text-white max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-inter text-text-primary max-w-2xl mx-auto">
             Built for <span className="text-brand-accent">speed</span> and <span className="text-brand-gold">clarity</span>
           </h2>
         </FadeIn>
@@ -246,13 +246,13 @@ export function SectionsEditorialPremium() {
             <FadeIn
               key={shot.title}
               delay={index * 0.1}
-              className={`group rounded-2xl overflow-hidden border ${shot.border} bg-brand-secondary/40 backdrop-blur-md transition-all duration-300 hover:border-brand-accent/40 hover:shadow-[0_0_40px_rgba(131,233,255,0.08)]`}
+              className={`group rounded-2xl overflow-hidden border ${shot.border} bg-brand-secondary/40 transition-all duration-300 hover:border-brand-accent/40 hover:shadow-[0_0_40px_rgba(131,233,255,0.08)]`}
             >
               <div className="aspect-[4/3] flex flex-col items-center justify-center p-5 sm:p-6 md:p-8">
-                <div className="w-16 h-16 mb-4 rounded-xl bg-white/5 border border-white/[0.08] flex items-center justify-center">
+                <div className="w-16 h-16 mb-4 rounded-lg bg-white/5 border border-white/[0.08] flex items-center justify-center">
                   <span className="text-2xl text-brand-accent/60">📊</span>
                 </div>
-                <p className="text-white font-medium text-sm">{shot.title}</p>
+                <p className="text-text-primary font-medium text-sm">{shot.title}</p>
                 <p className="text-text-secondary text-xs mt-1">{shot.subtitle}</p>
               </div>
             </FadeIn>
@@ -264,7 +264,7 @@ export function SectionsEditorialPremium() {
       <section id="get-started" className="relative py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center max-w-2xl mx-auto">
           <p className="text-brand-accent text-sm font-semibold uppercase tracking-[0.2em] mb-4">Get started</p>
-          <h2 className="text-3xl md:text-4xl font-inter text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-inter text-text-primary mb-6">
             Your <span className="text-brand-accent">terminal</span> awaits
           </h2>
           <p className="text-text-secondary text-lg mb-10">
@@ -274,14 +274,14 @@ export function SectionsEditorialPremium() {
           <FadeIn delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               href="/dashboard"
-              className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 backdrop-blur-md border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
+              className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
             >
               <span className="font-semibold text-white">Open the Terminal</span>
               <ArrowRight className="h-5 w-5 text-brand-accent group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/market/spot"
-              className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl border border-white/[0.08] text-white font-medium hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl border border-white/[0.08] text-text-primary font-medium hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all duration-300"
             >
               <TrendingUp className="h-5 w-5" />
               <span>Explore the Market</span>

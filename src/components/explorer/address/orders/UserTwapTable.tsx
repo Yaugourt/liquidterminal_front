@@ -22,7 +22,7 @@ const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const value = realTime ? realTime.remainingValue : twap.value;
 
   return (
-    <TableCell className="py-3 px-4 text-sm text-white font-medium w-[150px]">
+    <TableCell className="py-3 px-4 text-sm text-text-primary font-medium w-[150px]">
       ${formatNumber(value, format)}
     </TableCell>
   );
@@ -37,7 +37,7 @@ const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
 
   return (
-    <TableCell className="py-3 px-4 text-sm text-white w-[180px]">
+    <TableCell className="py-3 px-4 text-sm text-text-primary w-[180px]">
       {formatNumber(displayAmount, format)} {twap.token}
     </TableCell>
   );
@@ -99,13 +99,13 @@ const ProgressionCellComponent = ({ twap, realTimeData }: { twap: TwapTableData,
   };
 
   return (
-    <TableCell className="py-3 px-4 text-sm text-white w-[170px]">
+    <TableCell className="py-3 px-4 text-sm text-text-primary w-[170px]">
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between w-[120px]">
           <span className="text-xs text-white/50 font-inter">
             {getRemainingTime(twap)}
           </span>
-          <span className="text-xs text-white">
+          <span className="text-xs text-text-primary">
             {roundedProgression.toFixed(1)}%
           </span>
         </div>
@@ -127,7 +127,7 @@ ProgressionCell.displayName = 'ProgressionCell';
 
 // Composant mémorisé pour la cellule Type (statique)
 const TypeCellComponent = ({ twap }: { twap: TwapTableData }) => (
-  <TableCell className="py-3 px-4 text-sm text-white w-[80px]">
+  <TableCell className="py-3 px-4 text-sm text-text-primary w-[80px]">
     <span
       className={`px-2 py-1 rounded text-xs font-medium ${twap.type === 'Buy'
           ? 'bg-emerald-500/10 text-emerald-400'
@@ -228,7 +228,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
                 >
                   <div className="flex flex-col items-center justify-center text-center">
                     <Database className="w-10 h-10 mb-3 text-brand-accent/30" />
-                    <p className="text-white text-sm mb-1">No active TWAP orders found</p>
+                    <p className="text-text-primary text-sm mb-1">No active TWAP orders found</p>
                     <p className="text-white/50 text-xs">Come later</p>
                   </div>
                 </TableCell>

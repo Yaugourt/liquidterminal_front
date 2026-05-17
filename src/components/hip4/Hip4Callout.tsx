@@ -7,7 +7,7 @@ const variants = {
     wrap: "border-red-500/25 bg-red-500/5",
     icon: AlertTriangle,
     iconClass: "text-red-400",
-    titleClass: "text-white",
+    titleClass: "text-text-primary",
   },
   emphasis: {
     wrap: "border-brand-gold/25 bg-brand-gold/[0.06]",

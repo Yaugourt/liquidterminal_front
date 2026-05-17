@@ -68,7 +68,7 @@ export function VaultEcosystemChart() {
           <span className="h-1 w-1 rounded-full bg-brand-accent" />
           Ecosystem Overview
         </div>
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {TABS.map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -86,7 +86,7 @@ export function VaultEcosystemChart() {
                 )}
                 <span
                   className={`relative z-10 ${
-                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   {tab}
@@ -138,7 +138,7 @@ export function VaultEcosystemChart() {
                 return (
                   <div key={vault.summary.vaultAddress} className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-white font-medium truncate max-w-[180px] tabular-nums">
+                      <span className="text-xs text-text-primary font-medium truncate max-w-[180px] tabular-nums">
                         {i + 1}. {vault.summary.name}
                       </span>
                       <span className="text-xs text-text-secondary ml-2 shrink-0 tabular-nums">

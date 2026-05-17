@@ -62,7 +62,7 @@ export const StakingLineChart = memo(function StakingLineChart({
                 />
                 <span>Tokens</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.totalTokens, format)} HYPE
               </span>
             </div>
@@ -74,7 +74,7 @@ export const StakingLineChart = memo(function StakingLineChart({
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Users</span>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {Math.round(data.uniqueUsers)}
               </span>
             </div>

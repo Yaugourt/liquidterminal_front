@@ -154,7 +154,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
             {/* Category header */}
             <div className="mb-5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <h2 className="truncate text-lg font-semibold tracking-tight text-white">
+                <h2 className="truncate text-lg font-semibold tracking-tight text-text-primary">
                   {category.title}
                 </h2>
                 <span className="shrink-0 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-gold">
@@ -184,7 +184,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                   <Button
                     onClick={() => handleShowLess(category.id)}
                     variant="outline"
-                    className="border-border-subtle bg-brand-dark/40 text-text-secondary hover:border-border-hover hover:bg-white/5 hover:text-white"
+                    className="border-border-subtle bg-brand-dark/40 text-text-secondary hover:border-border-hover hover:bg-white/5 hover:text-text-primary"
                   >
                     Show less
                   </Button>

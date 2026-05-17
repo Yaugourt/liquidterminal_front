@@ -101,8 +101,8 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
             hidePageNavigation={true}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full border border-border-subtle rounded-xl bg-white/[0.02]">
-            <span className="text-white text-sm font-medium mb-1">Coming Soon</span>
+          <div className="flex flex-col items-center justify-center h-full border border-border-subtle rounded-lg bg-white/[0.02]">
+            <span className="text-text-primary text-sm font-medium mb-1">Coming Soon</span>
             <span className="text-text-muted text-xs">Perp past auctions will be available soon</span>
           </div>
         )}

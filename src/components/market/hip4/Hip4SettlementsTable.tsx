@@ -43,7 +43,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "market",
       header: "Market",
       accessor: (row) => (
-        <span className="text-xs font-semibold text-white line-clamp-1">
+        <span className="text-xs font-semibold text-text-primary line-clamp-1">
           {row.question_name ?? row.coin ?? `#${row.outcome_id}`}
         </span>
       ),

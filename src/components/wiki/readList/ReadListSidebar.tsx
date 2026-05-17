@@ -33,7 +33,7 @@ interface ReadListSidebarProps {
 }
 
 const ReadListSkeleton = () => (
-  <div className="p-3 rounded-xl animate-pulse">
+  <div className="p-3 rounded-lg animate-pulse">
     <div className="flex items-start gap-3">
       <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
       <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
@@ -84,10 +84,10 @@ function SortableReadListItem({
       animate={{ opacity: isDragging ? 0.5 : 1, x: 0 }}
       exit={{ opacity: 0, x: -12 }}
       onClick={() => onSelect(list.id)}
-      className={`p-3 rounded-xl cursor-pointer transition-colors group ${isActive
+      className={`p-3 rounded-lg cursor-pointer transition-colors group ${isActive
         ? "bg-brand-accent/10 border border-brand-accent/25"
         : "hover:bg-white/[0.03] border border-transparent hover:border-border-subtle"
-        } ${isDragging ? 'shadow-xl shadow-black/40 z-50' : ''}`}
+        } ${isDragging ? 'z-50' : ''}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-2.5 flex-1 min-w-0">
@@ -106,7 +106,7 @@ function SortableReadListItem({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h3 className={`font-medium text-sm truncate ${isActive ? "text-brand-accent" : "text-white"}`}>
+              <h3 className={`font-medium text-sm truncate ${isActive ? "text-brand-accent" : "text-text-primary"}`}>
                 {list.name}
               </h3>
               {list.isPublic && (
@@ -183,13 +183,13 @@ export function ReadListSidebar({
   const totalItems = readLists?.reduce((acc, l) => acc + (l.itemsCount || 0), 0) ?? 0;
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3.5 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-white font-semibold text-sm">Read Lists</h2>
+              <h2 className="text-text-primary font-semibold text-sm">Read Lists</h2>
               {readLists && readLists.length > 0 && (
                 <span className="text-label bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-md">
                   {readLists.length}
@@ -227,7 +227,7 @@ export function ReadListSidebar({
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-10"
             >
-              <div className="w-12 h-12 mx-auto mb-3 bg-brand-accent/10 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 mx-auto mb-3 bg-brand-accent/10 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-brand-accent" />
               </div>
               <p className="text-text-muted text-sm font-medium">No read lists yet</p>

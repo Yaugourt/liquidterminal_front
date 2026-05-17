@@ -28,7 +28,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
   return (
     <div className="mb-3 p-2">
       <div className="flex items-center gap-3 mb-1">
-        <span className="text-white text-xs tracking-wide font-medium uppercase">Address</span>
+        <span className="text-text-primary text-xs tracking-wide font-medium uppercase">Address</span>
         {alias && !aliasLoading && (
           <div className="flex items-center gap-2">
             <span className="text-brand-accent/20 text-xs">•</span>
@@ -62,7 +62,7 @@ export function AddressHeader({ address }: AddressHeaderProps) {
                 <Copy size={16} className="text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right" className="bg-brand-tertiary border border-brand-accent text-white">
+            <TooltipContent side="right" className="bg-brand-tertiary border border-brand-accent text-text-primary">
               <p className="text-xs font-medium px-1">Copied!</p>
             </TooltipContent>
           </Tooltip>

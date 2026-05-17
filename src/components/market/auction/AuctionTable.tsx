@@ -113,7 +113,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
         <EmptyState
           title="Coming Soon"
           description="Perpetual auctions table will be available soon."
@@ -125,21 +125,21 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
 
   if (isLoading) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
         <LoadingState message="Loading auctions..." size="lg" withCard={false} />
       </div>
     );
   }
   if (error) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
         <ErrorState title="Error loading auctions" message={error.message} withCard={false} />
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
       <div className="overflow-x-auto scrollbar-brand">
         <Table>
           <TableHeader>
@@ -168,23 +168,23 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
             ) : (
               auctions.map((auction) => (
                 <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">
-                  <TableCell className="text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
-                  <TableCell className="text-white text-sm font-medium text-left">{auction.name}</TableCell>
+                  <TableCell className="text-text-primary text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
+                  <TableCell className="text-text-primary text-sm font-medium text-left">{auction.name}</TableCell>
                   <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
+                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent text-xs hover:text-text-primary transition-colors">{formatAddress(auction.deployer)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-left">
                     <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
+                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent text-xs hover:text-text-primary transition-colors">{formatAddress(auction.tokenId)}</Link>
                       <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
                     </div>
                   </TableCell>
-                  <TableCell className="text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
-                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
-                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="text-text-primary text-sm text-center w-[10%]">{auction.index}</TableCell>
+                  <TableCell className="text-text-primary text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
+                  <TableCell className="text-text-primary text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
                 </TableRow>
               ))
             )}

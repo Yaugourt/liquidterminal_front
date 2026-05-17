@@ -110,7 +110,7 @@ export const StatsCard = memo(function StatsCard({
         <div className={cn("flex items-start", ds.iconGap)}>
             {icon ? (
                 <div className={cn(
-                    "shrink-0 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
+                    "shrink-0 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110",
                     ds.iconBox,
                     iconClassName ?? "bg-brand-accent/10"
                 )}>
@@ -136,7 +136,7 @@ export const StatsCard = memo(function StatsCard({
                             <span
                                 className={cn(
                                     valueClassName ??
-                                        cn(ds.valueSize, "text-white font-bold tracking-tight tabular-nums")
+                                        cn(ds.valueSize, "text-text-primary font-bold tracking-tight tabular-nums")
                                 )}
                             >
                                 {value}

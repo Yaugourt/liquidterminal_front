@@ -61,7 +61,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
     return (
       <div className={cn(
         "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
+        "bg-brand-secondary/60",
         "border border-rose-500/20",
         className
       )}>
@@ -95,7 +95,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
     return (
       <div className={cn(
         "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
+        "bg-brand-secondary/60",
         "border border-brand-telegram/30",
         className
       )}>
@@ -105,7 +105,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-bold text-white">Link Telegram</h3>
+            <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
             <p className="text-xs text-text-muted">Waiting for confirmation...</p>
           </div>
 
@@ -122,12 +122,12 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         </div>
 
         {/* Instructions */}
-        <div className="p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
+        <div className="p-3 mb-4 rounded-lg bg-brand-dark border border-border-subtle">
           <div className="flex items-center gap-2 mb-2">
             {isPolling && (
               <InlineSpinner className="text-brand-telegram" />
             )}
-            <span className="text-sm text-white font-medium">
+            <span className="text-sm text-text-primary font-medium">
               Click the button below to open Telegram
             </span>
           </div>
@@ -155,7 +155,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           <Button
             variant="outline"
             onClick={cancelLinking}
-            className="border-white/10 text-text-secondary hover:text-white hover:bg-white/5"
+            className="border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5"
           >
             <XCircle className="h-4 w-4" />
           </Button>
@@ -169,7 +169,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
     return (
       <div className={cn(
         "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
+        "bg-brand-secondary/60",
         "border border-emerald-500/20",
         className
       )}>
@@ -180,7 +180,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white">Telegram Linked</h3>
+                <h3 className="text-sm font-bold text-text-primary">Telegram Linked</h3>
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               </div>
               <p className="text-xs text-emerald-400">
@@ -214,7 +214,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-brand-secondary/60 backdrop-blur-md",
+      "bg-brand-secondary/60",
       "border border-border-subtle hover:border-border-hover transition-all",
       className
     )}>
@@ -224,7 +224,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Link Telegram</h3>
+            <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
             <p className="text-xs text-text-muted">
               Get notifications and alerts
             </p>

@@ -493,7 +493,7 @@ export function TradingViewChart({
               <span
                 className={`relative z-10 ${selectedTimeframe === t
                   ? "text-brand-accent"
-                  : "text-text-secondary hover:text-white"
+                  : "text-text-secondary hover:text-text-primary"
                   }`}
               >
                 {t}
@@ -522,7 +522,7 @@ export function TradingViewChart({
             className="appearance-none bg-brand-dark border border-border-subtle rounded-lg pl-3 pr-8 py-1.5 text-xs font-semibold tabular-nums text-brand-accent focus:outline-none focus:border-brand-accent/60"
           >
             {TIMEFRAMES.map((t) => (
-              <option key={t} value={t} className="bg-brand-dark text-white">
+              <option key={t} value={t} className="bg-brand-dark text-text-primary">
                 {t}
               </option>
             ))}
@@ -555,7 +555,7 @@ export function TradingViewChart({
               <span
                 className={`relative z-10 ${priceScaleMode === opt.key
                   ? "text-brand-accent"
-                  : "text-text-secondary hover:text-white"
+                  : "text-text-secondary hover:text-text-primary"
                   }`}
               >
                 {opt.label}
@@ -576,7 +576,7 @@ export function TradingViewChart({
                 className="flex items-center gap-3 min-w-0"
               >
                 <span>
-                  O <span className="text-white tabular-nums">{formatPrice(hover.o)}</span>
+                  O <span className="text-text-primary tabular-nums">{formatPrice(hover.o)}</span>
                 </span>
                 <span>
                   H <span className="text-emerald-400 tabular-nums">{formatPrice(hover.h)}</span>
@@ -585,7 +585,7 @@ export function TradingViewChart({
                   L <span className="text-rose-400 tabular-nums">{formatPrice(hover.l)}</span>
                 </span>
                 <span>
-                  C <span className="text-white tabular-nums">{formatPrice(hover.c)}</span>
+                  C <span className="text-text-primary tabular-nums">{formatPrice(hover.c)}</span>
                 </span>
                 <span>
                   V <span className="text-brand-accent tabular-nums">{formatCompactUsd(hover.v)}</span>
@@ -617,7 +617,7 @@ export function TradingViewChart({
       <div className="relative flex-1 min-h-0">
         {/* Overlay states */}
         {(isLoading || error || hasNoData) && (
-          <div className="absolute inset-0 bg-brand-secondary/60 backdrop-blur-md z-10 flex items-center justify-center">
+          <div className="absolute inset-0 bg-brand-secondary/60 z-10 flex items-center justify-center">
             {error ? (
               <ChartError
                 message={typeof error === "string" ? error : "Failed to load chart data"}

@@ -21,7 +21,7 @@ export function ToolbarStat({ label, value, tone }: ToolbarStatProps) {
       <span className="text-[9px] font-semibold uppercase tracking-wider text-text-muted">
         {label}
       </span>
-      <span className="text-[11px] font-semibold text-white tabular-nums">{value}</span>
+      <span className="text-[11px] font-semibold text-text-primary tabular-nums">{value}</span>
     </div>
   );
 }

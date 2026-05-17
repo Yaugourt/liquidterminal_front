@@ -19,7 +19,7 @@ export function PriceChange({
   const getColorClass = (change: number) => {
     if (change > 0) return "text-emerald-500"; // Vert
     if (change < 0) return "text-rose-500"; // Rouge
-    return "text-white";
+    return "text-text-primary";
   };
 
   // Formate le nombre avec le signe et 2 décimales
@@ -53,7 +53,7 @@ export function PriceChange({
 export function getPriceChangeColor(value: number): string {
   if (value > 0) return "text-emerald-500"; // Vert
   if (value < 0) return "text-rose-500"; // Rouge
-  return "text-white";
+  return "text-text-primary";
 }
 
 export function formatPriceChange(value: number, decimals: number = 2): string {

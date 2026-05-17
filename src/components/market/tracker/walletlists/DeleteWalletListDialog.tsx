@@ -51,7 +51,7 @@ export function DeleteWalletListDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Wallet List</DialogTitle>
-          <DialogDescription className="text-white">
+          <DialogDescription className="text-text-primary">
             Are you sure you want to delete this wallet list?
           </DialogDescription>
         </DialogHeader>
@@ -64,7 +64,7 @@ export function DeleteWalletListDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border-hover text-white hover:bg-white/5"
+            className="border-border-hover text-text-primary hover:bg-white/5"
           >
             Cancel
           </Button>

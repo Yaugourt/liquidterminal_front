@@ -119,7 +119,7 @@ export function Hip4GlassPanel({
     <div
       id={id}
       className={cn(
-        "rounded-xl border border-border-subtle bg-brand-secondary/40 p-5 sm:p-6 scroll-mt-28",
+        "rounded-lg border border-border-subtle bg-brand-secondary/40 p-5 sm:p-6 scroll-mt-28",
         className
       )}
     >

@@ -93,7 +93,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
   const StatusIcon = resourceStatusConfig[status].icon;
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 group overflow-hidden relative">
+    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all group overflow-hidden relative">
       {showStatus && status !== 'APPROVED' && (
         <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${resourceStatusConfig[status].color}`}>
           <StatusIcon className="w-3 h-3" />
@@ -153,7 +153,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
 
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-medium text-white line-clamp-2 group-hover:text-brand-accent transition-colors">
+              <h3 className="text-sm font-medium text-text-primary line-clamp-2 group-hover:text-brand-accent transition-colors">
                 {preview?.title || resource.title}
               </h3>
               <ExternalLink size={14} className="text-brand-accent mt-0.5 flex-shrink-0" />

@@ -21,7 +21,7 @@ export function StakingTabButtons({ activeSubTab, onSubTabChange }: StakingTabBu
           className={`px-3 py-1 rounded-sm text-xs font-medium transition-colors ${
             activeSubTab === tab.key
               ? 'bg-brand-accent text-brand-tertiary shadow-sm'
-              : 'text-white hover:text-white hover:bg-white/4'
+              : 'text-text-primary hover:text-text-primary hover:bg-white/4'
           }`}
         >
           {tab.label}

@@ -155,7 +155,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                 placeholder="Search wallets..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-8 bg-brand-dark border-border-subtle text-white h-8 rounded-lg"
+                                                className="pl-8 bg-brand-dark border-border-subtle text-text-primary h-8 rounded-lg"
                                                 onClick={(e) => e.stopPropagation()}
                                             />
                                         </div>
@@ -267,7 +267,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             onClick={onExportCSV}
                             size="sm"
                             variant="outline"
-                            className="w-full sm:w-auto border-border-subtle text-white hover:text-white hover:bg-white/5 rounded-lg"
+                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-white/5 rounded-lg"
                         >
                             <Download className="mr-2 h-4 w-4" />
                             <span className="hidden sm:inline">Export CSV</span>
@@ -281,7 +281,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             onClick={onImportCSV}
                             size="sm"
                             variant="outline"
-                            className="w-full sm:w-auto border-border-subtle text-white hover:text-white hover:bg-white/5 rounded-lg"
+                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-white/5 rounded-lg"
                         >
                             <FileUp className="mr-2 h-4 w-4" />
                             <span className="hidden sm:inline">Import CSV</span>
@@ -306,14 +306,14 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <AlertDialogContent className="bg-brand-secondary border-border-hover rounded-2xl shadow-xl shadow-black/20">
                     <AlertDialogHeader>
-                        <AlertDialogTitle className="text-white">Delete Multiple Wallets</AlertDialogTitle>
+                        <AlertDialogTitle className="text-text-primary">Delete Multiple Wallets</AlertDialogTitle>
                         <AlertDialogDescription className="text-text-secondary">
                             Are you sure you want to delete {selectedWalletIds.size} wallet
                             {selectedWalletIds.size !== 1 ? "s" : ""}? This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="border-border-subtle text-white hover:bg-white/5 rounded-lg">
+                        <AlertDialogCancel className="border-border-subtle text-text-primary hover:bg-white/5 rounded-lg">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction

@@ -15,7 +15,7 @@ function TagGroup({ title, tags }: { title: string; tags: string[] }) {
         {tags.map((t) => (
           <span
             key={t}
-            className="rounded-md border border-border-subtle bg-brand-tertiary/20 px-2 py-1 text-[11px] text-white"
+            className="rounded-md border border-border-subtle bg-brand-tertiary/20 px-2 py-1 text-[11px] text-text-primary"
           >
             {t}
           </span>

@@ -46,7 +46,7 @@ export function EvmRecentBlocksTable() {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-white">Recent EVM Blocks</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Recent EVM Blocks</h3>
         <p className="text-xs text-text-secondary mt-0.5">Latest indexed HyperEVM blocks</p>
       </div>
       <div className="overflow-x-auto">
@@ -90,7 +90,7 @@ export function EvmRecentBlocksTable() {
                   <TableCell className="text-text-secondary text-sm">
                     {formatBlockTime(block.block_time)}
                   </TableCell>
-                  <TableCell className="text-white text-sm">
+                  <TableCell className="text-text-primary text-sm">
                     {block.tx_count}
                   </TableCell>
                 </TableRow>

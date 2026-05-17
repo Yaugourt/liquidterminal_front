@@ -78,7 +78,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
                 />
                 <span>Tokens</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.totalTokens, format)} HYPE
               </span>
             </div>
@@ -90,7 +90,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Users</span>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {Math.round(data.uniqueUsers)}
               </span>
             </div>
@@ -106,7 +106,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
-          <p className="text-white/60 text-sm">Loading unstaking schedule...</p>
+          <p className="text-text-secondary text-sm">Loading unstaking schedule...</p>
         </div>
       </div>
     );
@@ -127,7 +127,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white/60 text-sm">No unstaking scheduled for the next {barCount} days</p>
+          <p className="text-text-secondary text-sm">No unstaking scheduled for the next {barCount} days</p>
         </div>
       </div>
     );

@@ -54,15 +54,15 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
 
         return (
             <div key={key}>
-                <div className="text-xs text-white mb-1 tracking-wide font-medium">
+                <div className="text-xs text-text-primary mb-1 tracking-wide font-medium">
                     {label}
                 </div>
                 <div className={
-                    variation.numericValue !== null 
-                        ? variation.numericValue >= 0 
-                            ? "text-emerald-400 text-sm font-medium tabular-nums" 
+                    variation.numericValue !== null
+                        ? variation.numericValue >= 0
+                            ? "text-emerald-400 text-sm font-medium tabular-nums"
                             : "text-rose-400 text-sm font-medium tabular-nums"
-                        : "text-white text-sm font-medium tabular-nums"
+                        : "text-text-primary text-sm font-medium tabular-nums"
                 }>
                     {variation.value !== null ? variation.value : '-'}
                 </div>
@@ -75,7 +75,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
                     <TrendingUp size={16} className="text-brand-gold" />
-                    <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">PNL</h3>
+                    <h3 className="text-[11px] text-text-primary font-medium tracking-wide font-inter">PNL</h3>
                 </div>
                 <div
                     role="group"
@@ -94,7 +94,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
                                     "rounded px-2 py-0.5 text-[11px] font-semibold transition-colors",
                                     isActive
                                         ? "bg-brand-gold/10 text-brand-gold"
-                                        : "text-text-muted hover:text-white"
+                                        : "text-text-muted hover:text-text-primary"
                                 )}
                             >
                                 {mode === 'percent' ? '%' : '$'}

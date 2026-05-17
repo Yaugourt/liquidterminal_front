@@ -88,10 +88,10 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       {showLoginModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-brand-secondary/80 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-6 max-w-md mx-4">
-            <h2 className="text-lg font-semibold text-white mb-2">
+            <h2 className="text-lg font-semibold text-text-primary mb-2">
               Login to Track Wallet
             </h2>
-            <p className="text-zinc-400 text-sm mb-4">
+            <p className="text-text-secondary text-sm mb-4">
               Sign in to add this wallet to your track list
             </p>
             <div className="flex gap-3">

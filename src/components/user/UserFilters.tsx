@@ -33,7 +33,7 @@ export function UserFilters({
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9 bg-brand-dark border-border-subtle text-white placeholder:text-text-muted focus:border-brand-accent/50 text-sm h-9"
+          className="pl-9 bg-brand-dark border-border-subtle text-text-primary placeholder:text-text-muted focus:border-brand-accent/50 text-sm h-9"
         />
       </div>
 

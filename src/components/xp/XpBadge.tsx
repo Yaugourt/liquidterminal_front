@@ -100,7 +100,7 @@ export function XpBadge({
 
         <DialogContent className="bg-surface border border-border-default rounded-xl text-text-primary max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-white">
+            <DialogTitle className="flex items-center gap-2 text-text-primary">
               <Star className="h-5 w-5 text-brand-gold fill-brand-gold" />
               Your Progress
             </DialogTitle>
@@ -116,9 +116,8 @@ export function XpBadge({
     <div
       className={cn(
         "p-6 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
+        "bg-brand-secondary/60",
         "border border-border-subtle hover:border-border-hover transition-all",
-        "shadow-xl shadow-black/20",
         className
       )}
     >
@@ -160,7 +159,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
           </div>
           <div>
             <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Level</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-lg font-bold text-text-primary">
               {stats.totalXp.toLocaleString()} XP
             </p>
           </div>
@@ -209,7 +208,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       </div>
 
       {/* XP to next level */}
-      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle">
+      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-lg border border-border-subtle">
         <span className="text-sm text-text-secondary">XP to next level</span>
         <div className="flex items-center gap-1">
           <span className="text-sm font-bold text-brand-gold">

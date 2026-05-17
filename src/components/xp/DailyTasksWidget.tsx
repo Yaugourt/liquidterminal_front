@@ -103,7 +103,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-brand-secondary/60 backdrop-blur-md",
+      "bg-brand-secondary/60",
       "border border-border-subtle",
       className
     )}>
@@ -114,7 +114,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Daily Tasks</h3>
+            <h3 className="text-sm font-bold text-text-primary">Daily Tasks</h3>
             <p className="text-xs text-text-muted">{dailyTasksCompletedCount}/{dailyTasks.length} completed</p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             <div
               key={task.type}
               className={cn(
-                "flex items-center gap-3 p-3 rounded-xl transition-all",
+                "flex items-center gap-3 p-3 rounded-lg transition-all",
                 task.completed
                   ? "bg-emerald-500/10 border border-emerald-500/20"
                   : "bg-white/5 border border-border-subtle hover:border-border-hover"
@@ -170,7 +170,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               <div className="flex-1 min-w-0">
                 <p className={cn(
                   "text-sm font-medium",
-                  task.completed ? "text-emerald-300" : "text-white"
+                  task.completed ? "text-emerald-300" : "text-text-primary"
                 )}>
                   {task.description}
                 </p>

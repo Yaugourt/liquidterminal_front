@@ -54,7 +54,7 @@ export function WelcomePrompt() {
             <Card className="p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"
+                    className="absolute top-2 right-2 text-text-secondary hover:text-text-primary transition-colors"
                     aria-label="Close"
                 >
                     <X className="w-4 h-4" />
@@ -66,10 +66,10 @@ export function WelcomePrompt() {
                     </div>
 
                     <div className="flex-1">
-                        <h4 className="text-white font-medium text-sm mb-1">
+                        <h4 className="text-text-primary font-medium text-sm mb-1">
                             Level up your journey! 🚀
                         </h4>
-                        <p className="text-gray-400 text-xs mb-3">
+                        <p className="text-text-secondary text-xs mb-3">
                             Sign in to earn XP, complete weekly challenges and unlock exclusive rewards.
                         </p>
 

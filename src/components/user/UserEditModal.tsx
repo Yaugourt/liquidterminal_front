@@ -45,7 +45,7 @@ export function UserEditModal({
               <Edit className="w-5 h-5 text-brand-accent" />
             </div>
             <div>
-              <DialogTitle className="text-white text-lg font-bold">Edit User</DialogTitle>
+              <DialogTitle className="text-text-primary text-lg font-bold">Edit User</DialogTitle>
               <p className="text-text-secondary text-xs mt-0.5">{user.name}</p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export function UserEditModal({
               id="name"
               value={editForm.name || ''}
               onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-              className="bg-brand-dark border-border-subtle text-white focus:border-brand-accent/50 text-sm h-9"
+              className="bg-brand-dark border-border-subtle text-text-primary focus:border-brand-accent/50 text-sm h-9"
             />
           </div>
 
@@ -71,7 +71,7 @@ export function UserEditModal({
               type="email"
               value={editForm.email || ''}
               onChange={(e) => onFormChange({ ...editForm, email: e.target.value })}
-              className="bg-brand-dark border-border-subtle text-white focus:border-brand-accent/50 text-sm h-9"
+              className="bg-brand-dark border-border-subtle text-text-primary focus:border-brand-accent/50 text-sm h-9"
             />
           </div>
 
@@ -96,7 +96,7 @@ export function UserEditModal({
           {/* Verified Toggle */}
           <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle">
             <div>
-              <Label htmlFor="verified" className="text-white text-sm font-medium">Verified</Label>
+              <Label htmlFor="verified" className="text-text-primary text-sm font-medium">Verified</Label>
               <p className="text-text-muted text-xs mt-0.5">User has verified their account</p>
             </div>
             <Switch
@@ -120,7 +120,7 @@ export function UserEditModal({
           <Button
             variant="ghost"
             onClick={onCancel}
-            className="border border-border-hover text-white/80 hover:text-white hover:bg-white/5 text-sm h-9"
+            className="border border-border-hover text-text-secondary hover:text-text-primary hover:bg-white/5 text-sm h-9"
           >
             Cancel
           </Button>

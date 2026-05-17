@@ -41,7 +41,7 @@ function NotableWalletCard({
         <div className="flex flex-col gap-1">
           <Link
             href={`/market/tracker/wallet/${walletAddress}`}
-            className="text-sm text-white hover:text-brand-accent transition-colors truncate"
+            className="text-sm text-text-primary hover:text-brand-accent transition-colors truncate"
           >
             {truncate(walletAddress)}
           </Link>
@@ -91,21 +91,21 @@ export function TrackerStatsBar() {
           iconClassName="bg-white/5 rounded-lg"
           title="24h Volume"
           value={`$${formatLargeNumber(totalVolume24h)}`}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
           icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
           iconClassName="bg-white/5 rounded-lg"
           title="24h PnL (Top 50)"
           value={`+$${formatLargeNumber(totalPnl24h)}`}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
           icon={<Activity className="h-4 w-4 text-purple-400" />}
           iconClassName="bg-white/5 rounded-lg"
           title="24h Fills"
           value={formatLargeNumber(totalFills24h)}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
       </div>
 

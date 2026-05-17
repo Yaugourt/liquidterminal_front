@@ -69,7 +69,7 @@ export const StakersTable = memo(function StakersTable() {
             <span className="font-medium">{rank}.</span>
             <Link
               href={`/explorer/address/${holder.address}`}
-              className="text-brand-accent hover:text-white transition-colors"
+              className="text-brand-accent hover:text-text-primary transition-colors"
               title="View address details"
             >
               {formatAddress(holder.address)}

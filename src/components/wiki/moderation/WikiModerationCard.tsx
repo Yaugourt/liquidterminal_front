@@ -45,14 +45,14 @@ function PendingResourceItem({
     };
 
     return (
-        <div className="p-3 bg-brand-dark rounded-xl border border-border-subtle space-y-3">
+        <div className="p-3 bg-brand-dark rounded-lg border border-border-subtle space-y-3">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <a
                         href={resource.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium text-white hover:text-brand-accent transition-colors flex items-center gap-2"
+                        className="text-sm font-medium text-text-primary hover:text-brand-accent transition-colors flex items-center gap-2"
                     >
                         {isLoading ? "Loading..." : (preview?.title || resource.url)}
                         <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
@@ -91,7 +91,7 @@ function PendingResourceItem({
                         value={rejectNotes}
                         onChange={(e) => setRejectNotes(e.target.value)}
                         placeholder="Raison du rejet (obligatoire)"
-                        className="bg-brand-secondary border-border-subtle text-white text-sm"
+                        className="bg-brand-secondary border-border-subtle text-text-primary text-sm"
                     />
                     <div className="flex gap-2">
                         <Button
@@ -144,7 +144,7 @@ export function WikiModerationCard() {
     };
 
     return (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+        <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
             {/* Header */}
             <div className="p-4 border-b border-border-subtle flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -152,7 +152,7 @@ export function WikiModerationCard() {
                         <Shield className="w-4 h-4 text-amber-400" />
                     </div>
                     <div>
-                        <h3 className="text-white font-semibold text-sm">Wiki Moderation</h3>
+                        <h3 className="text-text-primary font-semibold text-sm">Wiki Moderation</h3>
                         <p className="text-xs text-text-muted">Resources pending review</p>
                     </div>
                 </div>
@@ -168,7 +168,7 @@ export function WikiModerationCard() {
                         variant="ghost"
                         onClick={() => refetch()}
                         disabled={isLoading}
-                        className="h-7 w-7 text-text-secondary hover:text-white"
+                        className="h-7 w-7 text-text-secondary hover:text-text-primary"
                     >
                         <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                     </Button>

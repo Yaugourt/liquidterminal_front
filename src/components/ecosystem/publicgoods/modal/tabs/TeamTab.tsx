@@ -39,7 +39,7 @@ export function TeamTab({
             value={formData.leadDeveloperName}
             onChange={(e) => updateField('leadDeveloperName', e.target.value)}
             placeholder="John Doe"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
         
@@ -51,7 +51,7 @@ export function TeamTab({
             value={formData.leadDeveloperContact}
             onChange={(e) => updateField('leadDeveloperContact', e.target.value)}
             placeholder="john@example.com"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
           />
         </div>
       </div>
@@ -104,7 +104,7 @@ export function TeamTab({
               }
             }}
             placeholder="Type a technology and press Enter"
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           />
           <Button
             type="button"
@@ -119,7 +119,7 @@ export function TeamTab({
             <Badge
               key={tech}
               variant="outline"
-              className="border-border-hover text-white/80 flex items-center gap-1 bg-brand-dark rounded-lg"
+              className="border-border-hover text-text-secondary flex items-center gap-1 bg-brand-dark rounded-lg"
             >
               {tech}
               <button

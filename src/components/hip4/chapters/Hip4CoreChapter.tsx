@@ -115,9 +115,9 @@ export function Hip4CoreChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>L1 operator cluster</Hip4SectionTitle>
         <Hip4DocLead className="mb-3 text-xs">
-          We traced <strong className="text-white">eight linked system addresses</strong> on HyperCore
+          We traced <strong className="text-text-primary">eight linked system addresses</strong> on HyperCore
           testnet that appear to operate the prediction-market admin surface together.{" "}
-          <strong className="text-white">Two roles</strong> are mapped from on-chain activity; the other
+          <strong className="text-text-primary">Two roles</strong> are mapped from on-chain activity; the other
           six remain <Hip4GoldHighlight>unmapped</Hip4GoldHighlight> (validators, bridge, fee routing,
           or other Core roles — hypotheses only).
         </Hip4DocLead>

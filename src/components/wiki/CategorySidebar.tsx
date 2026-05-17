@@ -53,7 +53,6 @@ export function CategorySidebar({
       className={cn(
         "relative overflow-hidden rounded-2xl border border-border-subtle",
         "bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90",
-        "shadow-xl shadow-black/20",
         className,
       )}
     >
@@ -70,7 +69,7 @@ export function CategorySidebar({
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-accent">
               Filter
             </div>
-            <div className="text-sm font-semibold text-white truncate">
+            <div className="text-sm font-semibold text-text-primary truncate">
               Categories
             </div>
           </div>
@@ -90,7 +89,7 @@ export function CategorySidebar({
           disabled={isLoading || total === 0}
           className={cn(
             "flex w-full items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-left text-text-secondary transition-colors",
-            "hover:border-border-subtle hover:bg-white/5 hover:text-white",
+            "hover:border-border-subtle hover:bg-white/5 hover:text-text-primary",
             (isLoading || total === 0) && "cursor-not-allowed opacity-50",
           )}
         >
@@ -141,7 +140,7 @@ export function CategorySidebar({
                     )}
                   >
                     <span
-                      className="truncate text-xs font-medium text-text-secondary transition-colors group-hover:text-white"
+                      className="truncate text-xs font-medium text-text-secondary transition-colors group-hover:text-text-primary"
                       title={category.name}
                     >
                       {category.name}

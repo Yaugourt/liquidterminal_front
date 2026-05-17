@@ -43,7 +43,7 @@ export function PublicGoodsGrid<T>({
                     <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                         {emptyState.icon || <Plus className="w-8 h-8 text-brand-accent" />}
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{emptyState.title}</h3>
+                    <h3 className="text-lg font-semibold text-text-primary mb-2">{emptyState.title}</h3>
                     <p className="text-text-secondary mb-4">{emptyState.description}</p>
 
                     {emptyState.actionLabel && emptyState.onAction && (

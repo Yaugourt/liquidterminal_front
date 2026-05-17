@@ -67,7 +67,7 @@ function RecentFillsSection() {
   return (
     <>
       {error && (
-        <div className="mb-3 rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-wrap items-center gap-3">
+        <div className="mb-3 rounded-lg border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-wrap items-center gap-3">
           <span>{error.message}</span>
           <button
             type="button"
@@ -79,7 +79,7 @@ function RecentFillsSection() {
         </div>
       )}
 
-      <div className="rounded-xl border border-border-subtle overflow-x-auto scrollbar-brand">
+      <div className="rounded-lg border border-border-subtle overflow-x-auto scrollbar-brand">
         {isLoading && data.length === 0 ? (
           <div className="flex h-[220px]">
             <LoadingState message="Loading fills…" size="sm" withCard={false} />
@@ -137,13 +137,13 @@ function RecentFillsSection() {
                     <TableCell className="py-2.5 px-3 text-xs text-text-secondary whitespace-nowrap">
                       {formatFillTime(row.time)}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm text-white tabular-nums">
+                    <TableCell className="py-2.5 px-3 text-sm text-text-primary tabular-nums">
                       {row.coin ?? "—"}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-sm">
                       <span className={sideClass}>{sideLabel}</span>
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-white tabular-nums">
+                    <TableCell className="py-2.5 px-3 text-right text-sm text-text-primary tabular-nums">
                       {formatPriorityFeeNumber(Number.isFinite(g) ? g : undefined)}
                     </TableCell>
                     <TableCell className="py-2.5 px-3 text-sm min-w-[140px]">
@@ -166,7 +166,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-white"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
             disabled={!hasPrev || isLoading}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             aria-label="Previous page"
@@ -180,7 +180,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-white"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
             disabled={!hasNext || isLoading}
             onClick={() => setPage((p) => p + 1)}
             aria-label="Next page"
@@ -195,9 +195,9 @@ function RecentFillsSection() {
 
 export function PriorityFeesHistoryTable() {
   return (
-    <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md h-full flex flex-col">
+    <Card className="p-5 border-border-subtle bg-brand-secondary/40 h-full flex flex-col">
       <div className="mb-4">
-        <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
+        <h2 className="font-inter text-lg font-semibold text-text-primary tracking-tight">
           History & activity
         </h2>
         <p className="text-xs text-text-muted mt-1">

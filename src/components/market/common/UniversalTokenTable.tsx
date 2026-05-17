@@ -177,7 +177,7 @@ export function UniversalTokenTable({
 
     if (isLoading && !tokens.length) {
         return (
-            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
+            <div className={`w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
                 <LoadingState message="Loading tokens..." size="lg" withCard={false} />
             </div>
         );
@@ -185,7 +185,7 @@ export function UniversalTokenTable({
 
     if (error && mode === 'compact') {
         return (
-            <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+            <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
                 <ErrorState title="Error" message="Une erreur est survenue" withCard={false} />
             </div>
         );
@@ -194,7 +194,7 @@ export function UniversalTokenTable({
     //--- Main Render ---
 
     return (
-        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
+        <div className={`w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
             <div className={`overflow-x-auto scrollbar-brand ${mode === 'compact' ? 'flex-1' : ''}`}>
                 <Table className={mode === 'compact' ? 'h-full' : ''}>
                     <TableHeader>
@@ -313,13 +313,13 @@ export function UniversalTokenTable({
                                         <TableCell>
                                             <div className="flex items-center gap-2">
                                                 <TokenIcon src={t.logo} name={t.name} size="sm" />
-                                                <span className="text-white text-sm font-medium">{t.name}</span>
+                                                <span className="text-text-primary text-sm font-medium">{t.name}</span>
                                             </div>
                                         </TableCell>
 
                                         {/* Price */}
                                         <TableCell>
-                                            <div className="text-white text-sm">
+                                            <div className="text-text-primary text-sm">
                                                 {mode === 'compact'
                                                     ? formatNumber(t.price, format, { minimumFractionDigits: 0, maximumFractionDigits: 2, currency: '$', showCurrency: true })
                                                     : formatPrice(t.price, format)
@@ -334,7 +334,7 @@ export function UniversalTokenTable({
                                                 {isSpot ? (
                                                     // Spot Compact: Volume, then 24h
                                                     <>
-                                                        <TableCell className="text-white text-sm py-2 px-3">
+                                                        <TableCell className="text-text-primary text-sm py-2 px-3">
                                                             {formatVolumeCompact(t.volume)}
                                                         </TableCell>
                                                         <TableCell className="text-sm py-2 px-3">
@@ -351,7 +351,7 @@ export function UniversalTokenTable({
                                                                 {formatPriceChange(t.change24h)}
                                                             </span>
                                                         </TableCell>
-                                                        <TableCell className="text-white text-sm py-2 px-3">
+                                                        <TableCell className="text-text-primary text-sm py-2 px-3">
                                                             {'$' + formatNumber(t.openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                                                         </TableCell>
                                                     </>
@@ -367,7 +367,7 @@ export function UniversalTokenTable({
                                                     </StatusBadge>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <div className="text-white text-sm">
+                                                    <div className="text-text-primary text-sm">
                                                         ${formatNumber(t.volume, format)}
                                                     </div>
                                                 </TableCell>
@@ -375,12 +375,12 @@ export function UniversalTokenTable({
                                                 {isSpot ? (
                                                     <>
                                                         <TableCell className="py-3 px-3">
-                                                            <div className="text-white text-sm">
+                                                            <div className="text-text-primary text-sm">
                                                                 ${formatNumber(t.marketCap, format)}
                                                             </div>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <div className="text-white text-sm">
+                                                            <div className="text-text-primary text-sm">
                                                                 {formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </div>
                                                         </TableCell>
@@ -388,7 +388,7 @@ export function UniversalTokenTable({
                                                 ) : (
                                                     <>
                                                         <TableCell>
-                                                            <div className="text-white text-sm">
+                                                            <div className="text-text-primary text-sm">
                                                                 ${formatNumber(t.openInterest, format)}
                                                             </div>
                                                         </TableCell>

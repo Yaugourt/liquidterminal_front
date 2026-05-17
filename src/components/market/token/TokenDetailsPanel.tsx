@@ -92,7 +92,7 @@ export function TokenDetailsPanel({ token }: { token: TokenData }) {
         />
         <div className="flex flex-col">
           <span className="text-stat-label mb-1">Deploy time</span>
-          <span className="text-white text-xs">
+          <span className="text-text-primary text-xs">
             {tokenDetails?.deployTime
               ? new Date(tokenDetails.deployTime).toLocaleDateString()
               : "N/A"}
@@ -126,7 +126,7 @@ function DetailStat({ label, value }: { label: string; value: string }) {
       withCard={false}
       className="rounded-lg border border-border-subtle bg-white/[0.02] px-3 py-2"
       titleClassName="text-stat-label"
-      valueClassName="text-white text-sm font-medium tabular-nums truncate"
+      valueClassName="text-text-primary text-sm font-medium tabular-nums truncate"
     />
   );
 }

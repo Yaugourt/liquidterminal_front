@@ -126,7 +126,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     type="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                    className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
                     placeholder="https://example.com/article"
                     required
                     disabled={isRateLimited || isLoading}
@@ -150,7 +150,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                             <SelectItem
                                 key={cat.id}
                                 value={String(cat.id)}
-                                className="text-white/80 hover:bg-white/5 focus:bg-white/5 rounded-lg"
+                                className="text-text-secondary hover:bg-white/5 focus:bg-white/5 rounded-lg"
                             >
                                 {cat.name}
                             </SelectItem>

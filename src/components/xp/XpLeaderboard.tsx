@@ -72,7 +72,7 @@ export function XpLeaderboard({
       case 1:
         return <Crown className="h-5 w-5 text-amber-400" />;
       case 2:
-        return <Medal className="h-5 w-5 text-white/80" />;
+        return <Medal className="h-5 w-5 text-text-secondary" />;
       case 3:
         return <Medal className="h-5 w-5 text-amber-600" />;
       default:
@@ -98,10 +98,10 @@ export function XpLeaderboard({
   };
 
   return (
-    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+    <div className={cn("bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
         <div className="flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-white font-semibold">
+          <h3 className="flex items-center gap-2 text-text-primary font-semibold">
             <Trophy className="h-5 w-5 text-brand-gold" />
             Leaderboard
           </h3>
@@ -123,7 +123,7 @@ export function XpLeaderboard({
                 <div
                   key={entry.userId}
                   className={cn(
-                    "flex items-center justify-between p-3 rounded-xl border transition-all",
+                    "flex items-center justify-between p-3 rounded-lg border transition-all",
                     getRankBg(entry.rank),
                     entry.rank <= 3 && "hover:scale-[1.02]"
                   )}
@@ -134,7 +134,7 @@ export function XpLeaderboard({
                       <User className="h-4 w-4 text-text-secondary" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm text-white">{entry.name}</p>
+                      <p className="font-medium text-sm text-text-primary">{entry.name}</p>
                       <p className="text-xs text-text-muted">Level {entry.level}</p>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export function XpLeaderboard({
             {showCurrentUser && userRank && userRank > leaderboard.length && (
               <div className="pt-4 border-t border-border-subtle">
                 <p className="text-xs text-text-muted mb-2">Your position</p>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-brand-accent/10 border border-brand-accent/30">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-brand-accent/10 border border-brand-accent/30">
                   <div className="flex items-center gap-3">
                     <span className="w-5 text-center text-sm font-bold text-brand-accent">
                       #{userRank}
@@ -170,7 +170,7 @@ export function XpLeaderboard({
             {hasMore && (
               <Button
                 variant="outline"
-                className="w-full border-border-subtle hover:bg-white/5 text-white/80 rounded-lg"
+                className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg"
                 onClick={loadMore}
                 disabled={isLoading}
               >

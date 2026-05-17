@@ -110,7 +110,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-brand-secondary/60 backdrop-blur-md",
+      "bg-brand-secondary/60",
       "border border-border-subtle",
       className
     )}>
@@ -121,7 +121,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
             <Trophy className="h-4 w-4 text-brand-gold" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Weekly Challenges</h3>
+            <h3 className="text-sm font-bold text-text-primary">Weekly Challenges</h3>
             <p className="text-xs text-text-muted">{completedCount}/{weeklyChallenges.length} completed</p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
       </div>
 
       {/* XP Summary */}
-      <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
+      <div className="flex items-center gap-2 p-3 mb-4 rounded-lg bg-brand-dark border border-border-subtle">
         <Star className="h-4 w-4 text-brand-gold" />
         <span className="text-sm text-text-secondary">XP Earned:</span>
         <span className="text-sm font-bold text-brand-gold">{totalXpEarned}</span>
@@ -175,7 +175,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
                       "text-sm font-medium transition-colors",
                       challenge.completed
                         ? "text-emerald-300"
-                        : "text-white group-hover:text-brand-accent"
+                        : "text-text-primary group-hover:text-brand-accent"
                     )}>
                       {challenge.description}
                     </p>
@@ -216,7 +216,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
               <div
                 key={challenge.type}
                 className={cn(
-                  "p-4 rounded-xl transition-all",
+                  "p-4 rounded-lg transition-all",
                   "bg-emerald-500/10 border border-emerald-500/20 cursor-default"
                 )}
               >
@@ -230,7 +230,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
               key={challenge.type}
               href={challengeRoute}
               className={cn(
-                "p-4 rounded-xl transition-all block",
+                "p-4 rounded-lg transition-all block",
                 "bg-white/5 border border-border-subtle hover:bg-white/10 hover:border-brand-accent/30 cursor-pointer group"
               )}
             >

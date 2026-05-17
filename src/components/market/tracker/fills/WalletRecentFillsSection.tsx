@@ -72,7 +72,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
       return <span className="text-emerald-400">{dir}</span>;
     }
 
-    return <span className="text-white">{dir}</span>;
+    return <span className="text-text-primary">{dir}</span>;
   };
 
   const formatPnl = (pnl: string) => {
@@ -124,7 +124,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   if (!activeWallet?.address) {
     return (
-      <Card className="flex items-center justify-center h-[600px] text-white">
+      <Card className="flex items-center justify-center h-[600px] text-text-primary">
         No wallet selected
       </Card>
     );
@@ -132,7 +132,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   if (!fills || fills.length === 0) {
     return (
-      <Card className="flex items-center justify-center h-[600px] text-white">
+      <Card className="flex items-center justify-center h-[600px] text-text-primary">
         No fills found
       </Card>
     );
@@ -180,25 +180,25 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
                     </button>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                   {fill.coin}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-sm">
                   {formatDirection(fill.dir)}
                 </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                   {formatAge(fill.time)}
                 </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                   {parseFloat(fill.sz).toFixed(4)}
                 </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                   {formatCurrency(fill.px)}
                 </TableCell>
                 <TableCell className="py-3 px-4 text-sm text-right">
                   {formatPnl(fill.closedPnl)}
                 </TableCell>
-                <TableCell className="py-3 px-4 text-sm text-white text-right">
+                <TableCell className="py-3 px-4 text-sm text-text-primary text-right">
                   {formatCurrency(fill.fee)} {fill.feeToken}
                 </TableCell>
               </TableRow>

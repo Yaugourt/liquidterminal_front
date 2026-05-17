@@ -111,16 +111,16 @@ export function TableContent({
                         {validator.isActive ? 'Active' : 'Inactive'}
                       </StatusBadge>
                     </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
+                    <TableCell className="text-sm text-right text-text-primary font-medium">
                       {formatNumber(validator.stake, format, { maximumFractionDigits: 2 })}
                     </TableCell>
                     <TableCell className="text-sm text-right text-emerald-400 font-medium">
                       {formatNumber(validator.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
+                    <TableCell className="text-sm text-right text-text-primary font-medium">
                       {formatNumber(validator.commission, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%
                     </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
+                    <TableCell className="text-sm text-right text-text-primary font-medium">
                       {formatNumber(validator.uptime, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </TableCell>
                     <TableCell className="text-sm text-right text-brand-accent font-medium">
@@ -158,7 +158,7 @@ export function TableContent({
               <TableBody>
                 {stakingValidations?.map((tx: FormattedStakingValidation) => (
                   <TableRow key={tx.hash} className="hover:bg-white/[0.02]">
-                    <TableCell className="text-sm text-white font-medium">
+                    <TableCell className="text-sm text-text-primary font-medium">
                       {formatDateTime(tx.timestamp, dateFormat)}
                     </TableCell>
                     <TableCell className="text-sm">
@@ -169,7 +169,7 @@ export function TableContent({
                         {tx.type}
                       </StatusBadge>
                     </TableCell>
-                    <TableCell className="text-sm text-white font-medium">
+                    <TableCell className="text-sm text-text-primary font-medium">
                       {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
                     </TableCell>
                     <TableCell className="text-sm">
@@ -207,13 +207,13 @@ export function TableContent({
               <TableBody>
                 {unstakingQueue?.map((item: FormattedUnstakingQueueItem, index: number) => (
                   <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="hover:bg-white/[0.02]">
-                    <TableCell className="text-sm text-white font-medium">
+                    <TableCell className="text-sm text-text-primary font-medium">
                       {formatDateTime(item.timestamp, dateFormat)}
                     </TableCell>
                     <TableCell className="text-sm">
                       <AddressDisplay address={item.user} />
                     </TableCell>
-                    <TableCell className="text-sm text-white font-medium">
+                    <TableCell className="text-sm text-text-primary font-medium">
                       {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
                     </TableCell>
                   </TableRow>
@@ -255,7 +255,7 @@ export function TableContent({
           <TableBody>
             {liquidations.map((liq: Liquidation) => (
               <TableRow key={liq.tid} className="hover:bg-white/[0.02]">
-                <TableCell className="text-sm text-white font-medium">
+                <TableCell className="text-sm text-text-primary font-medium">
                   {formatDateTime(liq.time, dateFormat)}
                 </TableCell>
                 <TableCell className="text-sm text-brand-accent font-medium">
@@ -266,10 +266,10 @@ export function TableContent({
                     {liq.liq_dir}
                   </StatusBadge>
                 </TableCell>
-                <TableCell className="text-sm text-right text-white font-medium">
+                <TableCell className="text-sm text-right text-text-primary font-medium">
                   ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
                 </TableCell>
-                <TableCell className="text-sm text-right text-white font-medium max-lg:hidden">
+                <TableCell className="text-sm text-right text-text-primary font-medium max-lg:hidden">
                   {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
                 </TableCell>
                 <TableCell className="text-sm text-right text-text-muted max-md:hidden">
@@ -316,13 +316,13 @@ export function TableContent({
         <TableBody>
           {vaults.map((vault: VaultSummary) => (
             <TableRow key={vault.summary.vaultAddress} className="hover:bg-white/[0.02]">
-              <TableCell className="text-sm text-white font-medium">{vault.summary.name}</TableCell>
+              <TableCell className="text-sm text-text-primary font-medium">{vault.summary.name}</TableCell>
               <TableCell className="text-sm">
                 <StatusBadge variant={!vault.summary.isClosed ? 'success' : 'error'}>
                   {!vault.summary.isClosed ? 'Open' : 'Closed'}
                 </StatusBadge>
               </TableCell>
-              <TableCell className="text-sm text-white font-medium">
+              <TableCell className="text-sm text-text-primary font-medium">
                 ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
               </TableCell>
               <TableCell className={`text-right font-medium ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -331,7 +331,7 @@ export function TableContent({
               <TableCell className="text-sm">
                 <AddressDisplay address={vault.summary.leader} />
               </TableCell>
-              <TableCell className="text-sm text-white font-medium">
+              <TableCell className="text-sm text-text-primary font-medium">
                 {formatDate(vault.summary.createTimeMillis, dateFormat)}
               </TableCell>
             </TableRow>

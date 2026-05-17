@@ -37,7 +37,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           onChange={(e) => updateField('problemSolved', e.target.value)}
           placeholder="What problem does your project solve for HyperLiquid users?"
           rows={4}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.problemSolved.length >= 50 
@@ -58,7 +58,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
                 onCheckedChange={() => toggleTargetUser(user)}
                 className="border-border-hover data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
               />
-              <label htmlFor={user} className="text-sm text-white/80 capitalize cursor-pointer">
+              <label htmlFor={user} className="text-sm text-text-secondary capitalize cursor-pointer">
                 {user}
               </label>
             </div>
@@ -74,7 +74,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           onChange={(e) => updateField('hlIntegration', e.target.value)}
           placeholder="How does your project integrate with HyperLiquid? Which APIs, endpoints, or features do you use?"
           rows={4}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.hlIntegration.length >= 50 

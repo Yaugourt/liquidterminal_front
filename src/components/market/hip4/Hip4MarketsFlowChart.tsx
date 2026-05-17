@@ -58,7 +58,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
             Volume vs Open Interest · Top 10
           </div>
           <div className="mt-1 flex items-baseline gap-3">
-            <span className="text-[22px] font-bold text-white tabular-nums tracking-tight">{compactUsd(totals.vol)}</span>
+            <span className="text-[22px] font-bold text-text-primary tabular-nums tracking-tight">{compactUsd(totals.vol)}</span>
             <span className="text-sm text-violet-400 tabular-nums">{compactUsd(totals.oi)} OI</span>
           </div>
         </div>
@@ -93,7 +93,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
               const volRatio = vol / maxVol;
               const oiRatio = oi / maxOI;
               const isHovered = hoverIdx === i;
-              const rankColor = i === 0 ? "text-brand-gold" : i === 1 ? "text-zinc-300" : i === 2 ? "text-amber-600" : "text-text-muted";
+              const rankColor = i === 0 ? "text-brand-gold" : i === 1 ? "text-text-primary" : i === 2 ? "text-amber-600" : "text-text-muted";
               const label = row.display_name || row.coin || `#${row.outcome_id}`;
 
               return (
@@ -108,14 +108,14 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
                   <span className={`text-sm font-bold tabular-nums ${rankColor}`}>{i + 1}</span>
 
                   <div className="min-w-0 pr-2">
-                    <span className="block text-xs font-semibold text-white truncate">{label}</span>
+                    <span className="block text-xs font-semibold text-text-primary truncate">{label}</span>
                     {row.is_settled && (
                       <span className="text-[9px] text-emerald-400 font-medium">Settled</span>
                     )}
                   </div>
 
                   <div className="relative flex h-6 min-w-0 items-center justify-end pr-2">
-                    <span className="pointer-events-none absolute right-2 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                    <span className="pointer-events-none absolute right-2 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-text-primary whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                       {compactUsd(vol)}
                     </span>
                     <motion.div
@@ -148,7 +148,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
                         }}
                         className="relative h-6 min-w-0 max-w-full overflow-visible rounded-r-md"
                       >
-                        <span className="pointer-events-none absolute left-1.5 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-white whitespace-nowrap [text-shadow:0_0_1px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
+                        <span className="pointer-events-none absolute left-1.5 top-1/2 z-10 -translate-y-1/2 text-[10px] font-semibold tabular-nums text-text-primary whitespace-nowrap [text-shadow:0_0_1px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
                           {compactUsd(oi)}
                         </span>
                       </motion.div>
@@ -162,7 +162,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
           <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-muted tabular-nums">
             {hoverIdx !== null && top[hoverIdx] ? (
               <>
-                <span className="font-semibold text-white truncate max-w-[200px]">{top[hoverIdx].display_name || top[hoverIdx].coin || `#${top[hoverIdx].outcome_id}`}</span>
+                <span className="font-semibold text-text-primary truncate max-w-[200px]">{top[hoverIdx].display_name || top[hoverIdx].coin || `#${top[hoverIdx].outcome_id}`}</span>
                 <span>
                   <span className="text-brand-accent">Vol {compactUsd(top[hoverIdx].total_volume ?? 0)}</span>
                   <span className="mx-2 text-text-muted/50">·</span>

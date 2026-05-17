@@ -44,7 +44,7 @@ function ProbRow({ label, pct, color, volume }: ProbRowProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${dotColor}`} />
-          <span className="text-xs font-semibold text-white">{label}</span>
+          <span className="text-xs font-semibold text-text-primary">{label}</span>
         </div>
         <div className="flex items-center gap-2">
           {volume != null && (
@@ -93,7 +93,7 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2">
+          <h3 className="text-sm font-semibold text-text-primary leading-snug line-clamp-2">
             {title}
           </h3>
         </div>

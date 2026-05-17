@@ -54,10 +54,10 @@ export function StakingTableContent({
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Locked until</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Validator</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Locked until</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,7 +68,7 @@ export function StakingTableContent({
                     <div className="flex flex-col">
                       {delegation.validatorName && !delegation.validatorName.includes('...') ? (
                         <>
-                          <span className="text-white font-medium text-sm font-inter">{delegation.validatorName}</span>
+                          <span className="text-text-primary font-medium text-sm font-inter">{delegation.validatorName}</span>
                           <div className="flex items-center gap-2">
                             <span className="text-brand-accent text-xs">
                               {delegation.validator.slice(0, 8)}...{delegation.validator.slice(-6)}
@@ -87,16 +87,16 @@ export function StakingTableContent({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {formatNumber(parseFloat(delegation.amount), format, { maximumFractionDigits: 2 })} HYPE
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {hypePrice
                     ? `$${formatNumber(parseFloat(delegation.amount) * hypePrice, format, { maximumFractionDigits: 2 })}`
                     : '-'
                   }
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {delegation.lockedUntilTimestamp
                     ? formatDateTime(delegation.lockedUntilTimestamp * 1000, dateFormat)
                     : '-'
@@ -123,12 +123,12 @@ export function StakingTableContent({
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Hash</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Method</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Validator</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Hash</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Method</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Validator</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Time</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -150,10 +150,10 @@ export function StakingTableContent({
                     {tx.type}
                   </span>
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {hypePrice
                     ? `$${formatNumber(tx.amount * hypePrice, format, { maximumFractionDigits: 2 })}`
                     : '-'
@@ -164,7 +164,7 @@ export function StakingTableContent({
                     <div className="flex flex-col">
                       {tx.validatorName && !tx.validatorName.includes('...') ? (
                         <>
-                          <span className="text-white font-medium text-sm font-inter">{tx.validatorName}</span>
+                          <span className="text-text-primary font-medium text-sm font-inter">{tx.validatorName}</span>
                           <div className="flex items-center gap-2">
                             <span className="text-brand-accent text-xs">
                               {tx.validator.slice(0, 8)}...{tx.validator.slice(-6)}
@@ -183,7 +183,7 @@ export function StakingTableContent({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {formatDateTime(tx.timestamp, dateFormat)}
                 </TableCell>
               </TableRow>
@@ -207,10 +207,10 @@ export function StakingTableContent({
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Source</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Amount</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Value</TableHead>
-              <TableHead className="text-white text-left py-3 px-4 font-normal">Time</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Source</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Amount</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Value</TableHead>
+              <TableHead className="text-text-primary text-left py-3 px-4 font-normal">Time</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -227,13 +227,13 @@ export function StakingTableContent({
                 <TableCell className="py-3 px-4 text-emerald-400">
                   {formatNumber(reward.amount, format, { maximumFractionDigits: 6 })} HYPE
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {hypePrice
                     ? `$${formatNumber(reward.amount * hypePrice, format, { maximumFractionDigits: 6 })}`
                     : '-'
                   }
                 </TableCell>
-                <TableCell className="py-3 px-4 text-white">
+                <TableCell className="py-3 px-4 text-text-primary">
                   {formatDateTime(reward.timestamp, dateFormat)}
                 </TableCell>
               </TableRow>

@@ -21,7 +21,7 @@ function InlineStat({ icon, label, value, valueClassName }: InlineStatProps) {
         <span className="mr-1.5">{icon}</span>
         {label}
       </div>
-      <div className={valueClassName ?? "text-white font-bold text-lg"}>{value}</div>
+      <div className={valueClassName ?? "text-text-primary font-bold text-lg"}>{value}</div>
     </div>
   );
 }

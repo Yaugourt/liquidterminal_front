@@ -54,7 +54,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={loading}
-                        className="w-full bg-brand-dark border-border-subtle text-white hover:bg-white/5 border-dashed border-2 py-8 rounded-xl"
+                        className="w-full bg-brand-dark border-border-subtle text-text-primary hover:bg-white/5 border-dashed border-2 py-8 rounded-lg"
                     >
                         <div className="flex flex-col items-center gap-2">
                             <Upload className="w-6 h-6 text-brand-accent" />
@@ -80,7 +80,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
             )}
 
             {result?.success && (
-                <div className="space-y-4 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                <div className="space-y-4 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg">
                     <div className="flex items-center gap-2 text-emerald-400">
                         <CheckCircle className="w-5 h-5" />
                         <h3 className="font-medium">Import réussi !</h3>

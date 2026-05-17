@@ -102,7 +102,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
 
   if (isLoading && !topMarkets.length) {
     return (
-      <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+      <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
         <LoadingState message="Loading..." size="md" withCard={false} />
       </div>
     );
@@ -110,14 +110,14 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
 
   if (error) {
     return (
-      <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+      <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
         <ErrorState title="Failed to load data" withCard={false} />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+    <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
       <div className="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-border-subtle shrink-0">
         <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
           <LineChart size={12} className="text-brand-accent" />
@@ -156,14 +156,14 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent shrink-0">
                         {row.ticker.charAt(0)}
                       </div>
-                      <span className="text-white text-[11px] font-medium truncate">
+                      <span className="text-text-primary text-[11px] font-medium truncate">
                         {row.ticker}
                       </span>
                       <ChevronRight className="h-3 w-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                     </div>
                   </TableCell>
                   <TableCell
-                    className={`${cellMid} text-left text-white text-[11px] font-medium`}
+                    className={`${cellMid} text-left text-text-primary text-[11px] font-medium`}
                   >
                     {row.totalVolume24h > 0
                       ? formatLargeNumber(row.totalVolume24h, {
@@ -174,7 +174,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
                       : "-"}
                   </TableCell>
                   <TableCell
-                    className={`${cellLast} text-left text-white text-[11px] font-medium`}
+                    className={`${cellLast} text-left text-text-primary text-[11px] font-medium`}
                   >
                     {row.totalOpenInterest > 0
                       ? formatLargeNumber(row.totalOpenInterest, {
@@ -202,7 +202,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
           href={HIP3_DOCS_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand-accent text-[11px] hover:text-white transition-colors inline-flex items-center gap-1"
+          className="text-brand-accent text-[11px] hover:text-text-primary transition-colors inline-flex items-center gap-1"
           onClick={(e) => e.stopPropagation()}
         >
           HIP-3 documentation →

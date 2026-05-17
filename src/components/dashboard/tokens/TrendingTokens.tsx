@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils";
 
 const StatItem = memo(({ label, value, compact }: StatItemProps & { compact?: boolean }) => (
     <div className="flex items-center gap-2">
-        <span className={compact ? "text-[10px] text-white" : "text-[11px] text-white"}>{label}:</span>
-        <span className={compact ? "text-xs text-white" : "text-sm text-white"}>
+        <span className={compact ? "text-[10px] text-text-primary" : "text-[11px] text-text-primary"}>{label}:</span>
+        <span className={compact ? "text-xs text-text-primary" : "text-sm text-text-primary"}>
             {formatLargeNumber(value || 0, { prefix: '$', decimals: 1, forceDecimals: true })}
         </span>
     </div>
@@ -35,7 +35,7 @@ const TokensHeader = memo(({ type, totalVolume, dailyFees, openInterest, compact
 
             <Link
                 href={type === "spot" ? "/market/spot" : "/market/perp"}
-                className={cn("flex items-center gap-1 text-brand-gold hover:text-white transition-colors", compact ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm")}
+                className={cn("flex items-center gap-1 text-brand-gold hover:text-text-primary transition-colors", compact ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm")}
             >
                 View All
                 <ExternalLink size={14} />

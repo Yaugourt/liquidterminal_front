@@ -120,7 +120,7 @@ export const ChartDisplay = ({
             {/* Value Display */}
             {displayValue !== null && (
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
+                <span className="text-lg font-bold text-text-primary tracking-tight tabular-nums">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
@@ -138,15 +138,15 @@ export const ChartDisplay = ({
             )}
 
             {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+              <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
                 {(["USDC", "HYPE"] as const).map((c) => (
                   <button
                     key={c}
                     onClick={() => onCurrencyChange(c)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
                       selectedCurrency === c
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {c}
@@ -156,15 +156,15 @@ export const ChartDisplay = ({
             )}
 
             {selectedFilter === "fees" && onFeeTypeChange && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+              <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
                 {(["all", "spot"] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => onFeeTypeChange(t)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold capitalize transition-colors ${
                       selectedFeeType === t
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {t}

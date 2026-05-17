@@ -75,7 +75,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
             {paginatedOrders.length > 0 ? (
               paginatedOrders.map((order, index) => (
                 <TableRow key={`${order.coin}-${order.side}-${index}`} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
-                  <TableCell className="py-3 px-4 text-white">{order.orderType}</TableCell>
+                  <TableCell className="py-3 px-4 text-text-primary">{order.orderType}</TableCell>
                   <TableCell className="py-3 px-4">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${order.side === 'A'
                         ? 'bg-emerald-500/10 text-emerald-400'
@@ -84,23 +84,23 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
                       {order.side === 'A' ? 'Buy' : 'Sell'}
                     </span>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-white">
+                  <TableCell className="py-3 px-4 text-text-primary">
                     {formatNumberValue(order.sz, format)}
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-white">{order.coin}</TableCell>
-                  <TableCell className="py-3 px-4 text-white">
+                  <TableCell className="py-3 px-4 text-text-primary">{order.coin}</TableCell>
+                  <TableCell className="py-3 px-4 text-text-primary">
                     {order.limitPx ? formatNumberValue(order.limitPx, format) : 'Market'}
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-white">
+                  <TableCell className="py-3 px-4 text-text-primary">
                     {order.limitPx ?
                       `$${formatNumber(parseFloat(order.sz) * parseFloat(order.limitPx), format)}`
                       : '-'
                     }
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-white">
+                  <TableCell className="py-3 px-4 text-text-primary">
                     {order.reduceOnly ? 'Yes' : 'No'}
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-white">{order.tif}</TableCell>
+                  <TableCell className="py-3 px-4 text-text-primary">{order.tif}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -108,7 +108,7 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
                 <TableCell colSpan={8} className="py-8">
                   <div className="flex flex-col items-center justify-center text-center">
                     <Database className="w-10 h-10 mb-3 text-brand-accent/30" />
-                    <p className="text-white text-sm mb-1">No open orders found</p>
+                    <p className="text-text-primary text-sm mb-1">No open orders found</p>
                     <p className="text-white/50 text-xs">Your active orders will appear here</p>
                   </div>
                 </TableCell>
