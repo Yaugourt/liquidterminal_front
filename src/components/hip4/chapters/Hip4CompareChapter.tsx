@@ -66,8 +66,8 @@ export function Hip4CompareChapter() {
             </p>
             <p>
               CLOB trading exists on several venues; what stands out for HIP-4 under research is{" "}
-              <strong className="text-white">native L1 settlement</strong> for{" "}
-              <strong className="text-white">price-linked</strong> outcomes (observed on testnet) and
+              <strong className="text-text-primary">native L1 settlement</strong> for{" "}
+              <strong className="text-text-primary">price-linked</strong> outcomes (observed on testnet) and
               tight coupling with the HyperCore engine. Subjective or off-price resolution is still
               an open question — see the research doc.
             </p>
@@ -76,7 +76,7 @@ export function Hip4CompareChapter() {
       />
       <Hip4GlassPanel>
         <Hip4DocLead className="mb-4 text-xs">
-          Read down the <strong className="text-white">Feature</strong> column first; each cell is one
+          Read down the <strong className="text-text-primary">Feature</strong> column first; each cell is one
           sentence max.
         </Hip4DocLead>
         <Hip4CompareTable

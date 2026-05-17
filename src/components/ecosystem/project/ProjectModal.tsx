@@ -206,7 +206,7 @@ export function ProjectModal({ onSuccess }: ProjectModalProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-white text-lg font-bold">Add Project</DialogTitle>
+          <DialogTitle className="text-text-primary text-lg font-bold">Add Project</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">

@@ -104,7 +104,7 @@ export function VaultEnhancedTable() {
     router.push(`/explorer/vaults/${address}`);
   }, [router]);
 
-  const headCell = "py-3 px-3 cursor-pointer select-none hover:text-white transition-colors";
+  const headCell = "py-3 px-3 cursor-pointer select-none hover:text-text-primary transition-colors";
 
   return (
     <motion.div
@@ -124,7 +124,7 @@ export function VaultEnhancedTable() {
               setSearch(e.target.value);
               onPageChange(0);
             }}
-            className="pl-9 h-8 text-sm bg-white/5 border-border-subtle text-white placeholder:text-text-muted focus:border-brand-accent/50"
+            className="pl-9 h-8 text-sm bg-white/5 border-border-subtle text-text-primary placeholder:text-text-muted focus:border-brand-accent/50"
           />
         </div>
         <span className="text-text-muted text-xs ml-auto shrink-0">
@@ -180,7 +180,7 @@ export function VaultEnhancedTable() {
                 className="hover:bg-white/[0.03] cursor-pointer transition-colors"
                 onClick={() => handleRowClick(vault.summary.vaultAddress)}
               >
-                <TableCell className="py-3 px-3 text-sm font-medium text-white">
+                <TableCell className="py-3 px-3 text-sm font-medium text-text-primary">
                   {vault.summary.name}
                 </TableCell>
                 <TableCell className="py-3 px-3 text-sm">
@@ -188,7 +188,7 @@ export function VaultEnhancedTable() {
                     {!vault.summary.isClosed ? "Open" : "Closed"}
                   </StatusBadge>
                 </TableCell>
-                <TableCell className="py-3 px-3 text-sm text-white font-medium">
+                <TableCell className="py-3 px-3 text-sm text-text-primary font-medium">
                   ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell

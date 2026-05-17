@@ -25,7 +25,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
     >
       <div className="flex items-center gap-2 mb-4">
         <GitBranch className="w-4 h-4 text-brand-accent" />
-        <h3 className="text-sm font-semibold text-white">
+        <h3 className="text-sm font-semibold text-text-primary">
           Sub-Vaults ({childAddresses.length})
         </h3>
       </div>
@@ -43,10 +43,10 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
               <Link
                 key={addr}
                 href={`/explorer/vaults/${addr}`}
-                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-border-subtle hover:border-border-hover hover:bg-white/[0.05] transition-all group"
+                className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-border-subtle hover:border-border-hover hover:bg-white/[0.05] transition-all group"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
+                  <p className="text-sm font-medium text-text-primary truncate">
                     {summary?.name ?? `${addr.slice(0, 8)}…${addr.slice(-6)}`}
                   </p>
                   <p className="text-xs text-text-muted font-mono">

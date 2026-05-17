@@ -82,7 +82,7 @@ export function TokenIcon({
         "rounded-full border",
         variantClass.border,
         variant === "dark" && "shadow-[0_0_8px_rgba(131,233,255,0.15)]",
-        "backdrop-blur-sm object-contain",
+        "object-contain",
         className
       )}
       onError={() => setHasError(true)}

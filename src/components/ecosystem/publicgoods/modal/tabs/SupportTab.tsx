@@ -31,7 +31,7 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
                 className="border-border-hover mt-1 data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
               />
               <div className="flex-1">
-                <label htmlFor={type.value} className="text-sm text-white cursor-pointer flex items-center gap-2">
+                <label htmlFor={type.value} className="text-sm text-text-primary cursor-pointer flex items-center gap-2">
                   <span>{type.icon}</span>
                   <span className="font-medium">{type.label}</span>
                 </label>
@@ -54,7 +54,7 @@ export function SupportTab({ formData, updateField, toggleSupportType, toggleCon
                   onCheckedChange={() => toggleContributorType(type.value)}
                   className="border-border-hover data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
                 />
-                <label htmlFor={`contributor-${type.value}`} className="text-sm text-white/80 cursor-pointer flex items-center gap-1">
+                <label htmlFor={`contributor-${type.value}`} className="text-sm text-text-secondary cursor-pointer flex items-center gap-1">
                   <span>{type.icon}</span>
                   <span>{type.label}</span>
                 </label>

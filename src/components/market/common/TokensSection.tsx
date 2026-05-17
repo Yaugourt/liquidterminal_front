@@ -45,7 +45,7 @@ export function TokensSection({ market }: TokensSectionProps) {
             placeholder="Search tokens..."
             value={searchQuery || ''}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pr-10 bg-brand-dark border-border-subtle text-white placeholder:text-text-muted focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
+            className="pr-10 bg-brand-dark border-border-subtle text-text-primary placeholder:text-text-muted focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
           />
         </div>
       </div>

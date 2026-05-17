@@ -518,7 +518,7 @@ export function TypedDataTable<T>({
                                                 ds.cellPaddingY,
                                                 ds.cellPaddingX,
                                                 ds.textSize,
-                                                "text-white font-medium",
+                                                "text-text-primary font-medium",
                                                 column.align === "right" && "text-right",
                                                 column.align === "center" && "text-center",
                                                 column.className
@@ -591,7 +591,7 @@ function wrapInCard(
                 <div className="flex items-center gap-3">
                     {icon && <div className="p-2 bg-brand-accent/10 rounded-lg">{icon}</div>}
                     <div>
-                        <h2 className="text-lg font-semibold text-white">{title}</h2>
+                        <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
                         {subtitle && <p className="text-text-muted text-sm">{subtitle}</p>}
                     </div>
                 </div>

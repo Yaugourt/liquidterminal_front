@@ -48,7 +48,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
 
   return (
     <div
-      className={`bg-brand-secondary/60 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all duration-200 shadow-xl shadow-black/20 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
+      className={`bg-brand-secondary/60 border border-border-subtle hover:border-border-hover transition-all duration-200 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
       onClick={handleCardClick}
     >
       {/* Image section */}
@@ -135,7 +135,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1 gap-2">
         {/* Title */}
-        <h3 className={`font-medium text-sm line-clamp-2 group-hover:text-brand-accent transition-colors leading-snug ${item.isRead ? 'text-text-secondary' : 'text-white'}`}>
+        <h3 className={`font-medium text-sm line-clamp-2 group-hover:text-brand-accent transition-colors leading-snug ${item.isRead ? 'text-text-secondary' : 'text-text-primary'}`}>
           {preview?.title || item.resource?.url || 'No title'}
         </h3>
 

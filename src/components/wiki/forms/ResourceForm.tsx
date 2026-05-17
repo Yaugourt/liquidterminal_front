@@ -50,7 +50,7 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                     type="url"
                     value={form.url}
                     onChange={(e) => setForm(prev => ({ ...prev, url: e.target.value }))}
-                    className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                    className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
                     placeholder="https://example.com/resource"
                     required
                 />

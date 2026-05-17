@@ -113,17 +113,17 @@ export function PublicReadListDetails({
       </div>
 
       {/* Info card */}
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
         <div className="h-1 bg-gradient-to-r from-brand-accent/60 to-brand-accent/20" />
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4 flex-1 min-w-0">
-              <div className="w-12 h-12 rounded-xl bg-brand-accent/10 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0">
                 <BookOpen className="w-6 h-6 text-brand-accent" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl font-bold text-white">{readList.name}</h2>
+                  <h2 className="text-xl font-bold text-text-primary">{readList.name}</h2>
                   <span className="flex items-center gap-1 text-label bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md border border-brand-accent/20">
                     <Globe className="w-3 h-3" />
                     Public
@@ -143,14 +143,14 @@ export function PublicReadListDetails({
               </div>
               <div>
                 <p className="text-xs text-text-muted">Created by</p>
-                <p className="text-sm text-white/90 font-medium">{readList.creator.name}</p>
+                <p className="text-sm text-text-secondary font-medium">{readList.creator.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-text-muted">
               <Calendar className="w-3.5 h-3.5 text-brand-accent/60" />
               <div>
                 <p className="text-xs text-text-muted">Updated</p>
-                <p className="text-sm text-white/80">
+                <p className="text-sm text-text-secondary">
                   {formatDistanceToNow(new Date(readList.updatedAt), { addSuffix: true })}
                 </p>
               </div>
@@ -159,7 +159,7 @@ export function PublicReadListDetails({
               <FileText className="w-3.5 h-3.5 text-brand-accent/60" />
               <div>
                 <p className="text-xs text-text-muted">Resources</p>
-                <p className="text-sm text-white/80 font-medium">{readList.itemsCount}</p>
+                <p className="text-sm text-text-secondary font-medium">{readList.itemsCount}</p>
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ export function PublicReadListDetails({
               key="empty"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-12 text-center"
+              className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-12 text-center"
             >
               <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-brand-accent" />

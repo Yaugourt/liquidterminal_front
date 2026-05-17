@@ -21,7 +21,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
     <Card className="rounded-2xl hover:border-border-hover transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">
+          <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">
             {list.name}
           </CardTitle>
           <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full shrink-0">
@@ -42,7 +42,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5 text-text-secondary">
             <Wallet size={14} className="text-brand-accent" />
-            <span className="text-white font-medium">{list.itemsCount || 0}</span>
+            <span className="text-text-primary font-medium">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
 
@@ -55,7 +55,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         {/* Creator */}
         <div className="flex items-center gap-2 text-sm text-text-secondary pt-2 border-t border-border-subtle">
           <span>By</span>
-          <span className="text-white font-medium">
+          <span className="text-text-primary font-medium">
             {list.creator?.name || 'Anonymous'}
           </span>
         </div>

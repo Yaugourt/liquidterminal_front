@@ -15,7 +15,7 @@ export function Hip4InfoApiToc({ variant }: { variant: "inline" | "sidebar" }) {
             <Link
               key={item.id}
               href={`#${item.id}`}
-              className="rounded-md border border-border-subtle bg-brand-primary/40 px-2 py-1 text-[11px] text-text-secondary transition-colors hover:border-border-hover hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40"
+              className="rounded-md border border-border-subtle bg-brand-primary/40 px-2 py-1 text-[11px] text-text-secondary transition-colors hover:border-border-hover hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40"
             >
               {item.label}
             </Link>

@@ -132,7 +132,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                         }}
                       />
                       <span className="text-rose-400 relative z-10 font-medium">${formatPrice(ask.px)}</span>
-                      <span className="text-white text-right relative z-10">{formatSize(ask.sz)}</span>
+                      <span className="text-text-primary text-right relative z-10">{formatSize(ask.sz)}</span>
                       <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
                   );
@@ -142,7 +142,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
               {/* Spread */}
               <div className="border-y border-border-subtle py-2 text-center mb-2 mx-1 flex items-center justify-center gap-5">
                 <span className="text-label text-text-secondary">Spread</span>
-                <span className="text-xs text-white font-medium">
+                <span className="text-xs text-text-primary font-medium">
                   {spread.absolute > 0 ? (
                     `${spread.absolute.toFixed(3)} (${spread.percentage.toFixed(6)}%)`
                   ) : (
@@ -168,7 +168,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                         }}
                       />
                       <span className="text-emerald-400 relative z-10 font-medium">${formatPrice(bid.px)}</span>
-                      <span className="text-white text-right relative z-10">{formatSize(bid.sz)}</span>
+                      <span className="text-text-primary text-right relative z-10">{formatSize(bid.sz)}</span>
                       <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
                   );
@@ -203,7 +203,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                       )}>
                         ${formatPrice(tradePrice)}
                       </span>
-                      <span className="text-white text-right">{formatSize(tradeSize)}</span>
+                      <span className="text-text-primary text-right">{formatSize(tradeSize)}</span>
                       <span className="text-text-secondary text-right text-xs">{tradeTime}</span>
                     </div>
                   );

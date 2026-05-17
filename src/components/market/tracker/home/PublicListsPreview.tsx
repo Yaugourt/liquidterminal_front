@@ -32,7 +32,7 @@ export function PublicListsPreview() {
             <List className="h-5 w-5 text-brand-accent" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Public Lists</h2>
+            <h2 className="text-lg font-semibold text-text-primary">Public Lists</h2>
             <p className="text-text-muted text-sm">Curated wallet collections</p>
           </div>
         </div>

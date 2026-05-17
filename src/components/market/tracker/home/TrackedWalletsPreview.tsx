@@ -35,7 +35,7 @@ export function TrackedWalletsPreview() {
             <Wallet className="h-5 w-5 text-brand-gold" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Your Wallets</h2>
+            <h2 className="text-lg font-semibold text-text-primary">Your Wallets</h2>
             <p className="text-text-muted text-sm">Track and monitor</p>
           </div>
         </div>
@@ -61,7 +61,7 @@ export function TrackedWalletsPreview() {
             <div className="p-4 bg-brand-gold/10 rounded-2xl mb-4">
               <Wallet className="h-12 w-12 text-brand-gold" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-text-primary mb-2">
               Track Your Favorite Wallets
             </h3>
             <p className="text-text-secondary text-sm mb-6 max-w-md">
@@ -100,7 +100,7 @@ export function TrackedWalletsPreview() {
             <div className="p-4 bg-brand-gold/10 rounded-2xl mb-4">
               <Wallet className="h-12 w-12 text-brand-gold" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3 className="text-lg font-semibold text-text-primary mb-2">
               No Wallets Tracked Yet
             </h3>
             <p className="text-text-secondary text-sm mb-6">
@@ -120,11 +120,11 @@ export function TrackedWalletsPreview() {
           <div className="space-y-6">
             {/* Stats */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-brand-secondary/40 backdrop-blur-sm rounded-xl p-4 border border-border-subtle">
+              <div className="bg-brand-secondary/40 rounded-lg p-4 border border-border-subtle">
                 <p className="text-text-muted text-sm mb-1">Tracked Wallets</p>
-                <p className="text-2xl font-bold text-white">{wallets.length}</p>
+                <p className="text-2xl font-bold text-text-primary">{wallets.length}</p>
               </div>
-              <div className="bg-brand-secondary/40 backdrop-blur-sm rounded-xl p-4 border border-border-subtle">
+              <div className="bg-brand-secondary/40 rounded-lg p-4 border border-border-subtle">
                 <p className="text-text-muted text-sm mb-1">Active Wallet</p>
                 <p className="text-sm text-brand-accent truncate">
                   {activeWallet ? `${activeWallet.address.slice(0, 6)}...${activeWallet.address.slice(-4)}` : 'None'}

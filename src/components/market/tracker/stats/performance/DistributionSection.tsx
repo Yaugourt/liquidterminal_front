@@ -130,7 +130,7 @@ export function DistributionSection({
             <span>{data.name}</span>
           </div>
           <div className="mt-1.5 flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-white tabular-nums">
+            <span className="text-sm font-semibold text-text-primary tabular-nums">
               {data.percentage.toFixed(1)}%
             </span>
             <span className="text-[11px] text-text-secondary tabular-nums">
@@ -178,7 +178,7 @@ export function DistributionSection({
               <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">
                 Total
               </span>
-              <span className="text-sm font-semibold text-white tabular-nums mt-0.5">
+              <span className="text-sm font-semibold text-text-primary tabular-nums mt-0.5">
                 {formatCurrency(totalPortfolio)}
               </span>
             </div>
@@ -202,10 +202,10 @@ export function DistributionSection({
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-white text-xs font-semibold truncate">
+                        <span className="text-text-primary text-xs font-semibold truncate">
                           {asset.name}
                         </span>
-                        <span className="text-white text-xs font-semibold ml-1 tabular-nums">
+                        <span className="text-text-primary text-xs font-semibold ml-1 tabular-nums">
                           {asset.percentage.toFixed(1)}%
                         </span>
                       </div>

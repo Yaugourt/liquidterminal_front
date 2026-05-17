@@ -41,7 +41,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
 
   if (isLoading && !topDexs.length) {
     return (
-      <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+      <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
         <LoadingState message="Loading..." size="md" withCard={false} />
       </div>
     );
@@ -49,14 +49,14 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
 
   if (error) {
     return (
-      <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+      <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
         <ErrorState title="Failed to load data" withCard={false} />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+    <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden flex flex-col">
       {/* Title outside <table> — same pattern as TokensHeader + TokensTable (avoids oversized first header cell) */}
       <div className="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-border-subtle shrink-0">
         <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
@@ -89,11 +89,11 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent shrink-0">
                         {dex.name.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-white text-[11px] font-medium truncate">{dex.fullName}</span>
+                      <span className="text-text-primary text-[11px] font-medium truncate">{dex.fullName}</span>
                       <ChevronRight className="h-3 w-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                     </div>
                   </TableCell>
-                  <TableCell className={`${cellMid} text-left text-white text-[11px] font-medium`}>
+                  <TableCell className={`${cellMid} text-left text-text-primary text-[11px] font-medium`}>
                     {dex.totalVolume24h > 0
                       ? formatLargeNumber(dex.totalVolume24h, {
                           prefix: "$",
@@ -102,7 +102,7 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
                         })
                       : "-"}
                   </TableCell>
-                  <TableCell className={`${cellLast} text-left text-white text-[11px] font-medium`}>
+                  <TableCell className={`${cellLast} text-left text-text-primary text-[11px] font-medium`}>
                     {dex.totalOpenInterest > 0
                       ? formatLargeNumber(dex.totalOpenInterest, {
                           prefix: "$",

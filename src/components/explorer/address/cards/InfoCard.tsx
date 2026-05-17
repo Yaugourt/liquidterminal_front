@@ -45,12 +45,12 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
         <Card className={CARD_BASE_CLASSES}>
             <div className="flex items-center gap-1.5 ml-4 mb-5">
                 <Info size={16} className="text-brand-gold" />
-                <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">MORE INFO</h3>
+                <h3 className="text-[11px] text-text-primary font-medium tracking-wide font-inter">MORE INFO</h3>
             </div>
             <div className="space-y-5 ml-4 mr-4">
                 <div>
                     <div className="flex items-center justify-between mb-3">
-                        <span className="text-white text-sm">Private name tags</span>
+                        <span className="text-text-primary text-sm">Private name tags</span>
                         <Button
                             variant="outline"
                             size="sm"
@@ -62,7 +62,7 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
                     </div>
                 </div>
                 <div>
-                    <div className="text-white text-sm mb-3">Transactions sent</div>
+                    <div className="text-text-primary text-sm mb-3">Transactions sent</div>
                     <div className="flex gap-5">
                         <div>
                             <span className="text-text-muted text-xs">Latest:</span>

@@ -56,7 +56,7 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
             Add Content
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
           <DialogTitle className="sr-only">Add Educational Content</DialogTitle>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

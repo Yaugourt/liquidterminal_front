@@ -59,7 +59,7 @@ export function CategoryForm({
           id="categoryName"
           value={value.name}
           onChange={(e) => onChange((prev) => ({ ...prev, name: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           placeholder={namePlaceholder}
           required
         />
@@ -73,7 +73,7 @@ export function CategoryForm({
           id="categoryDesc"
           value={value.description}
           onChange={(e) => onChange((prev) => ({ ...prev, description: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
           rows={3}
           placeholder={descriptionPlaceholder}
         />

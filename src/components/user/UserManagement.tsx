@@ -140,7 +140,7 @@ export function UserManagement() {
   if (error) {
     return (
       <Card className="p-6">
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center backdrop-blur-md">
+        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center">
           <p className="text-rose-400 mb-3 text-sm">Error loading users</p>
           <Button
             onClick={handleRefresh}
@@ -173,7 +173,7 @@ export function UserManagement() {
           <div className="flex items-center justify-center h-48">
             <div className="text-center">
               <Shield className="w-8 h-8 text-brand-gold mx-auto mb-3" />
-              <p className="text-white text-sm">Access restricted to administrators</p>
+              <p className="text-text-primary text-sm">Access restricted to administrators</p>
             </div>
           </div>
         </Card>
@@ -184,11 +184,11 @@ export function UserManagement() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center">
               <Users className="w-5 h-5 text-brand-gold" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white">User Management</h1>
+              <h1 className="text-lg font-bold text-text-primary">User Management</h1>
               <p className="text-text-secondary text-xs">Administration of user accounts</p>
             </div>
           </div>
@@ -211,28 +211,28 @@ export function UserManagement() {
               icon={<Users size={16} className="text-brand-accent" />}
               title="Total Users"
               value={pagination?.total || stats.total}
-              valueClassName="text-xl text-white font-bold tracking-tight"
+              valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
               icon={<Shield size={16} className="text-rose-400" />}
               iconClassName="bg-rose-500/10"
               title="Admins"
               value={stats.admins}
-              valueClassName="text-xl text-white font-bold tracking-tight"
+              valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
               icon={<ShieldCheck size={16} className="text-brand-gold" />}
               iconClassName="bg-brand-gold/10"
               title="Moderators"
               value={stats.moderators}
-              valueClassName="text-xl text-white font-bold tracking-tight"
+              valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
               icon={<UserCheck size={16} className="text-emerald-400" />}
               iconClassName="bg-emerald-500/10"
               title="Verified"
               value={stats.verified}
-              valueClassName="text-xl text-white font-bold tracking-tight"
+              valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
           </div>
         </div>

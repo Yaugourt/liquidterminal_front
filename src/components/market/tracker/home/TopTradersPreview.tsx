@@ -55,7 +55,7 @@ export function TopTradersPreview() {
       align: "right",
       getSortValue: (t) => t.winRate,
       accessor: (t) => (
-        <span className={t.winRate >= 0.5 ? "text-emerald-400" : "text-zinc-400"}>
+        <span className={t.winRate >= 0.5 ? "text-emerald-400" : "text-text-secondary"}>
           {(t.winRate * 100).toFixed(1)}%
         </span>
       ),

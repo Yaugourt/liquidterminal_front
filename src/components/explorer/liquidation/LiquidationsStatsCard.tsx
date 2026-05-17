@@ -24,7 +24,7 @@ function InlineStat({ icon, label, value, valueClassName, isLoading, className }
         {icon && <span className="mr-1.5">{icon}</span>}
         {label}
       </div>
-      <div className={cn("font-bold text-lg pl-5", valueClassName ?? "text-white")}>
+      <div className={cn("font-bold text-lg pl-5", valueClassName ?? "text-text-primary")}>
         {isLoading ? <span className="animate-pulse text-text-muted">--</span> : value}
       </div>
     </div>

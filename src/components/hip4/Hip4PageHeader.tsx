@@ -16,7 +16,7 @@ export function Hip4ChapterHubHeader({
 }) {
   return (
     <header className={cn("mb-6 space-y-2", className)}>
-      <h1 className="font-inter text-lg font-semibold text-white sm:text-xl">{title}</h1>
+      <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">{title}</h1>
       {subtitle ? (
         <div className="max-w-prose space-y-2 text-xs leading-relaxed text-text-secondary">
           {typeof subtitle === "string" ? <p>{subtitle}</p> : subtitle}
@@ -48,7 +48,7 @@ export function Hip4PageHeader({
       <header className={cn("mb-8 space-y-4", className)}>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-inter text-lg font-semibold text-white sm:text-xl">
+            <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">
               HIP-4 research
             </h1>
             <span className="rounded-md border border-brand-accent/30 bg-brand-accent/10 px-2 py-0.5 text-[11px] font-medium text-brand-accent">
@@ -84,7 +84,7 @@ export function Hip4PageHeader({
     <header className={cn("mb-8 space-y-6", className)}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="font-inter text-lg font-semibold text-white sm:text-xl">
+          <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">
             HIP-4 Contest Contract
           </h1>
           <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
@@ -106,14 +106,14 @@ export function Hip4PageHeader({
         {STATS.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border-subtle bg-brand-secondary/50 p-3"
+            className="rounded-lg border border-border-subtle bg-brand-secondary/50 p-3"
           >
             <div className="text-[10px] font-medium uppercase tracking-wide text-text-secondary">
               {s.label}
             </div>
             <div
               className={cn(
-                "mt-1 font-semibold text-white",
+                "mt-1 font-semibold text-text-primary",
                 s.small && "font-mono text-sm",
                 s.accent
               )}

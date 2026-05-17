@@ -36,7 +36,7 @@ export function Hip4ReferenceChapter() {
         subtitle={
           <>
             <p>
-              This page is a <strong className="text-white">compact map</strong>: endpoints, channels,
+              This page is a <strong className="text-text-primary">compact map</strong>: endpoints, channels,
               L1 action names, infra. It does not duplicate full request/response payloads.
             </p>
             <p>

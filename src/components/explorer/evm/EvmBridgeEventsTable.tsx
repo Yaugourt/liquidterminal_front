@@ -55,7 +55,7 @@ export function EvmBridgeEventsTable() {
   return (
     <div className="p-4">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-white">Bridge Activity</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Bridge Activity</h3>
         <p className="text-xs text-text-secondary mt-0.5">Recent HyperEVM bridge deposits and withdrawals</p>
       </div>
       <div className="overflow-x-auto">
@@ -112,7 +112,7 @@ export function EvmBridgeEventsTable() {
                       {truncateAddress(event.user_addr)}
                     </span>
                   </TableCell>
-                  <TableCell className="text-white text-sm font-medium">
+                  <TableCell className="text-text-primary text-sm font-medium">
                     {event.amount}
                   </TableCell>
                   <TableCell className="text-text-secondary text-sm">

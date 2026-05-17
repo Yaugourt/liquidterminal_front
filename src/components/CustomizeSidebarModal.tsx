@@ -74,10 +74,10 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
       {/* Group header */}
       <div className="flex items-center gap-2">
         <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
-          <GripVertical className="w-4 h-4 text-gray-400" />
+          <GripVertical className="w-4 h-4 text-text-tertiary" />
         </div>
         <div className="flex-1 flex items-center justify-between">
-          <span className="text-white font-medium text-sm">{displayName}</span>
+          <span className="text-text-primary font-medium text-sm">{displayName}</span>
           <Switch
             checked={group.visible}
             onCheckedChange={() => onToggleGroup(group.id)}
@@ -95,7 +95,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
 
             return (
               <div key={item.id} className="flex items-center justify-between py-1">
-                <span className="text-gray-300 text-xs">{navItem.name}</span>
+                <span className="text-text-secondary text-xs">{navItem.name}</span>
                 <Switch
                   checked={item.visible}
                   onCheckedChange={() => onToggleItem(group.id, item.id)}
@@ -169,8 +169,8 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
           {/* Header */}
           <DialogHeader className="p-6 border-b border-border-subtle flex flex-row items-center justify-between space-y-0">
             <div>
-              <DialogTitle className="text-xl font-bold text-white">Customize Sidebar</DialogTitle>
-              <DialogDescription className="text-sm text-gray-400 mt-1">
+              <DialogTitle className="text-xl font-bold text-text-primary">Customize Sidebar</DialogTitle>
+              <DialogDescription className="text-sm text-text-secondary mt-1">
                 Toggle visibility and drag to reorder sections
               </DialogDescription>
             </div>
@@ -211,7 +211,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
             <Button
               variant="outline"
               onClick={handleReset}
-              className="border-border-hover text-white hover:bg-white/10 gap-2"
+              className="border-border-hover text-text-primary hover:bg-white/10 gap-2"
             >
               <RotateCcw className="w-4 h-4" />
               Reset to Default

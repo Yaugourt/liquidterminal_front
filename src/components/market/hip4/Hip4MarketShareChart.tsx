@@ -96,14 +96,14 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-1 text-[28px] font-bold text-white tabular-nums tracking-tight"
+            className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight"
           >
             {compactUsd(displayedValue)}
           </motion.div>
         </AnimatePresence>
         <div className="text-[11px] text-text-muted">
           {displayed
-            ? <span><span className="text-white">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total</span>
+            ? <span><span className="text-text-primary">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total</span>
             : <span>{slices.length} categories</span>
           }
         </div>
@@ -159,7 +159,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     className="flex flex-col items-center text-center px-4"
                   >
                     <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">{displayed ? displayed.name : "Total"}</div>
-                    <div className="mt-0.5 text-[20px] font-bold text-white tabular-nums tracking-tight">{compactUsd(displayedValue)}</div>
+                    <div className="mt-0.5 text-[20px] font-bold text-text-primary tabular-nums tracking-tight">{compactUsd(displayedValue)}</div>
                     <div className="text-[11px] text-text-secondary tabular-nums">{displayedPct.toFixed(1)}%</div>
                   </motion.div>
                 </AnimatePresence>
@@ -175,7 +175,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     key={s.name}
                     onMouseEnter={() => setActiveIdx(i)}
                     onMouseLeave={() => setActiveIdx(null)}
-                    className={`group relative flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all ${
+                    className={`group relative flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all ${
                       isActive ? "border-border-hover bg-white/[0.04]" : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
                     }`}
                   >
@@ -192,8 +192,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-white truncate">{s.name}</span>
-                        <span className="text-xs font-semibold text-white tabular-nums shrink-0">{compactUsd(s.value)}</span>
+                        <span className="text-xs font-semibold text-text-primary truncate">{s.name}</span>
+                        <span className="text-xs font-semibold text-text-primary tabular-nums shrink-0">{compactUsd(s.value)}</span>
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/5">

@@ -56,7 +56,7 @@ export function DailyLimitsWarning({
 
     return (
       <div className={cn(
-        "flex items-center gap-2 p-3 rounded-xl",
+        "flex items-center gap-2 p-3 rounded-lg",
         isReached 
           ? "bg-orange-500/10 border border-orange-500/20" 
           : "bg-white/5 border border-border-subtle",
@@ -66,7 +66,7 @@ export function DailyLimitsWarning({
         <div className="flex-1 min-w-0">
           <p className={cn(
             "text-sm",
-            isReached ? "text-orange-300" : "text-white/80"
+            isReached ? "text-orange-300" : "text-text-secondary"
           )}>
             {DAILY_LIMIT_LABELS[actionType]}
           </p>
@@ -103,7 +103,7 @@ export function DailyLimitsWarning({
         return (
           <div
             key={type}
-            className="flex items-center gap-2 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20"
+            className="flex items-center gap-2 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20"
           >
             <AlertTriangle className="h-4 w-4 text-orange-400 shrink-0" />
             <div className="flex-1 min-w-0">

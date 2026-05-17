@@ -22,7 +22,7 @@ export const StatusTabs = memo(function StatusTabs({
       id: 'all', 
       label: 'All Projects',
       count: counts.all,
-      color: 'text-white'
+      color: 'text-text-primary'
     },
     { 
       id: 'approved', 

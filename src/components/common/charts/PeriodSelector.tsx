@@ -31,7 +31,7 @@ function PeriodSelectorInner<T extends string>({
     const pad = size === "md" ? "px-3 py-1" : "px-2.5 py-1";
     return (
       <div
-        className={`flex items-center rounded-xl border border-border-subtle bg-black/30 p-1 ${className}`}
+        className={`flex items-center rounded-lg border border-border-subtle bg-black/30 p-1 ${className}`}
       >
         {options.map((option) => {
           const isActive = selected === option;
@@ -51,8 +51,8 @@ function PeriodSelectorInner<T extends string>({
               <span
                 className={`relative z-10 ${
                   isActive
-                    ? "text-white"
-                    : "text-text-secondary hover:text-white"
+                    ? "text-text-primary"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {labels?.[option] ?? option}

@@ -19,7 +19,7 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="stat-card animate-pulse h-24 rounded-xl" />
+          <div key={i} className="stat-card animate-pulse h-24 rounded-lg" />
         ))}
       </div>
     );
@@ -58,7 +58,7 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
       value: formatNumber(avgVolumePerUser, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true }),
       icon: <Coins className="w-4 h-4 text-text-secondary" />,
       pct: null,
-      valueClassName: "text-lg font-bold tabular-nums text-white",
+      valueClassName: "text-lg font-bold tabular-nums text-text-primary",
     },
   ];
 

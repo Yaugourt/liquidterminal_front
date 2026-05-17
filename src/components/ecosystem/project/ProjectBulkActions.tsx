@@ -102,7 +102,7 @@ export function ProjectBulkActions({
             onClick={handleCancelSelection}
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white"
+            className="text-text-tertiary hover:text-text-primary"
           >
             <X className="w-4 h-4" />
           </Button>

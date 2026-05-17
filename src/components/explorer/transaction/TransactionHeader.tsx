@@ -34,14 +34,14 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <p className="text-white text-sm mb-1 font-inter">Type:</p>
-            <p className="text-white text-base font-inter">
+            <p className="text-text-primary text-sm mb-1 font-inter">Type:</p>
+            <p className="text-text-primary text-base font-inter">
               {transaction.action.type}
             </p>
           </div>
           <div>
-            <p className="text-white text-sm mb-1 font-inter">Time:</p>
-            <p className="text-white text-base font-inter">
+            <p className="text-text-primary text-sm mb-1 font-inter">Time:</p>
+            <p className="text-text-primary text-base font-inter">
               {format(new Date(transaction.time), 'dd/MM/yyyy HH:mm:ss')}
             </p>
           </div>
@@ -49,7 +49,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
 
         <div className="space-y-4">
           <div>
-            <p className="text-white text-sm mb-1 font-inter">Block:</p>
+            <p className="text-text-primary text-sm mb-1 font-inter">Block:</p>
             <Link
               href={`/explorer/block/${transaction.block}`}
               className="text-brand-gold text-base hover:text-brand-gold/80 transition-colors font-inter"
@@ -58,7 +58,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
             </Link>
           </div>
           <div>
-            <p className="text-white text-sm mb-1 font-inter">User:</p>
+            <p className="text-text-primary text-sm mb-1 font-inter">User:</p>
             <div className="flex items-center gap-2">
               <Link
                 href={`/explorer/address/${transaction.user}`}
@@ -84,7 +84,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
 
       {transaction.error && (
         <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
-          <p className="text-white text-sm mb-1 font-inter">Error:</p>
+          <p className="text-text-primary text-sm mb-1 font-inter">Error:</p>
           <p className="text-rose-400 text-sm font-inter">{transaction.error}</p>
         </div>
       )}

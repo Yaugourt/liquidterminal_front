@@ -79,12 +79,12 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-        <h3 className="text-sm font-semibold text-white">Ledger</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Ledger</h3>
         <input
           placeholder="Filter by address or hash…"
           value={filterQuery}
           onChange={(e) => handleFilterChange(e.target.value)}
-          className="h-7 px-3 text-xs bg-white/5 border border-border-subtle rounded-md text-white placeholder:text-text-muted focus:outline-none focus:border-brand-accent/50 w-52"
+          className="h-7 px-3 text-xs bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-accent/50 w-52"
         />
       </div>
 

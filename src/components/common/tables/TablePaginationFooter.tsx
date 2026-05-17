@@ -54,7 +54,7 @@ export function TablePaginationFooter({
           size="sm"
           onClick={() => onPageChange(Math.max(0, page - 1))}
           disabled={page === 0}
-          className="h-8 w-8 p-0 text-text-muted hover:text-white disabled:opacity-50"
+          className="h-8 w-8 p-0 text-text-muted hover:text-text-primary disabled:opacity-50"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -80,7 +80,7 @@ export function TablePaginationFooter({
                   "h-8 w-8 p-0 text-sm",
                   n === displayPage
                     ? "bg-brand-accent/20 text-brand-accent"
-                    : "text-text-muted hover:text-white"
+                    : "text-text-muted hover:text-text-primary"
                 )}
               >
                 {n}
@@ -93,7 +93,7 @@ export function TablePaginationFooter({
           size="sm"
           onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}
           disabled={page === totalPages - 1}
-          className="h-8 w-8 p-0 text-text-muted hover:text-white disabled:opacity-50"
+          className="h-8 w-8 p-0 text-text-muted hover:text-text-primary disabled:opacity-50"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>

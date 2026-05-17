@@ -51,7 +51,7 @@ const PerpDexRow = memo(({
             {dex.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col">
-            <span className="text-white text-sm font-medium">{dex.fullName}</span>
+            <span className="text-text-primary text-sm font-medium">{dex.fullName}</span>
             <span className="text-brand-accent text-xs">{dex.name}</span>
           </div>
         </div>
@@ -60,7 +60,7 @@ const PerpDexRow = memo(({
       {/* Active Markets */}
       <TableCell className="text-left">
         <div className="flex flex-col items-start">
-          <span className="text-white text-sm font-medium">{dex.activeAssets}</span>
+          <span className="text-text-primary text-sm font-medium">{dex.activeAssets}</span>
           {dex.activeAssets !== dex.totalAssets && (
             <span className="text-rose-400 text-label">
               +{dex.totalAssets - dex.activeAssets} delisted
@@ -71,7 +71,7 @@ const PerpDexRow = memo(({
 
       {/* 24h Volume */}
       <TableCell className="text-left">
-        <span className="text-white text-sm font-medium">
+        <span className="text-text-primary text-sm font-medium">
           {dex.totalVolume24h > 0
             ? formatNumber(dex.totalVolume24h, format, {
               minimumFractionDigits: 0,
@@ -85,7 +85,7 @@ const PerpDexRow = memo(({
 
       {/* Open Interest */}
       <TableCell className="text-left">
-        <span className="text-white text-sm font-medium">
+        <span className="text-text-primary text-sm font-medium">
           {dex.totalOpenInterest > 0
             ? formatNumber(dex.totalOpenInterest, format, {
               minimumFractionDigits: 0,
@@ -107,7 +107,7 @@ const PerpDexRow = memo(({
       {/* OI Cap Utilization */}
       <TableCell className="pr-4 text-left">
         <div className="flex flex-col items-start">
-          <span className="text-white text-sm font-medium">
+          <span className="text-text-primary text-sm font-medium">
             {formatNumber(dex.totalOiCap, format, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
@@ -186,14 +186,14 @@ export function PerpDexTable() {
 
   if (isLoading && !sortedDexs.length) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
         <LoadingState message="Loading PerpDex..." size="lg" withCard={false} />
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
       <div className="overflow-x-auto scrollbar-brand">
         <Table className="min-w-[800px] w-full">
           <TableHeader>

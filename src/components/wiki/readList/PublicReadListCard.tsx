@@ -50,7 +50,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-colors duration-200 cursor-pointer group shadow-xl shadow-black/20 overflow-hidden ${isSelected
+      className={`bg-brand-secondary/60 border rounded-2xl transition-colors duration-200 cursor-pointer group overflow-hidden ${isSelected
         ? 'border-brand-accent/40'
         : 'border-border-subtle hover:border-border-hover'
         }`}
@@ -62,12 +62,12 @@ export const PublicReadListCard = memo(function PublicReadListCard({
       <div className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/20 transition-colors">
+          <div className="w-10 h-10 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/20 transition-colors">
             <BookOpen className="w-5 h-5 text-brand-accent" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
+              <h3 className="text-sm font-semibold text-text-primary truncate group-hover:text-brand-accent transition-colors">
                 {readList.name}
               </h3>
               <Globe className="w-3 h-3 text-brand-accent/60 flex-shrink-0" />
@@ -93,7 +93,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
         {/* Stats row */}
         <div className="flex items-center justify-between py-2 border-t border-border-subtle/60">
           <span className="text-xs text-text-muted">
-            <span className="text-white font-semibold">{readList.itemsCount}</span> resources
+            <span className="text-text-primary font-semibold">{readList.itemsCount}</span> resources
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
@@ -108,7 +108,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
         <Button
           onClick={handleCopy}
           disabled={isCopying}
-          className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-xl transition-all"
+          className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg transition-all"
           size="sm"
         >
           {isCopying ? (

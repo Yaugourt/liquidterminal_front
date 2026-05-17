@@ -36,7 +36,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
         const outcomeName = outcomeIdx === 0 ? "Yes" : outcomeIdx === 1 ? "No" : null;
         return (
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-xs font-semibold text-white truncate">
+            <span className="text-xs font-semibold text-text-primary truncate">
               {marketNameIndex?.[row.coin] || row.coin}
             </span>
             {outcomeName && (
@@ -72,7 +72,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => row.px ?? 0,
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-white">
+        <span className="text-xs tabular-nums text-text-primary">
           {row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}
         </span>
       ),

@@ -14,7 +14,7 @@ function InfoRow({ k, children }: PropsWithChildren<{ k: string }>) {
       <div className="text-[11px] font-medium uppercase tracking-wide text-text-secondary">
         {k}
       </div>
-      <div className="text-sm text-white">{children}</div>
+      <div className="text-sm text-text-primary">{children}</div>
     </div>
   );
 }

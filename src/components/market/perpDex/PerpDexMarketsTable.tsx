@@ -45,7 +45,7 @@ function MarketsSortableHead({
     <TableHead
       className={cn(
         "cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary",
-        !isActive && "hover:text-white"
+        !isActive && "hover:text-text-primary"
       )}
       onClick={() => onSort(field)}
       onKeyDown={(e) => {
@@ -151,7 +151,7 @@ export function PerpDexMarketsTable({
       <h2 className="text-table-header mb-3">
         Markets ({activeAssets} active / {totalAssets} total)
       </h2>
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
         <div className="overflow-x-auto scrollbar-brand">
           <Table>
             <TableHeader>
@@ -195,7 +195,7 @@ export function PerpDexMarketsTable({
                         <AssetLogo assetName={asset.name} isDelisted={asset.isDelisted} />
                         <div>
                           <div className="flex items-center gap-1">
-                            <span className="text-white text-sm font-medium">{getTicker(asset.name)}</span>
+                            <span className="text-text-primary text-sm font-medium">{getTicker(asset.name)}</span>
                             <span className="text-text-muted text-sm">/</span>
                             <span className="text-text-muted text-xs">{asset.collateralToken}</span>
                           </div>
@@ -205,7 +205,7 @@ export function PerpDexMarketsTable({
                     </TableCell>
 
                     <TableCell>
-                      <span className="text-white text-sm font-medium">
+                      <span className="text-text-primary text-sm font-medium">
                         {asset.markPx
                           ? `$${formatNumber(asset.markPx, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                           : "-"}
@@ -221,7 +221,7 @@ export function PerpDexMarketsTable({
                     </TableCell>
 
                     <TableCell>
-                      <span className="text-white text-sm font-medium">
+                      <span className="text-text-primary text-sm font-medium">
                         {asset.dayNtlVlm && asset.dayNtlVlm > 0
                           ? formatNumber(asset.dayNtlVlm, format, {
                               minimumFractionDigits: 0,
@@ -234,7 +234,7 @@ export function PerpDexMarketsTable({
                     </TableCell>
 
                     <TableCell>
-                      <span className="text-white text-sm font-medium">
+                      <span className="text-text-primary text-sm font-medium">
                         {asset.openInterest && asset.openInterest > 0
                           ? formatNumber(asset.openInterest, format, {
                               minimumFractionDigits: 0,
@@ -255,7 +255,7 @@ export function PerpDexMarketsTable({
                     </TableCell>
 
                     <TableCell>
-                      <span className="text-white text-sm font-medium">
+                      <span className="text-text-primary text-sm font-medium">
                         {formatNumber(asset.streamingOiCap, format, {
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0,

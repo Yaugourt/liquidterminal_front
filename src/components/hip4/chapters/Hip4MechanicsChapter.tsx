@@ -32,7 +32,7 @@ export function Hip4MechanicsChapter() {
         <Hip4SectionTitle>Contest lifecycle — V1</Hip4SectionTitle>
         <ul className="space-y-4">
           <FlowStep n={1}>
-            <strong className="text-white">OWNER</strong>{" "}
+            <strong className="text-text-primary">OWNER</strong>{" "}
             <code className="text-brand-gold">createContest(contestId, entryFee)</code>
           </FlowStep>
           <FlowStep n={2}>
@@ -41,7 +41,7 @@ export function Hip4MechanicsChapter() {
           </FlowStep>
           <FlowStep n={3}>Deadline enforced on-chain.</FlowStep>
           <FlowStep n={4}>
-            <strong className="text-white">OWNER</strong>{" "}
+            <strong className="text-text-primary">OWNER</strong>{" "}
             <code className="text-brand-gold">publishMerkleRoot</code> after finalize flow.
           </FlowStep>
           <FlowStep n={5}>

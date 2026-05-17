@@ -47,7 +47,7 @@ export function BlockTransactionList({
             }}
             className="-mx-4 px-4"
           >
-            <Table className="w-full text-sm text-white font-inter table-fixed">
+            <Table className="w-full text-sm text-text-primary font-inter table-fixed">
               {transactions.length > 0 && (
                 <>
                   <TableHeader>
@@ -81,8 +81,8 @@ export function BlockTransactionList({
                             {tx.action.type}
                           </span>
                         </TableCell>
-                        <TableCell className="py-3 px-4 text-white text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</TableCell>
-                        <TableCell className="py-3 px-4 text-white text-sm">
+                        <TableCell className="py-3 px-4 text-text-primary text-sm">{formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}</TableCell>
+                        <TableCell className="py-3 px-4 text-text-primary text-sm">
                           {formatDateTime(tx.time, dateFormat)}
                         </TableCell>
                         <TableCell className="py-3 px-4">

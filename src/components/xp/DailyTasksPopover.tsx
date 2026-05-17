@@ -85,7 +85,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
             <div className="h-6 w-6 rounded-md bg-emerald-500/20 flex items-center justify-center">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
             </div>
-            <span className="text-sm font-semibold text-white">Daily Tasks</span>
+            <span className="text-sm font-semibold text-text-primary">Daily Tasks</span>
           </div>
           <span className="text-xs text-text-secondary">
             {dailyTasksCompletedCount}/{dailyTasks.length}
@@ -111,7 +111,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                     "text-xs",
                     task.completed
                       ? "text-emerald-300"
-                      : "text-white/80 group-hover:text-white transition-colors"
+                      : "text-text-secondary group-hover:text-text-primary transition-colors"
                   )}>
                     {task.description}
                   </p>
@@ -198,7 +198,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         <div className="border-t border-border-subtle">
           <Link
             href="/profile?tab=missions"
-            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover-subtle"
+            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-text-primary hover-subtle"
           >
             <span>See Weekly Challenges</span>
             <ChevronRight className="h-4 w-4" />

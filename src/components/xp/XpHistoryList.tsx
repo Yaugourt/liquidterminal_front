@@ -103,9 +103,9 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+    <div className={cn("bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
-        <h3 className="flex items-center gap-2 text-white font-semibold">
+        <h3 className="flex items-center gap-2 text-text-primary font-semibold">
           <History className="h-5 w-5 text-brand-gold" />
           XP History
         </h3>
@@ -132,7 +132,7 @@ export function XpHistoryList({
                 return (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors"
+                    className="flex items-center justify-between p-3 bg-brand-dark rounded-lg border border-border-subtle hover:border-border-hover transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -144,7 +144,7 @@ export function XpHistoryList({
                         <Icon className={cn("h-4 w-4", textColor)} />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-white">
+                        <p className="font-medium text-sm text-text-primary">
                           {XP_ACTION_LABELS[tx.actionType] || tx.actionType}
                         </p>
                         {tx.description && (
@@ -174,7 +174,7 @@ export function XpHistoryList({
               historyPagination.page < historyPagination.totalPages && (
                 <Button
                   variant="outline"
-                  className="w-full border-border-subtle hover:bg-white/5 text-white/80 rounded-lg"
+                  className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg"
                   onClick={() => refetchHistory(historyPagination.page + 1)}
                   disabled={isLoadingHistory}
                 >

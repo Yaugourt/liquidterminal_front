@@ -23,7 +23,7 @@ function InlineStat({ icon, label, value, subValue }: InlineStatProps) {
         <span className="mr-1.5">{icon}</span>
         {label}
       </div>
-      <div className="text-white font-bold text-sm pl-5">
+      <div className="text-text-primary font-bold text-sm pl-5">
         {value}
         {subValue && <div className="text-text-muted text-xs font-medium">{subValue}</div>}
       </div>

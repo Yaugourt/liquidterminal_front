@@ -26,7 +26,7 @@ export function Hip4Breadcrumbs({ className }: { className?: string }) {
         HIP-4
       </Link>
       <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
-      <span className="font-medium text-white" aria-current="page">
+      <span className="font-medium text-text-primary" aria-current="page">
         {title}
       </span>
     </nav>

@@ -51,7 +51,7 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
+    <div className={`bg-brand-secondary/40 border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
       }`}>
       {/* Selection checkbox for admins */}
       {showSelection && (
@@ -90,11 +90,11 @@ export const ProjectCard = memo(function ProjectCard({
               src={project.logo}
               alt={project.title}
               fill
-              className="rounded-xl object-cover"
+              className="rounded-lg object-cover"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
+            <div className="w-full h-full rounded-lg bg-brand-accent/10 flex items-center justify-center">
               <span className="text-brand-accent text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
@@ -104,7 +104,7 @@ export const ProjectCard = memo(function ProjectCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <h3 className="text-base text-white font-semibold truncate">
+            <h3 className="text-base text-text-primary font-semibold truncate">
               {project.title}
             </h3>
             {project.categories && project.categories.length > 0 && (

@@ -33,10 +33,10 @@ export function PerformanceChart({
   ];
 
   return (
-    <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden relative">
+    <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden relative">
       {/* Aurora pill tabs */}
       <div className="absolute top-3 left-4 z-20">
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -54,7 +54,7 @@ export function PerformanceChart({
                 )}
                 <span
                   className={`relative z-10 ${
-                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   {tab.label}
@@ -73,7 +73,7 @@ export function PerformanceChart({
             className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
               hideSmallBalances
                 ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
-                : "border-border-subtle bg-black/30 text-text-secondary hover:text-white hover:border-border-hover"
+                : "border-border-subtle bg-black/30 text-text-secondary hover:text-text-primary hover:border-border-hover"
             }`}
             title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
           >

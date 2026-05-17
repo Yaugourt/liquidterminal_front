@@ -70,35 +70,35 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Max supply</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.maxSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Total supply</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.totalSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Circulating</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.circulatingSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Deploy gas</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isAuctionLoading ? "Loading..." : auctionInfo ? `${formatNumber(parseFloat(auctionInfo.deployGas), format, { maximumFractionDigits: 2 })} ${auctionInfo.currency}` : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Holders</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isHoldersLoading ? "Loading..." : formatNumber(holdersCount, format, { maximumFractionDigits: 0 })}
             </span>
           </div>
@@ -151,7 +151,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           {tokenDetails?.deployTime && (
             <div>
               <span className="text-text-secondary text-xs block mb-2">Deploy time</span>
-              <span className="text-white text-xs">
+              <span className="text-text-primary text-xs">
                 {new Date(tokenDetails.deployTime).toLocaleDateString()}
               </span>
             </div>

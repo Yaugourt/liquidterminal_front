@@ -63,7 +63,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
-          <DialogTitle className="text-white text-xl font-bold">Review: {project.name}</DialogTitle>
+          <DialogTitle className="text-text-primary text-xl font-bold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-text-muted">
             {project.category}
           </DialogDescription>
@@ -78,7 +78,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-emerald-500/30 transition-colors bg-black/20">
                   <RadioGroupItem value="APPROVED" id="approved" className="mt-0.5" />
                   <div className="flex-1">
-                    <label htmlFor="approved" className="text-white cursor-pointer flex items-center gap-2 font-medium">
+                    <label htmlFor="approved" className="text-text-primary cursor-pointer flex items-center gap-2 font-medium">
                       <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                       Approve Project
                     </label>
@@ -91,7 +91,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-rose-500/30 transition-colors bg-black/20">
                   <RadioGroupItem value="REJECTED" id="rejected" className="mt-0.5" />
                   <div className="flex-1">
-                    <label htmlFor="rejected" className="text-white cursor-pointer flex items-center gap-2 font-medium">
+                    <label htmlFor="rejected" className="text-text-primary cursor-pointer flex items-center gap-2 font-medium">
                       <XCircle className="w-5 h-5 text-rose-400" />
                       Reject Project
                     </label>

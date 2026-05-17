@@ -100,7 +100,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
         <div className="text-center">
-          <h3 className="text-xl font-semibold text-white mb-2">No public lists found</h3>
+          <h3 className="text-xl font-semibold text-text-primary mb-2">No public lists found</h3>
           <p className="text-text-secondary">
             {searchQuery
               ? `No results for "${searchQuery}"`

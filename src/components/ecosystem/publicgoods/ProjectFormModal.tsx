@@ -366,7 +366,7 @@ export function ProjectFormModal({
                 style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
             >
                 <DialogHeader>
-                    <DialogTitle className="text-white text-xl font-bold">{title}</DialogTitle>
+                    <DialogTitle className="text-text-primary text-xl font-bold">{title}</DialogTitle>
                     {subtitle && (
                         <p className="text-text-secondary text-sm">{subtitle}</p>
                     )}

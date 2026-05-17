@@ -61,7 +61,7 @@ const AuctionRow = memo(({
     <TableRow className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors">
       {/* Date */}
       <TableCell className="py-3 px-3 pl-4">
-        <span className="text-white text-sm">{formatDateTime(auction.time, dateFormat)}</span>
+        <span className="text-text-primary text-sm">{formatDateTime(auction.time, dateFormat)}</span>
       </TableCell>
 
       {/* Symbol */}
@@ -71,7 +71,7 @@ const AuctionRow = memo(({
             {auction.symbol.charAt(0)}
           </div>
           <div className="flex flex-col">
-            <span className="text-white text-sm font-medium">{auction.symbol}</span>
+            <span className="text-text-primary text-sm font-medium">{auction.symbol}</span>
             <span className="text-brand-accent text-xs">{auction.coin}</span>
           </div>
         </div>
@@ -80,7 +80,7 @@ const AuctionRow = memo(({
       {/* DEX */}
       <TableCell className="py-3 px-3">
         <div className="flex flex-col">
-          <span className="text-white text-sm font-medium">{auction.dex}</span>
+          <span className="text-text-primary text-sm font-medium">{auction.dex}</span>
           {auction.dexFullName && (
             <span className="text-text-muted text-xs">{auction.dexFullName}</span>
           )}
@@ -89,7 +89,7 @@ const AuctionRow = memo(({
 
       {/* Oracle Price */}
       <TableCell className="py-3 px-3">
-        <span className="text-white text-sm">
+        <span className="text-text-primary text-sm">
           {formatNumber(auction.oraclePx, numberFormat, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 6,
@@ -101,7 +101,7 @@ const AuctionRow = memo(({
 
       {/* Gas (HYPE) */}
       <TableCell className="py-3 px-3">
-        <span className="text-white text-sm">
+        <span className="text-text-primary text-sm">
           {auction.maxGas !== null
             ? formatNumber(auction.maxGas, numberFormat, {
                 minimumFractionDigits: 0,
@@ -122,7 +122,7 @@ const AuctionRow = memo(({
           href={`https://app.hyperliquid.xyz/explorer/tx/${auction.hash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-brand-accent hover:text-white transition-colors text-sm"
+          className="flex items-center gap-1 text-brand-accent hover:text-text-primary transition-colors text-sm"
         >
           View
           <ExternalLink className="w-3 h-3" />
@@ -199,14 +199,14 @@ export function PastAuctionsPerpTable() {
 
   if (isLoading && !sortedAuctions.length) {
     return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
         <LoadingState message="Loading auctions..." size="lg" withCard={false} />
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+    <div className="w-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden">
       <div className="overflow-x-auto scrollbar-brand">
         <Table className="min-w-[900px] w-full">
           <TableHeader>

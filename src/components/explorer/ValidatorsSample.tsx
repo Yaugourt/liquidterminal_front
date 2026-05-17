@@ -38,7 +38,7 @@ export function ValidatorsSample() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white">Top Validators</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Top Validators</h3>
         <Link
           href="/explorer/validator"
           className="text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
@@ -57,7 +57,7 @@ export function ValidatorsSample() {
               key={v.validator ?? v.address}
               className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0"
             >
-              <span className="text-sm text-white truncate max-w-[140px]">
+              <span className="text-sm text-text-primary truncate max-w-[140px]">
                 {v.name || truncate(v.validator ?? v.address ?? "")}
               </span>
               <div className="flex gap-4 text-xs text-text-secondary shrink-0">

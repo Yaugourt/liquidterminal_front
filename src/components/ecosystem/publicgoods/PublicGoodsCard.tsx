@@ -74,7 +74,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
   };
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-6 rounded-2xl shadow-xl shadow-black/20 hover:border-border-hover transition-all group relative">
+    <div className="bg-brand-secondary/60 border border-border-subtle p-6 rounded-2xl hover:border-border-hover transition-all group relative">
       <Link href={`/ecosystem/publicgoods/${project.id}`} className="cursor-pointer">
         {/* Header with logo and status badge */}
         <div className="flex justify-between items-start mb-4">
@@ -86,11 +86,11 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   src={project.logo}
                   alt={project.name}
                   fill
-                  className="rounded-xl object-cover"
+                  className="rounded-lg object-cover"
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
+                <div className="w-full h-full rounded-lg bg-brand-accent/10 flex items-center justify-center">
                   <span className="text-brand-accent text-lg font-bold">
                     {project.name.charAt(0).toUpperCase()}
                   </span>
@@ -100,7 +100,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
 
             {/* Project info */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-white group-hover:text-brand-accent transition-colors">
+              <h3 className="text-lg font-semibold text-text-primary group-hover:text-brand-accent transition-colors">
                 {project.name}
               </h3>
               <p className="text-sm text-text-muted mt-1">{project.category}</p>
@@ -122,7 +122,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-text-muted hover:text-white hover:bg-white/5"
+                    className="h-8 w-8 text-text-muted hover:text-text-primary hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

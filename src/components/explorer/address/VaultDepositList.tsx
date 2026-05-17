@@ -69,7 +69,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
         <div className="flex items-center gap-1.5">
           <Link
             href={`/explorer/address/${row.vaultAddress}`}
-            className="text-white font-inter hover:text-brand-accent transition-colors"
+            className="text-text-primary font-inter hover:text-brand-accent transition-colors"
             title={row.vaultAddress}
           >
             {row.name}
@@ -93,7 +93,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     {
       key: "equity",
       header: "User deposits",
-      accessor: (row) => <span className="text-white">${formatEquity(row.equity)}</span>,
+      accessor: (row) => <span className="text-text-primary">${formatEquity(row.equity)}</span>,
     },
     {
       key: "apr",
@@ -103,12 +103,12 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     {
       key: "tvl",
       header: "TVL",
-      accessor: (row) => <span className="text-white">{formatTVL(row.tvl)}</span>,
+      accessor: (row) => <span className="text-text-primary">{formatTVL(row.tvl)}</span>,
     },
     {
       key: "lock",
       header: "Time lock",
-      accessor: (row) => <span className="text-white">{formatTimeLock(row.lockedUntilTimestamp)}</span>,
+      accessor: (row) => <span className="text-text-primary">{formatTimeLock(row.lockedUntilTimestamp)}</span>,
     },
   ];
 

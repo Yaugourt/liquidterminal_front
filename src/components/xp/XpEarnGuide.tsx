@@ -92,7 +92,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
     return (
         <div className={cn(
             "p-6 rounded-2xl",
-            "bg-brand-secondary/60 backdrop-blur-md",
+            "bg-brand-secondary/60",
             "border border-border-subtle",
             className
         )}>
@@ -101,7 +101,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                     <Zap className="h-4 w-4 text-brand-gold" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-white">Ways to Earn XP</h3>
+                    <h3 className="text-sm font-bold text-text-primary">Ways to Earn XP</h3>
                     <p className="text-xs text-text-muted">Permanent missions and rewards available anytime</p>
                 </div>
             </div>
@@ -112,7 +112,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                     return (
                         <div
                             key={index}
-                            className="group p-4 rounded-xl bg-brand-dark border border-border-subtle hover:border-border-hover transition-all hover:bg-white/5"
+                            className="group p-4 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-all hover:bg-white/5"
                         >
                             <div className="flex justify-between items-start mb-3">
                                 <div className={cn(
@@ -129,7 +129,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                                 </div>
                             </div>
 
-                            <h4 className="text-sm font-semibold text-white mb-1 group-hover:text-brand-accent transition-colors">
+                            <h4 className="text-sm font-semibold text-text-primary mb-1 group-hover:text-brand-accent transition-colors">
                                 {mission.title}
                             </h4>
                             <p className="text-xs text-text-muted leading-relaxed">

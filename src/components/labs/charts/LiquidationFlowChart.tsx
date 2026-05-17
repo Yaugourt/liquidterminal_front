@@ -45,7 +45,7 @@ export function LiquidationFlowChart() {
             <span className="text-text-muted/60">·</span>
             <span>HYPE-PERP · 24h</span>
           </div>
-          <div className="mt-1 text-[28px] font-bold text-white tabular-nums tracking-tight">
+          <div className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight">
             {formatUsd(totalLongs + totalShorts)}
           </div>
           <div className="text-[11px] text-text-muted">
@@ -191,7 +191,7 @@ export function LiquidationFlowChart() {
             <>
               <span>
                 <span className="text-text-secondary">Level </span>
-                <span className="font-semibold text-white">${hover.price.toLocaleString()}</span>
+                <span className="font-semibold text-text-primary">${hover.price.toLocaleString()}</span>
               </span>
               <span>
                 <span className="text-rose-400">Longs {formatUsd(hover.longs)}</span>

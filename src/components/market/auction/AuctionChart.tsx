@@ -91,7 +91,7 @@ export const AuctionChart = ({
 
             {displayValue !== null && (
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
+                <span className="text-lg font-bold text-text-primary tracking-tight tabular-nums">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
@@ -109,15 +109,15 @@ export const AuctionChart = ({
 
             {/* Currency selector - only show for spot */}
             {marketType === "spot" && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+              <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
                 {(["USDC", "HYPE"] as const).map((c) => (
                   <button
                     key={c}
                     onClick={() => onCurrencyChange(c)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
                       selectedCurrency === c
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {c}

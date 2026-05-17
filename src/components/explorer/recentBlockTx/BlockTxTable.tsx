@@ -29,7 +29,7 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
 
   const HashDisplay = ({ hash }: { hash: string }) => (
     <div className="flex items-center gap-1.5">
-      <span className="text-white">
+      <span className="text-text-primary">
         {hash.slice(0, 4)}..{hash.slice(-3)}
       </span>
       <button
@@ -53,7 +53,7 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
       <Link
         href={`/explorer/address/${address}`}
         prefetch={false}
-        className="text-brand-accent hover:text-white transition-colors"
+        className="text-brand-accent hover:text-text-primary transition-colors"
       >
         {address.slice(0, 4)}..{address.slice(-3)}
       </Link>
@@ -111,19 +111,19 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
                   <Link
                     href={`/explorer/block/${block.height}`}
                     prefetch={false}
-                    className="text-brand-accent hover:text-white transition-colors"
+                    className="text-brand-accent hover:text-text-primary transition-colors"
                   >
                     {block.height}
                   </Link>
                 </TableCell>
-                <TableCell className="text-white font-medium">{formatDistanceToNowStrict(block.blockTime, { addSuffix: false })}</TableCell>
+                <TableCell className="text-text-primary font-medium">{formatDistanceToNowStrict(block.blockTime, { addSuffix: false })}</TableCell>
                 <TableCell>
                   <HashDisplay hash={block.hash} />
                 </TableCell>
                 <TableCell>
                   <AddressLink address={block.proposer} />
                 </TableCell>
-                <TableCell className="text-white font-medium text-right">{block.numTxs}</TableCell>
+                <TableCell className="text-text-primary font-medium text-right">{block.numTxs}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -166,7 +166,7 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
         <TableBody>
           {transactions.map((tx) => (
             <TableRow key={tx.hash} className="hover:bg-white/[0.02]">
-              <TableCell className="text-white font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
+              <TableCell className="text-text-primary font-medium">{formatDistanceToNowStrict(tx.time, { addSuffix: false })}</TableCell>
               <TableCell>
                 <div className="relative group">
                   <span className="px-2 py-1 rounded-md font-bold bg-brand-accent/10 text-brand-accent">
@@ -177,7 +177,7 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
                   </span>
                   {(tx.action?.type || 'Unknown').length > 7 && (
                     <div className="absolute left-0 top-full mt-1 z-50 invisible group-hover:visible">
-                      <div className="bg-brand-secondary border border-border-hover rounded-lg px-3 py-2 text-white shadow-lg max-w-xs">
+                      <div className="bg-brand-secondary border border-border-hover rounded-lg px-3 py-2 text-text-primary shadow-lg max-w-xs">
                         {tx.action?.type || 'Unknown'}
                       </div>
                     </div>
@@ -194,7 +194,7 @@ export function BlockTxTable({ type, data, emptyMessage }: BlockTxTableProps) {
                 <Link
                   href={`/explorer/block/${tx.block}`}
                   prefetch={false}
-                  className="text-white hover:text-brand-accent transition-colors"
+                  className="text-text-primary hover:text-brand-accent transition-colors"
                 >
                   {tx.block}
                 </Link>

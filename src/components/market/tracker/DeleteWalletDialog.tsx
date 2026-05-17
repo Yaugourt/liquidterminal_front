@@ -52,7 +52,7 @@ export function DeleteWalletDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Wallet</DialogTitle>
-          <DialogDescription className="text-white">
+          <DialogDescription className="text-text-primary">
             Are you sure you want to delete this wallet?
           </DialogDescription>
         </DialogHeader>
@@ -65,7 +65,7 @@ export function DeleteWalletDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border-hover text-white hover:bg-white/5"
+            className="border-border-hover text-text-primary hover:bg-white/5"
           >
             Cancel
           </Button>

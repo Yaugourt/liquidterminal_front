@@ -31,7 +31,7 @@ function NavLink({
         "rounded-md px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40",
         active
           ? "bg-brand-accent text-brand-tertiary shadow-sm"
-          : "border border-transparent text-text-secondary hover:border-border-subtle hover:bg-white/[0.04] hover:text-white",
+          : "border border-transparent text-text-secondary hover:border-border-subtle hover:bg-white/[0.04] hover:text-text-primary",
         className
       )}
     >

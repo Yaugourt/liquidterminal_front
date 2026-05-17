@@ -56,7 +56,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 <BookOpen className="w-5 h-5 text-brand-accent" />
               </div>
               <div>
-                <DialogTitle className="text-white font-bold">Create Read List</DialogTitle>
+                <DialogTitle className="text-text-primary font-bold">Create Read List</DialogTitle>
                 <p className="text-xs text-text-muted mt-0.5">Organize your reading with a curated list</p>
               </div>
             </div>
@@ -78,7 +78,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 required
                 minLength={2}
                 maxLength={255}
-                className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 h-10"
+                className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 h-10"
               />
             </div>
 
@@ -93,7 +93,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                 onChange={e => setDescription(e.target.value)}
                 placeholder="What is this list about?"
                 maxLength={500}
-                className="w-full p-3 bg-brand-dark border border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px] text-sm resize-none"
+                className="w-full p-3 bg-brand-dark border border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 focus:outline-none transition-colors min-h-[80px] text-sm resize-none"
                 rows={3}
               />
               <p className="text-xs text-text-muted text-right">{description.length}/500</p>
@@ -117,7 +117,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-text-primary">
                       {isPublic ? "Public list" : "Private list"}
                     </p>
                     <p className="text-xs text-text-muted mt-0.5">

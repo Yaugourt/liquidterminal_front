@@ -41,7 +41,7 @@ export function AssetsTable({
   isRefreshing
 }: AssetsTableProps) {
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
       {/* Header avec tabs et stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
@@ -81,7 +81,7 @@ export function AssetsTable({
           <button
             onClick={onRefresh}
             disabled={isRefreshing || isLoading}
-            className={`p-2 text-text-secondary hover:text-white transition-colors rounded-lg hover:bg-white/5 ${
+            className={`p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-white/5 ${
               isRefreshing ? 'animate-spin' : ''
             }`}
           >

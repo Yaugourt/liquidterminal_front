@@ -193,7 +193,7 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 max-[720px]:flex-wrap max-[720px]:gap-4">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-bold">{stats.total}</span>
+                <span className="text-text-primary text-sm font-bold">{stats.total}</span>
               </div>
               <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
@@ -220,7 +220,7 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-bold">{vaultsTotalCount}</span>
+                <span className="text-text-primary text-sm font-bold">{vaultsTotalCount}</span>
               </div>
               <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
@@ -235,7 +235,7 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Recent (2h):</span>
-                <span className="text-white text-sm font-bold">{liquidations.length}</span>
+                <span className="text-text-primary text-sm font-bold">{liquidations.length}</span>
               </div>
             </div>
           )}

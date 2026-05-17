@@ -22,7 +22,7 @@ export function EvmSection() {
     <div className="space-y-4">
       {/* Header */}
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-white">EVM Activity</h2>
+        <h2 className="text-lg font-semibold text-text-primary">EVM Activity</h2>
         <p className="text-sm text-text-secondary">
           HyperLiquid EVM — indexed blocks, transactions, and on-chain activity.
         </p>

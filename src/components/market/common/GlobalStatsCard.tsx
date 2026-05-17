@@ -37,7 +37,7 @@ function InlineStat({ icon, label, value }: InlineStatProps) {
         <span className="mr-1.5">{icon}</span>
         {label}
       </div>
-      <div className="text-white font-bold text-sm pl-5">{value}</div>
+      <div className="text-text-primary font-bold text-sm pl-5">{value}</div>
     </div>
   );
 }

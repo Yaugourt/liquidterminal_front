@@ -126,7 +126,7 @@ export function Hip4AnalyticsChart() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
-                className="mt-1 text-[28px] font-bold text-white tabular-nums tracking-tight"
+                className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight"
               >
                 {display
                   ? compactUsd((visible.buy_volume ? display.buy_volume : 0) + (visible.sell_volume ? display.sell_volume : 0))
@@ -147,7 +147,7 @@ export function Hip4AnalyticsChart() {
           </div>
 
           {/* Interval selector */}
-          <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+          <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
             {INTERVALS.map((iv) => (
               <button
                 key={iv.value}
@@ -162,7 +162,7 @@ export function Hip4AnalyticsChart() {
                     transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                   />
                 )}
-                <span className={`relative z-10 ${interval === iv.value ? "text-white" : "text-text-secondary hover:text-white"}`}>
+                <span className={`relative z-10 ${interval === iv.value ? "text-text-primary" : "text-text-secondary hover:text-text-primary"}`}>
                   {iv.label}
                 </span>
               </button>
@@ -180,7 +180,7 @@ export function Hip4AnalyticsChart() {
                 key={key}
                 type="button"
                 onClick={() => setVisible((v) => ({ ...v, [key]: !v[key] }))}
-                className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 transition-all ${isOn ? "border-border-hover bg-white/[0.03]" : "border-border-subtle opacity-40 hover:opacity-65"
+                className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 transition-all ${isOn ? "border-border-hover bg-white/[0.03]" : "border-border-subtle opacity-40 hover:opacity-65"
                   }`}
               >
                 <span
@@ -191,7 +191,7 @@ export function Hip4AnalyticsChart() {
                   {meta.label}
                 </span>
                 {display && (
-                  <span className="text-[11px] font-bold text-white tabular-nums">
+                  <span className="text-[11px] font-bold text-text-primary tabular-nums">
                     {key === "fees_usdc" ? compactUsd(display[key]) : compactUsd(display[key as "buy_volume" | "sell_volume"])}
                   </span>
                 )}
@@ -285,7 +285,7 @@ export function Hip4AnalyticsChart() {
             <BarChart2 className="h-3 w-3 text-brand-accent" />
             Activity
           </div>
-          <div className="mt-1 text-[20px] font-bold text-white tabular-nums">
+          <div className="mt-1 text-[20px] font-bold text-text-primary tabular-nums">
             {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.fills, 0))}
             <span className="ml-1.5 text-[13px] font-normal text-text-muted">fills</span>
           </div>
@@ -356,7 +356,7 @@ interface VolumeTooltipProps {
 function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTooltipProps) {
   if (!active || !payload || payload.length === 0 || !label) return null;
   return (
-    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
+    <div className="rounded-lg border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
         {formatBucket(label, interval)}
       </div>
@@ -371,7 +371,7 @@ function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTool
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: meta.color }} />
               <span className="text-text-secondary">{meta.label}</span>
             </div>
-            <span className="font-semibold text-white tabular-nums">
+            <span className="font-semibold text-text-primary tabular-nums">
               {compactUsd(Number(p.value))}
             </span>
           </div>
@@ -392,7 +392,7 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
   if (!active || !payload || payload.length === 0 || !label) return null;
   const fills = Number(payload.find((x) => x.dataKey === "fills")?.value ?? 0);
   return (
-    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
+    <div className="rounded-lg border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
         {formatBucket(label, interval)}
       </div>
@@ -401,7 +401,7 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
           <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
           <span className="text-text-secondary">Fills</span>
         </div>
-        <span className="font-semibold text-white tabular-nums">{compactNum(fills)}</span>
+        <span className="font-semibold text-text-primary tabular-nums">{compactNum(fills)}</span>
       </div>
     </div>
   );

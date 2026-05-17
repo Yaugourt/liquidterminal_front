@@ -67,7 +67,7 @@ export function AddToReadListModal({
                 <ListPlus className="w-4 h-4 text-brand-accent" />
               </div>
               <div className="min-w-0">
-                <DialogTitle className="text-sm font-bold text-white">
+                <DialogTitle className="text-sm font-bold text-text-primary">
                   Add to Read List
                 </DialogTitle>
                 <p className="text-xs text-text-muted mt-0.5 truncate">{resourceLabel}</p>
@@ -85,7 +85,7 @@ export function AddToReadListModal({
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search lists..."
-                className="pl-9 h-8 text-xs bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                className="pl-9 h-8 text-xs bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ export function AddToReadListModal({
                       onAddToList(readList.id);
                     }}
                     disabled={isAdding}
-                    className="w-full text-left px-3.5 py-2.5 text-sm text-white hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand-accent/30 group/item"
+                    className="w-full text-left px-3.5 py-2.5 text-sm text-text-primary hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand-accent/30 group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-brand-accent/20 transition-colors">
                       {addingToListId === readList.id ? (

@@ -21,7 +21,7 @@ interface ReadListContentProps {
 }
 
 const ReadListItemSkeleton = () => (
-  <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-0 overflow-hidden animate-pulse">
+  <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-0 overflow-hidden animate-pulse">
     <div className="w-full h-40 bg-white/5"></div>
     <div className="p-4 space-y-2.5">
       <div className="flex items-center justify-between">
@@ -104,7 +104,7 @@ export function ReadListContent({
         <div className="w-20 h-20 mx-auto mb-5 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
           <BookOpen className="w-10 h-10 text-brand-accent" />
         </div>
-        <h3 className="text-white font-semibold text-lg mb-2">No read list selected</h3>
+        <h3 className="text-text-primary font-semibold text-lg mb-2">No read list selected</h3>
         <p className="text-text-secondary text-sm max-w-xs">Select a list from the sidebar or create a new one to get started</p>
         <Button
           onClick={onCreateList}
@@ -124,7 +124,7 @@ export function ReadListContent({
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-white text-xl font-bold truncate">{activeList.name}</h1>
+              <h1 className="text-text-primary text-xl font-bold truncate">{activeList.name}</h1>
               {activeList.isPublic ? (
                 <span className="flex items-center gap-1 text-label bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md border border-brand-accent/20">
                   <Globe className="w-3 h-3" />
@@ -145,7 +145,7 @@ export function ReadListContent({
           {/* Stats */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-center">
-              <div className="text-white font-bold text-lg leading-none">{totalItems}</div>
+              <div className="text-text-primary font-bold text-lg leading-none">{totalItems}</div>
               <div className="text-text-muted text-xs mt-0.5">total</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
@@ -190,7 +190,7 @@ export function ReadListContent({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search resources..."
-              className="pl-9 h-9 bg-brand-dark border-border-subtle text-white text-sm rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+              className="pl-9 h-9 bg-brand-dark border-border-subtle text-text-primary text-sm rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
             />
           </div>
 
@@ -201,7 +201,7 @@ export function ReadListContent({
                 onClick={() => setActiveTab(tab.key)}
                 className={`relative px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors ${activeTab === tab.key
                   ? "text-brand-tertiary"
-                  : "text-text-muted hover:text-white"
+                  : "text-text-muted hover:text-text-primary"
                   }`}
               >
                 {activeTab === tab.key && (
@@ -304,7 +304,7 @@ export function ReadListContent({
               <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-brand-accent" />
               </div>
-              <h3 className="text-white text-base font-semibold mb-2">No items found</h3>
+              <h3 className="text-text-primary text-base font-semibold mb-2">No items found</h3>
               <p className="text-text-secondary text-sm max-w-xs">
                 {searchTerm
                   ? `No results for "${searchTerm}"`

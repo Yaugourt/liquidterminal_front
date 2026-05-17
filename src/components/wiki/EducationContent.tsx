@@ -145,7 +145,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
   if (!activeChapter) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90 shadow-xl shadow-black/20">
+    <div className="relative overflow-hidden rounded-2xl border border-border-subtle bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90">
       {/* Ambient glows */}
       <div className="pointer-events-none absolute -top-28 -right-28 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-brand-gold/[0.06] blur-3xl" />
@@ -157,7 +157,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
             <Sparkles className="h-3 w-3" />
             Liquid Wiki · Fundamentals
           </div>
-          <h1 className="text-[22px] font-bold tracking-tight text-white sm:text-2xl md:text-[28px]">
+          <h1 className="text-[22px] font-bold tracking-tight text-text-primary sm:text-2xl md:text-[28px]">
             Understand Hyperliquid
             <span className="ml-2 text-brand-accent">from first principles</span>
           </h1>
@@ -180,7 +180,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
             role="tablist"
             aria-label="Hyperliquid fundamentals"
             className={cn(
-              "flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-border-subtle bg-brand-dark/60 p-1 scroll-smooth snap-x",
+              "flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border-subtle bg-brand-dark/60 p-1 scroll-smooth snap-x",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
@@ -200,7 +200,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                     "flex shrink-0 snap-start items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
                     isActive
                       ? "border-brand-accent/40 bg-brand-accent/15 text-brand-accent shadow-sm shadow-brand-accent/10"
-                      : "border-transparent text-text-secondary hover:bg-white/5 hover:text-white",
+                      : "border-transparent text-text-secondary hover:bg-white/5 hover:text-text-primary",
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -234,7 +234,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       {activeMeta.tagline}
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold tracking-tight text-white md:text-[22px]">
+                  <h2 className="text-xl font-bold tracking-tight text-text-primary md:text-[22px]">
                     {activeChapter.title}
                   </h2>
                   {paragraphs[0] && (
@@ -251,7 +251,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       role="tablist"
                       aria-label={`${activeChapter.title} sub-sections`}
                       className={cn(
-                        "flex gap-1.5 overflow-x-auto rounded-xl border border-border-subtle bg-brand-dark/40 p-1.5 scroll-smooth snap-x",
+                        "flex gap-1.5 overflow-x-auto rounded-lg border border-border-subtle bg-brand-dark/40 p-1.5 scroll-smooth snap-x",
                         "lg:flex-col lg:overflow-visible lg:snap-none lg:h-fit lg:self-start",
                         "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
                       )}
@@ -298,7 +298,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                                   "block text-[12px] font-bold leading-tight",
                                   isActive
                                     ? "text-brand-accent"
-                                    : "text-white",
+                                    : "text-text-primary",
                                 )}
                               >
                                 {sub.title}
@@ -329,7 +329,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                             {activeSub.subtitle}
                           </div>
                         )}
-                        <h3 className="text-lg font-bold tracking-tight text-white">
+                        <h3 className="text-lg font-bold tracking-tight text-text-primary">
                           {activeSub.title}
                         </h3>
                         <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
@@ -372,7 +372,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       {activeMeta.tagline}
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold tracking-tight text-white md:text-[22px]">
+                  <h2 className="text-xl font-bold tracking-tight text-text-primary md:text-[22px]">
                     {activeChapter.title}
                   </h2>
                   <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
@@ -451,7 +451,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                         {copiedColor === hex ? (
                           <Check className="h-3 w-3 text-emerald-300" />
                         ) : (
-                          <Copy className="h-3 w-3 text-white" />
+                          <Copy className="h-3 w-3 text-text-primary" />
                         )}
                       </span>
                     </button>

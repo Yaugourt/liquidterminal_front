@@ -38,7 +38,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
     return (
         <Card className={cn("flex flex-col h-full", className)}>
             <div className="p-4 flex-shrink-0 border-b border-border-subtle">
-                <h3 className="text-sm font-semibold text-white">Recent Trades</h3>
+                <h3 className="text-sm font-semibold text-text-primary">Recent Trades</h3>
                 <p className="text-xs text-text-secondary mt-1">
                     Live trades for {displayName}
                 </p>
@@ -82,7 +82,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                                         )}>
                                             ${formatPrice(tradePrice)}
                                         </span>
-                                        <span className="text-white text-right">
+                                        <span className="text-text-primary text-right">
                                             {formatSize(tradeSize)}
                                         </span>
                                         <span className="text-text-secondary text-right">

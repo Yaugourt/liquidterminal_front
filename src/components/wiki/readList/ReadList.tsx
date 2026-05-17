@@ -62,7 +62,7 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
     <div className="bg-brand-secondary/90 backdrop-blur-md border border-border-hover rounded-2xl shadow-xl shadow-black/20 p-8 max-w-md w-full mx-4">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-bold text-white mb-2">Authentication Required</h2>
+        <h2 className="text-lg font-bold text-text-primary mb-2">Authentication Required</h2>
         <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
       </div>
       <button

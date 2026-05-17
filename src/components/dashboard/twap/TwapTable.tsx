@@ -28,12 +28,12 @@ const ValueCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const value = realTime ? realTime.remainingValue : twap.value;
 
   return (
-    <TableCell className="text-sm text-white font-medium w-[200px]">
+    <TableCell className="text-sm text-text-primary font-medium w-[200px]">
       <div className="flex items-center gap-2">
         <StatusBadge variant={twap.type === 'Buy' ? 'success' : 'error'}>
           {twap.type}
         </StatusBadge>
-        <span className="text-white font-medium">
+        <span className="text-text-primary font-medium">
           ${formatNumber(value, format)}
         </span>
       </div>
@@ -50,8 +50,8 @@ const TokenCellComponent = ({ twap, realTimeData, format }: { twap: TwapTableDat
   const displayAmount = realTime ? realTime.remainingAmount : parseFloat(twap.amount);
 
   return (
-    <TableCell className="px-4 text-sm text-white/80 w-[180px]">
-      <span className="text-white font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
+    <TableCell className="px-4 text-sm text-text-secondary w-[180px]">
+      <span className="text-text-primary font-medium">{formatNumber(displayAmount, format)}</span> {twap.token}
     </TableCell>
   );
 };
@@ -72,13 +72,13 @@ const ProgressionCell = memo(({ twap, realTimeData }: { twap: TwapTableData, rea
   };
 
   return (
-    <TableCell className="text-sm text-white w-[160px]">
+    <TableCell className="text-sm text-text-primary w-[160px]">
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between w-[120px]">
           <span className="text-label text-text-muted">
             {getRemainingTime(twap)}
           </span>
-          <span className="text-label text-white">
+          <span className="text-label text-text-primary">
             {roundedProgression.toFixed(1)}%
           </span>
         </div>
@@ -106,7 +106,7 @@ const UserCell = memo(({ twap, copiedAddress, copyToClipboard }: {
     <div className="flex items-center gap-1.5">
       <Link
         href={`/explorer/address/${twap.user}`}
-        className="text-brand-accent font-mono text-xs hover:text-white transition-colors"
+        className="text-brand-accent font-mono text-xs hover:text-text-primary transition-colors"
       >
         {formatAddress(twap.user)}
       </Link>

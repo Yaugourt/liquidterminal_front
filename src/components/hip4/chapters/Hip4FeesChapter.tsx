@@ -37,7 +37,7 @@ export function Hip4FeesChapter() {
               Evidence from <code className="font-mono text-[11px] text-brand-accent">hl-node</code>{" "}
               strings, <Hip4GoldHighlight>spotMetaAndAssetCtxs</Hip4GoldHighlight>,{" "}
               <Hip4GoldHighlight>userFees</Hip4GoldHighlight>, and a real outcome fill on testnet:
-              outcome CLOB fees behave like <strong className="text-white">ordinary spot</strong>{" "}
+              outcome CLOB fees behave like <strong className="text-text-primary">ordinary spot</strong>{" "}
               fees today, while a native governance hook (
               <code className="font-mono text-[11px] text-brand-accent">
                 VoteGlobalAction::SetOutcomeFeeScale
@@ -45,9 +45,9 @@ export function Hip4FeesChapter() {
               ) exists for future global rescaling.
             </p>
             <p>
-              This page is <strong className="text-white">HyperCore L1</strong> only. Third-party
+              This page is <strong className="text-text-primary">HyperCore L1</strong> only. Third-party
               HyperEVM parimutuel contracts document a separate{" "}
-              <strong className="text-white">platform fee</strong> (e.g. 90 bps) — see{" "}
+              <strong className="text-text-primary">platform fee</strong> (e.g. 90 bps) — see{" "}
               <Link href="/hip4/overview" className="text-brand-accent hover:underline">
                 EVM overview
               </Link>
@@ -132,7 +132,7 @@ export function Hip4FeesChapter() {
         <Hip4SectionTitle>Claim 5 — Real fill matches spot fee math</Hip4SectionTitle>
         <Hip4DocLead className="mb-2 text-xs">
           Taker fill on <code className="font-mono text-[11px]">@10</code>: fee is denominated in the{" "}
-          <strong className="text-white">base outcome token</strong> (
+          <strong className="text-text-primary">base outcome token</strong> (
           <code className="font-mono text-[11px]">feeToken</code>), not USDC — normalize before
           comparing to notional.
         </Hip4DocLead>

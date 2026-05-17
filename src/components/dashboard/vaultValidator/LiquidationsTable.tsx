@@ -52,7 +52,7 @@ const LiquidationsTableComponent = ({
     {
       header: "Notional",
       accessor: (item: Liquidation) => (
-        <span className="text-white font-medium">
+        <span className="text-text-primary font-medium">
           ${formatNumber(item.notional_total, format, { maximumFractionDigits: 0 })}
         </span>
       ),

@@ -30,7 +30,7 @@ export function WalletConnectButton() {
           size="sm"
           variant="ghost"
           onClick={() => disconnect()}
-          className="text-text-secondary hover:text-white"
+          className="text-text-secondary hover:text-text-primary"
         >
           <LogOut className="w-4 h-4" />
         </Button>

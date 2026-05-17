@@ -117,7 +117,7 @@ export function UserTable({
               {/* User Info */}
               <TableCell>
                 <div>
-                  <p className="font-medium text-white text-sm">{user.name}</p>
+                  <p className="font-medium text-text-primary text-sm">{user.name}</p>
                   <p className="text-xs text-text-muted">{user.email || 'No email'}</p>
                 </div>
               </TableCell>
@@ -161,7 +161,7 @@ export function UserTable({
               {/* Referred By */}
               <TableCell>
                 {user.referredBy ? (
-                  <span className="text-xs text-white/80">{user.referredBy}</span>
+                  <span className="text-xs text-text-secondary">{user.referredBy}</span>
                 ) : (
                   <span className="text-text-muted text-xs">—</span>
                 )}
@@ -201,8 +201,8 @@ export function UserTable({
                     </TooltipTrigger>
                     <TooltipContent side="top" className="bg-brand-secondary border-border-hover">
                       <div className="text-xs space-y-1">
-                        <p><span className="text-text-secondary">Joined:</span> <span className="text-white">{formatDate(user.createdAt)}</span></p>
-                        <p><span className="text-text-secondary">Updated:</span> <span className="text-white">{formatDate(user.updatedAt)}</span></p>
+                        <p><span className="text-text-secondary">Joined:</span> <span className="text-text-primary">{formatDate(user.createdAt)}</span></p>
+                        <p><span className="text-text-secondary">Updated:</span> <span className="text-text-primary">{formatDate(user.updatedAt)}</span></p>
                       </div>
                     </TooltipContent>
                   </Tooltip>
@@ -216,7 +216,7 @@ export function UserTable({
                     variant="ghost"
                     size="sm"
                     onClick={() => onEditUser(user)}
-                    className="text-text-muted hover:text-white hover:bg-white/5 h-7 w-7 p-0"
+                    className="text-text-muted hover:text-text-primary hover:bg-white/5 h-7 w-7 p-0"
                   >
                     <Edit className="w-3.5 h-3.5" />
                   </Button>

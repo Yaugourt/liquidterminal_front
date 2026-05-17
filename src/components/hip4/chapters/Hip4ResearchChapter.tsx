@@ -27,7 +27,7 @@ export function Hip4ResearchChapter() {
         <Hip4SectionTitle>Sources</Hip4SectionTitle>
         <Hip4DocList className="text-xs">
           <li>
-            <strong className="text-white">Canonical write-up: </strong>
+            <strong className="text-text-primary">Canonical write-up: </strong>
             <Link
               href="/hip4/HIP4-research-complete.md"
               className="text-brand-accent underline hover:text-brand-gold"
@@ -38,7 +38,7 @@ export function Hip4ResearchChapter() {
             </Link>
           </li>
           <li>
-            <strong className="text-white">Structured API blocks: </strong>
+            <strong className="text-text-primary">Structured API blocks: </strong>
             <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
               Info endpoint
             </Link>

@@ -57,7 +57,7 @@ export function VaultDetailHeader({
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl font-inter font-bold text-white">{name}</h1>
+                <h1 className="text-xl font-inter font-bold text-text-primary">{name}</h1>
                 <StatusBadge variant={isClosed ? "error" : "success"}>
                   {isClosed ? "Closed" : "Open"}
                 </StatusBadge>

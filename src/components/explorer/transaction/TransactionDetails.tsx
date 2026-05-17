@@ -105,14 +105,14 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'json':
         return (
-          <pre className="text-white bg-white/5 p-2 rounded text-xs overflow-x-auto scrollbar-brand font-inter">
+          <pre className="text-text-primary bg-white/5 p-2 rounded text-xs overflow-x-auto scrollbar-brand font-inter">
             {stringValue}
           </pre>
         );
 
       default:
         return (
-          <span className="text-white font-inter">
+          <span className="text-text-primary font-inter">
             {stringValue}
           </span>
         );
@@ -124,9 +124,9 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       {data.sections.map((section, sectionIndex) => (
         <Card
           key={sectionIndex}
-          className="p-0 rounded-xl overflow-hidden"
+          className="p-0 rounded-lg overflow-hidden"
         >
-          <h3 className="text-xl text-white font-medium p-6 border-b border-border-subtle font-inter">
+          <h3 className="text-xl text-text-primary font-medium p-6 border-b border-border-subtle font-inter">
             {section.title}
           </h3>
 

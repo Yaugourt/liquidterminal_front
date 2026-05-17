@@ -80,7 +80,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
           />
           Charts
         </div>
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {TABS.map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -98,7 +98,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
                 )}
                 <span
                   className={`relative z-10 ${
-                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   {tab}

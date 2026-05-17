@@ -264,7 +264,7 @@ export function QuantumCandleChart() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-[15px] font-semibold text-white tracking-tight">HYPE / USDC</h3>
+              <h3 className="text-[15px] font-semibold text-text-primary tracking-tight">HYPE / USDC</h3>
               <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-text-secondary">
                 Perp
               </span>
@@ -276,7 +276,7 @@ export function QuantumCandleChart() {
               </span>
             </div>
             <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-[28px] font-bold text-white tabular-nums tracking-tight">
+              <span className="text-[28px] font-bold text-text-primary tabular-nums tracking-tight">
                 {formatUsd(last.close)}
               </span>
               <span
@@ -305,7 +305,7 @@ export function QuantumCandleChart() {
 
       {/* TIMEFRAME PILLS */}
       <div className="relative z-10 flex items-center justify-between px-6 pb-3">
-        <div className="relative flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="relative flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {TIMEFRAMES.map((t) => (
             <button
               key={t}
@@ -320,7 +320,7 @@ export function QuantumCandleChart() {
                 />
               )}
               <span
-                className={`relative z-10 ${tf === t ? "text-brand-accent" : "text-text-secondary hover:text-white"}`}
+                className={`relative z-10 ${tf === t ? "text-brand-accent" : "text-text-secondary hover:text-text-primary"}`}
               >
                 {t}
               </span>
@@ -339,7 +339,7 @@ export function QuantumCandleChart() {
               className="hidden lg:flex items-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted"
             >
               <span>
-                O <span className="text-white tabular-nums">{hover.o.toFixed(2)}</span>
+                O <span className="text-text-primary tabular-nums">{hover.o.toFixed(2)}</span>
               </span>
               <span>
                 H <span className="text-emerald-400 tabular-nums">{hover.h.toFixed(2)}</span>
@@ -348,7 +348,7 @@ export function QuantumCandleChart() {
                 L <span className="text-rose-400 tabular-nums">{hover.l.toFixed(2)}</span>
               </span>
               <span>
-                C <span className="text-white tabular-nums">{hover.c.toFixed(2)}</span>
+                C <span className="text-text-primary tabular-nums">{hover.c.toFixed(2)}</span>
               </span>
               <span>
                 V <span className="text-brand-accent tabular-nums">${formatCompact(hover.v)}</span>
@@ -398,7 +398,7 @@ function StatPill({
         <span className={`h-1 w-1 rounded-full ${dot}`} />
         {label}
       </div>
-      <div className="mt-0.5 text-xs font-semibold text-white tabular-nums">{value}</div>
+      <div className="mt-0.5 text-xs font-semibold text-text-primary tabular-nums">{value}</div>
     </div>
   );
 }

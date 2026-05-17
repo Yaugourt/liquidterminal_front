@@ -19,7 +19,7 @@ function InlineStat({ icon, label, value, isLoading }: InlineStatProps) {
         <span className="mr-1.5">{icon}</span>
         {label}
       </div>
-      <div className="text-white font-bold text-xl pl-5">
+      <div className="text-text-primary font-bold text-xl pl-5">
         {isLoading ? <span className="animate-pulse text-text-muted">--</span> : value}
       </div>
     </div>

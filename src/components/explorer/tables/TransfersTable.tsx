@@ -55,10 +55,10 @@ export function TransfersTable() {
                 <TableBody>
                     {paginatedTransfers.map((transfer) => (
                         <TableRow key={transfer.hash} className="hover:bg-white/[0.02]">
-                            <TableCell className="text-white font-medium">
+                            <TableCell className="text-text-primary font-medium">
                                 {formatDistanceToNowStrict(transfer.timestamp, { addSuffix: false })}
                             </TableCell>
-                            <TableCell className="text-white font-medium">
+                            <TableCell className="text-text-primary font-medium">
                                 {(() => {
                                     const numericAmount = typeof transfer.amount === 'string' ? parseFloat(transfer.amount) : transfer.amount;
                                     return `${formatNumber(numericAmount, format, {
