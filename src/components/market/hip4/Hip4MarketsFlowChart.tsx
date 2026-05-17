@@ -3,15 +3,8 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ChartLoading, ChartEmpty } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
-
-function compactUsd(n: number | null | undefined) {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 function pctColor(px: number | null) {
   if (px === null) return "text-text-muted";

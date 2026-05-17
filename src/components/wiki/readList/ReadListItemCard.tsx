@@ -2,6 +2,7 @@
 
 import { ExternalLink, Trash2, Check, Clock, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -47,8 +48,8 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
   const hasImage = item.resource?.url?.startsWith('http') && preview?.image;
 
   return (
-    <div
-      className={`bg-brand-secondary/60 border border-border-subtle hover:border-border-hover transition-all duration-200 group overflow-hidden rounded-2xl cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
+    <Card
+      className={`hover:border-border-hover group cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
       onClick={handleCardClick}
     >
       {/* Image section */}
@@ -161,6 +162,6 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 });

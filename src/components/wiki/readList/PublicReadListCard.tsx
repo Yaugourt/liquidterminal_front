@@ -2,6 +2,7 @@
 
 import { useState, memo } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Copy,
   CheckCircle,
@@ -50,9 +51,11 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className={`bg-brand-secondary/60 border rounded-2xl transition-colors duration-200 cursor-pointer group overflow-hidden ${isSelected
+    >
+    <Card
+      className={`cursor-pointer group overflow-hidden ${isSelected
         ? 'border-brand-accent/40'
-        : 'border-border-subtle hover:border-border-hover'
+        : 'hover:border-border-hover'
         }`}
       onClick={onSelect}
     >
@@ -129,6 +132,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
           )}
         </Button>
       </div>
+    </Card>
     </motion.div>
   );
 });

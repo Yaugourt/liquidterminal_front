@@ -16,6 +16,7 @@ import {
   Hip4RecentFills,
   Hip4SettlementsTable,
 } from "@/components/market/hip4";
+import { PageHeader } from "@/components/common";
 
 export default function MarketHip4Page() {
   const { setTitle } = usePageTitle();
@@ -44,20 +45,16 @@ export default function MarketHip4Page() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">HIP-4 Prediction Markets</h1>
-          <p className="text-text-secondary text-sm mt-1 max-w-2xl">
-            Live prediction markets on HyperLiquid — outcome probabilities grouped by question, volume, open interest, and settlements.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+      <PageHeader
+        title="HIP-4 Prediction Markets"
+        description="Live prediction markets on HyperLiquid — outcome probabilities grouped by question, volume, open interest, and settlements."
+        actions={
           <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
             Mainnet
           </span>
-        </div>
-      </div>
+        }
+      />
 
       <Hip4GlobalStatsStrip
         questions={questions.questions}

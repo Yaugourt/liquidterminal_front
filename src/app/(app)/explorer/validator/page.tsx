@@ -7,20 +7,17 @@ import { ValidatorChartSection } from "@/components/explorer/validator/chart/Val
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { ValidatorSubTab } from "@/components/explorer/validator/types";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/common";
 
 export default function ValidatorPage() {
   const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>('all');
 
   return (
     <>
-      <div className="space-y-2">
-        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Validators
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl">
-          HyperLiquid validators — staking stats, delegation distribution, staking transactions, and the unstaking queue.
-        </p>
-      </div>
+      <PageHeader
+        title="Validators"
+        description="HyperLiquid validators — staking stats, delegation distribution, staking transactions, and the unstaking queue."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <Card>

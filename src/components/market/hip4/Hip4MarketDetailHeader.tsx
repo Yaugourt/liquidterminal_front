@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { ArrowLeft, Clock, TrendingUp } from "lucide-react";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 import { formatMarketTitle, formatExpiryCountdown } from "@/lib/hip4/market-formatter";
-
-function compactUsd(n: number | null | undefined): string {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}K`;
-  return `$${n.toFixed(2)}`;
-}
 
 interface Hip4MarketDetailHeaderProps {
   market: Hip4MarketEnrichedRow;

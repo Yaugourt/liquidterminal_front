@@ -12,6 +12,7 @@ import {
 import { useGlobalAliases } from "@/services/explorer";
 import { useWallets } from "@/store/use-wallets";
 import { AddToTrackListButton } from "@/components/market/tracker/AddToTrackListButton";
+import { Card } from "@/components/ui/card";
 
 interface AddressHeroProps {
   address: string;
@@ -75,7 +76,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
         className="pointer-events-none absolute -bottom-10 right-1/4 h-24 w-1/3 rounded-full bg-brand-gold/5 blur-3xl"
       />
 
-      <div className="relative glass-panel rounded-2xl p-4 md:p-5">
+      <Card className="relative p-4 md:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <div
@@ -163,7 +164,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
             <AddToTrackListButton address={address} />
           </div>
         </div>
-      </div>
+      </Card>
     </section>
   );
 }

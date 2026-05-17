@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,7 +75,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
   };
 
   return (
-    <div className="bg-brand-secondary/60 border border-border-subtle p-6 rounded-2xl hover:border-border-hover transition-all group relative">
+    <Card padding="lg" className="hover:border-border-hover group relative">
       <Link href={`/ecosystem/publicgoods/${project.id}`} className="cursor-pointer">
         {/* Header with logo and status badge */}
         <div className="flex justify-between items-start mb-4">
@@ -253,6 +254,6 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
           </div>
         </div>
       </Link>
-    </div>
+    </Card>
   );
 });

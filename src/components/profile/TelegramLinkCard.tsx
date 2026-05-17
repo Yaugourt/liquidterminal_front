@@ -13,6 +13,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { Card } from "@/components/ui/card";
 
 // Telegram brand icon (inline SVG)
 const TelegramIcon = ({ className }: { className?: string }) => (
@@ -59,12 +60,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   // Render error state
   if (error) {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60",
-        "border border-rose-500/20",
-        className
-      )}>
+      <Card className={cn("p-5 border-rose-500/20", className)}>
         <div className="flex items-start gap-3">
           <div className="h-10 w-10 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
             <AlertCircle className="h-5 w-5 text-rose-400" />
@@ -86,19 +82,14 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             </Button>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render linking in progress state
   if (state === 'linking') {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60",
-        "border border-brand-telegram/30",
-        className
-      )}>
+      <Card className={cn("p-5 border-brand-telegram/30", className)}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="h-10 w-10 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
@@ -160,19 +151,14 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             <XCircle className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render linked state
   if (state === 'linked' && telegramUsername) {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60",
-        "border border-emerald-500/20",
-        className
-      )}>
+      <Card className={cn("p-5 border-emerald-500/20", className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -206,18 +192,13 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             )}
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render not linked state (default)
   return (
-    <div className={cn(
-      "p-5 rounded-2xl",
-      "bg-brand-secondary/60",
-      "border border-border-subtle hover:border-border-hover transition-all",
-      className
-    )}>
+    <Card className={cn("p-5 hover:border-border-hover transition-all", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-brand-telegram/10 flex items-center justify-center">
@@ -246,6 +227,6 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           )}
         </Button>
       </div>
-    </div>
+    </Card>
   );
 });

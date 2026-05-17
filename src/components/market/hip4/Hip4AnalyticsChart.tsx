@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { chartPalette, chartColors } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHip4Analytics } from "@/services/indexer/hip4";
 import type { Hip4AnalyticsInterval } from "@/services/indexer/hip4";
 
@@ -36,12 +37,6 @@ const VOL_SERIES = {
 type VolKey = keyof typeof VOL_SERIES;
 
 // ─── Formatters ──────────────────────────────────────────────────────────────
-
-function compactUsd(n: number) {
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(2)}`;
-}
 
 function compactNum(n: number) {
   if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;

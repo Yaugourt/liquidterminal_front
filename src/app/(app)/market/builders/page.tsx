@@ -17,6 +17,7 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
+import { PageHeader } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 
@@ -48,36 +49,33 @@ export default function MarketBuildersPage() {
       transition={{ duration: 0.3 }}
     >
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-        <div>
-          <h1 className="text-[22px] font-semibold text-text-primary leading-tight">Builders</h1>
-          <p className="text-text-secondary text-sm mt-1 max-w-2xl">
-            Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory.
-          </p>
-        </div>
-        {/* Timeframe pills (V4) — layoutId motion keeps the smooth transition */}
-        <div className="flex items-center bg-surface-2 border border-border-subtle rounded-md p-0.5 w-fit">
-          {TIMEFRAMES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTf(t)}
-              className="relative rounded text-xs font-medium px-2.5 py-1"
-            >
-              {tf === t && (
-                <motion.span
-                  layoutId={`builders-tf-${tfLayoutId}`}
-                  className="absolute inset-0 rounded bg-brand"
-                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                />
-              )}
-              <span className={`mono relative z-10 ${tf === t ? "text-brand-text-on" : "text-text-tertiary hover:text-text-primary"}`}>
-                {t}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        title="Builders"
+        description="Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory."
+        actions={
+          <div className="flex items-center bg-surface-2 border border-border-subtle rounded-md p-0.5 w-fit">
+            {TIMEFRAMES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTf(t)}
+                className="relative rounded text-xs font-medium px-2.5 py-1"
+              >
+                {tf === t && (
+                  <motion.span
+                    layoutId={`builders-tf-${tfLayoutId}`}
+                    className="absolute inset-0 rounded bg-brand"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  />
+                )}
+                <span className={`mono relative z-10 ${tf === t ? "text-brand-text-on" : "text-text-tertiary hover:text-text-primary"}`}>
+                  {t}
+                </span>
+              </button>
+            ))}
+          </div>
+        }
+      />
 
       {/* Stats strip — 4 cards with icons + variation badges */}
       <BuildersGlobalStatsStrip

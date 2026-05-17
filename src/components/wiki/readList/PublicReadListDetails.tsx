@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   BookOpen,
   User,
@@ -27,14 +28,14 @@ interface PublicReadListDetailsProps {
 }
 
 const ResourceSkeleton = () => (
-  <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden animate-pulse">
+  <Card className="animate-pulse">
     <div className="w-full h-36 bg-white/5"></div>
     <div className="p-4 space-y-2.5">
       <div className="h-4 bg-white/5 rounded w-3/4"></div>
       <div className="h-3 bg-white/5 rounded w-full"></div>
       <div className="h-3 bg-white/5 rounded w-1/2"></div>
     </div>
-  </div>
+  </Card>
 );
 
 export function PublicReadListDetails({
@@ -113,7 +114,7 @@ export function PublicReadListDetails({
       </div>
 
       {/* Info card */}
-      <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
+      <Card>
         <div className="h-1 bg-gradient-to-r from-brand-accent/60 to-brand-accent/20" />
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
@@ -164,7 +165,7 @@ export function PublicReadListDetails({
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Resources */}
       <div>
@@ -193,12 +194,13 @@ export function PublicReadListDetails({
               key="empty"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-12 text-center"
             >
+            <Card padding="lg" className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-brand-accent" />
               </div>
               <p className="text-text-secondary">No resources in this list yet</p>
+            </Card>
             </motion.div>
           ) : (
             <motion.div

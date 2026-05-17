@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { User, Mail, Users, Code2, DollarSign, Globe } from "lucide-react";
 import { PublicGood } from "@/services/ecosystem/publicgood";
 
@@ -10,7 +11,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
     return (
         <div className="lg:col-span-2 space-y-8">
             {/* Section 2: Impact HyperLiquid */}
-            <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-6">
+            <Card padding="lg">
                 <h2 className="text-lg font-bold text-text-primary mb-4">Impact on HyperLiquid</h2>
 
                 <div className="space-y-4">
@@ -42,10 +43,10 @@ export function ProjectContent({ project }: ProjectContentProps) {
                         </Badge>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* Section 3: Team & Technical */}
-            <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-6">
+            <Card padding="lg">
                 <h2 className="text-lg font-bold text-text-primary mb-4">Team & Technical Details</h2>
 
                 <div className="space-y-4">
@@ -95,11 +96,11 @@ export function ProjectContent({ project }: ProjectContentProps) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* Section 4: Support Requested */}
             {(project.supportTypes.length > 0 || project.budgetRange) && (
-                <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl p-6">
+                <Card padding="lg">
                     <h2 className="text-lg font-bold text-text-primary mb-4">Support Requested</h2>
 
                     <div className="space-y-4">
@@ -144,7 +145,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                             </div>
                         )}
                     </div>
-                </div>
+                </Card>
             )}
         </div>
     );

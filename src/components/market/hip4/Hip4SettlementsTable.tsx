@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
+import { Card } from "@/components/ui/card";
 import type { Hip4SettlementRow } from "@/services/indexer/hip4";
 
 interface Hip4SettlementsTableProps {
@@ -94,29 +95,30 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.3 }}
-      className="glass-panel p-4 space-y-3"
     >
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-        Settled Markets
-        <span className="text-text-muted/60">· {settlements.length}</span>
-      </div>
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+          <span className="h-1 w-1 rounded-full bg-emerald-400" />
+          Settled Markets
+          <span className="text-text-muted/60">· {settlements.length}</span>
+        </div>
 
-      <TypedDataTable<Hip4SettlementRow>
-        data={settlements}
-        columns={columns}
-        getRowKey={(row, i) => `${row.outcome_id}-${i}`}
-        density="compact"
-        emptyMessage="No settlements yet"
-        emptyDescription="Market resolutions will appear here."
-        total={settlements.length}
-        page={page}
-        rowsPerPage={pageSize}
-        onPageChange={setPage}
-        onRowsPerPageChange={(n) => { setPageSize(n); setPage(0); }}
-        rowsPerPageOptions={[5, 10, 25, 40, 50]}
-        paginationVariant="full"
-      />
+        <TypedDataTable<Hip4SettlementRow>
+          data={settlements}
+          columns={columns}
+          getRowKey={(row, i) => `${row.outcome_id}-${i}`}
+          density="compact"
+          emptyMessage="No settlements yet"
+          emptyDescription="Market resolutions will appear here."
+          total={settlements.length}
+          page={page}
+          rowsPerPage={pageSize}
+          onPageChange={setPage}
+          onRowsPerPageChange={(n) => { setPageSize(n); setPage(0); }}
+          rowsPerPageOptions={[5, 10, 25, 40, 50]}
+          paginationVariant="full"
+        />
+      </Card>
     </motion.div>
   );
 }

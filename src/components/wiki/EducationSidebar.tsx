@@ -3,6 +3,7 @@
 import { FileText, Twitter, Globe, MessageCircle, Send, Github, Layers, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import { Card } from "@/components/ui/card";
 
 interface EducationSidebarProps {
   info: {
@@ -42,7 +43,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
   };
 
   return (
-    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden p-5">
+    <Card padding="lg">
       <div className="space-y-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -235,6 +236,6 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
-} 
+}

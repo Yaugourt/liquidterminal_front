@@ -3,6 +3,7 @@
 import { ExternalLink, Plus, Trash2, Flag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useState, memo, useCallback } from "react";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
@@ -93,7 +94,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
   const StatusIcon = resourceStatusConfig[status].icon;
 
   return (
-    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all group overflow-hidden relative">
+    <Card className="hover:border-border-hover group overflow-hidden relative">
       {showStatus && status !== 'APPROVED' && (
         <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${resourceStatusConfig[status].color}`}>
           <StatusIcon className="w-3 h-3" />
@@ -229,7 +230,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
           onOpenChange={setShowReportModal}
         />
       </div>
-    </div>
+    </Card>
   );
 });
 

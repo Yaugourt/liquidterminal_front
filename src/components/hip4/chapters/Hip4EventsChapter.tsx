@@ -1,48 +1,53 @@
+"use client";
+
 import {
   Hip4ChapterShell,
   Hip4GlassPanel,
   Hip4SectionTitle,
 } from "@/components/hip4/Hip4ChapterShell";
 import { Hip4PageHeader } from "@/components/hip4/Hip4PageHeader";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
+import { TypedDataTable, type Column } from "@/components/common";
 
-function ParamTable({
-  rows,
-}: {
-  rows: { param: string; type: string; indexed: string; pos: string }[];
-}) {
+interface EventParam {
+  param: string;
+  type: string;
+  indexed: string;
+  pos: string;
+}
+
+const PARAM_COLUMNS: Column<EventParam>[] = [
+  {
+    key: "param",
+    header: "Parameter",
+    accessor: (r) => <span className="font-mono text-brand-accent">{r.param}</span>,
+  },
+  {
+    key: "type",
+    header: "Type",
+    accessor: (r) => <span className="font-mono text-xs text-purple-300">{r.type}</span>,
+  },
+  {
+    key: "indexed",
+    header: "Indexed",
+    accessor: (r) => <span className="text-xs">{r.indexed}</span>,
+  },
+  {
+    key: "pos",
+    header: "Position",
+    accessor: (r) => <span className="text-xs text-text-secondary">{r.pos}</span>,
+  },
+];
+
+function ParamTable({ rows }: { rows: EventParam[] }) {
   return (
-    <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-border-subtle hover:bg-transparent">
-            <TableHead className="text-table-header">Parameter</TableHead>
-            <TableHead className="text-table-header">Type</TableHead>
-            <TableHead className="text-table-header">Indexed</TableHead>
-            <TableHead className="text-table-header">Position</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((r) => (
-            <TableRow key={r.param} className="border-border-subtle">
-              <TableCell className="font-mono text-brand-accent">{r.param}</TableCell>
-              <TableCell className="font-mono text-xs text-purple-300">{r.type}</TableCell>
-              <TableCell className="text-xs">{r.indexed}</TableCell>
-              <TableCell className="text-xs text-text-secondary">{r.pos}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <TypedDataTable<EventParam>
+      data={rows}
+      columns={PARAM_COLUMNS}
+      getRowKey={(r) => r.param}
+      density="compact"
+    />
   );
 }
 

@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { buildAuroraSeries } from "./mockData";
 
 type SeriesKey = "spotTvl" | "perpOi" | "staked";
@@ -42,12 +43,6 @@ const SERIES: Record<
 
 const PERIODS = ["7D", "30D", "90D", "1Y"] as const;
 type Period = (typeof PERIODS)[number];
-
-function compactUsd(n: number) {
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  return `$${n.toFixed(0)}`;
-}
 
 function formatDate(ms: number) {
   return new Date(ms).toLocaleDateString("en-US", {

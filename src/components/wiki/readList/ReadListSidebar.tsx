@@ -1,5 +1,6 @@
 import { Plus, BookOpen, Trash2, GripVertical, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { ReadList } from "@/services/wiki";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -183,7 +184,7 @@ export function ReadListSidebar({
   const totalItems = readLists?.reduce((acc, l) => acc + (l.itemsCount || 0), 0) ?? 0;
 
   return (
-    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
+    <Card>
       {/* Header */}
       <div className="px-4 py-3.5 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
         <div className="flex items-center justify-between">
@@ -257,6 +258,6 @@ export function ReadListSidebar({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </Card>
   );
 }
