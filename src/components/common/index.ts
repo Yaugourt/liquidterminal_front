@@ -25,11 +25,17 @@ export { ThemeToggle } from './ThemeToggle';
 
 // Tables
 export { DataTable, TypedDataTable } from './DataTable';
-export type { Column } from './DataTable';
+export type { Column, ColumnType } from './DataTable';
 export { ScrollableTable } from './ScrollableTable';
+
+// Numeric display
+export { Num } from './Num';
 
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
+export { PageHeader } from './PageHeader';
+export { PageSection } from './PageSection';
+export { TimeframeTabs } from './TimeframeTabs';
 
 // Re-exports from subpackages
 export * from './animations';
