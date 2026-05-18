@@ -1,7 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/common";
-import { HeroPulse } from "@/components/dashboard/HeroPulse";
+import { EcosystemStats } from "@/components/dashboard/EcosystemStats";
 import { MoversCard } from "@/components/dashboard/MoversCard";
 import { CapitalCard } from "@/components/dashboard/CapitalCard";
 import { LiquidationsCard } from "@/components/dashboard/LiquidationsCard";
@@ -15,9 +15,8 @@ import { Card } from "@/components/ui/card";
 /**
  * Dashboard — vue d'ensemble de Liquid Terminal.
  *
- * Layout bento : en-tête + chart/auction, puis Spot et Perp en pleine
- * largeur (tableaux complets), puis l'activité et la chaîne. La hiérarchie
- * est portée par la taille — les marchés ont le plus de place.
+ * Bandeau de KPI en cartes + chart/auctions, puis Spot/Perp en pleine
+ * largeur (tableaux complets), liquidations, TWAP, capital, chaîne.
  */
 export default function Home() {
   return (
@@ -27,17 +26,16 @@ export default function Home() {
         description="Real-time pulse of the HyperLiquid ecosystem — every corner of Liquid Terminal at a glance."
       />
 
-      {/* En-tête — volume écosystème + KPI globaux */}
-      <HeroPulse />
+      {/* KPI écosystème — une carte par stat + carte Liquidations 24h */}
+      <EcosystemStats />
 
-      {/* Tendance + auction live */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 items-stretch">
+      {/* Tendance + auctions live (spot & perp) */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 items-stretch">
         <Card className="xl:col-span-2 flex flex-col min-h-[380px]">
           <ChartSection />
         </Card>
-        <div className="xl:col-span-1">
-          <AuctionCard marketType="spot" />
-        </div>
+        <AuctionCard marketType="spot" />
+        <AuctionCard marketType="perp" />
       </div>
 
       {/* Marchés — pleine largeur, tableaux complets */}
