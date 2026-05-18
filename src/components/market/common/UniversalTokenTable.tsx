@@ -120,7 +120,6 @@ export function UniversalTokenTable({
     const nameCol: Column<TokenRow> = {
         key: "name",
         header: "Name",
-        width: mode === 'compact' ? '35%' : (market === 'spot' ? '16.66%' : '17%'),
         accessor: (t) => (
             <div className="flex items-center gap-2">
                 <TokenIcon src={t.logo} name={t.name} size="sm" />
@@ -135,7 +134,6 @@ export function UniversalTokenTable({
         header: "Price",
         type: "numeric",
         sortable: mode === 'full' && market === 'perp',
-        width: mode === 'compact' ? '20%' : '10%',
         accessor: (t) => (
             mode === 'compact'
                 ? formatNumber(t.price, format, { minimumFractionDigits: 0, maximumFractionDigits: 2, currency: '$', showCurrency: true })
@@ -148,7 +146,6 @@ export function UniversalTokenTable({
         key: "change24h",
         header: "24h",
         sortable: true,
-        width: mode === 'compact' ? '20%' : '10%',
         accessor: (t) => (
             mode === 'compact'
                 ? (
@@ -169,7 +166,6 @@ export function UniversalTokenTable({
         header: "Volume",
         type: "numeric",
         sortable: true,
-        width: market === 'spot' ? '12%' : '20%',
         accessor: (t) => (
             mode === 'compact'
                 ? compactUsd(t.volume)
@@ -186,7 +182,7 @@ export function UniversalTokenTable({
             columns = [
                 nameCol,
                 priceCol,
-                { ...volumeCol, width: '20%' },
+                volumeCol,
                 { ...change24hCol, sortable: true },
             ];
         } else {
@@ -194,13 +190,12 @@ export function UniversalTokenTable({
             columns = [
                 nameCol,
                 priceCol,
-                { ...change24hCol, width: '20%' },
+                change24hCol,
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
-                    width: '20%',
                     accessor: (t) => `$${formatNumber(t.openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
                 },
             ];
@@ -218,14 +213,12 @@ export function UniversalTokenTable({
                     header: "Market Cap",
                     type: "numeric",
                     sortable: true,
-                    width: '20%',
                     accessor: (t) => `$${formatNumber(t.marketCap, format)}`,
                 },
                 {
                     key: "supply",
                     header: "Supply",
                     type: "numeric",
-                    width: '12%',
                     accessor: (t) => formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
                 },
             ];
@@ -240,13 +233,11 @@ export function UniversalTokenTable({
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
-                    width: '20%',
                     accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
                 },
                 {
                     key: "funding",
                     header: "Funding Rate",
-                    width: '11%',
                     accessor: (t) => (
                         <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
                             {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
