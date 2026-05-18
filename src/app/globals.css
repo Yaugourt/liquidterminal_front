@@ -184,7 +184,7 @@
 
     /* ===== Interactive Elements ===== */
     .interactive-card {
-        @apply hover:border-border-hover transition-all duration-200;
+        @apply hover:border-border-default transition-all duration-200;
     }
 
     .interactive-button {
@@ -193,7 +193,7 @@
 
     /* ===== Text Utilities ===== */
     .text-muted {
-        @apply text-text-muted;
+        @apply text-text-tertiary;
     }
 
     /* ===== Stat Cards (Header) ===== */

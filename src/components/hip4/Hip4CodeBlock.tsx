@@ -17,7 +17,7 @@ export function Hip4CodeBlock({
       )}
     >
       {title ? (
-        <div className="px-3 py-1.5 text-[11px] font-medium text-text-secondary border-b border-border-subtle bg-brand-tertiary/30">
+        <div className="px-3 py-1.5 text-[11px] font-medium text-text-secondary border-b border-border-subtle bg-surface/30">
           {title}
         </div>
       ) : null}

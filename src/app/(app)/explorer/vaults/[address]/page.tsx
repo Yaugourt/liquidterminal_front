@@ -82,8 +82,8 @@ export default function VaultDetailPage() {
             onClick={() => handleTabChange(tab.id)}
             className={`text-sm font-medium px-4 py-2 border-b-2 transition-all -mb-px ${
               activeTab === tab.id
-                ? "border-brand-accent text-brand-accent"
-                : "border-transparent text-text-muted hover:text-text-secondary"
+                ? "border-brand text-brand"
+                : "border-transparent text-text-tertiary hover:text-text-secondary"
             }`}
           >
             {tab.label}

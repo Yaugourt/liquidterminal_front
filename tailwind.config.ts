@@ -47,31 +47,14 @@ export default {
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				// Brand colors
+				// V4 cyan signature — `bg-brand`, `text-brand`, `bg-brand-hover`, `bg-brand-deep`, `text-brand-text-on`
 				brand: {
-					// V2 legacy names — Phase 1 aliased to V4 tokens so every legacy
-					// consumer (`bg-brand-main`, `text-brand-accent`…) renders V4 with
-					// zero file-by-file edits. Names removed for good in Phase 5.
-					main: 'rgb(var(--bg-base) / <alpha-value>)',
-					secondary: 'rgb(var(--bg-surface) / <alpha-value>)',
-					// `tertiary` NOT aliased: #051728 serves dual duty — `text-brand-tertiary`
-					// (102 occ, navy text on cyan, must stay #051728) and `bg-brand-tertiary`
-					// (24 occ, dark surface). A single alias can't serve both. Phase 5 splits them.
-					tertiary: '#051728',
-					dark: 'rgb(var(--bg-base) / <alpha-value>)',
-					accent: 'rgb(var(--brand) / <alpha-value>)',
-					gold: 'rgb(var(--gold) / <alpha-value>)',
-					success: 'rgb(var(--success) / <alpha-value>)',
-					error: 'rgb(var(--danger) / <alpha-value>)',
-					warning: 'rgb(var(--warning) / <alpha-value>)',
-					// External brand colors (third-party services).
-					// Document new additions in docs/DESIGN_SYSTEM.md.
-					telegram: '#0088cc',
-					// V4 cyan signature — `bg-brand`, `text-brand`, `bg-brand-hover`, `bg-brand-deep`, `text-brand-text-on`
 					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
 					hover: 'rgb(var(--brand-hover) / <alpha-value>)',
 					deep: 'rgb(var(--brand-deep) / <alpha-value>)',
 					'text-on': 'rgb(var(--brand-text-on) / <alpha-value>)',
+					// External brand color (third-party service).
+					telegram: '#0088cc',
 				},
 				// V4 surfaces (whisper navy signature) — `bg-base`, `bg-surface`, `bg-surface-2`, `bg-surface-3`
 				base: 'rgb(var(--bg-base) / <alpha-value>)',
@@ -92,12 +75,9 @@ export default {
 				// V4 semantic text colors (CSS vars — light mode swap later)
 				'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',     // #E8EAED
 				'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)', // #9CA3AF
-				'text-muted': 'rgb(var(--text-tertiary) / <alpha-value>)', // V2 legacy — aliased to V4 text-tertiary
-				// V4 new text tier
-				'text-tertiary': 'rgb(var(--text-tertiary) / <alpha-value>)',
-				// V4 border (whisper navy #1E2535 — opaque, replaces V2 white/5)
+				'text-tertiary': 'rgb(var(--text-tertiary) / <alpha-value>)',   // #6B7280
+				// V4 border (whisper navy — opaque, replaces V2 white/5)
 				'border-subtle': 'rgb(var(--border-subtle) / <alpha-value>)',
-				'border-hover': 'rgb(var(--border-default) / <alpha-value>)', // V2 legacy — aliased to V4 border-default
 				// V4 borders (whisper navy palette) — `border-border-default`, `border-border-strong`
 				'border-default': 'rgb(var(--border-default) / <alpha-value>)',
 				'border-strong': 'rgb(var(--border-strong) / <alpha-value>)',

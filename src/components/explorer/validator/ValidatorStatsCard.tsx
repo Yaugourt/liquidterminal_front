@@ -25,7 +25,7 @@ function InlineStat({ icon, label, value, subValue }: InlineStatProps) {
       </div>
       <div className="text-text-primary font-bold text-sm pl-5">
         {value}
-        {subValue && <div className="text-text-muted text-xs font-medium">{subValue}</div>}
+        {subValue && <div className="text-text-tertiary text-xs font-medium">{subValue}</div>}
       </div>
     </div>
   );
@@ -41,7 +41,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
   return (
     <StatsPanel
       title="Validator Stats"
-      icon={<Shield size={16} className="text-brand-accent" />}
+      icon={<Shield size={16} className="text-brand" />}
       isLoading={isLoading}
       error={error}
       errorTitle="Failed to load validator stats"
@@ -50,7 +50,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
           href="https://app.hyperliquid.xyz/staking"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-label text-text-muted hover:text-brand-accent transition-colors"
+          className="flex items-center gap-1 text-label text-text-tertiary hover:text-brand transition-colors"
         >
           Stake
           <ExternalLink size={10} />
@@ -59,7 +59,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
     >
       <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm content-center h-full">
         <InlineStat
-          icon={<Users className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<Users className="h-3.5 w-3.5 text-brand" />}
           label="Total Validators"
           value={
             <>
@@ -69,7 +69,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
           }
         />
         <InlineStat
-          icon={<Coins className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<Coins className="h-3.5 w-3.5 text-brand" />}
           label="HYPE Staked"
           value={formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
           subValue={
@@ -80,8 +80,8 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
         />
         <InlineStat
           icon={
-            <div className="w-3.5 h-3.5 rounded-full bg-brand-gold/20 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-gold"></div>
+            <div className="w-3.5 h-3.5 rounded-full bg-gold/20 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
             </div>
           }
           label="Average Staked"
@@ -89,20 +89,20 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
         />
         <InlineStat
           icon={
-            <div className="w-3.5 h-3.5 rounded-full bg-brand-accent/20 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-accent"></div>
+            <div className="w-3.5 h-3.5 rounded-full bg-brand/20 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-brand"></div>
             </div>
           }
           label="Active Stakers"
           value={holdersStats ? formatNumber(holdersStats.totalHolders, format, { maximumFractionDigits: 0 }) : "0"}
         />
         <InlineStat
-          icon={<Clock className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<Clock className="h-3.5 w-3.5 text-brand" />}
           label="1h Unstaking"
           value={`${upcomingUnstaking ? formatNumber(upcomingUnstaking.nextHour.totalTokens, format, { maximumFractionDigits: 0 }) : "0"} HYPE`}
         />
         <InlineStat
-          icon={<Clock className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<Clock className="h-3.5 w-3.5 text-brand" />}
           label="24h Unstaking"
           value={`${upcomingUnstaking ? formatNumber(upcomingUnstaking.next24Hours.totalTokens, format, { maximumFractionDigits: 0 }) : "0"} HYPE`}
         />

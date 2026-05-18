@@ -22,14 +22,14 @@ export function TableLoadingState({
         <div className="flex flex-col items-center justify-center">
           {isLoading ? (
             <>
-              <InlineSpinner className="w-8 h-8 mb-3 text-brand-accent" />
+              <InlineSpinner className="w-8 h-8 mb-3 text-brand" />
               <p className="text-text-secondary text-sm">Loading...</p>
             </>
           ) : isEmpty ? (
             <>
-              <Database className="w-10 h-10 mb-3 text-text-muted" />
+              <Database className="w-10 h-10 mb-3 text-text-tertiary" />
               <p className="text-text-secondary text-sm mb-1">No positions found</p>
-              <p className="text-text-muted text-xs">Add a position or check back later</p>
+              <p className="text-text-tertiary text-xs">Add a position or check back later</p>
             </>
           ) : null}
         </div>

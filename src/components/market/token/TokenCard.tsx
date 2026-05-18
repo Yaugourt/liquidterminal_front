@@ -99,10 +99,10 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
               />
             ) : null}
             <div className={cn(
-              "w-full h-full bg-gradient-to-br from-brand-accent to-emerald-400 flex items-center justify-center",
+              "w-full h-full bg-gradient-to-br from-brand to-emerald-400 flex items-center justify-center",
               token.logo ? "hidden" : ""
             )}>
-              <span className="text-brand-tertiary text-xs font-bold">
+              <span className="text-brand-text-on text-xs font-bold">
                 {token.symbol.split('/')[0].charAt(0)}
               </span>
             </div>
@@ -190,12 +190,12 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             <div className="flex flex-col">
               <span className="text-stat-label">Contract</span>
               <div className="flex items-center gap-2">
-                <span className="text-brand-accent text-xs">
+                <span className="text-brand text-xs">
                   {truncateAddress(token.contract)}
                 </span>
                 <Copy
                   size={12}
-                  className="text-brand-gold opacity-60 cursor-pointer hover:opacity-100 transition-all duration-200"
+                  className="text-gold opacity-60 cursor-pointer hover:opacity-100 transition-all duration-200"
                   onClick={() => copyToClipboard(token.contract!)}
                 />
               </div>
@@ -236,8 +236,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           className={cn(
             "ml-auto inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap",
             detailsOpen
-              ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
-              : "border-border-subtle bg-white/[0.02] text-text-secondary hover:text-text-primary hover:border-border-hover"
+              ? "border-brand/40 bg-brand/10 text-brand"
+              : "border-border-subtle bg-white/[0.02] text-text-secondary hover:text-text-primary hover:border-border-default"
           )}
         >
           <span>{detailsOpen ? "Hide details" : "Details"}</span>

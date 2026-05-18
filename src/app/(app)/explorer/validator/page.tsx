@@ -39,7 +39,7 @@ export default function ValidatorPage() {
           ]}
           activeTab={validatorSubTab}
           onTabChange={(val) => setValidatorSubTab(val as ValidatorSubTab)}
-          className="bg-brand-dark border border-white/5"
+          className="bg-base border border-white/5"
         />
       </div>
 

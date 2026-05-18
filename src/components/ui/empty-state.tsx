@@ -32,7 +32,7 @@ export function EmptyState({
                 {icon || <Database className="w-8 h-8 text-text-tertiary" />}
             </div>
             <p className="text-text-primary text-lg mb-2">{title}</p>
-            <p className="text-text-muted text-sm mb-4">{description}</p>
+            <p className="text-text-tertiary text-sm mb-4">{description}</p>
             {action}
         </div>
     );

@@ -28,8 +28,8 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4
     {
       title: "Active Markets",
       value: isLoading ? "—" : stats.activeMarkets.toString(),
-      icon: <BarChart3 className="h-4 w-4 text-brand-accent" />,
-      valueClassName: "text-lg font-bold text-brand-accent tracking-tight",
+      icon: <BarChart3 className="h-4 w-4 text-brand" />,
+      valueClassName: "text-lg font-bold text-brand tracking-tight",
     },
     {
       title: "Questions",
@@ -40,8 +40,8 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4
     {
       title: "Total Volume",
       value: isLoading ? "—" : compactUsd(stats.totalVolume),
-      icon: <TrendingUp className="h-4 w-4 text-brand-gold" />,
-      valueClassName: "text-lg font-bold text-brand-gold tracking-tight",
+      icon: <TrendingUp className="h-4 w-4 text-gold" />,
+      valueClassName: "text-lg font-bold text-gold tracking-tight",
     },
     {
       title: "Settled Markets",

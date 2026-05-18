@@ -18,10 +18,10 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
   const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
 
   return (
-    <Card className="rounded-2xl hover:border-border-hover transition-all duration-200 group">
+    <Card className="rounded-2xl hover:border-border-default transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand-accent transition-colors">
+          <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand transition-colors">
             {list.name}
           </CardTitle>
           <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full shrink-0">
@@ -41,13 +41,13 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         {/* Stats */}
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5 text-text-secondary">
-            <Wallet size={14} className="text-brand-accent" />
+            <Wallet size={14} className="text-brand" />
             <span className="text-text-primary font-medium">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
 
           <div className="flex items-center gap-1.5 text-text-secondary">
-            <Calendar size={14} className="text-brand-gold" />
+            <Calendar size={14} className="text-gold" />
             <span>{timeAgo}</span>
           </div>
         </div>
@@ -64,7 +64,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         <div className="flex gap-2 pt-2">
           <Button
             onClick={() => onPreview(list)}
-            className="flex-1 bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
+            className="flex-1 bg-brand hover:bg-brand text-brand-text-on font-medium"
           >
             <Eye className="mr-2 h-4 w-4" />
             View & Copy

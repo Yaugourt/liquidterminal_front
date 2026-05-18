@@ -11,7 +11,7 @@ export function Hip4PricesGrid() {
         return (
           <div
             key={ticker}
-            className="rounded-lg border border-border-subtle bg-brand-secondary/40 p-3"
+            className="rounded-lg border border-border-subtle bg-surface/40 p-3"
           >
             <div className="text-[11px] font-mono text-text-secondary mb-1">
               {ticker}
@@ -19,7 +19,7 @@ export function Hip4PricesGrid() {
             <div className="text-lg font-bold" style={{ color }}>
               {pct}%
             </div>
-            <div className="mt-2 h-1.5 rounded-full bg-brand-tertiary/50 overflow-hidden">
+            <div className="mt-2 h-1.5 rounded-full bg-surface/50 overflow-hidden">
               <div
                 className={cn("h-full rounded-full")}
                 style={{ width: `${pct}%`, background: color }}

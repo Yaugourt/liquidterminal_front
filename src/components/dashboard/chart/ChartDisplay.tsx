@@ -124,7 +124,7 @@ export const ChartDisplay = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
+                  <span className="text-label text-text-tertiary tabular-nums">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',

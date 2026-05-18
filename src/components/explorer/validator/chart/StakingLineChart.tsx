@@ -49,8 +49,8 @@ export const StakingLineChart = memo(function StakingLineChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {formatDate(date, dateFormat)}
           </div>
           <div className="mt-2 space-y-1 text-xs">
@@ -68,7 +68,7 @@ export const StakingLineChart = memo(function StakingLineChart({
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Transactions</span>
-              <span className="font-semibold text-brand-gold tabular-nums">
+              <span className="font-semibold text-gold tabular-nums">
                 {Math.round(data.transactionCount)}
               </span>
             </div>

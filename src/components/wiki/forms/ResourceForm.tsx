@@ -50,7 +50,7 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                     type="url"
                     value={form.url}
                     onChange={(e) => setForm(prev => ({ ...prev, url: e.target.value }))}
-                    className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                    className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
                     placeholder="https://example.com/resource"
                     required
                 />
@@ -87,7 +87,7 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                 <Button
                     type="submit"
                     disabled={isLoading}
-                    className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                    className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                 >
                     {isLoading ? "Adding..." : "Add Resource"}
                 </Button>

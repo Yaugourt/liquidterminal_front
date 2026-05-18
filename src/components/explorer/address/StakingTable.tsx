@@ -160,7 +160,7 @@ export function StakingTable({ address }: StakingTableProps) {
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Undelegated:</span>
-            <span className="text-brand-accent text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-brand text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(undelegatedAmount, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-text-primary text-xs font-normal ml-1">
@@ -171,7 +171,7 @@ export function StakingTable({ address }: StakingTableProps) {
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
-            <span className="text-brand-gold text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-gold text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(pendingWithdrawal, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-text-primary text-xs font-normal ml-1">

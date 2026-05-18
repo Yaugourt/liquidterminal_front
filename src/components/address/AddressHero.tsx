@@ -69,18 +69,18 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
       {/* Ambient accent glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-16 left-1/4 h-32 w-1/2 rounded-full bg-brand-accent/10 blur-3xl"
+        className="pointer-events-none absolute -top-16 left-1/4 h-32 w-1/2 rounded-full bg-brand/10 blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-10 right-1/4 h-24 w-1/3 rounded-full bg-brand-gold/5 blur-3xl"
+        className="pointer-events-none absolute -bottom-10 right-1/4 h-24 w-1/3 rounded-full bg-gold/5 blur-3xl"
       />
 
       <Card className="relative p-4 md:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand-accent/20 shadow-inner shadow-black/30"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand/20 shadow-inner shadow-black/30"
               style={{ background: gradient }}
             >
               <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
@@ -94,9 +94,9 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   Address
                 </span>
                 {aliasLoading ? (
-                  <div className="h-4 w-20 animate-pulse rounded-md bg-brand-accent/20" />
+                  <div className="h-4 w-20 animate-pulse rounded-md bg-brand/20" />
                 ) : alias ? (
-                  <span className="rounded-md border border-brand-gold/20 bg-brand-gold/10 px-2 py-0.5 text-[10px] font-medium text-brand-gold">
+                  <span className="rounded-md border border-gold/20 bg-gold/10 px-2 py-0.5 text-[10px] font-medium text-gold">
                     {alias}
                   </span>
                 ) : null}
@@ -109,10 +109,10 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
               </div>
 
               <div className="flex items-center gap-2">
-                <code className="hidden truncate text-base font-medium tabular-nums text-brand-accent sm:block">
+                <code className="hidden truncate text-base font-medium tabular-nums text-brand sm:block">
                   {address}
                 </code>
-                <code className="truncate text-sm font-medium tabular-nums text-brand-accent sm:hidden">
+                <code className="truncate text-sm font-medium tabular-nums text-brand sm:hidden">
                   {truncateAddress(address)}
                 </code>
 
@@ -133,12 +133,12 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                         ) : (
                           <Copy
                             size={15}
-                            className="text-brand-gold opacity-60 transition-opacity group-hover:opacity-100"
+                            className="text-gold opacity-60 transition-opacity group-hover:opacity-100"
                           />
                         )}
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="top" className="bg-brand-tertiary border border-brand-accent text-text-primary">
+                    <TooltipContent side="top" className="bg-surface border border-brand text-text-primary">
                       <p className="px-1 text-xs font-medium">Copied</p>
                     </TooltipContent>
                   </Tooltip>
@@ -153,7 +153,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                 >
                   <ExternalLink
                     size={15}
-                    className="text-text-muted opacity-80 transition-colors group-hover:text-brand-accent"
+                    className="text-text-tertiary opacity-80 transition-colors group-hover:text-brand"
                   />
                 </a>
               </div>

@@ -35,12 +35,12 @@ function buildColumns(
       getSortValue: (row) => row.symbol.toLowerCase(),
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-sm font-bold text-brand-accent">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-sm font-bold text-brand">
             {row.symbol.charAt(0)}
           </div>
           <div className="flex flex-col">
             <span className="text-text-primary text-sm font-medium">{row.symbol}</span>
-            <span className="text-brand-accent text-xs">{row.coin}</span>
+            <span className="text-brand text-xs">{row.coin}</span>
           </div>
         </div>
       ),
@@ -54,7 +54,7 @@ function buildColumns(
         <div className="flex flex-col">
           <span className="text-text-primary text-sm font-medium">{row.dex}</span>
           {row.dexFullName && (
-            <span className="text-text-muted text-xs">{row.dexFullName}</span>
+            <span className="text-text-tertiary text-xs">{row.dexFullName}</span>
           )}
         </div>
       ),
@@ -102,7 +102,7 @@ function buildColumns(
           href={`https://app.hyperliquid.xyz/explorer/tx/${row.hash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-brand-accent hover:text-text-primary transition-colors text-sm"
+          className="flex items-center gap-1 text-brand hover:text-text-primary transition-colors text-sm"
         >
           View
           <ExternalLink className="w-3 h-3" />

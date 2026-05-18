@@ -28,7 +28,7 @@ const COLUMNS: Column<EvmBridgeEvent>[] = [
       <span
         className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
           e.event_type === "deposit"
-            ? "bg-brand-success/10 text-brand-success"
+            ? "bg-success/10 text-success"
             : "bg-rose-500/10 text-rose-400"
         }`}
       >

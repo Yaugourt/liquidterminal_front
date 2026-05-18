@@ -77,7 +77,7 @@ export default function TransactionPage() {
       {/* Back Button */}
       <button
         onClick={() => router.push('/explorer')}
-        className="flex items-center gap-2 text-brand-accent hover:text-brand-accent/80 transition-colors font-inter"
+        className="flex items-center gap-2 text-brand hover:text-brand/80 transition-colors font-inter"
       >
         <ArrowLeft size={20} />
         Back
@@ -87,10 +87,10 @@ export default function TransactionPage() {
       <h1 className="text-2xl text-white font-medium font-inter">Transaction Details</h1>
 
       {/* Hash */}
-      <div className="flex items-center gap-3 bg-brand-tertiary/90 border border-brand-accent/30 rounded-lg p-4">
+      <div className="flex items-center gap-3 bg-surface/90 border border-brand/30 rounded-lg p-4">
         <span className="text-white/50 text-sm font-inter">Hash:</span>
         <div className="flex items-center gap-2 flex-1">
-          <span className="text-brand-accent font-inter break-all">
+          <span className="text-brand font-inter break-all">
             <span className="md:hidden">{truncateHash(txHash)}</span>
             <span className="hidden md:inline">{txHash}</span>
           </span>
@@ -101,7 +101,7 @@ export default function TransactionPage() {
             {copiedHash ? (
               <Check className="h-4 w-4 text-green-500" />
             ) : (
-              <Copy className="h-4 w-4 text-brand-gold opacity-60 hover:opacity-100" />
+              <Copy className="h-4 w-4 text-gold opacity-60 hover:opacity-100" />
             )}
           </button>
         </div>

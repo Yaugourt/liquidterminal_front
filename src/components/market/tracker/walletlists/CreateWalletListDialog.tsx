@@ -81,7 +81,7 @@ export function CreateWalletListDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-brand-secondary border border-border-hover text-text-primary rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="bg-surface border border-border-default text-text-primary rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-text-primary">Create Wallet List</DialogTitle>
           <DialogDescription className="text-text-secondary">
@@ -99,7 +99,7 @@ export function CreateWalletListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., DeFi Whales, Interesting Traders..."
-              className="bg-brand-dark border-border-subtle text-text-primary placeholder:text-text-muted rounded-lg focus:border-brand-accent/50"
+              className="bg-base border-border-subtle text-text-primary placeholder:text-text-tertiary rounded-lg focus:border-brand/50"
             />
           </div>
 
@@ -112,24 +112,24 @@ export function CreateWalletListDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional description..."
-              className="bg-brand-dark border-border-subtle text-text-primary placeholder:text-text-muted min-h-[80px] rounded-lg focus:border-brand-accent/50"
+              className="bg-base border-border-subtle text-text-primary placeholder:text-text-tertiary min-h-[80px] rounded-lg focus:border-brand/50"
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-brand-dark border border-border-subtle rounded-xl hover:border-border-hover transition-all">
+          <div className="flex items-center justify-between p-4 bg-base border border-border-subtle rounded-xl hover:border-border-default transition-all">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-brand-gold/10'}`}>
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-gold/10'}`}>
                 {isPublic ? (
                   <Users size={20} className="text-emerald-400" />
                 ) : (
-                  <Lock size={20} className="text-brand-gold" />
+                  <Lock size={20} className="text-gold" />
                 )}
               </div>
               <div>
                 <label className="text-sm font-medium text-text-primary cursor-pointer block">
                   {isPublic ? '🌐 Public List' : '🔒 Private List'}
                 </label>
-                <p className="text-xs text-text-muted mt-0.5">
+                <p className="text-xs text-text-tertiary mt-0.5">
                   {isPublic
                     ? 'Anyone can view and copy this list'
                     : 'Only you can view this list'
@@ -156,7 +156,7 @@ export function CreateWalletListDialog({
           <Button
             onClick={handleCreateList}
             disabled={isLoading || !name.trim()}
-            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg disabled:opacity-50"
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg disabled:opacity-50"
           >
             {isLoading ? "Creating..." : "Create List"}
           </Button>

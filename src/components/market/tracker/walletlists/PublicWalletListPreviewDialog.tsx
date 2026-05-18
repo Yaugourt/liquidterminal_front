@@ -159,9 +159,9 @@ export function PublicWalletListPreviewDialog({
         {/* Content */}
         <div className="space-y-4">
           {/* Stats */}
-          <div className="flex items-center gap-4 p-3 bg-black/20 border border-border-hover rounded-lg">
+          <div className="flex items-center gap-4 p-3 bg-black/20 border border-border-default rounded-lg">
             <div className="flex items-center gap-2">
-              <Wallet size={16} className="text-brand-accent" />
+              <Wallet size={16} className="text-brand" />
               <span className="text-text-primary font-medium">{list.itemsCount || 0}</span>
               <span className="text-text-secondary text-sm">
                 wallet{list.itemsCount !== 1 ? 's' : ''}
@@ -180,14 +180,14 @@ export function PublicWalletListPreviewDialog({
           ) : fullList?.items && fullList.items.length > 0 ? (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-text-secondary">Wallets in this list:</h3>
-              <div className="h-[300px] border border-border-hover rounded-lg overflow-y-auto scrollbar-brand">
+              <div className="h-[300px] border border-border-default rounded-lg overflow-y-auto scrollbar-brand">
                 <div className="p-3 space-y-2">
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-brand-accent/50 transition-colors"
+                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-brand/50 transition-colors"
                     >
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-medium shrink-0">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand/20 text-brand text-xs font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
@@ -202,7 +202,7 @@ export function PublicWalletListPreviewDialog({
                           {item.userWallet?.Wallet?.address}
                         </code>
                         {item.notes && (
-                          <p className="text-xs text-text-muted italic">{item.notes}</p>
+                          <p className="text-xs text-text-tertiary italic">{item.notes}</p>
                         )}
                       </div>
                     </div>
@@ -223,7 +223,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleCopyAddresses}
               disabled={!fullList?.items?.length}
-              className="border-border-hover text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-white/5"
             >
               <ClipboardCopy className="mr-2 h-4 w-4" />
               Copy Addresses
@@ -232,7 +232,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleExportCSV}
               disabled={!fullList?.items?.length}
-              className="border-border-hover text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-white/5"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
@@ -243,14 +243,14 @@ export function PublicWalletListPreviewDialog({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-border-hover text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-white/5"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCopyList}
               disabled={copying}
-              className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
+              className="bg-brand hover:bg-brand text-brand-text-on font-medium"
             >
               {copying ? (
                 <>

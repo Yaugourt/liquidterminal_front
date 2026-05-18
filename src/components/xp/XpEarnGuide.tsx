@@ -67,16 +67,16 @@ const MISSIONS: MissionItem[] = [
         title: "Public Good Approved",
         description: "Get your submitted project validated by mods.",
         xp: "+500 XP",
-        color: "text-brand-gold",
-        bgColor: "bg-brand-gold/10"
+        color: "text-gold",
+        bgColor: "bg-gold/10"
     },
     {
         icon: Users,
         title: "Referral",
         description: "Invite a friend who becomes active.",
         xp: "+200 XP",
-        color: "text-brand-accent",
-        bgColor: "bg-brand-accent/10"
+        color: "text-brand",
+        bgColor: "bg-brand/10"
     },
     {
         icon: BookOpen,
@@ -92,17 +92,17 @@ export function XpEarnGuide({ className }: { className?: string }) {
     return (
         <div className={cn(
             "p-6 rounded-2xl",
-            "bg-brand-secondary/60",
+            "bg-surface/60",
             "border border-border-subtle",
             className
         )}>
             <div className="flex items-center gap-2 mb-6">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-gold/20 to-orange-500/20 flex items-center justify-center border border-brand-gold/30">
-                    <Zap className="h-4 w-4 text-brand-gold" />
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gold/20 to-orange-500/20 flex items-center justify-center border border-gold/30">
+                    <Zap className="h-4 w-4 text-gold" />
                 </div>
                 <div>
                     <h3 className="text-sm font-bold text-text-primary">Ways to Earn XP</h3>
-                    <p className="text-xs text-text-muted">Permanent missions and rewards available anytime</p>
+                    <p className="text-xs text-text-tertiary">Permanent missions and rewards available anytime</p>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                     return (
                         <div
                             key={index}
-                            className="group p-4 rounded-lg bg-brand-dark border border-border-subtle hover:border-border-hover transition-all hover:bg-white/5"
+                            className="group p-4 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-all hover:bg-white/5"
                         >
                             <div className="flex justify-between items-start mb-3">
                                 <div className={cn(
@@ -122,17 +122,17 @@ export function XpEarnGuide({ className }: { className?: string }) {
                                     <Icon className={cn("h-5 w-5", mission.color)} />
                                 </div>
                                 <div className={cn(
-                                    "px-2 py-1 rounded text-xs font-bold bg-brand-main border border-border-subtle",
+                                    "px-2 py-1 rounded text-xs font-bold bg-base border border-border-subtle",
                                     mission.color
                                 )}>
                                     {mission.xp}
                                 </div>
                             </div>
 
-                            <h4 className="text-sm font-semibold text-text-primary mb-1 group-hover:text-brand-accent transition-colors">
+                            <h4 className="text-sm font-semibold text-text-primary mb-1 group-hover:text-brand transition-colors">
                                 {mission.title}
                             </h4>
-                            <p className="text-xs text-text-muted leading-relaxed">
+                            <p className="text-xs text-text-tertiary leading-relaxed">
                                 {mission.description}
                             </p>
                         </div>

@@ -26,7 +26,7 @@ export default function UserPage() {
   if (!user || user.role !== 'ADMIN') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 text-center shadow-xl shadow-black/20 max-w-md">
+        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 text-center shadow-xl shadow-black/20 max-w-md">
           <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto mb-4">
             <ShieldX className="h-8 w-8 text-rose-400" />
           </div>
@@ -36,7 +36,7 @@ export default function UserPage() {
           </p>
           <Button
             onClick={() => router.push('/')}
-            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 font-medium"
+            className="bg-brand text-brand-text-on hover:bg-brand/80 font-medium"
           >
             Return to Home
           </Button>

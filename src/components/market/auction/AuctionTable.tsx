@@ -126,7 +126,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
         <div className="flex items-center gap-1.5">
           <Link
             href={`/explorer/address/${row.deployer}`}
-            className="text-brand-accent text-xs hover:text-text-primary transition-colors"
+            className="text-brand text-xs hover:text-text-primary transition-colors"
           >
             {formatAddress(row.deployer)}
           </Link>
@@ -137,7 +137,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
             {copiedAddress === row.deployer ? (
               <Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />
             ) : (
-              <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         </div>
@@ -150,7 +150,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
         <div className="flex items-center gap-1.5">
           <Link
             href={`/explorer/address/${row.tokenId}`}
-            className="text-brand-accent text-xs hover:text-text-primary transition-colors"
+            className="text-brand text-xs hover:text-text-primary transition-colors"
           >
             {formatAddress(row.tokenId)}
           </Link>
@@ -161,7 +161,7 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
             {copiedAddress === row.tokenId ? (
               <Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />
             ) : (
-              <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         </div>

@@ -49,9 +49,9 @@ export function UserTable({
       case 'ADMIN':
         return <Shield className="w-3 h-3 text-rose-400" />;
       case 'MODERATOR':
-        return <ShieldCheck className="w-3 h-3 text-brand-gold" />;
+        return <ShieldCheck className="w-3 h-3 text-gold" />;
       default:
-        return <ShieldX className="w-3 h-3 text-text-muted" />;
+        return <ShieldX className="w-3 h-3 text-text-tertiary" />;
     }
   };
 
@@ -60,7 +60,7 @@ export function UserTable({
       case 'ADMIN':
         return 'text-rose-400';
       case 'MODERATOR':
-        return 'text-brand-gold';
+        return 'text-gold';
       default:
         return 'text-text-secondary';
     }
@@ -73,7 +73,7 @@ export function UserTable({
       accessor: (user) => (
         <div>
           <p className="font-medium text-text-primary text-sm">{user.name}</p>
-          <p className="text-xs text-text-muted">{user.email || 'No email'}</p>
+          <p className="text-xs text-text-tertiary">{user.email || 'No email'}</p>
         </div>
       ),
     },
@@ -98,9 +98,9 @@ export function UserTable({
             checked={user.verified}
             onCheckedChange={(checked) => onVerifiedChange(user.id, checked)}
             disabled={isUpdating}
-            className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-zinc-700 scale-75"
+            className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-zinc-700 scale-75"
           />
-          <span className={`text-xs ${user.verified ? 'text-emerald-400' : 'text-text-muted'}`}>
+          <span className={`text-xs ${user.verified ? 'text-emerald-400' : 'text-text-tertiary'}`}>
             {user.verified ? 'Verified' : 'Unverified'}
           </span>
         </div>
@@ -111,11 +111,11 @@ export function UserTable({
       header: 'Referrals',
       accessor: (user) =>
         user.referralCount > 0 ? (
-          <span className="px-2 py-1 rounded-md text-xs font-bold bg-brand-accent/10 text-brand-accent">
+          <span className="px-2 py-1 rounded-md text-xs font-bold bg-brand/10 text-brand">
             {user.referralCount}
           </span>
         ) : (
-          <span className="text-text-muted text-xs">—</span>
+          <span className="text-text-tertiary text-xs">—</span>
         ),
     },
     {
@@ -125,7 +125,7 @@ export function UserTable({
         user.referredBy ? (
           <span className="text-xs text-text-secondary">{user.referredBy}</span>
         ) : (
-          <span className="text-text-muted text-xs">—</span>
+          <span className="text-text-tertiary text-xs">—</span>
         ),
     },
     {
@@ -144,12 +144,12 @@ export function UserTable({
               {copiedCode === user.referralCode ? (
                 <Check className="w-3 h-3 text-emerald-400" />
               ) : (
-                <Copy className="w-3 h-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                <Copy className="w-3 h-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}
             </button>
           </div>
         ) : (
-          <span className="text-text-muted text-xs">—</span>
+          <span className="text-text-tertiary text-xs">—</span>
         ),
     },
     {
@@ -159,11 +159,11 @@ export function UserTable({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-xs text-text-muted cursor-help border-b border-dotted border-zinc-600">
+              <span className="text-xs text-text-tertiary cursor-help border-b border-dotted border-zinc-600">
                 {formatDate(user.createdAt)}
               </span>
             </TooltipTrigger>
-            <TooltipContent side="top" className="bg-brand-secondary border-border-hover">
+            <TooltipContent side="top" className="bg-surface border-border-default">
               <div className="text-xs space-y-1">
                 <p><span className="text-text-secondary">Joined:</span> <span className="text-text-primary">{formatDate(user.createdAt)}</span></p>
                 <p><span className="text-text-secondary">Updated:</span> <span className="text-text-primary">{formatDate(user.updatedAt)}</span></p>
@@ -183,7 +183,7 @@ export function UserTable({
             variant="ghost"
             size="sm"
             onClick={() => onEditUser(user)}
-            className="text-text-muted hover:text-text-primary hover:bg-white/5 h-7 w-7 p-0"
+            className="text-text-tertiary hover:text-text-primary hover:bg-white/5 h-7 w-7 p-0"
           >
             <Edit className="w-3.5 h-3.5" />
           </Button>
@@ -192,7 +192,7 @@ export function UserTable({
             size="sm"
             disabled={user.id === currentUserId}
             onClick={() => onDeleteUser(user.id)}
-            className="text-text-muted hover:text-rose-400 hover:bg-rose-500/10 h-7 w-7 p-0 disabled:opacity-30"
+            className="text-text-tertiary hover:text-rose-400 hover:bg-rose-500/10 h-7 w-7 p-0 disabled:opacity-30"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>

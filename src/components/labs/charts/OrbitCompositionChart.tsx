@@ -95,11 +95,11 @@ export function OrbitCompositionChart() {
       {/* HEADER */}
       <div className="relative z-10 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <span className="h-1 w-1 rounded-full bg-brand-accent" />
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+            <span className="h-1 w-1 rounded-full bg-brand" />
             Portfolio Composition
           </div>
-          <div className="mt-0.5 text-[11px] text-text-muted">
+          <div className="mt-0.5 text-[11px] text-text-tertiary">
             {PORTFOLIO.length} assets · updated 12s ago
           </div>
         </div>
@@ -165,7 +165,7 @@ export function OrbitCompositionChart() {
                 transition={{ duration: 0.2 }}
                 className="flex flex-col items-center"
               >
-                <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
                   {displayed.name}
                 </div>
                 <div className="mt-0.5 text-[22px] font-bold text-text-primary tabular-nums tracking-tight">
@@ -202,8 +202,8 @@ export function OrbitCompositionChart() {
                 onMouseLeave={() => setActiveIdx(null)}
                 className={`group relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all ${
                   isActive
-                    ? "border-border-hover bg-white/[0.04]"
-                    : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
+                    ? "border-border-default bg-white/[0.04]"
+                    : "border-border-subtle bg-transparent hover:border-border-default hover:bg-white/[0.02]"
                 }`}
               >
                 <div

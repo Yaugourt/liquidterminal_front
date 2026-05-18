@@ -48,7 +48,7 @@ export function TooltipIcon({
         <TooltipTrigger asChild>
           <span
             className={cn(
-              "inline-flex cursor-help text-text-muted hover:text-text-secondary transition-colors",
+              "inline-flex cursor-help text-text-tertiary hover:text-text-secondary transition-colors",
               className
             )}
           >
@@ -58,7 +58,7 @@ export function TooltipIcon({
         <TooltipContent
           side={side}
           className={cn(
-            "max-w-xs border-border-subtle bg-brand-secondary text-text-secondary text-xs",
+            "max-w-xs border-border-subtle bg-surface text-text-secondary text-xs",
             contentClassName
           )}
         >

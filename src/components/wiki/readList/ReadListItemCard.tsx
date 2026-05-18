@@ -49,11 +49,11 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
 
   return (
     <Card
-      className={`hover:border-border-hover group cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
+      className={`hover:border-border-default group cursor-pointer h-full flex flex-col ${item.isRead ? 'opacity-70' : ''}`}
       onClick={handleCardClick}
     >
       {/* Image section */}
-      <div className="relative w-full overflow-hidden bg-gradient-to-br from-brand-dark to-brand-secondary flex-shrink-0" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full overflow-hidden bg-gradient-to-br from-base to-surface flex-shrink-0" style={{ aspectRatio: '16/9' }}>
         {hasImage ? (
           <Image
             src={preview!.image!}
@@ -63,12 +63,12 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             onError={() => setImageError(true)}
           />
         ) : !imageError ? (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-dark to-brand-secondary">
-            <BookOpen className="w-10 h-10 text-brand-accent/20" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-base to-surface">
+            <BookOpen className="w-10 h-10 text-brand/20" />
           </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <BookOpen className="w-10 h-10 text-brand-accent/20" />
+            <BookOpen className="w-10 h-10 text-brand/20" />
           </div>
         )}
 
@@ -79,7 +79,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-brand-dark/50 flex items-center justify-center"
+              className="absolute inset-0 bg-base/50 flex items-center justify-center"
             >
               <div className="bg-emerald-500 rounded-full p-2.5 shadow-lg">
                 <Check className="w-5 h-5 text-white" />
@@ -96,7 +96,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             disabled={isTogglingRead}
             className={`p-1.5 rounded-lg backdrop-blur-sm border transition-all ${item.isRead
               ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30'
-              : 'bg-brand-dark/80 border-border-hover text-brand-gold hover:bg-brand-gold/10 hover:border-brand-gold/30'
+              : 'bg-base/80 border-border-default text-gold hover:bg-gold/10 hover:border-gold/30'
               }`}
             title={item.isRead ? "Mark as unread" : "Mark as read"}
           >
@@ -115,7 +115,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleRemoveItem}
-            className="p-1.5 rounded-lg bg-brand-dark/80 border border-border-hover text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 backdrop-blur-sm transition-all"
+            className="p-1.5 rounded-lg bg-base/80 border border-border-default text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 backdrop-blur-sm transition-all"
             title="Remove from list"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -126,7 +126,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
         <div className="absolute bottom-2 left-2">
           <span className={`text-label px-2 py-1 rounded-md backdrop-blur-sm border ${item.isRead
             ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-            : 'bg-brand-gold/10 border-brand-gold/20 text-brand-gold'
+            : 'bg-gold/10 border-gold/20 text-gold'
             }`}>
             {item.isRead ? 'Read' : 'Unread'}
           </span>
@@ -136,28 +136,28 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1 gap-2">
         {/* Title */}
-        <h3 className={`font-medium text-sm line-clamp-2 group-hover:text-brand-accent transition-colors leading-snug ${item.isRead ? 'text-text-secondary' : 'text-text-primary'}`}>
+        <h3 className={`font-medium text-sm line-clamp-2 group-hover:text-brand transition-colors leading-snug ${item.isRead ? 'text-text-secondary' : 'text-text-primary'}`}>
           {preview?.title || item.resource?.url || 'No title'}
         </h3>
 
         {/* Description */}
         {preview?.description && (
-          <p className="text-xs text-text-muted line-clamp-2 flex-1">
+          <p className="text-xs text-text-tertiary line-clamp-2 flex-1">
             {preview.description}
           </p>
         )}
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-2 mt-auto border-t border-border-subtle/60">
-          <div className="flex items-center gap-1.5 text-text-muted text-xs min-w-0">
+          <div className="flex items-center gap-1.5 text-text-tertiary text-xs min-w-0">
             {preview?.siteName && (
-              <span className="text-xs bg-brand-dark border border-border-subtle text-text-secondary px-1.5 py-0.5 rounded-md truncate max-w-[100px]">
+              <span className="text-xs bg-base border border-border-subtle text-text-secondary px-1.5 py-0.5 rounded-md truncate max-w-[100px]">
                 {preview.siteName}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 text-xs text-text-muted flex-shrink-0">
-            <ExternalLink className="w-3 h-3 text-brand-accent" />
+          <div className="flex items-center gap-2 text-xs text-text-tertiary flex-shrink-0">
+            <ExternalLink className="w-3 h-3 text-brand" />
             {timeAgo && <span>{timeAgo}</span>}
           </div>
         </div>

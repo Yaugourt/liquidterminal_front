@@ -30,8 +30,8 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                     onError={() => setImageError(true)}
                                 />
                             ) : (
-                                <div className="w-full h-full rounded-lg bg-brand-accent/10 flex items-center justify-center">
-                                    <span className="text-brand-accent text-2xl font-bold">
+                                <div className="w-full h-full rounded-lg bg-brand/10 flex items-center justify-center">
+                                    <span className="text-brand text-2xl font-bold">
                                         {project.name.charAt(0).toUpperCase()}
                                     </span>
                                 </div>
@@ -55,7 +55,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.githubUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-brand-accent hover:text-text-primary transition-colors"
+                                className="flex items-center gap-2 text-brand hover:text-text-primary transition-colors"
                             >
                                 <Github className="w-5 h-5" />
                                 GitHub
@@ -67,7 +67,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.websiteUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-brand-accent hover:text-text-primary transition-colors"
+                                className="flex items-center gap-2 text-brand hover:text-text-primary transition-colors"
                             >
                                 <Globe className="w-5 h-5" />
                                 Website
@@ -79,7 +79,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 href={project.demoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-brand-gold hover:text-text-primary transition-colors"
+                                className="flex items-center gap-2 text-gold hover:text-text-primary transition-colors"
                             >
                                 <Globe className="w-5 h-5" />
                                 Demo
@@ -91,11 +91,11 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
 
                 <div className="text-right">
                     <div className="text-sm text-text-secondary mb-1">Submitted</div>
-                    <div className="text-brand-accent font-medium">{new Date(project.submittedAt).toLocaleDateString()}</div>
+                    <div className="text-brand font-medium">{new Date(project.submittedAt).toLocaleDateString()}</div>
                     {project.reviewedAt && (
                         <>
                             <div className="text-sm text-text-secondary mb-1 mt-2">Reviewed</div>
-                            <div className="text-brand-accent font-medium">{new Date(project.reviewedAt).toLocaleDateString()}</div>
+                            <div className="text-brand font-medium">{new Date(project.reviewedAt).toLocaleDateString()}</div>
                         </>
                     )}
                 </div>
@@ -111,7 +111,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         className="object-cover"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-tertiary/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-base/60 to-transparent" />
                 </div>
             )}
         </div>

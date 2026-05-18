@@ -54,14 +54,14 @@ export default function MyWallets() {
     <>
       {showAuthPopup && (
         <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="bg-brand-secondary/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
+          <div className="bg-surface/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
               <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
               <p className="text-zinc-400 text-sm">You need to login to access your wallet data</p>
             </div>
             <Button
               onClick={() => login()}
-              className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg py-2.5"
+              className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg py-2.5"
             >
               <LogIn className="w-5 h-5 mr-2" />
               Login
@@ -85,7 +85,7 @@ export default function MyWallets() {
               </div>
               <div>
                 <p className="text-sm font-medium text-white">Get wallet alerts on Telegram</p>
-                <p className="text-xs text-text-muted">Receive notifications for your tracked wallets</p>
+                <p className="text-xs text-text-tertiary">Receive notifications for your tracked wallets</p>
               </div>
             </div>
             <Button
@@ -131,7 +131,7 @@ export default function MyWallets() {
           activeWallet?.address ? (
             <OrdersSection address={activeWallet.address} />
           ) : (
-            <div className="bg-brand-tertiary border-2 border-brand-accent/30 rounded-lg p-8 text-center">
+            <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
               <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
               <p className="text-white/50 text-sm">No wallet selected</p>
             </div>
@@ -142,7 +142,7 @@ export default function MyWallets() {
           activeWallet?.address ? (
             <AddressTwapSection address={activeWallet.address} />
           ) : (
-            <div className="bg-brand-tertiary border-2 border-brand-accent/30 rounded-lg p-8 text-center">
+            <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
               <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
               <p className="text-white/50 text-sm">No wallet selected</p>
             </div>

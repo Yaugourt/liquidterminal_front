@@ -67,7 +67,7 @@ export default function BuildersIntelligencePage() {
                 onClick={() => setTf(t)}
                 className={
                   tf === t
-                    ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/40 hover:bg-brand-accent/30"
+                    ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
                     : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
                 }
               >

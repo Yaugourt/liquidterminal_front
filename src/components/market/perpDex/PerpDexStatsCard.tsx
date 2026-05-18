@@ -36,7 +36,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
   return (
     <StatsPanel
       title="HIP-3 Overview"
-      icon={<BarChart3 size={16} className="text-brand-accent" />}
+      icon={<BarChart3 size={16} className="text-brand" />}
       isLoading={isLoading}
       error={error}
       errorTitle="Failed to load stats"
@@ -55,39 +55,39 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
     >
       <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm content-center h-full">
         <InlineStat
-          icon={<Building2 className="h-3 w-3 text-brand-accent" />}
+          icon={<Building2 className="h-3 w-3 text-brand" />}
           label="Active DEXs"
           value={globalStats?.totalDexs || 0}
         />
         <InlineStat
-          icon={<Layers className="h-3 w-3 text-brand-accent" />}
+          icon={<Layers className="h-3 w-3 text-brand" />}
           label="Active Markets"
           value={
             <>
               {globalStats?.activeMarkets || 0}
-              <span className="text-text-muted text-xs font-normal ml-1">
+              <span className="text-text-tertiary text-xs font-normal ml-1">
                 / {globalStats?.totalAssets || 0}
               </span>
             </>
           }
         />
         <InlineStat
-          icon={<Activity className="h-3 w-3 text-brand-accent" />}
+          icon={<Activity className="h-3 w-3 text-brand" />}
           label="24h Volume"
           value={globalStats?.totalVolume24h ? formatNumber(globalStats.totalVolume24h, format, usdFormat) : "$0"}
         />
         <InlineStat
-          icon={<TrendingUp className="h-3 w-3 text-brand-accent" />}
+          icon={<TrendingUp className="h-3 w-3 text-brand" />}
           label="Open Interest"
           value={globalStats?.totalOpenInterest ? formatNumber(globalStats.totalOpenInterest, format, usdFormat) : "$0"}
         />
         <InlineStat
-          icon={<BarChart3 className="h-3 w-3 text-brand-accent" />}
+          icon={<BarChart3 className="h-3 w-3 text-brand" />}
           label="Total OI Cap"
           value={globalStats?.totalOiCap ? formatNumber(globalStats.totalOiCap, format, usdFormat) : "$0"}
         />
         <InlineStat
-          icon={<Activity className="h-3 w-3 text-brand-accent" />}
+          icon={<Activity className="h-3 w-3 text-brand" />}
           label="Avg Funding"
           value={globalStats?.avgFunding ? `${(globalStats.avgFunding * 100).toFixed(4)}%` : "0.0000%"}
           valueClassName={`font-bold text-lg ${avgFunding >= 0 ? "text-emerald-400" : "text-rose-400"}`}

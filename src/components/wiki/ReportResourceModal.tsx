@@ -54,7 +54,7 @@ export function ReportResourceModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
+            <DialogContent className="bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 bg-rose-500/10 rounded-lg">
                         <Flag className="w-5 h-5 text-rose-400" />
@@ -67,8 +67,8 @@ export function ReportResourceModal({
                     </div>
                 </div>
 
-                <div className="text-sm text-text-secondary p-3 bg-brand-dark rounded-lg border border-border-subtle mb-4">
-                    <span className="text-text-muted">Reporting:</span> {resourceTitle}
+                <div className="text-sm text-text-secondary p-3 bg-base rounded-lg border border-border-subtle mb-4">
+                    <span className="text-text-tertiary">Reporting:</span> {resourceTitle}
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,11 +80,11 @@ export function ReportResourceModal({
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Describe why you're reporting this resource (10-500 characters)"
-                            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 min-h-[100px]"
+                            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 min-h-[100px]"
                             required
                             maxLength={500}
                         />
-                        <div className="flex justify-between text-xs text-text-muted">
+                        <div className="flex justify-between text-xs text-text-tertiary">
                             <span>{reason.length < 10 && reason.length > 0 && (
                                 <span className="text-amber-400 flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" />

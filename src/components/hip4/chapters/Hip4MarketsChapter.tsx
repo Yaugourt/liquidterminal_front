@@ -30,7 +30,7 @@ function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestR
         <span>
           Pool —{" "}
           <span className="font-semibold text-text-primary">{result.label}</span>{" "}
-          <span className="font-mono text-[11px] text-brand-accent">{result.address}</span>
+          <span className="font-mono text-[11px] text-brand">{result.address}</span>
           {result.error ? (
             <span className="ml-2 text-red-400">RPC: {result.error}</span>
           ) : null}
@@ -38,7 +38,7 @@ function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestR
       ),
       type: "fees",
       accessor: (r) => (
-        <span className="font-semibold text-brand-gold">{formatHypeWei(r.pool)}</span>
+        <span className="font-semibold text-gold">{formatHypeWei(r.pool)}</span>
       ),
     },
     {
@@ -46,7 +46,7 @@ function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestR
       header: "Status",
       accessor: (r) =>
         r.root ? (
-          <Badge className="bg-brand-gold/15 text-brand-gold">Merkle root published</Badge>
+          <Badge className="bg-gold/15 text-gold">Merkle root published</Badge>
         ) : (
           <Badge variant="outline" className="text-[10px]">
             {r.status}
@@ -85,8 +85,8 @@ function SectionBanner({
       className={[
         "rounded-lg border px-4 py-3",
         tone === "core"
-          ? "border-brand-accent/25 bg-brand-accent/5"
-          : "border-border-hover bg-brand-secondary/50",
+          ? "border-brand/25 bg-brand/5"
+          : "border-border-default bg-surface/50",
       ].join(" ")}
     >
       <div className="text-xs font-bold uppercase tracking-wider text-text-primary">{title}</div>
@@ -150,7 +150,7 @@ export function Hip4MarketsChapter() {
         <Hip4SectionTitle>On-chain contests (RPC)</Hip4SectionTitle>
         {loading && !v1 && !v2 ? (
           <div className="flex items-center gap-2 py-8 text-text-secondary">
-            <InlineSpinner className="h-6 w-6 text-brand-accent" />
+            <InlineSpinner className="h-6 w-6 text-brand" />
             Scanning ContestCreated logs…
           </div>
         ) : (

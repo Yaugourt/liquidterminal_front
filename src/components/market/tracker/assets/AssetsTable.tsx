@@ -115,7 +115,7 @@ function buildPerpColumns(
           <span className={row.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
             {row.type}
           </span>
-          <span className="text-label text-text-muted">
+          <span className="text-label text-text-tertiary">
             {row.leverage.value}x ({row.leverage.type})
           </span>
         </div>
@@ -156,7 +156,7 @@ function buildPerpColumns(
           <span className="text-text-primary text-sm font-medium">
             {formatCurrency(row.positionValue)}
           </span>
-          <span className="text-label text-text-muted">
+          <span className="text-label text-text-tertiary">
             {formatTokenSize(row.szi, row.coin, formatTokenAmount)}
           </span>
         </div>
@@ -224,10 +224,10 @@ export function AssetsTable({
   const perpColumns = buildPerpColumns(formatCurrency, formatTokenAmount);
 
   return (
-    <div className="bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden">
+    <div className="bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden">
       {/* Tab header + stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+        <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
           {[
             { key: 'spot', label: 'Spot' },
             { key: 'perp', label: 'Perps' }
@@ -237,7 +237,7 @@ export function AssetsTable({
               onClick={() => onViewTypeChange(tab.key as "spot" | "perp")}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
                 type === tab.key
-                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                  ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                   : 'tab-inactive'
               }`}
             >
@@ -249,14 +249,14 @@ export function AssetsTable({
         <div className="flex items-center gap-6">
           <div className="flex items-baseline gap-2">
             <span className="text-text-secondary text-xs">Total assets:</span>
-            <span className="text-brand-accent text-sm font-bold">{totalAssets}</span>
+            <span className="text-brand text-sm font-bold">{totalAssets}</span>
           </div>
           {walletDisplay && (
             <>
               <div className="w-px h-4 bg-white/10" />
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs">Wallet:</span>
-                <span className="text-brand-accent text-sm font-medium">({walletDisplay})</span>
+                <span className="text-brand text-sm font-medium">({walletDisplay})</span>
               </div>
             </>
           )}

@@ -17,7 +17,7 @@ export function TopTradersPreview() {
       key: "rank",
       header: "Rank",
       accessor: (_t, _i, absoluteIndex) => (
-        <span className="text-brand-gold font-semibold">#{absoluteIndex + 1}</span>
+        <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
       ),
     },
     {
@@ -26,7 +26,7 @@ export function TopTradersPreview() {
       accessor: (t) => (
         <Link
           href={`/market/tracker/wallet/${t.user}`}
-          className="text-sm text-brand-accent hover:underline"
+          className="text-sm text-brand hover:underline"
         >
           {t.user.slice(0, 6)}...{t.user.slice(-4)}
         </Link>
@@ -77,7 +77,7 @@ export function TopTradersPreview() {
   return (
     <TypedDataTable<TopTrader>
       title="Top Traders 24h"
-      icon={<TrendingUp className="h-5 w-5 text-brand-accent" />}
+      icon={<TrendingUp className="h-5 w-5 text-brand" />}
       subtitle={`${traders.length} traders`}
       data={traders}
       columns={columns}

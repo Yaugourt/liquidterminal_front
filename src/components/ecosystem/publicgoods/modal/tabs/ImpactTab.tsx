@@ -37,7 +37,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           onChange={(e) => updateField('problemSolved', e.target.value)}
           placeholder="What problem does your project solve for HyperLiquid users?"
           rows={4}
-          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.problemSolved.length >= 50 
@@ -51,12 +51,12 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
         <Label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Target Users * (select at least 1)</Label>
         <div className="grid grid-cols-2 gap-2 mt-2">
           {TARGET_USER_OPTIONS.map(user => (
-            <div key={user} className="flex items-center space-x-2 p-2 bg-brand-dark border border-border-subtle rounded-lg hover:border-border-hover transition-colors">
+            <div key={user} className="flex items-center space-x-2 p-2 bg-base border border-border-subtle rounded-lg hover:border-border-default transition-colors">
               <Checkbox
                 id={user}
                 checked={formData.targetUsers.includes(user)}
                 onCheckedChange={() => toggleTargetUser(user)}
-                className="border-border-hover data-[state=checked]:bg-brand-accent data-[state=checked]:text-brand-tertiary data-[state=checked]:border-brand-accent"
+                className="border-border-default data-[state=checked]:bg-brand data-[state=checked]:text-brand-text-on data-[state=checked]:border-brand"
               />
               <label htmlFor={user} className="text-sm text-text-secondary capitalize cursor-pointer">
                 {user}
@@ -74,7 +74,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           onChange={(e) => updateField('hlIntegration', e.target.value)}
           placeholder="How does your project integrate with HyperLiquid? Which APIs, endpoints, or features do you use?"
           rows={4}
-          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
         />
         <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
           {formData.hlIntegration.length >= 50 

@@ -100,7 +100,7 @@ export function TableContent({
           key: "name",
           header: "Name",
           accessor: (v) => (
-            <span className="text-sm text-brand-accent font-medium">{v.name}</span>
+            <span className="text-sm text-brand font-medium">{v.name}</span>
           ),
         },
         {
@@ -166,7 +166,7 @@ export function TableContent({
           header: "Recent Blocks",
           type: "numeric",
           accessor: (v) => (
-            <span className="text-brand-accent font-medium">
+            <span className="text-brand font-medium">
               {formatNumber(v.nRecentBlocks, format, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
@@ -337,7 +337,7 @@ export function TableContent({
         key: "coin",
         header: "Coin",
         accessor: (liq) => (
-          <span className="text-brand-accent font-medium">{liq.coin}</span>
+          <span className="text-brand font-medium">{liq.coin}</span>
         ),
       },
       {
@@ -376,7 +376,7 @@ export function TableContent({
         type: "numeric",
         className: "max-md:hidden",
         accessor: (liq) => (
-          <span className="text-text-muted">
+          <span className="text-text-tertiary">
             ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
           </span>
         ),

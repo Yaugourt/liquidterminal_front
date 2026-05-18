@@ -41,8 +41,8 @@ export function UserEditModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="pb-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center">
-              <Edit className="w-5 h-5 text-brand-accent" />
+            <div className="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center">
+              <Edit className="w-5 h-5 text-brand" />
             </div>
             <div>
               <DialogTitle className="text-text-primary text-lg font-bold">Edit User</DialogTitle>
@@ -59,7 +59,7 @@ export function UserEditModal({
               id="name"
               value={editForm.name || ''}
               onChange={(e) => onFormChange({ ...editForm, name: e.target.value })}
-              className="bg-brand-dark border-border-subtle text-text-primary focus:border-brand-accent/50 text-sm h-9"
+              className="bg-base border-border-subtle text-text-primary focus:border-brand/50 text-sm h-9"
             />
           </div>
 
@@ -71,7 +71,7 @@ export function UserEditModal({
               type="email"
               value={editForm.email || ''}
               onChange={(e) => onFormChange({ ...editForm, email: e.target.value })}
-              className="bg-brand-dark border-border-subtle text-text-primary focus:border-brand-accent/50 text-sm h-9"
+              className="bg-base border-border-subtle text-text-primary focus:border-brand/50 text-sm h-9"
             />
           </div>
 
@@ -94,16 +94,16 @@ export function UserEditModal({
           </div>
 
           {/* Verified Toggle */}
-          <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle">
+          <div className="flex items-center justify-between p-3 bg-base rounded-xl border border-border-subtle">
             <div>
               <Label htmlFor="verified" className="text-text-primary text-sm font-medium">Verified</Label>
-              <p className="text-text-muted text-xs mt-0.5">User has verified their account</p>
+              <p className="text-text-tertiary text-xs mt-0.5">User has verified their account</p>
             </div>
             <Switch
               id="verified"
               checked={editForm.verified || false}
               onCheckedChange={(checked) => onFormChange({ ...editForm, verified: checked })}
-              className="data-[state=checked]:bg-brand-accent data-[state=unchecked]:bg-zinc-700"
+              className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-zinc-700"
             />
           </div>
         </div>
@@ -113,14 +113,14 @@ export function UserEditModal({
           <Button
             onClick={onSave}
             disabled={isUpdating}
-            className="flex-1 bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 font-medium text-sm h-9"
+            className="flex-1 bg-brand text-brand-text-on hover:bg-brand/80 font-medium text-sm h-9"
           >
             {isUpdating ? 'Saving...' : 'Save Changes'}
           </Button>
           <Button
             variant="ghost"
             onClick={onCancel}
-            className="border border-border-hover text-text-secondary hover:text-text-primary hover:bg-white/5 text-sm h-9"
+            className="border border-border-default text-text-secondary hover:text-text-primary hover:bg-white/5 text-sm h-9"
           >
             Cancel
           </Button>

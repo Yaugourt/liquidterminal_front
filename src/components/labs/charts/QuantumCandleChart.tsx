@@ -259,8 +259,8 @@ export function QuantumCandleChart() {
       {/* HEADER */}
       <div className="relative z-10 flex items-start justify-between gap-4 px-6 pt-5 pb-3">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-accent/30 to-brand-accent/5 border border-brand-accent/30">
-            <span className="text-xs font-bold text-brand-accent">H</span>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand/30 to-brand/5 border border-brand/30">
+            <span className="text-xs font-bold text-brand">H</span>
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -315,12 +315,12 @@ export function QuantumCandleChart() {
               {tf === t && (
                 <motion.span
                   layoutId="qc-active-tf"
-                  className="absolute inset-0 rounded-lg bg-brand-accent/15 ring-1 ring-brand-accent/40"
+                  className="absolute inset-0 rounded-lg bg-brand/15 ring-1 ring-brand/40"
                   transition={{ type: "spring", bounce: 0.18, duration: 0.45 }}
                 />
               )}
               <span
-                className={`relative z-10 ${tf === t ? "text-brand-accent" : "text-text-secondary hover:text-text-primary"}`}
+                className={`relative z-10 ${tf === t ? "text-brand" : "text-text-secondary hover:text-text-primary"}`}
               >
                 {t}
               </span>
@@ -336,7 +336,7 @@ export function QuantumCandleChart() {
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              className="hidden lg:flex items-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted"
+              className="hidden lg:flex items-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary"
             >
               <span>
                 O <span className="text-text-primary tabular-nums">{hover.o.toFixed(2)}</span>
@@ -351,7 +351,7 @@ export function QuantumCandleChart() {
                 C <span className="text-text-primary tabular-nums">{hover.c.toFixed(2)}</span>
               </span>
               <span>
-                V <span className="text-brand-accent tabular-nums">${formatCompact(hover.v)}</span>
+                V <span className="text-brand tabular-nums">${formatCompact(hover.v)}</span>
               </span>
             </motion.div>
           )}
@@ -364,7 +364,7 @@ export function QuantumCandleChart() {
 
         {/* Live price laser label */}
         <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="flex items-center gap-1 rounded-md bg-brand-accent/90 px-2 py-0.5 text-[10px] font-bold text-brand-tertiary shadow-lg shadow-brand-accent/30 tabular-nums">
+          <div className="flex items-center gap-1 rounded-md bg-brand/90 px-2 py-0.5 text-[10px] font-bold text-brand-text-on shadow-lg shadow-brand/30 tabular-nums">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
@@ -391,10 +391,10 @@ function StatPill({
       ? "bg-emerald-400"
       : accent === "rose"
         ? "bg-rose-400"
-        : "bg-brand-accent";
+        : "bg-brand";
   return (
     <div className="min-w-[92px] rounded-lg border border-border-subtle bg-white/[0.02] px-3 py-1.5">
-      <div className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-wider text-text-muted">
+      <div className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-wider text-text-tertiary">
         <span className={`h-1 w-1 rounded-full ${dot}`} />
         {label}
       </div>

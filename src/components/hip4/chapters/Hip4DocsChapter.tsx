@@ -28,22 +28,22 @@ export function Hip4DocsChapter() {
         <Hip4SectionTitle>Static files (public)</Hip4SectionTitle>
         <ul className="list-inside list-disc space-y-2 text-sm text-text-secondary">
           <li>
-            <Link className="text-brand-accent underline" href="/hip4/HIP4Contest.sol" target="_blank">
+            <Link className="text-brand underline" href="/hip4/HIP4Contest.sol" target="_blank">
               HIP4Contest.sol
             </Link>
           </li>
           <li>
-            <Link className="text-brand-accent underline" href="/hip4/HIP4Contest.v2.abi" target="_blank">
+            <Link className="text-brand underline" href="/hip4/HIP4Contest.v2.abi" target="_blank">
               HIP4Contest.v2.abi
             </Link>
           </li>
           <li>
-            <Link className="text-brand-accent underline" href="/hip4/HIP4Contest.v1.abi" target="_blank">
+            <Link className="text-brand underline" href="/hip4/HIP4Contest.v1.abi" target="_blank">
               HIP4Contest.v1.abi
             </Link>
           </li>
           <li>
-            <Link className="text-brand-accent underline" href="/hip4/HIP4Contest.bin" target="_blank">
+            <Link className="text-brand underline" href="/hip4/HIP4Contest.bin" target="_blank">
               HIP4Contest.bin
             </Link>
           </li>

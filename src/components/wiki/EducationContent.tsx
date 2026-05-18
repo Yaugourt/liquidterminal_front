@@ -146,21 +146,21 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
   if (!activeChapter) return null;
 
   return (
-    <Card interactive={false} className="relative overflow-hidden bg-gradient-to-br from-brand-secondary/80 via-brand-secondary/60 to-brand-main/90">
+    <Card interactive={false} className="relative overflow-hidden bg-gradient-to-br from-surface/80 via-surface/60 to-base/90">
       {/* Ambient glows */}
-      <div className="pointer-events-none absolute -top-28 -right-28 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-brand-gold/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -top-28 -right-28 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-gold/[0.06] blur-3xl" />
 
       {/* HERO */}
       <div className="relative z-10 px-5 pt-5 pb-4 sm:px-6 sm:pt-6 sm:pb-5">
         <div className="flex flex-col gap-3">
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-brand-accent/30 bg-brand-accent/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-brand-accent">
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-brand">
             <Sparkles className="h-3 w-3" />
             Liquid Wiki · Fundamentals
           </div>
           <h1 className="text-[22px] font-bold tracking-tight text-text-primary sm:text-2xl md:text-[28px]">
             Understand Hyperliquid
-            <span className="ml-2 text-brand-accent">from first principles</span>
+            <span className="ml-2 text-brand">from first principles</span>
           </h1>
           <p className="max-w-2xl text-[13px] leading-relaxed text-text-secondary sm:text-sm">
             From the consensus that powers it to the proposals that extend it — short, precise
@@ -174,14 +174,14 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
          whole page sideways. Fade edges hint at overflow without a scrollbar. */}
       <div className="relative z-10 px-5 sm:px-6">
         <div className="relative w-fit max-w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 rounded-l-xl bg-gradient-to-r from-brand-secondary/90 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 rounded-r-xl bg-gradient-to-l from-brand-secondary/90 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 rounded-l-xl bg-gradient-to-r from-surface/90 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 rounded-r-xl bg-gradient-to-l from-surface/90 to-transparent" />
           <div
             ref={tabsContainerRef}
             role="tablist"
             aria-label="Hyperliquid fundamentals"
             className={cn(
-              "flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border-subtle bg-brand-dark/60 p-1 scroll-smooth snap-x",
+              "flex max-w-full items-center gap-1 overflow-x-auto rounded-lg border border-border-subtle bg-base/60 p-1 scroll-smooth snap-x",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
@@ -200,7 +200,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                   className={cn(
                     "flex shrink-0 snap-start items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
                     isActive
-                      ? "border-brand-accent/40 bg-brand-accent/15 text-brand-accent shadow-sm shadow-brand-accent/10"
+                      ? "border-brand/40 bg-brand/15 text-brand shadow-sm shadow-brand/10"
                       : "border-transparent text-text-secondary hover:bg-white/5 hover:text-text-primary",
                   )}
                 >
@@ -228,10 +228,10 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                 {/* Chapter header + short overview */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-brand-accent/30 bg-brand-accent/10">
-                      <activeMeta.icon className="h-3.5 w-3.5 text-brand-accent" />
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-brand/30 bg-brand/10">
+                      <activeMeta.icon className="h-3.5 w-3.5 text-brand" />
                     </span>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-accent">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">
                       {activeMeta.tagline}
                     </span>
                   </div>
@@ -252,7 +252,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       role="tablist"
                       aria-label={`${activeChapter.title} sub-sections`}
                       className={cn(
-                        "flex gap-1.5 overflow-x-auto rounded-lg border border-border-subtle bg-brand-dark/40 p-1.5 scroll-smooth snap-x",
+                        "flex gap-1.5 overflow-x-auto rounded-lg border border-border-subtle bg-base/40 p-1.5 scroll-smooth snap-x",
                         "lg:flex-col lg:overflow-visible lg:snap-none lg:h-fit lg:self-start",
                         "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
                       )}
@@ -272,7 +272,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                             className={cn(
                               "flex shrink-0 snap-start items-start gap-2 rounded-lg border px-2.5 py-2 text-left transition-all lg:w-full",
                               isActive
-                                ? "border-brand-accent/40 bg-brand-accent/15 shadow-sm shadow-brand-accent/10"
+                                ? "border-brand/40 bg-brand/15 shadow-sm shadow-brand/10"
                                 : "border-transparent hover:border-border-subtle hover:bg-white/5",
                             )}
                           >
@@ -280,16 +280,16 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                               className={cn(
                                 "mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded border",
                                 isActive
-                                  ? "border-brand-accent/40 bg-brand-accent/15"
-                                  : "border-border-subtle bg-brand-dark/50",
+                                  ? "border-brand/40 bg-brand/15"
+                                  : "border-border-subtle bg-base/50",
                               )}
                             >
                               <SubIcon
                                 className={cn(
                                   "h-3 w-3",
                                   isActive
-                                    ? "text-brand-accent"
-                                    : "text-text-muted",
+                                    ? "text-brand"
+                                    : "text-text-tertiary",
                                 )}
                               />
                             </span>
@@ -298,14 +298,14 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                                 className={cn(
                                   "block text-[12px] font-bold leading-tight",
                                   isActive
-                                    ? "text-brand-accent"
+                                    ? "text-brand"
                                     : "text-text-primary",
                                 )}
                               >
                                 {sub.title}
                               </span>
                               {sub.subtitle && (
-                                <span className="mt-0.5 block text-[10px] leading-snug text-text-muted">
+                                <span className="mt-0.5 block text-[10px] leading-snug text-text-tertiary">
                                   {sub.subtitle}
                                 </span>
                               )}
@@ -326,7 +326,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                         className="space-y-3"
                       >
                         {activeSub.subtitle && (
-                          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-accent/80">
+                          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand/80">
                             {activeSub.subtitle}
                           </div>
                         )}
@@ -366,10 +366,10 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                 {/* Main column */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-brand-accent/30 bg-brand-accent/10">
-                      <activeMeta.icon className="h-3.5 w-3.5 text-brand-accent" />
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-brand/30 bg-brand/10">
+                      <activeMeta.icon className="h-3.5 w-3.5 text-brand" />
                     </span>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-accent">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">
                       {activeMeta.tagline}
                     </span>
                   </div>
@@ -399,11 +399,11 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
 
       {/* FOOTER — official resources + brand palette (replaces the old sidebar) */}
       {(resourceLinks.length > 0 || brandColors.length > 0) && (
-        <div className="relative z-10 border-t border-border-subtle bg-brand-dark/30 px-5 py-3 sm:px-6">
+        <div className="relative z-10 border-t border-border-subtle bg-base/30 px-5 py-3 sm:px-6">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             {resourceLinks.length > 0 && (
               <div className="flex items-center gap-2 min-w-0">
-                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted sm:inline">
+                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-text-tertiary sm:inline">
                   Official
                 </span>
                 <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 lg:flex-nowrap lg:overflow-x-auto lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden">
@@ -415,7 +415,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       rel="noopener noreferrer"
                       title={link.label}
                       aria-label={link.label}
-                      className="group inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border-subtle bg-brand-dark/50 px-2.5 py-1.5 text-[11px] font-medium text-text-secondary transition-all hover:border-brand-accent/40 hover:bg-brand-accent/10 hover:text-brand-accent"
+                      className="group inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border-subtle bg-base/50 px-2.5 py-1.5 text-[11px] font-medium text-text-secondary transition-all hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
                     >
                       <link.icon className="h-3 w-3" />
                       <span>{link.label}</span>
@@ -427,7 +427,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
 
             {brandColors.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-text-muted sm:inline">
+                <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-text-tertiary sm:inline">
                   Brand
                 </span>
                 <div className="flex items-center gap-1">
@@ -438,7 +438,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                       onClick={() => copyColor(hex)}
                       title={copiedColor === hex ? "Copied!" : hex}
                       aria-label={`Copy ${hex}`}
-                      className="group relative flex h-6 w-6 items-center justify-center rounded-md border border-border-subtle transition-all hover:scale-105 hover:border-border-hover"
+                      className="group relative flex h-6 w-6 items-center justify-center rounded-md border border-border-subtle transition-all hover:scale-105 hover:border-border-default"
                       style={{ backgroundColor: hex }}
                     >
                       <span

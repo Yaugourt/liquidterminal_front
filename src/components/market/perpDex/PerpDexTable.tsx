@@ -22,12 +22,12 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
       getSortValue: (row) => row.name.toLowerCase(),
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-sm font-bold text-brand-accent">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-sm font-bold text-brand">
             {row.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col">
             <span className="text-text-primary text-sm font-medium">{row.fullName}</span>
-            <span className="text-brand-accent text-xs">{row.name}</span>
+            <span className="text-brand text-xs">{row.name}</span>
           </div>
         </div>
       ),
@@ -109,13 +109,13 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
             <div className="flex items-center gap-1 mt-0.5">
               <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-brand-accent rounded-full"
+                  className="h-full bg-brand rounded-full"
                   style={{
                     width: `${Math.min((row.totalOpenInterest / row.totalOiCap) * 100, 100)}%`,
                   }}
                 />
               </div>
-              <span className="text-label text-text-muted">
+              <span className="text-label text-text-tertiary">
                 {((row.totalOpenInterest / row.totalOiCap) * 100).toFixed(1)}%
               </span>
             </div>

@@ -86,7 +86,7 @@ const ProgressionCellComponent = ({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between w-[120px]">
-        <span className="text-label text-text-muted">{getRemainingTime(twap)}</span>
+        <span className="text-label text-text-tertiary">{getRemainingTime(twap)}</span>
         <span className="text-label text-text-primary">
           {roundedProgression.toFixed(1)}%
         </span>
@@ -117,7 +117,7 @@ const UserCellComponent = ({
   <div className="flex items-center gap-1.5">
     <Link
       href={`/explorer/address/${twap.user}`}
-      className="text-brand-accent font-mono text-xs hover:text-text-primary transition-colors"
+      className="text-brand font-mono text-xs hover:text-text-primary transition-colors"
     >
       {formatAddress(twap.user)}
     </Link>
@@ -131,7 +131,7 @@ const UserCellComponent = ({
       {copiedAddress === twap.user ? (
         <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
       ) : (
-        <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+        <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
       )}
     </button>
   </div>

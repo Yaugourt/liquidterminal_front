@@ -27,7 +27,7 @@ export function SidebarToggle({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        "h-9 w-9 text-brand-accent hover:bg-white/5 hover:text-brand-accent",
+        "h-9 w-9 text-brand hover:bg-white/5 hover:text-brand",
         className
       )}
     >

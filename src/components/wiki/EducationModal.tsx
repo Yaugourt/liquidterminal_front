@@ -51,31 +51,31 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
     <ProtectedAction requiredRole="MODERATOR" user={user}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg">
+          <Button className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg">
             <Plus className="w-4 h-4 mr-2" />
             Add Content
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
+        <DialogContent className="bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
           <DialogTitle className="sr-only">Add Educational Content</DialogTitle>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-brand-dark rounded-lg p-1 border border-border-subtle">
+            <TabsList className="grid w-full grid-cols-3 bg-base rounded-lg p-1 border border-border-subtle">
               <TabsTrigger
                 value="category"
-                className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
+                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
               >
                 Add Category
               </TabsTrigger>
               <TabsTrigger
                 value="resource"
-                className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
+                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
               >
                 Add Resource
               </TabsTrigger>
               <TabsTrigger
                 value="csv"
-                className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all"
+                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
               >
                 Upload CSV
               </TabsTrigger>

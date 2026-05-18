@@ -19,7 +19,7 @@ export function TokensSection({ market }: TokensSectionProps) {
     <div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+        <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
           {(market === 'spot'
             ? [{ key: 'all', label: 'All' }, { key: 'strict', label: 'Strict' }]
             : [{ key: 'all', label: 'All' }]
@@ -28,7 +28,7 @@ export function TokensSection({ market }: TokensSectionProps) {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${(activeTab || 'all') === tab.key
-                ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                 : 'tab-inactive'
                 }`}
             >
@@ -45,7 +45,7 @@ export function TokensSection({ market }: TokensSectionProps) {
             placeholder="Search tokens..."
             value={searchQuery || ''}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pr-10 bg-brand-dark border-border-subtle text-text-primary placeholder:text-text-muted focus:border-brand-accent/50 focus:ring-brand-accent/20 h-8 text-sm rounded-lg"
+            className="pr-10 bg-base border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50 focus:ring-brand/20 h-8 text-sm rounded-lg"
           />
         </div>
       </div>

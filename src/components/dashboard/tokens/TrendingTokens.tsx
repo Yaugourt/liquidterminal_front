@@ -35,7 +35,7 @@ const TokensHeader = memo(({ type, totalVolume, dailyFees, openInterest, compact
 
             <Link
                 href={type === "spot" ? "/market/spot" : "/market/perp"}
-                className={cn("flex items-center gap-1 text-brand-gold hover:text-text-primary transition-colors", compact ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm")}
+                className={cn("flex items-center gap-1 text-gold hover:text-text-primary transition-colors", compact ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm")}
             >
                 View All
                 <ExternalLink size={14} />

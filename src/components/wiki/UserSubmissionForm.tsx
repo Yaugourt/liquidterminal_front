@@ -111,7 +111,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
 
             {/* Rate limit info */}
             {rateLimitRemaining !== undefined && !isRateLimited && (
-                <div className="flex items-center gap-2 text-xs text-text-muted">
+                <div className="flex items-center gap-2 text-xs text-text-tertiary">
                     <CheckCircle className="w-3 h-3" />
                     <span>{rateLimitRemaining} soumission(s) restante(s) aujourd&apos;hui</span>
                 </div>
@@ -126,7 +126,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     type="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                    className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
                     placeholder="https://example.com/article"
                     required
                     disabled={isRateLimited || isLoading}
@@ -174,7 +174,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                 <Button
                     type="submit"
                     disabled={isLoading || isRateLimited}
-                    className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                    className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                 >
                     {isLoading ? (
                         <>
@@ -187,7 +187,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                 </Button>
             </div>
 
-            <p className="text-xs text-text-muted text-center">
+            <p className="text-xs text-text-tertiary text-center">
                 Votre soumission sera examinée par un modérateur avant publication.
             </p>
         </form>

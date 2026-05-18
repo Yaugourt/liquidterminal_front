@@ -102,7 +102,7 @@ export function VaultSection() {
               "_blank"
             )
           }
-          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold px-3 py-1 flex items-center gap-1 mx-auto"
+          className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold px-3 py-1 flex items-center gap-1 mx-auto"
           disabled={v.summary.isClosed}
         >
           Deposit

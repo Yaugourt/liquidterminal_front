@@ -97,7 +97,7 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
           isPositive ? "bg-emerald-500/[0.08]" : "bg-rose-500/[0.08]"
         }`}
       />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-accent/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand/[0.06] blur-3xl" />
 
       {/* Header — PnL + aurora period selector */}
       <div className="absolute top-2 right-3 sm:right-6 z-20">

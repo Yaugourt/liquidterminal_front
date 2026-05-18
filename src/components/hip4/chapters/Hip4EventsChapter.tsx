@@ -21,7 +21,7 @@ const PARAM_COLUMNS: Column<EventParam>[] = [
   {
     key: "param",
     header: "Parameter",
-    accessor: (r) => <span className="font-mono text-brand-accent">{r.param}</span>,
+    accessor: (r) => <span className="font-mono text-brand">{r.param}</span>,
   },
   {
     key: "type",
@@ -58,7 +58,7 @@ export function Hip4EventsChapter() {
 
       <Hip4GlassPanel>
         <p className="mb-4 text-xs text-text-secondary leading-relaxed">
-          <strong className="text-brand-accent">V1</strong> on{" "}
+          <strong className="text-brand">V1</strong> on{" "}
           <code className="text-[11px]">{HIP4_CONFIG.contracts.v1.address}</code>.{" "}
           <strong className="text-emerald-400">V2</strong> renames{" "}
           <code>DepositReceived</code> → <code>Deposit</code> (new topic0) and adds{" "}
@@ -71,7 +71,7 @@ export function Hip4EventsChapter() {
           <Hip4SectionTitle className="!mb-0">V1 — DepositReceived</Hip4SectionTitle>
           <Badge className="bg-emerald-500/15 text-emerald-300">topic0 on-chain</Badge>
         </div>
-        <p className="mb-2 font-mono text-[11px] text-brand-accent">
+        <p className="mb-2 font-mono text-[11px] text-brand">
           DepositReceived(uint256 indexed contestId, uint256 indexed sideId, address depositor, uint256
           amount)
         </p>

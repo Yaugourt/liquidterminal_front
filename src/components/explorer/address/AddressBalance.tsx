@@ -51,7 +51,7 @@ export function AddressBalance({ address }: AddressBalanceProps) {
   if (isLoading || isSpotMarketLoading) {
     return (
       <div className="text-text-primary text-[16px] flex items-center gap-2">
-        <InlineSpinner className="text-brand-accent" />
+        <InlineSpinner className="text-brand" />
         <span>Loading...</span>
       </div>
     );

@@ -50,7 +50,7 @@ function ValidatorCell({
               {validatorName}
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-brand-accent text-xs">
+              <span className="text-brand text-xs">
                 {validator.slice(0, 8)}...{validator.slice(-6)}
               </span>
               <CopyButton text={validator} />
@@ -58,7 +58,7 @@ function ValidatorCell({
           </>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="text-brand-accent text-sm">
+            <span className="text-brand text-sm">
               {validator.slice(0, 8)}...{validator.slice(-6)}
             </span>
             <CopyButton text={validator} />
@@ -146,7 +146,7 @@ export function StakingTableContent({
         header: "Hash",
         accessor: (tx) => (
           <div className="flex items-center gap-2">
-            <span className="text-brand-accent text-sm">
+            <span className="text-brand text-sm">
               {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
             </span>
             <CopyButton text={tx.hash} />
@@ -233,7 +233,7 @@ export function StakingTableContent({
           <span
             className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
               r.source === "commission"
-                ? "bg-brand-gold text-brand-gold border border-brand-gold"
+                ? "bg-gold text-gold border border-gold"
                 : "bg-emerald-400/12 text-emerald-400 border border-emerald-400/25"
             }`}
           >

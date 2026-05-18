@@ -15,11 +15,11 @@ const COLUMNS: Column<PerpDexWithMarketData>[] = [
     header: "Name",
     accessor: (row) => (
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent shrink-0">
+        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-label text-brand shrink-0">
           {row.name.charAt(0).toUpperCase()}
         </div>
         <span className="text-text-primary text-[11px] font-medium truncate">{row.fullName}</span>
-        <ChevronRight className="h-3 w-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+        <ChevronRight className="h-3 w-3 text-text-tertiary opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
       </div>
     ),
   },
@@ -60,8 +60,8 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
     <Card className="w-full h-full overflow-hidden flex flex-col">
       {/* Title outside <table> — same pattern as TokensHeader + TokensTable */}
       <div className="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-border-subtle shrink-0">
-        <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
-          <Building2 size={12} className="text-brand-accent" />
+        <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
+          <Building2 size={12} className="text-brand" />
         </div>
         <h3 className="text-[10px] font-normal uppercase tracking-wide text-text-secondary">
           Top by Volume

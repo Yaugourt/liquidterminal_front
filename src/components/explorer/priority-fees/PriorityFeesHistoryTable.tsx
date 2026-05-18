@@ -92,7 +92,7 @@ function buildColumns(): Column<PriorityFeesFillRow>[] {
       key: "user",
       header: "User",
       accessor: (row) =>
-        row.user ? <AddressDisplay address={row.user} /> : <span className="text-text-muted">—</span>,
+        row.user ? <AddressDisplay address={row.user} /> : <span className="text-text-tertiary">—</span>,
     },
   ];
 }
@@ -117,7 +117,7 @@ function RecentFillsSection() {
           <button
             type="button"
             onClick={() => refetch()}
-            className="text-xs text-brand-accent hover:underline"
+            className="text-xs text-brand hover:underline"
           >
             Retry
           </button>
@@ -138,7 +138,7 @@ function RecentFillsSection() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-text-tertiary">
           {FILLS_PAGE_SIZE} per page · B = buy, A = sell (indexer)
         </p>
         <div className="flex items-center gap-2">
@@ -175,12 +175,12 @@ function RecentFillsSection() {
 
 export function PriorityFeesHistoryTable() {
   return (
-    <Card className="p-5 border-border-subtle bg-brand-secondary/40 h-full flex flex-col">
+    <Card className="p-5 border-border-subtle bg-surface/40 h-full flex flex-col">
       <div className="mb-4">
         <h2 className="font-inter text-lg font-semibold text-text-primary tracking-tight">
           History &amp; activity
         </h2>
-        <p className="text-xs text-text-muted mt-1">
+        <p className="text-xs text-text-tertiary mt-1">
           Recent fills with priority gas (live from the indexer).
         </p>
       </div>

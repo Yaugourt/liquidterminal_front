@@ -49,7 +49,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
           const addr = pickAddress(row);
           return (
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] text-text-muted shrink-0">
+              <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] text-text-tertiary shrink-0">
                 {addr !== "—" && addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
               </div>
               <span className="text-xs text-text-secondary font-mono truncate max-w-[160px] sm:max-w-none">
@@ -67,7 +67,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
         accessor: (row) => {
           const fees = pickFees(row);
           return (
-            <span className="text-brand-gold tabular-nums">
+            <span className="text-gold tabular-nums">
               {fees > 0
                 ? formatNumber(fees, format, { maximumFractionDigits: 4, currency: "$", showCurrency: true })
                 : "—"}
@@ -85,11 +85,11 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
             <div className="flex items-center gap-2">
               <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-brand-accent/50 rounded-full"
+                  className="h-full bg-brand/50 rounded-full"
                   style={{ width: `${Math.min(sharePct, 100)}%` }}
                 />
               </div>
-              <span className="text-text-muted text-xs tabular-nums w-10 text-left">
+              <span className="text-text-tertiary text-xs tabular-nums w-10 text-left">
                 {sharePct.toFixed(1)}%
               </span>
             </div>

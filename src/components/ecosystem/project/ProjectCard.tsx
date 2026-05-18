@@ -54,7 +54,7 @@ export const ProjectCard = memo(function ProjectCard({
   return (
     <Card
       padding="md"
-      className={`hover:border-border-hover group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''}`}
+      className={`hover:border-border-default group relative ${isSelected ? 'border-brand bg-brand/5' : ''}`}
     >
       {/* Selection checkbox for admins */}
       {showSelection && (
@@ -64,7 +64,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-brand-dark border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
+              className="bg-base border-white/20 data-[state=checked]:bg-brand data-[state=checked]:border-brand"
             />
           </div>
         </ProtectedAction>
@@ -97,8 +97,8 @@ export const ProjectCard = memo(function ProjectCard({
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-lg bg-brand-accent/10 flex items-center justify-center">
-              <span className="text-brand-accent text-lg font-bold">
+            <div className="w-full h-full rounded-lg bg-brand/10 flex items-center justify-center">
+              <span className="text-brand text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -113,7 +113,7 @@ export const ProjectCard = memo(function ProjectCard({
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-label text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md whitespace-nowrap">
+                  <span key={category.id} className="text-label text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}
@@ -133,7 +133,7 @@ export const ProjectCard = memo(function ProjectCard({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-text-muted hover:text-brand-accent transition-colors"
+                  className="text-text-tertiary hover:text-brand transition-colors"
                   aria-label={link.label}
                 >
                   <link.IconComponent className="w-4 h-4" />

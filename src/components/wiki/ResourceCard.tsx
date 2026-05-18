@@ -94,7 +94,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
   const StatusIcon = resourceStatusConfig[status].icon;
 
   return (
-    <Card className="hover:border-border-hover group overflow-hidden relative">
+    <Card className="hover:border-border-default group overflow-hidden relative">
       {showStatus && status !== 'APPROVED' && (
         <div className={`absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${resourceStatusConfig[status].color}`}>
           <StatusIcon className="w-3 h-3" />
@@ -124,7 +124,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
           rel="noopener noreferrer"
           className="block"
         >
-          <div className="relative w-full overflow-hidden bg-gradient-to-br from-brand-dark to-brand-secondary" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full overflow-hidden bg-gradient-to-br from-base to-surface" style={{ aspectRatio: '16/9' }}>
             {resource.url && resource.url.startsWith('http') && preview?.image ? (
               <Image
                 src={preview.image}
@@ -145,7 +145,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <div className="text-brand-accent opacity-20">
+                <div className="text-brand opacity-20">
                   <ExternalLink size={48} />
                 </div>
               </div>
@@ -154,10 +154,10 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
 
           <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-medium text-text-primary line-clamp-2 group-hover:text-brand-accent transition-colors">
+              <h3 className="text-sm font-medium text-text-primary line-clamp-2 group-hover:text-brand transition-colors">
                 {preview?.title || resource.title}
               </h3>
-              <ExternalLink size={14} className="text-brand-accent mt-0.5 flex-shrink-0" />
+              <ExternalLink size={14} className="text-brand mt-0.5 flex-shrink-0" />
             </div>
 
             <p className="text-xs text-text-secondary line-clamp-2">
@@ -167,13 +167,13 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
             <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
               <Badge
                 variant="secondary"
-                className="bg-brand-dark text-text-secondary border border-border-subtle text-xs rounded-md"
+                className="bg-base text-text-secondary border border-border-subtle text-xs rounded-md"
               >
                 {preview?.siteName || 'Article'}
               </Badge>
               <div className="flex items-center gap-1">
                 {previewLoading && (
-                  <span className="text-xs text-text-muted">Loading...</span>
+                  <span className="text-xs text-text-tertiary">Loading...</span>
                 )}
 
                 {authenticated && (
@@ -185,7 +185,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                       e.stopPropagation();
                       setShowReportModal(true);
                     }}
-                    className="p-1.5 h-auto rounded-lg text-text-muted hover:text-rose-400 hover:bg-rose-400/10"
+                    className="p-1.5 h-auto rounded-lg text-text-tertiary hover:text-rose-400 hover:bg-rose-400/10"
                     title="Report this resource"
                   >
                     <Flag className="w-3.5 h-3.5" />
@@ -198,8 +198,8 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                   disabled={!authenticated}
                   onClick={handleOpenModal}
                   className={`p-1.5 h-auto rounded-lg transition-all ${authenticated
-                    ? "text-brand-accent hover:bg-brand-accent/10 hover:scale-110"
-                    : "text-text-muted cursor-not-allowed"
+                    ? "text-brand hover:bg-brand/10 hover:scale-110"
+                    : "text-text-tertiary cursor-not-allowed"
                     }`}
                   title={authenticated ? "Add to read list" : "Login required"}
                 >

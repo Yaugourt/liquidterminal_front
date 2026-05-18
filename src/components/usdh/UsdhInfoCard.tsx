@@ -33,8 +33,8 @@ export function UsdhInfoCard() {
       <div className="space-y-4">
         {FEATURES.map(({ icon: Icon, label, desc }) => (
           <div key={label} className="flex gap-3">
-            <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
-              <Icon className="w-4 h-4 text-brand-accent" />
+            <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
+              <Icon className="w-4 h-4 text-brand" />
             </div>
             <div className="space-y-0.5">
               <p className="text-xs font-semibold text-text-primary">{label}</p>
@@ -47,7 +47,7 @@ export function UsdhInfoCard() {
       </div>
 
       <div className="pt-2 border-t border-border-subtle space-y-1.5">
-        <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">
+        <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-semibold">
           Powered by
         </p>
         <p className="text-xs text-text-secondary">

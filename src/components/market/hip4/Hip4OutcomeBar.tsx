@@ -12,8 +12,8 @@ interface Hip4OutcomeBarProps {
 }
 
 const PALETTE = [
-  { from: "rgba(131,233,255,0.8)", to: "rgba(131,233,255,0.25)", text: "text-brand-accent" },
-  { from: "rgba(249,227,112,0.8)", to: "rgba(249,227,112,0.25)", text: "text-brand-gold" },
+  { from: "rgba(131,233,255,0.8)", to: "rgba(131,233,255,0.25)", text: "text-brand" },
+  { from: "rgba(249,227,112,0.8)", to: "rgba(249,227,112,0.25)", text: "text-gold" },
   { from: "rgba(167,139,250,0.8)", to: "rgba(167,139,250,0.25)", text: "text-violet-300" },
   { from: "rgba(16,185,129,0.8)",  to: "rgba(16,185,129,0.25)",  text: "text-emerald-300" },
   { from: "rgba(244,63,94,0.8)",   to: "rgba(244,63,94,0.25)",   text: "text-rose-300" },

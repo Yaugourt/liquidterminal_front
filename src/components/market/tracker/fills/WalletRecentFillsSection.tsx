@@ -60,7 +60,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
     const isClose = dir.toLowerCase().includes('close');
     const isShort = dir.toLowerCase().includes('short');
     const isLong = dir.toLowerCase().includes('long');
-    if (isClose) return <span className="text-brand-gold">{dir}</span>;
+    if (isClose) return <span className="text-gold">{dir}</span>;
     if (isShort) return <span className="text-rose-400">{dir}</span>;
     if (isLong) return <span className="text-emerald-400">{dir}</span>;
     return <span className="text-text-primary">{dir}</span>;
@@ -88,7 +88,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
       header: "Hash",
       accessor: (fill) => (
         <div className="flex items-center gap-1.5">
-          <span className="text-brand-accent" title={fill.hash}>
+          <span className="text-brand" title={fill.hash}>
             {formatHash(fill.hash)}
           </span>
           <button
@@ -98,7 +98,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
             {copiedHash === fill.hash ? (
               <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         </div>

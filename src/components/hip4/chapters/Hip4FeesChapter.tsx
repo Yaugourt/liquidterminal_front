@@ -34,12 +34,12 @@ export function Hip4FeesChapter() {
         subtitle={
           <>
             <p>
-              Evidence from <code className="font-mono text-[11px] text-brand-accent">hl-node</code>{" "}
+              Evidence from <code className="font-mono text-[11px] text-brand">hl-node</code>{" "}
               strings, <Hip4GoldHighlight>spotMetaAndAssetCtxs</Hip4GoldHighlight>,{" "}
               <Hip4GoldHighlight>userFees</Hip4GoldHighlight>, and a real outcome fill on testnet:
               outcome CLOB fees behave like <strong className="text-text-primary">ordinary spot</strong>{" "}
               fees today, while a native governance hook (
-              <code className="font-mono text-[11px] text-brand-accent">
+              <code className="font-mono text-[11px] text-brand">
                 VoteGlobalAction::SetOutcomeFeeScale
               </code>
               ) exists for future global rescaling.
@@ -48,7 +48,7 @@ export function Hip4FeesChapter() {
               This page is <strong className="text-text-primary">HyperCore L1</strong> only. Third-party
               HyperEVM parimutuel contracts document a separate{" "}
               <strong className="text-text-primary">platform fee</strong> (e.g. 90 bps) — see{" "}
-              <Link href="/hip4/overview" className="text-brand-accent hover:underline">
+              <Link href="/hip4/overview" className="text-brand hover:underline">
                 EVM overview
               </Link>
               .
@@ -59,12 +59,12 @@ export function Hip4FeesChapter() {
                 href="/hip4/HIP4-fees.md"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-brand-gold underline decoration-brand-gold/40 underline-offset-2 hover:decoration-brand-gold"
+                className="font-medium text-gold underline decoration-gold/40 underline-offset-2 hover:decoration-gold"
               >
                 HIP4-fees.md
               </Link>
               . Structured <code className="font-mono text-[11px]">POST /info</code> entries:{" "}
-              <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
+              <Link href="/hip4/info-api" className="text-brand hover:underline">
                 Info endpoint
               </Link>
               .
@@ -78,12 +78,12 @@ export function Hip4FeesChapter() {
         <Hip4SubsectionTitle>Proof (hl-node strings)</Hip4SubsectionTitle>
         <Hip4CodeBlock>{HIP4_FEES_HL_NODE_STRINGS}</Hip4CodeBlock>
         <Hip4SubsectionTitle>What this proves</Hip4SubsectionTitle>
-        <ul className="list-disc space-y-1 pl-4 text-xs text-text-secondary marker:text-brand-gold/70">
+        <ul className="list-disc space-y-1 pl-4 text-xs text-text-secondary marker:text-gold/70">
           <li>HyperCore exposes <Hip4GoldHighlight>SetOutcomeFeeScale</Hip4GoldHighlight> as a real variant.</li>
           <li>The action has one field; binary text references a cooldown between changes.</li>
         </ul>
         <Hip4SubsectionTitle>What this does not prove</Hip4SubsectionTitle>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-text-tertiary">
           Exact post-change formula, live stored scale on testnet, or whether state lives in{" "}
           <code className="font-mono text-[11px]">OutcomeTracker</code> vs elsewhere.
         </p>
@@ -101,7 +101,7 @@ export function Hip4FeesChapter() {
           <code className="font-mono text-[11px]">spotMetaAndAssetCtxs</code>:
         </p>
         <Hip4CodeBlock>{HIP4_FEES_SPOT_META_SAMPLE}</Hip4CodeBlock>
-        <p className="mt-3 text-xs text-text-muted">
+        <p className="mt-3 text-xs text-text-tertiary">
           Compare fee behavior to spot first — not a separate prediction-only fee engine.
         </p>
       </Hip4GlassPanel>
@@ -156,13 +156,13 @@ export function Hip4FeesChapter() {
           string was found in the same pass.
         </Hip4DocLead>
         <Hip4CodeBlock>{HIP4_FEES_BINARY_LIMITS_TEXT}</Hip4CodeBlock>
-        <p className="mt-3 text-xs text-text-muted">
+        <p className="mt-3 text-xs text-text-tertiary">
           Safest statement: behavioral neutrality on testnet, not &quot;scale = X from strings&quot;.
         </p>
       </Hip4GlassPanel>
 
       <Hip4Callout variant="emphasis" title="Conclusion (testnet evidence)">
-        <ol className="list-decimal space-y-2 pl-4 marker:text-brand-gold">
+        <ol className="list-decimal space-y-2 pl-4 marker:text-gold">
           <li>
             <code className="font-mono text-[11px]">hl-node</code> proves{" "}
             <Hip4GoldHighlight>SetOutcomeFeeScale</Hip4GoldHighlight> exists.

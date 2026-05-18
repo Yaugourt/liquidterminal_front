@@ -69,7 +69,7 @@ export function FormModal({
       <DialogContent
         className={cn(
           MAX_WIDTH_CLASS[maxWidth],
-          "bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-text-primary",
+          "bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary",
           className
         )}
       >

@@ -59,7 +59,7 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
             <span className="text-xl max-sm:text-lg text-text-primary font-bold tracking-tight">
               ${formatNumber(stats.totalVolume, format, { maximumFractionDigits: 0 })}
             </span>
-            <span className="text-xs text-text-muted">
+            <span className="text-xs text-text-tertiary">
               ({stats.liquidationsCount.toLocaleString()} liqs)
             </span>
           </div>
@@ -67,12 +67,12 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
           {/* Stats supplémentaires */}
           <div className="flex items-center justify-between text-xs mb-3">
             <div>
-              <span className="text-text-muted">Top Token</span>
+              <span className="text-text-tertiary">Top Token</span>
               <p className="text-text-primary font-medium">{stats.topToken}</p>
             </div>
             <div className="text-right">
-              <span className="text-text-muted">Fees</span>
-              <p className="text-brand-gold font-medium">
+              <span className="text-text-tertiary">Fees</span>
+              <p className="text-gold font-medium">
                 ${formatNumber(stats.totalFees, format, { maximumFractionDigits: 0 })}
               </p>
             </div>

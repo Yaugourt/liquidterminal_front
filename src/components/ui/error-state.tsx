@@ -29,7 +29,7 @@ export function ErrorState({
             <AlertCircle className="w-12 h-12 mb-4 text-danger/50" />
             <p className="text-danger text-lg font-medium mb-2">{title}</p>
             {message && (
-                <p className="text-text-muted text-sm mb-4">{message}</p>
+                <p className="text-text-tertiary text-sm mb-4">{message}</p>
             )}
             {onRetry && (
                 <Button 

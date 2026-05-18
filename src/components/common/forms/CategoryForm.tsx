@@ -59,7 +59,7 @@ export function CategoryForm({
           id="categoryName"
           value={value.name}
           onChange={(e) => onChange((prev) => ({ ...prev, name: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
           placeholder={namePlaceholder}
           required
         />
@@ -73,7 +73,7 @@ export function CategoryForm({
           id="categoryDesc"
           value={value.description}
           onChange={(e) => onChange((prev) => ({ ...prev, description: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
           rows={3}
           placeholder={descriptionPlaceholder}
         />
@@ -91,7 +91,7 @@ export function CategoryForm({
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
         >
           {isSubmitting ? submittingLabel : submitLabel}
         </Button>

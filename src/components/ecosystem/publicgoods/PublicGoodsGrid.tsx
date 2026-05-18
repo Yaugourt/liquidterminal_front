@@ -40,8 +40,8 @@ export function PublicGoodsGrid<T>({
         return (
             <Card className="p-8">
                 <div className="text-center py-8">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-                        {emptyState.icon || <Plus className="w-8 h-8 text-brand-accent" />}
+                    <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-2xl flex items-center justify-center">
+                        {emptyState.icon || <Plus className="w-8 h-8 text-brand" />}
                     </div>
                     <h3 className="text-lg font-semibold text-text-primary mb-2">{emptyState.title}</h3>
                     <p className="text-text-secondary mb-4">{emptyState.description}</p>
@@ -49,7 +49,7 @@ export function PublicGoodsGrid<T>({
                     {emptyState.actionLabel && emptyState.onAction && (
                         <Button
                             onClick={emptyState.onAction}
-                            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                         >
                             {emptyState.actionLabel}
                         </Button>

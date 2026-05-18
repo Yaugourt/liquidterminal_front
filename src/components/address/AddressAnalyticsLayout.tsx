@@ -113,7 +113,7 @@ export function AddressAnalyticsLayout({
           </p>
           <Button
             onClick={() => window.history.back()}
-            className="bg-brand-accent font-semibold text-black hover:bg-brand-accent/90"
+            className="bg-brand font-semibold text-black hover:bg-brand/90"
           >
             Go Back
           </Button>
@@ -180,8 +180,8 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
       void _exhaustive;
       const label = ADDRESS_TAB_REGISTRY[tabId as AddressTabId]?.label ?? tabId;
       return (
-        <div className="flex h-[400px] items-center justify-center rounded-2xl border border-border-subtle bg-brand-secondary/60">
-          <p className="text-brand-accent">Coming soon: {label}</p>
+        <div className="flex h-[400px] items-center justify-center rounded-2xl border border-border-subtle bg-surface/60">
+          <p className="text-brand">Coming soon: {label}</p>
         </div>
       );
     }

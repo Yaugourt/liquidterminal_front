@@ -68,13 +68,13 @@ function PeriodSelectorInner<T extends string>({
   const activeClass =
     variant === "rose"
       ? "bg-rose-500/20 text-rose-400 font-bold"
-      : "bg-brand-accent text-brand-tertiary shadow-sm font-bold";
+      : "bg-brand text-brand-text-on shadow-sm font-bold";
 
   const pad = size === "md" ? "px-3 py-1.5" : "px-2 py-1";
 
   return (
     <div
-      className={`flex bg-brand-dark rounded-lg p-1 border border-border-subtle ${className}`}
+      className={`flex bg-base rounded-lg p-1 border border-border-subtle ${className}`}
     >
       {options.map((option) => (
         <button

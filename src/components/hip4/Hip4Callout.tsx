@@ -10,10 +10,10 @@ const variants = {
     titleClass: "text-text-primary",
   },
   emphasis: {
-    wrap: "border-brand-gold/25 bg-brand-gold/[0.06]",
+    wrap: "border-gold/25 bg-gold/[0.06]",
     icon: Info,
-    iconClass: "text-brand-gold",
-    titleClass: "text-brand-gold",
+    iconClass: "text-gold",
+    titleClass: "text-gold",
   },
 } as const;
 

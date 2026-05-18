@@ -89,7 +89,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => row.fee ?? 0,
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-brand-gold">
+        <span className="text-xs tabular-nums text-gold">
           {row.fee != null ? compactUsd(row.fee) : "—"}
         </span>
       ),
@@ -98,7 +98,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       key: "user",
       header: "User",
       accessor: (row) => (
-        <span className="text-[11px] text-text-muted font-mono">{shortAddress(row.user)}</span>
+        <span className="text-[11px] text-text-tertiary font-mono">{shortAddress(row.user)}</span>
       ),
     },
     {
@@ -107,7 +107,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => new Date(row.time).getTime(),
       accessor: (row) => (
-        <span className="text-[10px] text-text-muted tabular-nums">
+        <span className="text-[10px] text-text-tertiary tabular-nums">
           {new Date(row.time).toLocaleTimeString()}
         </span>
       ),
@@ -121,10 +121,10 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       transition={{ delay: 0.25, duration: 0.3 }}
     >
       <Card className="p-4 space-y-3">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          <span className="h-1 w-1 rounded-full bg-brand-accent animate-pulse" />
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand animate-pulse" />
           Recent Fills
-          <span className="text-text-muted/60">· {fills.length}</span>
+          <span className="text-text-tertiary/60">· {fills.length}</span>
         </div>
 
         <TypedDataTable<Hip4FillRow>

@@ -20,7 +20,7 @@ export const FeesTabsButton = ({ selectedFeeType, onFeeTypeChange }: FeesTabsBut
             onClick={() => onFeeTypeChange(tab.key)}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               selectedFeeType === tab.key
-                ? 'bg-brand-accent text-brand-tertiary shadow-sm'
+                ? 'bg-brand text-brand-text-on shadow-sm'
                 : 'text-text-primary hover:text-text-primary hover:bg-white/4'
             }`}
           >

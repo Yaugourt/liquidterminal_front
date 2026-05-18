@@ -45,7 +45,7 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
               </span>
             )}
             {market.period && (
-              <span className="text-text-muted">{market.period} period</span>
+              <span className="text-text-tertiary">{market.period} period</span>
             )}
           </div>
         </div>
@@ -54,19 +54,19 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
           {yesProb && (
             <div className="flex items-center gap-2">
               <div className="text-center">
-                <div className="text-xs text-text-muted mb-0.5">Yes</div>
+                <div className="text-xs text-text-tertiary mb-0.5">Yes</div>
                 <div className="text-lg font-bold text-emerald-400 tabular-nums">{yesProb}%</div>
               </div>
               <div className="h-8 w-px bg-border-subtle" />
               <div className="text-center">
-                <div className="text-xs text-text-muted mb-0.5">No</div>
+                <div className="text-xs text-text-tertiary mb-0.5">No</div>
                 <div className="text-lg font-bold text-rose-400 tabular-nums">{noProb}%</div>
               </div>
             </div>
           )}
 
           <div className="flex flex-col gap-1 pl-3 border-l border-border-subtle">
-            <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+            <div className="flex items-center gap-1.5 text-[10px] text-text-tertiary">
               <TrendingUp className="h-3 w-3" />
               <span>Volume</span>
             </div>
@@ -80,8 +80,8 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
               Settled
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-md border border-brand-accent/25 bg-brand-accent/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-accent">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
+            <span className="inline-flex items-center gap-1 rounded-md border border-brand/25 bg-brand/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
               Live
             </span>
           )}

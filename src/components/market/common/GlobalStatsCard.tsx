@@ -57,44 +57,44 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
   const items = market === 'spot'
     ? [
         {
-          icon: <CalendarDays className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <CalendarDays className="h-3.5 w-3.5 text-brand" />,
           label: "Daily Fees",
           value: feesStats ? formatNumber(feesStats.dailySpotFees, format, usdFormat) : '$0',
         },
         {
-          icon: <Clock className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <Clock className="h-3.5 w-3.5 text-brand" />,
           label: "Hourly Fees",
           value: feesStats ? formatNumber(feesStats.hourlySpotFees, format, usdFormat) : '$0',
         },
         {
-          icon: <Wallet className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <Wallet className="h-3.5 w-3.5 text-brand" />,
           label: "Total USDC",
           value: stats && isSpotStats(stats) ? formatNumber(stats.totalSpotUSDC, format, usdFormat) : '$0',
         },
         {
-          icon: <BarChart2 className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <BarChart2 className="h-3.5 w-3.5 text-brand" />,
           label: "24h Volume",
           value: stats ? formatNumber(stats.totalVolume24h, format, usdFormat) : '$0',
         },
       ]
     : [
         {
-          icon: <Scale className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <Scale className="h-3.5 w-3.5 text-brand" />,
           label: "Open Interest",
           value: stats && isPerpStats(stats) ? formatNumber(stats.totalOpenInterest, format, usdFormat) : '$0',
         },
         {
-          icon: <BarChart2 className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <BarChart2 className="h-3.5 w-3.5 text-brand" />,
           label: "24h Volume",
           value: stats ? formatNumber(stats.totalVolume24h, format, usdFormat) : '$0',
         },
         {
-          icon: <Clock className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <Clock className="h-3.5 w-3.5 text-brand" />,
           label: "Daily Fees",
           value: feesStats ? formatNumber(feesStats.dailyFees, format, usdFormat) : '$0',
         },
         {
-          icon: <Wallet className="h-3.5 w-3.5 text-brand-accent" />,
+          icon: <Wallet className="h-3.5 w-3.5 text-brand" />,
           label: "HLP TVL",
           value: stats && isPerpStats(stats) ? formatNumber(stats.hlpTvl, format, usdFormat) : '$0',
         },
@@ -103,7 +103,7 @@ export const GlobalStatsCard = memo(function GlobalStatsCard({ market }: GlobalS
   return (
     <StatsPanel
       title="Global Stats"
-      icon={<BarChart2 size={16} className="text-brand-gold" />}
+      icon={<BarChart2 size={16} className="text-gold" />}
       iconVariant="gold"
       isLoading={isLoading}
       error={error}

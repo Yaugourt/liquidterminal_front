@@ -45,7 +45,7 @@ export function VaultKpiBar() {
     {
       title: "Total TVL",
       value: isLoading ? "—" : `$${formatLargeNumber(stats?.totalTvl ?? 0, { decimals: 2 })}`,
-      icon: <DollarSign className="w-4 h-4 text-brand-accent" />,
+      icon: <DollarSign className="w-4 h-4 text-brand" />,
     },
     {
       title: "Active Vaults",
@@ -55,19 +55,19 @@ export function VaultKpiBar() {
     {
       title: "Closed Vaults",
       value: isLoading ? "—" : String(stats?.closedCount ?? 0),
-      icon: <Vault className="w-4 h-4 text-text-muted" />,
+      icon: <Vault className="w-4 h-4 text-text-tertiary" />,
     },
     {
       title: "Highest APR",
       value: isLoading
         ? "—"
         : `${(stats?.highestApr ?? 0).toFixed(2)}%`,
-      icon: <TrendingUp className="w-4 h-4 text-brand-gold" />,
+      icon: <TrendingUp className="w-4 h-4 text-gold" />,
     },
     {
       title: "Average APR",
       value: isLoading ? "—" : `${(stats?.avgApr ?? 0).toFixed(2)}%`,
-      icon: <BarChart2 className="w-4 h-4 text-brand-accent" />,
+      icon: <BarChart2 className="w-4 h-4 text-brand" />,
     },
   ];
 

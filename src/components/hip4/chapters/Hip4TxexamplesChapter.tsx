@@ -37,7 +37,7 @@ const COLUMNS: Column<TxExample>[] = [
   {
     key: "name",
     header: "Function",
-    accessor: (ex) => <span className="font-mono text-brand-accent">{ex.name}</span>,
+    accessor: (ex) => <span className="font-mono text-brand">{ex.name}</span>,
   },
   {
     key: "selector",

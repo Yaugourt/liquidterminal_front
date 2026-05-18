@@ -9,10 +9,10 @@ import { socials, reasons, screenshots, apiProviders } from "./landing-data";
 
 export function SectionsEditorialPremium() {
   return (
-    <div className="min-h-screen w-full overflow-y-auto overflow-x-hidden bg-brand-main font-inter scroll-smooth pb-[env(safe-area-inset-bottom,0)]">
+    <div className="min-h-screen w-full overflow-y-auto overflow-x-hidden bg-base font-inter scroll-smooth pb-[env(safe-area-inset-bottom,0)]">
       {/* Hero/global gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-brand-main" />
+        <div className="absolute inset-0 bg-base" />
         <div
           className="absolute inset-0"
           style={{
@@ -49,7 +49,7 @@ export function SectionsEditorialPremium() {
         <Link href="/" className="flex items-center gap-2.5 min-w-0 shrink">
           <Image src="/logo.svg" alt="Liquid Terminal" width={32} height={32} className="h-7 w-7 sm:h-8 sm:w-8 shrink-0" />
           <span className="font-inter text-base sm:text-lg text-text-primary tracking-tight whitespace-nowrap truncate">
-            Liquid <span className="text-brand-accent">Terminal</span>
+            Liquid <span className="text-brand">Terminal</span>
           </span>
         </Link>
         <div className="flex items-center gap-1 sm:gap-2">
@@ -59,7 +59,7 @@ export function SectionsEditorialPremium() {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg text-text-secondary hover:text-brand-accent hover:bg-white/[0.06] transition-all duration-200"
+              className="p-2 rounded-lg text-text-secondary hover:text-brand hover:bg-white/[0.06] transition-all duration-200"
               aria-label={item.name}
             >
               <item.Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
@@ -67,10 +67,10 @@ export function SectionsEditorialPremium() {
           ))}
           <Link
             href="/dashboard"
-            className="hidden sm:inline-flex group ml-1 sm:ml-2 items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-accent/10 border border-brand-accent/25 text-text-primary font-medium text-sm hover:bg-brand-accent/15 hover:border-brand-accent/40 transition-all duration-200"
+            className="hidden sm:inline-flex group ml-1 sm:ml-2 items-center gap-2 px-4 py-2.5 rounded-lg bg-brand/10 border border-brand/25 text-text-primary font-medium text-sm hover:bg-brand/15 hover:border-brand/40 transition-all duration-200"
           >
             <span className="whitespace-nowrap">Open App</span>
-            <ArrowRight className="h-4 w-4 text-brand-accent group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="h-4 w-4 text-brand group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
       </header>
@@ -82,7 +82,7 @@ export function SectionsEditorialPremium() {
             <HeroFadeIn
               as="p"
               delay={0.2}
-              className="text-brand-accent text-sm font-semibold uppercase tracking-[0.2em] mb-6"
+              className="text-brand text-sm font-semibold uppercase tracking-[0.2em] mb-6"
             >
               One terminal. All of HyperLiquid.
             </HeroFadeIn>
@@ -92,8 +92,8 @@ export function SectionsEditorialPremium() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-inter font-normal text-text-primary leading-tight mb-6"
             >
               The Terminal to house all{" "}
-              <span className="text-brand-accent drop-shadow-[0_0_20px_rgba(131,233,255,0.3)]">Hyper</span>
-              <span className="text-brand-gold/90 drop-shadow-[0_0_15px_rgba(249,227,112,0.2)]">Liquid</span>
+              <span className="text-brand drop-shadow-[0_0_20px_rgba(131,233,255,0.3)]">Hyper</span>
+              <span className="text-gold/90 drop-shadow-[0_0_15px_rgba(249,227,112,0.2)]">Liquid</span>
             </HeroFadeIn>
             <HeroFadeIn
               as="p"
@@ -105,24 +105,24 @@ export function SectionsEditorialPremium() {
             <HeroFadeIn delay={0.65} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <Link
                 href="#why"
-                className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
+                className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand/20 to-gold/10 border border-white/[0.12] hover:border-brand/40 transition-all duration-300"
               >
                 <span className="font-semibold text-white">Explore the Terminal</span>
-                <ArrowDown className="h-5 w-5 text-brand-accent group-hover:translate-y-0.5 transition-transform" />
+                <ArrowDown className="h-5 w-5 text-brand group-hover:translate-y-0.5 transition-transform" />
               </Link>
               <Link
                 href="/dashboard"
                 className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-white/5 border border-white/[0.12] hover:border-white/25 hover:bg-white/10 transition-all duration-300"
               >
                 <span className="font-semibold text-text-primary">Open App</span>
-                <ArrowRight className="h-5 w-5 text-brand-accent" />
+                <ArrowRight className="h-5 w-5 text-brand" />
               </Link>
             </HeroFadeIn>
           </div>
         </div>
 
         <HeroFadeIn delay={1.2} className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2">
-          <a href="#why" className="flex flex-col items-center gap-2 text-text-secondary hover:text-brand-accent transition-colors">
+          <a href="#why" className="flex flex-col items-center gap-2 text-text-secondary hover:text-brand transition-colors">
             <span className="text-xs uppercase tracking-widest">Scroll</span>
             <ChevronDown className="h-6 w-6 animate-bounce" />
           </a>
@@ -133,7 +133,7 @@ export function SectionsEditorialPremium() {
       <section id="why" className="relative py-16 sm:py-24 md:py-36 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <FadeIn className="text-center mb-12 sm:mb-16 md:mb-24">
-            <p className="text-brand-accent text-xs font-semibold uppercase tracking-[0.25em] mb-3 font-inter">
+            <p className="text-brand text-xs font-semibold uppercase tracking-[0.25em] mb-3 font-inter">
               Why Liquid Terminal
             </p>
             <h2 className="font-inter text-3xl md:text-4xl lg:text-[2.75rem] text-text-primary leading-tight max-w-2xl mx-auto">
@@ -159,8 +159,8 @@ export function SectionsEditorialPremium() {
                   <div
                     className={[
                       "rounded-2xl p-5 sm:p-6 md:p-8 lg:p-10 h-full",
-                      "bg-brand-secondary/40 border border-white/[0.06]",
-                      "hover:border-brand-accent/20 transition-all duration-300",
+                      "bg-surface/40 border border-white/[0.06]",
+                      "hover:border-brand/20 transition-all duration-300",
                       "hover:shadow-[0_0_40px_-8px_rgba(131,233,255,0.04)]",
                     ].join(" ")}
                   >
@@ -169,7 +169,7 @@ export function SectionsEditorialPremium() {
                         <span
                           className={[
                             "text-xl sm:text-2xl md:text-3xl font-bold tracking-tight",
-                            reason.accent === "accent" ? "text-brand-accent" : "text-brand-gold",
+                            reason.accent === "accent" ? "text-brand" : "text-gold",
                           ].join(" ")}
                         >
                           {reason.stat}
@@ -177,7 +177,7 @@ export function SectionsEditorialPremium() {
                         <span
                           className={[
                             "text-xs font-semibold uppercase tracking-widest",
-                            reason.accent === "accent" ? "text-brand-accent/80" : "text-brand-gold/80",
+                            reason.accent === "accent" ? "text-brand/80" : "text-gold/80",
                           ].join(" ")}
                         >
                           {reason.label}
@@ -187,8 +187,8 @@ export function SectionsEditorialPremium() {
                         className={[
                           "flex items-center justify-center w-12 h-12 rounded-full overflow-hidden shrink-0",
                           reason.accent === "accent"
-                            ? "bg-brand-accent/10 border border-brand-accent/20"
-                            : "bg-brand-gold/10 border border-brand-gold/20",
+                            ? "bg-brand/10 border border-brand/20"
+                            : "bg-gold/10 border border-gold/20",
                         ].join(" ")}
                       >
                         <Image
@@ -210,7 +210,7 @@ export function SectionsEditorialPremium() {
                     <div
                       className={[
                         "pt-4 border-t border-white/[0.06] text-sm leading-relaxed font-medium",
-                        reason.accent === "accent" ? "text-brand-accent" : "text-brand-gold",
+                        reason.accent === "accent" ? "text-brand" : "text-gold",
                       ].join(" ")}
                     >
                       <span className="opacity-70">→</span> {reason.solution}
@@ -220,8 +220,8 @@ export function SectionsEditorialPremium() {
                       className={[
                         "absolute bottom-0 left-8 right-8 h-px rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500",
                         reason.accent === "accent"
-                          ? "bg-gradient-to-r from-transparent via-brand-accent/40 to-transparent"
-                          : "bg-gradient-to-r from-transparent via-brand-gold/40 to-transparent",
+                          ? "bg-gradient-to-r from-transparent via-brand/40 to-transparent"
+                          : "bg-gradient-to-r from-transparent via-gold/40 to-transparent",
                       ].join(" ")}
                     />
                   </div>
@@ -235,9 +235,9 @@ export function SectionsEditorialPremium() {
       {/* See it */}
       <section id="see-it" className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center mb-10 sm:mb-14 md:mb-20">
-          <p className="text-brand-accent text-sm font-semibold uppercase tracking-[0.2em] mb-4">See it in action</p>
+          <p className="text-brand text-sm font-semibold uppercase tracking-[0.2em] mb-4">See it in action</p>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-inter text-text-primary max-w-2xl mx-auto">
-            Built for <span className="text-brand-accent">speed</span> and <span className="text-brand-gold">clarity</span>
+            Built for <span className="text-brand">speed</span> and <span className="text-gold">clarity</span>
           </h2>
         </FadeIn>
 
@@ -246,11 +246,11 @@ export function SectionsEditorialPremium() {
             <FadeIn
               key={shot.title}
               delay={index * 0.1}
-              className={`group rounded-2xl overflow-hidden border ${shot.border} bg-brand-secondary/40 transition-all duration-300 hover:border-brand-accent/40 hover:shadow-[0_0_40px_rgba(131,233,255,0.08)]`}
+              className={`group rounded-2xl overflow-hidden border ${shot.border} bg-surface/40 transition-all duration-300 hover:border-brand/40 hover:shadow-[0_0_40px_rgba(131,233,255,0.08)]`}
             >
               <div className="aspect-[4/3] flex flex-col items-center justify-center p-5 sm:p-6 md:p-8">
                 <div className="w-16 h-16 mb-4 rounded-lg bg-white/5 border border-white/[0.08] flex items-center justify-center">
-                  <span className="text-2xl text-brand-accent/60">📊</span>
+                  <span className="text-2xl text-brand/60">📊</span>
                 </div>
                 <p className="text-text-primary font-medium text-sm">{shot.title}</p>
                 <p className="text-text-secondary text-xs mt-1">{shot.subtitle}</p>
@@ -263,9 +263,9 @@ export function SectionsEditorialPremium() {
       {/* Get started */}
       <section id="get-started" className="relative py-24 md:py-32 px-4 sm:px-6">
         <FadeIn className="text-center max-w-2xl mx-auto">
-          <p className="text-brand-accent text-sm font-semibold uppercase tracking-[0.2em] mb-4">Get started</p>
+          <p className="text-brand text-sm font-semibold uppercase tracking-[0.2em] mb-4">Get started</p>
           <h2 className="text-3xl md:text-4xl font-inter text-text-primary mb-6">
-            Your <span className="text-brand-accent">terminal</span> awaits
+            Your <span className="text-brand">terminal</span> awaits
           </h2>
           <p className="text-text-secondary text-lg mb-10">
             Free to use. No sign-up required. Connect your wallet to unlock portfolio tracking.
@@ -274,14 +274,14 @@ export function SectionsEditorialPremium() {
           <FadeIn delay={0.2} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               href="/dashboard"
-              className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand-accent/20 to-brand-gold/10 border border-white/[0.12] hover:border-brand-accent/40 transition-all duration-300"
+              className="group inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl overflow-hidden bg-gradient-to-r from-brand/20 to-gold/10 border border-white/[0.12] hover:border-brand/40 transition-all duration-300"
             >
               <span className="font-semibold text-white">Open the Terminal</span>
-              <ArrowRight className="h-5 w-5 text-brand-accent group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-5 w-5 text-brand group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/market/spot"
-              className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl border border-white/[0.08] text-text-primary font-medium hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-5 py-3 sm:px-8 sm:py-4 rounded-2xl border border-white/[0.08] text-text-primary font-medium hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
             >
               <TrendingUp className="h-5 w-5" />
               <span>Explore the Market</span>
@@ -290,7 +290,7 @@ export function SectionsEditorialPremium() {
         </FadeIn>
 
         <FadeIn delay={0.4} className="mt-12 sm:mt-16 md:mt-20 text-center">
-          <p className="text-text-muted text-xs font-medium uppercase tracking-wider mb-4">Powered by</p>
+          <p className="text-text-tertiary text-xs font-medium uppercase tracking-wider mb-4">Powered by</p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {apiProviders.map((provider) => (
               <a
@@ -298,7 +298,7 @@ export function SectionsEditorialPremium() {
                 href={provider.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-text-secondary hover:text-brand-accent transition-colors"
+                className="flex items-center gap-2 text-text-secondary hover:text-brand transition-colors"
               >
                 <Image src={provider.logo} alt={provider.name} width={24} height={24} className="w-6 h-6 rounded" />
                 <span className="text-sm">{provider.name}</span>
@@ -308,8 +308,8 @@ export function SectionsEditorialPremium() {
         </FadeIn>
 
         <FadeIn delay={0.6} className="mt-10 sm:mt-14 md:mt-16 pt-8 border-t border-white/[0.06] text-center space-y-1">
-          <p className="text-text-muted text-sm">Liquid Terminal v1.0.0</p>
-          <p className="text-text-muted text-xs">© {new Date().getFullYear()} Liquid Terminal. All rights reserved.</p>
+          <p className="text-text-tertiary text-sm">Liquid Terminal v1.0.0</p>
+          <p className="text-text-tertiary text-xs">© {new Date().getFullYear()} Liquid Terminal. All rights reserved.</p>
         </FadeIn>
       </section>
     </div>

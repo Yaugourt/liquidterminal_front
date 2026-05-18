@@ -39,7 +39,7 @@ export function TeamTab({
             value={formData.leadDeveloperName}
             onChange={(e) => updateField('leadDeveloperName', e.target.value)}
             placeholder="John Doe"
-            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
           />
         </div>
         
@@ -51,7 +51,7 @@ export function TeamTab({
             value={formData.leadDeveloperContact}
             onChange={(e) => updateField('leadDeveloperContact', e.target.value)}
             placeholder="john@example.com"
-            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
           />
         </div>
       </div>
@@ -104,12 +104,12 @@ export function TeamTab({
               }
             }}
             placeholder="Type a technology and press Enter"
-            className="bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
           />
           <Button
             type="button"
             onClick={addTechnology}
-            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -119,7 +119,7 @@ export function TeamTab({
             <Badge
               key={tech}
               variant="outline"
-              className="border-border-hover text-text-secondary flex items-center gap-1 bg-brand-dark rounded-lg"
+              className="border-border-default text-text-secondary flex items-center gap-1 bg-base rounded-lg"
             >
               {tech}
               <button
