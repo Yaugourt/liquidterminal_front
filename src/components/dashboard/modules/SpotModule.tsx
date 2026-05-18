@@ -12,7 +12,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 /** SpotModule — résumé de /market/spot sur le Dashboard. */
 export const SpotModule = memo(function SpotModule() {
   const { stats, isLoading } = useSpotGlobalStats();
-  const { data: top } = useTrendingSpotTokens(3, "volume", "desc");
+  const { data: top } = useTrendingSpotTokens(5, "volume", "desc");
   const { format } = useNumberFormat();
 
   return (
@@ -34,7 +34,7 @@ export const SpotModule = memo(function SpotModule() {
       ]}
     >
       <ModuleSubhead>Top by volume</ModuleSubhead>
-      {(top ?? []).slice(0, 3).map((t) => {
+      {(top ?? []).slice(0, 5).map((t) => {
         const positive = t.change24h >= 0;
         return (
           <ModuleRow
