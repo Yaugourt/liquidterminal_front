@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { PageHeader } from "@/components/common";
 import { PulseStrip } from "@/components/dashboard/PulseStrip";
-import { TrendingTokensTabs } from "@/components/dashboard/tokens/TrendingTokensTabs";
+import { MoversCard } from "@/components/dashboard/MoversCard";
 import { TabSection } from "@/components/dashboard/vaultValidator";
 import { TwapSection } from "@/components/dashboard/twap";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Card } from "@/components/ui/card";
 
 export default function Home() {
-  const [, setActiveTokenTab] = useState<"perp" | "spot" | "auction" | "past-auction">("perp");
-  const [, setPastAuctionHeight] = useState<number>(270);
-
   return (
     <div className="space-y-4">
       <PageHeader
@@ -23,17 +19,15 @@ export default function Home() {
       {/* Niveau 1 — Pulse de l'écosystème */}
       <PulseStrip />
 
-      {/* Tokens + Chart */}
-      <div className="flex flex-col custom:flex-row gap-4 w-full custom:items-stretch">
-        <Card className="w-full custom:w-[35%] flex flex-col">
-          <TrendingTokensTabs
-            onTabChange={setActiveTokenTab}
-            onPastAuctionHeightChange={setPastAuctionHeight}
-          />
-        </Card>
-        <Card className="flex-1 flex flex-col">
-          <ChartSection />
-        </Card>
+      {/* Niveau 2 — Tendances */}
+      <Card className="flex flex-col min-h-[420px]">
+        <ChartSection />
+      </Card>
+
+      {/* Niveau 3 — Ce qui bouge : spot + perp côte à côte */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <MoversCard market="spot" />
+        <MoversCard market="perp" />
       </div>
 
       {/* Vaults/Validators + TWAP */}
