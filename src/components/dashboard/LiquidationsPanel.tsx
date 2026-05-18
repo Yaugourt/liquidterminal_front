@@ -73,11 +73,11 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
       </div>
 
       <div>
-        {feed.map((liq) => {
+        {feed.map((liq, i) => {
           const isLong = liq.liq_dir === "Long";
           return (
             <div
-              key={liq.tid}
+              key={`${liq.tid}-${i}`}
               className="flex items-center gap-2 px-3.5 py-1.5 border-t border-border-subtle text-[11px]"
             >
               <span
