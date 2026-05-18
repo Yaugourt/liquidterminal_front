@@ -217,6 +217,12 @@ interface TypedDataTableProps<T> {
     textSize?: "xs" | "sm";
     /** Sticky table header during vertical scroll. */
     stickyHeader?: boolean;
+    /**
+     * `table-layout: fixed` — colonnes aux largeurs déclarées (`Column.width`),
+     * réparties uniformément. Recommandé pour les tables data-dense afin
+     * d'éviter la distribution erratique du `table-layout: auto`.
+     */
+    fixedLayout?: boolean;
     /** Extra class on the outer wrapper. */
     className?: string;
 
@@ -326,6 +332,7 @@ export function TypedDataTable<T>({
     density,
     textSize,
     stickyHeader = false,
+    fixedLayout = false,
     className,
     // Row
     onRowClick,
@@ -508,7 +515,7 @@ export function TypedDataTable<T>({
                     : undefined
             }
         >
-            <Table>
+            <Table className={cn(fixedLayout && "table-fixed")}>
                 <TableHeader className={cn("bg-surface-2", stickyHeader && "sticky top-0 z-10")}>
                     <TableRow className="border-b border-border-subtle hover:bg-transparent">
                         {columns.map((column, colIdx) => {
@@ -530,6 +537,7 @@ export function TypedDataTable<T>({
                                         direction={isControlledSort ? (sortDirection ?? "desc") : local.sortDirection}
                                         onSort={isControlledSort ? handleControlledSort : local.handleColumnSort}
                                         align={headAlign}
+                                        style={widthStyle}
                                         className={cn(ds.cellPaddingY, ds.cellPaddingX, column.className)}
                                     >
                                         {column.header}
