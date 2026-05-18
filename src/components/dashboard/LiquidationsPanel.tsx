@@ -10,11 +10,13 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 /**
  * LiquidationsPanel — carte "Liquidations" de la colonne live du Dashboard.
  *
- * Section haute : total 24h + ratio Long/Short. Flux : 6 dernières
- * liquidations. Tokens V4 uniquement, aucune donnée inventée.
+ * Section haute : stats 24h détaillées (volume total, count, ratio Long/Short,
+ * notionnel moyen, top token, frais). Flux : mini-tableau des dernières
+ * liquidations avec en-tête de colonnes. Tokens V4 uniquement, aucune
+ * donnée inventée — uniquement des champs réels de l'API.
  */
 
-const FEED_LIMIT = 6;
+const FEED_LIMIT = 9;
 
 /** Âge compact relatif : "12s" / "4m" / "2h" / "1d". */
 function timeAgo(ms: number): string {
@@ -28,6 +30,15 @@ function timeAgo(ms: number): string {
   return `${Math.floor(h / 24)}d`;
 }
 
+/** Taille de position compacte sans devise : "12.4K" / "0.83". */
+function compactSize(n: number): string {
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+  if (abs >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  if (abs >= 1) return n.toFixed(2);
+  return n.toPrecision(2);
+}
+
 export const LiquidationsPanel = memo(function LiquidationsPanel() {
   const { stats } = useLiquidations24h(30000);
   const { liquidations } = useRecentLiquidations({ limit: 30 });
@@ -38,6 +49,12 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
   }, [stats.longCount, stats.shortCount]);
 
   const shortPct = 100 - longPct;
+
+  /** Notionnel moyen par liquidation — dérivé des stats 24h réelles. */
+  const avgNotional = useMemo(
+    () => (stats.liquidationsCount > 0 ? stats.totalVolume / stats.liquidationsCount : 0),
+    [stats.totalVolume, stats.liquidationsCount]
+  );
 
   const feed = useMemo(() => liquidations.slice(0, FEED_LIMIT), [liquidations]);
 
@@ -53,6 +70,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
         <span className="text-[11px] text-text-tertiary">24h</span>
       </div>
 
+      {/* Section haute : total + ratio L/S */}
       <div className="px-3.5 py-3 border-b border-border-subtle">
         <div className="flex items-baseline justify-between gap-2">
           <span className="mono text-[18px] font-semibold text-text-primary">
@@ -67,36 +85,82 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
           <span className="bg-danger" style={{ width: `${shortPct}%` }} />
         </div>
         <div className="flex items-center justify-between mt-1.5 text-[10px] mono">
-          <span className="text-success">{Math.round(longPct)}% Long</span>
-          <span className="text-danger">{Math.round(shortPct)}% Short</span>
+          <span className="text-success">
+            {Math.round(longPct)}% Long · {stats.longCount.toLocaleString()}
+          </span>
+          <span className="text-danger">
+            {stats.shortCount.toLocaleString()} · {Math.round(shortPct)}% Short
+          </span>
         </div>
       </div>
 
-      <div>
-        {feed.map((liq, i) => {
-          const isLong = liq.liq_dir === "Long";
-          return (
-            <div
-              key={`${liq.tid}-${i}`}
-              className="flex items-center gap-2 px-3.5 py-1.5 border-t border-border-subtle text-[11px]"
-            >
-              <span
-                className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                  isLong ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
-                }`}
+      {/* Stats détaillées 24h */}
+      <div className="grid grid-cols-3 border-b border-border-subtle">
+        <div className="px-3.5 py-2 border-r border-border-subtle">
+          <div className="text-[9px] uppercase tracking-wide text-text-tertiary">Avg size</div>
+          <div className="mono text-[12px] font-semibold text-text-primary mt-0.5">
+            {compactUsd(avgNotional)}
+          </div>
+        </div>
+        <div className="px-3.5 py-2 border-r border-border-subtle">
+          <div className="text-[9px] uppercase tracking-wide text-text-tertiary">Top token</div>
+          <div className="mono text-[12px] font-semibold text-text-primary mt-0.5 truncate">
+            {stats.topToken || "-"}
+          </div>
+        </div>
+        <div className="px-3.5 py-2">
+          <div className="text-[9px] uppercase tracking-wide text-text-tertiary">Fees</div>
+          <div className="mono text-[12px] font-semibold text-text-primary mt-0.5">
+            {compactUsd(stats.totalFees)}
+          </div>
+        </div>
+      </div>
+
+      {/* Flux : mini-tableau des dernières liquidations */}
+      <div className="flex-1">
+        <div className="grid grid-cols-[44px_1fr_auto_auto_36px] gap-2 px-3.5 py-1.5 border-b border-border-subtle text-[9px] uppercase tracking-wide text-text-tertiary">
+          <span>Side</span>
+          <span>Coin</span>
+          <span className="text-right">Notional</span>
+          <span className="text-right">Size</span>
+          <span className="text-right">Time</span>
+        </div>
+
+        {feed.length === 0 ? (
+          <div className="px-3.5 py-4 text-[11px] text-text-tertiary text-center">
+            No recent liquidations
+          </div>
+        ) : (
+          feed.map((liq, i) => {
+            const isLong = liq.liq_dir === "Long";
+            return (
+              <div
+                key={`${liq.tid}-${i}`}
+                className="grid grid-cols-[44px_1fr_auto_auto_36px] gap-2 items-center px-3.5 py-1.5 border-b border-border-subtle text-[11px] last:border-b-0"
               >
-                {isLong ? "LONG" : "SHORT"}
-              </span>
-              <span className="font-semibold text-text-primary">{liq.coin}</span>
-              <span className="mono text-text-secondary">
-                {compactUsd(liq.notional_total)}
-              </span>
-              <span className="ml-auto text-text-tertiary text-[10px]">
-                {timeAgo(liq.time_ms)}
-              </span>
-            </div>
-          );
-        })}
+                <span
+                  className={`text-[9px] font-bold px-1 py-0.5 rounded text-center ${
+                    isLong ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
+                  }`}
+                >
+                  {isLong ? "LONG" : "SHORT"}
+                </span>
+                <span className="font-semibold text-text-primary truncate">{liq.coin}</span>
+                <span
+                  className={`mono text-right ${isLong ? "text-success" : "text-danger"}`}
+                >
+                  {compactUsd(liq.notional_total)}
+                </span>
+                <span className="mono text-right text-text-secondary">
+                  {compactSize(liq.size_total)}
+                </span>
+                <span className="mono text-right text-text-tertiary text-[10px]">
+                  {timeAgo(liq.time_ms)}
+                </span>
+              </div>
+            );
+          })
+        )}
       </div>
     </Card>
   );
