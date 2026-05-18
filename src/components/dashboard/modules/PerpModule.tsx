@@ -11,7 +11,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 /** PerpModule — résumé de /market/perp sur le Dashboard. */
 export const PerpModule = memo(function PerpModule() {
   const { stats, isLoading } = usePerpGlobalStats();
-  const { data: top } = useTrendingPerpMarkets(3, "volume", "desc");
+  const { data: top } = useTrendingPerpMarkets(5, "volume", "desc");
 
   return (
     <OverviewModule
@@ -26,7 +26,7 @@ export const PerpModule = memo(function PerpModule() {
       ]}
     >
       <ModuleSubhead>Top by volume</ModuleSubhead>
-      {(top ?? []).slice(0, 3).map((t) => {
+      {(top ?? []).slice(0, 5).map((t) => {
         const positive = t.change24h >= 0;
         const fundingPositive = t.funding >= 0;
         return (

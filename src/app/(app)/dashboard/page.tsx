@@ -9,12 +9,17 @@ import { BuildersModule } from "@/components/dashboard/modules/BuildersModule";
 import { ExplorerModule } from "@/components/dashboard/modules/ExplorerModule";
 import { EcosystemModule } from "@/components/dashboard/modules/EcosystemModule";
 import { WikiModule } from "@/components/dashboard/modules/WikiModule";
+import { TwapModule } from "@/components/dashboard/modules/TwapModule";
+import { ChartSection } from "@/components/dashboard/chart/ChartSection";
+import { AuctionCard } from "@/components/market/auction";
+import { Card } from "@/components/ui/card";
 
 /**
  * Dashboard — vue d'ensemble de Liquid Terminal.
  *
- * Un en-tête (HeroPulse) + une grille de modules : un module = le résumé
- * d'une zone de l'app (KPI phares + mini-aperçu + lien vers la page).
+ * Layout bento : en-tête + zones de tailles variées. La hiérarchie est
+ * portée par la taille (le chart et les marchés prennent plus de place)
+ * et chaque zone de l'app a son résumé + lien.
  */
 export default function Home() {
   return (
@@ -27,13 +32,32 @@ export default function Home() {
       {/* En-tête — volume écosystème + KPI globaux */}
       <HeroPulse />
 
-      {/* Modules — un résumé par zone de l'app */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* Tendance + auction live */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 items-stretch">
+        <Card className="xl:col-span-2 flex flex-col min-h-[380px]">
+          <ChartSection />
+        </Card>
+        <div className="xl:col-span-1">
+          <AuctionCard marketType="spot" />
+        </div>
+      </div>
+
+      {/* Marchés — Spot + Perp, plus de contenu (top 5) */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <SpotModule />
         <PerpModule />
-        <PerpDexModule />
-        <BuildersModule />
+      </div>
+
+      {/* Chaîne — Explorer / Builders / PerpDexs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <ExplorerModule />
+        <BuildersModule />
+        <PerpDexModule />
+      </div>
+
+      {/* Activité & ressources — TWAPs / Ecosystem / Wiki */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <TwapModule />
         <EcosystemModule />
         <WikiModule />
       </div>
