@@ -24,7 +24,17 @@ import { useNumberFormat, type NumberFormatType } from "@/store/number-format.st
 type Market = "spot" | "perp";
 type Row = SpotToken | PerpMarketData;
 
-const TOP_N = 5;
+const TOP_N = 7;
+
+/** Compact count (no currency) — for token supply: 1.2B, 350M, 12.3K. */
+function compactCount(n: number, format: NumberFormatType): string {
+  if (!Number.isFinite(n)) return "—";
+  const abs = Math.abs(n);
+  if (abs >= 1e9) return `${formatNumber(n / 1e9, format, { maximumFractionDigits: 2 })}B`;
+  if (abs >= 1e6) return `${formatNumber(n / 1e6, format, { maximumFractionDigits: 2 })}M`;
+  if (abs >= 1e3) return `${formatNumber(n / 1e3, format, { maximumFractionDigits: 1 })}K`;
+  return formatNumber(n, format, { maximumFractionDigits: 0 });
+}
 
 function fmtPrice(price: number, format: NumberFormatType): string {
   if (price >= 1000) {
@@ -105,6 +115,24 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
           type: "numeric",
           accessor: (t) => compactUsd(t.volume),
         },
+        {
+          key: "marketCap",
+          header: "Market Cap",
+          type: "numeric",
+          accessor: (t) => compactUsd((t as SpotToken).marketCap),
+        },
+        {
+          key: "liquidity",
+          header: "Liquidity",
+          type: "numeric",
+          accessor: (t) => compactUsd((t as SpotToken).liquidity),
+        },
+        {
+          key: "supply",
+          header: "Supply",
+          type: "numeric",
+          accessor: (t) => compactCount((t as SpotToken).supply, format),
+        },
       ];
     }
     return [
@@ -126,16 +154,28 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
         accessor: (t) => <SignedPct value={t.change24h} />,
       },
       {
+        key: "volume",
+        header: "Volume",
+        type: "numeric",
+        accessor: (t) => compactUsd(t.volume),
+      },
+      {
+        key: "openInterest",
+        header: "Open Interest",
+        type: "numeric",
+        accessor: (t) => compactUsd((t as PerpMarketData).openInterest),
+      },
+      {
         key: "funding",
         header: "Funding",
         align: "right",
         accessor: (t) => <SignedPct value={(t as PerpMarketData).funding * 100} decimals={4} />,
       },
       {
-        key: "openInterest",
-        header: "OI",
+        key: "maxLeverage",
+        header: "Max Lev.",
         type: "numeric",
-        accessor: (t) => compactUsd((t as PerpMarketData).openInterest),
+        accessor: (t) => `${(t as PerpMarketData).maxLeverage}x`,
       },
     ];
   }, [market, format]);

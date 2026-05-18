@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Building2 } from "lucide-react";
-import { OverviewModule, ModuleRow, ModuleSubhead } from "../OverviewModule";
+import { OverviewModule, ModuleRow } from "../OverviewModule";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -12,8 +12,11 @@ export const PerpDexModule = memo(function PerpDexModule() {
   const { dexs, globalStats, isLoading } = usePerpDexMarketData();
   const { format } = useNumberFormat();
 
+  const intFmt = (v: number | null | undefined) =>
+    v != null ? formatNumber(v, format, { maximumFractionDigits: 0 }) : "—";
+
   const topDexs = useMemo(() => {
-    return [...dexs].sort((a, b) => b.totalVolume24h - a.totalVolume24h).slice(0, 5);
+    return [...dexs].sort((a, b) => b.totalVolume24h - a.totalVolume24h).slice(0, 7);
   }, [dexs]);
 
   return (
@@ -23,24 +26,22 @@ export const PerpDexModule = memo(function PerpDexModule() {
       href="/market/perpdex"
       isLoading={isLoading}
       stats={[
-        {
-          label: "Perp Dexes",
-          value:
-            globalStats?.totalDexs != null
-              ? formatNumber(globalStats.totalDexs, format, { maximumFractionDigits: 0 })
-              : "—",
-        },
-        {
-          label: "Markets",
-          value:
-            globalStats?.totalAssets != null
-              ? formatNumber(globalStats.totalAssets, format, { maximumFractionDigits: 0 })
-              : "—",
-        },
+        { label: "Perp Dexes", value: intFmt(globalStats?.totalDexs) },
+        { label: "Markets", value: intFmt(globalStats?.totalAssets) },
         { label: "24h Volume", value: compactUsd(globalStats?.totalVolume24h) },
+        { label: "Open Interest", value: compactUsd(globalStats?.totalOpenInterest) },
       ]}
     >
-      <ModuleSubhead>Top by volume</ModuleSubhead>
+      {/* En-tête de colonnes */}
+      <div className="flex items-center gap-3 px-4 pt-2.5 pb-1.5 text-[9px] uppercase tracking-[0.08em] text-text-tertiary font-medium border-b border-border-subtle">
+        <span className="flex-1 min-w-0">Dex</span>
+        <span className="w-[52px] text-right">Markets</span>
+        <span className="w-[68px] text-right">Vol 24h</span>
+        <span className="w-[68px] text-right">OI</span>
+      </div>
+      {isLoading && topDexs.length === 0 && (
+        <div className="px-4 py-2 text-[12px] text-text-tertiary">…</div>
+      )}
       {topDexs.map((dex) => (
         <ModuleRow
           key={dex.name}
@@ -54,9 +55,17 @@ export const PerpDexModule = memo(function PerpDexModule() {
             </>
           }
           right={
-            <span className="mono text-[12px] text-text-secondary">
-              {compactUsd(dex.totalVolume24h)}
-            </span>
+            <>
+              <span className="mono text-[12px] text-text-secondary w-[52px] text-right">
+                {intFmt(dex.totalAssets)}
+              </span>
+              <span className="mono text-[12px] text-text-secondary w-[68px] text-right">
+                {compactUsd(dex.totalVolume24h)}
+              </span>
+              <span className="mono text-[12px] text-text-secondary w-[68px] text-right">
+                {compactUsd(dex.totalOpenInterest)}
+              </span>
+            </>
           }
         />
       ))}

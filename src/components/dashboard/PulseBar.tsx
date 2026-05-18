@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
+import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { useFeesStats } from "@/services/market/fees/hooks/useFeesStats";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -14,12 +15,13 @@ interface KpiCell {
 
 /**
  * PulseBar — bandeau de KPI horizontal du Dashboard.
- * Ruban continu (1 conteneur, 6 cellules), sans sparkline ni delta :
+ * Ruban continu (1 conteneur, 8 cellules), sans sparkline ni delta :
  * l'API ne fournit pas d'historique par métrique.
  */
 export const PulseBar = memo(function PulseBar() {
   const { stats, isLoading: statsLoading } = useDashboardStats();
   const { stats: perpStats } = usePerpGlobalStats();
+  const { stats: spotStats } = useSpotGlobalStats();
   const { feesStats } = useFeesStats();
   const { format } = useNumberFormat();
 
@@ -56,10 +58,18 @@ export const PulseBar = memo(function PulseBar() {
       label: "Users",
       value: statsLoading && !stats ? loadingPlaceholder : formatCount(stats?.numberOfUsers),
     },
+    {
+      label: "Spot Market Cap",
+      value: compactUsd(spotStats?.totalMarketCap),
+    },
+    {
+      label: "Bridged USDC",
+      value: statsLoading && !stats ? loadingPlaceholder : compactUsd(stats?.bridgedUsdc),
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-8 bg-surface border border-border-subtle rounded-lg overflow-hidden">
       {kpis.map((kpi, index) => (
         <div
           key={kpi.label}
