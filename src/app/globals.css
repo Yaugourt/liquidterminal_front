@@ -168,28 +168,6 @@
         @apply text-sm text-text-primary font-semibold;
     }
 
-    /* ===== Shadow Utilities ===== */
-    /* V4 removes ambient shadows. Kept as a no-op so ~112 legacy consumers
-       (`shadow-premium`) don't break; the name is dropped in Phase 5. */
-    .shadow-premium {
-        box-shadow: none;
-    }
-
-    /* ===== Glass Panel (cards, sections) ===== */
-    /* V4: solid whisper-navy surface, opaque subtle border, 8px radius.
-       Glassmorphism (blur + translucency + shadow) removed. */
-    .glass-panel {
-        @apply bg-surface border border-border-subtle rounded-lg;
-    }
-
-    /* ===== Interactive Elements ===== */
-    .interactive-card {
-        @apply hover:border-border-default transition-all duration-200;
-    }
-
-    .interactive-button {
-        @apply hover:bg-surface-2 transition-colors;
-    }
 
     /* ===== Text Utilities ===== */
     .text-muted {
