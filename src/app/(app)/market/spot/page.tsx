@@ -30,7 +30,7 @@ export default function Market() {
       <MarketStatsStrip market="spot" />
 
       {/* Auction — status (left) + 5 recent auctions (right) */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.3fr] gap-4 items-stretch">
         <AuctionCard marketType="spot" />
         <RecentAuctionsCard />
       </div>
