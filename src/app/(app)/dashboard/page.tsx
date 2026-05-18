@@ -2,14 +2,12 @@
 
 import { PageHeader } from "@/components/common";
 import { HeroPulse } from "@/components/dashboard/HeroPulse";
-import { SpotModule } from "@/components/dashboard/modules/SpotModule";
-import { PerpModule } from "@/components/dashboard/modules/PerpModule";
-import { PerpDexModule } from "@/components/dashboard/modules/PerpDexModule";
+import { MoversCard } from "@/components/dashboard/MoversCard";
+import { CapitalCard } from "@/components/dashboard/CapitalCard";
+import { LiquidationsCard } from "@/components/dashboard/LiquidationsCard";
+import { TwapCard } from "@/components/dashboard/TwapCard";
 import { BuildersModule } from "@/components/dashboard/modules/BuildersModule";
-import { ExplorerModule } from "@/components/dashboard/modules/ExplorerModule";
-import { EcosystemModule } from "@/components/dashboard/modules/EcosystemModule";
-import { WikiModule } from "@/components/dashboard/modules/WikiModule";
-import { TwapModule } from "@/components/dashboard/modules/TwapModule";
+import { PerpDexModule } from "@/components/dashboard/modules/PerpDexModule";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { AuctionCard } from "@/components/market/auction";
 import { Card } from "@/components/ui/card";
@@ -17,9 +15,9 @@ import { Card } from "@/components/ui/card";
 /**
  * Dashboard — vue d'ensemble de Liquid Terminal.
  *
- * Layout bento : en-tête + zones de tailles variées. La hiérarchie est
- * portée par la taille (le chart et les marchés prennent plus de place)
- * et chaque zone de l'app a son résumé + lien.
+ * Layout bento : en-tête + chart/auction, puis Spot et Perp en pleine
+ * largeur (tableaux complets), puis l'activité et la chaîne. La hiérarchie
+ * est portée par la taille — les marchés ont le plus de place.
  */
 export default function Home() {
   return (
@@ -42,24 +40,26 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Marchés — Spot + Perp, plus de contenu (top 5) */}
+      {/* Marchés — pleine largeur, tableaux complets */}
+      <MoversCard market="spot" />
+      <MoversCard market="perp" />
+
+      {/* Activité live */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <SpotModule />
-        <PerpModule />
+        <LiquidationsCard />
+        <TwapCard />
       </div>
 
-      {/* Chaîne — Explorer / Builders / PerpDexs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <ExplorerModule />
+      {/* Capital — vaults + validators */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <CapitalCard kind="vaults" />
+        <CapitalCard kind="validators" />
+      </div>
+
+      {/* Chaîne — builders + perp dexes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BuildersModule />
         <PerpDexModule />
-      </div>
-
-      {/* Activité & ressources — TWAPs / Ecosystem / Wiki */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <TwapModule />
-        <EcosystemModule />
-        <WikiModule />
       </div>
     </div>
   );
