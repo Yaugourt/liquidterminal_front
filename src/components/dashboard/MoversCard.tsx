@@ -24,7 +24,7 @@ import { useNumberFormat, type NumberFormatType } from "@/store/number-format.st
 type Market = "spot" | "perp";
 type Row = SpotToken | PerpMarketData;
 
-const TOP_N = 10;
+const TOP_N = 5;
 
 function fmtPrice(price: number, format: NumberFormatType): string {
   if (price >= 1000) {
@@ -105,12 +105,6 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
           type: "numeric",
           accessor: (t) => compactUsd(t.volume),
         },
-        {
-          key: "marketCap",
-          header: "MCap",
-          type: "numeric",
-          accessor: (t) => compactUsd((t as SpotToken).marketCap),
-        },
       ];
     }
     return [
@@ -142,12 +136,6 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
         header: "OI",
         type: "numeric",
         accessor: (t) => compactUsd((t as PerpMarketData).openInterest),
-      },
-      {
-        key: "volume",
-        header: "Volume",
-        type: "numeric",
-        accessor: (t) => compactUsd(t.volume),
       },
     ];
   }, [market, format]);

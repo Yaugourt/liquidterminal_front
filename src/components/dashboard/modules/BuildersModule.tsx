@@ -17,7 +17,7 @@ export const BuildersModule = memo(function BuildersModule() {
   const { data: top, isLoading: topLoading } = useBuildersTop({
     timeframe: "24h",
     sort: "builder_fees",
-    limit: 3,
+    limit: 5,
   });
   const { format } = useNumberFormat();
 
@@ -27,7 +27,7 @@ export const BuildersModule = memo(function BuildersModule() {
     () =>
       [...(top?.builders ?? [])]
         .sort((a, b) => (b.totalBuilderFees ?? 0) - (a.totalBuilderFees ?? 0))
-        .slice(0, 3),
+        .slice(0, 5),
     [top?.builders]
   );
 
