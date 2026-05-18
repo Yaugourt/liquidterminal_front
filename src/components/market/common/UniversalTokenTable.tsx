@@ -121,9 +121,9 @@ export function UniversalTokenTable({
         key: "name",
         header: "Name",
         accessor: (t) => (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
                 <TokenIcon src={t.logo} name={t.name} size="sm" />
-                <span className="text-text-primary text-sm font-medium">{t.name}</span>
+                <span className="text-text-primary text-sm font-medium truncate">{t.name}</span>
             </div>
         ),
     };
@@ -146,6 +146,7 @@ export function UniversalTokenTable({
         key: "change24h",
         header: "24h",
         sortable: true,
+        align: "right",
         accessor: (t) => (
             mode === 'compact'
                 ? (
@@ -176,26 +177,28 @@ export function UniversalTokenTable({
     // Build columns array per mode × market
     let columns: Column<TokenRow>[];
 
+    // Largeurs en % qui totalisent 100 % — table-fixed (fixedLayout) → colonnes régulières.
     if (mode === 'compact') {
         if (market === 'spot') {
             // Compact spot: Name, Price, Volume, 24h
             columns = [
-                nameCol,
-                priceCol,
-                volumeCol,
-                { ...change24hCol, sortable: true },
+                { ...nameCol, width: '34%' },
+                { ...priceCol, width: '22%' },
+                { ...volumeCol, width: '22%' },
+                { ...change24hCol, sortable: true, width: '22%' },
             ];
         } else {
             // Compact perp: Name, Price, 24h, OI
             columns = [
-                nameCol,
-                priceCol,
-                change24hCol,
+                { ...nameCol, width: '30%' },
+                { ...priceCol, width: '22%' },
+                { ...change24hCol, width: '22%' },
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
+                    width: '26%',
                     accessor: (t) => `$${formatNumber(t.openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
                 },
             ];
@@ -204,40 +207,45 @@ export function UniversalTokenTable({
         // Full mode
         if (market === 'spot') {
             columns = [
-                nameCol,
-                priceCol,
-                change24hCol,
-                volumeCol,
+                { ...nameCol, width: '22%' },
+                { ...priceCol, width: '14%' },
+                { ...change24hCol, width: '14%' },
+                { ...volumeCol, width: '18%' },
                 {
                     key: "marketCap",
                     header: "Market Cap",
                     type: "numeric",
                     sortable: true,
+                    width: '18%',
                     accessor: (t) => `$${formatNumber(t.marketCap, format)}`,
                 },
                 {
                     key: "supply",
                     header: "Supply",
                     type: "numeric",
+                    width: '14%',
                     accessor: (t) => formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
                 },
             ];
         } else {
             columns = [
-                nameCol,
-                priceCol,
-                change24hCol,
-                volumeCol,
+                { ...nameCol, width: '22%' },
+                { ...priceCol, width: '14%' },
+                { ...change24hCol, width: '14%' },
+                { ...volumeCol, width: '17%' },
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
+                    width: '17%',
                     accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
                 },
                 {
                     key: "funding",
                     header: "Funding Rate",
+                    align: "right",
+                    width: '16%',
                     accessor: (t) => (
                         <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
                             {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
@@ -263,6 +271,7 @@ export function UniversalTokenTable({
             emptyMessage="Aucun token disponible"
             emptyDescription="Vérifiez plus tard"
             className={mode === 'compact' ? 'h-full flex flex-col' : undefined}
+            fixedLayout
             // Server-sort
             onSortChange={handleSortChange}
             sortField={sortField}

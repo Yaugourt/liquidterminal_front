@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { type CSSProperties, type ReactNode } from "react";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { TableHead } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,8 @@ interface SortableTableHeadProps<F extends string> {
   children: ReactNode;
   /** Extra class on the wrapping `<TableHead>`. */
   className?: string;
+  /** Inline style on the wrapping `<TableHead>` (used for column width). */
+  style?: CSSProperties;
 }
 
 /**
@@ -36,6 +38,7 @@ export function SortableTableHead<F extends string>({
   align = "left",
   children,
   className,
+  style,
 }: SortableTableHeadProps<F>) {
   const isActive = currentField === field;
   const Icon =
@@ -46,7 +49,7 @@ export function SortableTableHead<F extends string>({
       : ArrowUp;
 
   return (
-    <TableHead className={cn("py-2 px-3.5", align === "right" && "text-right", className)}>
+    <TableHead style={style} className={cn("py-2 px-3.5", align === "right" && "text-right", className)}>
       <button
         type="button"
         onClick={() => onSort(field)}
