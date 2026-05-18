@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { StatsGrid } from "@/components/dashboard/StatsGrid";
+import { PageHeader } from "@/components/common";
+import { PulseStrip } from "@/components/dashboard/PulseStrip";
 import { TrendingTokensTabs } from "@/components/dashboard/tokens/TrendingTokensTabs";
 import { TabSection } from "@/components/dashboard/vaultValidator";
 import { TwapSection } from "@/components/dashboard/twap";
@@ -13,21 +14,17 @@ export default function Home() {
   const [, setPastAuctionHeight] = useState<number>(270);
 
   return (
-    <>
-      <div className="space-y-2">
-        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Liquid Terminal
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl">
-          Your real-time command center for the HyperLiquid ecosystem — live market stats, trending tokens, top vaults, validators, and active TWAPs at a glance.
-        </p>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title="Ecosystem Overview"
+        description="Real-time pulse of the HyperLiquid ecosystem — markets, capital, and live activity at a glance."
+      />
 
-      {/* Stats Grid */}
-      <StatsGrid />
+      {/* Niveau 1 — Pulse de l'écosystème */}
+      <PulseStrip />
 
       {/* Tokens + Chart */}
-      <div className="flex flex-col custom:flex-row gap-8 w-full custom:items-stretch">
+      <div className="flex flex-col custom:flex-row gap-4 w-full custom:items-stretch">
         <Card className="w-full custom:w-[35%] flex flex-col">
           <TrendingTokensTabs
             onTabChange={setActiveTokenTab}
@@ -40,14 +37,14 @@ export default function Home() {
       </div>
 
       {/* Vaults/Validators + TWAP */}
-      <div className="flex flex-col custom:flex-row custom:gap-8">
-        <Card className="w-full custom:w-[35%] mb-6 custom:mb-0">
+      <div className="flex flex-col custom:flex-row custom:gap-4">
+        <Card className="w-full custom:w-[35%] mb-4 custom:mb-0">
           <TabSection />
         </Card>
         <Card className="w-full custom:w-[65%]">
           <TwapSection />
         </Card>
       </div>
-    </>
+    </div>
   );
 }
