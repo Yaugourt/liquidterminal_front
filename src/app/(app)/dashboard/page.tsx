@@ -1,61 +1,59 @@
 "use client";
 
 import { PageHeader } from "@/components/common";
-import { EcosystemStats } from "@/components/dashboard/EcosystemStats";
+import { PulseBar } from "@/components/dashboard/PulseBar";
 import { MoversCard } from "@/components/dashboard/MoversCard";
-import { CapitalCard } from "@/components/dashboard/CapitalCard";
-import { LiquidationsCard } from "@/components/dashboard/LiquidationsCard";
-import { TwapCard } from "@/components/dashboard/TwapCard";
+import { AuctionsPanel } from "@/components/dashboard/AuctionsPanel";
+import { LiquidationsPanel } from "@/components/dashboard/LiquidationsPanel";
+import { TwapPanel } from "@/components/dashboard/TwapPanel";
+import { VaultsModule } from "@/components/dashboard/modules/VaultsModule";
+import { ValidatorsModule } from "@/components/dashboard/modules/ValidatorsModule";
 import { BuildersModule } from "@/components/dashboard/modules/BuildersModule";
 import { PerpDexModule } from "@/components/dashboard/modules/PerpDexModule";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
-import { AuctionCard } from "@/components/market/auction";
 import { Card } from "@/components/ui/card";
 
 /**
  * Dashboard — vue d'ensemble de Liquid Terminal.
  *
- * Bandeau de KPI en cartes + chart/auctions, puis Spot/Perp en pleine
- * largeur (tableaux complets), liquidations, TWAP, capital, chaîne.
+ * Forme convergée : pulse bar (l'état de l'écosystème) en haut · grille 12
+ * colonnes — colonne principale (marchés + chart) et colonne live (auctions,
+ * liquidations, TWAP) · capital & infrastructure en bas.
  */
 export default function Home() {
   return (
     <div className="space-y-4">
       <PageHeader
         title="Ecosystem Overview"
-        description="Real-time pulse of the HyperLiquid ecosystem — every corner of Liquid Terminal at a glance."
+        description="Real-time pulse of the Hyperliquid ecosystem."
       />
 
-      {/* KPI écosystème — une carte par stat + carte Liquidations 24h */}
-      <EcosystemStats />
+      {/* Pulse bar — l'état de l'écosystème */}
+      <PulseBar />
 
-      {/* Tendance + auctions live (spot & perp) */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 items-stretch">
-        <Card className="xl:col-span-2 flex flex-col min-h-[380px]">
-          <ChartSection />
-        </Card>
-        <AuctionCard marketType="spot" />
-        <AuctionCard marketType="perp" />
+      {/* Grille 12 col — principale (marchés + chart) + colonne live */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+        <div className="xl:col-span-8 flex flex-col gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <MoversCard market="spot" />
+            <MoversCard market="perp" />
+          </div>
+          <Card className="flex flex-col min-h-[360px]">
+            <ChartSection />
+          </Card>
+        </div>
+
+        <div className="xl:col-span-4 flex flex-col gap-4">
+          <AuctionsPanel />
+          <LiquidationsPanel />
+          <TwapPanel />
+        </div>
       </div>
 
-      {/* Marchés — pleine largeur, tableaux complets */}
-      <MoversCard market="spot" />
-      <MoversCard market="perp" />
-
-      {/* Activité live */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <LiquidationsCard />
-        <TwapCard />
-      </div>
-
-      {/* Capital — vaults + validators */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <CapitalCard kind="vaults" />
-        <CapitalCard kind="validators" />
-      </div>
-
-      {/* Chaîne — builders + perp dexes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Capital & infrastructure */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <VaultsModule />
+        <ValidatorsModule />
         <BuildersModule />
         <PerpDexModule />
       </div>

@@ -13,7 +13,7 @@ export const PerpDexModule = memo(function PerpDexModule() {
   const { format } = useNumberFormat();
 
   const topDexs = useMemo(() => {
-    return [...dexs].sort((a, b) => b.totalVolume24h - a.totalVolume24h).slice(0, 3);
+    return [...dexs].sort((a, b) => b.totalVolume24h - a.totalVolume24h).slice(0, 5);
   }, [dexs]);
 
   return (
