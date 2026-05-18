@@ -109,9 +109,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                         onClick={() => setIsOpen(false)}
                     >
-                        <div className="w-[22px] h-[22px] rounded-md bg-brand text-brand-text-on flex items-center justify-center text-[13px] font-semibold">
-                            L
-                        </div>
+                        <Image src="/logo.svg" alt="Liquid Terminal" width={22} height={22} priority />
                         <h1 className="hidden lg:block text-sm font-semibold text-text-primary">
                             Liquid Terminal
                         </h1>
