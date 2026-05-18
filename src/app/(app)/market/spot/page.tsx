@@ -6,7 +6,6 @@ import { usePageTitle } from "@/store/use-page-title";
 import { MarketStatsStrip, TokensSection } from "@/components/market/common";
 import { AuctionCard } from "@/components/market/auction";
 import { PageHeader } from "@/components/common";
-import { Card } from "@/components/ui/card";
 
 export default function Market() {
   const { setTitle } = usePageTitle();
@@ -30,13 +29,11 @@ export default function Market() {
       {/* KPI strip */}
       <MarketStatsStrip market="spot" />
 
-      {/* Table + Auction side by side on wide screens */}
-      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4">
-        <Card className="overflow-hidden p-0">
-          <TokensSection market="spot" />
-        </Card>
-        <AuctionCard marketType="spot" />
-      </div>
+      {/* Auction status — featured widget */}
+      <AuctionCard marketType="spot" />
+
+      {/* Token directory — main table */}
+      <TokensSection market="spot" />
     </motion.div>
   );
 }
