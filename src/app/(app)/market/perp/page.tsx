@@ -30,7 +30,7 @@ export default function MarketPerp() {
       <MarketStatsStrip market="perp" />
 
       {/* Auction — status (left) + 5 recent auctions (right) */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.3fr] gap-4 items-stretch">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.3fr] gap-4 items-start">
         <AuctionCard marketType="perp" />
         <RecentAuctionsCard />
       </div>
