@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import { MarketStatsStrip, TokensSection } from "@/components/market/common";
-import { AuctionCard } from "@/components/market/auction";
+import { AuctionCard, RecentAuctionsCard } from "@/components/market/auction";
 import { PageHeader } from "@/components/common";
 
 export default function Market() {
@@ -29,8 +29,11 @@ export default function Market() {
       {/* KPI strip */}
       <MarketStatsStrip market="spot" />
 
-      {/* Auction status — featured widget */}
-      <AuctionCard marketType="spot" />
+      {/* Auction — status (left) + 5 recent auctions (right) */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <AuctionCard marketType="spot" />
+        <RecentAuctionsCard />
+      </div>
 
       {/* Token directory — main table */}
       <TokensSection market="spot" />
