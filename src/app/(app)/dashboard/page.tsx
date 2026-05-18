@@ -3,8 +3,10 @@
 import { PageHeader } from "@/components/common";
 import { PulseStrip } from "@/components/dashboard/PulseStrip";
 import { MoversCard } from "@/components/dashboard/MoversCard";
-import { TabSection } from "@/components/dashboard/vaultValidator";
-import { TwapSection } from "@/components/dashboard/twap";
+import { CapitalCard } from "@/components/dashboard/CapitalCard";
+import { LiquidationsCard } from "@/components/dashboard/LiquidationsCard";
+import { TwapCard } from "@/components/dashboard/TwapCard";
+import { AuctionsCard } from "@/components/dashboard/AuctionsCard";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
 import { Card } from "@/components/ui/card";
 
@@ -30,15 +32,18 @@ export default function Home() {
         <MoversCard market="perp" />
       </div>
 
-      {/* Vaults/Validators + TWAP */}
-      <div className="flex flex-col custom:flex-row custom:gap-4">
-        <Card className="w-full custom:w-[35%] mb-4 custom:mb-0">
-          <TabSection />
-        </Card>
-        <Card className="w-full custom:w-[65%]">
-          <TwapSection />
-        </Card>
+      {/* Niveau 4 — Où est le capital : vaults + validators */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <CapitalCard kind="vaults" />
+        <CapitalCard kind="validators" />
       </div>
+
+      {/* Niveau 5 — Activité live : auctions + liquidations + TWAPs */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <AuctionsCard />
+        <LiquidationsCard />
+      </div>
+      <TwapCard />
     </div>
   );
 }
