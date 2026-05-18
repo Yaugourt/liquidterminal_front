@@ -4,7 +4,7 @@
 
 /* Dark mode only - app is 100% dark themed */
 :root {
-    --background: 220 20% 4%; /* #0B0E14 */
+    --background: 228 20% 5%; /* #0A0B0F — realigned on V4 --bg-base */
     --foreground: 0 0% 93%; /* #ededed */
 
     /*
@@ -21,6 +21,67 @@
     --chart-up-rgb: 16 185 129;       /* emerald #10b981 */
     --chart-down-rgb: 244 63 94;      /* rose #f43f5e */
     --chart-violet-rgb: 167 139 250;  /* #a78bfa */
+
+    /*
+     * ===== V4 Design System tokens (dark mode) =====
+     * Format: "R G B" triplets, consumed via `rgb(var(--x) / <alpha-value>)` in tailwind.
+     */
+
+    /* Surfaces (V4 whisper navy signature) */
+    --bg-base: 10 11 15;          /* #0A0B0F */
+    --bg-surface: 15 20 33;       /* #0F1421 — the whisper navy V4 signature */
+    --bg-surface-2: 20 27 42;     /* #141B2A */
+    --bg-surface-3: 28 36 54;     /* #1C2436 */
+
+    /* Borders */
+    --border-subtle: 30 37 53;    /* #1E2535 — opaque whisper navy (replaces V2 white/5) */
+    --border-default: 44 53 74;   /* #2C354A */
+    --border-strong: 61 71 96;    /* #3D4760 */
+
+    /* Text */
+    --text-primary: 232 234 237;  /* #E8EAED */
+    --text-secondary: 156 163 175;/* #9CA3AF */
+    --text-tertiary: 107 114 128; /* #6B7280 */
+
+    /* Brand cyan signature */
+    --brand: 131 233 255;         /* #83E9FF */
+    --brand-hover: 168 240 255;   /* #A8F0FF */
+    --brand-deep: 22 146 173;     /* #1692AD */
+    --brand-text-on: 5 23 40;     /* #051728 — navy on cyan */
+
+    /* Action (primary CTAs) */
+    --action: 22 146 173;         /* #1692AD */
+    --action-hover: 31 168 196;   /* #1FA8C4 */
+
+    /* Gold — reserved for Builder Fees column (signature) */
+    --gold: 249 227 112;          /* #F9E370 */
+
+    /* Semantic */
+    --success: 31 168 91;         /* #1FA85B */
+    --danger: 229 62 62;          /* #E53E3E */
+    --warning: 245 158 11;        /* #F59E0B */
+
+    /*
+     * Composite tokens — full color/shadow values, NOT "R G B" triplets.
+     * Consumed via arbitrary values, e.g. `bg-[--brand-bg]`, `shadow-[--shadow-md]`.
+     */
+    --bg-overlay: rgba(10, 11, 15, 0.80);   /* modal/dialog scrim */
+    --text-disabled: #4B5563;
+
+    --brand-bg: rgba(131, 233, 255, 0.10);
+    --brand-bg-strong: rgba(131, 233, 255, 0.20);
+    --brand-border: rgba(131, 233, 255, 0.30);
+
+    --success-bg: rgba(31, 168, 91, 0.12);
+    --danger-bg: rgba(229, 62, 62, 0.12);
+    --warning-bg: rgba(245, 158, 11, 0.12);
+
+    --gold-bg: rgba(249, 227, 112, 0.10);
+    --gold-border: rgba(249, 227, 112, 0.30);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20);   /* dropdowns */
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.30);  /* tooltips, popovers */
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.40); /* modals */
 }
 
 @layer base {
@@ -43,6 +104,16 @@
 
     body {
         @apply bg-background text-foreground font-sans antialiased;
+        /* V4 base body text size (13px). Safe — `rem` spacing keys off the html
+           root, not body, so layout spacing is unaffected. */
+        font-size: 13px;
+        line-height: 1.5;
+        /* V4 ambient cyan gradient at top of page (subtle brand marker, 3.5%). */
+        background-image: radial-gradient(
+            ellipse 100% 50% at 50% -10%,
+            rgb(var(--brand) / 0.035),
+            transparent 70%
+        );
     }
 
     /* UA defaults use monospace for code blocks; align with site typography. */
@@ -62,27 +133,28 @@
 
     /**
      * Column headers for data tables (Markets, DEX list, etc.):
-     * light weight, small caps — not the bold "text-label" badge style.
+     * V4 ref: 10px, uppercase, tracking 0.08em, font-medium, text-tertiary.
      */
     .table-column-head {
-        @apply text-[10px] font-normal uppercase tracking-wide text-text-muted;
+        @apply text-[10px] font-medium uppercase tracking-[0.08em] text-text-tertiary;
     }
 
     .text-table-header {
-        @apply text-[10px] font-normal uppercase tracking-wide text-text-muted;
+        @apply text-[10px] font-medium uppercase tracking-[0.08em] text-text-tertiary;
     }
 
     /* États actifs pour les colonnes triables */
     .table-header-active-accent {
-        @apply text-brand-accent;
+        @apply text-brand;
     }
 
     .table-header-active-gold {
-        @apply text-brand-gold;
+        @apply text-gold;
     }
 
+    /* V4 ref: data cells render at 12px (between text-xs 11px and text-sm 13px). */
     .text-table-cell {
-        @apply text-sm text-white;
+        @apply text-[12px] text-text-primary;
     }
 
     .text-stat-label {
@@ -90,55 +162,74 @@
     }
 
     .text-stat-value {
-        @apply text-sm text-white font-bold;
-    }
-
-    /* ===== Shadow Utilities ===== */
-    .shadow-premium {
-        @apply shadow-xl shadow-black/20;
-    }
-
-    /* ===== Glass Panel (cards, sections) ===== */
-    .glass-panel {
-        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
-    }
-
-    /* ===== Interactive Elements ===== */
-    .interactive-card {
-        @apply hover:border-border-hover transition-all duration-200;
-    }
-
-    .interactive-button {
-        @apply hover:bg-white/5 transition-colors;
+        @apply text-sm text-text-primary font-semibold;
     }
 
     /* ===== Text Utilities ===== */
     .text-muted {
-        @apply text-text-muted;
+        @apply text-text-tertiary;
     }
 
     /* ===== Stat Cards (Header) ===== */
+    /* V4: solid surface, no blur. */
     .stat-card {
-        @apply bg-brand-secondary/40 backdrop-blur-sm border border-border-subtle 
-           rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all 
-           hover:border-border-hover;
+        @apply bg-surface border border-border-subtle
+           rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all
+           hover:border-border-default;
     }
 
     /* ===== Interactive Hover States ===== */
 
     /* Pattern 1: Onglets/Tabs inactifs */
     .tab-inactive {
-        @apply text-text-secondary hover:text-zinc-200 hover:bg-white/5;
+        @apply text-text-secondary hover:text-text-primary hover:bg-surface-2;
     }
 
     /* Pattern 3: Éléments avec hover léger */
     .hover-subtle {
-        @apply hover:bg-white/5 transition-colors;
+        @apply hover:bg-surface-2 transition-colors;
     }
 
     /* Pattern 4: Liens/boutons secondary */
     .interactive-secondary {
-        @apply text-text-secondary hover:text-white hover:bg-white/5;
+        @apply text-text-secondary hover:text-text-primary hover:bg-surface-2;
+    }
+
+    /* ===== V4 utility classes ===== */
+
+    /**
+     * `.mono` — JetBrains Mono + tabular-nums for all numeric data in V4.
+     * Usage: <span className="mono">$182,541,344</span>
+     */
+    .mono {
+        font-family: var(--font-mono), 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+
+    /**
+     * `.fees-cell` — V4 gold signature, reserved for the Builder Fees column.
+     */
+    .fees-cell {
+        color: rgb(var(--gold));
+        font-weight: 500;
+    }
+
+    /* ===== Legacy utilities (pages pas encore reprises — retirées au fil de la migration) ===== */
+    .shadow-premium {
+        @apply shadow-xl shadow-black/20;
+    }
+
+    .glass-panel {
+        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
+    }
+
+    .interactive-card {
+        @apply hover:border-border-hover transition-all duration-200;
+    }
+
+    .interactive-button {
+        @apply hover:bg-white/5 transition-colors;
     }
 }
 

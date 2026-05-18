@@ -10,10 +10,24 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				/** Single UI stack site-wide (titles, body, tables, former “mono” slots). */
+				/** Inter for UI / body / headings. */
 				inter: ['var(--font-inter)', 'Inter', 'sans-serif'],
 				sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
-				mono: ['var(--font-inter)', 'Inter', 'sans-serif'],
+				/** JetBrains Mono for all numeric data (V4 signature). Tabular-nums via `.mono` utility. */
+				mono: ['var(--font-mono)', 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', 'Menlo', 'monospace'],
+			},
+			/**
+			 * V4 type scale. Absolute px values so they don't depend on root font-size.
+			 */
+			fontSize: {
+				'2xs': ['10px', { lineHeight: '1.4' }],
+				'xs': ['11px', { lineHeight: '1.4' }],
+				'sm': ['13px', { lineHeight: '1.5' }],
+				'base': ['14px', { lineHeight: '1.5' }],
+				'lg': ['16px', { lineHeight: '1.4' }],
+				'xl': ['18px', { lineHeight: '1.3' }],
+				'2xl': ['22px', { lineHeight: '1.2' }],
+				'3xl': ['28px', { lineHeight: '1.1' }],
 			},
 			screens: {
 				'custom': '1227px',
@@ -31,8 +45,14 @@ export default {
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				// Brand colors
+
+				/* ===== V4 cyan signature — `bg-brand`, `text-brand`, `bg-brand-hover`, `bg-brand-deep` ===== */
 				brand: {
+					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
+					hover: 'rgb(var(--brand-hover) / <alpha-value>)',
+					deep: 'rgb(var(--brand-deep) / <alpha-value>)',
+					'text-on': 'rgb(var(--brand-text-on) / <alpha-value>)',
+					/* ----- legacy aliases (pages pas encore reprises — retirées au fil de la migration) ----- */
 					main: '#0B0E14',
 					secondary: '#151A25',
 					tertiary: '#051728',
@@ -42,49 +62,82 @@ export default {
 					success: '#00ff88',
 					error: '#ef4444',
 					warning: '#f59e0b',
-					// External brand colors (third-party services).
-					// Document new additions in docs/DESIGN_SYSTEM.md.
+					/* External brand color (third-party service). */
 					telegram: '#0088cc',
 				},
-				// Semantic text colors
-				'text-primary': '#ffffff',
-				'text-secondary': '#a1a1aa', // zinc-400
-				'text-muted': '#71717a',     // zinc-500
-				// Border tokens
-				'border-subtle': 'rgba(255, 255, 255, 0.05)',
-				'border-hover': 'rgba(255, 255, 255, 0.1)',
-				// shadcn/ui compatibility
+
+				/* ===== V4 surfaces (whisper navy) — `bg-base`, `bg-surface`, `bg-surface-2`, `bg-surface-3` ===== */
+				base: 'rgb(var(--bg-base) / <alpha-value>)',
+				surface: 'rgb(var(--bg-surface) / <alpha-value>)',
+				'surface-2': 'rgb(var(--bg-surface-2) / <alpha-value>)',
+				'surface-3': 'rgb(var(--bg-surface-3) / <alpha-value>)',
+
+				/* ===== V4 action color (primary CTAs) ===== */
+				action: {
+					DEFAULT: 'rgb(var(--action) / <alpha-value>)',
+					hover: 'rgb(var(--action-hover) / <alpha-value>)',
+				},
+
+				/* ===== V4 gold (`text-gold`, `bg-gold`) — reserved for Builder Fees column ===== */
+				gold: 'rgb(var(--gold) / <alpha-value>)',
+
+				/* ===== V4 semantic ===== */
+				success: 'rgb(var(--success) / <alpha-value>)',
+				danger: 'rgb(var(--danger) / <alpha-value>)',
+				warning: 'rgb(var(--warning) / <alpha-value>)',
+
+				/* ===== V4 semantic text colors ===== */
+				'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',     // #E8EAED
+				'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)', // #9CA3AF
+				'text-tertiary': 'rgb(var(--text-tertiary) / <alpha-value>)',   // #6B7280
+				'text-muted': '#71717a',     // legacy alias (zinc-500)
+
+				/* ===== V4 borders (whisper navy — opaque) ===== */
+				'border-subtle': 'rgb(var(--border-subtle) / <alpha-value>)',
+				'border-default': 'rgb(var(--border-default) / <alpha-value>)',
+				'border-strong': 'rgb(var(--border-strong) / <alpha-value>)',
+				'border-hover': 'rgba(255, 255, 255, 0.1)', // legacy alias
+
+				/* ===== shadcn/ui compatibility — mapped to V4 tokens by role ===== */
 				primary: {
-					DEFAULT: '#83E9FF',
+					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
 					foreground: '#051728',
 				},
 				secondary: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
 				destructive: {
-					DEFAULT: '#ef4444',
+					DEFAULT: 'rgb(var(--danger) / <alpha-value>)',
 					foreground: '#ffffff',
 				},
 				muted: {
-					DEFAULT: '#151A25',
-					foreground: '#a1a1aa',
+					DEFAULT: 'rgb(var(--bg-surface-2) / <alpha-value>)',
+					foreground: 'rgb(var(--text-secondary) / <alpha-value>)',
 				},
 				accent: {
-					DEFAULT: '#83E9FF',
+					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
 					foreground: '#051728',
 				},
 				card: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
 				popover: {
-					DEFAULT: '#151A25',
-					foreground: '#ffffff',
+					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
+					foreground: 'rgb(var(--text-primary) / <alpha-value>)',
 				},
-				input: 'rgba(255, 255, 255, 0.1)',
-				ring: '#83E9FF',
-			}
+				input: 'rgb(var(--border-default) / <alpha-value>)',
+				ring: 'rgb(var(--brand) / <alpha-value>)',
+			},
+			/**
+			 * V4 radius: cards/panels use `rounded-lg` (8px). Legacy consumers use
+			 * `rounded-2xl` (default 16px) — override `2xl` to 8px so they snap to V4.
+			 * `xl` (12px) left untouched: modal radius.
+			 */
+			borderRadius: {
+				'2xl': '8px',
+			},
 		}
 	}
 } satisfies Config;
