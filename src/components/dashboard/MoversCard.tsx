@@ -178,7 +178,7 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
       }
       data={(data ?? []).slice(0, TOP_N)}
       columns={columns}
-      getRowKey={(r) => r.name}
+      getRowKey={(r, i) => `${market}-${r.name}-${i}`}
       isLoading={isLoading}
       error={error}
       emptyMessage="No tokens available"
