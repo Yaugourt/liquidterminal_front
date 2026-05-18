@@ -53,7 +53,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "settledPrice",
       header: "Settled Price",
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-brand-accent">
+        <span className="text-xs tabular-nums text-brand">
           {formatSettledPrice(row.settled_px)}
         </span>
       ),
@@ -70,8 +70,8 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
           : isNo
           ? "text-rose-400 bg-rose-500/10"
           : row.winner_name
-          ? "text-brand-accent bg-brand-accent/10"
-          : "text-text-muted bg-white/5";
+          ? "text-brand bg-brand/10"
+          : "text-text-tertiary bg-white/5";
         return (
           <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${winColor}`}>
             {winner}
@@ -83,7 +83,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "settledAt",
       header: "Settled At",
       accessor: (row) => (
-        <span className="text-[11px] text-text-muted tabular-nums">
+        <span className="text-[11px] text-text-tertiary tabular-nums">
           {formatSettledAt(row.settled_at)}
         </span>
       ),
@@ -97,10 +97,10 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       transition={{ delay: 0.3, duration: 0.3 }}
     >
       <Card className="p-4 space-y-3">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
           <span className="h-1 w-1 rounded-full bg-emerald-400" />
           Settled Markets
-          <span className="text-text-muted/60">· {settlements.length}</span>
+          <span className="text-text-tertiary/60">· {settlements.length}</span>
         </div>
 
         <TypedDataTable<Hip4SettlementRow>

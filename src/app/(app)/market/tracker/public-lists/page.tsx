@@ -19,7 +19,7 @@ export default function PublicListsPage() {
           variant="outline"
           size="sm"
           onClick={() => router.push('/market/tracker')}
-          className="border-brand-accent/30 text-white hover:bg-brand-accent/12"
+          className="border-brand/30 text-white hover:bg-brand/12"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Tracker

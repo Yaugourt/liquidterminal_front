@@ -74,7 +74,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
         <Card className={CARD_BASE_CLASSES}>
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
-                    <TrendingUp size={16} className="text-brand-gold" />
+                    <TrendingUp size={16} className="text-gold" />
                     <h3 className="text-[11px] text-text-primary font-medium tracking-wide font-inter">PNL</h3>
                 </div>
                 <div
@@ -93,8 +93,8 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
                                 className={cn(
                                     "rounded px-2 py-0.5 text-[11px] font-semibold transition-colors",
                                     isActive
-                                        ? "bg-brand-gold/10 text-brand-gold"
-                                        : "text-text-muted hover:text-text-primary"
+                                        ? "bg-gold/10 text-gold"
+                                        : "text-text-tertiary hover:text-text-primary"
                                 )}
                             >
                                 {mode === 'percent' ? '%' : '$'}
@@ -107,7 +107,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {isLoading ? (
                     <div className="col-span-2 flex justify-center items-center p-4">
-                        <InlineSpinner className="w-5 h-5 text-brand-accent" />
+                        <InlineSpinner className="w-5 h-5 text-brand" />
                     </div>
                 ) : (
                     PERIODS.map(renderPeriod)

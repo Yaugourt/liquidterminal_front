@@ -95,7 +95,7 @@ function buildColumns(
                 "_blank"
               )
             }
-            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold px-3 py-1 h-7 text-xs flex items-center gap-1 mx-auto"
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold px-3 py-1 h-7 text-xs flex items-center gap-1 mx-auto"
             disabled={v.summary.isClosed}
           >
             Deposit
@@ -135,15 +135,15 @@ export function VaultEnhancedTable() {
   const toolbar = (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
       <div className="relative flex-1 max-w-xs">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
         <Input
           placeholder="Search vaults…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 h-8 text-sm bg-white/5 border-border-subtle text-text-primary placeholder:text-text-muted focus:border-brand-accent/50"
+          className="pl-9 h-8 text-sm bg-white/5 border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50"
         />
       </div>
-      <span className="text-text-muted text-xs ml-auto shrink-0">
+      <span className="text-text-tertiary text-xs ml-auto shrink-0">
         {filtered.length} vault{filtered.length !== 1 ? "s" : ""}
       </span>
     </div>

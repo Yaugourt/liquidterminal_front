@@ -58,19 +58,19 @@ export function AddToReadListModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm bg-brand-secondary border-border-hover p-0 z-[9999] overflow-hidden">
+      <DialogContent className="max-w-sm bg-surface border-border-default p-0 z-[9999] overflow-hidden">
         {/* Header */}
-        <div className="px-5 pt-5 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
+        <div className="px-5 pt-5 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0">
-                <ListPlus className="w-4 h-4 text-brand-accent" />
+              <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
+                <ListPlus className="w-4 h-4 text-brand" />
               </div>
               <div className="min-w-0">
                 <DialogTitle className="text-sm font-bold text-text-primary">
                   Add to Read List
                 </DialogTitle>
-                <p className="text-xs text-text-muted mt-0.5 truncate">{resourceLabel}</p>
+                <p className="text-xs text-text-tertiary mt-0.5 truncate">{resourceLabel}</p>
               </div>
             </div>
           </DialogHeader>
@@ -80,12 +80,12 @@ export function AddToReadListModal({
         {readLists.length > 3 && (
           <div className="px-4 pt-3 pb-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-muted" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
               <Input
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Search lists..."
-                className="pl-9 h-8 text-xs bg-brand-dark border-border-subtle text-text-primary rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+                className="pl-9 h-8 text-xs bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
               />
             </div>
           </div>
@@ -102,18 +102,18 @@ export function AddToReadListModal({
                 exit={{ opacity: 0, y: -8 }}
                 className="text-center py-8"
               >
-                <div className="w-10 h-10 mx-auto mb-3 bg-brand-accent/10 rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-brand-accent" />
+                <div className="w-10 h-10 mx-auto mb-3 bg-brand/10 rounded-xl flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-brand" />
                 </div>
-                <p className="text-sm text-text-muted">No read lists yet</p>
-                <p className="text-xs text-text-muted mt-1 opacity-70">Create one on the Read List page</p>
+                <p className="text-sm text-text-tertiary">No read lists yet</p>
+                <p className="text-xs text-text-tertiary mt-1 opacity-70">Create one on the Read List page</p>
               </motion.div>
             ) : filteredLists.length === 0 ? (
               <motion.div
                 key="no-results"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-6 text-sm text-text-muted"
+                className="text-center py-6 text-sm text-text-tertiary"
               >
                 No lists match &quot;{search}&quot;
               </motion.div>
@@ -131,32 +131,32 @@ export function AddToReadListModal({
                       onAddToList(readList.id);
                     }}
                     disabled={isAdding}
-                    className="w-full text-left px-3.5 py-2.5 text-sm text-text-primary hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand-accent/30 group/item"
+                    className="w-full text-left px-3.5 py-2.5 text-sm text-text-primary hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand/30 group/item"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-brand-accent/20 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-brand/20 transition-colors">
                       {addingToListId === readList.id ? (
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                          className="w-4 h-4 border-2 border-brand-accent/30 border-t-brand-accent rounded-full"
+                          className="w-4 h-4 border-2 border-brand/30 border-t-brand rounded-full"
                         />
                       ) : (
-                        <BookOpen className="w-4 h-4 text-brand-accent" />
+                        <BookOpen className="w-4 h-4 text-brand" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">{readList.name}</div>
                       {readList.description && (
-                        <div className="text-xs text-text-muted mt-0.5 truncate">{readList.description}</div>
+                        <div className="text-xs text-text-tertiary mt-0.5 truncate">{readList.description}</div>
                       )}
                     </div>
                     <div className="flex-shrink-0 flex items-center gap-1.5">
                       {readList.isPublic && (
-                        <span className="text-label bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded">
+                        <span className="text-label bg-brand/10 text-brand px-1.5 py-0.5 rounded">
                           Public
                         </span>
                       )}
-                      <span className="text-xs text-text-muted tabular-nums">
+                      <span className="text-xs text-text-tertiary tabular-nums">
                         {readList.itemsCount ?? 0}
                       </span>
                     </div>

@@ -129,17 +129,17 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                         >
                             <SelectTrigger className="w-full sm:w-[400px]">
                                 <div className="flex items-center gap-2 truncate">
-                                    <Wallet className="w-4 h-4 shrink-0 text-brand-accent" />
+                                    <Wallet className="w-4 h-4 shrink-0 text-brand" />
                                     <SelectValue>
                                         {activeItem ? (
                                             <div className="flex items-center gap-2">
                                                 <span className="font-medium">{activeItem.name || "Unnamed Wallet"}</span>
-                                                <span className="text-xs text-text-muted">
+                                                <span className="text-xs text-text-tertiary">
                                                     ({formatAddress(activeItem.address)})
                                                 </span>
                                             </div>
                                         ) : (
-                                            <span className="text-text-muted">Select a wallet...</span>
+                                            <span className="text-text-tertiary">Select a wallet...</span>
                                         )}
                                     </SelectValue>
                                 </div>
@@ -148,14 +148,14 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             <SelectContent className="max-h-[400px]">
                                 {/* Search input */}
                                 {items.length > 5 && (
-                                    <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-subtle">
+                                    <div className="p-2 sticky top-0 bg-surface z-10 border-b border-border-subtle">
                                         <div className="relative">
-                                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+                                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
                                             <Input
                                                 placeholder="Search wallets..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="pl-8 bg-brand-dark border-border-subtle text-text-primary h-8 rounded-lg"
+                                                className="pl-8 bg-base border-border-subtle text-text-primary h-8 rounded-lg"
                                                 onClick={(e) => e.stopPropagation()}
                                             />
                                         </div>
@@ -172,7 +172,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                     checked={selectedWalletIds.has(item.id)}
                                                     onCheckedChange={() => toggleWalletSelection(item.id)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
+                                                    className="border-white/20 data-[state=checked]:bg-brand data-[state=checked]:border-brand"
                                                 />
 
                                                 {/* Wallet Item */}
@@ -183,20 +183,20 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                     <div className="flex flex-col gap-1 w-full py-1">
                                                         <div className="flex items-center justify-between gap-2">
                                                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                                <Wallet className="w-4 h-4 text-brand-accent shrink-0" />
+                                                                <Wallet className="w-4 h-4 text-brand shrink-0" />
                                                                 <span className="font-medium truncate">
                                                                     {item.name || "Unnamed Wallet"}
                                                                 </span>
                                                             </div>
-                                                            <span className="text-xs text-text-muted shrink-0">
+                                                            <span className="text-xs text-text-tertiary shrink-0">
                                                                 {new Date(item.addedAt).toLocaleDateString()}
                                                             </span>
                                                         </div>
-                                                        <code className="text-xs text-text-muted pl-6">
+                                                        <code className="text-xs text-text-tertiary pl-6">
                                                             {item.address}
                                                         </code>
                                                         {item.notes && (
-                                                            <p className="text-xs text-text-muted italic pl-6">
+                                                            <p className="text-xs text-text-tertiary italic pl-6">
                                                                 {item.notes}
                                                             </p>
                                                         )}
@@ -226,14 +226,14 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                         </div>
                                     ))
                                 ) : searchQuery ? (
-                                    <div className="p-4 text-center text-sm text-text-muted">
+                                    <div className="p-4 text-center text-sm text-text-tertiary">
                                         No wallets found for &quot;{searchQuery}&quot;
                                     </div>
                                 ) : null}
 
                                 {/* Empty state */}
                                 {items.length === 0 && (
-                                    <div className="p-4 text-center text-sm text-text-muted">
+                                    <div className="p-4 text-center text-sm text-text-tertiary">
                                         {emptyMessage}
                                     </div>
                                 )}
@@ -241,9 +241,9 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                         </Select>
 
                         {/* Wallet count badge */}
-                        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-border-subtle rounded-lg text-xs text-brand-accent">
+                        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand/10 border border-border-subtle rounded-lg text-xs text-brand">
                             <span className="font-medium">{items.length}</span>
-                            <span className="text-text-muted">wallet{items.length !== 1 ? "s" : ""}</span>
+                            <span className="text-text-tertiary">wallet{items.length !== 1 ? "s" : ""}</span>
                         </div>
                     </div>
 
@@ -293,7 +293,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                     <Button
                         onClick={onAddWallet}
                         size="sm"
-                        className="w-full sm:w-auto bg-brand-gold hover:bg-brand-gold/90 text-black font-semibold rounded-lg"
+                        className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg"
                     >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         <span className="hidden sm:inline">Add Wallet</span>
@@ -304,7 +304,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
 
             {/* Bulk Delete Confirmation Dialog */}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <AlertDialogContent className="bg-brand-secondary border-border-hover rounded-2xl shadow-xl shadow-black/20">
+                <AlertDialogContent className="bg-surface border-border-default rounded-2xl shadow-xl shadow-black/20">
                     <AlertDialogHeader>
                         <AlertDialogTitle className="text-text-primary">Delete Multiple Wallets</AlertDialogTitle>
                         <AlertDialogDescription className="text-text-secondary">

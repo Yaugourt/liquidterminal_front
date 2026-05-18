@@ -56,7 +56,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const chartData = activeTab === "Account Value" ? accountValueData : tvlData;
   const lineColor = activeTab === "Account Value" ? chartPalette.accent : chartPalette.gold;
   const glowColor =
-    activeTab === "Account Value" ? "bg-brand-accent/10" : "bg-brand-gold/10";
+    activeTab === "Account Value" ? "bg-brand/10" : "bg-gold/10";
 
   return (
     <motion.div
@@ -73,7 +73,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
 
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
           <span
             className="h-1 w-1 rounded-full"
             style={{ background: lineColor }}
@@ -119,7 +119,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
           </div>
         ) : chartData.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-text-muted text-sm">No data available for this period.</p>
+            <p className="text-text-tertiary text-sm">No data available for this period.</p>
           </div>
         ) : (
           <AuroraAreaChart

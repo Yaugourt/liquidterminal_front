@@ -139,7 +139,7 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
             <Button
               onClick={handleLoadMore}
               disabled={loading}
-              className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
+              className="bg-brand hover:bg-brand text-brand-text-on font-medium"
             >
               {loading ? (
                 <>

@@ -28,7 +28,7 @@ export function Hip4HomeChapter() {
         <Hip4Callout variant="emphasis" title="Testnet & two tracks">
           <ul className="list-none space-y-2 pl-0">
             <li className="flex gap-2">
-              <span className="text-brand-gold" aria-hidden>
+              <span className="text-gold" aria-hidden>
                 ·
               </span>
               <span>
@@ -37,7 +37,7 @@ export function Hip4HomeChapter() {
               </span>
             </li>
             <li className="flex gap-2">
-              <span className="text-brand-gold" aria-hidden>
+              <span className="text-gold" aria-hidden>
                 ·
               </span>
               <span>
@@ -70,7 +70,7 @@ export function Hip4HomeChapter() {
             <code className="font-mono text-[11px]">SetOutcomeFeeScale</code>, fill normalization.
           </li>
           <li>
-            <strong className="text-brand-gold">Info endpoint</strong> — full{" "}
+            <strong className="text-gold">Info endpoint</strong> — full{" "}
             <code className="font-mono text-[11px]">POST /info</code> + WS blocks (GitBook-style).
           </li>
           <li>
@@ -120,7 +120,7 @@ export function Hip4HomeChapter() {
         <Hip4SectionTitle>L1 ↔ HyperEVM</Hip4SectionTitle>
         <Hip4DocLead className="mb-4 text-xs">
           How HyperCore and the embedded EVM relate:{" "}
-          <code className="font-mono text-[11px] text-brand-accent">EvmRawTx</code>, bridge
+          <code className="font-mono text-[11px] text-brand">EvmRawTx</code>, bridge
           mechanics, precompiles.
         </Hip4DocLead>
         <Hip4SectionCardLink
@@ -186,11 +186,11 @@ export function Hip4HomeChapter() {
         </div>
       </Hip4GlassPanel>
 
-      <p className="text-center text-[11px] text-text-muted">
+      <p className="text-center text-[11px] text-text-tertiary">
         Full narrative:{" "}
         <Link
           href="/hip4/HIP4-research-complete.md"
-          className="text-brand-accent underline hover:text-brand-gold"
+          className="text-brand underline hover:text-gold"
           target="_blank"
           rel="noopener noreferrer"
         >

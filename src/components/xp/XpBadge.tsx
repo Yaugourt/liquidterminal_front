@@ -48,7 +48,7 @@ export function XpBadge({
   if (isLoading && !stats) {
     return (
       <div className={cn("flex items-center gap-2", className)}>
-        <InlineSpinner className="text-brand-gold" />
+        <InlineSpinner className="text-gold" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function XpBadge({
         <DialogContent className="bg-surface border border-border-default rounded-xl text-text-primary max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-text-primary">
-              <Star className="h-5 w-5 text-brand-gold fill-brand-gold" />
+              <Star className="h-5 w-5 text-gold fill-gold" />
               Your Progress
             </DialogTitle>
           </DialogHeader>
@@ -116,8 +116,8 @@ export function XpBadge({
     <div
       className={cn(
         "p-6 rounded-2xl",
-        "bg-brand-secondary/60",
-        "border border-border-subtle hover:border-border-hover transition-all",
+        "bg-surface/60",
+        "border border-border-subtle hover:border-border-default transition-all",
         className
       )}
     >
@@ -147,15 +147,15 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-brand-gold to-purple-500 p-0.5">
-              <div className="h-full w-full rounded-full bg-brand-secondary flex items-center justify-center">
-                <span className="text-xl font-bold text-brand-gold">
+            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-gold to-purple-500 p-0.5">
+              <div className="h-full w-full rounded-full bg-surface flex items-center justify-center">
+                <span className="text-xl font-bold text-gold">
                   {stats.level}
                 </span>
               </div>
             </div>
             {/* Level glow effect */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-gold/20 to-purple-500/20 blur-md -z-10" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/20 to-purple-500/20 blur-md -z-10" />
           </div>
           <div>
             <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Level</p>
@@ -172,19 +172,19 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
               <Flame
                 className={cn(
                   "h-5 w-5",
-                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-muted"
+                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-tertiary"
                 )}
               />
               <span
                 className={cn(
                   "text-lg font-bold",
-                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-muted"
+                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-tertiary"
                 )}
               >
                 {stats.loginStreak}
               </span>
             </div>
-            <p className="text-xs text-text-muted">day streak</p>
+            <p className="text-xs text-text-tertiary">day streak</p>
           </div>
         )}
       </div>
@@ -195,26 +195,26 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
           <span className="text-text-secondary">
             Level {stats.level} → {stats.level + 1}
           </span>
-          <span className="text-brand-gold font-medium">{stats.progressPercent}%</span>
+          <span className="text-gold font-medium">{stats.progressPercent}%</span>
         </div>
         <Progress
           value={stats.progressPercent}
-          className="h-2 bg-brand-dark border border-border-subtle"
+          className="h-2 bg-base border border-border-subtle"
         />
-        <div className="flex justify-between text-xs text-text-muted">
+        <div className="flex justify-between text-xs text-text-tertiary">
           <span>{stats.currentLevelXp.toLocaleString()} XP</span>
           <span>{stats.nextLevelXp.toLocaleString()} XP</span>
         </div>
       </div>
 
       {/* XP to next level */}
-      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-lg border border-border-subtle">
+      <div className="flex items-center justify-between p-3 bg-base rounded-lg border border-border-subtle">
         <span className="text-sm text-text-secondary">XP to next level</span>
         <div className="flex items-center gap-1">
-          <span className="text-sm font-bold text-brand-gold">
+          <span className="text-sm font-bold text-gold">
             {stats.xpToNextLevel.toLocaleString()}
           </span>
-          <ChevronRight className="h-4 w-4 text-text-muted" />
+          <ChevronRight className="h-4 w-4 text-text-tertiary" />
         </div>
       </div>
     </div>

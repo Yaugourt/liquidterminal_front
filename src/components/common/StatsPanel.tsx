@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 type IconVariant = "accent" | "gold";
 
 const ICON_BG: Record<IconVariant, string> = {
-    accent: "bg-brand-accent/10",
-    gold: "bg-brand-gold/10",
+    accent: "bg-brand/10",
+    gold: "bg-gold/10",
 };
 
 export interface StatsPanelProps {

@@ -97,7 +97,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
             ]}
             activeTab={activeTab}
             onTabChange={(val) => setActiveTab(val as 'orderbook' | 'trades')}
-            className="bg-brand-dark border border-border-subtle"
+            className="bg-base border border-border-subtle"
           />
         </div>
       </div>

@@ -28,9 +28,9 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "rounded-md px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/40",
+        "rounded-md px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
         active
-          ? "bg-brand-accent text-brand-tertiary shadow-sm"
+          ? "bg-brand text-brand-text-on shadow-sm"
           : "border border-transparent text-text-secondary hover:border-border-subtle hover:bg-white/[0.04] hover:text-text-primary",
         className
       )}
@@ -93,18 +93,18 @@ export function Hip4SubNav() {
           return (
             <details
               key={`${sectionId}-${slug}`}
-              className="group rounded-lg border border-border-subtle bg-brand-dark/80"
+              className="group rounded-lg border border-border-subtle bg-base/80"
               {...({ defaultOpen: openDefault } as React.HTMLAttributes<HTMLDetailsElement>)}
             >
               <summary
                 className={cn(
                   "flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5",
-                  "text-[10px] font-semibold uppercase tracking-wider text-brand-gold/85",
+                  "text-[10px] font-semibold uppercase tracking-wider text-gold/85",
                   "[&::-webkit-details-marker]:hidden"
                 )}
               >
                 {HIP4_NAV_SECTION_LABELS[sectionId as Hip4NavSection]}
-                <ChevronDown className="h-4 w-4 shrink-0 text-brand-gold/70 transition-transform group-open:rotate-180" />
+                <ChevronDown className="h-4 w-4 shrink-0 text-gold/70 transition-transform group-open:rotate-180" />
               </summary>
               <div className="border-t border-border-subtle px-2 py-2">
                 <SectionLinks
@@ -123,7 +123,7 @@ export function Hip4SubNav() {
       <div className="hidden lg:flex lg:flex-col lg:gap-6">
         {HIP4_NAV_SECTIONS.map((sectionId) => (
           <div key={sectionId}>
-            <div className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-wider text-brand-gold/85">
+            <div className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-wider text-gold/85">
               {HIP4_NAV_SECTION_LABELS[sectionId as Hip4NavSection]}
             </div>
             <SectionLinks

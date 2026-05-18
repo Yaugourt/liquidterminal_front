@@ -46,19 +46,19 @@ function PendingResourceItem({
     };
 
     return (
-        <div className="p-3 bg-brand-dark rounded-lg border border-border-subtle space-y-3">
+        <div className="p-3 bg-base rounded-lg border border-border-subtle space-y-3">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <a
                         href={resource.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium text-text-primary hover:text-brand-accent transition-colors flex items-center gap-2"
+                        className="text-sm font-medium text-text-primary hover:text-brand transition-colors flex items-center gap-2"
                     >
                         {isLoading ? "Loading..." : (preview?.title || resource.url)}
-                        <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <ExternalLink className="w-3 h-3 text-text-tertiary flex-shrink-0" />
                     </a>
-                    <div className="text-xs text-text-muted mt-1">
+                    <div className="text-xs text-text-tertiary mt-1">
                         Soumis par {resource.creator?.name || "Unknown"} • {new Date(resource.createdAt).toLocaleDateString()}
                     </div>
                 </div>
@@ -92,7 +92,7 @@ function PendingResourceItem({
                         value={rejectNotes}
                         onChange={(e) => setRejectNotes(e.target.value)}
                         placeholder="Raison du rejet (obligatoire)"
-                        className="bg-brand-secondary border-border-subtle text-text-primary text-sm"
+                        className="bg-surface border-border-subtle text-text-primary text-sm"
                     />
                     <div className="flex gap-2">
                         <Button
@@ -154,7 +154,7 @@ export function WikiModerationCard() {
                     </div>
                     <div>
                         <h3 className="text-text-primary font-semibold text-sm">Wiki Moderation</h3>
-                        <p className="text-xs text-text-muted">Resources pending review</p>
+                        <p className="text-xs text-text-tertiary">Resources pending review</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -180,10 +180,10 @@ export function WikiModerationCard() {
             <CardContent density="compact">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-8">
-                        <InlineSpinner className="w-5 h-5 text-brand-accent" />
+                        <InlineSpinner className="w-5 h-5 text-brand" />
                     </div>
                 ) : resources.length === 0 ? (
-                    <div className="text-center py-8 text-text-muted text-sm">
+                    <div className="text-center py-8 text-text-tertiary text-sm">
                         <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-400/50" />
                         No pending resources
                     </div>

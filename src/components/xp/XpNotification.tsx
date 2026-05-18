@@ -44,9 +44,9 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
 
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-brand-gold/20 rounded-xl p-4 shadow-xl shadow-black/20">
-            <div className="h-10 w-10 rounded-lg bg-brand-gold/10 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-brand-gold" />
+          <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-gold/20 rounded-xl p-4 shadow-xl shadow-black/20">
+            <div className="h-10 w-10 rounded-lg bg-gold/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-gold" />
             </div>
             <div>
               <p className="font-bold text-text-primary">
@@ -85,12 +85,12 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
     if (stats && previousLevel.current !== null && stats.level > previousLevel.current) {
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-brand-gold/20 border border-brand-gold/50 rounded-xl p-4 shadow-xl shadow-brand-gold/10 animate-pulse">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-brand-gold to-purple-500 flex items-center justify-center">
-              <Star className="h-6 w-6 text-brand-tertiary fill-brand-tertiary" />
+          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-gold/20 border border-gold/50 rounded-xl p-4 shadow-xl shadow-gold/10 animate-pulse">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-gold to-purple-500 flex items-center justify-center">
+              <Star className="h-6 w-6 text-brand-text-on fill-brand-text-on" />
             </div>
             <div>
-              <p className="font-bold text-brand-gold text-lg">
+              <p className="font-bold text-gold text-lg">
                 Level Up! 🎉
               </p>
               <p className="text-sm text-white">
@@ -130,12 +130,12 @@ export function useXpRefetch() {
 export function showXpGainToast(amount: number, action: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-brand-gold/20 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-brand-gold/10 flex items-center justify-center">
-          <Star className="h-4 w-4 text-brand-gold" />
+      <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-gold/20 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-gold/10 flex items-center justify-center">
+          <Star className="h-4 w-4 text-gold" />
         </div>
         <div>
-          <p className="font-bold text-brand-gold">+{amount} XP</p>
+          <p className="font-bold text-gold">+{amount} XP</p>
           <p className="text-xs text-text-secondary">{action}</p>
         </div>
       </div>
@@ -158,7 +158,7 @@ export function showXpGainToast(amount: number, action: string) {
 export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGranted?: number) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+      <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
         <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
           <Star className="h-4 w-4 text-emerald-400" />
         </div>
@@ -166,7 +166,7 @@ export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGra
           <p className="font-bold text-emerald-400">Daily Task Completed!</p>
           <p className="text-xs text-text-secondary">{taskName} +{xpGranted} XP</p>
           {bonusGranted && bonusGranted > 0 && (
-            <p className="text-xs text-brand-gold">All tasks bonus: +{bonusGranted} XP!</p>
+            <p className="text-xs text-gold">All tasks bonus: +{bonusGranted} XP!</p>
           )}
         </div>
       </div>
@@ -188,14 +188,14 @@ export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGra
 export function showWeeklyChallengeToast(xpReward: number, challengeName: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-brand-gold/20 border border-brand-gold/30 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-brand-gold/10 flex items-center justify-center">
-          <TrendingUp className="h-4 w-4 text-brand-gold" />
+      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-gold/20 border border-gold/30 rounded-xl p-3 shadow-xl shadow-black/20">
+        <div className="h-8 w-8 rounded-lg bg-gold/10 flex items-center justify-center">
+          <TrendingUp className="h-4 w-4 text-gold" />
         </div>
         <div>
-          <p className="font-bold text-brand-gold">Weekly Challenge Complete!</p>
+          <p className="font-bold text-gold">Weekly Challenge Complete!</p>
           <p className="text-xs text-text-secondary">{challengeName}</p>
-          <p className="text-xs text-brand-gold">+{xpReward} XP</p>
+          <p className="text-xs text-gold">+{xpReward} XP</p>
         </div>
       </div>
     ),
@@ -216,7 +216,7 @@ export function showWeeklyChallengeToast(xpReward: number, challengeName: string
 export function showDailyLimitToast(actionName: string) {
   toast.custom(
     () => (
-      <div className="flex items-center gap-3 bg-brand-secondary backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
+      <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
         <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
           <Flame className="h-4 w-4 text-orange-400" />
         </div>

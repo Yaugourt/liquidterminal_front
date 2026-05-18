@@ -79,8 +79,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
       />
 
       <div className="relative z-10 mb-4">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          <span className="h-1 w-1 rounded-full bg-brand-accent" />
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand" />
           Volume by Category
         </div>
         <AnimatePresence mode="wait">
@@ -94,7 +94,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
             {compactUsd(displayedValue)}
           </motion.div>
         </AnimatePresence>
-        <div className="text-[11px] text-text-muted">
+        <div className="text-[11px] text-text-tertiary">
           {displayed
             ? <span><span className="text-text-primary">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total</span>
             : <span>{slices.length} categories</span>
@@ -151,7 +151,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     transition={{ duration: 0.2 }}
                     className="flex flex-col items-center text-center px-4"
                   >
-                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">{displayed ? displayed.name : "Total"}</div>
+                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">{displayed ? displayed.name : "Total"}</div>
                     <div className="mt-0.5 text-[20px] font-bold text-text-primary tabular-nums tracking-tight">{compactUsd(displayedValue)}</div>
                     <div className="text-[11px] text-text-secondary tabular-nums">{displayedPct.toFixed(1)}%</div>
                   </motion.div>
@@ -169,7 +169,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     onMouseEnter={() => setActiveIdx(i)}
                     onMouseLeave={() => setActiveIdx(null)}
                     className={`group relative flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all ${
-                      isActive ? "border-border-hover bg-white/[0.04]" : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
+                      isActive ? "border-border-default bg-white/[0.04]" : "border-border-subtle bg-transparent hover:border-border-default hover:bg-white/[0.02]"
                     }`}
                   >
                     <div

@@ -77,7 +77,7 @@ export function renderParagraph(text: string) {
     const isMatch = i % 2 === 1;
     if (isMatch) {
       return (
-        <span key={i} className="font-medium text-brand-accent/90">
+        <span key={i} className="font-medium text-brand/90">
           {part}
         </span>
       );

@@ -97,7 +97,7 @@ export default function TokenPage() {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
                 <div className="flex flex-col items-center">
-                    <div className="h-6 w-6 border-2 border-brand-accent border-t-transparent rounded-full animate-spin mb-2" />
+                    <div className="h-6 w-6 border-2 border-brand border-t-transparent rounded-full animate-spin mb-2" />
                     <span className="text-zinc-500 text-sm">Loading...</span>
                 </div>
             </div>
@@ -107,12 +107,12 @@ export default function TokenPage() {
     if (error || !token) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+                <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
                     <div className="text-xl font-bold text-white mb-4">Token not found</div>
                     <div className="text-zinc-400 mb-6 text-center">{error}</div>
                     <Button
                         onClick={handleBackToList}
-                        className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-bold"
+                        className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold"
                     >
                         Back to tokens list
                     </Button>
@@ -153,11 +153,11 @@ export default function TokenPage() {
                     {/* Tabs dans l'espace vide sous le chart */}
                     <div className="mt-4">
                         <div className="flex justify-start items-center">
-                            <div className="flex bg-brand-dark rounded-lg p-1 border border-white/5">
+                            <div className="flex bg-base rounded-lg p-1 border border-white/5">
                                 <button
                                     onClick={() => selectTab('twap')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
-                                        ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                                        ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                                         : 'tab-inactive'
                                         }`}
                                 >
@@ -166,7 +166,7 @@ export default function TokenPage() {
                                 <button
                                     onClick={() => selectTab('holders')}
                                     className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
-                                        ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                                        ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                                         : 'tab-inactive'
                                         }`}
                                 >

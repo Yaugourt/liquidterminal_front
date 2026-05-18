@@ -97,15 +97,15 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
-            <p className="text-xs text-text-muted">Waiting for confirmation...</p>
+            <p className="text-xs text-text-tertiary">Waiting for confirmation...</p>
           </div>
 
           {/* Countdown timer */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
-            <Clock className="h-3.5 w-3.5 text-brand-gold" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-default">
+            <Clock className="h-3.5 w-3.5 text-gold" />
             <span className={cn(
               "text-xs font-medium",
-              remainingSeconds < 60 ? "text-rose-400" : "text-brand-gold"
+              remainingSeconds < 60 ? "text-rose-400" : "text-gold"
             )}>
               {formattedCountdown}
             </span>
@@ -113,7 +113,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         </div>
 
         {/* Instructions */}
-        <div className="p-3 mb-4 rounded-lg bg-brand-dark border border-border-subtle">
+        <div className="p-3 mb-4 rounded-lg bg-base border border-border-subtle">
           <div className="flex items-center gap-2 mb-2">
             {isPolling && (
               <InlineSpinner className="text-brand-telegram" />
@@ -122,7 +122,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
               Click the button below to open Telegram
             </span>
           </div>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-tertiary">
             Press &quot;Start&quot; in the bot to complete the link. This window will update automatically.
           </p>
         </div>
@@ -180,7 +180,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             size="sm"
             onClick={unlinkTelegram}
             disabled={isUnlinking}
-            className="text-text-muted hover:text-rose-400 hover:bg-rose-500/10"
+            className="text-text-tertiary hover:text-rose-400 hover:bg-rose-500/10"
           >
             {isUnlinking ? (
               <InlineSpinner />
@@ -198,7 +198,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
 
   // Render not linked state (default)
   return (
-    <Card className={cn("p-5 hover:border-border-hover transition-all", className)}>
+    <Card className={cn("p-5 hover:border-border-default transition-all", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-brand-telegram/10 flex items-center justify-center">
@@ -206,7 +206,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           </div>
           <div>
             <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
-            <p className="text-xs text-text-muted">
+            <p className="text-xs text-text-tertiary">
               Get notifications and alerts
             </p>
           </div>

@@ -12,7 +12,7 @@ const columns: Column<Hip4Asset>[] = [
     header: "Coin",
     type: "address",
     accessor: (a) => (
-      <span className="font-mono font-bold text-brand-accent">{a.coin}</span>
+      <span className="font-mono font-bold text-brand">{a.coin}</span>
     ),
   },
   {
@@ -43,7 +43,7 @@ const columns: Column<Hip4Asset>[] = [
     accessor: (a) => {
       const idx = 100_000_000 + parseInt(a.coin.slice(1), 10);
       return (
-        <span className="font-mono text-[11px] text-brand-gold">{idx}</span>
+        <span className="font-mono text-[11px] text-gold">{idx}</span>
       );
     },
   },

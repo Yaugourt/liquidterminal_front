@@ -39,16 +39,16 @@ export function LiquidationFlowChart() {
       {/* HEADER */}
       <div className="relative z-10 flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
             <span className="h-1 w-1 rounded-full bg-rose-400" />
             Liquidation Heatmap
-            <span className="text-text-muted/60">·</span>
+            <span className="text-text-tertiary/60">·</span>
             <span>HYPE-PERP · 24h</span>
           </div>
           <div className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight">
             {formatUsd(totalLongs + totalShorts)}
           </div>
-          <div className="text-[11px] text-text-muted">
+          <div className="text-[11px] text-text-tertiary">
             Total liquidated across {buckets.length} price levels
           </div>
         </div>
@@ -81,7 +81,7 @@ export function LiquidationFlowChart() {
               className="bg-gradient-to-r from-emerald-400 to-emerald-500"
             />
           </div>
-          <div className="flex w-full justify-between text-[10px] text-text-muted tabular-nums">
+          <div className="flex w-full justify-between text-[10px] text-text-tertiary tabular-nums">
             <span>Max pain ${maxPainLong.price.toLocaleString()}</span>
             <span>Max pain ${maxPainShort.price.toLocaleString()}</span>
           </div>
@@ -91,7 +91,7 @@ export function LiquidationFlowChart() {
       {/* CHART BODY */}
       <div className="relative z-10 mt-5 flex-1 min-h-0 flex flex-col">
         {/* column labels */}
-        <div className="grid grid-cols-[70px_1fr_60px_1fr_70px] items-center pb-2 text-[9px] font-semibold uppercase tracking-wider text-text-muted">
+        <div className="grid grid-cols-[70px_1fr_60px_1fr_70px] items-center pb-2 text-[9px] font-semibold uppercase tracking-wider text-text-tertiary">
           <span>Longs</span>
           <span className="text-right pr-2">Size</span>
           <span className="text-center text-text-secondary">Price</span>
@@ -146,13 +146,13 @@ export function LiquidationFlowChart() {
                 <div className="text-center">
                   <span
                     className={`tabular-nums text-[11px] font-semibold ${
-                      isLastPrice ? "text-brand-accent" : "text-text-secondary"
+                      isLastPrice ? "text-brand" : "text-text-secondary"
                     }`}
                   >
                     ${b.price.toLocaleString()}
                   </span>
                   {isLastPrice && (
-                    <div className="mx-auto mt-0.5 h-[2px] w-8 rounded-full bg-brand-accent shadow-[0_0_8px_rgba(131,233,255,0.8)]" />
+                    <div className="mx-auto mt-0.5 h-[2px] w-8 rounded-full bg-brand shadow-[0_0_8px_rgba(131,233,255,0.8)]" />
                   )}
                 </div>
 
@@ -186,7 +186,7 @@ export function LiquidationFlowChart() {
         </div>
 
         {/* Footer / hover detail */}
-        <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-muted tabular-nums">
+        <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-tertiary tabular-nums">
           {hover ? (
             <>
               <span>
@@ -195,14 +195,14 @@ export function LiquidationFlowChart() {
               </span>
               <span>
                 <span className="text-rose-400">Longs {formatUsd(hover.longs)}</span>
-                <span className="mx-2 text-text-muted/50">·</span>
+                <span className="mx-2 text-text-tertiary/50">·</span>
                 <span className="text-emerald-400">Shorts {formatUsd(hover.shorts)}</span>
               </span>
             </>
           ) : (
             <>
               <span>Last price ${lastPrice.toLocaleString()}</span>
-              <span className="text-text-muted/70">Hover a level for detail</span>
+              <span className="text-text-tertiary/70">Hover a level for detail</span>
             </>
           )}
         </div>

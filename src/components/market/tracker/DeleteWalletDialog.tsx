@@ -65,7 +65,7 @@ export function DeleteWalletDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border-hover text-text-primary hover:bg-white/5"
+            className="border-border-default text-text-primary hover:bg-white/5"
           >
             Cancel
           </Button>

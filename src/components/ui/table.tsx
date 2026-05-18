@@ -89,11 +89,11 @@ const SortableTableHead = React.forwardRef<HTMLTableCellElement, SortableTableHe
         }}
         disabled={!onClick}
         className={cn(
-          "table-column-head w-full min-h-8 px-0 py-0.5 flex items-center justify-start gap-1 transition-colors hover:text-text-secondary cursor-pointer disabled:cursor-default disabled:opacity-80 disabled:hover:text-text-muted",
+          "table-column-head w-full min-h-8 px-0 py-0.5 flex items-center justify-start gap-1 transition-colors hover:text-text-secondary cursor-pointer disabled:cursor-default disabled:opacity-80 disabled:hover:text-text-tertiary",
           isActive
             ? highlight === "accent"
-              ? "!text-brand-accent"
-              : "!text-brand-gold"
+              ? "!text-brand"
+              : "!text-gold"
             : ""
         )}
       >

@@ -32,7 +32,7 @@ const COLUMNS: Column<PriorityFeesLeaderboardEntry>[] = [
     key: "rank",
     header: "#",
     accessor: (row, idx) => (
-      <span className="text-text-muted text-sm tabular-nums">{row.rank ?? idx + 1}</span>
+      <span className="text-text-tertiary text-sm tabular-nums">{row.rank ?? idx + 1}</span>
     ),
   },
   {
@@ -43,7 +43,7 @@ const COLUMNS: Column<PriorityFeesLeaderboardEntry>[] = [
       return addr ? (
         <AddressDisplay address={addr} />
       ) : (
-        <span className="text-text-muted">—</span>
+        <span className="text-text-tertiary">—</span>
       );
     },
   },
@@ -78,12 +78,12 @@ export function PriorityFeesLeaderboardCard({
   onRetry,
 }: PriorityFeesLeaderboardCardProps) {
   return (
-    <Card className="p-5 border-border-subtle bg-brand-secondary/40 h-full flex flex-col">
+    <Card className="p-5 border-border-subtle bg-surface/40 h-full flex flex-col">
       <div className="mb-4">
         <h2 className="font-inter text-lg font-semibold text-text-primary tracking-tight">
           Top 11 payers
         </h2>
-        <p className="text-xs text-text-muted mt-1">
+        <p className="text-xs text-text-tertiary mt-1">
           HypeDexer <code className="text-[10px]">by=priority_fees</code> — same hours window as the
           summary above.
         </p>
@@ -96,7 +96,7 @@ export function PriorityFeesLeaderboardCard({
             <button
               type="button"
               onClick={onRetry}
-              className="text-xs text-brand-accent hover:underline w-fit"
+              className="text-xs text-brand hover:underline w-fit"
             >
               Retry
             </button>

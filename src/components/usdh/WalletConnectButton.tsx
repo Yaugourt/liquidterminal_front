@@ -45,7 +45,7 @@ export function WalletConnectButton() {
           key={connector.id}
           size="sm"
           onClick={() => connect({ connector })}
-          className="bg-brand-accent/10 text-brand-accent border border-brand-accent/30 hover:bg-brand-accent/20"
+          className="bg-brand/10 text-brand border border-brand/30 hover:bg-brand/20"
         >
           <Wallet className="w-4 h-4 mr-2" />
           {connector.name}

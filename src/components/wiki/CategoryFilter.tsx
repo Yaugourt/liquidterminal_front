@@ -86,29 +86,29 @@ export function CategoryFilter({
         disabled={isLoading || total === 0}
         className={cn(
           "flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-2.5 text-left transition-all",
-          "bg-brand-secondary/40",
+          "bg-surface/40",
           isOpen
-            ? "border-brand-accent/50 shadow-[0_0_15px_-3px_rgba(131,233,255,0.15)]"
-            : "border-border-subtle hover:border-border-hover",
+            ? "border-brand/50 shadow-[0_0_15px_-3px_rgba(131,233,255,0.15)]"
+            : "border-border-subtle hover:border-border-default",
           (isLoading || total === 0) && "cursor-not-allowed opacity-70",
         )}
       >
         <span className="flex items-center gap-2 min-w-0">
-          <Filter className="h-4 w-4 shrink-0 text-brand-accent" />
+          <Filter className="h-4 w-4 shrink-0 text-brand" />
           <span className="truncate text-sm font-medium text-text-primary">
             {getButtonText()}
           </span>
         </span>
         <span className="flex items-center gap-2 shrink-0">
           {total > 0 && (
-            <span className="rounded-full border border-border-subtle bg-brand-dark/50 px-2 py-0.5 text-[10px] font-medium tabular-nums text-text-secondary">
+            <span className="rounded-full border border-border-subtle bg-base/50 px-2 py-0.5 text-[10px] font-medium tabular-nums text-text-secondary">
               {selectedCount}/{total}
             </span>
           )}
           <ChevronDown
             size={16}
             className={cn(
-              "text-brand-accent transition-transform",
+              "text-brand transition-transform",
               isOpen && "rotate-180",
             )}
           />
@@ -119,7 +119,7 @@ export function CategoryFilter({
         <div
           className={cn(
             "absolute top-full z-50 mt-2 w-full overflow-hidden rounded-lg border border-border-subtle",
-            "bg-gradient-to-br from-brand-secondary/95 via-brand-secondary/90 to-brand-main/95",
+            "bg-gradient-to-br from-surface/95 via-surface/90 to-base/95",
             "shadow-xl shadow-black/30 backdrop-blur-md",
           )}
         >
@@ -137,10 +137,10 @@ export function CategoryFilter({
                 "flex h-4 w-4 items-center justify-center rounded border transition-colors",
                 allSelected
                   ? "border-white/80 bg-white/90"
-                  : "border-border-hover",
+                  : "border-border-default",
               )}
             >
-              {allSelected && <Check size={12} className="text-brand-tertiary" />}
+              {allSelected && <Check size={12} className="text-brand-text-on" />}
             </span>
           </button>
 
@@ -167,11 +167,11 @@ export function CategoryFilter({
                       "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
                       isActive
                         ? "border-white/80 bg-white/90"
-                        : "border-border-hover group-hover:border-white/40",
+                        : "border-border-default group-hover:border-white/40",
                     )}
                   >
                     {isActive && (
-                      <Check size={12} className="text-brand-tertiary" />
+                      <Check size={12} className="text-brand-text-on" />
                     )}
                   </span>
                 </button>

@@ -86,7 +86,7 @@ export default function PublicGoodsPage() {
       pageHeader={
         <>
           <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-brand-secondary">
+            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand to-surface">
               Public Goods
             </h1>
             <p className="text-zinc-400 max-w-2xl">
@@ -96,7 +96,7 @@ export default function PublicGoodsPage() {
 
           <div className="flex gap-3">
             <Button
-              className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/90"
+              className="bg-brand text-brand-text-on hover:bg-brand/90"
               onClick={() => setIsSubmitModalOpen(true)} // Changed to isSubmitModalOpen
             >
               <Plus className="w-4 h-4 mr-2" />

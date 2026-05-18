@@ -70,7 +70,7 @@ export function DailyLimitsWarning({
           )}>
             {DAILY_LIMIT_LABELS[actionType]}
           </p>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-tertiary">
             {isReached 
               ? "Daily limit reached - no XP until tomorrow" 
               : `${limit.remaining}/${limit.max} remaining (+${limit.xpPerAction} XP each)`
@@ -82,7 +82,7 @@ export function DailyLimitsWarning({
             onClick={() => handleDismiss(actionType)}
             className="p-1 hover:bg-white/10 rounded transition-colors"
           >
-            <X className="h-4 w-4 text-text-muted" />
+            <X className="h-4 w-4 text-text-tertiary" />
           </button>
         )}
       </div>
@@ -110,7 +110,7 @@ export function DailyLimitsWarning({
               <p className="text-sm text-orange-300">
                 {DAILY_LIMIT_LABELS[type as LimitedActionType]}
               </p>
-              <p className="text-xs text-text-muted">
+              <p className="text-xs text-text-tertiary">
                 Daily limit reached - no XP until tomorrow
               </p>
             </div>
@@ -118,7 +118,7 @@ export function DailyLimitsWarning({
               onClick={() => handleDismiss(type)}
               className="p-1 hover:bg-white/10 rounded transition-colors"
             >
-              <X className="h-4 w-4 text-text-muted" />
+              <X className="h-4 w-4 text-text-tertiary" />
             </button>
           </div>
         );

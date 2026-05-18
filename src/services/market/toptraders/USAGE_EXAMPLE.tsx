@@ -31,10 +31,10 @@ export function TopTradersTable() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-[400px] bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
+      <div className="flex justify-center items-center h-[400px] bg-surface/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-          <span className="text-text-muted text-sm">Loading top traders...</span>
+          <Loader2 className="h-6 w-6 animate-spin text-brand mb-2" />
+          <span className="text-text-tertiary text-sm">Loading top traders...</span>
         </div>
       </div>
     );
@@ -81,14 +81,14 @@ export function TopTradersTable() {
         </select>
 
         {metadata && (
-          <div className="text-text-muted text-xs ml-auto">
+          <div className="text-text-tertiary text-xs ml-auto">
             Last updated: {new Date(metadata.cachedAt).toLocaleTimeString()}
           </div>
         )}
       </div>
 
       {/* Table */}
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
+      <div className="w-full bg-surface/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-default transition-all shadow-xl shadow-black/20 overflow-hidden">
         <div className="overflow-x-auto scrollbar-brand">
           <Table>
             <TableHeader>

@@ -51,12 +51,12 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     {
       title: "TVL",
       value: `$${formatLargeNumber(kpis.tvl, { decimals: 2 })}`,
-      icon: <DollarSign className="w-4 h-4 text-brand-accent" />,
+      icon: <DollarSign className="w-4 h-4 text-brand" />,
     },
     {
       title: "APR",
       value: kpis.apr !== null ? `${kpis.apr.toFixed(2)}%` : "—",
-      icon: <Percent className="w-4 h-4 text-brand-gold" />,
+      icon: <Percent className="w-4 h-4 text-gold" />,
     },
     {
       title: "All-Time PnL",

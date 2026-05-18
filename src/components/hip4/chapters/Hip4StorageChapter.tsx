@@ -31,7 +31,7 @@ const STORAGE_SLOTS: StorageSlot[] = [
   {
     slot: "0",
     raw: "0x000…e21c78037329d06fe0d6fefc4221aaa67cb0d135",
-    decoded: <Badge className="bg-brand-gold/15 text-brand-gold">Owner</Badge>,
+    decoded: <Badge className="bg-gold/15 text-gold">Owner</Badge>,
   },
   {
     slot: "1",
@@ -50,7 +50,7 @@ const SLOT_COLUMNS: Column<StorageSlot>[] = [
     key: "slot",
     header: "Slot",
     type: "address",
-    accessor: (r) => <span className="font-mono text-brand-accent">{r.slot}</span>,
+    accessor: (r) => <span className="font-mono text-brand">{r.slot}</span>,
   },
   {
     key: "raw",

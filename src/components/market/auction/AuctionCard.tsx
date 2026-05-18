@@ -56,7 +56,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             : "https://app.hyperliquid.xyz/deployPerp"}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-accent bg-brand-accent/5 hover:bg-brand-accent/10 rounded-lg border border-brand-accent/10 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
         >
           Participate
           <ExternalLink size={12} />
@@ -67,7 +67,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
       <div className="flex-1 flex flex-col justify-center px-4 pb-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-accent/50"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand/50"></div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -75,24 +75,24 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             {/* Price & Timer */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-text-muted font-medium mb-1">Current Price</p>
+                <p className="text-xs text-text-tertiary font-medium mb-1">Current Price</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg font-bold text-text-primary tracking-tight">
                     {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     <span className="text-xs font-medium text-text-secondary ml-1">HYPE</span>
                   </span>
                 </div>
-                <p className="text-label text-text-muted mt-0.5">
+                <p className="text-label text-text-tertiary mt-0.5">
                   ≈ {formatNumber(auctionState.currentPriceUSD, format, { minimumFractionDigits: 2, currency: '$', showCurrency: true })}
                 </p>
               </div>
 
               <div className="text-right">
-                <p className="text-xs text-text-muted font-medium mb-1">
+                <p className="text-xs text-text-tertiary font-medium mb-1">
                   {auctionState.isActive ? "Time Remaining" : "Starts In"}
                 </p>
                 <div className="flex items-center justify-end gap-2 text-text-primary">
-                  <Clock className="w-4 h-4 text-brand-gold" />
+                  <Clock className="w-4 h-4 text-gold" />
                   <span className="text-lg font-medium tracking-tight">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
                   </span>
@@ -102,12 +102,12 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
 
             {/* Progress Bar */}
             <div className="space-y-2">
-              <div className="flex justify-between text-label text-text-muted">
+              <div className="flex justify-between text-label text-text-tertiary">
                 <span>Start</span>
                 <span>{auctionState.progressPercentage.toFixed(0)}% Complete</span>
                 <span>End</span>
               </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden border border-border-hover">
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden border border-border-default">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ease-out ${
                     auctionState.progressPercentage < 30 ? 'bg-gradient-to-r from-red-500 to-red-400' :
@@ -122,9 +122,9 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
             {/* Footer Info */}
             <div className="pt-4 border-t border-border-subtle">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-text-muted">Last Auction</span>
+                <span className="text-text-tertiary">Last Auction</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-brand-gold font-medium">{auctionState.lastAuctionName}</span>
+                  <span className="text-gold font-medium">{auctionState.lastAuctionName}</span>
                   <span className="text-text-secondary">•</span>
                   <span className="text-text-primary font-medium">{formatNumber(auctionState.lastAuctionPrice, format)} HYPE</span>
                 </div>

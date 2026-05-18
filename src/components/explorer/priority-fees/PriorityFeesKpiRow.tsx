@@ -79,7 +79,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
       {
         title: "Avg priority gas",
         value: formatPriorityFeeNumber(stats?.avg_priority_gas),
-        icon: <Gauge className="w-4 h-4 text-brand-gold" />,
+        icon: <Gauge className="w-4 h-4 text-gold" />,
       },
       {
         title: "Max priority gas",
@@ -121,7 +121,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
                 </TooltipTrigger>
                 <TooltipContent
                   side="top"
-                  className="max-w-xs border-border-subtle bg-brand-secondary text-text-secondary text-xs"
+                  className="max-w-xs border-border-subtle bg-surface text-text-secondary text-xs"
                 >
                   {card.tooltip}
                 </TooltipContent>

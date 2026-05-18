@@ -30,7 +30,7 @@ export function Hip4ResearchChapter() {
             <strong className="text-text-primary">Canonical write-up: </strong>
             <Link
               href="/hip4/HIP4-research-complete.md"
-              className="text-brand-accent underline hover:text-brand-gold"
+              className="text-brand underline hover:text-gold"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -39,7 +39,7 @@ export function Hip4ResearchChapter() {
           </li>
           <li>
             <strong className="text-text-primary">Structured API blocks: </strong>
-            <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
+            <Link href="/hip4/info-api" className="text-brand hover:underline">
               Info endpoint
             </Link>
           </li>

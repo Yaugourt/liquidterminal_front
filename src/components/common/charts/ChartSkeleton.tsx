@@ -13,7 +13,7 @@ export function ChartSkeleton({ className = "" }: { className?: string }) {
                     {[...Array(7)].map((_, i) => (
                         <div
                             key={i}
-                            className="w-2 bg-brand-accent/30 rounded-t animate-pulse"
+                            className="w-2 bg-brand/30 rounded-t animate-pulse"
                             style={{
                                 height: `${20 + Math.random() * 40}px`,
                                 animationDelay: `${i * 100}ms`,
@@ -21,7 +21,7 @@ export function ChartSkeleton({ className = "" }: { className?: string }) {
                         />
                     ))}
                 </div>
-                <span className="text-xs text-text-muted">Loading chart...</span>
+                <span className="text-xs text-text-tertiary">Loading chart...</span>
             </div>
         </div>
     );

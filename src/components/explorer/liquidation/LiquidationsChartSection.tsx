@@ -98,7 +98,7 @@ export const LiquidationsChartSection = () => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
                 <span className="h-1 w-1 rounded-full bg-rose-400" />
                 Liquidations
               </div>
@@ -145,7 +145,7 @@ export const LiquidationsChartSection = () => {
                   )}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
+                  <span className="text-label text-text-tertiary tabular-nums">
                     {formatDateTime(new Date(hoverTime), dateFormat)}
                   </span>
                 )}

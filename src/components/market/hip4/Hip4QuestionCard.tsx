@@ -28,9 +28,9 @@ interface ProbRowProps {
 }
 
 function ProbRow({ label, pct, color, volume }: ProbRowProps) {
-  const barColor = color === "emerald" ? "bg-emerald-500" : color === "rose" ? "bg-rose-500" : "bg-brand-accent";
-  const textColor = color === "emerald" ? "text-emerald-400" : color === "rose" ? "text-rose-400" : "text-brand-accent";
-  const dotColor = color === "emerald" ? "bg-emerald-400" : color === "rose" ? "bg-rose-400" : "bg-brand-accent";
+  const barColor = color === "emerald" ? "bg-emerald-500" : color === "rose" ? "bg-rose-500" : "bg-brand";
+  const textColor = color === "emerald" ? "text-emerald-400" : color === "rose" ? "text-rose-400" : "text-brand";
+  const dotColor = color === "emerald" ? "bg-emerald-400" : color === "rose" ? "bg-rose-400" : "bg-brand";
   const safePct = Math.max(0, Math.min(100, Number.isFinite(pct) ? pct : 0));
   return (
     <div className="space-y-1">
@@ -41,7 +41,7 @@ function ProbRow({ label, pct, color, volume }: ProbRowProps) {
         </div>
         <div className="flex items-center gap-2">
           {volume != null && (
-            <span className="text-[10px] text-text-muted tabular-nums">{compactUsd(volume)}</span>
+            <span className="text-[10px] text-text-tertiary tabular-nums">{compactUsd(volume)}</span>
           )}
           <span className={`text-sm font-bold tabular-nums ${textColor}`}>{safePct.toFixed(1)}%</span>
         </div>
@@ -81,7 +81,7 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.03, 0.3), duration: 0.25 }}
-      className="bg-surface border border-border-subtle rounded-lg relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-hover transition-colors cursor-pointer"
+      className="bg-surface border border-border-subtle rounded-lg relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-default transition-colors cursor-pointer"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
@@ -96,7 +96,7 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
             Settled
           </span>
         ) : (
-          <span className="shrink-0 inline-flex items-center gap-1 rounded-md border border-brand-accent/25 bg-brand-accent/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-brand-accent">
+          <span className="shrink-0 inline-flex items-center gap-1 rounded-md border border-brand/25 bg-brand/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-brand">
             <Radio className="h-3 w-3 animate-pulse" />
             Live
           </span>
@@ -148,11 +148,11 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
       </div>
 
       {/* Footer */}
-      <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-text-muted border-t border-border-subtle">
+      <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-text-tertiary border-t border-border-subtle">
         <span className="tabular-nums">{compactUsd(question.total_volume)} vol</span>
         <div className="flex items-center gap-2">
           {countdown && !settled && (
-            <span className="flex items-center gap-1 text-text-muted/70">
+            <span className="flex items-center gap-1 text-text-tertiary/70">
               <Clock className="h-3 w-3" />
               {countdown}
             </span>

@@ -73,7 +73,7 @@ export function WalletListTabs({
             {/* Tab "All Wallets" */}
             <TabsTrigger
               value="all-wallets"
-              className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg text-text-secondary font-medium hover:text-text-primary transition-colors"
+              className="bg-zinc-800/50 data-[state=active]:bg-surface data-[state=active]:text-text-primary data-[state=active]:border border-border-default rounded-lg text-text-secondary font-medium hover:text-text-primary transition-colors"
             >
               All Wallets
             </TabsTrigger>
@@ -88,7 +88,7 @@ export function WalletListTabs({
               <TabsTrigger
                 key={`list-${list.id || index}`}
                 value={(list.id || index).toString()}
-                className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
+                className="bg-zinc-800/50 data-[state=active]:bg-surface data-[state=active]:text-text-primary data-[state=active]:border border-border-default rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-start">
@@ -106,9 +106,9 @@ export function WalletListTabs({
                         onClick={(e) => onDeleteList(list.id, list.name, e)}
                         onMouseDown={(e) => e.stopPropagation()}
                         onPointerDown={(e) => e.stopPropagation()}
-                        className="ml-2 p-1 rounded-full hover:bg-brand-gold/20 transition-colors cursor-pointer"
+                        className="ml-2 p-1 rounded-full hover:bg-gold/20 transition-colors cursor-pointer"
                       >
-                        <Trash2 className="h-3.5 w-3.5 text-brand-gold" />
+                        <Trash2 className="h-3.5 w-3.5 text-gold" />
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -127,14 +127,14 @@ export function WalletListTabs({
         <Button
           onClick={() => router.push('/market/tracker/public-lists')}
           variant="outline"
-          className="border-border-hover interactive-secondary"
+          className="border-border-default interactive-secondary"
         >
           <Globe className="mr-2 h-4 w-4" />
           Browse Public Lists
         </Button>
         <Button
           onClick={onCreateList}
-          className="bg-brand-accent hover:bg-brand-accent text-brand-tertiary font-medium"
+          className="bg-brand hover:bg-brand text-brand-text-on font-medium"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Create List
@@ -205,7 +205,7 @@ export function WalletContentTabs({
       {/* Info badge and action button */}
       <div className="flex items-center gap-2 shrink-0">
         {wallets.length > 1 && (
-          <div className="hidden lg:flex items-center gap-1 text-xs text-text-muted bg-white/5 px-2 py-1 rounded border border-border-subtle">
+          <div className="hidden lg:flex items-center gap-1 text-xs text-text-tertiary bg-white/5 px-2 py-1 rounded border border-border-subtle">
             <GripVertical className="w-3 h-3" />
             <span>Drag to reorder</span>
           </div>
@@ -238,7 +238,7 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
       ref={setNodeRef}
       style={style}
       value={wallet.id.toString()}
-      className="bg-zinc-800/50 data-[state=active]:bg-brand-secondary data-[state=active]:text-text-primary data-[state=active]:border border-border-hover rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
+      className="bg-zinc-800/50 data-[state=active]:bg-surface data-[state=active]:text-text-primary data-[state=active]:border border-border-default rounded-lg flex items-center group text-text-secondary hover:text-text-primary transition-colors"
     >
       <div className="flex items-center gap-2">
         {/* Drag handle */}
@@ -263,9 +263,9 @@ export function SortableWalletTab({ wallet, onDelete }: SortableWalletTabProps) 
           <TooltipTrigger asChild>
             <div
               onClick={(e) => onDelete(wallet.id, wallet.name, e)}
-              className="ml-2 p-1 rounded-full hover:bg-brand-gold/20 transition-colors cursor-pointer"
+              className="ml-2 p-1 rounded-full hover:bg-gold/20 transition-colors cursor-pointer"
             >
-              <Trash2 className="h-3.5 w-3.5 text-brand-gold" />
+              <Trash2 className="h-3.5 w-3.5 text-gold" />
             </div>
           </TooltipTrigger>
           <TooltipContent>

@@ -61,7 +61,7 @@ const HashCellComponent = ({ twap, copiedHash, copyToClipboard }: {
       <div className="flex items-center gap-1.5">
         <Link
           href={`/explorer/transaction/${twap.hash}`}
-          className="text-brand-accent font-inter hover:text-brand-accent/80 transition-colors"
+          className="text-brand font-inter hover:text-brand/80 transition-colors"
         >
           {formatHash(twap.hash)}
         </Link>
@@ -75,7 +75,7 @@ const HashCellComponent = ({ twap, copiedHash, copyToClipboard }: {
           {copiedHash === twap.hash ? (
             <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
           ) : (
-            <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+            <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
           )}
         </button>
       </div>
@@ -175,7 +175,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
     return (
       <div className="flex justify-center items-center h-[200px]">
         <div className="flex flex-col items-center text-center px-4">
-          <Database className="w-8 h-8 mb-3 text-brand-accent/30" />
+          <Database className="w-8 h-8 mb-3 text-brand/30" />
           <p className="text-rose-400 text-sm mb-1">Une erreur est survenue</p>
           <p className="text-white/50 text-xs">Veuillez réessayer plus tard</p>
         </div>
@@ -227,7 +227,7 @@ const UserTwapTableComponent = ({ twaps, isLoading, error }: UserTwapTableProps)
                   className="py-8"
                 >
                   <div className="flex flex-col items-center justify-center text-center">
-                    <Database className="w-10 h-10 mb-3 text-brand-accent/30" />
+                    <Database className="w-10 h-10 mb-3 text-brand/30" />
                     <p className="text-text-primary text-sm mb-1">No active TWAP orders found</p>
                     <p className="text-white/50 text-xs">Come later</p>
                   </div>

@@ -30,7 +30,7 @@ const DataFreshnessComponent = ({ lastUpdated, className = "" }: DataFreshnessPr
 
   return (
     <span
-      className={`text-[10px] text-text-muted/60 tabular-nums select-none ${className}`}
+      className={`text-[10px] text-text-tertiary/60 tabular-nums select-none ${className}`}
       title={lastUpdated.toLocaleString()}
     >
       Updated {formatRelativeTime(lastUpdated)}

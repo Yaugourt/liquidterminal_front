@@ -41,7 +41,7 @@ export function ActiveUsersPreview() {
       key: "rank",
       header: "Rank",
       accessor: (_u, _i, absoluteIndex) => (
-        <span className="text-brand-gold font-semibold">#{absoluteIndex + 1}</span>
+        <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
       ),
     },
     {
@@ -50,7 +50,7 @@ export function ActiveUsersPreview() {
       accessor: (u) => (
         <Link
           href={`/market/tracker/wallet/${u.user}`}
-          className="text-sm text-brand-accent hover:underline"
+          className="text-sm text-brand hover:underline"
         >
           {u.user.slice(0, 6)}...{u.user.slice(-4)}
         </Link>
@@ -87,7 +87,7 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
       accessor: (u) => (
-        <span className="text-text-muted">{formatRelativeTime(u.last_activity)}</span>
+        <span className="text-text-tertiary">{formatRelativeTime(u.last_activity)}</span>
       ),
     },
   ];
@@ -95,7 +95,7 @@ export function ActiveUsersPreview() {
   return (
     <TypedDataTable<ActiveUser>
       title="Active Users"
-      icon={<Users className="h-5 w-5 text-brand-accent" />}
+      icon={<Users className="h-5 w-5 text-brand" />}
       subtitle={`${metadata?.totalCount || users.length} users`}
       headerAction={
         <Select value={hours.toString()} onValueChange={(val) => setHours(Number(val))}>

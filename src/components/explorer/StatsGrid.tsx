@@ -61,24 +61,24 @@ export function StatsGrid() {
         {
           title: "Blocks",
           value: formatValue(currentBlockHeight, "blocks"),
-          icon: <Activity size={16} className="text-brand-accent" />,
+          icon: <Activity size={16} className="text-brand" />,
         },
         {
           title: "Block Time",
           value: "0.07s",
-          icon: <Timer size={16} className="text-brand-accent" />,
+          icon: <Timer size={16} className="text-brand" />,
         },
         {
           title: "Max TPS",
           value: "200,000",
-          icon: <Zap size={16} className="text-brand-accent" />,
+          icon: <Zap size={16} className="text-brand" />,
         },
         {
           title: "Users",
           value: dashboardStats?.numberOfUsers
             ? formatValue(dashboardStats.numberOfUsers, "users")
             : dashboardLoading ? "Loading..." : "N/A",
-          icon: <Users size={16} className="text-brand-accent" />,
+          icon: <Users size={16} className="text-brand" />,
         },
         {
           title: "HYPE Staked",
@@ -92,7 +92,7 @@ export function StatsGrid() {
           value: vaultsTvl > 0
             ? formatValue(vaultsTvl, "vaultsTvl")
             : vaultsLoading ? "Loading..." : "N/A",
-          icon: <Wallet size={16} className="text-brand-accent" />,
+          icon: <Wallet size={16} className="text-brand" />,
         },
       ]);
       setIsLoading(false);

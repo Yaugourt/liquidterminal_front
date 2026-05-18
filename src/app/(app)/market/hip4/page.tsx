@@ -49,8 +49,8 @@ export default function MarketHip4Page() {
         title="HIP-4 Prediction Markets"
         description="Live prediction markets on HyperLiquid — outcome probabilities grouped by question, volume, open interest, and settlements."
         actions={
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-2.5 py-1 rounded-lg">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand bg-brand/10 border border-brand/20 px-2.5 py-1 rounded-lg">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
             Mainnet
           </span>
         }

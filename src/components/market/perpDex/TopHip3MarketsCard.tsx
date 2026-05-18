@@ -77,13 +77,13 @@ const COLUMNS: Column<AggregatedHip3MarketRow>[] = [
     header: "Ticker",
     accessor: (row) => (
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-label text-brand-accent shrink-0">
+        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-label text-brand shrink-0">
           {row.ticker.charAt(0)}
         </div>
         <span className="text-text-primary text-[11px] font-medium truncate">
           {row.ticker}
         </span>
-        <ChevronRight className="h-3 w-3 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+        <ChevronRight className="h-3 w-3 text-text-tertiary opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
       </div>
     ),
   },
@@ -121,14 +121,14 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
   return (
     <Card className="w-full h-full overflow-hidden flex flex-col">
       <div className="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-border-subtle shrink-0">
-        <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center shrink-0">
-          <LineChart size={12} className="text-brand-accent" />
+        <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
+          <LineChart size={12} className="text-brand" />
         </div>
         <div className="min-w-0">
           <h3 className="text-[10px] font-normal uppercase tracking-wide text-text-secondary">
             Top markets
           </h3>
-          <p className="text-[9px] text-text-muted truncate font-normal normal-case tracking-normal">
+          <p className="text-[9px] text-text-tertiary truncate font-normal normal-case tracking-normal">
             Aggregated across all builder DEXs
           </p>
         </div>
@@ -155,7 +155,7 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
           href={HIP3_DOCS_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand-accent text-[11px] hover:text-text-primary transition-colors inline-flex items-center gap-1"
+          className="text-brand text-[11px] hover:text-text-primary transition-colors inline-flex items-center gap-1"
           onClick={(e) => e.stopPropagation()}
         >
           HIP-3 documentation →

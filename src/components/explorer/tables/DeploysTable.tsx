@@ -46,7 +46,7 @@ export function DeploysTable() {
           address={d.hash}
           showCopy={false}
           showExternalLink
-          className="text-brand-accent"
+          className="text-brand"
         />
       ),
     },

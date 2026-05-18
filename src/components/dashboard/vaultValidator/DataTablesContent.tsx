@@ -104,7 +104,7 @@ const ValidatorsTableComponent = ({
             address={address}
             label={<span className="text-text-primary font-medium truncate block max-w-[200px]" title={item.name}>{item.name}</span>}
             truncate={false}
-            className="text-text-primary hover:text-brand-accent max-w-full"
+            className="text-text-primary hover:text-brand max-w-full"
           />
         );
       },

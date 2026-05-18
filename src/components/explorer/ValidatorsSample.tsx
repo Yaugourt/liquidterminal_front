@@ -41,7 +41,7 @@ export function ValidatorsSample() {
         <h3 className="text-sm font-semibold text-text-primary">Top Validators</h3>
         <Link
           href="/explorer/validator"
-          className="text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
+          className="text-xs text-brand hover:text-brand/80 transition-colors"
         >
           View all →
         </Link>
@@ -62,7 +62,7 @@ export function ValidatorsSample() {
               </span>
               <div className="flex gap-4 text-xs text-text-secondary shrink-0">
                 <span>{formatStake(v.stake)} HYPE</span>
-                <span className="text-brand-accent">
+                <span className="text-brand">
                   {v.apr !== undefined ? `${v.apr.toFixed(1)}%` : "-"}
                 </span>
               </div>

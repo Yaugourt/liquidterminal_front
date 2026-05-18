@@ -20,7 +20,7 @@ export const CategoryTabs = memo(function CategoryTabs({
 
   if (isLoading) {
     return (
-      <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
+      <div className="flex bg-base rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="h-8 w-20 bg-white/5 rounded-md animate-pulse" />
         ))}
@@ -39,7 +39,7 @@ export const CategoryTabs = memo(function CategoryTabs({
   }
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-1 w-fit max-w-full overflow-x-auto scrollbar-brand">
+    <div className="flex bg-base rounded-lg p-1 border border-border-subtle gap-1 w-fit max-w-full overflow-x-auto scrollbar-brand">
       {/* Tab "All" */}
       <button
         onClick={() => onTabChange('all')}
@@ -47,7 +47,7 @@ export const CategoryTabs = memo(function CategoryTabs({
           "flex-shrink-0 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
           "px-2.5 sm:px-4",
           activeTab === 'all'
-            ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+            ? "bg-brand text-brand-text-on shadow-sm font-bold"
             : "tab-inactive"
         )}
       >
@@ -63,7 +63,7 @@ export const CategoryTabs = memo(function CategoryTabs({
             "flex-shrink-0 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
             "px-2 sm:px-3",
             activeTab === category.id.toString()
-              ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+              ? "bg-brand text-brand-text-on shadow-sm font-bold"
               : "tab-inactive"
           )}
         >

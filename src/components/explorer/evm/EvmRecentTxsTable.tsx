@@ -32,7 +32,7 @@ const COLUMNS: Column<EvmTransaction>[] = [
     header: "Hash",
     type: "address",
     accessor: (tx) => (
-      <span className="font-mono text-brand-accent text-sm">
+      <span className="font-mono text-brand text-sm">
         {truncateHash(tx.tx_hash)}
       </span>
     ),

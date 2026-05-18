@@ -61,7 +61,7 @@ const useReadListInitialization = () => {
 // Simple state components
 const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-    <Card padding="lg" className="backdrop-blur-md border-border-hover shadow-xl shadow-black/20 max-w-md w-full mx-4">
+    <Card padding="lg" className="backdrop-blur-md border-border-default shadow-xl shadow-black/20 max-w-md w-full mx-4">
       <div className="text-center mb-6">
         <h2 className="text-lg font-bold text-text-primary mb-2">Authentication Required</h2>
         <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
@@ -69,7 +69,7 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
       <button
         type="button"
         onClick={() => onLogin()}
-        className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold py-2.5 rounded-lg transition-colors"
+        className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold py-2.5 rounded-lg transition-colors"
       >
         Login
       </button>

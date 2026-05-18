@@ -33,7 +33,7 @@ export function PerformanceChart({
   ];
 
   return (
-    <div className="w-full h-full bg-brand-secondary/60 border border-border-subtle rounded-2xl hover:border-border-hover transition-all overflow-hidden relative">
+    <div className="w-full h-full bg-surface/60 border border-border-subtle rounded-2xl hover:border-border-default transition-all overflow-hidden relative">
       {/* Aurora pill tabs */}
       <div className="absolute top-3 left-4 z-20">
         <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
@@ -72,8 +72,8 @@ export function PerformanceChart({
             onClick={() => setHideSmallBalances(!hideSmallBalances)}
             className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
               hideSmallBalances
-                ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
-                : "border-border-subtle bg-black/30 text-text-secondary hover:text-text-primary hover:border-border-hover"
+                ? "border-brand/40 bg-brand/10 text-brand"
+                : "border-border-subtle bg-black/30 text-text-secondary hover:text-text-primary hover:border-border-default"
             }`}
             title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
           >

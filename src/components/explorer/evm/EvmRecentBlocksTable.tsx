@@ -19,7 +19,7 @@ const COLUMNS: Column<EvmBlock>[] = [
     key: "block_number",
     header: "Block #",
     accessor: (b) => (
-      <span className="font-mono text-brand-accent text-sm">
+      <span className="font-mono text-brand text-sm">
         #{b.block_number.toLocaleString()}
       </span>
     ),

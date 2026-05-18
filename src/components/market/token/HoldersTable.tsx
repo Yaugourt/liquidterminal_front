@@ -70,16 +70,16 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
       header: "Address",
       accessor: (holder, index) => (
         <div className="flex items-center gap-1">
-          <span className="text-text-muted text-xs">{startIndex + index + 1}.</span>
+          <span className="text-text-tertiary text-xs">{startIndex + index + 1}.</span>
           <div className="flex items-center gap-1">
             <Link
               href={`/explorer/address/${holder.address}`}
-              className="text-brand-accent text-xs hover:text-text-primary transition-colors"
+              className="text-brand text-xs hover:text-text-primary transition-colors"
             >
               {formatAddress(holder.address)}
             </Link>
             {getAlias(holder.address) && (
-              <span className="text-text-muted text-xs ml-1">
+              <span className="text-text-tertiary text-xs ml-1">
                 ({getAlias(holder.address)})
               </span>
             )}
@@ -90,7 +90,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
               {copiedAddress === holder.address ? (
                 <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
               ) : (
-                <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}
             </button>
           </div>
@@ -104,7 +104,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
         <div className="flex items-center gap-1">
           <span>{formatNumber(holder.amount, format, { maximumFractionDigits: 2 })}</span>
           {stakedHolders && stakedHolders[holder.address] && (
-            <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-brand-gold/10 text-brand-gold">
+            <span className="px-1.5 py-0.5 rounded-md text-xs font-medium bg-gold/10 text-gold">
               (staked)
             </span>
           )}

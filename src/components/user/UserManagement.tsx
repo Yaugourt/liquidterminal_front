@@ -144,7 +144,7 @@ export function UserManagement() {
           <p className="text-rose-400 mb-3 text-sm">Error loading users</p>
           <Button
             onClick={handleRefresh}
-            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent/80 text-sm"
+            className="bg-brand text-brand-text-on hover:bg-brand/80 text-sm"
           >
             Retry
           </Button>
@@ -172,7 +172,7 @@ export function UserManagement() {
         <Card className="p-6">
           <div className="flex items-center justify-center h-48">
             <div className="text-center">
-              <Shield className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <Shield className="w-8 h-8 text-gold mx-auto mb-3" />
               <p className="text-text-primary text-sm">Access restricted to administrators</p>
             </div>
           </div>
@@ -184,8 +184,8 @@ export function UserManagement() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center">
-              <Users className="w-5 h-5 text-brand-gold" />
+            <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center">
+              <Users className="w-5 h-5 text-gold" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-text-primary">User Management</h1>
@@ -208,7 +208,7 @@ export function UserManagement() {
         <div className="p-4 border-b border-border-subtle">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatsCard
-              icon={<Users size={16} className="text-brand-accent" />}
+              icon={<Users size={16} className="text-brand" />}
               title="Total Users"
               value={pagination?.total || stats.total}
               valueClassName="text-xl text-text-primary font-bold tracking-tight"
@@ -221,8 +221,8 @@ export function UserManagement() {
               valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
-              icon={<ShieldCheck size={16} className="text-brand-gold" />}
-              iconClassName="bg-brand-gold/10"
+              icon={<ShieldCheck size={16} className="text-gold" />}
+              iconClassName="bg-gold/10"
               title="Moderators"
               value={stats.moderators}
               valueClassName="text-xl text-text-primary font-bold tracking-tight"

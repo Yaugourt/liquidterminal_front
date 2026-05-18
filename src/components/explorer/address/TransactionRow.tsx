@@ -73,7 +73,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                 <TableCell className="py-3 px-4 text-sm">
                     <Link
                         href={`https://arbiscan.io/address/${currentAddress}#tokentxns`}
-                        className="text-brand-accent hover:text-brand-accent/80 truncate block"
+                        className="text-brand hover:text-brand/80 truncate block"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -88,7 +88,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                 <TableCell className="py-3 px-4 text-sm">
                     <Link
                         href={`/explorer/address/${address}`}
-                        className="text-brand-accent hover:text-brand-accent/80 truncate block"
+                        className="text-brand hover:text-brand/80 truncate block"
                     >
                         HIP2
                     </Link>
@@ -115,10 +115,10 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     // Let's use AddressDisplay fully but customize styling matching original if needed.
                     // Original:
                     // Current: Text + Copy Button
-                    // Other: Link (text-brand-accent)
+                    // Other: Link (text-brand)
 
                     showExternalLink={false}
-                    className={isCurrent ? "text-text-primary" : "text-brand-accent"}
+                    className={isCurrent ? "text-text-primary" : "text-brand"}
                     href={isCurrent ? undefined : `/explorer/address/${address}`} // Disable link for current address?
                 // Original had NO link for current address, just text.
                 />
@@ -135,7 +135,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     <Link
                         href={`/explorer/transaction/${tx.hash}`}
                         prefetch={false}
-                        className="text-brand-accent hover:text-text-primary transition-colors"
+                        className="text-brand hover:text-text-primary transition-colors"
                         title={tx.hash}
                     >
                         {formatHash(tx.hash)}
@@ -145,12 +145,12 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                             e.preventDefault();
                             copyHashToClipboard(tx.hash);
                         }}
-                        className="group text-text-muted hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="group text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-white/10"
                     >
                         {copiedHash === tx.hash ? (
                             <Check className="h-3 w-3 text-emerald-400" />
                         ) : (
-                            <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                     </button>
                 </div>

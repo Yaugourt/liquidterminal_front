@@ -33,7 +33,7 @@ export function LoadingState({
             className
         )}>
             <Loader2 className={cn(config.icon, "animate-spin text-brand mb-3")} />
-            <span className={cn("text-text-muted", config.text)}>{message}</span>
+            <span className={cn("text-text-tertiary", config.text)}>{message}</span>
         </div>
     );
 

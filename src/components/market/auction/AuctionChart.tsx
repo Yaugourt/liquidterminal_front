@@ -77,15 +77,15 @@ export const AuctionChart = ({
       style={{ height: chartHeight }}
     >
       {/* Ambient gold glow — Aurora aesthetic */}
-      <div className="pointer-events-none absolute -top-24 -right-16 h-60 w-60 rounded-full bg-brand-gold/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-accent/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-60 w-60 rounded-full bg-gold/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand/[0.06] blur-3xl" />
 
       {/* Header Controls */}
       <div className="absolute top-4 left-4 right-4 z-20 pointer-events-none">
         <div className="flex items-center justify-between flex-wrap gap-2 pointer-events-auto">
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-              <span className="h-1 w-1 rounded-full bg-brand-gold" />
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+              <span className="h-1 w-1 rounded-full bg-gold" />
               {marketType === "perp" ? "Gas Price (HYPE)" : `Auction Price (${selectedCurrency})`}
             </div>
 
@@ -95,7 +95,7 @@ export const AuctionChart = ({
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
+                  <span className="text-label text-text-tertiary tabular-nums">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',

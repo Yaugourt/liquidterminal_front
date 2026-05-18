@@ -105,12 +105,12 @@ export function Hip4AnalyticsChart() {
         {/* Header */}
         <div className="relative z-10 flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
               <span className="h-1 w-1 rounded-full bg-emerald-400" />
               Trading Volume
               {display && (
                 <>
-                  <span className="text-text-muted/60">·</span>
+                  <span className="text-text-tertiary/60">·</span>
                   <span>{formatBucket(display.bucket, interval)}</span>
                 </>
               )}
@@ -136,7 +136,7 @@ export function Hip4AnalyticsChart() {
                 <span className={totals.delta >= 0 ? "text-emerald-400" : "text-rose-400"}>
                   {totals.delta >= 0 ? "+" : ""}{compactUsd(totals.delta)}
                 </span>
-                <span className="text-text-muted">last bucket vs first</span>
+                <span className="text-text-tertiary">last bucket vs first</span>
               </div>
             )}
           </div>
@@ -175,7 +175,7 @@ export function Hip4AnalyticsChart() {
                 key={key}
                 type="button"
                 onClick={() => setVisible((v) => ({ ...v, [key]: !v[key] }))}
-                className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 transition-all ${isOn ? "border-border-hover bg-white/[0.03]" : "border-border-subtle opacity-40 hover:opacity-65"
+                className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 transition-all ${isOn ? "border-border-default bg-white/[0.03]" : "border-border-subtle opacity-40 hover:opacity-65"
                   }`}
               >
                 <span
@@ -199,14 +199,14 @@ export function Hip4AnalyticsChart() {
         <div className="relative z-10 mt-4 flex-1 min-h-0">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
-              <InlineSpinner className="h-5 w-5 text-brand-accent" />
+              <InlineSpinner className="h-5 w-5 text-brand" />
             </div>
           ) : error ? (
             <div className="flex h-full items-center justify-center text-xs text-rose-400">
               Failed to load analytics
             </div>
           ) : data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-xs text-text-muted">
+            <div className="flex h-full items-center justify-center text-xs text-text-tertiary">
               No data available
             </div>
           ) : (
@@ -273,30 +273,30 @@ export function Hip4AnalyticsChart() {
 
       {/* ── Activity bar chart (fills + unique users) ── */}
       <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[380px] flex flex-col p-6">
-        <div className="pointer-events-none absolute -top-20 right-0 h-48 w-48 rounded-full bg-brand-accent/8 blur-3xl" />
+        <div className="pointer-events-none absolute -top-20 right-0 h-48 w-48 rounded-full bg-brand/8 blur-3xl" />
 
         <div className="relative z-10 mb-4">
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <BarChart2 className="h-3 w-3 text-brand-accent" />
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+            <BarChart2 className="h-3 w-3 text-brand" />
             Activity
           </div>
           <div className="mt-1 text-[20px] font-bold text-text-primary tabular-nums">
             {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.fills, 0))}
-            <span className="ml-1.5 text-[13px] font-normal text-text-muted">fills</span>
+            <span className="ml-1.5 text-[13px] font-normal text-text-tertiary">fills</span>
           </div>
           <div className="mt-0.5 text-[12px] text-text-secondary tabular-nums">
             {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.unique_users, 0))}
-            <span className="ml-1 text-text-muted">unique traders (total window)</span>
+            <span className="ml-1 text-text-tertiary">unique traders (total window)</span>
           </div>
         </div>
 
         <div className="relative z-10 flex-1 min-h-0">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
-              <InlineSpinner className="h-5 w-5 text-brand-accent" />
+              <InlineSpinner className="h-5 w-5 text-brand" />
             </div>
           ) : data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-xs text-text-muted">
+            <div className="flex h-full items-center justify-center text-xs text-text-tertiary">
               No data
             </div>
           ) : (
@@ -351,8 +351,8 @@ interface VolumeTooltipProps {
 function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTooltipProps) {
   if (!active || !payload || payload.length === 0 || !label) return null;
   return (
-    <div className="rounded-lg border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
+    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
         {formatBucket(label, interval)}
       </div>
       {(Object.keys(VOL_SERIES) as VolKey[]).map((key) => {
@@ -387,13 +387,13 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
   if (!active || !payload || payload.length === 0 || !label) return null;
   const fills = Number(payload.find((x) => x.dataKey === "fills")?.value ?? 0);
   return (
-    <div className="rounded-lg border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted mb-2">
+    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
         {formatBucket(label, interval)}
       </div>
       <div className="flex items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
+          <span className="h-1.5 w-1.5 rounded-full bg-brand" />
           <span className="text-text-secondary">Fills</span>
         </div>
         <span className="font-semibold text-text-primary tabular-nums">{compactNum(fills)}</span>

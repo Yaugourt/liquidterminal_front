@@ -39,7 +39,7 @@ export function VaultsSample() {
         <h3 className="text-sm font-semibold text-text-primary">Top Vaults</h3>
         <Link
           href="/explorer/vaults"
-          className="text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
+          className="text-xs text-brand hover:text-brand/80 transition-colors"
         >
           View all →
         </Link>
@@ -60,7 +60,7 @@ export function VaultsSample() {
               </span>
               <div className="flex gap-4 text-xs text-text-secondary shrink-0">
                 <span>{formatTVL(vault.summary?.tvl)}</span>
-                <span className="text-brand-accent">
+                <span className="text-brand">
                   {vault.apr !== undefined ? `${vault.apr.toFixed(1)}%` : "-"}
                 </span>
               </div>

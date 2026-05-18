@@ -61,10 +61,10 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-surface/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-text-primary text-xl font-bold">Review: {project.name}</DialogTitle>
-          <DialogDescription className="text-text-muted">
+          <DialogDescription className="text-text-tertiary">
             {project.category}
           </DialogDescription>
         </DialogHeader>
@@ -82,7 +82,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                       <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                       Approve Project
                     </label>
-                    <p className="text-sm text-text-muted mt-1">
+                    <p className="text-sm text-text-tertiary mt-1">
                       The project meets the requirements and will be published in the public goods directory.
                     </p>
                   </div>
@@ -95,7 +95,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                       <XCircle className="w-5 h-5 text-rose-400" />
                       Reject Project
                     </label>
-                    <p className="text-sm text-text-muted mt-1">
+                    <p className="text-sm text-text-tertiary mt-1">
                       The project doesn&apos;t meet the requirements or needs improvements before approval.
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any comments or feedback for the submitter..."
                 rows={3}
-                className="bg-black/20 border border-border-hover focus:border-brand-accent/50 outline-none transition-colors mt-2 rounded-lg placeholder:text-text-muted"
+                className="bg-black/20 border border-border-default focus:border-brand/50 outline-none transition-colors mt-2 rounded-lg placeholder:text-text-tertiary"
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                   ? "bg-emerald-500 text-white hover:bg-emerald-600"
                   : status === 'REJECTED'
                     ? "bg-rose-500 text-white hover:bg-rose-600"
-                    : "bg-brand-accent text-brand-tertiary hover:bg-brand-accent/90"
+                    : "bg-brand text-brand-text-on hover:bg-brand/90"
                 }`}
             >
               {isSubmitting ? "Submitting..." : "Submit Review"}

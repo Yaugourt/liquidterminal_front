@@ -148,7 +148,7 @@ function DetailAddress({
     <div className="flex flex-col min-w-0">
       <span className="text-stat-label mb-1">{label}</span>
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-brand-accent text-xs truncate flex-1 min-w-0 font-mono">
+        <span className="text-brand text-xs truncate flex-1 min-w-0 font-mono">
           {isLoading ? "Loading..." : address ? truncateAddressLong(address) : "N/A"}
         </span>
         {address && (
@@ -160,7 +160,7 @@ function DetailAddress({
             {copied === address ? (
               <Check className="h-3.5 w-3.5 text-emerald-400" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         )}

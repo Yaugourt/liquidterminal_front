@@ -34,7 +34,7 @@ const LiquidationsTableComponent = ({
     {
       header: "Coin",
       accessor: (item: Liquidation) => (
-        <span className="text-brand-accent font-medium">{item.coin}</span>
+        <span className="text-brand font-medium">{item.coin}</span>
       ),
       align: "left",
       className: "w-[80px] px-4"

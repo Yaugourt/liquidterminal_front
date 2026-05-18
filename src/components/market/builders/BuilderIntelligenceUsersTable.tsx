@@ -40,7 +40,7 @@ export function BuilderIntelligenceUsersTable({
       header: "#",
       className: "w-8",
       accessor: (_u, idx) => (
-        <span className="text-text-muted text-xs font-bold">{idx + 1}</span>
+        <span className="text-text-tertiary text-xs font-bold">{idx + 1}</span>
       ),
     },
     {
@@ -50,7 +50,7 @@ export function BuilderIntelligenceUsersTable({
         const addr = (u.user ?? u.address ?? "—") as string;
         return (
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[9px] text-text-muted shrink-0">
+            <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[9px] text-text-tertiary shrink-0">
               {addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
             </div>
             <span className="text-xs text-text-secondary font-mono truncate max-w-[100px]">
@@ -66,7 +66,7 @@ export function BuilderIntelligenceUsersTable({
       sortable: true,
       getSortValue: pickFees,
       accessor: (u) => (
-        <span className="text-brand-gold tabular-nums">
+        <span className="text-gold tabular-nums">
           {formatNumber(pickFees(u), format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
         </span>
       ),
@@ -98,11 +98,11 @@ export function BuilderIntelligenceUsersTable({
           <div className="flex items-center gap-1.5">
             <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
               <div
-                className="h-full bg-brand-accent/50 rounded-full"
+                className="h-full bg-brand/50 rounded-full"
                 style={{ width: `${Math.min(share, 100)}%` }}
               />
             </div>
-            <span className="text-text-muted text-xs w-8 text-left tabular-nums">
+            <span className="text-text-tertiary text-xs w-8 text-left tabular-nums">
               {share.toFixed(1)}%
             </span>
           </div>
@@ -115,7 +115,7 @@ export function BuilderIntelligenceUsersTable({
     <Card className="p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-text-primary font-semibold text-sm">Top Users</h2>
-        {users.length > 0 && <span className="text-text-muted text-xs">{users.length} users</span>}
+        {users.length > 0 && <span className="text-text-tertiary text-xs">{users.length} users</span>}
       </div>
 
       <TypedDataTable<BuilderUserRow>

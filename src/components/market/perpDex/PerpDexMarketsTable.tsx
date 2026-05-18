@@ -39,7 +39,7 @@ const formatPriceChange = (change: number | undefined) => {
 function renderAssetBadges(asset: PerpDexAssetWithMarketData) {
   return (
     <div className="flex items-center gap-2 mt-0.5">
-      <span className="text-label text-text-muted">{asset.maxLeverage}x</span>
+      <span className="text-label text-text-tertiary">{asset.maxLeverage}x</span>
       {asset.growthMode === "enabled" && (
         <span className="text-emerald-400 text-label flex items-center gap-0.5">
           <Sprout className="h-2.5 w-2.5" />
@@ -69,8 +69,8 @@ function buildColumns(
           <div>
             <div className="flex items-center gap-1">
               <span className="text-text-primary text-sm font-medium">{getTicker(row.name)}</span>
-              <span className="text-text-muted text-sm">/</span>
-              <span className="text-text-muted text-xs">{row.collateralToken}</span>
+              <span className="text-text-tertiary text-sm">/</span>
+              <span className="text-text-tertiary text-xs">{row.collateralToken}</span>
             </div>
             {renderAssetBadges(row)}
           </div>

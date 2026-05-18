@@ -20,7 +20,7 @@ function InlineStat({ icon, label, value, isLoading }: InlineStatProps) {
         {label}
       </div>
       <div className="text-text-primary font-bold text-xl pl-5">
-        {isLoading ? <span className="animate-pulse text-text-muted">--</span> : value}
+        {isLoading ? <span className="animate-pulse text-text-tertiary">--</span> : value}
       </div>
     </div>
   );
@@ -33,17 +33,17 @@ export function VaultStatsCard() {
   return (
     <StatsPanel
       title="Vault Stats"
-      icon={<Database size={16} className="text-brand-accent" />}
+      icon={<Database size={16} className="text-brand" />}
     >
       <div className="grid grid-cols-1 gap-6 content-center h-full">
         <InlineStat
-          icon={<BarChart2 className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<BarChart2 className="h-3.5 w-3.5 text-brand" />}
           label="Total TVL"
           value={<>${formatNumber(totalTvl, format, { maximumFractionDigits: 2 })}</>}
           isLoading={isLoading}
         />
         <InlineStat
-          icon={<FolderOpen className="h-3.5 w-3.5 text-brand-accent" />}
+          icon={<FolderOpen className="h-3.5 w-3.5 text-brand" />}
           label="Open Vaults"
           value={totalCount}
           isLoading={isLoading}

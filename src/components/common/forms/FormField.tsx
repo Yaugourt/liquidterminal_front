@@ -43,13 +43,13 @@ export function FormField({
         className="text-xs text-text-secondary font-semibold uppercase tracking-wider"
       >
         {label}
-        {required && <span className="text-brand-accent ml-0.5">*</span>}
+        {required && <span className="text-brand ml-0.5">*</span>}
       </label>
       {children}
       {error ? (
         <p className="text-xs text-rose-400">{error}</p>
       ) : helper ? (
-        <p className="text-xs text-text-muted">{helper}</p>
+        <p className="text-xs text-text-tertiary">{helper}</p>
       ) : null}
     </div>
   );

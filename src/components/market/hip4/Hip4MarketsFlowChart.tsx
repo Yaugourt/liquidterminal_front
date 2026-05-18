@@ -7,9 +7,9 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 
 function pctColor(px: number | null) {
-  if (px === null) return "text-text-muted";
+  if (px === null) return "text-text-tertiary";
   if (px >= 0.7) return "text-emerald-400";
-  if (px >= 0.5) return "text-brand-gold";
+  if (px >= 0.5) return "text-gold";
   return "text-rose-400";
 }
 
@@ -41,13 +41,13 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
       transition={{ delay: 0.15, duration: 0.35 }}
       className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-6 flex flex-col"
     >
-      <div className="pointer-events-none absolute -top-24 left-1/4 h-64 w-64 rounded-full bg-brand-accent/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/4 h-64 w-64 rounded-full bg-brand/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
 
       <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <span className="h-1 w-1 rounded-full bg-brand-accent" />
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+            <span className="h-1 w-1 rounded-full bg-brand" />
             Volume vs Open Interest · Top 10
           </div>
           <div className="mt-1 flex items-baseline gap-3">
@@ -56,8 +56,8 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
           </div>
         </div>
         <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-wider">
-          <span className="flex items-center gap-1.5 text-brand-accent">
-            <span className="h-2 w-2 rounded-sm bg-brand-accent/60" />Volume
+          <span className="flex items-center gap-1.5 text-brand">
+            <span className="h-2 w-2 rounded-sm bg-brand/60" />Volume
           </span>
           <span className="flex items-center gap-1.5 text-violet-400">
             <span className="h-2 w-2 rounded-sm bg-violet-400/60" />Open Interest
@@ -71,7 +71,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
         <div className="mt-4 min-h-[320px]"><ChartEmpty message="No market data" /></div>
       ) : (
         <div className="relative z-10 mt-5 flex-1 min-h-0 flex flex-col">
-          <div className="grid grid-cols-[28px_140px_1fr_80px_1fr] items-center pb-2 text-[9px] font-semibold uppercase tracking-wider text-text-muted">
+          <div className="grid grid-cols-[28px_140px_1fr_80px_1fr] items-center pb-2 text-[9px] font-semibold uppercase tracking-wider text-text-tertiary">
             <span>#</span>
             <span>Market</span>
             <span className="text-right pr-2">Volume</span>
@@ -86,7 +86,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
               const volRatio = vol / maxVol;
               const oiRatio = oi / maxOI;
               const isHovered = hoverIdx === i;
-              const rankColor = i === 0 ? "text-brand-gold" : i === 1 ? "text-text-primary" : i === 2 ? "text-amber-600" : "text-text-muted";
+              const rankColor = i === 0 ? "text-gold" : i === 1 ? "text-text-primary" : i === 2 ? "text-amber-600" : "text-text-tertiary";
               const label = row.display_name || row.coin || `#${row.outcome_id}`;
 
               return (
@@ -152,15 +152,15 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
             })}
           </div>
 
-          <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-muted tabular-nums">
+          <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-text-tertiary tabular-nums">
             {hoverIdx !== null && top[hoverIdx] ? (
               <>
                 <span className="font-semibold text-text-primary truncate max-w-[200px]">{top[hoverIdx].display_name || top[hoverIdx].coin || `#${top[hoverIdx].outcome_id}`}</span>
                 <span>
-                  <span className="text-brand-accent">Vol {compactUsd(top[hoverIdx].total_volume ?? 0)}</span>
-                  <span className="mx-2 text-text-muted/50">·</span>
+                  <span className="text-brand">Vol {compactUsd(top[hoverIdx].total_volume ?? 0)}</span>
+                  <span className="mx-2 text-text-tertiary/50">·</span>
                   <span className="text-violet-400">OI {compactUsd(top[hoverIdx].open_interest ?? 0)}</span>
-                  <span className="mx-2 text-text-muted/50">·</span>
+                  <span className="mx-2 text-text-tertiary/50">·</span>
                   <span className={pctColor(top[hoverIdx].mid_price)}>
                     {top[hoverIdx].mid_price !== null ? `${(top[hoverIdx].mid_price! * 100).toFixed(1)}%` : "—"}
                   </span>
@@ -169,7 +169,7 @@ export function Hip4MarketsFlowChart({ markets, isLoading }: Hip4MarketsFlowChar
             ) : (
               <>
                 <span>{top.length} markets shown</span>
-                <span className="text-text-muted/70">Hover a row · Prob = mid price probability</span>
+                <span className="text-text-tertiary/70">Hover a row · Prob = mid price probability</span>
               </>
             )}
           </div>

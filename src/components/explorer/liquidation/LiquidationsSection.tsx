@@ -39,7 +39,7 @@ export function LiquidationsSection() {
       key: "coin",
       header: "Coin",
       accessor: (liq) => (
-        <span className="text-brand-accent font-medium">{liq.coin}</span>
+        <span className="text-brand font-medium">{liq.coin}</span>
       ),
     },
     {
@@ -78,7 +78,7 @@ export function LiquidationsSection() {
       type: "numeric",
       className: "max-md:hidden",
       accessor: (liq) => (
-        <span className="text-text-muted">
+        <span className="text-text-tertiary">
           ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
         </span>
       ),
@@ -112,13 +112,13 @@ export function LiquidationsSection() {
           Recent Liquidations
         </h3>
         {lastUpdated && (
-          <span className="text-[10px] text-text-muted">
+          <span className="text-[10px] text-text-tertiary">
             Updated {lastUpdated.toLocaleTimeString()}
           </span>
         )}
         <button
           onClick={refreshData}
-          className="p-1.5 rounded-md hover-subtle text-text-muted hover:text-text-secondary"
+          className="p-1.5 rounded-md hover-subtle text-text-tertiary hover:text-text-secondary"
           title="Refresh data"
         >
           <RefreshCw className="h-3.5 w-3.5" />
@@ -126,15 +126,15 @@ export function LiquidationsSection() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Filter className="h-3.5 w-3.5 text-text-muted" />
-        <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
+        <Filter className="h-3.5 w-3.5 text-text-tertiary" />
+        <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
           {MIN_AMOUNT_PRESETS.map((preset) => (
             <button
               key={preset.value}
               onClick={() => setMinAmount(preset.value)}
               className={`px-2.5 py-1 rounded-md text-label transition-all ${
                 minAmount === preset.value
-                  ? "bg-brand-accent text-brand-tertiary font-bold"
+                  ? "bg-brand text-brand-text-on font-bold"
                   : "tab-inactive"
               }`}
             >

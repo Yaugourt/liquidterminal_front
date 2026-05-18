@@ -16,16 +16,16 @@ export function Hip4Breadcrumbs({ className }: { className?: string }) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className={cn("mb-5 flex flex-wrap items-center gap-1 text-[11px] text-text-muted", className)}
+      className={cn("mb-5 flex flex-wrap items-center gap-1 text-[11px] text-text-tertiary", className)}
     >
-      <Link href="/wiki" className="text-text-secondary hover:text-brand-accent">
+      <Link href="/wiki" className="text-text-secondary hover:text-brand">
         Wiki
       </Link>
-      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
-      <Link href="/hip4/home" className="text-text-secondary hover:text-brand-accent">
+      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-tertiary" aria-hidden />
+      <Link href="/hip4/home" className="text-text-secondary hover:text-brand">
         HIP-4
       </Link>
-      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
+      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-text-tertiary" aria-hidden />
       <span className="font-medium text-text-primary" aria-current="page">
         {title}
       </span>

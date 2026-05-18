@@ -24,15 +24,15 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
       className="bg-surface border border-border-subtle rounded-lg p-4"
     >
       <div className="flex items-center gap-2 mb-4">
-        <GitBranch className="w-4 h-4 text-brand-accent" />
+        <GitBranch className="w-4 h-4 text-brand" />
         <h3 className="text-sm font-semibold text-text-primary">
           Sub-Vaults ({childAddresses.length})
         </h3>
       </div>
 
       {isLoading ? (
-        <div className="flex items-center gap-2 text-text-muted">
-          <InlineSpinner className="text-brand-accent" />
+        <div className="flex items-center gap-2 text-text-tertiary">
+          <InlineSpinner className="text-brand" />
           <span className="text-sm">Loading sub-vaults…</span>
         </div>
       ) : (
@@ -43,13 +43,13 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
               <Link
                 key={addr}
                 href={`/explorer/vaults/${addr}`}
-                className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-border-subtle hover:border-border-hover hover:bg-white/[0.05] transition-all group"
+                className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-border-subtle hover:border-border-default hover:bg-white/[0.05] transition-all group"
               >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-text-primary truncate">
                     {summary?.name ?? `${addr.slice(0, 8)}…${addr.slice(-6)}`}
                   </p>
-                  <p className="text-xs text-text-muted font-mono">
+                  <p className="text-xs text-text-tertiary font-mono">
                     {addr.slice(0, 10)}…{addr.slice(-6)}
                   </p>
                   {summary && (
@@ -58,7 +58,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
                     </p>
                   )}
                 </div>
-                <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-brand-accent transition-colors flex-shrink-0" />
+                <ChevronRight className="w-4 h-4 text-text-tertiary group-hover:text-brand transition-colors flex-shrink-0" />
               </Link>
             );
           })}

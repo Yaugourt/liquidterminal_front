@@ -53,7 +53,7 @@ export default function BuilderDetailPage() {
       <Card className="p-8 text-center max-w-lg mx-auto">
         <h2 className="text-lg font-medium text-white mb-2">Invalid address</h2>
         <p className="text-text-secondary text-sm mb-4">Use a checksummed 0x address (40 hex chars).</p>
-        <Button variant="ghost" className="text-brand-accent" onClick={() => router.push("/market/builders")}>
+        <Button variant="ghost" className="text-brand" onClick={() => router.push("/market/builders")}>
           <ArrowLeft className="h-4 w-4 mr-2" />Back to Builders
         </Button>
       </Card>
@@ -80,7 +80,7 @@ export default function BuilderDetailPage() {
               onClick={() => setTf(t)}
               className={
                 tf === t
-                  ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/40 hover:bg-brand-accent/30"
+                  ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
                   : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
               }
             >
@@ -104,7 +104,7 @@ export default function BuilderDetailPage() {
       ) : (
         <Card className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-2xl font-bold text-brand-accent shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-2xl font-bold text-brand shrink-0">
               {(displayName && displayName !== "—" ? displayName.charAt(0) : address.slice(2, 3)).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
@@ -112,7 +112,7 @@ export default function BuilderDetailPage() {
                 <h1 className="text-xl font-bold text-white">
                   {displayName && displayName !== "—" ? displayName : "Builder"}
                 </h1>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/20">
                   {tf}
                 </span>
               </div>
@@ -121,19 +121,19 @@ export default function BuilderDetailPage() {
             {stats.stats && (
               <div className="flex gap-6 shrink-0">
                 <div className="text-center">
-                  <p className="text-text-muted text-[10px] uppercase tracking-wider">Volume</p>
+                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Volume</p>
                   <p className="text-white font-bold text-sm tabular-nums">
                     {formatNumber(stats.stats.current.totalVolume, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-text-muted text-[10px] uppercase tracking-wider">Builder fees</p>
-                  <p className="text-brand-gold font-bold text-sm tabular-nums">
+                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Builder fees</p>
+                  <p className="text-gold font-bold text-sm tabular-nums">
                     {formatNumber(stats.stats.current.totalBuilderFees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-text-muted text-[10px] uppercase tracking-wider">Users</p>
+                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Users</p>
                   <p className="text-white font-bold text-sm tabular-nums">
                     {formatNumber(stats.stats.current.uniqueUsers, format, { maximumFractionDigits: 0 })}
                   </p>
@@ -161,10 +161,10 @@ export default function BuilderDetailPage() {
           <Card className="rounded-2xl">
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-border-subtle">
               {stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => (
-                <div key={coin.coin ?? i} className="bg-brand-secondary/60 p-3 text-center">
-                  <p className="text-brand-accent font-medium text-sm">{coin.coin ?? "—"}</p>
+                <div key={coin.coin ?? i} className="bg-surface/60 p-3 text-center">
+                  <p className="text-brand font-medium text-sm">{coin.coin ?? "—"}</p>
                   {coin.totalVolume !== undefined && (
-                    <p className="text-text-muted text-xs tabular-nums">
+                    <p className="text-text-tertiary text-xs tabular-nums">
                       {formatNumber(coin.totalVolume as number, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
                     </p>
                   )}
@@ -182,7 +182,7 @@ export default function BuilderDetailPage() {
             Top users ({tf})
           </h2>
           {users.data?.users && (
-            <span className="text-text-muted text-xs">{users.data.users.length} users</span>
+            <span className="text-text-tertiary text-xs">{users.data.users.length} users</span>
           )}
         </div>
         <BuilderUsersTable

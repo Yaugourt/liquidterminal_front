@@ -63,11 +63,11 @@ export function Hip4CoreChapter() {
             </p>
             <p>
               For API field names and examples, pair this page with{" "}
-              <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
+              <Link href="/hip4/info-api" className="text-brand hover:underline">
                 Info endpoint
               </Link>{" "}
               and{" "}
-              <Link href="/hip4/reference" className="text-brand-accent hover:underline">
+              <Link href="/hip4/reference" className="text-brand hover:underline">
                 API & data overview
               </Link>
               .
@@ -101,11 +101,11 @@ export function Hip4CoreChapter() {
         </Hip4DocLead>
         <Hip4SubsectionTitle>Observed book mirror</Hip4SubsectionTitle>
         <Hip4CodeBlock>{PAIR_EXAMPLE}</Hip4CodeBlock>
-        <p className="mt-4 text-xs text-text-muted">
+        <p className="mt-4 text-xs text-text-tertiary">
           Minimum notional (community formula):{" "}
-          <code className="font-mono text-brand-accent">size × min(markPx, 1 − markPx) ≥ $10</code>{" "}
+          <code className="font-mono text-brand">size × min(markPx, 1 − markPx) ≥ $10</code>{" "}
           USDH — feeds in{" "}
-          <Link href="/hip4/info-api" className="text-brand-accent hover:underline">
+          <Link href="/hip4/info-api" className="text-brand hover:underline">
             Info endpoint
           </Link>
           .
@@ -124,10 +124,10 @@ export function Hip4CoreChapter() {
         <Hip4SubsectionTitle>0xc25c… — HIP-4 operator</Hip4SubsectionTitle>
         <p className="mb-3 text-xs text-text-secondary">
           Observed actions (explorer labels — JSON payloads in docs often use lowercase variants such as{" "}
-          <code className="font-mono text-[11px] text-brand-accent">registerTokensAndStandaloneOutcome</code>{" "}
-          and <code className="font-mono text-[11px] text-brand-accent">VoteGlobalAction</code>):
+          <code className="font-mono text-[11px] text-brand">registerTokensAndStandaloneOutcome</code>{" "}
+          and <code className="font-mono text-[11px] text-brand">VoteGlobalAction</code>):
         </p>
-        <ul className="mb-4 list-disc space-y-1.5 pl-4 text-xs text-text-secondary marker:text-brand-gold/70">
+        <ul className="mb-4 list-disc space-y-1.5 pl-4 text-xs text-text-secondary marker:text-gold/70">
           <li>Create markets — RegisterTokensAndStandaloneOutcome, RegisterOutcome</li>
           <li>Settle markets — SettleOutcome (settlement in API research as VoteGlobalAction)</li>
           <li>Create questions — RegisterQuestion</li>
@@ -138,19 +138,19 @@ export function Hip4CoreChapter() {
         <p className="mb-3 text-xs text-text-secondary">
           Holds oracle / on-chain price-feed duties. A historical settlement from this wallet was
           observed (same tx often cited for VoteGlobalAction discovery); more recent settlement traffic
-          has been attributed to <code className="font-mono text-[11px] text-brand-accent">0xc25c…</code>{" "}
+          has been attributed to <code className="font-mono text-[11px] text-brand">0xc25c…</code>{" "}
           in our trace — roles may shift on testnet.
         </p>
         <Hip4SubsectionTitle>Separation from HyperEVM parimutuel</Hip4SubsectionTitle>
         <p className="mb-3 text-xs text-text-secondary">
           None of the eight L1 cluster addresses overlap the third-party parimutuel deployer{" "}
-          <code className="font-mono text-[11px] text-text-muted">{HIP4_EVM_PARIMUTUEL_DEPLOYER}</code>.
+          <code className="font-mono text-[11px] text-text-tertiary">{HIP4_EVM_PARIMUTUEL_DEPLOYER}</code>.
           Official HIP-4 CLOB flow and the EVM contest contracts are operated or owned by distinct
           entities on testnet.
         </p>
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-text-tertiary">
           Full table + proof link:{" "}
-          <Link href="/hip4/reference#system-wallets" className="text-brand-accent hover:underline">
+          <Link href="/hip4/reference#system-wallets" className="text-brand hover:underline">
             API & data — system wallets
           </Link>
           . On mainnet, duties would likely be distributed across validators — not guaranteed here.
@@ -162,7 +162,7 @@ export function Hip4CoreChapter() {
         <Hip4DocLead className="mb-3 text-xs">
           Research gaps — not failures of the doc, just unknowns as of the last research pass.
         </Hip4DocLead>
-        <ul className="list-disc space-y-2 pl-4 text-xs text-text-secondary marker:text-brand-gold/70">
+        <ul className="list-disc space-y-2 pl-4 text-xs text-text-secondary marker:text-gold/70">
           <li>Collateral redistribution across multiple outcomes at settlement</li>
           <li>Whether HyperEVM parimutuel deployer is team-adjacent or third-party (funding trace)</li>
           <li>Mainnet: validator settlement, permissionless creation</li>

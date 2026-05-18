@@ -85,11 +85,11 @@ export function WalletListSelector({
         <Select value={activeTab.toString()} onValueChange={onTabChange}>
           <SelectTrigger className="w-full sm:w-[320px]">
             <div className="flex items-center gap-2 truncate">
-              <List className="w-4 h-4 shrink-0 text-brand-accent" />
+              <List className="w-4 h-4 shrink-0 text-brand" />
               <SelectValue>
                 <span className="font-medium">{activeListInfo.name}</span>
                 {activeListInfo.count !== null && (
-                  <span className="text-xs text-text-muted ml-2">
+                  <span className="text-xs text-text-tertiary ml-2">
                     ({activeListInfo.count} wallet{activeListInfo.count !== 1 ? "s" : ""})
                   </span>
                 )}
@@ -100,14 +100,14 @@ export function WalletListSelector({
           <SelectContent className="max-h-[400px]">
             {/* Search input */}
             {userLists.length > 5 && (
-              <div className="p-2 sticky top-0 bg-brand-secondary z-10 border-b border-border-subtle">
+              <div className="p-2 sticky top-0 bg-surface z-10 border-b border-border-subtle">
                 <div className="relative">
-                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
                   <Input
                     placeholder="Search lists..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 bg-brand-dark border-border-subtle text-text-primary h-8 rounded-lg"
+                    className="pl-8 bg-base border-border-subtle text-text-primary h-8 rounded-lg"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
@@ -120,7 +120,7 @@ export function WalletListSelector({
               className="focus:bg-white/5 focus:text-text-primary cursor-pointer rounded-lg"
             >
               <div className="flex items-center gap-2">
-                <List className="w-4 h-4 text-brand-accent" />
+                <List className="w-4 h-4 text-brand" />
                 <span className="font-medium">All Wallets</span>
               </div>
             </SelectItem>
@@ -139,28 +139,28 @@ export function WalletListSelector({
                   <div className="flex flex-col gap-1 w-full py-1">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <List className="w-4 h-4 text-brand-accent shrink-0" />
+                        <List className="w-4 h-4 text-brand shrink-0" />
                         <span className="font-medium truncate">{list.name}</span>
                       </div>
-                      <span className="text-xs text-text-muted shrink-0">
+                      <span className="text-xs text-text-tertiary shrink-0">
                         {new Date(list.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="text-xs text-text-muted pl-6">
+                    <div className="text-xs text-text-tertiary pl-6">
                       {list.itemsCount || 0} wallet{list.itemsCount !== 1 ? "s" : ""}
                     </div>
                   </div>
                 </SelectItem>
               ))
             ) : searchQuery ? (
-              <div className="p-4 text-center text-sm text-text-muted">
+              <div className="p-4 text-center text-sm text-text-tertiary">
                 No lists found for &quot;{searchQuery}&quot;
               </div>
             ) : null}
 
             {/* Empty state */}
             {userLists.length === 0 && (
-              <div className="p-4 text-center text-sm text-text-muted">
+              <div className="p-4 text-center text-sm text-text-tertiary">
                 No lists yet. Create your first one!
               </div>
             )}
@@ -187,9 +187,9 @@ export function WalletListSelector({
         )}
 
         {/* List count badge */}
-        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand-accent/10 border border-border-subtle rounded-lg text-xs text-brand-accent">
+        <div className="hidden lg:flex items-center gap-1 px-2 py-1 bg-brand/10 border border-border-subtle rounded-lg text-xs text-brand">
           <span className="font-medium">{userLists.length}</span>
-          <span className="text-text-muted">list{userLists.length !== 1 ? "s" : ""}</span>
+          <span className="text-text-tertiary">list{userLists.length !== 1 ? "s" : ""}</span>
         </div>
       </div>
 
@@ -208,7 +208,7 @@ export function WalletListSelector({
         <Button
           onClick={onCreateList}
           size="sm"
-          className="flex-1 sm:flex-none bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="flex-1 sm:flex-none bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Create List</span>

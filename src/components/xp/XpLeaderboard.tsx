@@ -77,7 +77,7 @@ export function XpLeaderboard({
         return <Medal className="h-5 w-5 text-amber-600" />;
       default:
         return (
-          <span className="w-5 text-center text-sm font-bold text-text-muted">
+          <span className="w-5 text-center text-sm font-bold text-text-tertiary">
             {rank}
           </span>
         );
@@ -93,16 +93,16 @@ export function XpLeaderboard({
       case 3:
         return "bg-gradient-to-r from-amber-600/10 to-orange-500/10 border-amber-600/30";
       default:
-        return "bg-brand-dark border-border-subtle";
+        return "bg-base border-border-subtle";
     }
   };
 
   return (
-    <div className={cn("bg-brand-secondary/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
+    <div className={cn("bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
         <div className="flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-text-primary font-semibold">
-            <Trophy className="h-5 w-5 text-brand-gold" />
+            <Trophy className="h-5 w-5 text-gold" />
             Leaderboard
           </h3>
           <span className="text-sm font-normal text-text-secondary">
@@ -130,19 +130,19 @@ export function XpLeaderboard({
                 >
                   <div className="flex items-center gap-3">
                     {getRankIcon(entry.rank)}
-                    <div className="h-8 w-8 rounded-lg bg-brand-secondary border border-border-subtle flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-lg bg-surface border border-border-subtle flex items-center justify-center">
                       <User className="h-4 w-4 text-text-secondary" />
                     </div>
                     <div>
                       <p className="font-medium text-sm text-text-primary">{entry.name}</p>
-                      <p className="text-xs text-text-muted">Level {entry.level}</p>
+                      <p className="text-xs text-text-tertiary">Level {entry.level}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-brand-gold">
+                    <p className="font-bold text-gold">
                       {entry.totalXp.toLocaleString()}
                     </p>
-                    <p className="text-xs text-text-muted">XP</p>
+                    <p className="text-xs text-text-tertiary">XP</p>
                   </div>
                 </div>
               ))}
@@ -151,16 +151,16 @@ export function XpLeaderboard({
             {/* Current user rank (if not in visible list) */}
             {showCurrentUser && userRank && userRank > leaderboard.length && (
               <div className="pt-4 border-t border-border-subtle">
-                <p className="text-xs text-text-muted mb-2">Your position</p>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-brand-accent/10 border border-brand-accent/30">
+                <p className="text-xs text-text-tertiary mb-2">Your position</p>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-brand/10 border border-brand/30">
                   <div className="flex items-center gap-3">
-                    <span className="w-5 text-center text-sm font-bold text-brand-accent">
+                    <span className="w-5 text-center text-sm font-bold text-brand">
                       #{userRank}
                     </span>
-                    <div className="h-8 w-8 rounded-lg bg-brand-accent/20 flex items-center justify-center">
-                      <User className="h-4 w-4 text-brand-accent" />
+                    <div className="h-8 w-8 rounded-lg bg-brand/20 flex items-center justify-center">
+                      <User className="h-4 w-4 text-brand" />
                     </div>
-                    <span className="font-medium text-sm text-brand-accent">You</span>
+                    <span className="font-medium text-sm text-brand">You</span>
                   </div>
                 </div>
               </div>

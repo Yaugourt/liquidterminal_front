@@ -83,12 +83,12 @@ export default function PerpDexDetailPage() {
 
   if (error || !dex) {
     return (
-      <div className="p-8 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
+      <div className="p-8 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
         <div className="flex flex-col items-center justify-center text-center">
           <Database className="w-12 h-12 mb-4 text-zinc-600" />
           <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
           <p className="text-zinc-400 mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
-          <Button onClick={() => router.push('/market/perpdex')} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary">
+          <Button onClick={() => router.push('/market/perpdex')} className="bg-brand hover:bg-brand/90 text-brand-text-on">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to PerpDexs
           </Button>
@@ -106,18 +106,18 @@ export default function PerpDexDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/market/perpdex')}
-            className="text-brand-accent hover:text-white hover:bg-white/5"
+            className="text-brand hover:text-white hover:bg-white/5"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-lg font-bold text-brand-accent">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-lg font-bold text-brand">
               {dex.name.charAt(0).toUpperCase()}
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">{dex.fullName}</h1>
-              <span className="text-brand-accent text-sm">{dex.name}</span>
+              <span className="text-brand text-sm">{dex.name}</span>
             </div>
           </div>
         </div>
@@ -139,10 +139,10 @@ export default function PerpDexDetailPage() {
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* 24h Volume */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Activity className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Activity className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">24h Volume</span>
           </div>
@@ -159,10 +159,10 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Open Interest */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <TrendingUp className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <TrendingUp className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Open Interest</span>
           </div>
@@ -179,10 +179,10 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Avg Funding */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Zap className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Zap className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Avg Funding</span>
           </div>
@@ -192,10 +192,10 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Active Markets */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Scale className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Scale className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Active Markets</span>
           </div>
@@ -210,10 +210,10 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* OI Cap */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <TrendingUp className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <TrendingUp className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">OI Cap</span>
           </div>
@@ -228,10 +228,10 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Fee Scale */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Wallet className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Wallet className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Fee Scale</span>
           </div>
@@ -244,10 +244,10 @@ export default function PerpDexDetailPage() {
       {/* Addresses */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Deployer Card */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Database className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Database className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">DEPLOYER</span>
           </div>
@@ -256,15 +256,15 @@ export default function PerpDexDetailPage() {
             showExternalLink={true}
             externalLinkHref={`/explorer/address/${dex.deployer}`}
             copyMessage="Deployer address copied"
-            className="text-brand-accent text-sm"
+            className="text-brand text-sm"
           />
         </div>
 
         {/* Fee Recipient Card */}
-        <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Wallet className="h-3 w-3 text-brand-accent" />
+            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
+              <Wallet className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">FEE RECIPIENT</span>
           </div>
@@ -273,7 +273,7 @@ export default function PerpDexDetailPage() {
             showExternalLink={true}
             externalLinkHref={`/explorer/address/${dex.feeRecipient}`}
             copyMessage="Fee recipient address copied"
-            className="text-brand-accent text-sm"
+            className="text-brand text-sm"
           />
         </div>
 
@@ -286,17 +286,17 @@ export default function PerpDexDetailPage() {
             className="text-zinc-400 text-sm"
           />
         ) : dex.subDeployers.length > 0 ? (
-          <div className="p-4 bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
+          <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-lg bg-brand-accent/10 flex items-center justify-center">
-                <Wallet className="h-3 w-3 text-brand-accent" />
+              <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center">
+                <Wallet className="h-3 w-3 text-brand" />
               </div>
               <span className="text-stat-label">Sub-Deployers ({dex.subDeployers.length})</span>
             </div>
             <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-brand">
               {dex.subDeployers.slice(0, 4).map((sub, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs">
-                  <span className="text-brand-accent shrink-0">{sub.permission}</span>
+                  <span className="text-brand shrink-0">{sub.permission}</span>
                   <div className="flex items-center gap-1 flex-wrap">
                     {sub.addresses.slice(0, 2).map((addr, addrIdx) => (
                       <div
@@ -304,7 +304,7 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-zinc-400 text-label hover:text-brand-accent transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-zinc-400 text-label hover:text-brand transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>

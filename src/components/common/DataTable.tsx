@@ -625,10 +625,10 @@ export function TypedDataTable<T>({
                         <TableRow>
                             <TableCell colSpan={columns.length} className="py-8 border-none">
                                 <div className="flex flex-col items-center justify-center text-center">
-                                    <Database className="w-10 h-10 mb-3 text-text-muted" />
+                                    <Database className="w-10 h-10 mb-3 text-text-tertiary" />
                                     <p className="text-text-secondary text-sm mb-1">{emptyMessage}</p>
                                     {emptyDescription && (
-                                        <p className="text-text-muted text-xs">{emptyDescription}</p>
+                                        <p className="text-text-tertiary text-xs">{emptyDescription}</p>
                                     )}
                                 </div>
                             </TableCell>
@@ -741,10 +741,10 @@ function wrapInCard(
         <Card className={cn("flex flex-col", outerClassName)}>
             <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    {icon && <div className="p-2 bg-brand-accent/10 rounded-lg">{icon}</div>}
+                    {icon && <div className="p-2 bg-brand/10 rounded-lg">{icon}</div>}
                     <div>
                         <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
-                        {subtitle && <p className="text-text-muted text-sm">{subtitle}</p>}
+                        {subtitle && <p className="text-text-tertiary text-sm">{subtitle}</p>}
                     </div>
                 </div>
                 {headerAction && <div className="shrink-0">{headerAction}</div>}

@@ -27,16 +27,16 @@ export default function PerpDexsPage() {
 
       {/* Tables with Tabs */}
       <Tabs defaultValue="builder-dexs" className="w-full">
-        <TabsList className="bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl mb-4">
+        <TabsList className="bg-surface/60 border border-border-subtle p-1 rounded-xl mb-4">
           <TabsTrigger
             value="builder-dexs"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all"
+            className="data-[state=active]:bg-brand/20 data-[state=active]:text-brand text-text-secondary px-4 py-2 rounded-lg transition-all"
           >
             All Builder DEXs
           </TabsTrigger>
           <TabsTrigger
             value="auction-pairs"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all"
+            className="data-[state=active]:bg-brand/20 data-[state=active]:text-brand text-text-secondary px-4 py-2 rounded-lg transition-all"
           >
             Auction Pairs
           </TabsTrigger>

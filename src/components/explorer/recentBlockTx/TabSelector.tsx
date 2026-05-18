@@ -12,14 +12,14 @@ export function TabSelector({ activeTab, onTabChange }: TabSelectorProps) {
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+    <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
       {tabs.map(tab => (
         <button
           key={tab.key}
           onClick={() => onTabChange(tab.key)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
             activeTab === tab.key
-              ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+              ? 'bg-brand text-brand-text-on shadow-sm font-bold'
               : 'tab-inactive'
           }`}
         >

@@ -84,7 +84,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
           <span className={`font-medium ${type === "deposit" ? "text-emerald-400" : "text-rose-400"}`}>
             {type === "deposit" ? "+" : "-"}$
             {formatNumber(e.amount, format, { maximumFractionDigits: 2 })}{" "}
-            <span className="text-text-muted text-[10px]">{e.token}</span>
+            <span className="text-text-tertiary text-[10px]">{e.token}</span>
           </span>
         );
       },
@@ -112,7 +112,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         placeholder="Filter by address or hash…"
         value={filterQuery}
         onChange={(e) => handleFilterChange(e.target.value)}
-        className="h-7 px-3 text-xs bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-muted focus:outline-none focus:border-brand-accent/50 w-52"
+        className="h-7 px-3 text-xs bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand/50 w-52"
       />
     </div>
   );

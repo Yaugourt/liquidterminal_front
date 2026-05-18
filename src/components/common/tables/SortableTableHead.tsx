@@ -55,7 +55,7 @@ export function SortableTableHead<F extends string>({
           // Right-aligned columns: reverse so the label stays flush-right and
           // lines up with the numeric cells below — the icon sits to its left.
           align === "right" && "w-full flex-row-reverse",
-          isActive && "!text-brand-gold"
+          isActive && "!text-gold"
         )}
       >
         {children}
@@ -63,7 +63,7 @@ export function SortableTableHead<F extends string>({
           className={cn(
             "h-3 w-3 shrink-0",
             !isActive && "opacity-50",
-            isActive && "text-brand-gold"
+            isActive && "text-gold"
           )}
         />
       </button>
