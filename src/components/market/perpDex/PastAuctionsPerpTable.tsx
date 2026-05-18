@@ -1,7 +1,6 @@
 "use client";
 
 import { TypedDataTable, type Column } from "@/components/common";
-import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -119,20 +118,18 @@ export function PastAuctionsPerpTable() {
   const { auctions, isLoading } = usePastAuctionsPerp();
 
   return (
-    <Card>
-      <TypedDataTable<PastAuctionPerp>
-        data={auctions}
-        columns={buildColumns(numberFormat, dateFormat)}
-        getRowKey={(row) => row.hash}
-        isLoading={isLoading && auctions.length === 0}
-        emptyMessage="No auction pairs found"
-        emptyDescription="Check back later"
-        paginate
-        itemsPerPage={PAGE_SIZE}
-        initialSort={{ field: "time", direction: "desc" }}
-        paginationVariant="full"
-        rowsPerPageOptions={[5, 10, 15, 20]}
-      />
-    </Card>
+    <TypedDataTable<PastAuctionPerp>
+      data={auctions}
+      columns={buildColumns(numberFormat, dateFormat)}
+      getRowKey={(row) => row.hash}
+      isLoading={isLoading && auctions.length === 0}
+      emptyMessage="No auction pairs found"
+      emptyDescription="Check back later"
+      paginate
+      itemsPerPage={PAGE_SIZE}
+      initialSort={{ field: "time", direction: "desc" }}
+      paginationVariant="full"
+      rowsPerPageOptions={[5, 10, 15, 20]}
+    />
   );
 }

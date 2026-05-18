@@ -1,20 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { TrendingUp, Vault, DollarSign, BarChart2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { StatsCard } from "@/components/common";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.07, duration: 0.35 },
-  }),
-} as const;
 
 export function VaultKpiBar() {
   const { vaults, totalTvl, isLoading } = useVaults({ limit: 1000 });
@@ -29,65 +18,60 @@ export function VaultKpiBar() {
     const highestApr = aprs.length ? Math.max(...aprs) : 0;
     const avgApr = aprs.length ? aprs.reduce((a, b) => a + b, 0) / aprs.length : 0;
 
-    const highestAprVault = vaults.find((v) => v.apr === highestApr);
-
     return {
       totalTvl,
       openCount: openVaults.length,
       closedCount: closedVaults.length,
       highestApr,
-      highestAprName: highestAprVault?.summary.name ?? "—",
       avgApr,
     };
   }, [vaults, totalTvl]);
 
-  const cards = [
+  const items = [
     {
-      title: "Total TVL",
-      value: isLoading ? "—" : `$${formatLargeNumber(stats?.totalTvl ?? 0, { decimals: 2 })}`,
-      icon: <DollarSign className="w-4 h-4 text-brand" />,
+      label: "Total TVL",
+      value: isLoading || !stats ? "—" : `$${formatLargeNumber(stats.totalTvl, { decimals: 2 })}`,
     },
     {
-      title: "Active Vaults",
-      value: isLoading ? "—" : String(stats?.openCount ?? 0),
-      icon: <Vault className="w-4 h-4 text-emerald-400" />,
+      label: "Active Vaults",
+      value: isLoading || !stats ? "—" : String(stats.openCount),
     },
     {
-      title: "Closed Vaults",
-      value: isLoading ? "—" : String(stats?.closedCount ?? 0),
-      icon: <Vault className="w-4 h-4 text-text-tertiary" />,
+      label: "Closed Vaults",
+      value: isLoading || !stats ? "—" : String(stats.closedCount),
     },
     {
-      title: "Highest APR",
-      value: isLoading
-        ? "—"
-        : `${(stats?.highestApr ?? 0).toFixed(2)}%`,
-      icon: <TrendingUp className="w-4 h-4 text-gold" />,
+      label: "Highest APR",
+      value: isLoading || !stats ? "—" : `${stats.highestApr.toFixed(2)}%`,
     },
     {
-      title: "Average APR",
-      value: isLoading ? "—" : `${(stats?.avgApr ?? 0).toFixed(2)}%`,
-      icon: <BarChart2 className="w-4 h-4 text-brand" />,
+      label: "Average APR",
+      value: isLoading || !stats ? "—" : `${stats.avgApr.toFixed(2)}%`,
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-      {cards.map((card, i) => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2">
+      {items.map((item, i) => (
         <motion.div
-          key={card.title}
-          custom={i}
-          initial="hidden"
-          animate="visible"
-          variants={cardVariants}
+          key={item.label}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.06, duration: 0.3 }}
+          className="bg-surface border border-border-subtle rounded-lg px-3.5 py-3"
         >
-          <StatsCard
-            title={card.title}
-            value={card.value}
-            icon={card.icon}
-            isLoading={isLoading}
-            className="bg-surface border border-border-subtle rounded-lg h-full"
-          />
+          <div className="mb-1.5">
+            <span className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
+              {item.label}
+            </span>
+          </div>
+          <div className="mono text-[20px] leading-tight font-semibold text-text-primary">
+            {isLoading && !stats ? (
+              <span className="text-text-tertiary">…</span>
+            ) : (
+              item.value
+            )}
+          </div>
         </motion.div>
       ))}
     </div>

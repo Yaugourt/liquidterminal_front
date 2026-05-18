@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
-import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
@@ -140,18 +139,16 @@ export function PerpDexTable() {
   );
 
   return (
-    <Card>
-      <TypedDataTable<PerpDexWithMarketData>
-        data={dexs}
-        columns={buildColumns(format)}
-        getRowKey={(row) => row.name}
-        isLoading={isLoading && dexs.length === 0}
-        emptyMessage="No PerpDex available"
-        emptyDescription="Check back later"
-        onRowClick={handleDexClick}
-        rowMotion
-        initialSort={{ field: "totalVolume24h", direction: "desc" }}
-      />
-    </Card>
+    <TypedDataTable<PerpDexWithMarketData>
+      data={dexs}
+      columns={buildColumns(format)}
+      getRowKey={(row) => row.name}
+      isLoading={isLoading && dexs.length === 0}
+      emptyMessage="No PerpDex available"
+      emptyDescription="Check back later"
+      onRowClick={handleDexClick}
+      rowMotion
+      initialSort={{ field: "totalVolume24h", direction: "desc" }}
+    />
   );
 }
