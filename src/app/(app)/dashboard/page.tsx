@@ -9,16 +9,19 @@ import { TwapPanel } from "@/components/dashboard/TwapPanel";
 import { VaultsModule } from "@/components/dashboard/modules/VaultsModule";
 import { ValidatorsModule } from "@/components/dashboard/modules/ValidatorsModule";
 import { BuildersModule } from "@/components/dashboard/modules/BuildersModule";
-import { PerpDexModule } from "@/components/dashboard/modules/PerpDexModule";
+import { Hip3MarketsPanel } from "@/components/dashboard/Hip3MarketsPanel";
 import { ChartSection } from "@/components/dashboard/chart/ChartSection";
+import { StablecoinsCard } from "@/components/dashboard/StablecoinsCard";
+import { SectionHead } from "@/components/dashboard/SectionHead";
 import { Card } from "@/components/ui/card";
 
 /**
  * Dashboard — vue d'ensemble de Liquid Terminal.
  *
- * Forme convergée : pulse bar (l'état de l'écosystème) en haut · grille 12
- * colonnes — colonne principale (marchés + chart) et colonne live (auctions,
- * liquidations, TWAP) · capital & infrastructure en bas.
+ * Disposition analytics (mockup 3) : pulse bar (l'état de l'écosystème) en
+ * haut · lignes empilées pleine largeur — chart + auction (g-main), marchés
+ * spot/perp (g-2), flux live liquidations/TWAP/perp DEXs (g-3), capital
+ * vaults/validators (g-2), leaderboard builders en pied.
  */
 export default function Home() {
   return (
@@ -29,33 +32,49 @@ export default function Home() {
       />
 
       {/* Pulse bar — l'état de l'écosystème */}
-      <PulseBar />
-
-      {/* Grille 12 col — principale (marchés + chart) + colonne live */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
-        <div className="xl:col-span-8 flex flex-col gap-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <MoversCard market="spot" />
-            <MoversCard market="perp" />
-          </div>
-          <Card className="flex flex-col min-h-[360px]">
-            <ChartSection />
-          </Card>
-        </div>
-
-        <div className="xl:col-span-4 flex flex-col gap-4">
-          <AuctionsPanel />
-          <LiquidationsPanel />
-          <TwapPanel />
-        </div>
+      <div className="space-y-1.5">
+        <SectionHead
+          title="Network Pulse"
+          subtitle="Real-time ecosystem metrics"
+        />
+        <PulseBar />
       </div>
 
-      {/* Capital & infrastructure */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* g-main — chart + stablecoins */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
+        <Card className="flex flex-col min-h-[360px]">
+          <ChartSection />
+        </Card>
+        <StablecoinsCard />
+      </div>
+
+      {/* g-2 — table Spot + auction Spot + table Perp */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_264px_minmax(0,1fr)] gap-4">
+        <MoversCard market="spot" />
+        <AuctionsPanel market="spot" />
+        <MoversCard market="perp" />
+      </div>
+
+      {/* g-3 — flux live : liquidations + TWAP + marchés HIP-3 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <LiquidationsPanel />
+        <TwapPanel />
+        <Hip3MarketsPanel />
+      </div>
+
+      {/* g-2 — capital : vaults + validators */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <VaultsModule />
         <ValidatorsModule />
+      </div>
+
+      {/* Builder leaderboard — pleine largeur */}
+      <div className="space-y-1.5">
+        <SectionHead
+          title="Builder Leaderboard"
+          subtitle="Apps generating fees via the builder code program"
+        />
         <BuildersModule />
-        <PerpDexModule />
       </div>
     </div>
   );

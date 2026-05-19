@@ -109,71 +109,72 @@ export const ChartDisplay = ({
         style={{ background: `${mainColor}22` }}
       />
 
-      {/* Header */}
-      <div className="relative z-10 flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            <h2 className="text-[11px] text-text-secondary font-semibold uppercase tracking-[0.18em]">
-              {getTitle()}
-            </h2>
+      {/* chart-legend — pastille + nom de série + valeur courante */}
+      <div className="relative z-10 flex-shrink-0 flex flex-wrap items-center gap-x-4 gap-y-2 px-3.5 sm:px-4 pt-3.5 pb-1.5">
+        <div className="flex items-center gap-1.5">
+          <span
+            className="w-2 h-2 rounded-sm"
+            style={{ background: mainColor }}
+          />
+          <span className="text-[11px] font-medium text-text-secondary">
+            {getTitle()}
+          </span>
+          {displayValue !== null && (
+            <span className="mono text-[11px] font-semibold text-text-primary ml-0.5">
+              {formatYAxisValue(displayValue)}
+            </span>
+          )}
+        </div>
 
-            {/* Value Display */}
-            {displayValue !== null && (
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
-                  {formatYAxisValue(displayValue)}
-                </span>
-                {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
-                    {new Date(hoverTime).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                )}
-              </div>
-            )}
+        {hoverTime && (
+          <span className="mono text-[10px] text-text-tertiary">
+            {new Date(hoverTime).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </span>
+        )}
 
-            {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
-                {(["USDC", "HYPE"] as const).map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => onCurrencyChange(c)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
-                      selectedCurrency === c
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
-                    }`}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {selectedFilter === "fees" && onFeeTypeChange && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
-                {(["all", "spot"] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => onFeeTypeChange(t)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold capitalize transition-colors ${
-                      selectedFeeType === t
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            )}
+        {selectedFilter !== "bridge" && selectedFilter !== "fees" && onCurrencyChange && (
+          <div className="flex gap-px bg-base rounded-md p-0.5 border border-border-default">
+            {(["USDC", "HYPE"] as const).map((c) => (
+              <button
+                key={c}
+                onClick={() => onCurrencyChange(c)}
+                className={`px-2.5 py-1 rounded text-[11px] font-medium tabular-nums transition-colors ${
+                  selectedCurrency === c
+                    ? "bg-surface-2 text-text-primary"
+                    : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
           </div>
+        )}
 
+        {selectedFilter === "fees" && onFeeTypeChange && (
+          <div className="flex gap-px bg-base rounded-md p-0.5 border border-border-default">
+            {(["all", "spot"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => onFeeTypeChange(t)}
+                className={`px-2.5 py-1 rounded text-[11px] font-medium capitalize transition-colors ${
+                  selectedFeeType === t
+                    ? "bg-surface-2 text-text-primary"
+                    : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="ml-auto">
           <PeriodSelector
             selected={selectedPeriod}
             onChange={onPeriodChange}

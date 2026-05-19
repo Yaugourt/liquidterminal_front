@@ -24,17 +24,7 @@ import { useNumberFormat, type NumberFormatType } from "@/store/number-format.st
 type Market = "spot" | "perp";
 type Row = SpotToken | PerpMarketData;
 
-const TOP_N = 7;
-
-/** Compact count (no currency) — for token supply: 1.2B, 350M, 12.3K. */
-function compactCount(n: number, format: NumberFormatType): string {
-  if (!Number.isFinite(n)) return "—";
-  const abs = Math.abs(n);
-  if (abs >= 1e9) return `${formatNumber(n / 1e9, format, { maximumFractionDigits: 2 })}B`;
-  if (abs >= 1e6) return `${formatNumber(n / 1e6, format, { maximumFractionDigits: 2 })}M`;
-  if (abs >= 1e3) return `${formatNumber(n / 1e3, format, { maximumFractionDigits: 1 })}K`;
-  return formatNumber(n, format, { maximumFractionDigits: 0 });
-}
+const TOP_N = 5;
 
 function fmtPrice(price: number, format: NumberFormatType): string {
   if (price >= 1000) {
@@ -86,8 +76,7 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
   const spot = useTrendingSpotTokens(TOP_N, "volume", "desc");
   const perp = useTrendingPerpMarkets(TOP_N, "volume", "desc");
 
-  const { data, isLoading, error, totalVolume } =
-    market === "spot" ? spot : perp;
+  const { data, isLoading, error } = market === "spot" ? spot : perp;
 
   const columns: Column<Row>[] = useMemo(() => {
     if (market === "spot") {
@@ -115,24 +104,6 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
           type: "numeric",
           accessor: (t) => compactUsd(t.volume),
         },
-        {
-          key: "marketCap",
-          header: "Market Cap",
-          type: "numeric",
-          accessor: (t) => compactUsd((t as SpotToken).marketCap),
-        },
-        {
-          key: "liquidity",
-          header: "Liquidity",
-          type: "numeric",
-          accessor: (t) => compactUsd((t as SpotToken).liquidity),
-        },
-        {
-          key: "supply",
-          header: "Supply",
-          type: "numeric",
-          accessor: (t) => compactCount((t as SpotToken).supply, format),
-        },
       ];
     }
     return [
@@ -159,24 +130,6 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
         type: "numeric",
         accessor: (t) => compactUsd(t.volume),
       },
-      {
-        key: "openInterest",
-        header: "Open Interest",
-        type: "numeric",
-        accessor: (t) => compactUsd((t as PerpMarketData).openInterest),
-      },
-      {
-        key: "funding",
-        header: "Funding",
-        align: "right",
-        accessor: (t) => <SignedPct value={(t as PerpMarketData).funding * 100} decimals={4} />,
-      },
-      {
-        key: "maxLeverage",
-        header: "Max Lev.",
-        type: "numeric",
-        accessor: (t) => `${(t as PerpMarketData).maxLeverage}x`,
-      },
     ];
   }, [market, format]);
 
@@ -185,16 +138,19 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
     [router, market],
   );
 
+  const rows = (data ?? []).slice(0, TOP_N);
+
   return (
     <TypedDataTable<Row>
-      title={market === "spot" ? "Trending Spot" : "Trending Perp"}
-      icon={<TrendingUp size={14} className="text-brand" />}
-      subtitle={
-        <span className="mono text-text-secondary">
-          {compactUsd(totalVolume)}{" "}
-          <span className="font-sans text-text-tertiary">24h volume</span>
+      title={
+        <span className="inline-flex items-center gap-2">
+          {market === "spot" ? "Trending Spot" : "Trending Perpetuals"}
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+            {rows.length} markets
+          </span>
         </span>
       }
+      icon={<TrendingUp size={14} className="text-brand" />}
       headerAction={
         <Link
           href={`/market/${market}`}
@@ -204,7 +160,7 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
           <ArrowUpRight size={12} />
         </Link>
       }
-      data={(data ?? []).slice(0, TOP_N)}
+      data={rows}
       columns={columns}
       getRowKey={(r, i) => `${market}-${r.name}-${i}`}
       isLoading={isLoading}
