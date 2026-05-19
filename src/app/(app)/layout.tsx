@@ -18,18 +18,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }, [width]);
 
     return (
-        <div className="min-h-screen bg-brand-main text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-secondary via-brand-main to-black">            {/* Mobile menu button */}
+        <div className="min-h-screen bg-base text-text-primary font-inter">
+            {/* Halo subtil en haut de page — donne de la profondeur au fond plat */}
+            <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[340px] bg-gradient-to-b from-surface/60 to-transparent" />
+
+            {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             </div>
 
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-            <div className="lg:pl-[220px]">
-                {/* Header - scrolls with page content */}
-                <div>
-                    <Header />
-                </div>
+            <div className="relative z-10 lg:pl-[232px]">
+                <Header />
 
                 {/* Mobile SearchBar */}
                 <div className="p-2 lg:hidden">

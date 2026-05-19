@@ -15,12 +15,12 @@ export function Header({
     searchWidth = "w-[350px]",
 }: HeaderProps) {
     return (
-        <div className="w-full max-w-[1920px] mx-auto">
-            <div className="flex items-center justify-between w-full px-2 sm:px-4 lg:px-6 xl:px-12 py-3 gap-2">
+        <header className="sticky top-0 z-30 bg-base/80 backdrop-blur-xl">
+            <div className="flex items-center justify-between w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 xl:px-8 py-2.5 gap-2">
                 <div className="flex items-center gap-3 flex-shrink-0 ml-8 lg:ml-0">
                     <ExplorerSearchBar
                         placeholder={searchPlaceholder}
-                        className={`hidden lg:block bg-brand-main/80 backdrop-blur-xl border border-border-hover rounded-xl shadow-sm ${searchWidth} transition-all hover:border-white/20 focus-within:border-brand-accent`}
+                        className={`hidden lg:block ${searchWidth}`}
                     />
                 </div>
 
@@ -29,6 +29,6 @@ export function Header({
                     <SettingsSelector />
                 </div>
             </div>
-        </div>
+        </header>
     )
 } 
