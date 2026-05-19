@@ -1,12 +1,13 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
 import { ENDPOINTS } from '@/services/api/constants';
-import { 
-  LiquidationResponse, 
-  LiquidationsParams, 
+import {
+  LiquidationResponse,
+  LiquidationsParams,
   LiquidationStatsAllResponse,
   LiquidationChartDataResponse,
   LiquidationsDataResponse,
+  LiquidationsHistoricalChartResponse,
   ChartPeriod
 } from './types';
 
@@ -86,6 +87,23 @@ export const fetchLiquidationsChartData = async (
     );
     return response;
   }, 'fetching liquidations chart data');
+};
+
+/**
+ * Récupère la chart historique des liquidations (`/liquidations/historical/chart`).
+ * Profondeur jusqu'à 90 jours, granularité adaptative côté backend.
+ */
+export const fetchLiquidationsHistoricalChart = async (
+  period: string = '30d',
+  coin?: string
+): Promise<LiquidationsHistoricalChartResponse> => {
+  return withErrorHandling(async () => {
+    const params = new URLSearchParams({ period });
+    if (coin) params.append('coin', coin);
+    return await get<LiquidationsHistoricalChartResponse>(
+      `/liquidations/historical/chart?${params.toString()}`
+    );
+  }, 'fetching historical liquidations chart');
 };
 
 /**

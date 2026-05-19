@@ -181,6 +181,33 @@ export interface LiquidationsDataResponse {
 }
 
 // ============================================
+// Historical chart (jusqu'à 90 jours)
+// ============================================
+
+/** Période supportée par `/liquidations/historical/chart`. */
+export type HistoricalChartPeriod = "24h" | "7d" | "14d" | "30d" | "90d";
+
+/** Bucket renvoyé par `/liquidations/historical/chart`. */
+export interface HistoricalChartBucket {
+  timestamp: string;
+  totalVolume_USD: number;
+  longVolume_USD: number;
+  shortVolume_USD: number;
+  count: number;
+  longCount: number;
+  shortCount: number;
+}
+
+export interface LiquidationsHistoricalChartResponse {
+  success: boolean;
+  data: {
+    buckets: HistoricalChartBucket[];
+    period?: string;
+    interval?: string;
+  };
+}
+
+// ============================================
 // WebSocket Types
 // ============================================
 
