@@ -96,102 +96,38 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 4. **Type everything** - No `any` types allowed.
 
-## Design System (V3)
+## Design System (V4)
 
-### Color Tokens (use these, not raw colors)
+**Référence complète** : [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Lire ce fichier avant tout nouvel écran ou composant.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `bg-brand-primary` | `#0B0E14` | Main background |
-| `bg-brand-secondary` | `#151A25` | Cards, sections |
-| `text-text-secondary` | `#a1a1aa` | Labels, headers |
-| `text-text-muted` | `#71717a` | Muted text |
-| `text-brand-accent` | `#83E9FF` | Links, accent |
-| `text-brand-gold` | `#f9e370` | Secondary accent |
-| `border-border-subtle` | `rgba(255,255,255,0.05)` | Light borders |
-| `border-border-hover` | `rgba(255,255,255,0.1)` | Hover borders |
+### Tokens essentiels
 
-### Glass Components (defined in globals.css)
+| Token | Usage |
+|-------|-------|
+| `bg-base` `#0A0B0F` | Fond de l'app |
+| `bg-surface` `#0F1421` | Cartes, sidebar |
+| `bg-surface-2` `#141B2A` | Header de table, hover, pills |
+| `border-subtle` / `border-default` | Séparateurs / bordures |
+| `text-primary` / `secondary` / `tertiary` | Hiérarchie de texte |
+| `brand` `#83E9FF` | Cyan accent (focus, actifs) |
+| `gold` `#F9E370` | Fees, accent secondaire |
+| `success` `#1FA85B` / `danger` `#E53E3E` | Long/buy · Short/sell |
 
-```tsx
-<div className="glass-panel">       // Standard cards (60% opacity)
-<div className="glass-card">        // Higher opacity cards (90%)
-<div className="glass-dialog">      // Modals
-<div className="stat-card">         // Stats displays
-<input className="glass-input" />   // Inputs
-<button className="glass-button">   // Buttons
-```
+### Primitives (toujours composer à partir de là)
 
-### Typography
+- **Cartes** : `<Card>` + card-head V4 (icône brand + titre 13px + tag pill + action `ml-auto`).
+- **Tables** : `<TypedDataTable>` uniquement — le `<Table>` brut hors `common/` est bloqué par ESLint.
+- **Charts** : `<AuroraAreaChart>` mono-série / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Couleurs via `chartPalette` — hex hardcodé bloqué par ESLint.
+- **Layout shell** : `bg-base` + halo subtil `z-0` ; contenu `relative z-10` ; sidebar 232px ; header sticky `bg-base/80 backdrop-blur-xl` sans border-b.
 
-- **Single stack:** `font-inter`, `font-sans`, and `font-mono` all resolve to Inter (`tailwind.config.ts` + `globals.css` base resets for `code`/`pre`).
-- **Numeric alignment:** prefer `tabular-nums` instead of expecting a different glyph width from `font-mono`.
+### Règles dures
 
-### Semantic Colors
+- Aucun hex hardcodé dans le style — toujours un token.
+- `.mono` pour les nombres tabulaires.
+- Pas de sparkline/delta inventé : si l'API n'a pas d'historique pour la métrique, on ne l'affiche pas.
+- Hypedexer (`/indexer/*`) est instable (402) — tout chart qui en dépend doit dégrader proprement. Sources robustes : DB locale `/liquidations/historical/chart`, Hypurrscan fees + `/spotUSDC`, DefiLlama bridge.
 
-- **Success/Buy:** `emerald-400/500`
-- **Error/Sell:** `rose-400/500`
-- **Accent:** `text-brand-accent`
-- **Warning:** `text-brand-gold`
-
-### Migration Checklist (when editing components)
-
-Replace legacy classes:
-- `text-zinc-400` → `text-text-secondary`
-- `text-zinc-500` → `text-text-muted`
-- `border-white/5` → `border-border-subtle`
-- `border-white/10` → `border-border-hover`
-- `bg-[#151A25]` → `bg-brand-secondary`
-
-## Component Patterns
-
-### Page Structure
-
-```tsx
-<div className="min-h-screen bg-brand-primary text-zinc-100 font-inter bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a2c38] via-brand-primary to-[#050505]">
-  <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-  <div>
-    <div className="sticky top-0 z-40 backdrop-blur-xl bg-brand-primary/80 border-b border-border-subtle">
-      <Header customTitle="Page Title" />
-    </div>
-    <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
-      {/* Content */}
-    </main>
-  </div>
-</div>
-```
-
-### Loading State
-
-```tsx
-<div className="flex justify-center items-center h-[200px] glass-panel">
-  <div className="flex flex-col items-center">
-    <Loader2 className="h-6 w-6 animate-spin text-brand-accent mb-2" />
-    <span className="text-text-muted text-sm">Loading...</span>
-  </div>
-</div>
-```
-
-### Error State
-
-```tsx
-<div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm backdrop-blur-md">
-  Error: {error.message}
-</div>
-```
-
-### Tables (use shadcn Table components)
-
-```tsx
-<TableHead className="py-3 px-3">
-  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-    {header}
-  </span>
-</TableHead>
-<TableCell className="py-3 px-3 text-sm text-white">
-  {content}
-</TableCell>
-```
+Voir [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) pour le détail des patterns Dashboard (PulseBar, OverviewModule, SectionHead), des paddings, des tailles de police et de l'inventaire complet des primitives.
 
 ## Key Files Reference
 
