@@ -6,3 +6,5 @@ export { fetchLiquidations, fetchRecentLiquidations, fetchLiquidationsChartData,
 
 // Hooks
 export { useLiquidations, useRecentLiquidations } from './hooks/useLiquidations';
+export { useLiquidationsData } from './hooks/useLiquidationsData';
+export { useLiquidationsHistoricalChart } from './hooks/useLiquidationsHistoricalChart';
