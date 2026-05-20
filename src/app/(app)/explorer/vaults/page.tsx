@@ -1,19 +1,23 @@
-import React from "react";
+"use client";
+
+import { motion } from "framer-motion";
 import { VaultKpiBar, VaultEcosystemChart, VaultEnhancedTable } from "@/components/explorer/vault";
+import { PageHeader } from "@/components/common";
 
 export default function VaultsPage() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Vaults
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl">
-          HyperLiquid vaults — ecosystem KPIs, TVL distribution, and the full vault directory with performance metrics.
-        </p>
-      </div>
+    <motion.div
+      className="space-y-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <PageHeader
+        title="Vaults"
+        description="HyperLiquid vaults — ecosystem KPIs, TVL distribution, and the full vault directory with performance metrics."
+      />
 
-      {/* KPI bar */}
+      {/* KPI strip */}
       <VaultKpiBar />
 
       {/* Ecosystem chart */}
@@ -21,6 +25,6 @@ export default function VaultsPage() {
 
       {/* Enhanced vaults table */}
       <VaultEnhancedTable />
-    </div>
+    </motion.div>
   );
 }

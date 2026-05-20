@@ -17,12 +17,12 @@ export function Hip4CodeBlock({
       )}
     >
       {title ? (
-        <div className="px-3 py-1.5 text-[11px] font-medium text-text-secondary border-b border-border-subtle bg-brand-tertiary/30">
+        <div className="px-3 py-1.5 text-[11px] font-medium text-text-secondary border-b border-border-subtle bg-surface/30">
           {title}
         </div>
       ) : null}
       <pre
-        className="overflow-x-auto p-4 text-[12px] leading-relaxed font-mono text-white/90 scrollbar-brand max-h-[min(70vh,520px)]"
+        className="overflow-x-auto p-4 text-[12px] leading-relaxed font-mono text-text-secondary scrollbar-brand max-h-[min(70vh,520px)]"
         tabIndex={0}
       >
         <code>{children}</code>

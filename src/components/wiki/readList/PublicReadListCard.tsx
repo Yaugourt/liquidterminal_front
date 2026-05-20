@@ -2,6 +2,7 @@
 
 import { useState, memo } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Copy,
   CheckCircle,
@@ -50,54 +51,56 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className={`bg-brand-secondary/60 backdrop-blur-md border rounded-2xl transition-colors duration-200 cursor-pointer group shadow-xl shadow-black/20 overflow-hidden ${isSelected
-        ? 'border-brand-accent/40'
-        : 'border-border-subtle hover:border-border-hover'
+    >
+    <Card
+      className={`cursor-pointer group overflow-hidden ${isSelected
+        ? 'border-brand/40'
+        : 'hover:border-border-default'
         }`}
       onClick={onSelect}
     >
       {/* Top accent bar */}
-      <div className={`h-0.5 w-full transition-all duration-300 ${isSelected ? 'bg-brand-accent' : 'bg-transparent group-hover:bg-brand-accent/40'}`} />
+      <div className={`h-0.5 w-full transition-all duration-300 ${isSelected ? 'bg-brand' : 'bg-transparent group-hover:bg-brand/40'}`} />
 
       <div className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-accent/10 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-accent/20 transition-colors">
-            <BookOpen className="w-5 h-5 text-brand-accent" />
+          <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0 group-hover:bg-brand/20 transition-colors">
+            <BookOpen className="w-5 h-5 text-brand" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-semibold text-white truncate group-hover:text-brand-accent transition-colors">
+              <h3 className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors">
                 {readList.name}
               </h3>
-              <Globe className="w-3 h-3 text-brand-accent/60 flex-shrink-0" />
+              <Globe className="w-3 h-3 text-brand/60 flex-shrink-0" />
             </div>
             {readList.description ? (
               <p className="text-xs text-text-secondary mt-0.5 line-clamp-2">{readList.description}</p>
             ) : (
-              <p className="text-xs text-text-muted mt-0.5 italic">No description</p>
+              <p className="text-xs text-text-tertiary mt-0.5 italic">No description</p>
             )}
           </div>
         </div>
 
         {/* Creator */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-brand-accent/20 flex items-center justify-center text-brand-accent font-bold text-xs flex-shrink-0">
+          <div className="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xs flex-shrink-0">
             {initial}
           </div>
           <span className="text-xs text-text-secondary truncate">{readList.creator.name}</span>
-          <span className="text-text-muted text-xs">·</span>
-          <span className="text-xs text-text-muted">{timeAgo}</span>
+          <span className="text-text-tertiary text-xs">·</span>
+          <span className="text-xs text-text-tertiary">{timeAgo}</span>
         </div>
 
         {/* Stats row */}
         <div className="flex items-center justify-between py-2 border-t border-border-subtle/60">
-          <span className="text-xs text-text-muted">
-            <span className="text-white font-semibold">{readList.itemsCount}</span> resources
+          <span className="text-xs text-text-tertiary">
+            <span className="text-text-primary font-semibold">{readList.itemsCount}</span> resources
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
-            className="flex items-center gap-1 text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
+            className="flex items-center gap-1 text-xs text-brand hover:text-brand/80 transition-colors"
           >
             View list
             <ChevronRight className="w-3 h-3" />
@@ -108,7 +111,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
         <Button
           onClick={handleCopy}
           disabled={isCopying}
-          className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-xl transition-all"
+          className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg transition-all"
           size="sm"
         >
           {isCopying ? (
@@ -129,6 +132,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
           )}
         </Button>
       </div>
+    </Card>
     </motion.div>
   );
 });

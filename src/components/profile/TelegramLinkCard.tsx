@@ -13,6 +13,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { Card } from "@/components/ui/card";
 
 // Telegram brand icon (inline SVG)
 const TelegramIcon = ({ className }: { className?: string }) => (
@@ -59,12 +60,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   // Render error state
   if (error) {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-rose-500/20",
-        className
-      )}>
+      <Card className={cn("p-5 border-rose-500/20", className)}>
         <div className="flex items-start gap-3">
           <div className="h-10 w-10 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
             <AlertCircle className="h-5 w-5 text-rose-400" />
@@ -86,35 +82,30 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             </Button>
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render linking in progress state
   if (state === 'linking') {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-brand-telegram/30",
-        className
-      )}>
+      <Card className={cn("p-5 border-brand-telegram/30", className)}>
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="h-10 w-10 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
             <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-bold text-white">Link Telegram</h3>
-            <p className="text-xs text-text-muted">Waiting for confirmation...</p>
+            <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
+            <p className="text-xs text-text-tertiary">Waiting for confirmation...</p>
           </div>
 
           {/* Countdown timer */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-hover">
-            <Clock className="h-3.5 w-3.5 text-brand-gold" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-default">
+            <Clock className="h-3.5 w-3.5 text-gold" />
             <span className={cn(
               "text-xs font-medium",
-              remainingSeconds < 60 ? "text-rose-400" : "text-brand-gold"
+              remainingSeconds < 60 ? "text-rose-400" : "text-gold"
             )}>
               {formattedCountdown}
             </span>
@@ -122,16 +113,16 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         </div>
 
         {/* Instructions */}
-        <div className="p-3 mb-4 rounded-xl bg-brand-dark border border-border-subtle">
+        <div className="p-3 mb-4 rounded-lg bg-base border border-border-subtle">
           <div className="flex items-center gap-2 mb-2">
             {isPolling && (
               <InlineSpinner className="text-brand-telegram" />
             )}
-            <span className="text-sm text-white font-medium">
+            <span className="text-sm text-text-primary font-medium">
               Click the button below to open Telegram
             </span>
           </div>
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-tertiary">
             Press &quot;Start&quot; in the bot to complete the link. This window will update automatically.
           </p>
         </div>
@@ -155,24 +146,19 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           <Button
             variant="outline"
             onClick={cancelLinking}
-            className="border-white/10 text-text-secondary hover:text-white hover:bg-white/5"
+            className="border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5"
           >
             <XCircle className="h-4 w-4" />
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render linked state
   if (state === 'linked' && telegramUsername) {
     return (
-      <div className={cn(
-        "p-5 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-emerald-500/20",
-        className
-      )}>
+      <Card className={cn("p-5 border-emerald-500/20", className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -180,7 +166,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white">Telegram Linked</h3>
+                <h3 className="text-sm font-bold text-text-primary">Telegram Linked</h3>
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               </div>
               <p className="text-xs text-emerald-400">
@@ -194,7 +180,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             size="sm"
             onClick={unlinkTelegram}
             disabled={isUnlinking}
-            className="text-text-muted hover:text-rose-400 hover:bg-rose-500/10"
+            className="text-text-tertiary hover:text-rose-400 hover:bg-rose-500/10"
           >
             {isUnlinking ? (
               <InlineSpinner />
@@ -206,26 +192,21 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             )}
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Render not linked state (default)
   return (
-    <div className={cn(
-      "p-5 rounded-2xl",
-      "bg-brand-secondary/60 backdrop-blur-md",
-      "border border-border-subtle hover:border-border-hover transition-all",
-      className
-    )}>
+    <Card className={cn("p-5 hover:border-border-default transition-all", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-lg bg-brand-telegram/10 flex items-center justify-center">
             <TelegramIcon className="h-5 w-5 text-brand-telegram" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Link Telegram</h3>
-            <p className="text-xs text-text-muted">
+            <h3 className="text-sm font-bold text-text-primary">Link Telegram</h3>
+            <p className="text-xs text-text-tertiary">
               Get notifications and alerts
             </p>
           </div>
@@ -246,6 +227,6 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           )}
         </Button>
       </div>
-    </div>
+    </Card>
   );
 });

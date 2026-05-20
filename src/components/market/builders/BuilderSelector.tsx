@@ -31,22 +31,22 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="glass-panel px-4 py-3 flex items-center gap-3 min-w-64 hover:border-border-hover transition-all text-left"
+        className="bg-surface border border-border-subtle rounded-lg px-4 py-3 flex items-center gap-3 min-w-64 hover:border-border-default transition-all text-left"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center text-xs font-bold text-brand-accent shrink-0">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-xs font-bold text-brand shrink-0">
           {displayName !== "—" ? displayName.charAt(0).toUpperCase() : "?"}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-medium text-sm truncate">{displayName}</p>
-          <p className="text-text-muted text-xs font-mono truncate">
+          <p className="text-text-primary font-medium text-sm truncate">{displayName}</p>
+          <p className="text-text-tertiary text-xs font-mono truncate">
             {selectedAddress ? `${selectedAddress.slice(0, 10)}…` : "—"}
           </p>
         </div>
-        <ChevronDown className={`w-4 h-4 text-text-muted transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`w-4 h-4 text-text-tertiary transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-80 glass-panel border border-border-hover z-50 shadow-2xl">
+        <div className="absolute top-full left-0 mt-1 w-80 bg-surface border border-border-default rounded-lg z-50 shadow-2xl">
           <div className="p-2 border-b border-border-subtle">
             <SearchBar
               onSearch={setSearch}
@@ -61,7 +61,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
                 <button
                   key={b.address}
                   className={`w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 transition-colors text-left ${
-                    b.address === selectedAddress ? "bg-brand-accent/10" : ""
+                    b.address === selectedAddress ? "bg-brand/10" : ""
                   }`}
                   onClick={() => {
                     onSelect(b.address);
@@ -69,18 +69,18 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
                     setSearch("");
                   }}
                 >
-                  <div className="w-6 h-6 rounded-full bg-brand-accent/10 flex items-center justify-center text-[10px] font-bold text-brand-accent shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center text-[10px] font-bold text-brand shrink-0">
                     {name !== "—" ? name.charAt(0).toUpperCase() : "?"}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-white text-sm truncate">{name}</p>
-                    <p className="text-text-muted text-xs font-mono">{b.address.slice(0, 12)}…</p>
+                    <p className="text-text-primary text-sm truncate">{name}</p>
+                    <p className="text-text-tertiary text-xs font-mono">{b.address.slice(0, 12)}…</p>
                   </div>
                 </button>
               );
             })}
             {filtered.length === 0 && (
-              <p className="text-text-muted text-sm text-center py-4">No results</p>
+              <p className="text-text-tertiary text-sm text-center py-4">No results</p>
             )}
           </div>
         </div>

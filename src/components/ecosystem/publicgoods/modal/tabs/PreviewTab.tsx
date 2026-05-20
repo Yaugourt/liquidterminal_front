@@ -18,77 +18,77 @@ interface PreviewTabProps {
 export function PreviewTab({ formData }: PreviewTabProps) {
   return (
     <div className="space-y-6">
-      <div className="bg-brand-tertiary p-4 rounded-lg border border-brand-tertiary">
-        <h3 className="text-lg font-semibold text-white mb-4">Review Your Submission</h3>
+      <div className="bg-surface p-4 rounded-lg border border-border-subtle">
+        <h3 className="text-lg font-semibold text-text-primary mb-4">Review Your Submission</h3>
         
         <div className="space-y-4">
           <div>
-            <p className="text-sm text-gray-400">Project Name</p>
-            <p className="text-white">{formData.name || "—"}</p>
+            <p className="text-sm text-text-secondary">Project Name</p>
+            <p className="text-text-primary">{formData.name || "—"}</p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">Category</p>
-            <p className="text-white">{formData.category || "—"}</p>
+            <p className="text-sm text-text-secondary">Category</p>
+            <p className="text-text-primary">{formData.category || "—"}</p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">GitHub</p>
-            <p className="text-white break-all">{formData.githubUrl || "—"}</p>
+            <p className="text-sm text-text-secondary">GitHub</p>
+            <p className="text-text-primary break-all">{formData.githubUrl || "—"}</p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">Development Status</p>
-            <p className="text-white">
+            <p className="text-sm text-text-secondary">Development Status</p>
+            <p className="text-text-primary">
               {DEVELOPMENT_STATUSES.find(s => s.value === formData.developmentStatus)?.label || "—"}
             </p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">Team Size</p>
-            <p className="text-white">
+            <p className="text-sm text-text-secondary">Team Size</p>
+            <p className="text-text-primary">
               {TEAM_SIZES.find(s => s.value === formData.teamSize)?.label || "—"}
             </p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">Technologies</p>
+            <p className="text-sm text-text-secondary">Technologies</p>
             <div className="flex flex-wrap gap-1 mt-1">
               {formData.technologies.length > 0 ? (
                 formData.technologies.map(tech => (
-                  <Badge key={tech} variant="outline" className="border-brand-tertiary text-gray-300">
+                  <Badge key={tech} variant="outline" className="border-border-subtle text-text-secondary">
                     {tech}
                   </Badge>
                 ))
               ) : (
-                <span className="text-white">—</span>
+                <span className="text-text-primary">—</span>
               )}
             </div>
           </div>
           
           <div>
-            <p className="text-sm text-gray-400">Target Users</p>
+            <p className="text-sm text-text-secondary">Target Users</p>
             <div className="flex flex-wrap gap-1 mt-1">
               {formData.targetUsers.length > 0 ? (
                 formData.targetUsers.map(user => (
-                  <Badge key={user} variant="outline" className="border-brand-tertiary text-gray-300 capitalize">
+                  <Badge key={user} variant="outline" className="border-border-subtle text-text-secondary capitalize">
                     {user}
                   </Badge>
                 ))
               ) : (
-                <span className="text-white">—</span>
+                <span className="text-text-primary">—</span>
               )}
             </div>
           </div>
           
           {formData.supportTypes.length > 0 && (
             <div>
-              <p className="text-sm text-gray-400">Support Requested</p>
+              <p className="text-sm text-text-secondary">Support Requested</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {formData.supportTypes.map(type => {
                   const supportType = SUPPORT_TYPES.find(s => s.value === type);
                   return (
-                    <Badge key={type} variant="outline" className="border-brand-tertiary text-gray-300">
+                    <Badge key={type} variant="outline" className="border-border-subtle text-text-secondary">
                       {supportType?.icon} {supportType?.label}
                     </Badge>
                   );
@@ -99,12 +99,12 @@ export function PreviewTab({ formData }: PreviewTabProps) {
           
           {formData.supportTypes.includes('CONTRIBUTOR') && formData.contributorTypes.length > 0 && (
             <div>
-              <p className="text-sm text-gray-400">Looking for Contributors</p>
+              <p className="text-sm text-text-secondary">Looking for Contributors</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {formData.contributorTypes.map(type => {
                   const contributorType = CONTRIBUTOR_TYPES.find(c => c.value === type);
                   return (
-                    <Badge key={type} variant="outline" className="border-brand-tertiary text-gray-300">
+                    <Badge key={type} variant="outline" className="border-border-subtle text-text-secondary">
                       {contributorType?.icon} {contributorType?.label}
                     </Badge>
                   );

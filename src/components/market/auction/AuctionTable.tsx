@@ -1,40 +1,20 @@
+"use client";
+
 import { useState, useCallback } from 'react';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  SortableTableHead,
-} from '@/components/ui/table';
+import { TypedDataTable, type Column } from '@/components/common';
 import { Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
 import { formatDateTime } from '@/lib/formatters/dateFormatting';
-import { Pagination } from '@/components/common';
-import { TableEmptyState } from "@/components/ui/table-states";
-import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
-import { ErrorState } from "@/components/ui/error-state";
+import { Card } from "@/components/ui/card";
+import type { AuctionInfo } from '@/services/market/auction/types';
+import type { SortDirection } from '@/components/common';
 
 interface AuctionTableProps {
   marketType: "spot" | "perp";
 }
-
-
-
-
-const columns = [
-  { key: 'time', label: 'Date', sortable: true, className: 'pl-4 w-[16%] text-left' },
-  { key: 'name', label: 'Name', sortable: false, className: 'pl-2 w-[12%] text-left' },
-  { key: 'deployer', label: 'Deployer', sortable: false, className: 'pl-2 w-[16%] text-left' },
-  { key: 'tokenId', label: 'Token Address', sortable: false, className: 'pl-2 w-[16%] text-left' },
-  { key: 'index', label: 'Index', sortable: false, className: 'pl-2 pr-4 w-[10%] text-center' },
-  { key: 'gasHype', label: 'Gas (HYPE)', sortable: true, className: 'pl-4 pr-2 w-[15%] text-left' },
-  { key: 'gasUsdc', label: 'Gas (USDC)', sortable: true, className: 'pl-4 pr-4 w-[15%] text-left' },
-];
 
 // Format court pour l'adresse
 const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -46,24 +26,24 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
-  const { 
-    auctions, 
-    total, 
-    page: currentPage, 
-    isLoading, 
+  const { format: dateFormat } = useDateFormat();
+
+  const {
+    auctions,
+    total,
+    page: currentPage,
+    isLoading,
     error,
-    updateParams 
-  } = useAuctions({ 
-    currency: 'ALL', 
+    updateParams,
+  } = useAuctions({
+    currency: 'ALL',
     limit: pageSize,
     defaultParams: {
       page,
       sortBy: sortField === 'time' ? 'time' : 'deployGas',
-      sortOrder
-    }
+      sortOrder,
+    },
   });
-
-  const { format: dateFormat } = useDateFormat();
 
   const handleCopy = async (address: string) => {
     try {
@@ -73,136 +53,166 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
     } catch {}
   };
 
-
-
-  const handleSort = useCallback((field: string) => {
-    // Map column keys to API sort fields
-    const sortFieldMap: Record<string, 'time' | 'deployGas'> = {
-      'time': 'time',
-      'gasHype': 'deployGas',
-      'gasUsdc': 'deployGas'
-    };
-    
-    const apiSortField = sortFieldMap[field];
-    if (!apiSortField) return;
-    
-    if (sortField === field) {
-      const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-      setSortOrder(newOrder);
-      updateParams({ sortBy: apiSortField, sortOrder: newOrder, page: 1 });
-      setPage(1);
-    } else {
+  // Server-side sort handler
+  const handleSortChange = useCallback(
+    (field: string, dir: SortDirection) => {
+      const sortFieldMap: Record<string, 'time' | 'deployGas'> = {
+        time: 'time',
+        gasHype: 'deployGas',
+        gasUsdc: 'deployGas',
+      };
+      const apiSortField = sortFieldMap[field];
+      if (!apiSortField) return;
       setSortField(field as 'time' | 'gasHype' | 'gasUsdc');
-      setSortOrder('desc');
-      updateParams({ sortBy: apiSortField, sortOrder: 'desc', page: 1 });
+      setSortOrder(dir);
+      updateParams({ sortBy: apiSortField, sortOrder: dir, page: 1 });
       setPage(1);
-    }
-  }, [sortField, sortOrder, updateParams]);
+    },
+    [updateParams]
+  );
 
-  const handlePageChange = useCallback((newPage: number) => {
-    setPage(newPage + 1);
-    updateParams({ page: newPage + 1 });
-  }, [updateParams]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage + 1);
+      updateParams({ page: newPage + 1 });
+    },
+    [updateParams]
+  );
 
-  const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
-    setPageSize(newRowsPerPage);
-    setPage(1);
-    updateParams({ limit: newRowsPerPage, page: 1 });
-  }, [updateParams]);
+  const handleRowsPerPageChange = useCallback(
+    (newRowsPerPage: number) => {
+      setPageSize(newRowsPerPage);
+      setPage(1);
+      updateParams({ limit: newRowsPerPage, page: 1 });
+    },
+    [updateParams]
+  );
 
   // Si c'est perp, afficher Coming Soon
   if (marketType === "perp") {
     return (
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+      <Card>
         <EmptyState
           title="Coming Soon"
           description="Perpetual auctions table will be available soon."
           withCard={false}
         />
-      </div>
+      </Card>
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-        <LoadingState message="Loading auctions..." size="lg" withCard={false} />
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-        <ErrorState title="Error loading auctions" message={error.message} withCard={false} />
-      </div>
-    );
-  }
+  const columns: Column<AuctionInfo>[] = [
+    {
+      key: 'time',
+      header: 'Date',
+      sortable: true,
+      accessor: (row) => (
+        <span className="text-text-primary text-sm">
+          {formatDateTime(row.time, dateFormat)}
+        </span>
+      ),
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      accessor: (row) => (
+        <span className="text-text-primary text-sm font-medium">{row.name}</span>
+      ),
+    },
+    {
+      key: 'deployer',
+      header: 'Deployer',
+      accessor: (row) => (
+        <div className="flex items-center gap-1.5">
+          <Link
+            href={`/explorer/address/${row.deployer}`}
+            className="text-brand text-xs hover:text-text-primary transition-colors"
+          >
+            {formatAddress(row.deployer)}
+          </Link>
+          <button
+            onClick={(e) => { e.preventDefault(); handleCopy(row.deployer); }}
+            className="group p-1 rounded transition-colors"
+          >
+            {copiedAddress === row.deployer ? (
+              <Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />
+            ) : (
+              <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+            )}
+          </button>
+        </div>
+      ),
+    },
+    {
+      key: 'tokenId',
+      header: 'Token Address',
+      accessor: (row) => (
+        <div className="flex items-center gap-1.5">
+          <Link
+            href={`/explorer/address/${row.tokenId}`}
+            className="text-brand text-xs hover:text-text-primary transition-colors"
+          >
+            {formatAddress(row.tokenId)}
+          </Link>
+          <button
+            onClick={(e) => { e.preventDefault(); handleCopy(row.tokenId); }}
+            className="group p-1 rounded transition-colors"
+          >
+            {copiedAddress === row.tokenId ? (
+              <Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />
+            ) : (
+              <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+            )}
+          </button>
+        </div>
+      ),
+    },
+    {
+      key: 'index',
+      header: 'Index',
+      type: 'numeric',
+      accessor: (row) => (
+        <span className="text-text-primary text-sm">{row.index}</span>
+      ),
+    },
+    {
+      key: 'gasHype',
+      header: 'Gas (HYPE)',
+      type: 'fees',
+      sortable: true,
+      accessor: (row) => row.currency === 'HYPE' ? row.deployGas : '-',
+    },
+    {
+      key: 'gasUsdc',
+      header: 'Gas (USDC)',
+      type: 'numeric',
+      sortable: true,
+      accessor: (row) => row.currency === 'USDC' ? row.deployGas : '-',
+    },
+  ];
 
   return (
-    <div className="w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-      <div className="overflow-x-auto scrollbar-brand">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-border-subtle hover:bg-transparent">
-              {columns.map(col => (
-                col.sortable ? (
-                  <SortableTableHead
-                    key={col.key}
-                    label={col.label}
-                    onClick={() => handleSort(col.key)}
-                    isActive={sortField === col.key}
-                    sortDirection={sortOrder}
-                    className={col.className}
-                  />
-                ) : (
-                  <TableHead key={col.key} className={col.className}>
-                    {col.label}
-                  </TableHead>
-                )
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {auctions.length === 0 ? (
-              <TableEmptyState colSpan={7} title="No auctions available" description="Check back later" />
-            ) : (
-              auctions.map((auction) => (
-                <TableRow key={auction.tokenId} className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer">
-                  <TableCell className="text-white text-sm text-left">{formatDateTime(auction.time, dateFormat)}</TableCell>
-                  <TableCell className="text-white text-sm font-medium text-left">{auction.name}</TableCell>
-                  <TableCell className="text-sm text-left">
-                    <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.deployer}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.deployer)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.deployer); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.deployer ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-left">
-                    <div className="flex items-center gap-1.5">
-                      <Link href={`/explorer/address/${auction.tokenId}`} className="text-brand-accent text-xs hover:text-white transition-colors">{formatAddress(auction.tokenId)}</Link>
-                      <button onClick={e => { e.preventDefault(); handleCopy(auction.tokenId); }} className="group p-1 rounded transition-colors">{copiedAddress === auction.tokenId ? (<Check className="h-3 w-3 text-emerald-400 transition-all duration-200" />) : (<Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />)}</button>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-white text-sm text-center w-[10%]">{auction.index}</TableCell>
-                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'HYPE' ? auction.deployGas : '-'}</TableCell>
-                  <TableCell className="text-white text-sm text-left w-[15%]">{auction.currency === 'USDC' ? auction.deployGas : '-'}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      
-      {/* Pagination intégrée */}
-      <div className="border-t border-border-subtle px-4 py-3">
-        <Pagination
-          total={total}
-          page={currentPage - 1}
-          rowsPerPage={pageSize}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-          rowsPerPageOptions={[5, 10, 15, 20]}
-        />
-      </div>
-    </div>
+    <TypedDataTable<AuctionInfo>
+      data={auctions}
+      columns={columns}
+      getRowKey={(row) => row.tokenId}
+      isLoading={isLoading && auctions.length === 0}
+      error={error}
+      errorTitle="Error loading auctions"
+      emptyMessage="No auctions available"
+      emptyDescription="Check back later"
+      // Server-side sort
+      onSortChange={handleSortChange}
+      sortField={sortField}
+      sortDirection={sortOrder}
+      // Server-side pagination
+      total={total}
+      page={currentPage - 1}
+      rowsPerPage={pageSize}
+      onPageChange={handlePageChange}
+      onRowsPerPageChange={handleRowsPerPageChange}
+      rowsPerPageOptions={[5, 10, 15, 20]}
+      paginationVariant="full"
+    />
   );
 }

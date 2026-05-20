@@ -98,7 +98,7 @@ export const LiquidationsChartSection = () => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
                 <span className="h-1 w-1 rounded-full bg-rose-400" />
                 Liquidations
               </div>
@@ -106,7 +106,7 @@ export const LiquidationsChartSection = () => {
             </div>
 
             {/* Volume/Count pill tabs */}
-            <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+            <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
               {chartTabs.map((tab) => {
                 const isActive = selectedChart === tab.key;
                 return (
@@ -124,7 +124,7 @@ export const LiquidationsChartSection = () => {
                     )}
                     <span
                       className={`relative z-10 ${
-                        isActive ? "text-white" : "text-text-secondary hover:text-white"
+                        isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                       }`}
                     >
                       {tab.label}
@@ -137,7 +137,7 @@ export const LiquidationsChartSection = () => {
             {/* Value Display */}
             {displayValue !== null && (
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
+                <span className="text-lg font-bold text-text-primary tracking-tight tabular-nums">
                   {hoverValue !== null ? formatYAxisValue(hoverValue) : (
                     selectedChart === 'volume'
                       ? formatYAxisValue(displayValue)
@@ -145,7 +145,7 @@ export const LiquidationsChartSection = () => {
                   )}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
+                  <span className="text-label text-text-tertiary tabular-nums">
                     {formatDateTime(new Date(hoverTime), dateFormat)}
                   </span>
                 )}
@@ -154,7 +154,7 @@ export const LiquidationsChartSection = () => {
           </div>
 
           {/* Period Selector — rose-accented aurora pill */}
-          <div className="flex items-center rounded-xl border border-rose-500/20 bg-black/30 p-1">
+          <div className="flex items-center rounded-lg border border-rose-500/20 bg-black/30 p-1">
             {CHART_PERIOD_OPTIONS.map((option) => {
               const isActive = chartPeriod === option.value;
               return (
@@ -172,7 +172,7 @@ export const LiquidationsChartSection = () => {
                   )}
                   <span
                     className={`relative z-10 ${
-                      isActive ? "text-rose-300" : "text-text-secondary hover:text-white"
+                      isActive ? "text-rose-300" : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {option.label}

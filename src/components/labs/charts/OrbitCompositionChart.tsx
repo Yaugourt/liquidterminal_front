@@ -80,7 +80,7 @@ export function OrbitCompositionChart() {
   const isUp = displayed.change24h >= 0;
 
   return (
-    <div className="glass-panel relative overflow-hidden h-[460px] p-6 flex flex-col">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[460px] p-6 flex flex-col">
       {/* Ambient glow that follows hovered asset */}
       <motion.div
         animate={{
@@ -95,11 +95,11 @@ export function OrbitCompositionChart() {
       {/* HEADER */}
       <div className="relative z-10 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <span className="h-1 w-1 rounded-full bg-brand-accent" />
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+            <span className="h-1 w-1 rounded-full bg-brand" />
             Portfolio Composition
           </div>
-          <div className="mt-0.5 text-[11px] text-text-muted">
+          <div className="mt-0.5 text-[11px] text-text-tertiary">
             {PORTFOLIO.length} assets · updated 12s ago
           </div>
         </div>
@@ -165,10 +165,10 @@ export function OrbitCompositionChart() {
                 transition={{ duration: 0.2 }}
                 className="flex flex-col items-center"
               >
-                <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
                   {displayed.name}
                 </div>
-                <div className="mt-0.5 text-[22px] font-bold text-white tabular-nums tracking-tight">
+                <div className="mt-0.5 text-[22px] font-bold text-text-primary tabular-nums tracking-tight">
                   {formatUsd(displayed.value)}
                 </div>
                 <div className="flex items-center gap-2 text-[11px] tabular-nums">
@@ -200,10 +200,10 @@ export function OrbitCompositionChart() {
                 key={a.symbol}
                 onMouseEnter={() => setActiveIdx(i)}
                 onMouseLeave={() => setActiveIdx(null)}
-                className={`group relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-all ${
+                className={`group relative flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all ${
                   isActive
-                    ? "border-border-hover bg-white/[0.04]"
-                    : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
+                    ? "border-border-default bg-white/[0.04]"
+                    : "border-border-subtle bg-transparent hover:border-border-default hover:bg-white/[0.02]"
                 }`}
               >
                 <div
@@ -219,10 +219,10 @@ export function OrbitCompositionChart() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-semibold text-white truncate">
+                    <span className="text-sm font-semibold text-text-primary truncate">
                       {a.symbol === "OTHER" ? a.name : a.symbol}
                     </span>
-                    <span className="text-sm font-semibold text-white tabular-nums">
+                    <span className="text-sm font-semibold text-text-primary tabular-nums">
                       {formatUsd(a.value)}
                     </span>
                   </div>

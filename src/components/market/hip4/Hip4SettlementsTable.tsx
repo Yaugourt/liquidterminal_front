@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
+import { Card } from "@/components/ui/card";
 import type { Hip4SettlementRow } from "@/services/indexer/hip4";
 
 interface Hip4SettlementsTableProps {
@@ -43,7 +44,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "market",
       header: "Market",
       accessor: (row) => (
-        <span className="text-xs font-semibold text-white line-clamp-1">
+        <span className="text-xs font-semibold text-text-primary line-clamp-1">
           {row.question_name ?? row.coin ?? `#${row.outcome_id}`}
         </span>
       ),
@@ -52,7 +53,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "settledPrice",
       header: "Settled Price",
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-brand-accent">
+        <span className="text-xs tabular-nums text-brand">
           {formatSettledPrice(row.settled_px)}
         </span>
       ),
@@ -69,8 +70,8 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
           : isNo
           ? "text-rose-400 bg-rose-500/10"
           : row.winner_name
-          ? "text-brand-accent bg-brand-accent/10"
-          : "text-text-muted bg-white/5";
+          ? "text-brand bg-brand/10"
+          : "text-text-tertiary bg-white/5";
         return (
           <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${winColor}`}>
             {winner}
@@ -82,7 +83,7 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       key: "settledAt",
       header: "Settled At",
       accessor: (row) => (
-        <span className="text-[11px] text-text-muted tabular-nums">
+        <span className="text-[11px] text-text-tertiary tabular-nums">
           {formatSettledAt(row.settled_at)}
         </span>
       ),
@@ -94,29 +95,30 @@ export function Hip4SettlementsTable({ settlements, isLoading }: Hip4Settlements
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.3 }}
-      className="glass-panel p-4 space-y-3"
     >
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-        Settled Markets
-        <span className="text-text-muted/60">· {settlements.length}</span>
-      </div>
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-emerald-400" />
+          Settled Markets
+          <span className="text-text-tertiary/60">· {settlements.length}</span>
+        </div>
 
-      <TypedDataTable<Hip4SettlementRow>
-        data={settlements}
-        columns={columns}
-        getRowKey={(row, i) => `${row.outcome_id}-${i}`}
-        density="compact"
-        emptyMessage="No settlements yet"
-        emptyDescription="Market resolutions will appear here."
-        total={settlements.length}
-        page={page}
-        rowsPerPage={pageSize}
-        onPageChange={setPage}
-        onRowsPerPageChange={(n) => { setPageSize(n); setPage(0); }}
-        rowsPerPageOptions={[5, 10, 25, 40, 50]}
-        paginationVariant="full"
-      />
+        <TypedDataTable<Hip4SettlementRow>
+          data={settlements}
+          columns={columns}
+          getRowKey={(row, i) => `${row.outcome_id}-${i}`}
+          density="compact"
+          emptyMessage="No settlements yet"
+          emptyDescription="Market resolutions will appear here."
+          total={settlements.length}
+          page={page}
+          rowsPerPage={pageSize}
+          onPageChange={setPage}
+          onRowsPerPageChange={(n) => { setPageSize(n); setPage(0); }}
+          rowsPerPageOptions={[5, 10, 25, 40, 50]}
+          paginationVariant="full"
+        />
+      </Card>
     </motion.div>
   );
 }

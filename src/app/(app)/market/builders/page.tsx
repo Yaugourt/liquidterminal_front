@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import {
@@ -10,7 +10,6 @@ import {
   type BuildersTimeframe,
 } from "@/services/indexer/builders";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import {
   BuildersGlobalStatsStrip,
   BuildersOverviewChart,
@@ -18,12 +17,14 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
+import { PageHeader } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 
 export default function MarketBuildersPage() {
   const { setTitle } = usePageTitle();
   const [tf, setTf] = useState<BuildersTimeframe>("24h");
+  const tfLayoutId = useId().replace(/:/g, "");
 
   const allTf = useBuildersStatsAllTimeframes();
   const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
@@ -42,37 +43,39 @@ export default function MarketBuildersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Builders</h1>
-          <p className="text-text-secondary text-sm mt-1 max-w-2xl">
-            Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {TIMEFRAMES.map((t) => (
-            <Button
-              key={t}
-              type="button"
-              size="sm"
-              onClick={() => setTf(t)}
-              className={
-                tf === t
-                  ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/40 hover:bg-brand-accent/30"
-                  : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
-              }
-            >
-              {t}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        title="Builders"
+        description="Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory."
+        actions={
+          <div className="flex items-center bg-surface-2 border border-border-subtle rounded-md p-0.5 w-fit">
+            {TIMEFRAMES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTf(t)}
+                className="relative rounded text-xs font-medium px-2.5 py-1"
+              >
+                {tf === t && (
+                  <motion.span
+                    layoutId={`builders-tf-${tfLayoutId}`}
+                    className="absolute inset-0 rounded bg-brand"
+                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                  />
+                )}
+                <span className={`mono relative z-10 ${tf === t ? "text-brand-text-on" : "text-text-tertiary hover:text-text-primary"}`}>
+                  {t}
+                </span>
+              </button>
+            ))}
+          </div>
+        }
+      />
 
       {/* Stats strip — 4 cards with icons + variation badges */}
       <BuildersGlobalStatsStrip
@@ -82,7 +85,7 @@ export default function MarketBuildersPage() {
       />
 
       {/* Charts — market share donut + flow comparison */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
         <BuildersOverviewChart
           rows={top.data?.builders ?? []}
           isLoading={top.isLoading}
@@ -95,39 +98,45 @@ export default function MarketBuildersPage() {
         />
       </div>
 
-      {/* Table tabs */}
+      {/* Table card — single shell containing sub-tabs + meta in the header */}
       <Tabs defaultValue="top" className="w-full">
-        <TabsList className="bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl mb-4">
-          <TabsTrigger
-            value="top"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all"
-          >
-            Top builders
-          </TabsTrigger>
-          <TabsTrigger
-            value="all"
-            className="data-[state=active]:bg-brand-accent/20 data-[state=active]:text-brand-accent text-text-secondary px-4 py-2 rounded-lg transition-all"
-          >
-            All builders ({list.builders.length > 0 ? list.builders.length : "…"})
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="top" className="mt-0 space-y-2">
-          <p className="text-text-muted text-xs px-1">
-            Sorted by volume · window {top.data?.timeframe ?? tf}
-          </p>
-          <BuildersTopTable
-            rows={top.data?.builders ?? []}
-            isLoading={top.isLoading}
-            error={top.error}
-          />
-        </TabsContent>
-        <TabsContent value="all" className="mt-0">
-          <BuildersAllTable
-            builders={list.builders}
-            isLoading={list.isLoading}
-            error={list.error}
-          />
-        </TabsContent>
+        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          {/* Card header: tabs (left) + meta (right) */}
+          <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle">
+            <TabsList className="bg-surface-2 p-0.5 rounded-md h-auto">
+              <TabsTrigger
+                value="top"
+                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
+              >
+                Top builders
+              </TabsTrigger>
+              <TabsTrigger
+                value="all"
+                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
+              >
+                All builders ({list.builders.length > 0 ? list.builders.length : "…"})
+              </TabsTrigger>
+            </TabsList>
+            <span className="text-[10px] text-text-tertiary tracking-wide">
+              Sorted by volume · window <span className="mono">{top.data?.timeframe ?? tf}</span>
+            </span>
+          </div>
+
+          <TabsContent value="top" className="mt-0">
+            <BuildersTopTable
+              rows={top.data?.builders ?? []}
+              isLoading={top.isLoading}
+              error={top.error}
+            />
+          </TabsContent>
+          <TabsContent value="all" className="mt-0">
+            <BuildersAllTable
+              builders={list.builders}
+              isLoading={list.isLoading}
+              error={list.error}
+            />
+          </TabsContent>
+        </div>
       </Tabs>
     </motion.div>
   );

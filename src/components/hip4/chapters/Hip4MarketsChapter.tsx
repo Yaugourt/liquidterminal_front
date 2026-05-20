@@ -9,70 +9,65 @@ import { Hip4AssetTable } from "@/components/hip4/Hip4AssetTable";
 import { Hip4PricesGrid } from "@/components/hip4/Hip4PricesGrid";
 import { Hip4PageHeader } from "@/components/hip4/Hip4PageHeader";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useHip4MarketsScan } from "@/hooks/use-hip4-markets-scan";
-import { formatHypeWei, type Hip4ScanDeploymentResult } from "@/services/hip4/markets-scan";
+import { formatHypeWei, type Hip4ScanDeploymentResult, type Hip4ContestRow } from "@/services/hip4/markets-scan";
 import { RefreshCw } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Badge } from "@/components/ui/badge";
+import { TypedDataTable, type Column } from "@/components/common";
+
+function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestRow>[] {
+  return [
+    {
+      key: "id",
+      header: "Contest",
+      type: "address",
+      accessor: (r) => <span className="font-mono">#{r.id}</span>,
+    },
+    {
+      key: "pool",
+      header: (
+        <span>
+          Pool —{" "}
+          <span className="font-semibold text-text-primary">{result.label}</span>{" "}
+          <span className="font-mono text-[11px] text-brand">{result.address}</span>
+          {result.error ? (
+            <span className="ml-2 text-red-400">RPC: {result.error}</span>
+          ) : null}
+        </span>
+      ),
+      type: "fees",
+      accessor: (r) => (
+        <span className="font-semibold text-gold">{formatHypeWei(r.pool)}</span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      accessor: (r) =>
+        r.root ? (
+          <Badge className="bg-gold/15 text-gold">Merkle root published</Badge>
+        ) : (
+          <Badge variant="outline" className="text-[10px]">
+            {r.status}
+          </Badge>
+        ),
+    },
+  ];
+}
 
 function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
   if (!result) return null;
   const visible = result.rows.filter((r) => r.pool > 0n || r.root);
   return (
-    <div className="overflow-x-auto scrollbar-brand rounded-lg border border-border-subtle">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-border-subtle hover:bg-transparent">
-            <TableHead className="text-table-header" colSpan={3}>
-              <span className="font-semibold text-white">{result.label}</span>
-              <span className="ml-2 font-mono text-[11px] text-brand-accent">{result.address}</span>
-              {result.error ? (
-                <span className="ml-2 text-red-400">RPC: {result.error}</span>
-              ) : null}
-            </TableHead>
-          </TableRow>
-          <TableRow className="border-border-subtle hover:bg-transparent">
-            <TableHead className="text-table-header">Contest</TableHead>
-            <TableHead className="text-table-header">Pool</TableHead>
-            <TableHead className="text-table-header">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {!result.error && visible.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={3} className="text-xs text-text-secondary">
-                No contests with pool &gt; 0 or published root in scan window.
-              </TableCell>
-            </TableRow>
-          ) : null}
-          {visible.map((r) => (
-            <TableRow key={r.id} className="border-border-subtle">
-              <TableCell className="font-mono">#{r.id}</TableCell>
-              <TableCell className="font-semibold text-brand-gold">
-                {formatHypeWei(r.pool)}
-              </TableCell>
-              <TableCell>
-                {r.root ? (
-                  <Badge className="bg-brand-gold/15 text-brand-gold">Merkle root published</Badge>
-                ) : (
-                  <Badge variant="outline" className="text-[10px]">
-                    {r.status}
-                  </Badge>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <TypedDataTable<Hip4ContestRow>
+      data={visible}
+      columns={buildScanColumns(result)}
+      getRowKey={(r) => r.id}
+      emptyMessage="No contests with pool > 0 or published root in scan window."
+      emptyDescription=""
+      density="compact"
+    />
   );
 }
 
@@ -90,11 +85,11 @@ function SectionBanner({
       className={[
         "rounded-lg border px-4 py-3",
         tone === "core"
-          ? "border-brand-accent/25 bg-brand-accent/5"
-          : "border-border-hover bg-brand-secondary/50",
+          ? "border-brand/25 bg-brand/5"
+          : "border-border-default bg-surface/50",
       ].join(" ")}
     >
-      <div className="text-xs font-bold uppercase tracking-wider text-white">{title}</div>
+      <div className="text-xs font-bold uppercase tracking-wider text-text-primary">{title}</div>
       <p className="mt-1 text-[11px] text-text-secondary leading-relaxed">{subtitle}</p>
     </div>
   );
@@ -155,7 +150,7 @@ export function Hip4MarketsChapter() {
         <Hip4SectionTitle>On-chain contests (RPC)</Hip4SectionTitle>
         {loading && !v1 && !v2 ? (
           <div className="flex items-center gap-2 py-8 text-text-secondary">
-            <InlineSpinner className="h-6 w-6 text-brand-accent" />
+            <InlineSpinner className="h-6 w-6 text-brand" />
             Scanning ContestCreated logs…
           </div>
         ) : (

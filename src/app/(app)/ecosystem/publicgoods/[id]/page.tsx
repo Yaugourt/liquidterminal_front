@@ -94,10 +94,10 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   if (!project) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center">
             <h1 className="text-xl font-bold text-white mb-4">Project not found</h1>
-            <Button onClick={() => router.back()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg">
+            <Button onClick={() => router.back()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg">
               Go back
             </Button>
           </div>

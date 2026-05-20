@@ -13,7 +13,7 @@ export function EducationStatCard({ stat }: { stat: StatItem }) {
       subValue={stat.hint}
       density="compact"
       withCard={false}
-      className="rounded-xl border border-border-subtle bg-brand-dark/40 transition-colors hover:border-border-hover"
+      className="rounded-lg border border-border-subtle bg-base/40 transition-colors hover:border-border-default"
     />
   );
 }

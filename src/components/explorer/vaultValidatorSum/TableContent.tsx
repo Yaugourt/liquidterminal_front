@@ -1,23 +1,23 @@
-import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { DataTable } from "@/components/common";
+import { TypedDataTable, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { NumberFormatType } from "@/store/number-format.store";
 import { Validator } from "@/services/explorer/validator/types/validators";
-import { FormattedStakingValidation, FormattedUnstakingQueueItem } from "@/services/explorer/validator/types/staking";
+import {
+  FormattedStakingValidation,
+  FormattedUnstakingQueueItem,
+} from "@/services/explorer/validator/types/staking";
 import { VaultSummary } from "@/services/explorer/vault/types";
 import { Liquidation } from "@/services/explorer/liquidation";
-
+import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/formatters/dateFormatting";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { PaginationProps } from "@/components/common";
-
 
 interface TableContentProps {
   activeTab: string;
   validatorSubTab: string;
-  onValidatorSubTabChange: (subTab: 'all' | 'transactions' | 'unstaking') => void;
+  onValidatorSubTabChange: (subTab: "all" | "transactions" | "unstaking") => void;
   validatorsData: {
     validators: Validator[];
     loading: boolean;
@@ -60,284 +60,439 @@ export function TableContent({
   format,
   startIndex,
   endIndex,
-  pagination
+  pagination,
 }: TableContentProps) {
   const { validators, loading: validatorsLoading, error: validatorsError } = validatorsData;
   const { vaults, loading: vaultsLoading, error: vaultsError } = vaultsData;
-  const { validations: stakingValidations, loading: stakingLoading, error: stakingError } = stakingData;
-  const { unstakingQueue, loading: unstakingLoading, error: unstakingError } = unstakingData;
-  const { liquidations, loading: liquidationsLoading, error: liquidationsError } = liquidationsData;
+  const {
+    validations: stakingValidations,
+    loading: stakingLoading,
+    error: stakingError,
+  } = stakingData;
+  const {
+    unstakingQueue,
+    loading: unstakingLoading,
+    error: unstakingError,
+  } = unstakingData;
+  const {
+    liquidations,
+    loading: liquidationsLoading,
+    error: liquidationsError,
+  } = liquidationsData;
   const { format: dateFormat } = useDateFormat();
 
-  // Fonction pour trouver le nom du validator par son adresse
   const getValidatorName = (validatorAddress: string) => {
-    const validator = validators.find((v: Validator) => v.address === validatorAddress || v.validator === validatorAddress);
-    return validator ? validator.name : `${validatorAddress.slice(0, 6)}...${validatorAddress.slice(-4)}`;
+    const validator = validators.find(
+      (v: Validator) => v.address === validatorAddress || v.validator === validatorAddress
+    );
+    return validator
+      ? validator.name
+      : `${validatorAddress.slice(0, 6)}...${validatorAddress.slice(-4)}`;
   };
 
-  if (activeTab === 'validators') {
-    return (
-      <div>
+  // ── Validators tab ──────────────────────────────────────────────────────
+  if (activeTab === "validators") {
+    const validatorsSlice = validators.slice(startIndex, endIndex);
 
-        {validatorSubTab === 'all' && (
-          <DataTable
-            isLoading={validatorsLoading}
-            error={validatorsError}
-            isEmpty={validators.length === 0}
-            emptyState={{
-              title: "No validators available"
-            }}
-            pagination={pagination}
-            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
-          >
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Staked HYPE</TableHead>
-                  <TableHead className="text-right">APR</TableHead>
-                  <TableHead className="text-right">Commission</TableHead>
-                  <TableHead className="text-right">Uptime</TableHead>
-                  <TableHead className="text-right">Recent Blocks</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {validators.slice(startIndex, endIndex).map((validator: Validator) => (
-                  <TableRow key={validator.name} className="hover:bg-white/[0.02]">
-                    <TableCell className="text-sm text-brand-accent font-medium">{validator.name}</TableCell>
-                    <TableCell className="text-sm">
-                      <StatusBadge variant={validator.isActive ? 'success' : 'error'}>
-                        {validator.isActive ? 'Active' : 'Inactive'}
-                      </StatusBadge>
-                    </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
-                      {formatNumber(validator.stake, format, { maximumFractionDigits: 2 })}
-                    </TableCell>
-                    <TableCell className="text-sm text-right text-emerald-400 font-medium">
-                      {formatNumber(validator.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                    </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
-                      {formatNumber(validator.commission, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%
-                    </TableCell>
-                    <TableCell className="text-sm text-right text-white font-medium">
-                      {formatNumber(validator.uptime, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                    </TableCell>
-                    <TableCell className="text-sm text-right text-brand-accent font-medium">
-                      {formatNumber(validator.nRecentBlocks, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </DataTable>
-        )}
+    if (validatorSubTab === "all") {
+      const columns: Column<Validator>[] = [
+        {
+          key: "name",
+          header: "Name",
+          accessor: (v) => (
+            <span className="text-sm text-brand font-medium">{v.name}</span>
+          ),
+        },
+        {
+          key: "status",
+          header: "Status",
+          accessor: (v) => (
+            <StatusBadge variant={v.isActive ? "success" : "error"}>
+              {v.isActive ? "Active" : "Inactive"}
+            </StatusBadge>
+          ),
+        },
+        {
+          key: "stake",
+          header: "Staked HYPE",
+          type: "numeric",
+          accessor: (v) => (
+            <span className="font-medium">
+              {formatNumber(v.stake, format, { maximumFractionDigits: 2 })}
+            </span>
+          ),
+        },
+        {
+          key: "apr",
+          header: "APR",
+          type: "numeric",
+          accessor: (v) => (
+            <span className="text-emerald-400 font-medium">
+              {formatNumber(v.apr, format, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%
+            </span>
+          ),
+        },
+        {
+          key: "commission",
+          header: "Commission",
+          type: "numeric",
+          accessor: (v) => (
+            <span className="font-medium">
+              {formatNumber(v.commission, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}%
+            </span>
+          ),
+        },
+        {
+          key: "uptime",
+          header: "Uptime",
+          type: "numeric",
+          accessor: (v) => (
+            <span className="font-medium">
+              {formatNumber(v.uptime, format, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}%
+            </span>
+          ),
+        },
+        {
+          key: "nRecentBlocks",
+          header: "Recent Blocks",
+          type: "numeric",
+          accessor: (v) => (
+            <span className="text-brand font-medium">
+              {formatNumber(v.nRecentBlocks, format, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+            </span>
+          ),
+        },
+      ];
 
-        {validatorSubTab === 'transactions' && (
-          <DataTable
-            isLoading={stakingLoading}
-            error={stakingError}
-            isEmpty={!stakingValidations || stakingValidations.length === 0}
-            emptyState={{
-              title: "No transactions available"
-            }}
-            pagination={pagination}
-            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
-          >
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Time</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Validator</TableHead>
-                  <TableHead>Hash</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stakingValidations?.map((tx: FormattedStakingValidation) => (
-                  <TableRow key={tx.hash} className="hover:bg-white/[0.02]">
-                    <TableCell className="text-sm text-white font-medium">
-                      {formatDateTime(tx.timestamp, dateFormat)}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <AddressDisplay address={tx.user} />
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <StatusBadge variant={tx.type === 'Undelegate' ? 'error' : 'success'}>
-                        {tx.type}
-                      </StatusBadge>
-                    </TableCell>
-                    <TableCell className="text-sm text-white font-medium">
-                      {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <AddressDisplay address={tx.validator} label={getValidatorName(tx.validator)} />
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <AddressDisplay address={tx.hash} showExternalLink={true} showCopy={true} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </DataTable>
-        )}
+      return (
+        <TypedDataTable<Validator>
+          data={validatorsSlice}
+          columns={columns}
+          getRowKey={(v) => v.name}
+          isLoading={validatorsLoading}
+          error={validatorsError}
+          errorTitle="Failed to load validators"
+          emptyMessage="No validators available"
+          paginationVariant={pagination ? "full" : "none"}
+          total={pagination?.total}
+          page={pagination?.page}
+          rowsPerPage={pagination?.rowsPerPage}
+          onPageChange={pagination?.onPageChange}
+          onRowsPerPageChange={pagination?.onRowsPerPageChange}
+          rowsPerPageOptions={pagination?.rowsPerPageOptions}
+        />
+      );
+    }
 
-        {validatorSubTab === 'unstaking' && (
-          <DataTable
-            isLoading={unstakingLoading}
-            error={unstakingError}
-            isEmpty={!unstakingQueue || unstakingQueue.length === 0}
-            emptyState={{
-              title: "No pending unstaking requests"
-            }}
-            pagination={pagination}
-            className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
-          >
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Time</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead>Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {unstakingQueue?.map((item: FormattedUnstakingQueueItem, index: number) => (
-                  <TableRow key={`${item.user}-${item.timestamp}-${index}`} className="hover:bg-white/[0.02]">
-                    <TableCell className="text-sm text-white font-medium">
-                      {formatDateTime(item.timestamp, dateFormat)}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      <AddressDisplay address={item.user} />
-                    </TableCell>
-                    <TableCell className="text-sm text-white font-medium">
-                      {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </DataTable>
-        )}
-      </div>
-    );
+    if (validatorSubTab === "transactions") {
+      const columns: Column<FormattedStakingValidation>[] = [
+        {
+          key: "timestamp",
+          header: "Time",
+          accessor: (tx) => (
+            <span className="font-medium">
+              {formatDateTime(tx.timestamp, dateFormat)}
+            </span>
+          ),
+        },
+        {
+          key: "user",
+          header: "User",
+          accessor: (tx) => <AddressDisplay address={tx.user} />,
+        },
+        {
+          key: "type",
+          header: "Type",
+          accessor: (tx) => (
+            <StatusBadge variant={tx.type === "Undelegate" ? "error" : "success"}>
+              {tx.type}
+            </StatusBadge>
+          ),
+        },
+        {
+          key: "amount",
+          header: "Amount",
+          type: "numeric",
+          accessor: (tx) => (
+            <span className="font-medium">
+              {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
+            </span>
+          ),
+        },
+        {
+          key: "validator",
+          header: "Validator",
+          accessor: (tx) => (
+            <AddressDisplay
+              address={tx.validator}
+              label={getValidatorName(tx.validator)}
+            />
+          ),
+        },
+        {
+          key: "hash",
+          header: "Hash",
+          accessor: (tx) => (
+            <AddressDisplay address={tx.hash} showExternalLink showCopy />
+          ),
+        },
+      ];
+
+      return (
+        <TypedDataTable<FormattedStakingValidation>
+          data={stakingValidations ?? []}
+          columns={columns}
+          getRowKey={(tx) => tx.hash}
+          isLoading={stakingLoading}
+          error={stakingError}
+          errorTitle="Failed to load transactions"
+          emptyMessage="No transactions available"
+          paginationVariant={pagination ? "full" : "none"}
+          total={pagination?.total}
+          page={pagination?.page}
+          rowsPerPage={pagination?.rowsPerPage}
+          onPageChange={pagination?.onPageChange}
+          onRowsPerPageChange={pagination?.onRowsPerPageChange}
+          rowsPerPageOptions={pagination?.rowsPerPageOptions}
+        />
+      );
+    }
+
+    if (validatorSubTab === "unstaking") {
+      const columns: Column<FormattedUnstakingQueueItem>[] = [
+        {
+          key: "timestamp",
+          header: "Time",
+          accessor: (item) => (
+            <span className="font-medium">
+              {formatDateTime(item.timestamp, dateFormat)}
+            </span>
+          ),
+        },
+        {
+          key: "user",
+          header: "User",
+          accessor: (item) => <AddressDisplay address={item.user} />,
+        },
+        {
+          key: "amount",
+          header: "Amount",
+          type: "numeric",
+          accessor: (item) => (
+            <span className="font-medium">
+              {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
+            </span>
+          ),
+        },
+      ];
+
+      return (
+        <TypedDataTable<FormattedUnstakingQueueItem>
+          data={unstakingQueue ?? []}
+          columns={columns}
+          getRowKey={(item, idx) => `${item.user}-${item.timestamp}-${idx}`}
+          isLoading={unstakingLoading}
+          error={unstakingError}
+          errorTitle="Failed to load unstaking queue"
+          emptyMessage="No pending unstaking requests"
+          paginationVariant={pagination ? "full" : "none"}
+          total={pagination?.total}
+          page={pagination?.page}
+          rowsPerPage={pagination?.rowsPerPage}
+          onPageChange={pagination?.onPageChange}
+          onRowsPerPageChange={pagination?.onRowsPerPageChange}
+          rowsPerPageOptions={pagination?.rowsPerPageOptions}
+        />
+      );
+    }
+
+    return null;
   }
 
-  if (activeTab === 'liquidations') {
+  // ── Liquidations tab ────────────────────────────────────────────────────
+  if (activeTab === "liquidations") {
+    const columns: Column<Liquidation>[] = [
+      {
+        key: "time",
+        header: "Time",
+        accessor: (liq) => (
+          <span className="font-medium">
+            {formatDateTime(liq.time, dateFormat)}
+          </span>
+        ),
+      },
+      {
+        key: "coin",
+        header: "Coin",
+        accessor: (liq) => (
+          <span className="text-brand font-medium">{liq.coin}</span>
+        ),
+      },
+      {
+        key: "side",
+        header: "Side",
+        accessor: (liq) => (
+          <StatusBadge variant={liq.liq_dir === "Long" ? "success" : "error"}>
+            {liq.liq_dir}
+          </StatusBadge>
+        ),
+      },
+      {
+        key: "notional",
+        header: "Notional",
+        type: "numeric",
+        accessor: (liq) => (
+          <span className="font-medium">
+            ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
+          </span>
+        ),
+      },
+      {
+        key: "size",
+        header: "Size",
+        type: "numeric",
+        className: "max-lg:hidden",
+        accessor: (liq) => (
+          <span className="font-medium">
+            {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
+          </span>
+        ),
+      },
+      {
+        key: "fee",
+        header: "Fee",
+        type: "numeric",
+        className: "max-md:hidden",
+        accessor: (liq) => (
+          <span className="text-text-tertiary">
+            ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
+          </span>
+        ),
+      },
+      {
+        key: "method",
+        header: "Method",
+        className: "max-lg:hidden",
+        accessor: (liq) => (
+          <span className="text-text-secondary">{liq.method}</span>
+        ),
+      },
+      {
+        key: "user",
+        header: "User",
+        accessor: (liq) => <AddressDisplay address={liq.liquidated_user} />,
+      },
+      {
+        key: "hash",
+        header: "Hash",
+        accessor: (liq) => (
+          <AddressDisplay address={liq.hash} showExternalLink showCopy />
+        ),
+      },
+    ];
+
     return (
-      <DataTable
+      <TypedDataTable<Liquidation>
+        data={liquidations}
+        columns={columns}
+        getRowKey={(liq) => liq.tid}
         isLoading={liquidationsLoading}
         error={liquidationsError}
-        isEmpty={liquidations.length === 0}
-        emptyState={{
-          title: "No liquidations available"
-        }}
-        pagination={pagination}
-        className="!border-none !bg-transparent !shadow-none backdrop-blur-none"
-      >
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>Time</TableHead>
-              <TableHead>Coin</TableHead>
-              <TableHead>Side</TableHead>
-              <TableHead className="text-right">Notional</TableHead>
-              <TableHead className="text-right max-lg:hidden">Size</TableHead>
-              <TableHead className="text-right max-md:hidden">Fee</TableHead>
-              <TableHead className="max-lg:hidden">Method</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Hash</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {liquidations.map((liq: Liquidation) => (
-              <TableRow key={liq.tid} className="hover:bg-white/[0.02]">
-                <TableCell className="text-sm text-white font-medium">
-                  {formatDateTime(liq.time, dateFormat)}
-                </TableCell>
-                <TableCell className="text-sm text-brand-accent font-medium">
-                  {liq.coin}
-                </TableCell>
-                <TableCell className="text-sm">
-                  <StatusBadge variant={liq.liq_dir === 'Long' ? 'success' : 'error'}>
-                    {liq.liq_dir}
-                  </StatusBadge>
-                </TableCell>
-                <TableCell className="text-sm text-right text-white font-medium">
-                  ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
-                </TableCell>
-                <TableCell className="text-sm text-right text-white font-medium max-lg:hidden">
-                  {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
-                </TableCell>
-                <TableCell className="text-sm text-right text-text-muted max-md:hidden">
-                  ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
-                </TableCell>
-                <TableCell className="text-sm text-text-secondary max-lg:hidden">
-                  {liq.method}
-                </TableCell>
-                <TableCell className="text-sm">
-                  <AddressDisplay address={liq.liquidated_user} />
-                </TableCell>
-                <TableCell className="text-sm">
-                  <AddressDisplay address={liq.hash} showExternalLink={true} showCopy={true} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </DataTable>
+        errorTitle="Failed to load liquidations"
+        emptyMessage="No liquidations available"
+        paginationVariant={pagination ? "full" : "none"}
+        total={pagination?.total}
+        page={pagination?.page}
+        rowsPerPage={pagination?.rowsPerPage}
+        onPageChange={pagination?.onPageChange}
+        onRowsPerPageChange={pagination?.onRowsPerPageChange}
+        rowsPerPageOptions={pagination?.rowsPerPageOptions}
+      />
     );
   }
 
+  // ── Vaults tab (default) ─────────────────────────────────────────────────
+  const vaultColumns: Column<VaultSummary>[] = [
+    {
+      key: "name",
+      header: "Name",
+      accessor: (v) => (
+        <span className="font-medium">{v.summary.name}</span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      accessor: (v) => (
+        <StatusBadge variant={!v.summary.isClosed ? "success" : "error"}>
+          {!v.summary.isClosed ? "Open" : "Closed"}
+        </StatusBadge>
+      ),
+    },
+    {
+      key: "tvl",
+      header: "TVL",
+      type: "numeric",
+      accessor: (v) => (
+        <span className="font-medium">
+          ${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 2 })}
+        </span>
+      ),
+    },
+    {
+      key: "apr",
+      header: "APR",
+      type: "numeric",
+      accessor: (v) => (
+        <span className={`font-medium ${v.apr >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+          {formatNumber(v.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+        </span>
+      ),
+    },
+    {
+      key: "leader",
+      header: "Leader",
+      accessor: (v) => <AddressDisplay address={v.summary.leader} />,
+    },
+    {
+      key: "created",
+      header: "Created",
+      accessor: (v) => (
+        <span className="font-medium">
+          {formatDate(v.summary.createTimeMillis, dateFormat)}
+        </span>
+      ),
+    },
+  ];
+
   return (
-    <DataTable
+    <TypedDataTable<VaultSummary>
+      data={vaults}
+      columns={vaultColumns}
+      getRowKey={(v) => v.summary.vaultAddress}
       isLoading={vaultsLoading}
       error={vaultsError}
-      isEmpty={vaults.length === 0}
-      emptyState={{
-        title: "No vaults available"
-      }}
-      pagination={pagination}
-    >
-      <Table className="w-full">
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>TVL</TableHead>
-            <TableHead className="text-right">APR</TableHead>
-            <TableHead>Leader</TableHead>
-            <TableHead>Created</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {vaults.map((vault: VaultSummary) => (
-            <TableRow key={vault.summary.vaultAddress} className="hover:bg-white/[0.02]">
-              <TableCell className="text-sm text-white font-medium">{vault.summary.name}</TableCell>
-              <TableCell className="text-sm">
-                <StatusBadge variant={!vault.summary.isClosed ? 'success' : 'error'}>
-                  {!vault.summary.isClosed ? 'Open' : 'Closed'}
-                </StatusBadge>
-              </TableCell>
-              <TableCell className="text-sm text-white font-medium">
-                ${formatNumber(parseFloat(vault.summary.tvl), format, { maximumFractionDigits: 2 })}
-              </TableCell>
-              <TableCell className={`text-right font-medium ${vault.apr >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {formatNumber(vault.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-              </TableCell>
-              <TableCell className="text-sm">
-                <AddressDisplay address={vault.summary.leader} />
-              </TableCell>
-              <TableCell className="text-sm text-white font-medium">
-                {formatDate(vault.summary.createTimeMillis, dateFormat)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </DataTable>
+      errorTitle="Failed to load vaults"
+      emptyMessage="No vaults available"
+      paginationVariant={pagination ? "full" : "none"}
+      total={pagination?.total}
+      page={pagination?.page}
+      rowsPerPage={pagination?.rowsPerPage}
+      onPageChange={pagination?.onPageChange}
+      onRowsPerPageChange={pagination?.onRowsPerPageChange}
+      rowsPerPageOptions={pagination?.rowsPerPageOptions}
+    />
   );
-} 
+}

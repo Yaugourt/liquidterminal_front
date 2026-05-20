@@ -29,18 +29,18 @@ export function DeleteConfirmDialog({
 }: DeleteConfirmDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20">
+      <AlertDialogContent className="bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20">
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-rose-400" />
             </div>
-            <AlertDialogTitle className="text-white text-xl font-bold">
+            <AlertDialogTitle className="text-text-primary text-xl font-bold">
               Delete Project
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-text-secondary">
-            Are you sure you want to delete <span className="font-semibold text-white">{projectName}</span>?
+            Are you sure you want to delete <span className="font-semibold text-text-primary">{projectName}</span>?
             <br />
             <br />
             This action cannot be undone. All data associated with this project will be permanently removed.
@@ -48,7 +48,7 @@ export function DeleteConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel 
-            className="bg-transparent border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white rounded-lg"
+            className="bg-transparent border-border-subtle text-text-secondary hover:bg-white/5 hover:text-text-primary rounded-lg"
             disabled={isDeleting}
           >
             Cancel

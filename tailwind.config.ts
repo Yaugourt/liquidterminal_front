@@ -17,7 +17,9 @@ export default {
 				mono: ['var(--font-mono)', 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', 'Menlo', 'monospace'],
 			},
 			/**
-			 * V4 type scale. Absolute px values so they don't depend on root font-size.
+			 * V4 type scale (docs/DESIGN_SYSTEM_V4.md §3.4). Absolute px values so
+			 * they don't depend on root font-size. Replaces Tailwind defaults
+			 * (which rendered text-sm=14px, text-xs=12px… — the V4 spec wants 13/11).
 			 */
 			fontSize: {
 				'2xs': ['10px', { lineHeight: '1.4' }],
@@ -45,63 +47,44 @@ export default {
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-
-				/* ===== V4 cyan signature — `bg-brand`, `text-brand`, `bg-brand-hover`, `bg-brand-deep` ===== */
+				// V4 cyan signature — `bg-brand`, `text-brand`, `bg-brand-hover`, `bg-brand-deep`, `text-brand-text-on`
 				brand: {
 					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
 					hover: 'rgb(var(--brand-hover) / <alpha-value>)',
 					deep: 'rgb(var(--brand-deep) / <alpha-value>)',
 					'text-on': 'rgb(var(--brand-text-on) / <alpha-value>)',
-					/* ----- legacy aliases (pages pas encore reprises — retirées au fil de la migration) ----- */
-					main: '#0B0E14',
-					secondary: '#151A25',
-					tertiary: '#051728',
-					dark: '#0A0D12',
-					accent: '#83E9FF',
-					gold: '#f9e370',
-					success: '#00ff88',
-					error: '#ef4444',
-					warning: '#f59e0b',
-					/* External brand color (third-party service). */
+					// External brand color (third-party service).
 					telegram: '#0088cc',
 				},
-
-				/* ===== V4 surfaces (whisper navy) — `bg-base`, `bg-surface`, `bg-surface-2`, `bg-surface-3` ===== */
+				// V4 surfaces (whisper navy signature) — `bg-base`, `bg-surface`, `bg-surface-2`, `bg-surface-3`
 				base: 'rgb(var(--bg-base) / <alpha-value>)',
 				surface: 'rgb(var(--bg-surface) / <alpha-value>)',
 				'surface-2': 'rgb(var(--bg-surface-2) / <alpha-value>)',
 				'surface-3': 'rgb(var(--bg-surface-3) / <alpha-value>)',
-
-				/* ===== V4 action color (primary CTAs) ===== */
+				// V4 action color (primary CTAs)
 				action: {
 					DEFAULT: 'rgb(var(--action) / <alpha-value>)',
 					hover: 'rgb(var(--action-hover) / <alpha-value>)',
 				},
-
-				/* ===== V4 gold (`text-gold`, `bg-gold`) — reserved for Builder Fees column ===== */
+				// V4 gold (top-level for `text-gold`, `bg-gold`). Reserved for Builder Fees column.
 				gold: 'rgb(var(--gold) / <alpha-value>)',
-
-				/* ===== V4 semantic ===== */
+				// V4 semantic
 				success: 'rgb(var(--success) / <alpha-value>)',
 				danger: 'rgb(var(--danger) / <alpha-value>)',
 				warning: 'rgb(var(--warning) / <alpha-value>)',
-
-				/* ===== V4 semantic text colors ===== */
+				// V4 semantic text colors (CSS vars — light mode swap later)
 				'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',     // #E8EAED
 				'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)', // #9CA3AF
 				'text-tertiary': 'rgb(var(--text-tertiary) / <alpha-value>)',   // #6B7280
-				'text-muted': '#71717a',     // legacy alias (zinc-500)
-
-				/* ===== V4 borders (whisper navy — opaque) ===== */
+				// V4 border (whisper navy — opaque, replaces V2 white/5)
 				'border-subtle': 'rgb(var(--border-subtle) / <alpha-value>)',
+				// V4 borders (whisper navy palette) — `border-border-default`, `border-border-strong`
 				'border-default': 'rgb(var(--border-default) / <alpha-value>)',
 				'border-strong': 'rgb(var(--border-strong) / <alpha-value>)',
-				'border-hover': 'rgba(255, 255, 255, 0.1)', // legacy alias
-
-				/* ===== shadcn/ui compatibility — mapped to V4 tokens by role ===== */
+				// shadcn/ui compatibility — Phase 1 aliased to V4 tokens by role.
 				primary: {
 					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
-					foreground: '#051728',
+					foreground: '#051728', // navy text on cyan
 				},
 				secondary: {
 					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
@@ -117,7 +100,7 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'rgb(var(--brand) / <alpha-value>)',
-					foreground: '#051728',
+					foreground: '#051728', // navy text on cyan
 				},
 				card: {
 					DEFAULT: 'rgb(var(--bg-surface) / <alpha-value>)',
@@ -131,9 +114,10 @@ export default {
 				ring: 'rgb(var(--brand) / <alpha-value>)',
 			},
 			/**
-			 * V4 radius: cards/panels use `rounded-lg` (8px). Legacy consumers use
-			 * `rounded-2xl` (default 16px) — override `2xl` to 8px so they snap to V4.
-			 * `xl` (12px) left untouched: modal radius.
+			 * V4 radius: cards/panels use `rounded-lg` (8px, Tailwind default).
+			 * Many legacy consumers use `rounded-2xl` (default 16px) — override the
+			 * `2xl` key to 8px so they snap to V4 without hunting 267 occurrences.
+			 * `xl` (12px) is intentionally left untouched: it's the modal radius (spec §4.2).
 			 */
 			borderRadius: {
 				'2xl': '8px',

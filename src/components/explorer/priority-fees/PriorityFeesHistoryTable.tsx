@@ -3,17 +3,9 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { LoadingState } from "@/components/ui/loading-state";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { AddressDisplay } from "@/components/ui/address-display";
+import { TypedDataTable, type Column } from "@/components/common";
 import {
   usePriorityFeesRecentFills,
   extractFillPriorityGas,
@@ -52,6 +44,59 @@ function formatFillTime(t: unknown): string {
   return "—";
 }
 
+function buildColumns(): Column<PriorityFeesFillRow>[] {
+  return [
+    {
+      key: "time",
+      header: "Time",
+      accessor: (row) => (
+        <span className="text-xs text-text-secondary whitespace-nowrap">
+          {formatFillTime(row.time)}
+        </span>
+      ),
+    },
+    {
+      key: "coin",
+      header: "Coin",
+      accessor: (row) => (
+        <span className="text-sm text-text-primary tabular-nums">{row.coin ?? "—"}</span>
+      ),
+    },
+    {
+      key: "side",
+      header: "Side",
+      accessor: (row) => {
+        const sideLabel = formatFillSideLabel(row.side);
+        const sideClass = isFillSideBuy(row.side)
+          ? "text-emerald-400"
+          : isFillSideSell(row.side)
+            ? "text-rose-400"
+            : "text-text-secondary";
+        return <span className={`text-sm ${sideClass}`}>{sideLabel}</span>;
+      },
+    },
+    {
+      key: "priority_gas",
+      header: "Priority gas",
+      type: "numeric",
+      accessor: (row) => {
+        const g = extractFillPriorityGas(row);
+        return (
+          <span className="text-sm text-text-primary tabular-nums">
+            {formatPriorityFeeNumber(Number.isFinite(g) ? g : undefined)}
+          </span>
+        );
+      },
+    },
+    {
+      key: "user",
+      header: "User",
+      accessor: (row) =>
+        row.user ? <AddressDisplay address={row.user} /> : <span className="text-text-tertiary">—</span>,
+    },
+  ];
+}
+
 function RecentFillsSection() {
   const [page, setPage] = useState(0);
   const offset = page * FILLS_PAGE_SIZE;
@@ -67,98 +112,33 @@ function RecentFillsSection() {
   return (
     <>
       {error && (
-        <div className="mb-3 rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-wrap items-center gap-3">
+        <div className="mb-3 rounded-lg border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-wrap items-center gap-3">
           <span>{error.message}</span>
           <button
             type="button"
             onClick={() => refetch()}
-            className="text-xs text-brand-accent hover:underline"
+            className="text-xs text-brand hover:underline"
           >
             Retry
           </button>
         </div>
       )}
 
-      <div className="rounded-xl border border-border-subtle overflow-x-auto scrollbar-brand">
-        {isLoading && data.length === 0 ? (
-          <div className="flex h-[220px]">
-            <LoadingState message="Loading fills…" size="sm" withCard={false} />
-          </div>
-        ) : data.length === 0 ? (
-          <div className="flex h-[220px] items-center justify-center text-sm text-text-secondary px-4 text-center">
-            No recent fills with priority gas (&gt; 0)
-            {page > 0 ? " on this page." : "."}
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Time
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Coin
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Side
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3 text-right">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    Priority gas
-                  </span>
-                </TableHead>
-                <TableHead className="py-3 px-3">
-                  <span className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-                    User
-                  </span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((row: PriorityFeesFillRow, idx: number) => {
-                const g = extractFillPriorityGas(row);
-                const sideLabel = formatFillSideLabel(row.side);
-                const sideClass = isFillSideBuy(row.side)
-                  ? "text-emerald-400"
-                  : isFillSideSell(row.side)
-                    ? "text-rose-400"
-                    : "text-text-secondary";
-                return (
-                  <TableRow
-                    key={`${String(row.hash ?? row.tid ?? idx)}-${offset + idx}`}
-                    className="border-border-subtle hover:bg-white/[0.03]"
-                  >
-                    <TableCell className="py-2.5 px-3 text-xs text-text-secondary whitespace-nowrap">
-                      {formatFillTime(row.time)}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm text-white tabular-nums">
-                      {row.coin ?? "—"}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm">
-                      <span className={sideClass}>{sideLabel}</span>
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-right text-sm text-white tabular-nums">
-                      {formatPriorityFeeNumber(Number.isFinite(g) ? g : undefined)}
-                    </TableCell>
-                    <TableCell className="py-2.5 px-3 text-sm min-w-[140px]">
-                      {row.user ? <AddressDisplay address={row.user} /> : "—"}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        )}
+      <div className="rounded-lg border border-border-subtle overflow-hidden">
+        <TypedDataTable<PriorityFeesFillRow>
+          data={data}
+          columns={buildColumns()}
+          getRowKey={(row, idx) => `${String(row.hash ?? row.tid ?? idx)}-${offset + idx}`}
+          isLoading={isLoading && data.length === 0}
+          emptyMessage="No recent fills with priority gas (> 0)"
+          emptyDescription={page > 0 ? "on this page." : ""}
+          density="compact"
+          paginationVariant="none"
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-text-muted">
+        <p className="text-xs text-text-tertiary">
           {FILLS_PAGE_SIZE} per page · B = buy, A = sell (indexer)
         </p>
         <div className="flex items-center gap-2">
@@ -166,7 +146,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-white"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
             disabled={!hasPrev || isLoading}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             aria-label="Previous page"
@@ -180,7 +160,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-white"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
             disabled={!hasNext || isLoading}
             onClick={() => setPage((p) => p + 1)}
             aria-label="Next page"
@@ -195,12 +175,12 @@ function RecentFillsSection() {
 
 export function PriorityFeesHistoryTable() {
   return (
-    <Card className="p-5 border-border-subtle bg-brand-secondary/40 backdrop-blur-md h-full flex flex-col">
+    <Card className="p-5 border-border-subtle bg-surface/40 h-full flex flex-col">
       <div className="mb-4">
-        <h2 className="font-inter text-lg font-semibold text-white tracking-tight">
-          History & activity
+        <h2 className="font-inter text-lg font-semibold text-text-primary tracking-tight">
+          History &amp; activity
         </h2>
-        <p className="text-xs text-text-muted mt-1">
+        <p className="text-xs text-text-tertiary mt-1">
           Recent fills with priority gas (live from the indexer).
         </p>
       </div>

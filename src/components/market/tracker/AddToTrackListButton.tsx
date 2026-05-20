@@ -87,17 +87,17 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-brand-secondary/80 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-6 max-w-md mx-4">
-            <h2 className="text-lg font-semibold text-white mb-2">
+          <div className="bg-surface/80 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-6 max-w-md mx-4">
+            <h2 className="text-lg font-semibold text-text-primary mb-2">
               Login to Track Wallet
             </h2>
-            <p className="text-zinc-400 text-sm mb-4">
+            <p className="text-text-secondary text-sm mb-4">
               Sign in to add this wallet to your track list
             </p>
             <div className="flex gap-3">
               <Button
                 onClick={() => login()}
-                className="flex-1 bg-brand-accent hover:bg-brand-accent/90 text-black font-semibold"
+                className="flex-1 bg-brand hover:bg-brand/90 text-black font-semibold"
               >
                 <LogIn className="w-5 h-5 mr-2" />
                 Login
@@ -118,7 +118,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       <Button
         onClick={handleAddToTrackList}
         disabled={isAdding}
-        className={`bg-brand-gold hover:bg-brand-gold/90 text-black font-semibold ${className}`}
+        className={`bg-gold hover:bg-gold/90 text-black font-semibold ${className}`}
       >
         <Plus className="w-4 h-4 mr-2" />
         {isAdding ? "Adding..." : "Add to Track List"}

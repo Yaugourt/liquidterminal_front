@@ -25,10 +25,10 @@ export function UserAccountCompact() {
             <Button
                 onClick={() => login()}
                 size="sm"
-                className="bg-brand-accent hover:bg-brand-accent/90 text-brand-main font-bold text-xs px-3 py-1.5 h-auto rounded-lg"
+                className="bg-action hover:bg-action-hover text-white font-medium text-xs px-3.5 h-7 rounded-md transition-colors"
             >
                 <LogIn className="w-3.5 h-3.5 mr-1.5" />
-                Login
+                Connect
             </Button>
         )
     }
@@ -45,55 +45,50 @@ export function UserAccountCompact() {
                 <DailyTasksPopover />
             </div>
 
-            {/* Telegram */}
+            {/* Connect Wallet CTA (when wallet not linked) — placeholder slot for now */}
+
+            {/* Telegram (icon-btn 32x32 per V4 ref) */}
             <button
                 onClick={() => router.push('/profile')}
                 className={cn(
-                    "stat-card flex items-center gap-1.5 cursor-pointer transition-colors",
-                    user?.telegramUsername
-                        ? "text-emerald-400 hover:border-emerald-500/40"
-                        : "text-brand-telegram hover:border-brand-telegram/40"
+                    "h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-subtle bg-surface-2 hover:bg-surface-3 hover:text-text-primary transition-colors cursor-pointer",
+                    user?.telegramUsername ? "text-success" : "text-text-secondary"
                 )}
                 title={user?.telegramUsername ? `Telegram: @${user.telegramUsername}` : 'Connect Telegram'}
             >
-                <TelegramIcon className="h-3 w-3 shrink-0" />
-                <span className="text-[10px] font-medium hidden lg:block">
-                    {user?.telegramUsername ? `@${user.telegramUsername}` : 'Telegram'}
-                </span>
+                <TelegramIcon className="h-3.5 w-3.5 shrink-0" />
             </button>
 
-            {/* Avatar + username → profile */}
+            {/* Avatar circle 28x28 → profile (V4 brand-bg + brand text + brand-border) */}
             <Link
                 href="/profile"
-                className="flex items-center gap-1.5 stat-card hover:border-border-hover transition-colors"
+                className="h-7 w-7 inline-flex items-center justify-center rounded-full border border-brand/30 bg-brand/10 hover:bg-brand/20 transition-colors"
+                title={privyUser?.twitter?.username || 'Profile'}
             >
-                <Avatar className="h-5 w-5 shrink-0">
+                <Avatar className="h-full w-full">
                     {privyUser?.twitter?.profilePictureUrl ? (
                         <Image
                             src={privyUser.twitter.profilePictureUrl}
                             alt="Avatar"
-                            width={20}
-                            height={20}
+                            width={28}
+                            height={28}
                             className="object-cover rounded-full"
                         />
                     ) : (
-                        <AvatarFallback className="bg-brand-secondary text-brand-accent text-[9px] font-medium">
+                        <AvatarFallback className="bg-transparent text-brand text-[10px] font-semibold">
                             {privyUser?.twitter?.username?.[0]?.toUpperCase() || "U"}
                         </AvatarFallback>
                     )}
                 </Avatar>
-                <span className="text-white text-[11px] font-medium hidden md:block max-w-[90px] truncate">
-                    {privyUser?.twitter?.username || "Profile"}
-                </span>
             </Link>
 
-            {/* Logout */}
+            {/* Logout (icon-btn 32x32) */}
             <button
                 onClick={() => logout()}
-                className="stat-card flex items-center gap-1 text-text-muted hover:text-rose-400 hover:border-rose-500/30 transition-colors cursor-pointer"
+                className="h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-subtle bg-surface-2 text-text-secondary hover:text-danger hover:bg-surface-3 transition-colors cursor-pointer"
                 title="Logout"
             >
-                <LogOut className="w-3 h-3" />
+                <LogOut className="w-3.5 h-3.5" />
             </button>
         </div>
     )

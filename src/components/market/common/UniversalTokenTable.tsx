@@ -1,26 +1,14 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableRow,
-    SortableTableHead,
-} from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { formatNumber, formatMetricValue, formatPrice, formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatMetricValue, formatPrice, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
-import { TokenIcon, formatPriceChange } from "@/components/common";
-import { Pagination } from "@/components/common";
-import { TableEmptyState } from "@/components/ui/table-states";
-import { LoadingState } from "@/components/ui/loading-state";
-import { ErrorState } from "@/components/ui/error-state";
+import { TokenIcon, formatPriceChange, TypedDataTable, type Column } from "@/components/common";
 import {
     SpotToken,
     PerpToken,
@@ -28,6 +16,7 @@ import {
 } from "./types";
 import { PerpSortableFields, PerpMarketData } from "@/services/market/perp/types";
 import { SpotToken as SpotTokenService } from "@/services/market/spot/types";
+import type { SortDirection } from "@/components/common";
 
 interface UniversalTokenTableProps {
     market: 'spot' | 'perp';
@@ -36,9 +25,7 @@ interface UniversalTokenTableProps {
     searchQuery?: string;
 }
 
-
-
-
+type TokenRow = SpotToken & PerpToken & SpotTokenService & PerpMarketData;
 
 export function UniversalTokenTable({
     market,
@@ -49,7 +36,6 @@ export function UniversalTokenTable({
     const router = useRouter();
     const { format } = useNumberFormat();
 
-    // Default sort: volume (highest first with desc)
     const initialSortField = 'volume';
 
     const [sortField, setSortField] = useState<SpotSortableFields | PerpSortableFields>(initialSortField);
@@ -57,18 +43,12 @@ export function UniversalTokenTable({
     const [pageSize, setPageSize] = useState(mode === 'compact' ? 5 : 10);
     const [page, setPage] = useState(1);
 
-    // Forcer pageSize à 5 si compact
     useEffect(() => {
         if (mode === 'compact') {
             setPageSize(5);
         }
     }, [mode]);
 
-    //--- Hooks d'acquisition de données ---
-    // Note: On appelle les deux hooks pour respecter les règles des hooks, 
-    // même si on n'utilise qu'un seul jeu de données.
-
-    // Spot Data
     const spotResult = useSpotTokens({
         limit: pageSize,
         page: mode === 'compact' ? 1 : page,
@@ -77,7 +57,6 @@ export function UniversalTokenTable({
         strict: market === 'spot' ? strict : false
     });
 
-    // Perp Data
     const perpResult = usePerpMarkets({
         limit: pageSize,
         defaultParams: {
@@ -86,342 +65,226 @@ export function UniversalTokenTable({
         }
     });
 
-    // Sélection des données actives
     const rawTokens = market === 'spot' ? spotResult.data : perpResult.data;
     const total = market === 'spot' ? spotResult.total : perpResult.total;
     const isLoading = market === 'spot' ? spotResult.isLoading : perpResult.isLoading;
     const error = market === 'spot' ? spotResult.error : perpResult.error;
     const currentPage = market === 'spot' ? page : perpResult.page;
 
-    // Filtrage local si recherche (uniquement pour mode full qui gère la recherche locale en plus)
-    // Note: Idéalement la recherche devrait être serveur, mais ici on reprend la logique existante
-    // Pour le mode full, TokenTable faisait une récuperation de TOUS les tokens pour filtrer.
-    // On va simplifier pour l'instant et filtrer sur la page courante si pas de support recherche serveur
-    // OU si on veut reproduire exactement TokenTable, on doit appeler useSpotTokens avec limit 1000...
-    // Pour l'instant, on applique le filtre sur les tokens reçus si searchQuery est présent.
-
-    const tokens = rawTokens.filter(token =>
+    const tokens = (rawTokens as TokenRow[]).filter(token =>
         !searchQuery || token.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    //--- Handlers ---
-
-    const handlePageChange = (newPage: number) => {
+    const handlePageChange = useCallback((newPage: number) => {
         if (mode === 'compact') return;
-
         if (market === 'spot') {
             setPage(newPage + 1);
         } else if (perpResult.updateParams) {
             perpResult.updateParams({ page: newPage + 1 });
         }
-    };
+    }, [mode, market, perpResult]);
 
-    const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
         if (mode === 'compact') return;
-
         setPageSize(newRowsPerPage);
         if (market === 'spot') {
             setPage(1);
         } else if (perpResult.updateParams) {
+            perpResult.updateParams({ page: 1, limit: newRowsPerPage });
+        }
+    }, [mode, market, perpResult]);
+
+    const handleSortChange = useCallback((field: string, direction: SortDirection) => {
+        const typedField = field as SpotSortableFields | PerpSortableFields;
+        setSortField(typedField);
+        setSortOrder(direction);
+        if (market === 'spot') {
+            setPage(1);
+        } else if (perpResult.updateParams) {
             perpResult.updateParams({
-                page: 1,
-                limit: newRowsPerPage
+                sortBy: typedField as PerpSortableFields,
+                sortOrder: direction,
+                page: 1
             });
         }
-    };
-
-    const handleSort = useCallback((field: SpotSortableFields | PerpSortableFields) => {
-        if (market === 'spot') {
-            if (sortField === field) {
-                setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                setPage(1);
-            } else {
-                setSortField(field);
-                setSortOrder("desc");
-                setPage(1);
-            }
-        } else if (perpResult.updateParams) {
-            if (sortField === field) {
-                const newOrder = sortOrder === "asc" ? "desc" : "asc";
-                setSortOrder(newOrder);
-                perpResult.updateParams({
-                    sortBy: field as PerpSortableFields,
-                    sortOrder: newOrder,
-                    page: 1
-                });
-            } else {
-                setSortField(field);
-                setSortOrder("desc");
-                perpResult.updateParams({
-                    sortBy: field as PerpSortableFields,
-                    sortOrder: "desc",
-                    page: 1
-                });
-            }
-        }
-    }, [market, sortField, sortOrder, perpResult]);
+    }, [market, perpResult]);
 
     const handleTokenClick = useCallback((tokenName: string) => {
         const basePath = market === 'spot' ? '/market/spot' : '/market/perp';
         router.push(`${basePath}/${encodeURIComponent(tokenName)}`);
     }, [router, market]);
 
-    //--- Render Helpers ---
+    // ── Column definitions vary by mode + market ──────────────────────
 
-    const formatVolumeCompact = (value: number) => {
-        // Format compact pour le mode compact: $1.2M
-        return formatLargeNumber(value, { prefix: '$', decimals: 2, suffix: '' }).replace(/([0-9])([KMB])$/, '$1 $2');
+    // Name column — shared
+    const nameCol: Column<TokenRow> = {
+        key: "name",
+        header: "Name",
+        accessor: (t) => (
+            <div className="flex items-center gap-2 min-w-0">
+                <TokenIcon src={t.logo} name={t.name} size="sm" />
+                <span className="text-text-primary text-sm font-medium truncate">{t.name}</span>
+            </div>
+        ),
     };
 
-    //--- Loading / Error States ---
+    // Price column — shared
+    const priceCol: Column<TokenRow> = {
+        key: "price",
+        header: "Price",
+        type: "numeric",
+        sortable: mode === 'full' && market === 'perp',
+        accessor: (t) => (
+            mode === 'compact'
+                ? formatNumber(t.price, format, { minimumFractionDigits: 0, maximumFractionDigits: 2, currency: '$', showCurrency: true })
+                : formatPrice(t.price, format)
+        ),
+    };
 
-    if (isLoading && !tokens.length) {
-        return (
-            <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full' : ''}`}>
-                <LoadingState message="Loading tokens..." size="lg" withCard={false} />
-            </div>
-        );
+    // Change 24h
+    const change24hCol: Column<TokenRow> = {
+        key: "change24h",
+        header: "24h",
+        sortable: true,
+        align: "right",
+        accessor: (t) => (
+            mode === 'compact'
+                ? (
+                    <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                        {formatPriceChange(t.change24h)}
+                    </span>
+                ) : (
+                    <StatusBadge variant={t.change24h < 0 ? 'error' : 'success'}>
+                        {t.change24h > 0 ? '+' : ''}{formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                    </StatusBadge>
+                )
+        ),
+    };
+
+    // Volume column
+    const volumeCol: Column<TokenRow> = {
+        key: "volume",
+        header: "Volume",
+        type: "numeric",
+        sortable: true,
+        accessor: (t) => (
+            mode === 'compact'
+                ? compactUsd(t.volume)
+                : `$${formatNumber(t.volume, format)}`
+        ),
+    };
+
+    // Build columns array per mode × market
+    let columns: Column<TokenRow>[];
+
+    // Largeurs en % qui totalisent 100 % — table-fixed (fixedLayout) → colonnes régulières.
+    if (mode === 'compact') {
+        if (market === 'spot') {
+            // Compact spot: Name, Price, Volume, 24h
+            columns = [
+                { ...nameCol, width: '34%' },
+                { ...priceCol, width: '22%' },
+                { ...volumeCol, width: '22%' },
+                { ...change24hCol, sortable: true, width: '22%' },
+            ];
+        } else {
+            // Compact perp: Name, Price, 24h, OI
+            columns = [
+                { ...nameCol, width: '30%' },
+                { ...priceCol, width: '22%' },
+                { ...change24hCol, width: '22%' },
+                {
+                    key: "openInterest",
+                    header: "Open Interest",
+                    type: "numeric",
+                    sortable: true,
+                    width: '26%',
+                    accessor: (t) => `$${formatNumber(t.openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
+                },
+            ];
+        }
+    } else {
+        // Full mode
+        if (market === 'spot') {
+            columns = [
+                { ...nameCol, width: '22%' },
+                { ...priceCol, width: '14%' },
+                { ...change24hCol, width: '14%' },
+                { ...volumeCol, width: '18%' },
+                {
+                    key: "marketCap",
+                    header: "Market Cap",
+                    type: "numeric",
+                    sortable: true,
+                    width: '18%',
+                    accessor: (t) => `$${formatNumber(t.marketCap, format)}`,
+                },
+                {
+                    key: "supply",
+                    header: "Supply",
+                    type: "numeric",
+                    width: '14%',
+                    accessor: (t) => formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                },
+            ];
+        } else {
+            columns = [
+                { ...nameCol, width: '22%' },
+                { ...priceCol, width: '14%' },
+                { ...change24hCol, width: '14%' },
+                { ...volumeCol, width: '17%' },
+                {
+                    key: "openInterest",
+                    header: "Open Interest",
+                    type: "numeric",
+                    sortable: true,
+                    width: '17%',
+                    accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
+                },
+                {
+                    key: "funding",
+                    header: "Funding Rate",
+                    align: "right",
+                    width: '16%',
+                    accessor: (t) => (
+                        <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
+                            {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
+                        </StatusBadge>
+                    ),
+                },
+            ];
+        }
     }
-
-    if (error && mode === 'compact') {
-        return (
-            <div className="w-full h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden">
-                <ErrorState title="Error" message="Une erreur est survenue" withCard={false} />
-            </div>
-        );
-    }
-
-    //--- Main Render ---
 
     return (
-        <div className={`w-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl hover:border-border-hover transition-all shadow-xl shadow-black/20 overflow-hidden ${mode === 'compact' ? 'h-full flex flex-col' : ''}`}>
-            <div className={`overflow-x-auto scrollbar-brand ${mode === 'compact' ? 'flex-1' : ''}`}>
-                <Table className={mode === 'compact' ? 'h-full' : ''}>
-                    <TableHeader>
-                        <TableRow className="border-b border-border-subtle hover:bg-transparent">
-                            <SortableTableHead
-                                label="Name"
-                                className={mode === 'compact' ? 'w-[35%]' : (market === 'spot' ? 'w-[16.66%]' : 'w-[17%]')}
-                            />
-                            <SortableTableHead
-                                label="Price"
-                                onClick={mode === 'full' && market === 'perp' ? () => handleSort("price") : undefined}
-                                isActive={market === 'perp' && sortField === "price"}
-                                className={mode === 'compact' ? 'w-[20%]' : 'w-[10%]'}
-                            />
-
-                            {/* Colonne 3 */}
-                            {mode === 'compact' ? (
-                                market === 'spot' ? (
-                                    <SortableTableHead
-                                        label="Volume"
-                                        onClick={() => handleSort("volume")}
-                                        isActive={sortField === "volume"}
-                                        className="w-[20%]"
-                                    />
-                                ) : (
-                                    <SortableTableHead
-                                        label="24h"
-                                        onClick={() => handleSort("change24h")}
-                                        isActive={sortField === "change24h"}
-                                        className="w-[20%]"
-                                    />
-                                )
-                            ) : (
-                                <SortableTableHead
-                                    label="24h"
-                                    onClick={() => handleSort("change24h")}
-                                    isActive={sortField === "change24h"}
-                                    className="w-[10%]"
-                                />
-                            )}
-
-                            {/* Colonne 4 et plus (Full mode ou derniere colonne compact) */}
-                            {mode === 'full' ? (
-                                <>
-                                    <SortableTableHead
-                                        label="Volume"
-                                        onClick={() => handleSort("volume")}
-                                        isActive={sortField === "volume"}
-                                        className={market === 'spot' ? 'w-[12%]' : 'w-[20%]'}
-                                    />
-                                    {market === 'spot' ? (
-                                        <>
-                                            <SortableTableHead
-                                                label="Market Cap"
-                                                onClick={() => handleSort("marketCap")}
-                                                isActive={sortField === "marketCap"}
-                                                className="w-[20%]"
-                                            />
-                                            <SortableTableHead
-                                                label="Supply"
-                                                className="w-[12%]"
-                                            />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <SortableTableHead
-                                                label="Open Interest"
-                                                onClick={() => handleSort("openInterest")}
-                                                isActive={sortField === "openInterest"}
-                                                className="w-[20%]"
-                                            />
-                                            <SortableTableHead
-                                                label="Funding Rate"
-                                                className="w-[11%]"
-                                            />
-                                        </>
-                                    )}
-                                </>
-                            ) : (
-                                // Compact Mode - Dernière colonne
-                                market === 'spot' ? (
-                                    <SortableTableHead
-                                        label="24h"
-                                        onClick={() => handleSort("change24h")}
-                                        isActive={sortField === "change24h"}
-                                        className="w-[20%]"
-                                    />
-                                ) : (
-                                    <SortableTableHead
-                                        label="Open Interest"
-                                        onClick={() => handleSort("openInterest")}
-                                        isActive={sortField === "openInterest"}
-                                        className="w-[20%]"
-                                    />
-                                )
-                            )}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {tokens && tokens.length > 0 ? (
-                            tokens.map((token, index) => {
-                                const isSpot = market === 'spot';
-                                const t = token as (SpotToken & PerpToken & SpotTokenService & PerpMarketData);
-                                const uniqueKey = isSpot
-                                    ? `${market}-${t.name}-${t.tokenId}-${index}`
-                                    : `${market}-${t.name}-${t.index}-${index}`;
-
-                                return (
-                                    <TableRow
-                                        key={uniqueKey}
-                                        className="border-b border-border-subtle hover:bg-white/[0.02] transition-colors cursor-pointer"
-                                        style={mode === 'compact' ? { height: `${100 / pageSize}%` } : undefined}
-                                        onClick={() => handleTokenClick(t.name)}
-                                    >
-                                        {/* Name */}
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <TokenIcon src={t.logo} name={t.name} size="sm" />
-                                                <span className="text-white text-sm font-medium">{t.name}</span>
-                                            </div>
-                                        </TableCell>
-
-                                        {/* Price */}
-                                        <TableCell>
-                                            <div className="text-white text-sm">
-                                                {mode === 'compact'
-                                                    ? formatNumber(t.price, format, { minimumFractionDigits: 0, maximumFractionDigits: 2, currency: '$', showCurrency: true })
-                                                    : formatPrice(t.price, format)
-                                                }
-                                            </div>
-                                        </TableCell>
-
-                                        {/* Colonne 3 / 4 etc dependant du mode */}
-                                        {mode === 'compact' ? (
-                                            // COMPACT MODE
-                                            <>
-                                                {isSpot ? (
-                                                    // Spot Compact: Volume, then 24h
-                                                    <>
-                                                        <TableCell className="text-white text-sm py-2 px-3">
-                                                            {formatVolumeCompact(t.volume)}
-                                                        </TableCell>
-                                                        <TableCell className="text-sm py-2 px-3">
-                                                            <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                                                {formatPriceChange(t.change24h)}
-                                                            </span>
-                                                        </TableCell>
-                                                    </>
-                                                ) : (
-                                                    // Perp Compact: 24h, then OI
-                                                    <>
-                                                        <TableCell className="text-sm py-2 px-3">
-                                                            <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
-                                                                {formatPriceChange(t.change24h)}
-                                                            </span>
-                                                        </TableCell>
-                                                        <TableCell className="text-white text-sm py-2 px-3">
-                                                            {'$' + formatNumber(t.openInterest, format, { showCurrency: false, minimumFractionDigits: 0, maximumFractionDigits: 2 })}
-                                                        </TableCell>
-                                                    </>
-                                                )}
-                                            </>
-                                        ) : (
-                                            // FULL MODE
-                                            // Colonnes: 24h, Volume, (MarketCap/Supply OR OI/Funding)
-                                            <>
-                                                <TableCell>
-                                                    <StatusBadge variant={t.change24h < 0 ? 'error' : 'success'}>
-                                                        {t.change24h > 0 ? '+' : ''}{formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                                                    </StatusBadge>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="text-white text-sm">
-                                                        ${formatNumber(t.volume, format)}
-                                                    </div>
-                                                </TableCell>
-
-                                                {isSpot ? (
-                                                    <>
-                                                        <TableCell className="py-3 px-3">
-                                                            <div className="text-white text-sm">
-                                                                ${formatNumber(t.marketCap, format)}
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <div className="text-white text-sm">
-                                                                {formatMetricValue(t.supply, { format: 'US', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                                            </div>
-                                                        </TableCell>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <TableCell>
-                                                            <div className="text-white text-sm">
-                                                                ${formatNumber(t.openInterest, format)}
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
-                                                                {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
-                                                            </StatusBadge>
-                                                        </TableCell>
-                                                    </>
-                                                )}
-                                            </>
-                                        )}
-                                    </TableRow>
-                                );
-                            })
-                        ) : (
-                            <TableEmptyState colSpan={6} title="Aucun token disponible" description="Vérifiez plus tard" />
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-            {mode === 'full' && (
-                <div className="border-t border-border-subtle px-4 py-3">
-                    <Pagination
-                        total={total}
-                        page={currentPage - 1}
-                        rowsPerPage={pageSize}
-                        onPageChange={handlePageChange}
-                        onRowsPerPageChange={handleRowsPerPageChange}
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                    />
-                </div>
-            )}
-        </div>
+        <TypedDataTable<TokenRow>
+            data={tokens}
+            columns={columns}
+            getRowKey={(t, i) => {
+                const isSpot = market === 'spot';
+                return isSpot
+                    ? `${market}-${t.name}-${t.tokenId}-${i}`
+                    : `${market}-${t.name}-${t.index}-${i}`;
+            }}
+            isLoading={isLoading && !tokens.length}
+            error={error ?? null}
+            emptyMessage="Aucun token disponible"
+            emptyDescription="Vérifiez plus tard"
+            className={mode === 'compact' ? 'h-full flex flex-col' : undefined}
+            fixedLayout
+            // Server-sort
+            onSortChange={handleSortChange}
+            sortField={sortField}
+            sortDirection={sortOrder}
+            // Server-pagination (full mode only)
+            total={mode === 'full' ? total : undefined}
+            page={mode === 'full' ? currentPage - 1 : undefined}
+            rowsPerPage={mode === 'full' ? pageSize : undefined}
+            onPageChange={mode === 'full' ? handlePageChange : undefined}
+            onRowsPerPageChange={mode === 'full' ? handleRowsPerPageChange : undefined}
+            rowsPerPageOptions={[5, 10, 15, 20]}
+            paginationVariant={mode === 'full' ? "full" : "none"}
+            onRowClick={(t) => handleTokenClick(t.name)}
+        />
     );
 }

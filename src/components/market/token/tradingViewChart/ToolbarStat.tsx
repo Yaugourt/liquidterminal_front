@@ -14,14 +14,14 @@ export function ToolbarStat({ label, value, tone }: ToolbarStatProps) {
       ? "bg-emerald-400"
       : tone === "rose"
         ? "bg-rose-400"
-        : "bg-brand-accent";
+        : "bg-brand";
   return (
     <div className="flex items-center gap-1.5 rounded-md border border-border-subtle bg-white/[0.02] px-1.5 py-0.5 sm:gap-2 sm:px-2">
       <span className={`h-1 w-1 rounded-full ${dot}`} />
-      <span className="text-[9px] font-semibold uppercase tracking-wider text-text-muted">
+      <span className="text-[9px] font-semibold uppercase tracking-wider text-text-tertiary">
         {label}
       </span>
-      <span className="text-[11px] font-semibold text-white tabular-nums">{value}</span>
+      <span className="text-[11px] font-semibold text-text-primary tabular-nums">{value}</span>
     </div>
   );
 }

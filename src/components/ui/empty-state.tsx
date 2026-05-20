@@ -28,11 +28,11 @@ export function EmptyState({
             "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-[300px]",
             className
         )}>
-            <div className="w-16 h-16 mb-4 bg-white/5 rounded-2xl flex items-center justify-center">
-                {icon || <Database className="w-8 h-8 text-text-muted" />}
+            <div className="w-16 h-16 mb-4 bg-surface-2 rounded-lg flex items-center justify-center">
+                {icon || <Database className="w-8 h-8 text-text-tertiary" />}
             </div>
-            <p className="text-white text-lg mb-2">{title}</p>
-            <p className="text-text-muted text-sm mb-4">{description}</p>
+            <p className="text-text-primary text-lg mb-2">{title}</p>
+            <p className="text-text-tertiary text-sm mb-4">{description}</p>
             {action}
         </div>
     );

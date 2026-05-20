@@ -64,7 +64,7 @@ export interface StatsCardProps {
     valueClassName?: string;
     /** Class applied to the label `<h3>` (overrides default). */
     titleClassName?: string;
-    /** Class applied to the icon's tinted background square (e.g. `bg-brand-gold/10` for accent variant). */
+    /** Class applied to the icon's tinted background square (e.g. `bg-gold/10` for accent variant). */
     iconClassName?: string;
 }
 
@@ -110,9 +110,9 @@ export const StatsCard = memo(function StatsCard({
         <div className={cn("flex items-start", ds.iconGap)}>
             {icon ? (
                 <div className={cn(
-                    "shrink-0 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
+                    "shrink-0 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110",
                     ds.iconBox,
-                    iconClassName ?? "bg-brand-accent/10"
+                    iconClassName ?? "bg-brand/10"
                 )}>
                     {icon}
                 </div>
@@ -136,7 +136,7 @@ export const StatsCard = memo(function StatsCard({
                             <span
                                 className={cn(
                                     valueClassName ??
-                                        cn(ds.valueSize, "text-white font-bold tracking-tight tabular-nums")
+                                        cn(ds.valueSize, "text-text-primary font-bold tracking-tight tabular-nums")
                                 )}
                             >
                                 {value}
@@ -158,7 +158,7 @@ export const StatsCard = memo(function StatsCard({
                             ) : null}
                         </div>
                         {subValue && (
-                            <div className="mt-0.5 text-[10px] leading-snug text-text-muted">
+                            <div className="mt-0.5 text-[10px] leading-snug text-text-tertiary">
                                 {subValue}
                             </div>
                         )}

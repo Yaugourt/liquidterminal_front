@@ -69,7 +69,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
         <div className="flex items-center gap-1.5">
           <Link
             href={`/explorer/address/${row.vaultAddress}`}
-            className="text-white font-inter hover:text-brand-accent transition-colors"
+            className="text-text-primary font-inter hover:text-brand transition-colors"
             title={row.vaultAddress}
           >
             {row.name}
@@ -84,7 +84,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
             {copiedAddress === row.vaultAddress ? (
               <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         </div>
@@ -93,7 +93,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     {
       key: "equity",
       header: "User deposits",
-      accessor: (row) => <span className="text-white">${formatEquity(row.equity)}</span>,
+      accessor: (row) => <span className="text-text-primary">${formatEquity(row.equity)}</span>,
     },
     {
       key: "apr",
@@ -103,19 +103,19 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     {
       key: "tvl",
       header: "TVL",
-      accessor: (row) => <span className="text-white">{formatTVL(row.tvl)}</span>,
+      accessor: (row) => <span className="text-text-primary">{formatTVL(row.tvl)}</span>,
     },
     {
       key: "lock",
       header: "Time lock",
-      accessor: (row) => <span className="text-white">{formatTimeLock(row.lockedUntilTimestamp)}</span>,
+      accessor: (row) => <span className="text-text-primary">{formatTimeLock(row.lockedUntilTimestamp)}</span>,
     },
   ];
 
   if (isLoading || vaultsLoading) {
     return (
       <Card className="flex items-center justify-center h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
       </Card>
     );
   }

@@ -22,7 +22,7 @@ export const StatusTabs = memo(function StatusTabs({
       id: 'all', 
       label: 'All Projects',
       count: counts.all,
-      color: 'text-white'
+      color: 'text-text-primary'
     },
     { 
       id: 'approved', 
@@ -45,7 +45,7 @@ export const StatusTabs = memo(function StatusTabs({
   ];
 
   return (
-    <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
+    <div className="flex bg-base rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
       {tabs.map(tab => (
         <button
           key={tab.id}
@@ -54,7 +54,7 @@ export const StatusTabs = memo(function StatusTabs({
             "py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
             "px-2 sm:px-3",
             activeTab === tab.id
-              ? "bg-brand-accent text-brand-tertiary shadow-sm font-bold"
+              ? "bg-brand text-brand-text-on shadow-sm font-bold"
               : "tab-inactive"
           )}
         >
@@ -65,7 +65,7 @@ export const StatusTabs = memo(function StatusTabs({
             <span className={cn(
               "px-1.5 py-0.5 text-label rounded-md",
               activeTab === tab.id
-                ? "bg-brand-tertiary/20 text-brand-tertiary"
+                ? "bg-surface/20 text-brand-text-on"
                 : `bg-white/5 ${tab.color}`
             )}>
               {tab.count}

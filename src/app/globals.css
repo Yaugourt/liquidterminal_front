@@ -25,6 +25,8 @@
     /*
      * ===== V4 Design System tokens (dark mode) =====
      * Format: "R G B" triplets, consumed via `rgb(var(--x) / <alpha-value>)` in tailwind.
+     * Light mode swap will redefine these under [data-theme="light"] (Phase 2 future).
+     * Live alongside V2 brand-* tokens during the V4 rollout.
      */
 
     /* Surfaces (V4 whisper navy signature) */
@@ -62,8 +64,9 @@
     --warning: 245 158 11;        /* #F59E0B */
 
     /*
-     * Composite tokens — full color/shadow values, NOT "R G B" triplets.
-     * Consumed via arbitrary values, e.g. `bg-[--brand-bg]`, `shadow-[--shadow-md]`.
+     * Composite tokens (spec §2.1 / §5.5) — full color/shadow values, NOT
+     * "R G B" triplets. Consumed directly via arbitrary values, e.g.
+     * `bg-[--brand-bg]`, `shadow-[--shadow-md]`. Light mode swap is out of scope.
      */
     --bg-overlay: rgba(10, 11, 15, 0.80);   /* modal/dialog scrim */
     --text-disabled: #4B5563;
@@ -104,8 +107,8 @@
 
     body {
         @apply bg-background text-foreground font-sans antialiased;
-        /* V4 base body text size (13px). Safe — `rem` spacing keys off the html
-           root, not body, so layout spacing is unaffected. */
+        /* V4 base body text size (mockup: 13px). Safe — `rem` spacing keys off
+           the html root, not body, so layout spacing is unaffected. */
         font-size: 13px;
         line-height: 1.5;
         /* V4 ambient cyan gradient at top of page (subtle brand marker, 3.5%). */
@@ -165,13 +168,15 @@
         @apply text-sm text-text-primary font-semibold;
     }
 
+
     /* ===== Text Utilities ===== */
     .text-muted {
         @apply text-text-tertiary;
     }
 
     /* ===== Stat Cards (Header) ===== */
-    /* V4: solid surface, no blur. */
+    /* V4: solid surface, no blur. Padding kept as-is to avoid a header reflow
+       (density is fine here — same reasoning as Card's p-6). */
     .stat-card {
         @apply bg-surface border border-border-subtle
            rounded-lg px-2 lg:px-3 py-1 lg:py-1.5 transition-all
@@ -199,6 +204,7 @@
 
     /**
      * `.mono` — JetBrains Mono + tabular-nums for all numeric data in V4.
+     * Non-negotiable on Builders V4 (and on V4-migrated pages going forward).
      * Usage: <span className="mono">$182,541,344</span>
      */
     .mono {
@@ -208,28 +214,12 @@
     }
 
     /**
-     * `.fees-cell` — V4 gold signature, reserved for the Builder Fees column.
+     * `.fees-cell` — V4 gold signature, reserved for the Builder Fees column
+     * (and only that). Instant brand recognition on tables.
      */
     .fees-cell {
         color: rgb(var(--gold));
         font-weight: 500;
-    }
-
-    /* ===== Legacy utilities (pages pas encore reprises — retirées au fil de la migration) ===== */
-    .shadow-premium {
-        @apply shadow-xl shadow-black/20;
-    }
-
-    .glass-panel {
-        @apply bg-brand-secondary/60 backdrop-blur-md border border-border-subtle shadow-premium rounded-2xl;
-    }
-
-    .interactive-card {
-        @apply hover:border-border-hover transition-all duration-200;
-    }
-
-    .interactive-button {
-        @apply hover:bg-white/5 transition-colors;
     }
 }
 

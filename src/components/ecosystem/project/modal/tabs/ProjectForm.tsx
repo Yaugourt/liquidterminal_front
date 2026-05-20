@@ -64,14 +64,14 @@ export function ProjectForm({
             id="title"
             value={projectForm.title}
             onChange={(e) => setProjectForm(prev => ({ ...prev, title: e.target.value }))}
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             required
           />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="categories" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Categories</label>
-          <div className="space-y-2 max-h-32 overflow-y-auto bg-brand-dark border border-border-subtle rounded-lg p-2">
+          <div className="space-y-2 max-h-32 overflow-y-auto bg-base border border-border-subtle rounded-lg p-2">
             {categories.map((category) => (
               <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 p-1 rounded">
                 <Checkbox
@@ -90,7 +90,7 @@ export function ProjectForm({
                     }
                   }}
                 />
-                <span className="text-white/80 text-sm">{category.name}</span>
+                <span className="text-text-secondary text-sm">{category.name}</span>
               </label>
             ))}
           </div>
@@ -103,7 +103,7 @@ export function ProjectForm({
           id="desc"
           value={projectForm.desc}
           onChange={(e) => setProjectForm(prev => ({ ...prev, desc: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
           rows={3}
           required
         />
@@ -116,8 +116,8 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle">
-                <Upload className="h-4 w-4 text-brand-accent" />
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-base text-text-primary hover-subtle">
+                <Upload className="h-4 w-4 text-brand" />
                 <span className="text-sm">Upload Image</span>
               </div>
               <input
@@ -145,7 +145,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {logoPreview && (
-            <div className="relative w-20 h-20 border border-border-hover rounded-xl overflow-hidden">
+            <div className="relative w-20 h-20 border border-border-default rounded-xl overflow-hidden">
               <Image
                 src={logoPreview}
                 alt="Logo preview"
@@ -159,7 +159,7 @@ export function ProjectForm({
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
-            <span className="text-text-muted text-xs">OR</span>
+            <span className="text-text-tertiary text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
 
@@ -176,7 +176,7 @@ export function ProjectForm({
                   handleRemoveFile();
                 }
               }}
-              className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+              className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
               placeholder="https://example.com/logo.png"
               disabled={!!selectedFile}
             />
@@ -190,8 +190,8 @@ export function ProjectForm({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <label htmlFor="banner-file-upload" className="cursor-pointer">
-              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-brand-dark text-white hover-subtle">
-                <Upload className="h-4 w-4 text-brand-accent" />
+              <div className="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg bg-base text-text-primary hover-subtle">
+                <Upload className="h-4 w-4 text-brand" />
                 <span className="text-sm">Upload Banner</span>
               </div>
               <input
@@ -219,7 +219,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {bannerPreview && (
-            <div className="relative w-full max-w-md h-24 border border-border-hover rounded-xl overflow-hidden">
+            <div className="relative w-full max-w-md h-24 border border-border-default rounded-xl overflow-hidden">
               <Image
                 src={bannerPreview}
                 alt="Banner preview"
@@ -233,7 +233,7 @@ export function ProjectForm({
           {/* OR separator */}
           <div className="flex items-center gap-2">
             <div className="flex-1 h-px bg-white/5"></div>
-            <span className="text-text-muted text-xs">OR</span>
+            <span className="text-text-tertiary text-xs">OR</span>
             <div className="flex-1 h-px bg-white/5"></div>
           </div>
 
@@ -250,7 +250,7 @@ export function ProjectForm({
                   handleRemoveBannerFile();
                 }
               }}
-              className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50 mt-1"
+              className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
               placeholder="https://example.com/banner.png"
               disabled={!!selectedBannerFile}
             />
@@ -266,7 +266,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.website}
             onChange={(e) => setProjectForm(prev => ({ ...prev, website: e.target.value }))}
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             placeholder="https://example.com"
           />
         </div>
@@ -278,7 +278,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.twitter}
             onChange={(e) => setProjectForm(prev => ({ ...prev, twitter: e.target.value }))}
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             placeholder="https://twitter.com/project"
           />
         </div>
@@ -292,7 +292,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.discord}
             onChange={(e) => setProjectForm(prev => ({ ...prev, discord: e.target.value }))}
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             placeholder="https://discord.gg/project"
           />
         </div>
@@ -304,7 +304,7 @@ export function ProjectForm({
             type="url"
             value={projectForm.telegram}
             onChange={(e) => setProjectForm(prev => ({ ...prev, telegram: e.target.value }))}
-            className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+            className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             placeholder="https://t.me/project"
           />
         </div>
@@ -318,7 +318,7 @@ export function ProjectForm({
           type="text"
           value={projectForm.token}
           onChange={(e) => setProjectForm(prev => ({ ...prev, token: e.target.value }))}
-          className="bg-brand-dark border-border-subtle text-white rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+          className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
           placeholder="0x..."
         />
       </div>
@@ -335,7 +335,7 @@ export function ProjectForm({
         <Button
           type="submit"
           disabled={creatingProject}
-          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
         >
           {creatingProject ? "Creating..." : "Create Project"}
         </Button>

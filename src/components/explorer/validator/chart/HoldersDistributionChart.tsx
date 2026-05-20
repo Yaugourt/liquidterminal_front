@@ -53,8 +53,8 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {`Range: ${label} HYPE`}
           </div>
           <div className="mt-2 space-y-1 text-xs">
@@ -66,19 +66,19 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
                 />
                 <span>Holders</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.holders, format)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Staked</span>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.staked, format)} HYPE
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Share</span>
-              <span className="font-semibold text-brand-gold tabular-nums">
+              <span className="font-semibold text-gold tabular-nums">
                 {formatNumber(data.percentage, format)}%
               </span>
             </div>

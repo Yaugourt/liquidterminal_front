@@ -41,14 +41,14 @@ function NotableWalletCard({
         <div className="flex flex-col gap-1">
           <Link
             href={`/market/tracker/wallet/${walletAddress}`}
-            className="text-sm text-white hover:text-brand-accent transition-colors truncate"
+            className="text-sm text-text-primary hover:text-brand transition-colors truncate"
           >
             {truncate(walletAddress)}
           </Link>
           <span className={`text-xs font-medium ${statColor}`}>{stat}</span>
         </div>
       ) : (
-        <span className="text-text-muted text-sm">No data</span>
+        <span className="text-text-tertiary text-sm">No data</span>
       )}
     </Card>
   );
@@ -75,8 +75,8 @@ export function TrackerStatsBar() {
     return (
       <Card className="p-6">
         <div className="flex items-center justify-center gap-3">
-          <InlineSpinner className="w-5 h-5 text-brand-accent" />
-          <span className="text-text-muted text-sm">Loading tracker stats...</span>
+          <InlineSpinner className="w-5 h-5 text-brand" />
+          <span className="text-text-tertiary text-sm">Loading tracker stats...</span>
         </div>
       </Card>
     );
@@ -87,25 +87,25 @@ export function TrackerStatsBar() {
       {/* Stats Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <StatsCard
-          icon={<DollarSign className="h-4 w-4 text-brand-gold" />}
+          icon={<DollarSign className="h-4 w-4 text-gold" />}
           iconClassName="bg-white/5 rounded-lg"
           title="24h Volume"
           value={`$${formatLargeNumber(totalVolume24h)}`}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
           icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
           iconClassName="bg-white/5 rounded-lg"
           title="24h PnL (Top 50)"
           value={`+$${formatLargeNumber(totalPnl24h)}`}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
           icon={<Activity className="h-4 w-4 text-purple-400" />}
           iconClassName="bg-white/5 rounded-lg"
           title="24h Fills"
           value={formatLargeNumber(totalFills24h)}
-          valueClassName="text-lg font-semibold text-white"
+          valueClassName="text-lg font-semibold text-text-primary"
         />
       </div>
 
@@ -114,9 +114,9 @@ export function TrackerStatsBar() {
         <NotableWalletCard
           label="Top PnL"
           icon={Crown}
-          color="text-brand-gold"
-          bgColor="bg-brand-gold/10"
-          borderColor="border-brand-gold/20"
+          color="text-gold"
+          bgColor="bg-gold/10"
+          borderColor="border-gold/20"
           walletAddress={topPnlTrader?.user ?? null}
           stat={topPnlTrader ? `+$${formatLargeNumber(topPnlTrader.totalPnl)}` : null}
           statColor="text-emerald-400"
@@ -124,12 +124,12 @@ export function TrackerStatsBar() {
         <NotableWalletCard
           label="Top Volume"
           icon={DollarSign}
-          color="text-brand-accent"
-          bgColor="bg-brand-accent/10"
-          borderColor="border-brand-accent/20"
+          color="text-brand"
+          bgColor="bg-brand/10"
+          borderColor="border-brand/20"
           walletAddress={topVolumeTrader?.user ?? null}
           stat={topVolumeTrader ? `$${formatLargeNumber(topVolumeTrader.totalVolume)}` : null}
-          statColor="text-brand-accent"
+          statColor="text-brand"
         />
         <NotableWalletCard
           label="Most Trades"

@@ -50,10 +50,10 @@ const ACTION_COLORS: Record<string, string> = {
   CREATE_READLIST: "text-cyan-400 bg-cyan-400/10",
   MARK_RESOURCE_READ: "text-teal-400 bg-teal-400/10",
   COPY_PUBLIC_READLIST: "text-indigo-400 bg-indigo-400/10",
-  CREATE_WALLETLIST: "text-brand-accent bg-brand-accent/10",
-  ADD_WALLET_TO_LIST: "text-brand-accent bg-brand-accent/10",
+  CREATE_WALLETLIST: "text-brand bg-brand/10",
+  ADD_WALLET_TO_LIST: "text-brand bg-brand/10",
   SUBMIT_PUBLIC_GOOD: "text-amber-400 bg-amber-400/10",
-  PUBLIC_GOOD_APPROVED: "text-brand-gold bg-brand-gold/10",
+  PUBLIC_GOOD_APPROVED: "text-gold bg-gold/10",
 };
 
 function formatRelativeTime(dateString: string): string {
@@ -103,10 +103,10 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <div className={cn("bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden", className)}>
+    <div className={cn("bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
-        <h3 className="flex items-center gap-2 text-white font-semibold">
-          <History className="h-5 w-5 text-brand-gold" />
+        <h3 className="flex items-center gap-2 text-text-primary font-semibold">
+          <History className="h-5 w-5 text-gold" />
           XP History
         </h3>
       </div>
@@ -117,9 +117,9 @@ export function XpHistoryList({
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-8">
-            <History className="h-12 w-12 mx-auto mb-3 text-text-muted" />
+            <History className="h-12 w-12 mx-auto mb-3 text-text-tertiary" />
             <p className="text-text-secondary">No XP activity yet</p>
-            <p className="text-sm mt-1 text-text-muted">Start earning XP by using the platform!</p>
+            <p className="text-sm mt-1 text-text-tertiary">Start earning XP by using the platform!</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -132,7 +132,7 @@ export function XpHistoryList({
                 return (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors"
+                    className="flex items-center justify-between p-3 bg-base rounded-lg border border-border-subtle hover:border-border-default transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -144,24 +144,24 @@ export function XpHistoryList({
                         <Icon className={cn("h-4 w-4", textColor)} />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-white">
+                        <p className="font-medium text-sm text-text-primary">
                           {XP_ACTION_LABELS[tx.actionType] || tx.actionType}
                         </p>
                         {tx.description && (
-                          <p className="text-xs text-text-muted truncate max-w-[200px]">
+                          <p className="text-xs text-text-tertiary truncate max-w-[200px]">
                             {tx.description}
                           </p>
                         )}
-                        <p className="text-xs text-text-muted">
+                        <p className="text-xs text-text-tertiary">
                           {formatRelativeTime(tx.createdAt)}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-brand-gold">
+                      <span className="font-bold text-gold">
                         +{tx.xpAmount}
                       </span>
-                      <span className="text-xs text-text-muted ml-1">XP</span>
+                      <span className="text-xs text-text-tertiary ml-1">XP</span>
                     </div>
                   </div>
                 );
@@ -174,7 +174,7 @@ export function XpHistoryList({
               historyPagination.page < historyPagination.totalPages && (
                 <Button
                   variant="outline"
-                  className="w-full border-border-subtle hover:bg-white/5 text-white/80 rounded-lg"
+                  className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg"
                   onClick={() => refetchHistory(historyPagination.page + 1)}
                   disabled={isLoadingHistory}
                 >

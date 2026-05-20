@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, CheckCircle2, TrendingUp, Layers } from "lucide-react";
 import { StatsCard } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type {
   Hip4QuestionWithOutcomesRow,
   Hip4SettlementRow,
@@ -13,14 +14,6 @@ interface Hip4GlobalStatsStripProps {
   questions: Hip4QuestionWithOutcomesRow[];
   settlements: Hip4SettlementRow[];
   isLoading: boolean;
-}
-
-function compactUsd(n: number | null | undefined) {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
 }
 
 export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4GlobalStatsStripProps) {
@@ -35,8 +28,8 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4
     {
       title: "Active Markets",
       value: isLoading ? "—" : stats.activeMarkets.toString(),
-      icon: <BarChart3 className="h-4 w-4 text-brand-accent" />,
-      valueClassName: "text-lg font-bold text-brand-accent tracking-tight",
+      icon: <BarChart3 className="h-4 w-4 text-brand" />,
+      valueClassName: "text-lg font-bold text-brand tracking-tight",
     },
     {
       title: "Questions",
@@ -47,8 +40,8 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4
     {
       title: "Total Volume",
       value: isLoading ? "—" : compactUsd(stats.totalVolume),
-      icon: <TrendingUp className="h-4 w-4 text-brand-gold" />,
-      valueClassName: "text-lg font-bold text-brand-gold tracking-tight",
+      icon: <TrendingUp className="h-4 w-4 text-gold" />,
+      valueClassName: "text-lg font-bold text-gold tracking-tight",
     },
     {
       title: "Settled Markets",

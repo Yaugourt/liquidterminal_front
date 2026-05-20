@@ -82,13 +82,13 @@ export function AddWalletToListDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add wallet to &quot;{listName}&quot;</DialogTitle>
-          <DialogDescription className="text-white">
+          <DialogDescription className="text-text-primary">
             Enter a wallet address to add it directly to this list.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label htmlFor="address" className="text-sm text-white">
+            <label htmlFor="address" className="text-sm text-text-primary">
               Wallet address (required)
             </label>
             <Input
@@ -96,11 +96,11 @@ export function AddWalletToListDialog({
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-black/20 border-border-hover text-white focus:border-brand-accent/50"
+              className="bg-black/20 border-border-default text-text-primary focus:border-brand/50"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm text-white">
+            <label htmlFor="name" className="text-sm text-text-primary">
               Wallet name (optional)
             </label>
             <Input
@@ -108,7 +108,7 @@ export function AddWalletToListDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-black/20 border-border-hover text-white focus:border-brand-accent/50"
+              className="bg-black/20 border-border-default text-text-primary focus:border-brand/50"
             />
           </div>
         </div>
@@ -116,14 +116,14 @@ export function AddWalletToListDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border-hover text-white hover:bg-white/5"
+            className="border-border-default text-text-primary hover:bg-white/5"
           >
             Cancel
           </Button>
           <Button
             onClick={handleAddWallet}
             disabled={isLoading}
-            className="bg-brand-accent text-brand-tertiary hover:bg-brand-accent font-medium"
+            className="bg-brand text-brand-text-on hover:bg-brand font-medium"
           >
             {isLoading ? "Adding..." : "Add to List"}
           </Button>

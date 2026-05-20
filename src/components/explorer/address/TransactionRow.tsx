@@ -53,7 +53,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
     const renderAddressCell = (address: string) => {
         if (!address) {
             return (
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                     <span>-</span>
                 </TableCell>
             );
@@ -62,7 +62,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
         // Special cases
         if (["Spot", "Perp", "Staking"].includes(address)) {
             return (
-                <TableCell className="py-3 px-4 text-sm text-white">
+                <TableCell className="py-3 px-4 text-sm text-text-primary">
                     <span>{address}</span>
                 </TableCell>
             );
@@ -73,7 +73,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                 <TableCell className="py-3 px-4 text-sm">
                     <Link
                         href={`https://arbiscan.io/address/${currentAddress}#tokentxns`}
-                        className="text-brand-accent hover:text-brand-accent/80 truncate block"
+                        className="text-brand hover:text-brand/80 truncate block"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -88,7 +88,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                 <TableCell className="py-3 px-4 text-sm">
                     <Link
                         href={`/explorer/address/${address}`}
-                        className="text-brand-accent hover:text-brand-accent/80 truncate block"
+                        className="text-brand hover:text-brand/80 truncate block"
                     >
                         HIP2
                     </Link>
@@ -115,10 +115,10 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     // Let's use AddressDisplay fully but customize styling matching original if needed.
                     // Original:
                     // Current: Text + Copy Button
-                    // Other: Link (text-brand-accent)
+                    // Other: Link (text-brand)
 
                     showExternalLink={false}
-                    className={isCurrent ? "text-white" : "text-brand-accent"}
+                    className={isCurrent ? "text-text-primary" : "text-brand"}
                     href={isCurrent ? undefined : `/explorer/address/${address}`} // Disable link for current address?
                 // Original had NO link for current address, just text.
                 />
@@ -135,7 +135,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     <Link
                         href={`/explorer/transaction/${tx.hash}`}
                         prefetch={false}
-                        className="text-brand-accent hover:text-white transition-colors"
+                        className="text-brand hover:text-text-primary transition-colors"
                         title={tx.hash}
                     >
                         {formatHash(tx.hash)}
@@ -145,26 +145,26 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                             e.preventDefault();
                             copyHashToClipboard(tx.hash);
                         }}
-                        className="group text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="group text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-white/10"
                     >
                         {copiedHash === tx.hash ? (
                             <Check className="h-3 w-3 text-emerald-400" />
                         ) : (
-                            <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                            <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                         )}
                     </button>
                 </div>
             </TableCell>
-            <TableCell className="py-3 px-4 text-sm text-white">
+            <TableCell className="py-3 px-4 text-sm text-text-primary">
                 {tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer' ? 'Internal Transfer' : tx.method}
             </TableCell>
-            <TableCell className="py-3 px-4 text-sm text-white">{tx.age}</TableCell>
+            <TableCell className="py-3 px-4 text-sm text-text-primary">{tx.age}</TableCell>
             {renderAddressCell(tx.from)}
             {renderAddressCell(tx.to)}
             <TableCell className={`py-3 px-4 text-sm ${getAmountColorClass(tx, formatterConfig)}`}>
                 {formatAmountWithDirection(tx, formatterConfig)}
             </TableCell>
-            <TableCell className="py-3 px-4 text-sm text-white text-right">
+            <TableCell className="py-3 px-4 text-sm text-text-primary text-right">
                 {tx.price ? formatNumber(parseFloat(tx.price), format, {
                     currency: '$',
                     showCurrency: true,
@@ -175,7 +175,7 @@ export const TransactionRow = memo(function TransactionRow({ tx, formatterConfig
                     minimumFractionDigits: 4
                 }) : '-')}
             </TableCell>
-            <TableCell className="py-3 px-4 text-sm text-white text-right">
+            <TableCell className="py-3 px-4 text-sm text-text-primary text-right">
                 {calculateValueWithDirection(tx, formatterConfig)}
             </TableCell>
         </TableRow>

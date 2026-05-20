@@ -34,8 +34,8 @@ const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
 const TASK_COLORS: Record<DailyTaskType, string> = {
   LOGIN: "text-emerald-400",
   READ_RESOURCE: "text-cyan-400",
-  ADD_WALLET: "text-brand-accent",
-  EXPLORE_LEADERBOARD: "text-brand-gold",
+  ADD_WALLET: "text-brand",
+  EXPLORE_LEADERBOARD: "text-gold",
   SUBMIT_RESOURCE: "text-purple-400",
   CREATE_READLIST: "text-pink-400",
   CREATE_WALLETLIST: "text-blue-400",
@@ -54,7 +54,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   if (isLoading && dailyTasks.length === 0) {
     return (
       <div className={cn("flex items-center justify-center p-4", className)}>
-        <InlineSpinner className="h-5 w-5 text-brand-gold" />
+        <InlineSpinner className="h-5 w-5 text-gold" />
       </div>
     );
   }
@@ -64,7 +64,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
     return (
       <div className={cn(
         "flex items-center gap-2 px-3 py-2 rounded-lg",
-        "bg-brand-secondary/60 border border-border-subtle",
+        "bg-surface/60 border border-border-subtle",
         className
       )}>
         <div className="flex items-center gap-1">
@@ -77,7 +77,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                   "h-6 w-6 rounded-full flex items-center justify-center",
                   task.completed
                     ? "bg-emerald-500/20 border border-emerald-500/40"
-                    : "bg-white/5 border border-border-hover"
+                    : "bg-white/5 border border-border-default"
                 )}
               >
                 {task.completed ? (
@@ -93,7 +93,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
           {dailyTasksCompletedCount}/{dailyTasks.length}
         </span>
         {!allDailyTasksCompleted && (
-          <span className="text-xs text-brand-gold">+{dailyBonusXp} bonus</span>
+          <span className="text-xs text-gold">+{dailyBonusXp} bonus</span>
         )}
       </div>
     );
@@ -103,7 +103,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   return (
     <div className={cn(
       "p-5 rounded-2xl",
-      "bg-brand-secondary/60 backdrop-blur-md",
+      "bg-surface/60",
       "border border-border-subtle",
       className
     )}>
@@ -114,8 +114,8 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Daily Tasks</h3>
-            <p className="text-xs text-text-muted">{dailyTasksCompletedCount}/{dailyTasks.length} completed</p>
+            <h3 className="text-sm font-bold text-text-primary">Daily Tasks</h3>
+            <p className="text-xs text-text-tertiary">{dailyTasksCompletedCount}/{dailyTasks.length} completed</p>
           </div>
         </div>
 
@@ -124,11 +124,11 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
           <div className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full",
             allDailyTasksCompleted
-              ? "bg-brand-gold/20 border border-brand-gold/40 animate-pulse"
-              : "bg-brand-gold/10 border border-brand-gold/20"
+              ? "bg-gold/20 border border-gold/40 animate-pulse"
+              : "bg-gold/10 border border-gold/20"
           )}>
-            <Gift className="h-3.5 w-3.5 text-brand-gold" />
-            <span className="text-xs font-bold text-brand-gold">+{dailyBonusXp} XP</span>
+            <Gift className="h-3.5 w-3.5 text-gold" />
+            <span className="text-xs font-bold text-gold">+{dailyBonusXp} XP</span>
           </div>
         )}
         {dailyBonusClaimed && (
@@ -147,10 +147,10 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
             <div
               key={task.type}
               className={cn(
-                "flex items-center gap-3 p-3 rounded-xl transition-all",
+                "flex items-center gap-3 p-3 rounded-lg transition-all",
                 task.completed
                   ? "bg-emerald-500/10 border border-emerald-500/20"
-                  : "bg-white/5 border border-border-subtle hover:border-border-hover"
+                  : "bg-white/5 border border-border-subtle hover:border-border-default"
               )}
             >
               {/* Icon */}
@@ -170,18 +170,18 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               <div className="flex-1 min-w-0">
                 <p className={cn(
                   "text-sm font-medium",
-                  task.completed ? "text-emerald-300" : "text-white"
+                  task.completed ? "text-emerald-300" : "text-text-primary"
                 )}>
                   {task.description}
                 </p>
-                <p className="text-xs text-text-muted">+{task.xp} XP</p>
+                <p className="text-xs text-text-tertiary">+{task.xp} XP</p>
               </div>
 
               {/* Status */}
               {task.completed ? (
                 <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
               ) : (
-                <Circle className="h-5 w-5 text-text-muted shrink-0" />
+                <Circle className="h-5 w-5 text-text-tertiary shrink-0" />
               )}
             </div>
           );
@@ -192,13 +192,13 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
       <div className="mt-4 pt-4 border-t border-border-subtle">
         <div className="flex items-center justify-between text-xs mb-2">
           <span className="text-text-secondary">Daily progress</span>
-          <span className="text-brand-gold font-medium">
+          <span className="text-gold font-medium">
             {Math.round((dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100)}%
           </span>
         </div>
-        <div className="h-2 bg-brand-dark rounded-full overflow-hidden border border-border-subtle">
+        <div className="h-2 bg-base rounded-full overflow-hidden border border-border-subtle">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 to-brand-gold transition-all duration-500"
+            className="h-full bg-gradient-to-r from-emerald-500 to-gold transition-all duration-500"
             style={{ width: `${(dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100}%` }}
           />
         </div>

@@ -51,32 +51,32 @@ export function WelcomePrompt() {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300">
-            <Card className="p-4 border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
+            <Card className="p-4 border border-brand/30 shadow-lg shadow-brand/10">
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"
+                    className="absolute top-2 right-2 text-text-secondary hover:text-text-primary transition-colors"
                     aria-label="Close"
                 >
                     <X className="w-4 h-4" />
                 </button>
 
                 <div className="flex items-start gap-3 pr-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-brand-accent/20 to-brand-gold/20 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-brand-accent" />
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-brand" />
                     </div>
 
                     <div className="flex-1">
-                        <h4 className="text-white font-medium text-sm mb-1">
+                        <h4 className="text-text-primary font-medium text-sm mb-1">
                             Level up your journey! 🚀
                         </h4>
-                        <p className="text-gray-400 text-xs mb-3">
+                        <p className="text-text-secondary text-xs mb-3">
                             Sign in to earn XP, complete weekly challenges and unlock exclusive rewards.
                         </p>
 
                         <Button
                             onClick={handleLogin}
                             size="sm"
-                            className="w-full bg-gradient-to-r from-brand-accent to-brand-gold text-black font-medium hover:opacity-90 transition-opacity"
+                            className="w-full bg-gradient-to-r from-brand to-gold text-black font-medium hover:opacity-90 transition-opacity"
                         >
                             <LogIn className="w-4 h-4 mr-2" />
                             Get Started

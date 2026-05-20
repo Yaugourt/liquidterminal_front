@@ -174,13 +174,13 @@ export function ValidatorsTable() {
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-center justify-between mb-6 max-[720px]:flex-col max-[720px]:items-start max-[720px]:gap-4">
           {activeTab === 'validators' && (
-            <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+            <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
               {['all', 'transactions', 'unstaking'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => handleValidatorSubTabChange(tab as ValidatorSubTab)}
                   className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${validatorSubTab === tab
-                    ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                    ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                     : 'tab-inactive'
                     }`}
                 >
@@ -193,22 +193,22 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 max-[720px]:flex-wrap max-[720px]:gap-4">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-bold">{stats.total}</span>
+                <span className="text-text-primary text-sm font-bold">{stats.total}</span>
               </div>
               <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Active:</span>
-                <span className="text-brand-accent text-sm font-bold">{stats.active}</span>
+                <span className="text-brand text-sm font-bold">{stats.active}</span>
               </div>
               <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">HYPE Staked:</span>
                 <div className="flex flex-col">
-                  <span className="text-brand-gold text-sm font-bold">
+                  <span className="text-gold text-sm font-bold">
                     {formatNumber(stats.totalHypeStaked, format, { maximumFractionDigits: 0 })}
                   </span>
                   {hypePrice && (
-                    <span className="text-text-muted text-xs">
+                    <span className="text-text-tertiary text-xs">
                       (${formatNumber(stats.totalHypeStaked * hypePrice, format, { maximumFractionDigits: 0 })})
                     </span>
                   )}
@@ -220,12 +220,12 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total:</span>
-                <span className="text-white text-sm font-bold">{vaultsTotalCount}</span>
+                <span className="text-text-primary text-sm font-bold">{vaultsTotalCount}</span>
               </div>
               <div className="w-px h-4 bg-white/10 max-[720px]:hidden"></div>
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Total TVL:</span>
-                <span className="text-brand-gold text-sm font-bold">
+                <span className="text-gold text-sm font-bold">
                   ${formatNumber(totalTvl, format, { maximumFractionDigits: 0 })}
                 </span>
               </div>
@@ -235,7 +235,7 @@ export function ValidatorsTable() {
             <div className="flex items-center gap-6 justify-start pl-6 max-[720px]:flex-wrap max-[720px]:gap-4 max-[720px]:pl-0">
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs font-medium">Recent (2h):</span>
-                <span className="text-white text-sm font-bold">{liquidations.length}</span>
+                <span className="text-text-primary text-sm font-bold">{liquidations.length}</span>
               </div>
             </div>
           )}

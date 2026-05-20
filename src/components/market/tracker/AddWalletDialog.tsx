@@ -80,9 +80,9 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-brand-secondary border border-border-hover text-white rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="bg-surface border border-border-default text-text-primary rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
-          <DialogTitle className="text-white">
+          <DialogTitle className="text-text-primary">
             {walletListName ? `Add wallet to "${walletListName}"` : "Add a new wallet"}
           </DialogTitle>
           <DialogDescription className="text-text-secondary">
@@ -104,7 +104,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x..."
-              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg focus:border-brand-accent/50"
+              className="bg-base border-border-subtle text-text-primary placeholder:text-text-tertiary rounded-lg focus:border-brand/50"
             />
           </div>
           <div className="space-y-2">
@@ -116,7 +116,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My Wallet"
-              className="bg-brand-dark border-border-subtle text-white placeholder:text-text-muted rounded-lg focus:border-brand-accent/50"
+              className="bg-base border-border-subtle text-text-primary placeholder:text-text-tertiary rounded-lg focus:border-brand/50"
             />
           </div>
 
@@ -125,14 +125,14 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-border-subtle text-white hover:bg-white/5 rounded-lg"
+            className="border-border-subtle text-text-primary hover:bg-white/5 rounded-lg"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleAddWallet}
             disabled={isLoading || hasReachedWalletLimit}
-            className="bg-brand-gold hover:bg-brand-gold/90 text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading 
               ? "Adding..." 
@@ -153,7 +153,7 @@ export function AddWalletButton({ onClick }: { onClick: () => void }) {
   return (
     <Button 
       variant="default" 
-      className="ml-auto bg-brand-gold text-black hover:bg-brand-gold/90"
+      className="ml-auto bg-gold text-black hover:bg-gold/90"
       onClick={onClick}
     >
       <PlusCircle className="mr-2 h-4 w-4" /> Add a wallet

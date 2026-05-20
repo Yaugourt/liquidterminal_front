@@ -22,8 +22,8 @@ export function Hip4BackToTop() {
       href={`#${TOP_ID}`}
       className={cn(
         "fixed bottom-6 right-6 z-30 flex h-10 w-10 items-center justify-center rounded-full",
-        "border border-border-hover bg-brand-secondary/90 text-brand-accent shadow-lg backdrop-blur-sm",
-        "transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent/50",
+        "border border-border-default bg-surface/90 text-brand shadow-lg",
+        "transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50",
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       )}
       aria-label="Back to top"

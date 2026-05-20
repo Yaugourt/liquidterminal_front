@@ -77,25 +77,25 @@ export const AuctionChart = ({
       style={{ height: chartHeight }}
     >
       {/* Ambient gold glow — Aurora aesthetic */}
-      <div className="pointer-events-none absolute -top-24 -right-16 h-60 w-60 rounded-full bg-brand-gold/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-accent/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-60 w-60 rounded-full bg-gold/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand/[0.06] blur-3xl" />
 
       {/* Header Controls */}
       <div className="absolute top-4 left-4 right-4 z-20 pointer-events-none">
         <div className="flex items-center justify-between flex-wrap gap-2 pointer-events-auto">
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-              <span className="h-1 w-1 rounded-full bg-brand-gold" />
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+              <span className="h-1 w-1 rounded-full bg-gold" />
               {marketType === "perp" ? "Gas Price (HYPE)" : `Auction Price (${selectedCurrency})`}
             </div>
 
             {displayValue !== null && (
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-white tracking-tight tabular-nums">
+                <span className="text-lg font-bold text-text-primary tracking-tight tabular-nums">
                   {formatYAxisValue(displayValue)}
                 </span>
                 {hoverTime && (
-                  <span className="text-label text-text-muted tabular-nums">
+                  <span className="text-label text-text-tertiary tabular-nums">
                     {new Date(hoverTime).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -109,15 +109,15 @@ export const AuctionChart = ({
 
             {/* Currency selector - only show for spot */}
             {marketType === "spot" && (
-              <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-0.5">
+              <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
                 {(["USDC", "HYPE"] as const).map((c) => (
                   <button
                     key={c}
                     onClick={() => onCurrencyChange(c)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
                       selectedCurrency === c
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-white"
-                        : "text-text-secondary hover:text-white"
+                        ? "bg-white/[0.06] ring-1 ring-white/10 text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {c}

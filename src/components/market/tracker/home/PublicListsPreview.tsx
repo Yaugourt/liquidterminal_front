@@ -28,19 +28,19 @@ export function PublicListsPreview() {
       {/* Header */}
       <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-brand-accent/10 rounded-lg">
-            <List className="h-5 w-5 text-brand-accent" />
+          <div className="p-2 bg-brand/10 rounded-lg">
+            <List className="h-5 w-5 text-brand" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">Public Lists</h2>
-            <p className="text-text-muted text-sm">Curated wallet collections</p>
+            <h2 className="text-lg font-semibold text-text-primary">Public Lists</h2>
+            <p className="text-text-tertiary text-sm">Curated wallet collections</p>
           </div>
         </div>
         <Link href="/market/tracker/public-lists">
           <Button
             variant="ghost"
             size="sm"
-            className="text-brand-accent hover:text-brand-accent hover:bg-brand-accent/10"
+            className="text-brand hover:text-brand hover:bg-brand/10"
           >
             Browse All
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -65,7 +65,7 @@ export function PublicListsPreview() {
           <>
             {lists.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-                <List className="h-12 w-12 text-text-muted mb-3" />
+                <List className="h-12 w-12 text-text-tertiary mb-3" />
                 <p className="text-text-secondary">No public lists available</p>
               </div>
             ) : (

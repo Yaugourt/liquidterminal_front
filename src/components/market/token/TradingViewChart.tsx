@@ -459,7 +459,7 @@ export function TradingViewChart({
         <span
           className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] ${isConnected
             ? "bg-emerald-500/10 text-emerald-400"
-            : "bg-white/5 text-text-muted"
+            : "bg-white/5 text-text-tertiary"
             }`}
         >
           <Radio
@@ -486,14 +486,14 @@ export function TradingViewChart({
               {selectedTimeframe === t && (
                 <motion.span
                   layoutId="tv-active-tf"
-                  className="absolute inset-0 rounded-md bg-brand-accent/15 ring-1 ring-brand-accent/40"
+                  className="absolute inset-0 rounded-md bg-brand/15 ring-1 ring-brand/40"
                   transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
                 />
               )}
               <span
                 className={`relative z-10 ${selectedTimeframe === t
-                  ? "text-brand-accent"
-                  : "text-text-secondary hover:text-white"
+                  ? "text-brand"
+                  : "text-text-secondary hover:text-text-primary"
                   }`}
               >
                 {t}
@@ -519,15 +519,15 @@ export function TradingViewChart({
           <select
             value={selectedTimeframe}
             onChange={(e) => setSelectedTimeframe(e.target.value as TimeframeType)}
-            className="appearance-none bg-brand-dark border border-border-subtle rounded-lg pl-3 pr-8 py-1.5 text-xs font-semibold tabular-nums text-brand-accent focus:outline-none focus:border-brand-accent/60"
+            className="appearance-none bg-base border border-border-subtle rounded-lg pl-3 pr-8 py-1.5 text-xs font-semibold tabular-nums text-brand focus:outline-none focus:border-brand/60"
           >
             {TIMEFRAMES.map((t) => (
-              <option key={t} value={t} className="bg-brand-dark text-white">
+              <option key={t} value={t} className="bg-base text-text-primary">
                 {t}
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-muted" />
+          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-text-tertiary" />
         </div>
 
         {/* Price scale mode (Linear / Log / Percent) */}
@@ -548,14 +548,14 @@ export function TradingViewChart({
               {priceScaleMode === opt.key && (
                 <motion.span
                   layoutId="tv-active-scale"
-                  className="absolute inset-0 rounded-md bg-brand-accent/15 ring-1 ring-brand-accent/40"
+                  className="absolute inset-0 rounded-md bg-brand/15 ring-1 ring-brand/40"
                   transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
                 />
               )}
               <span
                 className={`relative z-10 ${priceScaleMode === opt.key
-                  ? "text-brand-accent"
-                  : "text-text-secondary hover:text-white"
+                  ? "text-brand"
+                  : "text-text-secondary hover:text-text-primary"
                   }`}
               >
                 {opt.label}
@@ -565,7 +565,7 @@ export function TradingViewChart({
         </div>
 
         {/* OHLC crosshair readout */}
-        <div className="hidden lg:flex flex-1 items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-text-muted min-w-0">
+        <div className="hidden lg:flex flex-1 items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary min-w-0">
           <AnimatePresence mode="wait">
             {hover && (
               <motion.div
@@ -576,7 +576,7 @@ export function TradingViewChart({
                 className="flex items-center gap-3 min-w-0"
               >
                 <span>
-                  O <span className="text-white tabular-nums">{formatPrice(hover.o)}</span>
+                  O <span className="text-text-primary tabular-nums">{formatPrice(hover.o)}</span>
                 </span>
                 <span>
                   H <span className="text-emerald-400 tabular-nums">{formatPrice(hover.h)}</span>
@@ -585,10 +585,10 @@ export function TradingViewChart({
                   L <span className="text-rose-400 tabular-nums">{formatPrice(hover.l)}</span>
                 </span>
                 <span>
-                  C <span className="text-white tabular-nums">{formatPrice(hover.c)}</span>
+                  C <span className="text-text-primary tabular-nums">{formatPrice(hover.c)}</span>
                 </span>
                 <span>
-                  V <span className="text-brand-accent tabular-nums">{formatCompactUsd(hover.v)}</span>
+                  V <span className="text-brand tabular-nums">{formatCompactUsd(hover.v)}</span>
                 </span>
                 {hover.c >= hover.o ? (
                   <span className="text-emerald-400 tabular-nums">
@@ -617,7 +617,7 @@ export function TradingViewChart({
       <div className="relative flex-1 min-h-0">
         {/* Overlay states */}
         {(isLoading || error || hasNoData) && (
-          <div className="absolute inset-0 bg-brand-secondary/60 backdrop-blur-md z-10 flex items-center justify-center">
+          <div className="absolute inset-0 bg-surface/60 z-10 flex items-center justify-center">
             {error ? (
               <ChartError
                 message={typeof error === "string" ? error : "Failed to load chart data"}
@@ -644,9 +644,9 @@ export function TradingViewChart({
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
                 {isConnected && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-accent/70" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/70" />
                 )}
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-accent shadow-[0_0_8px_rgba(131,233,255,0.8)]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand shadow-[0_0_8px_rgba(131,233,255,0.8)]" />
               </span>
             </div>
           </div>

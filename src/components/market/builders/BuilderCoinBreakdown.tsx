@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { LoadingState } from "@/components/ui/loading-state";
+import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { BuilderCoinBreakdownRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -52,9 +53,9 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
   };
 
   return (
-    <div className="glass-panel p-5 space-y-4">
+    <Card className="p-5 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h2 className="text-white font-semibold text-sm">{label ?? "Top Coins"}</h2>
+        <h2 className="text-text-primary font-semibold text-sm">{label ?? "Top Coins"}</h2>
         <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
           {SORT_OPTIONS.map((opt) => (
             <button
@@ -62,8 +63,8 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
               onClick={() => setSortKey(opt.key)}
               className={`relative rounded-md px-2.5 py-0.5 text-[10px] font-semibold transition-colors ${
                 sortKey === opt.key
-                  ? "bg-brand-accent/15 text-brand-accent"
-                  : "text-text-secondary hover:text-white"
+                  ? "bg-brand/15 text-brand"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {opt.label}
@@ -104,20 +105,20 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-text-muted text-xs w-4 tabular-nums shrink-0">{i + 1}</span>
-                    <span className="text-white text-sm font-medium truncate">{(coin.coin as string) ?? "—"}</span>
+                    <span className="text-text-tertiary text-xs w-4 tabular-nums shrink-0">{i + 1}</span>
+                    <span className="text-text-primary text-sm font-medium truncate">{(coin.coin as string) ?? "—"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-right shrink-0">
                     <div className="flex flex-col items-end">
-                      <p className="text-white text-sm tabular-nums">
+                      <p className="text-text-primary text-sm tabular-nums">
                         {formatByKey(pickVal)}
                       </p>
-                      <p className="text-text-muted text-[10px] tabular-nums">
+                      <p className="text-text-tertiary text-[10px] tabular-nums">
                         {sortKey !== "volume" && (
                           <span>Vol {formatNumber(vol, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}</span>
                         )}
                         {sortKey === "volume" && fees > 0 && (
-                          <span className="text-brand-gold">
+                          <span className="text-gold">
                             {formatNumber(fees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })} fees
                           </span>
                         )}
@@ -133,7 +134,7 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}
                     transition={{ delay: i * 0.04 + 0.1, duration: 0.4 }}
-                    className="h-full bg-brand-accent/50 rounded-full"
+                    className="h-full bg-brand/50 rounded-full"
                   />
                 </div>
               </motion.div>
@@ -141,6 +142,6 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
           })}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

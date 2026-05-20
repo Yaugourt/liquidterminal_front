@@ -35,7 +35,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
   if (isLoading && dailyTasks.length === 0) {
     return (
       <div className={cn("flex items-center gap-1.5", className)}>
-        <InlineSpinner className="h-3 w-3 text-text-muted" />
+        <InlineSpinner className="h-3 w-3 text-text-tertiary" />
       </div>
     );
   }
@@ -48,42 +48,27 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
       <PopoverTrigger asChild>
         <button
           className={cn(
-            "flex items-center gap-2 w-full px-2 py-1.5 rounded-lg",
-            "bg-white/5 hover:bg-white/10 border border-border-subtle hover:border-border-hover",
-            "transition-all duration-200 group",
+            "h-8 inline-flex items-center gap-1.5 px-2.5 rounded-md",
+            "bg-surface-2 border border-border-subtle hover:bg-surface-3",
+            "transition-colors",
             className
           )}
         >
-          {/* 4 dots indicator */}
-          <div className="flex items-center gap-0.5">
-            {dailyTasks.map((task) => (
-              <div
-                key={task.type}
-                className={cn(
-                  "h-2 w-2 rounded-full transition-colors",
-                  task.completed
-                    ? "bg-emerald-400"
-                    : "bg-zinc-600 group-hover:bg-zinc-500"
-                )}
-              />
-            ))}
-          </div>
-
           {/* Count */}
-          <span className="text-label text-text-secondary group-hover:text-white/80">
+          <span className="mono text-[12px] font-medium text-text-secondary">
             {dailyTasksCompletedCount}/{dailyTasks.length}
           </span>
 
           {/* Bonus indicator if not all completed */}
           {!allDailyTasksCompleted && !dailyBonusClaimed && (
-            <span className="text-label text-brand-gold">
+            <span className="mono text-[12px] font-medium text-brand">
               +{dailyBonusXp}
             </span>
           )}
 
           {/* Checkmark if all done */}
           {allDailyTasksCompleted && (
-            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+            <CheckCircle2 className="h-3 w-3 text-success" />
           )}
         </button>
       </PopoverTrigger>
@@ -92,7 +77,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         side="right"
         align="end"
         sideOffset={8}
-        className="w-72 p-0 bg-brand-secondary border border-border-hover rounded-xl shadow-xl shadow-black/40"
+        className="w-72 p-0 bg-surface border border-border-default rounded-xl shadow-xl shadow-black/40"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-border-subtle">
@@ -100,7 +85,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
             <div className="h-6 w-6 rounded-md bg-emerald-500/20 flex items-center justify-center">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
             </div>
-            <span className="text-sm font-semibold text-white">Daily Tasks</span>
+            <span className="text-sm font-semibold text-text-primary">Daily Tasks</span>
           </div>
           <span className="text-xs text-text-secondary">
             {dailyTasksCompletedCount}/{dailyTasks.length}
@@ -117,7 +102,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                 {task.completed ? (
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                 ) : (
-                  <Circle className="h-4 w-4 text-text-muted group-hover:text-brand-accent shrink-0 transition-colors" />
+                  <Circle className="h-4 w-4 text-text-tertiary group-hover:text-brand shrink-0 transition-colors" />
                 )}
 
                 {/* Task info */}
@@ -126,7 +111,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                     "text-xs",
                     task.completed
                       ? "text-emerald-300"
-                      : "text-white/80 group-hover:text-white transition-colors"
+                      : "text-text-secondary group-hover:text-text-primary transition-colors"
                   )}>
                     {task.description}
                   </p>
@@ -136,12 +121,12 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className={cn(
                     "text-[10px] font-medium",
-                    task.completed ? "text-emerald-400" : "text-text-muted group-hover:text-brand-accent transition-colors"
+                    task.completed ? "text-emerald-400" : "text-text-tertiary group-hover:text-brand transition-colors"
                   )}>
                     +{task.xp}
                   </span>
                   {!task.completed && (
-                    <ExternalLink className="h-3 w-3 text-text-muted group-hover:text-brand-accent opacity-0 group-hover:opacity-100 transition-all" />
+                    <ExternalLink className="h-3 w-3 text-text-tertiary group-hover:text-brand opacity-0 group-hover:opacity-100 transition-all" />
                   )}
                 </div>
               </>
@@ -182,16 +167,16 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
             <div className={cn(
               "flex items-center gap-2 p-2 rounded-lg",
               allDailyTasksCompleted
-                ? "bg-brand-gold/20 border border-brand-gold/30"
+                ? "bg-gold/20 border border-gold/30"
                 : "bg-white/5 border border-border-subtle"
             )}>
               <Gift className={cn(
                 "h-4 w-4",
-                allDailyTasksCompleted ? "text-brand-gold" : "text-text-muted"
+                allDailyTasksCompleted ? "text-gold" : "text-text-tertiary"
               )} />
               <span className={cn(
                 "text-xs",
-                allDailyTasksCompleted ? "text-brand-gold font-medium" : "text-text-secondary"
+                allDailyTasksCompleted ? "text-gold font-medium" : "text-text-secondary"
               )}>
                 {allDailyTasksCompleted
                   ? `Bonus unlocked! +${dailyBonusXp} XP`
@@ -213,7 +198,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         <div className="border-t border-border-subtle">
           <Link
             href="/profile?tab=missions"
-            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-white hover-subtle"
+            className="flex items-center justify-between p-3 text-xs text-text-secondary hover:text-text-primary hover-subtle"
           >
             <span>See Weekly Challenges</span>
             <ChevronRight className="h-4 w-4" />

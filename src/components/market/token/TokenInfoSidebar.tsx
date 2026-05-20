@@ -70,35 +70,35 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Max supply</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.maxSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Total supply</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.totalSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Circulating</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isLoading ? "Loading..." : tokenDetails ? formatSupply(tokenDetails.circulatingSupply, format) : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Deploy gas</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isAuctionLoading ? "Loading..." : auctionInfo ? `${formatNumber(parseFloat(auctionInfo.deployGas), format, { maximumFractionDigits: 2 })} ${auctionInfo.currency}` : "N/A"}
             </span>
           </div>
 
           <div className="flex justify-between items-center">
             <span className="text-text-secondary text-xs">Holders</span>
-            <span className="text-white text-xs font-medium text-right">
+            <span className="text-text-primary text-xs font-medium text-right">
               {isHoldersLoading ? "Loading..." : formatNumber(holdersCount, format, { maximumFractionDigits: 0 })}
             </span>
           </div>
@@ -109,7 +109,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           <div>
             <span className="text-text-secondary text-xs block mb-2">Deployer</span>
             <div className="flex items-center justify-between">
-              <span className="text-brand-accent text-xs flex-1 truncate mr-1">
+              <span className="text-brand text-xs flex-1 truncate mr-1">
                 {isLoading ? "Loading..." : tokenDetails ? truncateAddress(tokenDetails.deployer) : "N/A"}
               </span>
               {tokenDetails?.deployer && (
@@ -120,7 +120,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
                   {copiedAddress === tokenDetails.deployer ? (
                     <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
                   ) : (
-                    <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                    <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
                 </button>
               )}
@@ -130,7 +130,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           <div>
             <span className="text-text-secondary text-xs block mb-2">Token address</span>
             <div className="flex items-center justify-between">
-              <span className="text-brand-accent text-xs flex-1 truncate mr-1">
+              <span className="text-brand text-xs flex-1 truncate mr-1">
                 {token.contract ? truncateAddress(token.contract) : "N/A"}
               </span>
               {token.contract && (
@@ -141,7 +141,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
                   {copiedAddress === token.contract ? (
                     <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
                   ) : (
-                    <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                    <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
                 </button>
               )}
@@ -151,7 +151,7 @@ export function TokenInfoSidebar({ token, className }: TokenInfoSidebarProps) {
           {tokenDetails?.deployTime && (
             <div>
               <span className="text-text-secondary text-xs block mb-2">Deploy time</span>
-              <span className="text-white text-xs">
+              <span className="text-text-primary text-xs">
                 {new Date(tokenDetails.deployTime).toLocaleDateString()}
               </span>
             </div>

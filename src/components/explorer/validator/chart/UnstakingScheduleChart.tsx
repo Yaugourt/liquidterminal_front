@@ -65,8 +65,8 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {formatDate(date, dateFormat)}
           </div>
           <div className="mt-2 space-y-1 text-xs">
@@ -78,19 +78,19 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
                 />
                 <span>Tokens</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {formatNumber(data.totalTokens, format)} HYPE
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Transactions</span>
-              <span className="font-semibold text-brand-gold tabular-nums">
+              <span className="font-semibold text-gold tabular-nums">
                 {Math.round(data.transactionCount)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="text-text-secondary">Users</span>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {Math.round(data.uniqueUsers)}
               </span>
             </div>
@@ -105,8 +105,8 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent mx-auto mb-2"></div>
-          <p className="text-white/60 text-sm">Loading unstaking schedule...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-2"></div>
+          <p className="text-text-secondary text-sm">Loading unstaking schedule...</p>
         </div>
       </div>
     );
@@ -127,7 +127,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white/60 text-sm">No unstaking scheduled for the next {barCount} days</p>
+          <p className="text-text-secondary text-sm">No unstaking scheduled for the next {barCount} days</p>
         </div>
       </div>
     );

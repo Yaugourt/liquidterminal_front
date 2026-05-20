@@ -56,7 +56,7 @@ export function Hip4SubsectionTitle({
   return (
     <h3
       className={cn(
-        "mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted",
+        "mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-tertiary",
         className
       )}
     >
@@ -96,7 +96,7 @@ export function Hip4DocList({
   return (
     <ul
       className={cn(
-        "list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-text-secondary marker:text-brand-gold/75",
+        "list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-text-secondary marker:text-gold/75",
         className
       )}
     >
@@ -119,7 +119,7 @@ export function Hip4GlassPanel({
     <div
       id={id}
       className={cn(
-        "rounded-xl border border-border-subtle bg-brand-secondary/40 p-5 sm:p-6 scroll-mt-28",
+        "rounded-lg border border-border-subtle bg-surface/40 p-5 sm:p-6 scroll-mt-28",
         className
       )}
     >

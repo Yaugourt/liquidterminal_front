@@ -28,21 +28,21 @@ export function Hip4HomeChapter() {
         <Hip4Callout variant="emphasis" title="Testnet & two tracks">
           <ul className="list-none space-y-2 pl-0">
             <li className="flex gap-2">
-              <span className="text-brand-gold" aria-hidden>
+              <span className="text-gold" aria-hidden>
                 ·
               </span>
               <span>
-                <strong className="text-white">Testnet only.</strong> Chain <strong>998</strong> for
+                <strong className="text-text-primary">Testnet only.</strong> Chain <strong>998</strong> for
                 HyperEVM examples — mainnet addresses are not validated here.
               </span>
             </li>
             <li className="flex gap-2">
-              <span className="text-brand-gold" aria-hidden>
+              <span className="text-gold" aria-hidden>
                 ·
               </span>
               <span>
-                <strong className="text-white">HyperCore L1</strong> = confirmed prediction flow.{" "}
-                <strong className="text-white">HyperEVM</strong> (V1/V2) = separate third-party
+                <strong className="text-text-primary">HyperCore L1</strong> = confirmed prediction flow.{" "}
+                <strong className="text-text-primary">HyperEVM</strong> (V1/V2) = separate third-party
                 parimutuel docs — see sidebar labels.
               </span>
             </li>
@@ -58,27 +58,27 @@ export function Hip4HomeChapter() {
         <Hip4SubsectionTitle>What to open first</Hip4SubsectionTitle>
         <Hip4DocList className="mb-4">
           <li>
-            <strong className="text-white">Timeline</strong> — how the research unfolded (X
+            <strong className="text-text-primary">Timeline</strong> — how the research unfolded (X
             archive).
           </li>
           <li>
-            <strong className="text-white">HyperCore (L1)</strong> — architecture, lifecycle, pair
+            <strong className="text-text-primary">HyperCore (L1)</strong> — architecture, lifecycle, pair
             minting.
           </li>
           <li>
-            <strong className="text-white">Trading fees (L1)</strong> — spot-like fees,{" "}
+            <strong className="text-text-primary">Trading fees (L1)</strong> — spot-like fees,{" "}
             <code className="font-mono text-[11px]">SetOutcomeFeeScale</code>, fill normalization.
           </li>
           <li>
-            <strong className="text-brand-gold">Info endpoint</strong> — full{" "}
+            <strong className="text-gold">Info endpoint</strong> — full{" "}
             <code className="font-mono text-[11px]">POST /info</code> + WS blocks (GitBook-style).
           </li>
           <li>
-            <strong className="text-white">API & data</strong> — one-page tables (URLs, wallets,
+            <strong className="text-text-primary">API & data</strong> — one-page tables (URLs, wallets,
             S3).
           </li>
           <li>
-            <strong className="text-white">Industry compare</strong> — HIP-4 vs Polymarket vs
+            <strong className="text-text-primary">Industry compare</strong> — HIP-4 vs Polymarket vs
             Kalshi.
           </li>
         </Hip4DocList>
@@ -120,7 +120,7 @@ export function Hip4HomeChapter() {
         <Hip4SectionTitle>L1 ↔ HyperEVM</Hip4SectionTitle>
         <Hip4DocLead className="mb-4 text-xs">
           How HyperCore and the embedded EVM relate:{" "}
-          <code className="font-mono text-[11px] text-brand-accent">EvmRawTx</code>, bridge
+          <code className="font-mono text-[11px] text-brand">EvmRawTx</code>, bridge
           mechanics, precompiles.
         </Hip4DocLead>
         <Hip4SectionCardLink
@@ -133,7 +133,7 @@ export function Hip4HomeChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>Third-party EVM (unconfirmed)</Hip4SectionTitle>
         <Hip4DocLead className="mb-3 text-xs">
-          <strong className="text-white">V1</strong> from bytecode · <strong className="text-white">V2</strong>{" "}
+          <strong className="text-text-primary">V1</strong> from bytecode · <strong className="text-text-primary">V2</strong>{" "}
           aligned with Solidity in repo. Not the official L1 settlement path.
         </Hip4DocLead>
         <Hip4SubsectionTitle>Contract & mechanics</Hip4SubsectionTitle>
@@ -186,11 +186,11 @@ export function Hip4HomeChapter() {
         </div>
       </Hip4GlassPanel>
 
-      <p className="text-center text-[11px] text-text-muted">
+      <p className="text-center text-[11px] text-text-tertiary">
         Full narrative:{" "}
         <Link
           href="/hip4/HIP4-research-complete.md"
-          className="text-brand-accent underline hover:text-brand-gold"
+          className="text-brand underline hover:text-gold"
           target="_blank"
           rel="noopener noreferrer"
         >

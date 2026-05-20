@@ -41,7 +41,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
           <div className="flex items-center gap-2">
             <Link
               href={`/explorer/address/${stringValue}`}
-              className="text-brand-accent hover:text-brand-accent/80 transition-colors"
+              className="text-brand hover:text-brand/80 transition-colors"
             >
               {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
@@ -55,7 +55,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -64,7 +64,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       case 'hash':
         return (
           <div className="flex items-center gap-2">
-            <span className="text-brand-accent">
+            <span className="text-brand">
               {stringValue.length > 20
                 ? `${stringValue.substring(0, 8)}...${stringValue.substring(stringValue.length - 8)}`
                 : stringValue
@@ -77,7 +77,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               {copiedValue === stringValue ? (
                 <Check className="h-3 w-3 text-green-500" />
               ) : (
-                <Copy className="h-3 w-3 text-brand-gold opacity-60 hover:opacity-100" />
+                <Copy className="h-3 w-3 text-gold opacity-60 hover:opacity-100" />
               )}
             </button>
           </div>
@@ -85,7 +85,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'amount':
         return (
-          <span className="text-brand-gold font-inter">
+          <span className="text-gold font-inter">
             {typeof field.value === 'number'
               ? field.value.toLocaleString()
               : stringValue
@@ -97,7 +97,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
         return (
           <Link
             href={stringValue}
-            className="text-brand-accent hover:text-brand-accent/80 transition-colors underline font-inter"
+            className="text-brand hover:text-brand/80 transition-colors underline font-inter"
           >
             {stringValue}
           </Link>
@@ -105,14 +105,14 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'json':
         return (
-          <pre className="text-white bg-white/5 p-2 rounded text-xs overflow-x-auto scrollbar-brand font-inter">
+          <pre className="text-text-primary bg-white/5 p-2 rounded text-xs overflow-x-auto scrollbar-brand font-inter">
             {stringValue}
           </pre>
         );
 
       default:
         return (
-          <span className="text-white font-inter">
+          <span className="text-text-primary font-inter">
             {stringValue}
           </span>
         );
@@ -124,9 +124,9 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
       {data.sections.map((section, sectionIndex) => (
         <Card
           key={sectionIndex}
-          className="p-0 rounded-xl overflow-hidden"
+          className="p-0 rounded-lg overflow-hidden"
         >
-          <h3 className="text-xl text-white font-medium p-6 border-b border-border-subtle font-inter">
+          <h3 className="text-xl text-text-primary font-medium p-6 border-b border-border-subtle font-inter">
             {section.title}
           </h3>
 

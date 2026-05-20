@@ -7,6 +7,7 @@ import { useReadLists } from "@/store/use-readlists";
 import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";
 import { CreateListModal } from "./CreateListModal";
+import { Card } from "@/components/ui/card";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
 import { showXpGainToast } from "@/components/xp";
 
@@ -60,19 +61,19 @@ const useReadListInitialization = () => {
 // Simple state components
 const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-    <div className="bg-brand-secondary/90 backdrop-blur-md border border-border-hover rounded-2xl shadow-xl shadow-black/20 p-8 max-w-md w-full mx-4">
+    <Card padding="lg" className="backdrop-blur-md border-border-default shadow-xl shadow-black/20 max-w-md w-full mx-4">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-bold text-white mb-2">Authentication Required</h2>
+        <h2 className="text-lg font-bold text-text-primary mb-2">Authentication Required</h2>
         <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
       </div>
       <button
         type="button"
         onClick={() => onLogin()}
-        className="w-full bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold py-2.5 rounded-lg transition-colors"
+        className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold py-2.5 rounded-lg transition-colors"
       >
         Login
       </button>
-    </div>
+    </Card>
   </div>
 );
 

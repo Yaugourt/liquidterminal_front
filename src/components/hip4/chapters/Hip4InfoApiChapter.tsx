@@ -31,11 +31,11 @@ export function Hip4InfoApiChapter() {
             subtitle={
               <>
                 <p>
-                  Same <strong className="text-white">layout pattern</strong> as the official
+                  Same <strong className="text-text-primary">layout pattern</strong> as the official
                   Hyperliquid GitBook: method badge, headers table, body fields, response tabs.
                 </p>
                 <p>
-                  <strong className="text-white">Content</strong> is Liquid Terminal research on
+                  <strong className="text-text-primary">Content</strong> is Liquid Terminal research on
                   prediction markets and <Hip4GoldHighlight>#</Hip4GoldHighlight> coins — not an
                   official Hyperliquid page.
                 </p>
@@ -45,7 +45,7 @@ export function Hip4InfoApiChapter() {
 
           <Hip4InfoApiToc variant="inline" />
 
-          <Hip4GlassPanel id="hip4-info-intro" className="border-brand-gold/20 bg-brand-gold/[0.04]">
+          <Hip4GlassPanel id="hip4-info-intro" className="border-gold/20 bg-gold/[0.04]">
             <Hip4SubsectionTitle>Official reference</Hip4SubsectionTitle>
             <Hip4DocList className="mb-0 text-xs">
               <li>
@@ -54,7 +54,7 @@ export function Hip4InfoApiChapter() {
                   href={HYPERLIQUID_INFO_SPOT_DOC_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-accent underline hover:text-brand-gold"
+                  className="text-brand underline hover:text-gold"
                 >
                   Info endpoint → Spot
                 </Link>{" "}
@@ -62,8 +62,8 @@ export function Hip4InfoApiChapter() {
               </li>
               <li>
                 Our fields documented here:{" "}
-                <code className="font-mono text-[11px] text-brand-accent">outcomeMeta</code>,{" "}
-                <code className="font-mono text-[11px] text-brand-accent">candleSnapshot</code>,
+                <code className="font-mono text-[11px] text-brand">outcomeMeta</code>,{" "}
+                <code className="font-mono text-[11px] text-brand">candleSnapshot</code>,
                 plus WS subscribe/push examples.
               </li>
               <li>
@@ -80,14 +80,14 @@ export function Hip4InfoApiChapter() {
             <Hip4DocLead className="text-xs">
               Each card below is one <code className="font-mono text-[11px]">type</code> in the JSON
               body (GitBook-style: headers, body table, collapsible example, response tabs). Use the
-              right-hand <strong className="text-white">On this page</strong> menu (desktop) or the
+              right-hand <strong className="text-text-primary">On this page</strong> menu (desktop) or the
               inline chips above to jump.
             </Hip4DocLead>
             <div className="space-y-6">
               {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
                 <div
                   key={spec.id}
-                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                  className="rounded-lg border border-border-subtle bg-surface/30 p-5 sm:p-6"
                 >
                   <Hip4ApiRestEndpointDoc spec={spec} />
                 </div>
@@ -113,12 +113,12 @@ export function Hip4InfoApiChapter() {
             </p>
           </Hip4GlassPanel>
 
-          <Hip4GlassPanel id="coin-mapping" className="border-brand-gold/15">
+          <Hip4GlassPanel id="coin-mapping" className="border-gold/15">
             <Hip4SectionTitle>Coin ID mapping</Hip4SectionTitle>
             <Hip4DocLead className="text-xs">
               Outcome tokens use <Hip4GoldHighlight>#-prefixed</Hip4GoldHighlight> names on the book.
             </Hip4DocLead>
-            <ul className="mt-3 list-disc space-y-2 pl-5 font-mono text-[11px] text-text-secondary marker:text-brand-gold/70">
+            <ul className="mt-3 list-disc space-y-2 pl-5 font-mono text-[11px] text-text-secondary marker:text-gold/70">
               <li>
                 Outcome <Hip4GoldHighlight>2243</Hip4GoldHighlight> → YES{" "}
                 <Hip4GoldHighlight>#22430</Hip4GoldHighlight>, NO{" "}
@@ -126,11 +126,11 @@ export function Hip4InfoApiChapter() {
               </li>
               <li>
                 Formula: YES ={" "}
-                <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10)</code>, NO ={" "}
-                <code className="text-brand-accent">&quot;#&quot; + (outcomeId × 10 + 1)</code>
+                <code className="text-brand">&quot;#&quot; + (outcomeId × 10)</code>, NO ={" "}
+                <code className="text-brand">&quot;#&quot; + (outcomeId × 10 + 1)</code>
               </li>
             </ul>
-            <p className="mt-4 border-t border-border-subtle pt-3 text-xs font-medium text-brand-gold">
+            <p className="mt-4 border-t border-border-subtle pt-3 text-xs font-medium text-gold">
               Always pass the full # coin string to candleSnapshot — not the bare outcome id.
             </p>
           </Hip4GlassPanel>
@@ -146,7 +146,7 @@ export function Hip4InfoApiChapter() {
               {HIP4_WS_EXAMPLES.map((spec) => (
                 <div
                   key={spec.id}
-                  className="rounded-xl border border-border-subtle bg-brand-secondary/30 p-5 sm:p-6"
+                  className="rounded-lg border border-border-subtle bg-surface/30 p-5 sm:p-6"
                 >
                   <Hip4ApiWsEndpointDoc spec={spec} />
                 </div>

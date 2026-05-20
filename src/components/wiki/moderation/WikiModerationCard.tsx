@@ -6,6 +6,7 @@ import { EducationalResource } from "@/services/wiki/types";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import {
     Shield,
     CheckCircle,
@@ -45,19 +46,19 @@ function PendingResourceItem({
     };
 
     return (
-        <div className="p-3 bg-brand-dark rounded-xl border border-border-subtle space-y-3">
+        <div className="p-3 bg-base rounded-lg border border-border-subtle space-y-3">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <a
                         href={resource.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-medium text-white hover:text-brand-accent transition-colors flex items-center gap-2"
+                        className="text-sm font-medium text-text-primary hover:text-brand transition-colors flex items-center gap-2"
                     >
                         {isLoading ? "Loading..." : (preview?.title || resource.url)}
-                        <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <ExternalLink className="w-3 h-3 text-text-tertiary flex-shrink-0" />
                     </a>
-                    <div className="text-xs text-text-muted mt-1">
+                    <div className="text-xs text-text-tertiary mt-1">
                         Soumis par {resource.creator?.name || "Unknown"} • {new Date(resource.createdAt).toLocaleDateString()}
                     </div>
                 </div>
@@ -91,7 +92,7 @@ function PendingResourceItem({
                         value={rejectNotes}
                         onChange={(e) => setRejectNotes(e.target.value)}
                         placeholder="Raison du rejet (obligatoire)"
-                        className="bg-brand-secondary border-border-subtle text-white text-sm"
+                        className="bg-surface border-border-subtle text-text-primary text-sm"
                     />
                     <div className="flex gap-2">
                         <Button
@@ -144,16 +145,16 @@ export function WikiModerationCard() {
     };
 
     return (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+        <Card>
             {/* Header */}
-            <div className="p-4 border-b border-border-subtle flex items-center justify-between">
+            <CardHeader density="compact" className="border-b border-border-subtle flex-row items-center justify-between space-y-0">
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-amber-500/10 rounded-lg">
                         <Shield className="w-4 h-4 text-amber-400" />
                     </div>
                     <div>
-                        <h3 className="text-white font-semibold text-sm">Wiki Moderation</h3>
-                        <p className="text-xs text-text-muted">Resources pending review</p>
+                        <h3 className="text-text-primary font-semibold text-sm">Wiki Moderation</h3>
+                        <p className="text-xs text-text-tertiary">Resources pending review</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -168,21 +169,21 @@ export function WikiModerationCard() {
                         variant="ghost"
                         onClick={() => refetch()}
                         disabled={isLoading}
-                        className="h-7 w-7 text-text-secondary hover:text-white"
+                        className="h-7 w-7 text-text-secondary hover:text-text-primary"
                     >
                         <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                     </Button>
                 </div>
-            </div>
+            </CardHeader>
 
             {/* Content */}
-            <div className="p-4">
+            <CardContent density="compact">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-8">
-                        <InlineSpinner className="w-5 h-5 text-brand-accent" />
+                        <InlineSpinner className="w-5 h-5 text-brand" />
                     </div>
                 ) : resources.length === 0 ? (
-                    <div className="text-center py-8 text-text-muted text-sm">
+                    <div className="text-center py-8 text-text-tertiary text-sm">
                         <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-400/50" />
                         No pending resources
                     </div>
@@ -200,7 +201,7 @@ export function WikiModerationCard() {
                         ))}
                     </div>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

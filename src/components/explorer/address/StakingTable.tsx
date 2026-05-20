@@ -148,33 +148,33 @@ export function StakingTable({ address }: StakingTableProps) {
         {/* Stats - responsive grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6">
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
+            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
             <span className="text-emerald-400 text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(stakingBalance, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
-                <span className="text-white text-xs font-normal ml-1">
+                <span className="text-text-primary text-xs font-normal ml-1">
                   (${formatNumber(stakingBalance * hypePrice, format, { maximumFractionDigits: 2 })})
                 </span>
               )}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Undelegated:</span>
-            <span className="text-brand-accent text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Undelegated:</span>
+            <span className="text-brand text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(undelegatedAmount, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
-                <span className="text-white text-xs font-normal ml-1">
+                <span className="text-text-primary text-xs font-normal ml-1">
                   (${formatNumber(undelegatedAmount * hypePrice, format, { maximumFractionDigits: 2 })})
                 </span>
               )}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-white text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
-            <span className="text-brand-gold text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
+            <span className="text-gold text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(pendingWithdrawal, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
-                <span className="text-white text-xs font-normal ml-1">
+                <span className="text-text-primary text-xs font-normal ml-1">
                   (${formatNumber(pendingWithdrawal * hypePrice, format, { maximumFractionDigits: 2 })})
                 </span>
               )}
