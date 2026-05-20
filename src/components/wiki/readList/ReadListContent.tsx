@@ -2,6 +2,7 @@ import { Plus, BookOpen, Search, Globe, Lock, CheckCircle2 } from "lucide-react"
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +22,7 @@ interface ReadListContentProps {
 }
 
 const ReadListItemSkeleton = () => (
-  <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl p-0 overflow-hidden animate-pulse">
+  <Card className="animate-pulse">
     <div className="w-full h-40 bg-white/5"></div>
     <div className="p-4 space-y-2.5">
       <div className="flex items-center justify-between">
@@ -36,7 +37,7 @@ const ReadListItemSkeleton = () => (
         <div className="h-5 bg-white/5 rounded w-14"></div>
       </div>
     </div>
-  </div>
+  </Card>
 );
 
 const TABS = [
@@ -101,14 +102,14 @@ export function ReadListContent({
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-8"
       >
-        <div className="w-20 h-20 mx-auto mb-5 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-          <BookOpen className="w-10 h-10 text-brand-accent" />
+        <div className="w-20 h-20 mx-auto mb-5 bg-brand/10 rounded-2xl flex items-center justify-center">
+          <BookOpen className="w-10 h-10 text-brand" />
         </div>
-        <h3 className="text-white font-semibold text-lg mb-2">No read list selected</h3>
+        <h3 className="text-text-primary font-semibold text-lg mb-2">No read list selected</h3>
         <p className="text-text-secondary text-sm max-w-xs">Select a list from the sidebar or create a new one to get started</p>
         <Button
           onClick={onCreateList}
-          className="mt-6 bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="mt-6 bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create Read List
@@ -120,18 +121,18 @@ export function ReadListContent({
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-5 border-b border-border-subtle space-y-4 bg-gradient-to-r from-brand-accent/3 to-transparent">
+      <div className="p-5 border-b border-border-subtle space-y-4 bg-gradient-to-r from-brand/3 to-transparent">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-white text-xl font-bold truncate">{activeList.name}</h1>
+              <h1 className="text-text-primary text-xl font-bold truncate">{activeList.name}</h1>
               {activeList.isPublic ? (
-                <span className="flex items-center gap-1 text-label bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-md border border-brand-accent/20">
+                <span className="flex items-center gap-1 text-label bg-brand/10 text-brand px-2 py-0.5 rounded-md border border-brand/20">
                   <Globe className="w-3 h-3" />
                   Public
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-label bg-white/5 text-text-muted px-2 py-0.5 rounded-md">
+                <span className="flex items-center gap-1 text-label bg-white/5 text-text-tertiary px-2 py-0.5 rounded-md">
                   <Lock className="w-3 h-3" />
                   Private
                 </span>
@@ -145,18 +146,18 @@ export function ReadListContent({
           {/* Stats */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-center">
-              <div className="text-white font-bold text-lg leading-none">{totalItems}</div>
-              <div className="text-text-muted text-xs mt-0.5">total</div>
+              <div className="text-text-primary font-bold text-lg leading-none">{totalItems}</div>
+              <div className="text-text-tertiary text-xs mt-0.5">total</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
               <div className="text-emerald-400 font-bold text-lg leading-none">{readItems}</div>
-              <div className="text-text-muted text-xs mt-0.5">read</div>
+              <div className="text-text-tertiary text-xs mt-0.5">read</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
-              <div className="text-brand-gold font-bold text-lg leading-none">{unreadItems}</div>
-              <div className="text-text-muted text-xs mt-0.5">unread</div>
+              <div className="text-gold font-bold text-lg leading-none">{unreadItems}</div>
+              <div className="text-text-tertiary text-xs mt-0.5">unread</div>
             </div>
           </div>
         </div>
@@ -164,7 +165,7 @@ export function ReadListContent({
         {/* Progress bar */}
         {totalItems > 0 && (
           <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs text-text-muted">
+            <div className="flex items-center justify-between text-xs text-text-tertiary">
               <span className="flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 {Math.round(readProgress)}% complete
@@ -173,7 +174,7 @@ export function ReadListContent({
             </div>
             <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-emerald-500 to-brand-accent rounded-full"
+                className="h-full bg-gradient-to-r from-emerald-500 to-brand rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${readProgress}%` }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
@@ -185,35 +186,35 @@ export function ReadListContent({
         {/* Search + Tabs */}
         <div className="flex flex-col sm:flex-row gap-3 justify-between">
           <div className="relative w-full sm:w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-3.5 h-3.5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary w-3.5 h-3.5" />
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search resources..."
-              className="pl-9 h-9 bg-brand-dark border-border-subtle text-white text-sm rounded-lg placeholder:text-text-muted focus:border-brand-accent/50"
+              className="pl-9 h-9 bg-base border-border-subtle text-text-primary text-sm rounded-lg placeholder:text-text-tertiary focus:border-brand/50"
             />
           </div>
 
-          <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle gap-0.5 self-start">
+          <div className="flex bg-base rounded-lg p-1 border border-border-subtle gap-0.5 self-start">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`relative px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors ${activeTab === tab.key
-                  ? "text-brand-tertiary"
-                  : "text-text-muted hover:text-white"
+                  ? "text-brand-text-on"
+                  : "text-text-tertiary hover:text-text-primary"
                   }`}
               >
                 {activeTab === tab.key && (
                   <motion.div
                     layoutId="active-tab"
-                    className="absolute inset-0 bg-brand-accent rounded-md"
+                    className="absolute inset-0 bg-brand rounded-md"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                   />
                 )}
                 <span className="relative z-10">{tab.label}</span>
                 {tab.key === "unread" && unreadItems > 0 && (
-                  <span className={`relative z-10 ml-1.5 text-label px-1.5 py-0.5 rounded-full ${activeTab === tab.key ? "bg-brand-tertiary/20 text-brand-tertiary" : "bg-white/10 text-text-muted"}`}>
+                  <span className={`relative z-10 ml-1.5 text-label px-1.5 py-0.5 rounded-full ${activeTab === tab.key ? "bg-surface/20 text-brand-text-on" : "bg-white/10 text-text-tertiary"}`}>
                     {unreadItems}
                   </span>
                 )}
@@ -273,7 +274,7 @@ export function ReadListContent({
                   <Button
                     onClick={onLoadMore}
                     disabled={itemsLoading}
-                    className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg px-6"
+                    className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg px-6"
                   >
                     {itemsLoading ? (
                       <>
@@ -289,7 +290,7 @@ export function ReadListContent({
 
               {itemsLoading && filteredItems.length > 0 && (
                 <div className="flex justify-center mt-4">
-                  <InlineSpinner className="w-5 h-5 text-brand-accent" />
+                  <InlineSpinner className="w-5 h-5 text-brand" />
                 </div>
               )}
             </motion.div>
@@ -301,10 +302,10 @@ export function ReadListContent({
               exit={{ opacity: 0 }}
               className="flex flex-col items-center justify-center py-20 text-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-brand-accent/10 rounded-2xl flex items-center justify-center">
-                <BookOpen className="w-8 h-8 text-brand-accent" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-2xl flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-brand" />
               </div>
-              <h3 className="text-white text-base font-semibold mb-2">No items found</h3>
+              <h3 className="text-text-primary text-base font-semibold mb-2">No items found</h3>
               <p className="text-text-secondary text-sm max-w-xs">
                 {searchTerm
                   ? `No results for "${searchTerm}"`
@@ -316,7 +317,7 @@ export function ReadListContent({
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="mt-4 text-sm text-brand-accent hover:text-brand-accent/80 transition-colors"
+                  className="mt-4 text-sm text-brand hover:text-brand/80 transition-colors"
                 >
                   Clear search
                 </button>

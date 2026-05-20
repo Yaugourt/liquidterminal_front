@@ -95,7 +95,7 @@ export default function Hip4MarketDetailPage() {
                     ? isYes
                       ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
                       : "bg-rose-500/20 text-rose-400 border border-rose-500/40"
-                    : "bg-white/[0.04] text-text-muted border border-border-subtle hover:bg-white/[0.07]"
+                    : "bg-white/[0.04] text-text-tertiary border border-border-subtle hover:bg-white/[0.07]"
                 } disabled:opacity-40 disabled:cursor-not-allowed`}
               >
                 {tab.label}

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from "@/components/ui/card";
 import { Project } from "@/services/ecosystem/project/types";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
@@ -51,8 +52,10 @@ export const ProjectCard = memo(function ProjectCard({
   };
 
   return (
-    <div className={`bg-brand-secondary/40 backdrop-blur-md border border-border-subtle hover:border-border-hover transition-all p-5 rounded-2xl shadow-xl shadow-black/20 group relative ${isSelected ? 'border-brand-accent bg-brand-accent/5' : ''
-      }`}>
+    <Card
+      padding="md"
+      className={`hover:border-border-default group relative ${isSelected ? 'border-brand bg-brand/5' : ''}`}
+    >
       {/* Selection checkbox for admins */}
       {showSelection && (
         <ProtectedAction requiredRole="ADMIN" user={user}>
@@ -61,7 +64,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-brand-dark border-white/20 data-[state=checked]:bg-brand-accent data-[state=checked]:border-brand-accent"
+              className="bg-base border-white/20 data-[state=checked]:bg-brand data-[state=checked]:border-brand"
             />
           </div>
         </ProtectedAction>
@@ -90,12 +93,12 @@ export const ProjectCard = memo(function ProjectCard({
               src={project.logo}
               alt={project.title}
               fill
-              className="rounded-xl object-cover"
+              className="rounded-lg object-cover"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
-              <span className="text-brand-accent text-lg font-bold">
+            <div className="w-full h-full rounded-lg bg-brand/10 flex items-center justify-center">
+              <span className="text-brand text-lg font-bold">
                 {project.title.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -104,13 +107,13 @@ export const ProjectCard = memo(function ProjectCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <h3 className="text-base text-white font-semibold truncate">
+            <h3 className="text-base text-text-primary font-semibold truncate">
               {project.title}
             </h3>
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
-                  <span key={category.id} className="text-label text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md whitespace-nowrap">
+                  <span key={category.id} className="text-label text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">
                     {category.name}
                   </span>
                 ))}
@@ -130,7 +133,7 @@ export const ProjectCard = memo(function ProjectCard({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-text-muted hover:text-brand-accent transition-colors"
+                  className="text-text-tertiary hover:text-brand transition-colors"
                   aria-label={link.label}
                 >
                   <link.IconComponent className="w-4 h-4" />
@@ -140,6 +143,6 @@ export const ProjectCard = memo(function ProjectCard({
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
-}); 
+});

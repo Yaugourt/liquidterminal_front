@@ -64,14 +64,14 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
   return (
     <div className="w-full h-full flex flex-col" ref={containerRef}>
       <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+        <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
           {subTabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-label transition-all ${
                 activeSubTab === tab.key
-                  ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                  ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                   : 'tab-inactive'
               }`}
             >
@@ -83,7 +83,7 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
         {activeSubTab === "spot" && (
           <Link
             href="/market/spot/auction"
-            className="flex items-center gap-1 text-label text-text-muted hover:text-brand-accent transition-colors"
+            className="flex items-center gap-1 text-label text-text-tertiary hover:text-brand transition-colors"
           >
             See All
             <ExternalLink size={10} />
@@ -101,9 +101,9 @@ export const PastAuctionSection = ({ onHeightChange }: PastAuctionSectionProps) 
             hidePageNavigation={true}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full border border-border-subtle rounded-xl bg-white/[0.02]">
-            <span className="text-white text-sm font-medium mb-1">Coming Soon</span>
-            <span className="text-text-muted text-xs">Perp past auctions will be available soon</span>
+          <div className="flex flex-col items-center justify-center h-full border border-border-subtle rounded-lg bg-white/[0.02]">
+            <span className="text-text-primary text-sm font-medium mb-1">Coming Soon</span>
+            <span className="text-text-tertiary text-xs">Perp past auctions will be available soon</span>
           </div>
         )}
       </div>

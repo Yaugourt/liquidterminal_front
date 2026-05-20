@@ -24,9 +24,9 @@ export function TableEmptyState({
         <TableRow className="hover:bg-transparent">
             <TableCell colSpan={colSpan} className="text-center py-8">
                 <div className="flex flex-col items-center justify-center">
-                    {icon || <Database className="w-10 h-10 mb-3 text-text-muted" />}
+                    {icon || <Database className="w-10 h-10 mb-3 text-text-tertiary" />}
                     <p className="text-text-secondary text-sm mb-1">{title}</p>
-                    <p className="text-text-muted text-xs">{description}</p>
+                    <p className="text-text-tertiary text-xs">{description}</p>
                 </div>
             </TableCell>
         </TableRow>
@@ -52,8 +52,8 @@ export function TableLoadingState({
             <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={colSpan} className="text-center py-8">
                     <div className="flex flex-col items-center justify-center">
-                        <Loader2 className="w-8 h-8 mb-3 text-brand-accent animate-spin" />
-                        <p className="text-text-muted text-sm">Loading...</p>
+                        <Loader2 className="w-8 h-8 mb-3 text-brand animate-spin" />
+                        <p className="text-text-tertiary text-sm">Loading...</p>
                     </div>
                 </TableCell>
             </TableRow>
@@ -96,7 +96,7 @@ export function TableErrorState({
                     <AlertCircle className="w-10 h-10 mb-3 text-rose-500/50" />
                     <p className="text-rose-400 text-sm mb-1">{title}</p>
                     {message && (
-                        <p className="text-text-muted text-xs">{message}</p>
+                        <p className="text-text-tertiary text-xs">{message}</p>
                     )}
                 </div>
             </TableCell>

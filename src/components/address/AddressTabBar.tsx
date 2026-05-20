@@ -38,7 +38,7 @@ export function AddressTabBar({
     <div
       className={
         sticky
-          ? "sticky top-16 z-20 -mx-2 px-2 py-2 backdrop-blur-md bg-brand-main/70 rounded-xl"
+          ? "sticky top-16 z-20 -mx-2 px-2 py-2 backdrop-blur-md bg-base/70 rounded-lg"
           : "py-1"
       }
     >

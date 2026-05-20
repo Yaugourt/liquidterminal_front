@@ -37,9 +37,9 @@ const variants = {
     border: "border-white/20"
   },
   dark: {
-    bg: "bg-brand-tertiary",
-    text: "text-brand-accent",
-    border: "border-brand-accent/20"
+    bg: "bg-surface",
+    text: "text-brand",
+    border: "border-brand/20"
   }
 };
 
@@ -82,7 +82,7 @@ export function TokenIcon({
         "rounded-full border",
         variantClass.border,
         variant === "dark" && "shadow-[0_0_8px_rgba(131,233,255,0.15)]",
-        "backdrop-blur-sm object-contain",
+        "object-contain",
         className
       )}
       onError={() => setHasError(true)}

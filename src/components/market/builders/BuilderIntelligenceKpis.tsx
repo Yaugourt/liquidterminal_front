@@ -19,7 +19,7 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="stat-card animate-pulse h-24 rounded-xl" />
+          <div key={i} className="stat-card animate-pulse h-24 rounded-lg" />
         ))}
       </div>
     );
@@ -35,16 +35,16 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
     {
       label: "Builder revenue",
       value: formatNumber(c.totalBuilderFees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true }),
-      icon: <TrendingUp className="w-4 h-4 text-brand-gold" />,
+      icon: <TrendingUp className="w-4 h-4 text-gold" />,
       pct: stats.variations?.totalBuilderFeesPct,
-      valueClassName: "text-lg font-bold tabular-nums text-brand-gold",
+      valueClassName: "text-lg font-bold tabular-nums text-gold",
     },
     {
       label: "Active users",
       value: formatNumber(c.uniqueUsers, format, { maximumFractionDigits: 0 }),
-      icon: <Users className="w-4 h-4 text-brand-accent" />,
+      icon: <Users className="w-4 h-4 text-brand" />,
       pct: stats.variations?.uniqueUsersPct,
-      valueClassName: "text-lg font-bold tabular-nums text-brand-accent",
+      valueClassName: "text-lg font-bold tabular-nums text-brand",
     },
     {
       label: "Avg rev / user",
@@ -58,7 +58,7 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
       value: formatNumber(avgVolumePerUser, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true }),
       icon: <Coins className="w-4 h-4 text-text-secondary" />,
       pct: null,
-      valueClassName: "text-lg font-bold tabular-nums text-white",
+      valueClassName: "text-lg font-bold tabular-nums text-text-primary",
     },
   ];
 

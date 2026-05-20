@@ -14,7 +14,7 @@ function InfoRow({ k, children }: PropsWithChildren<{ k: string }>) {
       <div className="text-[11px] font-medium uppercase tracking-wide text-text-secondary">
         {k}
       </div>
-      <div className="text-sm text-white">{children}</div>
+      <div className="text-sm text-text-primary">{children}</div>
     </div>
   );
 }
@@ -45,16 +45,16 @@ export function Hip4OverviewChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>V1 — Contract information</Hip4SectionTitle>
         <InfoRow k="Address">
-          <span className="font-mono text-brand-accent">{HIP4_CONFIG.contracts.v1.address}</span>
+          <span className="font-mono text-brand">{HIP4_CONFIG.contracts.v1.address}</span>
         </InfoRow>
         <InfoRow k="Network">
           HyperEVM Testnet <Badge variant="outline" className="ml-1 text-[10px]">Chain 998</Badge>
         </InfoRow>
         <InfoRow k="Owner">
-          <span className="font-mono text-brand-gold">{HIP4_CONFIG.sameOwner}</span>
+          <span className="font-mono text-gold">{HIP4_CONFIG.sameOwner}</span>
         </InfoRow>
         <InfoRow k="Platform fee">
-          <span className="font-bold text-brand-gold">90 bps (0.9%)</span> — from reward pool
+          <span className="font-bold text-gold">90 bps (0.9%)</span> — from reward pool
         </InfoRow>
         <InfoRow k="Renounce">
           <Badge variant="destructive" className="text-[10px]">ALWAYS REVERT</Badge> “Renounce disabled”
@@ -65,13 +65,13 @@ export function Hip4OverviewChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>V2 — Contract information</Hip4SectionTitle>
         <InfoRow k="Address">
-          <span className="font-mono text-brand-accent">{HIP4_CONFIG.contracts.v2.address}</span>
+          <span className="font-mono text-brand">{HIP4_CONFIG.contracts.v2.address}</span>
         </InfoRow>
         <InfoRow k="Network">
           HyperEVM Testnet <Badge variant="outline" className="ml-1 text-[10px]">Chain 998</Badge>
         </InfoRow>
         <InfoRow k="Owner">
-          <span className="font-mono text-brand-gold">{HIP4_CONFIG.sameOwner}</span>
+          <span className="font-mono text-gold">{HIP4_CONFIG.sameOwner}</span>
           <span className="mt-1 block text-[11px] text-text-secondary">Same owner as V1</span>
         </InfoRow>
         <InfoRow k="Reference">
@@ -83,11 +83,11 @@ export function Hip4OverviewChapter() {
         <Hip4SectionTitle>V1 — Access surface (bytecode)</Hip4SectionTitle>
         <div className="access-grid grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <div className="mb-2 text-xs font-bold text-brand-gold">Owner-only</div>
+            <div className="mb-2 text-xs font-bold text-gold">Owner-only</div>
             <ul className="space-y-2 text-xs">
               {V1_OWNER_FUNCS.map(([sel, sig]) => (
                 <li key={sel} className="flex flex-wrap items-center gap-2">
-                  <code className="rounded bg-brand-tertiary/40 px-1.5 py-0.5 font-mono text-[10px]">
+                  <code className="rounded bg-surface/40 px-1.5 py-0.5 font-mono text-[10px]">
                     {sel}
                   </code>
                   <span className="font-mono text-text-secondary">{sig}</span>
@@ -100,7 +100,7 @@ export function Hip4OverviewChapter() {
             <ul className="space-y-2 text-xs">
               {V1_PUBLIC.map(([sel, sig]) => (
                 <li key={sel} className="flex flex-wrap items-center gap-2">
-                  <code className="rounded bg-brand-tertiary/40 px-1.5 py-0.5 font-mono text-[10px]">
+                  <code className="rounded bg-surface/40 px-1.5 py-0.5 font-mono text-[10px]">
                     {sel}
                   </code>
                   <span className="font-mono text-text-secondary">{sig}</span>

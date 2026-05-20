@@ -37,7 +37,7 @@ export function FormSection({
             </h3>
           )}
           {description && (
-            <p className="text-xs text-text-muted">{description}</p>
+            <p className="text-xs text-text-tertiary">{description}</p>
           )}
         </div>
       )}

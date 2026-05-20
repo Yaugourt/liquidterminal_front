@@ -7,7 +7,7 @@ export const COLORS = {
   primary: chartPalette.accent,
   textSecondary: "rgb(255 255 255 / 0.6)",
   border: "rgba(255, 255, 255, 0.05)",
-  background: chartColors.labelBg, // = brand-main #0B0E14
+  background: chartColors.labelBg, // = base #0B0E14
 } as const;
 
 export const STYLES = {

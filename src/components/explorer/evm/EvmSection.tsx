@@ -22,7 +22,7 @@ export function EvmSection() {
     <div className="space-y-4">
       {/* Header */}
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-white">EVM Activity</h2>
+        <h2 className="text-lg font-semibold text-text-primary">EVM Activity</h2>
         <p className="text-sm text-text-secondary">
           HyperLiquid EVM — indexed blocks, transactions, and on-chain activity.
         </p>
@@ -33,19 +33,19 @@ export function EvmSection() {
         <StatsCard
           title="Blocks Indexed"
           value={formatLargeNumber(stats?.total_blocks)}
-          icon={<Layers className="w-4 h-4 text-brand-accent" />}
+          icon={<Layers className="w-4 h-4 text-brand" />}
           isLoading={isLoading && !stats}
         />
         <StatsCard
           title="Txs Indexed"
           value={formatLargeNumber(stats?.total_transactions)}
-          icon={<Hash className="w-4 h-4 text-brand-accent" />}
+          icon={<Hash className="w-4 h-4 text-brand" />}
           isLoading={isLoading && !stats}
         />
         <StatsCard
           title="Logs Indexed"
           value={formatLargeNumber(stats?.total_logs)}
-          icon={<FileText className="w-4 h-4 text-brand-accent" />}
+          icon={<FileText className="w-4 h-4 text-brand" />}
           isLoading={isLoading && !stats}
         />
       </div>

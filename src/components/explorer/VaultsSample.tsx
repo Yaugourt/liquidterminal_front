@@ -36,10 +36,10 @@ export function VaultsSample() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white">Top Vaults</h3>
+        <h3 className="text-sm font-semibold text-text-primary">Top Vaults</h3>
         <Link
           href="/explorer/vaults"
-          className="text-xs text-brand-accent hover:text-brand-accent/80 transition-colors"
+          className="text-xs text-brand hover:text-brand/80 transition-colors"
         >
           View all →
         </Link>
@@ -55,12 +55,12 @@ export function VaultsSample() {
               key={vault.summary?.vaultAddress}
               className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0"
             >
-              <span className="text-sm text-white truncate max-w-[140px]">
+              <span className="text-sm text-text-primary truncate max-w-[140px]">
                 {vault.summary?.name ?? "-"}
               </span>
               <div className="flex gap-4 text-xs text-text-secondary shrink-0">
                 <span>{formatTVL(vault.summary?.tvl)}</span>
-                <span className="text-brand-accent">
+                <span className="text-brand">
                   {vault.apr !== undefined ? `${vault.apr.toFixed(1)}%` : "-"}
                 </span>
               </div>

@@ -60,7 +60,7 @@ export function FormFooter({
         <Button
           type="submit"
           disabled={isSubmitting || disabled}
-          className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+          className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
         >
           {isSubmitting ? submittingLabel : submitLabel}
         </Button>

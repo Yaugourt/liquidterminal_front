@@ -123,17 +123,17 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
   if (categoriesLoading || resourcesLoading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border-subtle bg-brand-dark/40 py-16 text-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-brand-accent" />
-        <p className="text-sm text-text-muted">Loading resources…</p>
+      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border-subtle bg-base/40 py-16 text-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-brand" />
+        <p className="text-sm text-text-tertiary">Loading resources…</p>
       </div>
     );
   }
 
   if (categoriesWithResources.length === 0) {
     return (
-      <div className="rounded-2xl border border-border-subtle bg-brand-dark/40 py-16 text-center">
-        <p className="text-sm text-text-muted">
+      <div className="rounded-2xl border border-border-subtle bg-base/40 py-16 text-center">
+        <p className="text-sm text-text-tertiary">
           Select at least one category to see resources.
         </p>
       </div>
@@ -154,10 +154,10 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
             {/* Category header */}
             <div className="mb-5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <h2 className="truncate text-lg font-semibold tracking-tight text-white">
+                <h2 className="truncate text-lg font-semibold tracking-tight text-text-primary">
                   {category.title}
                 </h2>
-                <span className="shrink-0 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-2.5 py-0.5 text-[11px] font-medium text-brand-gold">
+                <span className="shrink-0 rounded-full border border-gold/30 bg-gold/10 px-2.5 py-0.5 text-[11px] font-medium text-gold">
                   {category.resources.length} {category.resources.length === 1 ? "resource" : "resources"}
                 </span>
               </div>
@@ -184,7 +184,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                   <Button
                     onClick={() => handleShowLess(category.id)}
                     variant="outline"
-                    className="border-border-subtle bg-brand-dark/40 text-text-secondary hover:border-border-hover hover:bg-white/5 hover:text-white"
+                    className="border-border-subtle bg-base/40 text-text-secondary hover:border-border-default hover:bg-white/5 hover:text-text-primary"
                   >
                     Show less
                   </Button>
@@ -192,7 +192,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                 {hasMore && (
                   <Button
                     onClick={() => handleShowMore(category.id)}
-                    className="bg-brand-accent font-medium text-brand-tertiary hover:bg-brand-accent/90"
+                    className="bg-brand font-medium text-brand-text-on hover:bg-brand/90"
                   >
                     Show more
                   </Button>

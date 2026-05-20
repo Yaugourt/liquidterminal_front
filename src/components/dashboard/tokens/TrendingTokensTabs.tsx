@@ -24,13 +24,13 @@ const AuctionSection = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex items-center justify-between mb-4 px-2">
-        <div className="flex bg-brand-dark rounded-lg p-1 border border-border-subtle">
+        <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
           {subTabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`px-3 py-1 rounded-md text-label transition-all ${activeSubTab === tab.key
-                ? 'bg-brand-accent text-brand-tertiary shadow-sm font-bold'
+                ? 'bg-brand text-brand-text-on shadow-sm font-bold'
                 : 'tab-inactive'
                 }`}
             >
@@ -71,7 +71,7 @@ export const TrendingTokensTabs = ({ onTabChange, onPastAuctionHeightChange }: T
             tabs={tabs.map(t => ({ value: t.key, label: t.label }))}
             activeTab={activeTab}
             onTabChange={(val) => handleTabChange(val as "spot" | "perp" | "auction" | "past-auction")}
-            className="bg-brand-dark border border-border-subtle"
+            className="bg-base border border-border-subtle"
           />
         </div>
       </div>

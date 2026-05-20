@@ -149,7 +149,7 @@ export default function MySubmissionsPage() {
             </p>
             <Button
               onClick={handleSubmitClick}
-              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg flex items-center gap-2"
+              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Submit New Project
@@ -202,10 +202,10 @@ export default function MySubmissionsPage() {
       />
 
       {/* Stats footer */}
-      <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+      <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-brand-accent">{counts.all}</div>
+            <div className="text-2xl font-bold text-brand">{counts.all}</div>
             <div className="text-xs text-zinc-400 uppercase tracking-wider">Total Submissions</div>
           </div>
           <div>

@@ -57,18 +57,18 @@ export function VaultEcosystemChart() {
   const isLoading = activeTab === "TVL Trend" ? chartLoading : vaultsLoading;
 
   return (
-    <div className="glass-panel relative overflow-hidden p-4 flex flex-col">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-4 flex flex-col">
       {/* Ambient glow blobs — Aurora aesthetic */}
-      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand-gold/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-gold/[0.06] blur-3xl" />
 
       {/* Tab header */}
       <div className="relative z-10 flex items-center justify-between mb-4 flex-shrink-0">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          <span className="h-1 w-1 rounded-full bg-brand-accent" />
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand" />
           Ecosystem Overview
         </div>
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {TABS.map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -86,7 +86,7 @@ export function VaultEcosystemChart() {
                 )}
                 <span
                   className={`relative z-10 ${
-                    isActive ? "text-white" : "text-text-secondary hover:text-white"
+                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   {tab}
@@ -108,7 +108,7 @@ export function VaultEcosystemChart() {
             </div>
           ) : tvlChartData.length === 0 ? (
             <div className="flex items-center justify-center h-[220px]">
-              <p className="text-text-muted text-sm">No TVL data available.</p>
+              <p className="text-text-tertiary text-sm">No TVL data available.</p>
             </div>
           ) : (
             <div className="h-[220px]">
@@ -123,14 +123,14 @@ export function VaultEcosystemChart() {
           /* Top 5 bars */
           <div className="flex flex-col gap-3 py-2">
             {top5.length === 0 ? (
-              <p className="text-text-muted text-sm text-center">No vault data.</p>
+              <p className="text-text-tertiary text-sm text-center">No vault data.</p>
             ) : (
               top5.map((vault, i) => {
                 const tvl = parseFloat(vault.summary.tvl);
                 const pct = (tvl / maxTvl) * 100;
                 const colors = [
-                  "bg-brand-accent",
-                  "bg-brand-gold",
+                  "bg-brand",
+                  "bg-gold",
                   "bg-emerald-400",
                   "bg-violet-400",
                   "bg-orange-400",
@@ -138,7 +138,7 @@ export function VaultEcosystemChart() {
                 return (
                   <div key={vault.summary.vaultAddress} className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-white font-medium truncate max-w-[180px] tabular-nums">
+                      <span className="text-xs text-text-primary font-medium truncate max-w-[180px] tabular-nums">
                         {i + 1}. {vault.summary.name}
                       </span>
                       <span className="text-xs text-text-secondary ml-2 shrink-0 tabular-nums">

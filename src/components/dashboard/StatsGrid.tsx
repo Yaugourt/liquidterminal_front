@@ -60,27 +60,27 @@ export function StatsGrid({ stats: initialData }: StatsGridProps) {
     {
       title: "Users",
       value: formatStat(currentStats.numberOfUsers),
-      icon: <Users size={16} className="text-brand-accent" />,
+      icon: <Users size={16} className="text-brand" />,
     },
     {
       title: "Daily Volume",
       value: formatStat(currentStats.dailyVolume, { prefix: '$', decimals: 2 }),
-      icon: <Activity size={16} className="text-brand-accent" />,
+      icon: <Activity size={16} className="text-brand" />,
     },
     {
       title: "Bridged USDC",
       value: formatStat(currentStats.bridgedUsdc, { prefix: '$', decimals: 1 }),
-      icon: <Wallet size={16} className="text-brand-accent" />,
+      icon: <Wallet size={16} className="text-brand" />,
     },
     {
       title: "HYPE Staked",
       value: formatStat(currentStats.totalHypeStake, { decimals: 1 }),
-      icon: <Shield size={16} className="text-brand-accent" />,
+      icon: <Shield size={16} className="text-brand" />,
     },
     {
       title: "Vaults TVL",
       value: formatStat(currentStats.vaultsTvl, { prefix: '$', decimals: 1 }),
-      icon: <Database size={16} className="text-brand-accent" />,
+      icon: <Database size={16} className="text-brand" />,
     },
   ] : [];
 

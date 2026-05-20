@@ -39,7 +39,7 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
     <Card className={`p-4 flex flex-col ${className || ''}`}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center">
           <Zap size={16} className="text-rose-400" />
         </div>
         <h3 className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
@@ -56,10 +56,10 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
           {/* Volume total */}
           <div className="flex items-baseline gap-2 mb-3">
             <DollarSign className="h-4 w-4 text-rose-400" />
-            <span className="text-xl max-sm:text-lg text-white font-bold tracking-tight">
+            <span className="text-xl max-sm:text-lg text-text-primary font-bold tracking-tight">
               ${formatNumber(stats.totalVolume, format, { maximumFractionDigits: 0 })}
             </span>
-            <span className="text-xs text-text-muted">
+            <span className="text-xs text-text-tertiary">
               ({stats.liquidationsCount.toLocaleString()} liqs)
             </span>
           </div>
@@ -67,12 +67,12 @@ export function Liquidations24hCard({ className }: Liquidations24hCardProps) {
           {/* Stats supplémentaires */}
           <div className="flex items-center justify-between text-xs mb-3">
             <div>
-              <span className="text-text-muted">Top Token</span>
-              <p className="text-white font-medium">{stats.topToken}</p>
+              <span className="text-text-tertiary">Top Token</span>
+              <p className="text-text-primary font-medium">{stats.topToken}</p>
             </div>
             <div className="text-right">
-              <span className="text-text-muted">Fees</span>
-              <p className="text-brand-gold font-medium">
+              <span className="text-text-tertiary">Fees</span>
+              <p className="text-gold font-medium">
                 ${formatNumber(stats.totalFees, format, { maximumFractionDigits: 0 })}
               </p>
             </div>

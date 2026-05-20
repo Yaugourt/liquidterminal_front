@@ -21,6 +21,7 @@ export { StatsPanel } from './StatsPanel';
 export type { StatsPanelProps } from './StatsPanel';
 export { WelcomePrompt } from './WelcomePrompt';
 export { UserAccountCompact } from './UserAccountCompact';
+export { ThemeToggle } from './ThemeToggle';
 
 // Tables
 export { DataTable, TypedDataTable } from './DataTable';

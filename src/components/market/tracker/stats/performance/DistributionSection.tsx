@@ -118,8 +118,8 @@ export function DistributionSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
-          <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{
@@ -130,7 +130,7 @@ export function DistributionSection({
             <span>{data.name}</span>
           </div>
           <div className="mt-1.5 flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-white tabular-nums">
+            <span className="text-sm font-semibold text-text-primary tabular-nums">
               {data.percentage.toFixed(1)}%
             </span>
             <span className="text-[11px] text-text-secondary tabular-nums">
@@ -146,8 +146,8 @@ export function DistributionSection({
   return (
     <>
       {/* Ambient glow — subtle cyan anchor */}
-      <div className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand-accent/[0.08] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-brand-gold/[0.05] blur-3xl" />
+      <div className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-brand/[0.08] blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-gold/[0.05] blur-3xl" />
 
       <div className="absolute inset-0 p-4 pt-12 z-10">
         <div className="flex h-full">
@@ -175,10 +175,10 @@ export function DistributionSection({
             </ResponsiveContainer>
             {/* Centered metric */}
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
                 Total
               </span>
-              <span className="text-sm font-semibold text-white tabular-nums mt-0.5">
+              <span className="text-sm font-semibold text-text-primary tabular-nums mt-0.5">
                 {formatCurrency(totalPortfolio)}
               </span>
             </div>
@@ -202,14 +202,14 @@ export function DistributionSection({
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-white text-xs font-semibold truncate">
+                        <span className="text-text-primary text-xs font-semibold truncate">
                           {asset.name}
                         </span>
-                        <span className="text-white text-xs font-semibold ml-1 tabular-nums">
+                        <span className="text-text-primary text-xs font-semibold ml-1 tabular-nums">
                           {asset.percentage.toFixed(1)}%
                         </span>
                       </div>
-                      <div className="text-text-muted text-[11px] truncate tabular-nums">
+                      <div className="text-text-tertiary text-[11px] truncate tabular-nums">
                         {formatCurrency(asset.value)}
                       </div>
                     </div>

@@ -17,6 +17,7 @@ import {
   BuilderIntelligenceUsersTable,
   BuilderIntelligenceSecondaryStats,
 } from "@/components/market/builders";
+import { PageHeader } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 const ETH = /^0x[a-fA-F0-9]{40}$/i;
@@ -53,31 +54,29 @@ export default function BuildersIntelligencePage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Builder Analytics</h1>
-          <p className="text-text-secondary text-sm mt-1 max-w-2xl">
-            Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {TIMEFRAMES.map((t) => (
-            <Button
-              key={t}
-              type="button"
-              size="sm"
-              onClick={() => setTf(t)}
-              className={
-                tf === t
-                  ? "bg-brand-accent/20 text-brand-accent border border-brand-accent/40 hover:bg-brand-accent/30"
-                  : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
-              }
-            >
-              {t}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        title="Builder Analytics"
+        description="Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            {TIMEFRAMES.map((t) => (
+              <Button
+                key={t}
+                type="button"
+                size="sm"
+                onClick={() => setTf(t)}
+                className={
+                  tf === t
+                    ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
+                    : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
+                }
+              >
+                {t}
+              </Button>
+            ))}
+          </div>
+        }
+      />
 
       <BuilderSelector
         builders={list.builders}

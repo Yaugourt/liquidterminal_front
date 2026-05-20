@@ -25,12 +25,12 @@ export function UserSubmissionModal({ onSuccess }: UserSubmissionModalProps) {
         <ProtectedAction requiredRole="USER" user={user}>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg">
+                    <Button className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg">
                         <Plus className="w-4 h-4 mr-2" />
                         Suggest Resource
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+                <DialogContent className="bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
                     <DialogTitle className="text-lg font-bold">Suggest a Resource</DialogTitle>
                     <DialogDescription className="text-text-secondary text-sm">
                         Submit a link to be reviewed by moderators before publication.

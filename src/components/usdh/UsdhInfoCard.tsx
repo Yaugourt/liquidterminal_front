@@ -23,7 +23,7 @@ export function UsdhInfoCard() {
   return (
     <Card className="p-6 space-y-6">
       <div className="space-y-1.5">
-        <h3 className="text-sm font-semibold text-white">What is USDH?</h3>
+        <h3 className="text-sm font-semibold text-text-primary">What is USDH?</h3>
         <p className="text-sm text-text-secondary leading-relaxed">
           USDH is Hyperliquid&apos;s native fully-reserved stablecoin, designed
           as the primary stable on HyperCore and HyperEVM.
@@ -33,11 +33,11 @@ export function UsdhInfoCard() {
       <div className="space-y-4">
         {FEATURES.map(({ icon: Icon, label, desc }) => (
           <div key={label} className="flex gap-3">
-            <div className="w-8 h-8 rounded-xl bg-brand-accent/10 flex items-center justify-center shrink-0">
-              <Icon className="w-4 h-4 text-brand-accent" />
+            <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
+              <Icon className="w-4 h-4 text-brand" />
             </div>
             <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-white">{label}</p>
+              <p className="text-xs font-semibold text-text-primary">{label}</p>
               <p className="text-xs text-text-secondary leading-relaxed">
                 {desc}
               </p>
@@ -47,11 +47,11 @@ export function UsdhInfoCard() {
       </div>
 
       <div className="pt-2 border-t border-border-subtle space-y-1.5">
-        <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">
+        <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-semibold">
           Powered by
         </p>
         <p className="text-xs text-text-secondary">
-          <span className="text-white font-medium">usdh-kit</span> — open-source
+          <span className="text-text-primary font-medium">usdh-kit</span> — open-source
           SDK for USDC → USDH swaps on Hyperliquid.
         </p>
       </div>

@@ -35,13 +35,13 @@ export const SpotTableRow = memo(function SpotTableRow({
             size="md" 
             variant="dark"
           />
-          <span className="text-white text-sm font-medium">{holding.coin}</span>
+          <span className="text-text-primary text-sm font-medium">{holding.coin}</span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm">
+      <TableCell className="text-text-primary text-sm">
         {formatTokenAmount(holding.total)}
       </TableCell>
-      <TableCell className="text-white text-sm">
+      <TableCell className="text-text-primary text-sm">
         {formatCurrency(holding.price)}
       </TableCell>
       <TableCell 
@@ -50,7 +50,7 @@ export const SpotTableRow = memo(function SpotTableRow({
       >
         {formatPercent(holding.pnlPercentage)}
       </TableCell>
-      <TableCell className="text-white text-sm pr-4 font-medium">
+      <TableCell className="text-text-primary text-sm pr-4 font-medium">
         {formatCurrency(holding.totalValue)}
       </TableCell>
     </UITableRow>
@@ -97,7 +97,7 @@ export const PerpTableRow = memo(function PerpTableRow({
             size="md" 
             variant="dark"
           />
-          <span className="text-white text-sm font-medium">{holding.coin}</span>
+          <span className="text-text-primary text-sm font-medium">{holding.coin}</span>
         </div>
       </TableCell>
       <TableCell className="text-sm">
@@ -105,26 +105,26 @@ export const PerpTableRow = memo(function PerpTableRow({
           <span className={holding.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
             {holding.type}
           </span>
-          <span className="text-label text-text-muted">
+          <span className="text-label text-text-tertiary">
             {holding.leverage.value}x ({holding.leverage.type})
           </span>
         </div>
       </TableCell>
-      <TableCell className="text-white text-sm">
+      <TableCell className="text-text-primary text-sm">
         {formatCurrency(holding.entryPrice)}
       </TableCell>
-      <TableCell className="text-white text-sm">
+      <TableCell className="text-text-primary text-sm">
         {formatCurrency(holding.liquidation)}
       </TableCell>
-      <TableCell className="text-white text-sm">
+      <TableCell className="text-text-primary text-sm">
         {formatCurrency(holding.price)}
       </TableCell>
       <TableCell className="text-sm">
         <div className="flex flex-col gap-0.5">
-          <span className="text-white text-sm font-medium">
+          <span className="text-text-primary text-sm font-medium">
             {formatCurrency(holding.positionValue)}
           </span>
-          <span className="text-label text-text-muted">
+          <span className="text-label text-text-tertiary">
             {formatTokenSize(holding.szi, holding.coin)}
           </span>
         </div>

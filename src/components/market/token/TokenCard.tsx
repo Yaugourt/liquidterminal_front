@@ -99,16 +99,16 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
               />
             ) : null}
             <div className={cn(
-              "w-full h-full bg-gradient-to-br from-brand-accent to-emerald-400 flex items-center justify-center",
+              "w-full h-full bg-gradient-to-br from-brand to-emerald-400 flex items-center justify-center",
               token.logo ? "hidden" : ""
             )}>
-              <span className="text-brand-tertiary text-xs font-bold">
+              <span className="text-brand-text-on text-xs font-bold">
                 {token.symbol.split('/')[0].charAt(0)}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-white text-sm font-medium">{token.symbol}</span>
+            <span className="text-text-primary text-sm font-medium">{token.symbol}</span>
             <span className={cn(
               "px-2 py-0.5 rounded-md text-xs font-medium",
               token.type === 'spot'
@@ -128,10 +128,10 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
               {token.type === 'perpetual' ? 'Mark' : 'Price'}
             </span>
             <span className={cn(
-              "text-white text-sm transition-colors",
+              "text-text-primary text-sm transition-colors",
               lastSide === "A" ? "text-red-400" :
                 lastSide === "B" ? "text-green-400" :
-                  "text-white"
+                  "text-text-primary"
             )}>
               {formatPriceValue(livePrice || token.mark || token.price || 0)}
             </span>
@@ -141,7 +141,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {token.type === 'perpetual' && token.oracle && (
             <div className="flex flex-col">
               <span className="text-stat-label">Oracle</span>
-              <span className="text-white text-sm font-medium">
+              <span className="text-text-primary text-sm font-medium">
                 {formatPriceValue(token.oracle)}
               </span>
             </div>
@@ -161,7 +161,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* 24h Volume */}
           <div className="flex flex-col">
             <span className="text-stat-label">24h Volume</span>
-            <span className="text-white text-sm font-medium">
+            <span className="text-text-primary text-sm font-medium">
               {formatVolumeValue(token.volume24h)}
             </span>
           </div>
@@ -170,7 +170,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {token.type === 'spot' && token.marketCap && (
             <div className="flex flex-col">
               <span className="text-stat-label">Market Cap</span>
-              <span className="text-white text-sm font-medium">
+              <span className="text-text-primary text-sm font-medium">
                 {formatMarketCapValue(token.marketCap)}
               </span>
             </div>
@@ -179,7 +179,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {token.type === 'perpetual' && token.openInterest && (
             <div className="flex flex-col">
               <span className="text-stat-label">Open Interest</span>
-              <span className="text-white text-sm font-medium">
+              <span className="text-text-primary text-sm font-medium">
                 {formatVolumeValue(token.openInterest)}
               </span>
             </div>
@@ -190,12 +190,12 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             <div className="flex flex-col">
               <span className="text-stat-label">Contract</span>
               <div className="flex items-center gap-2">
-                <span className="text-brand-accent text-xs">
+                <span className="text-brand text-xs">
                   {truncateAddress(token.contract)}
                 </span>
                 <Copy
                   size={12}
-                  className="text-brand-gold opacity-60 cursor-pointer hover:opacity-100 transition-all duration-200"
+                  className="text-gold opacity-60 cursor-pointer hover:opacity-100 transition-all duration-200"
                   onClick={() => copyToClipboard(token.contract!)}
                 />
               </div>
@@ -218,7 +218,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
                   </span>
                 )}
                 {token.countdown && (
-                  <span className="text-white/80 text-xs">
+                  <span className="text-text-secondary text-xs">
                     {token.countdown}
                   </span>
                 )}
@@ -236,8 +236,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           className={cn(
             "ml-auto inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap",
             detailsOpen
-              ? "border-brand-accent/40 bg-brand-accent/10 text-brand-accent"
-              : "border-border-subtle bg-white/[0.02] text-text-secondary hover:text-white hover:border-border-hover"
+              ? "border-brand/40 bg-brand/10 text-brand"
+              : "border-border-subtle bg-white/[0.02] text-text-secondary hover:text-text-primary hover:border-border-default"
           )}
         >
           <span>{detailsOpen ? "Hide details" : "Details"}</span>

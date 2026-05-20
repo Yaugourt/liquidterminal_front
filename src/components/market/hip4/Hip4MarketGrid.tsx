@@ -111,10 +111,10 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
       <Hip4MarketCategoryTabs value={category} onChange={handleCategory} counts={counts} />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          <span className="h-1 w-1 rounded-full bg-brand-accent" />
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand" />
           Markets
-          <span className="text-text-muted/60">· {filtered.length}</span>
+          <span className="text-text-tertiary/60">· {filtered.length}</span>
         </div>
         <div className="flex items-center gap-2 flex-1 sm:flex-none sm:max-w-sm">
           <SearchBar onSearch={handleSearch} placeholder="Search markets..." debounceMs={200} />
@@ -127,8 +127,8 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
               onClick={() => handleSort(s)}
               className={`rounded-lg px-2 py-1 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
                 sort === s
-                  ? "bg-white/[0.06] text-white"
-                  : "text-text-muted hover:text-text-secondary"
+                  ? "bg-white/[0.06] text-text-primary"
+                  : "text-text-tertiary hover:text-text-secondary"
               }`}
             >
               {s === "volume" ? "Volume" : s === "outcomes" ? "Outcomes" : "Recent"}
@@ -161,7 +161,7 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
               <button
                 type="button"
                 onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}
-                className="rounded-xl border border-border-subtle bg-white/[0.03] px-4 py-2 text-xs font-semibold text-text-secondary hover:border-border-hover hover:text-white transition-colors"
+                className="rounded-lg border border-border-subtle bg-white/[0.03] px-4 py-2 text-xs font-semibold text-text-secondary hover:border-border-default hover:text-text-primary transition-colors"
               >
                 Load more ({filtered.length - visibleCount} left)
               </button>

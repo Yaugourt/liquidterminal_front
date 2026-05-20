@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { buildAuroraSeries } from "./mockData";
 
 type SeriesKey = "spotTvl" | "perpOi" | "staked";
@@ -42,12 +43,6 @@ const SERIES: Record<
 
 const PERIODS = ["7D", "30D", "90D", "1Y"] as const;
 type Period = (typeof PERIODS)[number];
-
-function compactUsd(n: number) {
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  return `$${n.toFixed(0)}`;
-}
 
 function formatDate(ms: number) {
   return new Date(ms).toLocaleDateString("en-US", {
@@ -85,18 +80,18 @@ export function AuroraEcosystemShowcase() {
     (visible.staked ? display.staked : 0);
 
   return (
-    <div className="glass-panel relative overflow-hidden h-[460px] flex flex-col p-6">
+    <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[460px] flex flex-col p-6">
       {/* Ambient color glow */}
-      <div className="pointer-events-none absolute -top-32 right-0 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 -left-24 h-64 w-64 rounded-full bg-brand-gold/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 right-0 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 -left-24 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
 
       {/* HEADER */}
       <div className="relative z-10 flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            <span className="h-1 w-1 rounded-full bg-brand-accent" />
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+            <span className="h-1 w-1 rounded-full bg-brand" />
             Ecosystem Capital
-            <span className="text-text-muted/60">·</span>
+            <span className="text-text-tertiary/60">·</span>
             <span>{formatDate(display.time)}</span>
           </div>
           <AnimatePresence mode="wait">
@@ -105,7 +100,7 @@ export function AuroraEcosystemShowcase() {
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              className="mt-1 text-[32px] font-bold text-white tabular-nums tracking-tight"
+              className="mt-1 text-[32px] font-bold text-text-primary tabular-nums tracking-tight"
             >
               {compactUsd(displayTotal)}
             </motion.div>
@@ -121,11 +116,11 @@ export function AuroraEcosystemShowcase() {
               {compactUsd(totals.delta)} ({totals.pct >= 0 ? "+" : ""}
               {totals.pct.toFixed(2)}%)
             </span>
-            <span className="text-text-muted">over {period}</span>
+            <span className="text-text-tertiary">over {period}</span>
           </div>
         </div>
 
-        <div className="flex items-center rounded-xl border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
           {PERIODS.map((p) => (
             <button
               key={p}
@@ -140,7 +135,7 @@ export function AuroraEcosystemShowcase() {
                 />
               )}
               <span
-                className={`relative z-10 ${period === p ? "text-white" : "text-text-secondary hover:text-white"}`}
+                className={`relative z-10 ${period === p ? "text-text-primary" : "text-text-secondary hover:text-text-primary"}`}
               >
                 {p}
               </span>
@@ -159,9 +154,9 @@ export function AuroraEcosystemShowcase() {
             <button
               key={key}
               onClick={() => setVisible((v) => ({ ...v, [key]: !v[key] }))}
-              className={`group flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-all ${
+              className={`group flex items-center gap-2.5 rounded-lg border px-3 py-2 transition-all ${
                 isOn
-                  ? "border-border-hover bg-white/[0.03]"
+                  ? "border-border-default bg-white/[0.03]"
                   : "border-border-subtle bg-transparent opacity-45 hover:opacity-75"
               }`}
             >
@@ -173,10 +168,10 @@ export function AuroraEcosystemShowcase() {
                 }}
               />
               <div className="text-left">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
                   {meta.label}
                 </div>
-                <div className="text-xs font-bold text-white tabular-nums">
+                <div className="text-xs font-bold text-text-primary tabular-nums">
                   {compactUsd(current)}
                 </div>
               </div>
@@ -287,8 +282,8 @@ function AuroraTooltip({ active, payload, label, visible }: AuroraTooltipProps) 
   if (!active || !payload || payload.length === 0) return null;
   const ts = Number(label);
   return (
-    <div className="rounded-xl border border-border-hover bg-brand-main/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+    <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
         {formatDate(ts)}
       </div>
       <div className="mt-2 space-y-1.5">
@@ -306,7 +301,7 @@ function AuroraTooltip({ active, payload, label, visible }: AuroraTooltipProps) 
                 />
                 <span className="text-text-secondary">{meta.label}</span>
               </div>
-              <span className="font-semibold text-white tabular-nums">
+              <span className="font-semibold text-text-primary tabular-nums">
                 {compactUsd(Number(p.value))}
               </span>
             </div>

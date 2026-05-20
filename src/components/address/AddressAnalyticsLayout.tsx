@@ -105,7 +105,7 @@ export function AddressAnalyticsLayout({
       <div className="flex min-h-[60vh] items-center justify-center">
         <Card className="max-w-md p-8 text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-rose-400" />
-          <h2 className="mb-2 text-xl font-semibold text-white">
+          <h2 className="mb-2 text-xl font-semibold text-text-primary">
             Invalid Address
           </h2>
           <p className="mb-4 text-text-secondary">
@@ -113,7 +113,7 @@ export function AddressAnalyticsLayout({
           </p>
           <Button
             onClick={() => window.history.back()}
-            className="bg-brand-accent font-semibold text-black hover:bg-brand-accent/90"
+            className="bg-brand font-semibold text-black hover:bg-brand/90"
           >
             Go Back
           </Button>
@@ -180,8 +180,8 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
       void _exhaustive;
       const label = ADDRESS_TAB_REGISTRY[tabId as AddressTabId]?.label ?? tabId;
       return (
-        <div className="flex h-[400px] items-center justify-center rounded-2xl border border-border-subtle bg-brand-secondary/60 shadow-xl shadow-black/20 backdrop-blur-md">
-          <p className="text-brand-accent">Coming soon: {label}</p>
+        <div className="flex h-[400px] items-center justify-center rounded-2xl border border-border-subtle bg-surface/60">
+          <p className="text-brand">Coming soon: {label}</p>
         </div>
       );
     }

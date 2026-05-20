@@ -24,8 +24,8 @@ function InlineStat({ icon, label, value, valueClassName, isLoading, className }
         {icon && <span className="mr-1.5">{icon}</span>}
         {label}
       </div>
-      <div className={cn("font-bold text-lg pl-5", valueClassName ?? "text-white")}>
-        {isLoading ? <span className="animate-pulse text-text-muted">--</span> : value}
+      <div className={cn("font-bold text-lg pl-5", valueClassName ?? "text-text-primary")}>
+        {isLoading ? <span className="animate-pulse text-text-tertiary">--</span> : value}
       </div>
     </div>
   );
@@ -54,7 +54,7 @@ function LongShortRatioBar({ longPercent, shortPercent, isLoading }: LongShortRa
           <span className="text-emerald-400 font-medium">
             {isLoading ? '--' : `${longPercent.toFixed(0)}%`}
           </span>
-          <span className="text-text-muted">/</span>
+          <span className="text-text-tertiary">/</span>
           <span className="text-rose-400 font-medium">
             {isLoading ? '--' : `${shortPercent.toFixed(0)}%`}
           </span>
@@ -86,7 +86,7 @@ export function LiquidationsStatsCard() {
     >
       <div className="flex flex-col gap-4 h-full">
         {/* Period Selector */}
-        <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
+        <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
           {TIMEFRAME_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -127,7 +127,7 @@ export function LiquidationsStatsCard() {
                   {statsLoading ? '--' : stats.longCount}
                 </span>
               </div>
-              <span className="text-text-muted">/</span>
+              <span className="text-text-tertiary">/</span>
               <div className="flex items-center gap-1">
                 <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
                 <span className="text-rose-400 font-bold text-sm">
@@ -139,7 +139,7 @@ export function LiquidationsStatsCard() {
           <InlineStat
             label="Top Coin"
             value={stats.topCoin}
-            valueClassName="text-brand-accent"
+            valueClassName="text-brand"
             isLoading={statsLoading}
           />
           <InlineStat

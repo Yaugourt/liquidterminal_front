@@ -18,12 +18,12 @@ const OverviewCardComponent = ({ balances, isLoading, formatCurrency }: Overview
         <Card className={CARD_BASE_CLASSES}>
             <div className="flex justify-between items-center gap-2 mb-5">
                 <div className="flex items-center gap-1.5 ml-4">
-                    <Wallet size={16} className="text-brand-gold" />
-                    <h3 className="text-[11px] text-white font-medium tracking-wide font-inter">OVERVIEW</h3>
+                    <Wallet size={16} className="text-gold" />
+                    <h3 className="text-[11px] text-text-primary font-medium tracking-wide font-inter">OVERVIEW</h3>
                 </div>
-                <span className="text-[16px] text-white font-medium font-inter tabular-nums mr-4">
+                <span className="text-[16px] text-text-primary font-medium font-inter tabular-nums mr-4">
                     {isLoading ? (
-                        <InlineSpinner className="text-brand-accent" />
+                        <InlineSpinner className="text-brand" />
                     ) : (
                         formatCurrency(balances.totalBalance)
                     )}
@@ -33,12 +33,12 @@ const OverviewCardComponent = ({ balances, isLoading, formatCurrency }: Overview
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 ml-4">
                 {balanceItems.map((item) => (
                     <div key={item.type}>
-                        <div className="text-xs text-white mb-1 tracking-wide font-medium font-inter">
+                        <div className="text-xs text-text-primary mb-1 tracking-wide font-medium font-inter">
                             {item.label}
                         </div>
-                        <div className="text-sm text-white font-medium font-inter tabular-nums">
+                        <div className="text-sm text-text-primary font-medium font-inter tabular-nums">
                             {isLoading ? (
-                                <span className="text-text-muted">Loading...</span>
+                                <span className="text-text-tertiary">Loading...</span>
                             ) : (
                                 formatCurrency(item.value)
                             )}

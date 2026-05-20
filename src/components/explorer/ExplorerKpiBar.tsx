@@ -60,13 +60,13 @@ export function ExplorerKpiBar() {
     {
       title: "Volume 24h",
       value: formatUSD(overview?.total_volume_24h, format),
-      icon: <BarChart3 className="w-4 h-4 text-brand-accent" />,
+      icon: <BarChart3 className="w-4 h-4 text-brand" />,
       isLoading: overviewLoading && !overview,
     },
     {
       title: "Fees 24h",
       value: formatUSD(overview?.total_fees_24h, format),
-      icon: <Coins className="w-4 h-4 text-brand-gold" />,
+      icon: <Coins className="w-4 h-4 text-gold" />,
       isLoading: overviewLoading && !overview,
     },
     {
@@ -84,13 +84,13 @@ export function ExplorerKpiBar() {
     {
       title: "EVM Blocks",
       value: formatLargeNumber(stats?.total_blocks),
-      icon: <Layers className="w-4 h-4 text-brand-accent" />,
+      icon: <Layers className="w-4 h-4 text-brand" />,
       isLoading: evmLoading && !stats,
     },
     {
       title: "EVM Txs",
       value: formatLargeNumber(stats?.total_transactions),
-      icon: <Hash className="w-4 h-4 text-brand-accent" />,
+      icon: <Hash className="w-4 h-4 text-brand" />,
       isLoading: evmLoading && !stats,
     },
   ], [overview, overviewLoading, stats, evmLoading, format]);

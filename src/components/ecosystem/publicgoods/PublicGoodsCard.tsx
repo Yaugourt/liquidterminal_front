@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +48,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
     const normalizedStatus = status.toLowerCase();
     switch (normalizedStatus) {
       case 'production':
-        return 'bg-brand-accent/10 text-brand-accent';
+        return 'bg-brand/10 text-brand';
       case 'beta':
         return 'bg-blue-500/10 text-blue-400';
       case 'development':
@@ -74,7 +75,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
   };
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-6 rounded-2xl shadow-xl shadow-black/20 hover:border-border-hover transition-all group relative">
+    <Card padding="lg" className="hover:border-border-default group relative">
       <Link href={`/ecosystem/publicgoods/${project.id}`} className="cursor-pointer">
         {/* Header with logo and status badge */}
         <div className="flex justify-between items-start mb-4">
@@ -86,12 +87,12 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   src={project.logo}
                   alt={project.name}
                   fill
-                  className="rounded-xl object-cover"
+                  className="rounded-lg object-cover"
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full rounded-xl bg-brand-accent/10 flex items-center justify-center">
-                  <span className="text-brand-accent text-lg font-bold">
+                <div className="w-full h-full rounded-lg bg-brand/10 flex items-center justify-center">
+                  <span className="text-brand text-lg font-bold">
                     {project.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -100,10 +101,10 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
 
             {/* Project info */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-white group-hover:text-brand-accent transition-colors">
+              <h3 className="text-lg font-semibold text-text-primary group-hover:text-brand transition-colors">
                 {project.name}
               </h3>
-              <p className="text-sm text-text-muted mt-1">{project.category}</p>
+              <p className="text-sm text-text-tertiary mt-1">{project.category}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -122,7 +123,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-text-muted hover:text-white hover:bg-white/5"
+                    className="h-8 w-8 text-text-tertiary hover:text-text-primary hover:bg-white/5"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -185,7 +186,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
 
         {/* Problem solved */}
         <div className="mb-4">
-          <p className="text-label text-brand-accent mb-1">Problem Solved:</p>
+          <p className="text-label text-brand mb-1">Problem Solved:</p>
           <p className="text-sm text-text-secondary line-clamp-2">
             {project.problemSolved}
           </p>
@@ -196,11 +197,11 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
           <Badge className={`${getDevelopmentStatusColor(project.developmentStatus)} border-0`}>
             {project.developmentStatus}
           </Badge>
-          <div className="flex items-center gap-1 text-text-muted">
+          <div className="flex items-center gap-1 text-text-tertiary">
             {getTeamSizeIcon()}
             <span className="text-xs">{project.teamSize} team</span>
           </div>
-          <Badge variant="outline" className="text-xs border-border-hover text-text-secondary">
+          <Badge variant="outline" className="text-xs border-border-default text-text-secondary">
             {project.experienceLevel}
           </Badge>
         </div>
@@ -216,10 +217,10 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
               {supportTypes.map((type: string) => (
                 <div key={type} className="flex items-center gap-1">
                   {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-amber-400" />}
-                  {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-brand-accent" />}
+                  {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-brand" />}
                   {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
                   {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-emerald-400" />}
-                  <span className="text-xs text-text-muted">{type.toLowerCase()}</span>
+                  <span className="text-xs text-text-tertiary">{type.toLowerCase()}</span>
                 </div>
               ))}
             </div>
@@ -229,30 +230,30 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
         {/* Links */}
         <div className="flex items-center gap-3 pt-3 border-t border-border-subtle">
           {project.githubUrl && (
-            <div className="text-text-muted hover:text-brand-accent transition-colors cursor-pointer">
+            <div className="text-text-tertiary hover:text-brand transition-colors cursor-pointer">
               <Github className="w-4 h-4" />
             </div>
           )}
           {project.websiteUrl && (
-            <div className="text-text-muted hover:text-brand-accent transition-colors cursor-pointer">
+            <div className="text-text-tertiary hover:text-brand transition-colors cursor-pointer">
               <Globe className="w-4 h-4" />
             </div>
           )}
           {project.discordContact && (
-            <div className="text-text-muted">
+            <div className="text-text-tertiary">
               <MessageCircle className="w-4 h-4" />
             </div>
           )}
           {project.telegramContact && (
-            <div className="text-text-muted">
+            <div className="text-text-tertiary">
               <Send className="w-4 h-4" />
             </div>
           )}
-          <div className="ml-auto text-xs text-text-muted">
+          <div className="ml-auto text-xs text-text-tertiary">
             {new Date(project.submittedAt).toLocaleDateString()}
           </div>
         </div>
       </Link>
-    </div>
+    </Card>
   );
 });

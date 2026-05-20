@@ -362,11 +362,11 @@ export function ProjectFormModal({
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent
-                className="sm:max-w-[900px] max-h-[90vh] bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 flex flex-col"
+                className="sm:max-w-[900px] max-h-[90vh] bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 flex flex-col"
                 style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
             >
                 <DialogHeader>
-                    <DialogTitle className="text-white text-xl font-bold">{title}</DialogTitle>
+                    <DialogTitle className="text-text-primary text-xl font-bold">{title}</DialogTitle>
                     {subtitle && (
                         <p className="text-text-secondary text-sm">{subtitle}</p>
                     )}
@@ -374,19 +374,19 @@ export function ProjectFormModal({
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
                     <TabsList className="grid w-full grid-cols-5 bg-black/20 border border-border-subtle rounded-lg p-1">
-                        <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             1. Project
                         </TabsTrigger>
-                        <TabsTrigger value="impact" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger value="impact" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             2. Impact
                         </TabsTrigger>
-                        <TabsTrigger value="team" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger value="team" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             3. Team
                         </TabsTrigger>
-                        <TabsTrigger value="support" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger value="support" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             4. Support
                         </TabsTrigger>
-                        <TabsTrigger value="preview" className="text-text-secondary data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger value="preview" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             5. Preview
                         </TabsTrigger>
                     </TabsList>
@@ -457,7 +457,7 @@ export function ProjectFormModal({
                     {currentIndex < tabs.length - 1 ? (
                         <Button
                             onClick={goNext}
-                            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                         >
                             Next
                             <ArrowRight className="h-4 w-4 ml-2" />
@@ -466,7 +466,7 @@ export function ProjectFormModal({
                         <Button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                         >
                             {isSubmitting ? submittingLabel : submitLabel}
                             <Check className="h-4 w-4 ml-2" />

@@ -4,20 +4,13 @@ import { useMemo, useState, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { ChartLoading, ChartEmpty, chartPalette, chartColors } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 import { categorizeMarket, CATEGORY_LABELS } from "@/lib/hip4-category";
 
 const SLICE_PALETTE = chartPalette.multiSeries;
 const SLICE_FALLBACK = chartColors.textMuted;
 const SLICE_OTHERS_COLOR = "rgb(82 82 91)";
-
-function compactUsd(n: number | null | undefined) {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 interface ActiveShapeProps {
   cx?: number; cy?: number;
@@ -73,7 +66,7 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.35 }}
-      className="glass-panel relative overflow-hidden p-6"
+      className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-6"
     >
       <motion.div
         animate={{
@@ -86,8 +79,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
       />
 
       <div className="relative z-10 mb-4">
-        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          <span className="h-1 w-1 rounded-full bg-brand-accent" />
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand" />
           Volume by Category
         </div>
         <AnimatePresence mode="wait">
@@ -96,14 +89,14 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-1 text-[28px] font-bold text-white tabular-nums tracking-tight"
+            className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight"
           >
             {compactUsd(displayedValue)}
           </motion.div>
         </AnimatePresence>
-        <div className="text-[11px] text-text-muted">
+        <div className="text-[11px] text-text-tertiary">
           {displayed
-            ? <span><span className="text-white">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total</span>
+            ? <span><span className="text-text-primary">{displayed.name}</span> · {displayedPct.toFixed(1)}% of total</span>
             : <span>{slices.length} categories</span>
           }
         </div>
@@ -158,8 +151,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     transition={{ duration: 0.2 }}
                     className="flex flex-col items-center text-center px-4"
                   >
-                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-muted">{displayed ? displayed.name : "Total"}</div>
-                    <div className="mt-0.5 text-[20px] font-bold text-white tabular-nums tracking-tight">{compactUsd(displayedValue)}</div>
+                    <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">{displayed ? displayed.name : "Total"}</div>
+                    <div className="mt-0.5 text-[20px] font-bold text-text-primary tabular-nums tracking-tight">{compactUsd(displayedValue)}</div>
                     <div className="text-[11px] text-text-secondary tabular-nums">{displayedPct.toFixed(1)}%</div>
                   </motion.div>
                 </AnimatePresence>
@@ -175,8 +168,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     key={s.name}
                     onMouseEnter={() => setActiveIdx(i)}
                     onMouseLeave={() => setActiveIdx(null)}
-                    className={`group relative flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all ${
-                      isActive ? "border-border-hover bg-white/[0.04]" : "border-border-subtle bg-transparent hover:border-border-hover hover:bg-white/[0.02]"
+                    className={`group relative flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all ${
+                      isActive ? "border-border-default bg-white/[0.04]" : "border-border-subtle bg-transparent hover:border-border-default hover:bg-white/[0.02]"
                     }`}
                   >
                     <div
@@ -192,8 +185,8 @@ export function Hip4MarketShareChart({ markets, isLoading }: Hip4MarketShareChar
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-white truncate">{s.name}</span>
-                        <span className="text-xs font-semibold text-white tabular-nums shrink-0">{compactUsd(s.value)}</span>
+                        <span className="text-xs font-semibold text-text-primary truncate">{s.name}</span>
+                        <span className="text-xs font-semibold text-text-primary tabular-nums shrink-0">{compactUsd(s.value)}</span>
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/5">

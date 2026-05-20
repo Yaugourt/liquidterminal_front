@@ -18,7 +18,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
     const StatusIcon = config.icon;
 
     return (
-        <div className="p-3 bg-brand-dark rounded-xl border border-border-subtle hover:border-border-hover transition-colors">
+        <div className="p-3 bg-base rounded-lg border border-border-subtle hover:border-border-default transition-colors">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -26,13 +26,13 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                             href={resource.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm font-medium text-white hover:text-brand-accent transition-colors truncate"
+                            className="text-sm font-medium text-text-primary hover:text-brand transition-colors truncate"
                         >
                             {isLoading ? "Loading..." : (preview?.title || resource.url)}
                         </a>
-                        <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <ExternalLink className="w-3 h-3 text-text-tertiary flex-shrink-0" />
                     </div>
-                    <div className="text-xs text-text-muted truncate">
+                    <div className="text-xs text-text-tertiary truncate">
                         {new URL(resource.url).hostname}
                     </div>
                 </div>
@@ -56,7 +56,7 @@ export function MySubmissionsList() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-8">
-                <InlineSpinner className="w-5 h-5 text-brand-accent" />
+                <InlineSpinner className="w-5 h-5 text-brand" />
             </div>
         );
     }
@@ -71,7 +71,7 @@ export function MySubmissionsList() {
 
     if (submissions.length === 0) {
         return (
-            <div className="text-center py-8 text-text-muted text-sm">
+            <div className="text-center py-8 text-text-tertiary text-sm">
                 Aucune soumission pour le moment.
             </div>
         );

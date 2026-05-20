@@ -102,9 +102,9 @@ const ValidatorsTableComponent = ({
         return (
           <AddressDisplay
             address={address}
-            label={<span className="text-white font-medium truncate block max-w-[200px]" title={item.name}>{item.name}</span>}
+            label={<span className="text-text-primary font-medium truncate block max-w-[200px]" title={item.name}>{item.name}</span>}
             truncate={false}
-            className="text-white hover:text-brand-accent max-w-full"
+            className="text-text-primary hover:text-brand max-w-full"
           />
         );
       },
@@ -160,7 +160,7 @@ const VaultTableComponent = ({
       accessor: (item: VaultTableProps["vaults"][0]) => (
         <AddressDisplay
           address={item.vaultAddress || ""}
-          label={<span className="text-white font-medium truncate block max-w-[150px]" title={item.name}>{item.name}</span>}
+          label={<span className="text-text-primary font-medium truncate block max-w-[150px]" title={item.name}>{item.name}</span>}
           truncate={false}
           className="max-w-full"
         />

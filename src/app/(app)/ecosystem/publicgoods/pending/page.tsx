@@ -54,11 +54,11 @@ export default function PendingReviewPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <h2 className="text-xl font-bold text-white">Authentication Required</h2>
             <p className="text-zinc-400">Please login to access this page</p>
-            <Button onClick={() => login()} className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg w-full">
+            <Button onClick={() => login()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full">
               Login
             </Button>
           </div>
@@ -71,7 +71,7 @@ export default function PendingReviewPage() {
   if (!canReview) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
+        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 mx-auto mb-4 bg-rose-500/10 rounded-2xl flex items-center justify-center">
               <AlertCircle className="w-8 h-8 text-rose-400" />
@@ -81,7 +81,7 @@ export default function PendingReviewPage() {
             <p className="text-xs text-zinc-500">Moderator or Admin role required</p>
             <Button
               onClick={() => router.push('/ecosystem/publicgoods')}
-              className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg w-full"
+              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full"
             >
               Go to Public Goods
             </Button>
@@ -139,7 +139,7 @@ export default function PendingReviewPage() {
           description: searchQuery.trim()
             ? "Try adjusting your search criteria"
             : "There are no projects pending review at the moment",
-          icon: <AlertCircle className="w-8 h-8 text-brand-accent" />,
+          icon: <AlertCircle className="w-8 h-8 text-brand" />,
           actionLabel: !searchQuery.trim() ? "View All Projects" : undefined,
           onAction: !searchQuery.trim() ? () => router.push('/ecosystem/publicgoods') : undefined
         }}
@@ -147,27 +147,27 @@ export default function PendingReviewPage() {
 
       {/* Info Banner */}
       {pendingPublicGoods.length > 0 && (
-        <div className="bg-brand-secondary/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
+        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
           <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
           <ul className="text-zinc-400 text-sm space-y-2">
             <li className="flex items-start gap-2">
-              <span className="text-brand-accent">•</span>
+              <span className="text-brand">•</span>
               Check that the project has a valid GitHub repository
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-brand-accent">•</span>
+              <span className="text-brand">•</span>
               Verify the project integrates with HyperLiquid
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-brand-accent">•</span>
+              <span className="text-brand">•</span>
               Ensure the description clearly explains the project&apos;s purpose
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-brand-accent">•</span>
+              <span className="text-brand">•</span>
               Confirm the project benefits the HyperLiquid ecosystem
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-brand-accent">•</span>
+              <span className="text-brand">•</span>
               Provide constructive feedback in review notes if rejecting
             </li>
           </ul>

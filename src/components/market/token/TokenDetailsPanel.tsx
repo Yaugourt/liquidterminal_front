@@ -92,7 +92,7 @@ export function TokenDetailsPanel({ token }: { token: TokenData }) {
         />
         <div className="flex flex-col">
           <span className="text-stat-label mb-1">Deploy time</span>
-          <span className="text-white text-xs">
+          <span className="text-text-primary text-xs">
             {tokenDetails?.deployTime
               ? new Date(tokenDetails.deployTime).toLocaleDateString()
               : "N/A"}
@@ -126,7 +126,7 @@ function DetailStat({ label, value }: { label: string; value: string }) {
       withCard={false}
       className="rounded-lg border border-border-subtle bg-white/[0.02] px-3 py-2"
       titleClassName="text-stat-label"
-      valueClassName="text-white text-sm font-medium tabular-nums truncate"
+      valueClassName="text-text-primary text-sm font-medium tabular-nums truncate"
     />
   );
 }
@@ -148,7 +148,7 @@ function DetailAddress({
     <div className="flex flex-col min-w-0">
       <span className="text-stat-label mb-1">{label}</span>
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-brand-accent text-xs truncate flex-1 min-w-0 font-mono">
+        <span className="text-brand text-xs truncate flex-1 min-w-0 font-mono">
           {isLoading ? "Loading..." : address ? truncateAddressLong(address) : "N/A"}
         </span>
         {address && (
@@ -160,7 +160,7 @@ function DetailAddress({
             {copied === address ? (
               <Check className="h-3.5 w-3.5 text-emerald-400" />
             ) : (
-              <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+              <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
           </button>
         )}

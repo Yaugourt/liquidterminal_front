@@ -66,8 +66,8 @@ export function Hip4CompareChapter() {
             </p>
             <p>
               CLOB trading exists on several venues; what stands out for HIP-4 under research is{" "}
-              <strong className="text-white">native L1 settlement</strong> for{" "}
-              <strong className="text-white">price-linked</strong> outcomes (observed on testnet) and
+              <strong className="text-text-primary">native L1 settlement</strong> for{" "}
+              <strong className="text-text-primary">price-linked</strong> outcomes (observed on testnet) and
               tight coupling with the HyperCore engine. Subjective or off-price resolution is still
               an open question — see the research doc.
             </p>
@@ -76,7 +76,7 @@ export function Hip4CompareChapter() {
       />
       <Hip4GlassPanel>
         <Hip4DocLead className="mb-4 text-xs">
-          Read down the <strong className="text-white">Feature</strong> column first; each cell is one
+          Read down the <strong className="text-text-primary">Feature</strong> column first; each cell is one
           sentence max.
         </Hip4DocLead>
         <Hip4CompareTable
@@ -85,7 +85,7 @@ export function Hip4CompareChapter() {
             cells.map((c, ci) => <span key={`${ri}-${ci}`}>{c}</span>)
           )}
         />
-        <p className="mt-4 text-xs text-text-muted leading-relaxed">
+        <p className="mt-4 text-xs text-text-tertiary leading-relaxed">
           Instant L1 settlement in the HIP-4 column refers to outcomes resolved from the on-chain
           price feed; subjective or non-market-linked markets are not confirmed. Polymarket and Kalshi
           also offer continuous CLOB trading. A “dual system” (CLOB + parimutuel) on Hyperliquid
@@ -96,7 +96,7 @@ export function Hip4CompareChapter() {
         <Hip4SectionTitle>Source</Hip4SectionTitle>
         <p className="text-xs text-text-secondary">
           Table adapted from the “Comparison: HIP-4 vs Polymarket vs Kalshi” section in{" "}
-          <code className="font-mono text-brand-accent">HIP4-research-complete.md</code>.
+          <code className="font-mono text-brand">HIP4-research-complete.md</code>.
         </p>
       </Hip4GlassPanel>
     </Hip4ChapterShell>

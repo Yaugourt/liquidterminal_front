@@ -12,8 +12,8 @@ interface Hip4OutcomeBarProps {
 }
 
 const PALETTE = [
-  { from: "rgba(131,233,255,0.8)", to: "rgba(131,233,255,0.25)", text: "text-brand-accent" },
-  { from: "rgba(249,227,112,0.8)", to: "rgba(249,227,112,0.25)", text: "text-brand-gold" },
+  { from: "rgba(131,233,255,0.8)", to: "rgba(131,233,255,0.25)", text: "text-brand" },
+  { from: "rgba(249,227,112,0.8)", to: "rgba(249,227,112,0.25)", text: "text-gold" },
   { from: "rgba(167,139,250,0.8)", to: "rgba(167,139,250,0.25)", text: "text-violet-300" },
   { from: "rgba(16,185,129,0.8)",  to: "rgba(16,185,129,0.25)",  text: "text-emerald-300" },
   { from: "rgba(244,63,94,0.8)",   to: "rgba(244,63,94,0.25)",   text: "text-rose-300" },
@@ -38,7 +38,7 @@ export function Hip4OutcomeBar({ outcome, colorIndex = 0, delay = 0 }: Hip4Outco
 
   return (
     <div className="flex items-center gap-3">
-      <span className="flex-1 min-w-0 truncate text-xs font-semibold text-white">
+      <span className="flex-1 min-w-0 truncate text-xs font-semibold text-text-primary">
         {outcome.display_name || `#${outcome.outcome_id}`}
       </span>
       <div className="relative h-1.5 w-24 sm:w-32 rounded-full bg-white/5 overflow-hidden">

@@ -48,18 +48,18 @@ export function SearchBar({
         <div className={cn("relative w-full max-w-sm", className)}>
             <div
                 className={cn(
-                    "relative flex items-center w-full px-4 py-2.5 rounded-lg transition-all duration-200",
-                    "bg-brand-secondary/40 backdrop-blur-sm border",
+                    "relative flex items-center w-full px-3 py-2 rounded-md transition-colors duration-200",
+                    "bg-surface-2 border",
                     isFocused
-                        ? "border-brand-accent/50 shadow-[0_0_15px_-3px_rgba(131,233,255,0.15)]"
-                        : "border-border-subtle hover:border-border-hover"
+                        ? "border-brand"
+                        : "border-border-subtle hover:border-border-default"
                 )}
             >
                 <Search
-                    size={18}
+                    size={14}
                     className={cn(
-                        "mr-3 transition-colors duration-200",
-                        isFocused ? "text-brand-accent" : "text-text-muted"
+                        "mr-2 shrink-0 transition-colors duration-200",
+                        isFocused ? "text-brand" : "text-text-tertiary"
                     )}
                 />
 
@@ -70,7 +70,7 @@ export function SearchBar({
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     placeholder={placeholder}
-                    className="flex-1 bg-transparent text-white placeholder:text-text-muted text-sm outline-none w-full"
+                    className="flex-1 bg-transparent text-text-primary placeholder:text-text-tertiary text-sm outline-none w-full"
                 />
 
                 {query && (
@@ -78,9 +78,9 @@ export function SearchBar({
                         variant="ghost"
                         size="icon"
                         onClick={handleClear}
-                        className="ml-2 h-6 w-6 text-text-muted hover:text-white hover:bg-white/5 rounded-full p-0.5"
+                        className="ml-2 h-5 w-5 text-text-tertiary hover:text-text-primary hover:bg-surface-3 rounded p-0.5"
                     >
-                        <X size={14} />
+                        <X size={13} />
                     </Button>
                 )}
             </div>

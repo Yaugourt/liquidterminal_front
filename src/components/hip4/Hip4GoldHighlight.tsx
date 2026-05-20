@@ -13,7 +13,7 @@ export function Hip4GoldHighlight({
     <mark
       className={cn(
         "rounded px-1.5 py-0.5 font-medium not-italic",
-        "bg-brand-gold/15 text-brand-gold ring-1 ring-brand-gold/25",
+        "bg-gold/15 text-gold ring-1 ring-gold/25",
         className
       )}
     >

@@ -54,20 +54,20 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={loading}
-                        className="w-full bg-brand-dark border-border-subtle text-white hover:bg-white/5 border-dashed border-2 py-8 rounded-xl"
+                        className="w-full bg-base border-border-subtle text-text-primary hover:bg-white/5 border-dashed border-2 py-8 rounded-lg"
                     >
                         <div className="flex flex-col items-center gap-2">
-                            <Upload className="w-6 h-6 text-brand-accent" />
+                            <Upload className="w-6 h-6 text-brand" />
                             <span className="text-sm">Click to select CSV file</span>
-                            <span className="text-xs text-text-muted">Max 10MB</span>
+                            <span className="text-xs text-text-tertiary">Max 10MB</span>
                         </div>
                     </Button>
                 </div>
             </div>
 
             {loading && (
-                <div className="flex items-center gap-2 text-brand-accent">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-accent"></div>
+                <div className="flex items-center gap-2 text-brand">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand"></div>
                     <span className="text-sm">Upload en cours...</span>
                 </div>
             )}
@@ -80,7 +80,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
             )}
 
             {result?.success && (
-                <div className="space-y-4 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl">
+                <div className="space-y-4 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg">
                     <div className="flex items-center gap-2 text-emerald-400">
                         <CheckCircle className="w-5 h-5" />
                         <h3 className="font-medium">Import réussi !</h3>
@@ -89,7 +89,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                             <span className="text-text-secondary">Total :</span>
-                            <span className="text-brand-accent">{result.data.totalRows}</span>
+                            <span className="text-brand">{result.data.totalRows}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-text-secondary">Succès :</span>
@@ -103,10 +103,10 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
 
                     {result.data.createdCategories.length > 0 && (
                         <div className="space-y-2">
-                            <h4 className="text-sm font-medium text-brand-accent">Nouvelles catégories créées :</h4>
+                            <h4 className="text-sm font-medium text-brand">Nouvelles catégories créées :</h4>
                             <div className="flex flex-wrap gap-1">
                                 {result.data.createdCategories.map((category, index) => (
-                                    <span key={index} className="bg-brand-dark px-2 py-1 rounded-lg text-xs border border-border-subtle">
+                                    <span key={index} className="bg-base px-2 py-1 rounded-lg text-xs border border-border-subtle">
                                         {category}
                                     </span>
                                 ))}
@@ -131,7 +131,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                     <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                         <Button
                             onClick={handleSuccess}
-                            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg"
+                            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg"
                         >
                             Fermer
                         </Button>

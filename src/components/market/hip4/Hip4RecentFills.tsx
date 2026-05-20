@@ -3,14 +3,9 @@
 import { motion } from "framer-motion";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
+import { Card } from "@/components/ui/card";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4FillRow } from "@/services/indexer/hip4";
-
-function compactUsd(n: number | null | undefined) {
-  if (n == null || !Number.isFinite(n)) return "—";
-  if (n >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `$${(n / 1e3).toFixed(1)}K`;
-  return `$${n.toFixed(2)}`;
-}
 
 function shortAddress(addr: string) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -36,7 +31,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
         const outcomeName = outcomeIdx === 0 ? "Yes" : outcomeIdx === 1 ? "No" : null;
         return (
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-xs font-semibold text-white truncate">
+            <span className="text-xs font-semibold text-text-primary truncate">
               {marketNameIndex?.[row.coin] || row.coin}
             </span>
             {outcomeName && (
@@ -72,7 +67,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => row.px ?? 0,
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-white">
+        <span className="text-xs tabular-nums text-text-primary">
           {row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}
         </span>
       ),
@@ -94,7 +89,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => row.fee ?? 0,
       accessor: (row) => (
-        <span className="text-xs tabular-nums text-brand-gold">
+        <span className="text-xs tabular-nums text-gold">
           {row.fee != null ? compactUsd(row.fee) : "—"}
         </span>
       ),
@@ -103,7 +98,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       key: "user",
       header: "User",
       accessor: (row) => (
-        <span className="text-[11px] text-text-muted font-mono">{shortAddress(row.user)}</span>
+        <span className="text-[11px] text-text-tertiary font-mono">{shortAddress(row.user)}</span>
       ),
     },
     {
@@ -112,7 +107,7 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       sortable: true,
       getSortValue: (row) => new Date(row.time).getTime(),
       accessor: (row) => (
-        <span className="text-[10px] text-text-muted tabular-nums">
+        <span className="text-[10px] text-text-tertiary tabular-nums">
           {new Date(row.time).toLocaleTimeString()}
         </span>
       ),
@@ -124,27 +119,28 @@ export function Hip4RecentFills({ fills, isLoading, marketNameIndex }: Hip4Recen
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25, duration: 0.3 }}
-      className="glass-panel p-4 space-y-3"
     >
-      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-        <span className="h-1 w-1 rounded-full bg-brand-accent animate-pulse" />
-        Recent Fills
-        <span className="text-text-muted/60">· {fills.length}</span>
-      </div>
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
+          <span className="h-1 w-1 rounded-full bg-brand animate-pulse" />
+          Recent Fills
+          <span className="text-text-tertiary/60">· {fills.length}</span>
+        </div>
 
-      <TypedDataTable<Hip4FillRow>
-        data={fills}
-        columns={columns}
-        getRowKey={(row, i) => `${row.hash}-${i}`}
-        density="compact"
-        emptyMessage="No fills yet"
-        emptyDescription="Prediction market fills will appear here."
-        paginate
-        paginationVariant="full"
-        itemsPerPage={10}
-        rowsPerPageOptions={[5, 10, 25, 40, 50]}
-        initialSort={{ field: "time", direction: "desc" }}
-      />
+        <TypedDataTable<Hip4FillRow>
+          data={fills}
+          columns={columns}
+          getRowKey={(row, i) => `${row.hash}-${i}`}
+          density="compact"
+          emptyMessage="No fills yet"
+          emptyDescription="Prediction market fills will appear here."
+          paginate
+          paginationVariant="full"
+          itemsPerPage={10}
+          rowsPerPageOptions={[5, 10, 25, 40, 50]}
+          initialSort={{ field: "time", direction: "desc" }}
+        />
+      </Card>
     </motion.div>
   );
 }

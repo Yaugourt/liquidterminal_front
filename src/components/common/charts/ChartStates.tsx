@@ -23,7 +23,7 @@ export function ChartLoading({ className = "" }: ChartLoadingProps) {
         ))}
       </div>
       <div className="h-[1px] w-full max-w-[280px] bg-white/[0.06] mt-1" />
-      <span className="text-[10px] text-text-muted mt-3 tracking-wide">Loading...</span>
+      <span className="text-[10px] text-text-tertiary mt-3 tracking-wide">Loading...</span>
     </div>
   );
 }
@@ -42,9 +42,9 @@ export function ChartEmpty({
   return (
     <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-2 ${className}`}>
       <BarChart3 className="h-8 w-8 text-white/[0.08]" strokeWidth={1.5} />
-      <p className="text-text-muted text-sm">{message}</p>
+      <p className="text-text-tertiary text-sm">{message}</p>
       {suggestion && (
-        <p className="text-text-muted/60 text-xs">{suggestion}</p>
+        <p className="text-text-tertiary/60 text-xs">{suggestion}</p>
       )}
     </div>
   );
@@ -68,7 +68,7 @@ export function ChartError({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
         >
           <RefreshCw className="h-3 w-3" />
           Retry

@@ -51,7 +51,7 @@ export function AddressDisplay({
         <div className={cn("inline-flex items-center gap-1.5", className)} {...props}>
             <Link
                 href={linkHref}
-                className="text-brand-accent hover:text-white transition-colors"
+                className="text-brand hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
             >
                 {label || displayAddress}
@@ -66,7 +66,7 @@ export function AddressDisplay({
                     {copied ? (
                         <Check className="h-3 w-3 text-emerald-400" />
                     ) : (
-                        <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100" />
+                        <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100" />
                     )}
                 </button>
             )}
@@ -75,7 +75,7 @@ export function AddressDisplay({
                 externalLinkHref ? (
                     <Link
                         href={externalLinkHref}
-                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-tertiary hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />
@@ -85,7 +85,7 @@ export function AddressDisplay({
                         href={`https://app.hyperliquid.xyz/explorer/address/${address}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-text-muted hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-tertiary hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />

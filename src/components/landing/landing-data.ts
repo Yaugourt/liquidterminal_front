@@ -44,9 +44,9 @@ export const reasons = [
 ] as const;
 
 export const screenshots = [
-  { title: "Market overview", subtitle: "Spot, perps, auctions", border: "border-brand-accent/20" },
-  { title: "Explorer & liquidations", subtitle: "On-chain verified", border: "border-brand-gold/20" },
-  { title: "Dashboard & analytics", subtitle: "Portfolio, fees, trends", border: "border-brand-accent/20" },
+  { title: "Market overview", subtitle: "Spot, perps, auctions", border: "border-brand/20" },
+  { title: "Explorer & liquidations", subtitle: "On-chain verified", border: "border-gold/20" },
+  { title: "Dashboard & analytics", subtitle: "Portfolio, fees, trends", border: "border-brand/20" },
 ] as const;
 
 export const apiProviders = [

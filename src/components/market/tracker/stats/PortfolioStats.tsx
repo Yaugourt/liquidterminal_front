@@ -146,9 +146,9 @@ export function PortfolioStats({
 
   if (!isMounted) {
     return (
-      <div className="h-full bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-6">
+      <div className="h-full bg-surface/60 border border-border-subtle rounded-2xl p-6">
         <div className="flex items-center justify-center h-full">
-          <InlineSpinner className="w-6 h-6 text-brand-accent" />
+          <InlineSpinner className="w-6 h-6 text-brand" />
         </div>
       </div>
     );
@@ -160,7 +160,7 @@ export function PortfolioStats({
       {activeWallet && (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-white text-xs">
+            <span className="text-text-primary text-xs">
               {activeWallet.address}
             </span>
             <TooltipProvider>
@@ -169,10 +169,10 @@ export function PortfolioStats({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 p-0 text-text-muted hover:text-white hover:bg-white/5"
+                    className="h-6 w-6 p-0 text-text-tertiary hover:text-text-primary hover:bg-white/5"
                     onClick={copyToClipboard}
                   >
-                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
+                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -181,13 +181,13 @@ export function PortfolioStats({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <span className="text-brand-accent text-xs">Last tx: 1h ago</span>
+          <span className="text-brand text-xs">Last tx: 1h ago</span>
         </div>
       )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-32">
-          <InlineSpinner className="w-6 h-6 text-brand-accent" />
+          <InlineSpinner className="w-6 h-6 text-brand" />
         </div>
       ) : error ? (
         <div className="text-rose-400 text-center py-4">
@@ -199,43 +199,43 @@ export function PortfolioStats({
           <div className="grid grid-cols-2 gap-4">
             {/* Colonne gauche : Balances */}
             <div className="space-y-2">
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Spot Balance</p>
-                <p className="text-white text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
+                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Perp Balance</p>
-                <p className="text-white text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
+                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Vault Balance</p>
-                <p className="text-white text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
+                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Staked Balance</p>
-                <p className="text-white text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
+                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
-              <div className="flex justify-between items-center bg-brand-secondary/60 backdrop-blur-md border border-border-subtle p-3 rounded-xl hover:border-border-hover transition-all">
+              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Total Balance</p>
-                <p className="text-white text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
+                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
               </div>
             </div>
 
             {/* Colonne droite : Long/Short Ratio */}
-            <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 p-4 h-full">
+            <div className="bg-surface/60 border border-border-subtle rounded-2xl p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-stat-label">Volume</p>
-                    <div className="flex bg-brand-dark rounded-lg p-0.5 border border-border-subtle">
+                    <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
                       {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
                         <button
                           key={timeframe}
                           onClick={() => setVolumeTimeframe(timeframe)}
                           className={`px-2 py-1 text-label rounded-md transition-all ${volumeTimeframe === timeframe
-                            ? 'bg-brand-accent text-brand-tertiary font-bold'
-                            : 'text-text-secondary hover:text-zinc-200'
+                            ? 'bg-brand text-brand-text-on font-bold'
+                            : 'text-text-secondary hover:text-text-primary'
                             }`}
                         >
                           {timeframe}
@@ -246,15 +246,15 @@ export function PortfolioStats({
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Perp:</p>
-                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
+                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Spot + Vault:</p>
-                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
+                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Total:</p>
-                      <p className="text-white text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
+                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
                     </div>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export function PortfolioStats({
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between text-label text-text-muted">
+                    <div className="flex justify-between text-label text-text-tertiary">
                       <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
                       <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
                     </div>
@@ -299,7 +299,7 @@ export function PortfolioStats({
                   {/* Withdrawable */}
                   <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
                     <p className="text-text-secondary text-xs">Withdrawable:</p>
-                    <p className="text-white text-sm font-bold">{formatCurrency(0)}</p>
+                    <p className="text-text-primary text-sm font-bold">{formatCurrency(0)}</p>
                   </div>
                 </div>
               </div>

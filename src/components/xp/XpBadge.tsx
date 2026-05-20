@@ -48,7 +48,7 @@ export function XpBadge({
   if (isLoading && !stats) {
     return (
       <div className={cn("flex items-center gap-2", className)}>
-        <InlineSpinner className="text-brand-gold" />
+        <InlineSpinner className="text-gold" />
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function XpBadge({
     }
   };
 
-  // Compact version for header/sidebar
+  // Compact version for header/sidebar — V4 `.header-stat` chip
   if (compact) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -69,46 +69,39 @@ export function XpBadge({
           <button
             onClick={handleClick}
             className={cn(
-              "flex items-center gap-2 px-2.5 py-1.5 rounded-lg",
-              "bg-gradient-to-r from-brand-gold/10 to-purple-500/10",
-              "border border-brand-gold/20 hover:border-brand-gold/40",
-              "transition-all duration-200 hover:scale-105",
-              "group cursor-pointer",
+              "h-8 inline-flex items-center gap-1.5 px-2.5 rounded-md",
+              "bg-surface-2 border border-border-subtle hover:bg-surface-3",
+              "transition-colors cursor-pointer",
               className
             )}
           >
-            {/* Level badge */}
-            <div className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 text-brand-gold fill-brand-gold" />
-              <span className="text-xs font-bold text-brand-gold">
-                {displayStats.level}
-              </span>
-            </div>
-
-            {/* Mini progress */}
-            <div className="w-12 h-1.5 bg-brand-dark rounded-full overflow-hidden border border-border-subtle">
-              <div
-                className="h-full bg-gradient-to-r from-brand-accent to-cyan-400 transition-all duration-500"
-                style={{ width: `${displayStats.progressPercent}%` }}
-              />
-            </div>
+            {/* Level */}
+            <Star className="h-3 w-3 text-gold fill-gold" />
+            <span className="mono text-[12px] font-medium text-text-primary">
+              {displayStats.level}
+            </span>
 
             {/* Streak */}
-            {showStreak && displayStats.loginStreak > 0 && (
-              <div className="flex items-center gap-0.5">
-                <Flame className="h-3 w-3 text-orange-500" />
-                <span className="text-xs font-medium text-orange-400">
+            {showStreak && (
+              <>
+                <Flame
+                  className={cn(
+                    "h-3 w-3",
+                    displayStats.loginStreak > 0 ? "text-warning" : "text-text-tertiary"
+                  )}
+                />
+                <span className="mono text-[12px] font-medium text-text-primary">
                   {displayStats.loginStreak}
                 </span>
-              </div>
+              </>
             )}
           </button>
         </DialogTrigger>
 
-        <DialogContent className="bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white max-w-md">
+        <DialogContent className="bg-surface border border-border-default rounded-xl text-text-primary max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-white">
-              <Star className="h-5 w-5 text-brand-gold fill-brand-gold" />
+            <DialogTitle className="flex items-center gap-2 text-text-primary">
+              <Star className="h-5 w-5 text-gold fill-gold" />
               Your Progress
             </DialogTitle>
           </DialogHeader>
@@ -123,9 +116,8 @@ export function XpBadge({
     <div
       className={cn(
         "p-6 rounded-2xl",
-        "bg-brand-secondary/60 backdrop-blur-md",
-        "border border-border-subtle hover:border-border-hover transition-all",
-        "shadow-xl shadow-black/20",
+        "bg-surface/60",
+        "border border-border-subtle hover:border-border-default transition-all",
         className
       )}
     >
@@ -155,19 +147,19 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-brand-gold to-purple-500 p-0.5">
-              <div className="h-full w-full rounded-full bg-brand-secondary flex items-center justify-center">
-                <span className="text-xl font-bold text-brand-gold">
+            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-gold to-purple-500 p-0.5">
+              <div className="h-full w-full rounded-full bg-surface flex items-center justify-center">
+                <span className="text-xl font-bold text-gold">
                   {stats.level}
                 </span>
               </div>
             </div>
             {/* Level glow effect */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-gold/20 to-purple-500/20 blur-md -z-10" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/20 to-purple-500/20 blur-md -z-10" />
           </div>
           <div>
             <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Level</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-lg font-bold text-text-primary">
               {stats.totalXp.toLocaleString()} XP
             </p>
           </div>
@@ -180,19 +172,19 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
               <Flame
                 className={cn(
                   "h-5 w-5",
-                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-muted"
+                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-tertiary"
                 )}
               />
               <span
                 className={cn(
                   "text-lg font-bold",
-                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-muted"
+                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-tertiary"
                 )}
               >
                 {stats.loginStreak}
               </span>
             </div>
-            <p className="text-xs text-text-muted">day streak</p>
+            <p className="text-xs text-text-tertiary">day streak</p>
           </div>
         )}
       </div>
@@ -203,26 +195,26 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
           <span className="text-text-secondary">
             Level {stats.level} → {stats.level + 1}
           </span>
-          <span className="text-brand-gold font-medium">{stats.progressPercent}%</span>
+          <span className="text-gold font-medium">{stats.progressPercent}%</span>
         </div>
         <Progress
           value={stats.progressPercent}
-          className="h-2 bg-brand-dark border border-border-subtle"
+          className="h-2 bg-base border border-border-subtle"
         />
-        <div className="flex justify-between text-xs text-text-muted">
+        <div className="flex justify-between text-xs text-text-tertiary">
           <span>{stats.currentLevelXp.toLocaleString()} XP</span>
           <span>{stats.nextLevelXp.toLocaleString()} XP</span>
         </div>
       </div>
 
       {/* XP to next level */}
-      <div className="flex items-center justify-between p-3 bg-brand-dark rounded-xl border border-border-subtle">
+      <div className="flex items-center justify-between p-3 bg-base rounded-lg border border-border-subtle">
         <span className="text-sm text-text-secondary">XP to next level</span>
         <div className="flex items-center gap-1">
-          <span className="text-sm font-bold text-brand-gold">
+          <span className="text-sm font-bold text-gold">
             {stats.xpToNextLevel.toLocaleString()}
           </span>
-          <ChevronRight className="h-4 w-4 text-text-muted" />
+          <ChevronRight className="h-4 w-4 text-text-tertiary" />
         </div>
       </div>
     </div>

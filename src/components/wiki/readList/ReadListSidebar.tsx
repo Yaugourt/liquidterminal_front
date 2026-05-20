@@ -1,5 +1,6 @@
 import { Plus, BookOpen, Trash2, GripVertical, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { ReadList } from "@/services/wiki";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -33,7 +34,7 @@ interface ReadListSidebarProps {
 }
 
 const ReadListSkeleton = () => (
-  <div className="p-3 rounded-xl animate-pulse">
+  <div className="p-3 rounded-lg animate-pulse">
     <div className="flex items-start gap-3">
       <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
       <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
@@ -84,10 +85,10 @@ function SortableReadListItem({
       animate={{ opacity: isDragging ? 0.5 : 1, x: 0 }}
       exit={{ opacity: 0, x: -12 }}
       onClick={() => onSelect(list.id)}
-      className={`p-3 rounded-xl cursor-pointer transition-colors group ${isActive
-        ? "bg-brand-accent/10 border border-brand-accent/25"
+      className={`p-3 rounded-lg cursor-pointer transition-colors group ${isActive
+        ? "bg-brand/10 border border-brand/25"
         : "hover:bg-white/[0.03] border border-transparent hover:border-border-subtle"
-        } ${isDragging ? 'shadow-xl shadow-black/40 z-50' : ''}`}
+        } ${isDragging ? 'z-50' : ''}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-2.5 flex-1 min-w-0">
@@ -97,29 +98,29 @@ function SortableReadListItem({
             className="cursor-grab active:cursor-grabbing p-0.5 hover:bg-white/5 rounded mt-0.5 flex-shrink-0"
             onClick={e => e.stopPropagation()}
           >
-            <GripVertical className={`w-3.5 h-3.5 ${isActive ? "text-brand-accent/60" : "text-text-muted/50"}`} />
+            <GripVertical className={`w-3.5 h-3.5 ${isActive ? "text-brand/60" : "text-text-tertiary/50"}`} />
           </div>
 
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isActive ? "bg-brand-accent/20" : "bg-white/5 group-hover:bg-brand-accent/10"}`}>
-            <BookOpen className={`w-3.5 h-3.5 ${isActive ? "text-brand-accent" : "text-text-muted"}`} />
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isActive ? "bg-brand/20" : "bg-white/5 group-hover:bg-brand/10"}`}>
+            <BookOpen className={`w-3.5 h-3.5 ${isActive ? "text-brand" : "text-text-tertiary"}`} />
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h3 className={`font-medium text-sm truncate ${isActive ? "text-brand-accent" : "text-white"}`}>
+              <h3 className={`font-medium text-sm truncate ${isActive ? "text-brand" : "text-text-primary"}`}>
                 {list.name}
               </h3>
               {list.isPublic && (
-                <Globe className={`w-3 h-3 flex-shrink-0 ${isActive ? "text-brand-accent/70" : "text-text-muted"}`} />
+                <Globe className={`w-3 h-3 flex-shrink-0 ${isActive ? "text-brand/70" : "text-text-tertiary"}`} />
               )}
             </div>
 
             {list.description && (
-              <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{list.description}</p>
+              <p className="text-xs text-text-tertiary mt-0.5 line-clamp-1">{list.description}</p>
             )}
 
             <div className="flex items-center gap-2 mt-1.5">
-              <span className="text-xs text-text-muted">{total} items</span>
+              <span className="text-xs text-text-tertiary">{total} items</span>
             </div>
 
             {/* Progress bar */}
@@ -127,7 +128,7 @@ function SortableReadListItem({
               <div className="mt-2">
                 <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-brand-accent/60 rounded-full"
+                    className="h-full bg-brand/60 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
@@ -183,34 +184,34 @@ export function ReadListSidebar({
   const totalItems = readLists?.reduce((acc, l) => acc + (l.itemsCount || 0), 0) ?? 0;
 
   return (
-    <div className="bg-brand-secondary/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+    <Card>
       {/* Header */}
-      <div className="px-4 py-3.5 border-b border-border-subtle bg-gradient-to-r from-brand-accent/5 to-transparent">
+      <div className="px-4 py-3.5 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-white font-semibold text-sm">Read Lists</h2>
+              <h2 className="text-text-primary font-semibold text-sm">Read Lists</h2>
               {readLists && readLists.length > 0 && (
-                <span className="text-label bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-md">
+                <span className="text-label bg-brand/10 text-brand px-1.5 py-0.5 rounded-md">
                   {readLists.length}
                 </span>
               )}
             </div>
             {totalItems > 0 && (
-              <p className="text-xs text-text-muted mt-0.5">{totalItems} total resources</p>
+              <p className="text-xs text-text-tertiary mt-0.5">{totalItems} total resources</p>
             )}
           </div>
           <Button
             onClick={onCreateList}
             size="sm"
-            className="bg-brand-accent hover:bg-brand-accent/90 text-brand-tertiary font-semibold rounded-lg h-8 w-8 p-0"
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg h-8 w-8 p-0"
             disabled={loading}
             title="Create new list"
           >
             <Plus className="w-4 h-4" />
           </Button>
         </div>
-        <p className="flex items-center gap-1 text-label text-text-muted mt-2">
+        <p className="flex items-center gap-1 text-label text-text-tertiary mt-2">
           <GripVertical className="w-3 h-3" />
           Drag to reorder
         </p>
@@ -227,11 +228,11 @@ export function ReadListSidebar({
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-10"
             >
-              <div className="w-12 h-12 mx-auto mb-3 bg-brand-accent/10 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-brand-accent" />
+              <div className="w-12 h-12 mx-auto mb-3 bg-brand/10 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-brand" />
               </div>
-              <p className="text-text-muted text-sm font-medium">No read lists yet</p>
-              <p className="text-text-muted text-xs mt-1 opacity-70">Click + to create your first list</p>
+              <p className="text-text-tertiary text-sm font-medium">No read lists yet</p>
+              <p className="text-text-tertiary text-xs mt-1 opacity-70">Click + to create your first list</p>
             </motion.div>
           ) : (
             <DndContext
@@ -257,6 +258,6 @@ export function ReadListSidebar({
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </Card>
   );
 }

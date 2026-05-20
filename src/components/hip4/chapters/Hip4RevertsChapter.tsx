@@ -8,14 +8,14 @@ import { Hip4PageHeader } from "@/components/hip4/Hip4PageHeader";
 function TagGroup({ title, tags }: { title: string; tags: string[] }) {
   return (
     <div className="mb-6">
-      <Hip4SectionTitle className="!normal-case !text-[11px] !tracking-normal !text-text-muted">
+      <Hip4SectionTitle className="!normal-case !text-[11px] !tracking-normal !text-text-tertiary">
         {title}
       </Hip4SectionTitle>
       <div className="flex flex-wrap gap-2">
         {tags.map((t) => (
           <span
             key={t}
-            className="rounded-md border border-border-subtle bg-brand-tertiary/20 px-2 py-1 text-[11px] text-white"
+            className="rounded-md border border-border-subtle bg-surface/20 px-2 py-1 text-[11px] text-text-primary"
           >
             {t}
           </span>

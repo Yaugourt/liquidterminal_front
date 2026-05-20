@@ -1,28 +1,42 @@
 "use client";
 
-import { GlobalStatsCard, TokensSection, UniversalTokenTable } from "@/components/market/common";
-import { AuctionCard } from "@/components/market/auction";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { usePageTitle } from "@/store/use-page-title";
+import { MarketStatsStrip, TokensSection } from "@/components/market/common";
+import { AuctionCard, RecentAuctionsCard } from "@/components/market/auction";
+import { PageHeader } from "@/components/common";
 
 export default function Market() {
+  const { setTitle } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Spot Market");
+  }, [setTitle]);
+
   return (
-    <>
-      <div className="space-y-2">
-        <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-          Spot Market
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl">
-          Spot tokens on HyperLiquid — global market stats, recent auction activity, and the full token directory.
-        </p>
+    <motion.div
+      className="space-y-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <PageHeader
+        title="Spot Market"
+        description="Spot tokens on HyperLiquid — global market stats, recent auction activity, and the full token directory."
+      />
+
+      {/* KPI strip */}
+      <MarketStatsStrip market="spot" />
+
+      {/* Auction — status (left) + 5 recent auctions (right) */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.3fr] gap-4 items-start">
+        <AuctionCard marketType="spot" />
+        <RecentAuctionsCard />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
-        <GlobalStatsCard market="spot" />
-        <div className="h-full">
-          <UniversalTokenTable market="spot" mode="compact" />
-        </div>
-        <AuctionCard marketType="spot" />
-      </div>
+      {/* Token directory — main table */}
       <TokensSection market="spot" />
-    </>
+    </motion.div>
   );
 }

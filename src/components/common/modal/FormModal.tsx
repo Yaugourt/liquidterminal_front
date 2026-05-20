@@ -69,12 +69,12 @@ export function FormModal({
       <DialogContent
         className={cn(
           MAX_WIDTH_CLASS[maxWidth],
-          "bg-brand-secondary border border-border-hover rounded-2xl shadow-xl shadow-black/20 text-white",
+          "bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary",
           className
         )}
       >
         <DialogHeader className={hideTitle ? "sr-only" : undefined}>
-          <DialogTitle className={hideTitle ? "sr-only" : "text-lg font-semibold text-white"}>
+          <DialogTitle className={hideTitle ? "sr-only" : "text-lg font-semibold text-text-primary"}>
             {title}
           </DialogTitle>
           {description && (

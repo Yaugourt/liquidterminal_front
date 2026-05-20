@@ -69,7 +69,7 @@ export const StakersTable = memo(function StakersTable() {
             <span className="font-medium">{rank}.</span>
             <Link
               href={`/explorer/address/${holder.address}`}
-              className="text-brand-accent hover:text-white transition-colors"
+              className="text-brand hover:text-text-primary transition-colors"
               title="View address details"
             >
               {formatAddress(holder.address)}
@@ -78,12 +78,12 @@ export const StakersTable = memo(function StakersTable() {
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(holder.address)}
-              className="h-6 w-6 p-0 hover:bg-white/5 text-text-secondary hover:text-brand-gold"
+              className="h-6 w-6 p-0 hover:bg-white/5 text-text-secondary hover:text-gold"
             >
               {copiedAddress === holder.address ? (
                 <Check className="h-3 w-3 text-emerald-400" />
               ) : (
-                <Copy className="h-3 w-3 text-brand-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
+                <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}
             </Button>
           </div>

@@ -39,12 +39,12 @@ export function VaultDetailHeader({
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="glass-panel p-5"
+      className="bg-surface border border-border-subtle rounded-lg p-5"
     >
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         {/* Icon */}
-        <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center flex-shrink-0">
-          <Vault className="w-6 h-6 text-brand-accent" />
+        <div className="w-12 h-12 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center flex-shrink-0">
+          <Vault className="w-6 h-6 text-brand" />
         </div>
 
         {/* Info */}
@@ -57,12 +57,12 @@ export function VaultDetailHeader({
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl font-inter font-bold text-white">{name}</h1>
+                <h1 className="text-xl font-inter font-bold text-text-primary">{name}</h1>
                 <StatusBadge variant={isClosed ? "error" : "success"}>
                   {isClosed ? "Closed" : "Open"}
                 </StatusBadge>
                 {leaderCommission !== undefined && (
-                  <span className="text-[11px] bg-brand-gold/10 text-brand-gold px-2 py-0.5 rounded-full font-medium">
+                  <span className="text-[11px] bg-gold/10 text-gold px-2 py-0.5 rounded-full font-medium">
                     {(leaderCommission * 100).toFixed(0)}% commission
                   </span>
                 )}
@@ -71,13 +71,13 @@ export function VaultDetailHeader({
               <div className="flex flex-wrap gap-4 text-sm">
                 {/* Vault address */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-text-muted text-xs">Vault</span>
-                  <code className="font-mono text-xs text-brand-accent">
+                  <span className="text-text-tertiary text-xs">Vault</span>
+                  <code className="font-mono text-xs text-brand">
                     {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-6)}
                   </code>
                   <button
                     onClick={copy}
-                    className="text-text-muted hover:text-brand-accent transition-colors"
+                    className="text-text-tertiary hover:text-brand transition-colors"
                     title="Copy address"
                   >
                     {copied ? (
@@ -90,7 +90,7 @@ export function VaultDetailHeader({
                     href={`https://app.hyperliquid.xyz/vaults/${vaultAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-text-muted hover:text-brand-accent transition-colors"
+                    className="text-text-tertiary hover:text-brand transition-colors"
                     title="Open on HyperLiquid"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -100,7 +100,7 @@ export function VaultDetailHeader({
                 {/* Leader */}
                 {leader && (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-text-muted text-xs">Leader</span>
+                    <span className="text-text-tertiary text-xs">Leader</span>
                     <AddressDisplay address={leader} />
                   </div>
                 )}

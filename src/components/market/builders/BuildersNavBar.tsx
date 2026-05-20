@@ -16,7 +16,7 @@ export function BuildersNavBar() {
   if (ETH_ADDRESS.test(pathname)) return null;
 
   return (
-    <nav className="flex gap-1 bg-brand-secondary/60 border border-border-subtle p-1 rounded-xl w-fit">
+    <nav className="flex gap-0.5 bg-surface-2 border border-border-subtle p-0.5 rounded-md w-fit">
       {NAV.map(({ label, href }) => {
         const isActive =
           href === "/market/builders"
@@ -26,10 +26,10 @@ export function BuildersNavBar() {
           <Link
             key={href}
             href={href}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
               isActive
-                ? "bg-brand-accent/20 text-brand-accent"
-                : "text-text-secondary hover:bg-white/5 hover:text-white"
+                ? "bg-brand text-brand-text-on"
+                : "text-text-secondary hover:text-text-primary"
             }`}
           >
             {label}

@@ -46,7 +46,7 @@ export function Hip4AbiChapter() {
           rows={COMPARE_ROWS}
         />
         <p className="mt-4 text-[11px] text-text-secondary">
-          V2 mystery selector <code className="text-brand-gold">0xb2447e34</code> is{" "}
+          V2 mystery selector <code className="text-gold">0xb2447e34</code> is{" "}
           <code>withdrawPlatformFee(uint256,uint256)</code> on the shipped source.
         </p>
       </Hip4GlassPanel>
@@ -54,16 +54,16 @@ export function Hip4AbiChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>Full ABI JSON</Hip4SectionTitle>
         <Tabs defaultValue="v1" className="w-full">
-          <TabsList className="mb-3 bg-brand-dark p-1">
+          <TabsList className="mb-3 bg-base p-1">
             <TabsTrigger
               value="v1"
-              className="data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary"
+              className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on"
             >
               V1 <Badge variant="outline" className="ml-1 text-[9px]">{(v1Abi as unknown[]).length} items</Badge>
             </TabsTrigger>
             <TabsTrigger
               value="v2"
-              className="data-[state=active]:bg-brand-accent data-[state=active]:text-brand-tertiary"
+              className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on"
             >
               V2 <Badge variant="outline" className="ml-1 text-[9px]">{(v2Abi as unknown[]).length} items</Badge>
             </TabsTrigger>

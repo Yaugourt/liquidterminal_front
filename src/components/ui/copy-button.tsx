@@ -36,7 +36,7 @@ export function CopyButton({ text, className }: CopyButtonProps) {
             {copied ? (
                 <Check className="h-3.5 w-3.5 text-emerald-500" />
             ) : (
-                <Copy className="h-3.5 w-3.5 text-brand-gold opacity-60 group-hover:opacity-100" />
+                <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100" />
             )}
         </button>
     );
