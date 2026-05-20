@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Terminal — Hyperliquid Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10;
+  --bg-elev:#0f1218;
+  --panel:#13161e;
+  --panel-2:#161a23;
+  --border:#1f2430;
+  --border-soft:#191d27;
+  --text:#e8eaf0;
+  --text-2:#9aa3b4;
+  --text-3:#5d6573;
+  --accent:#3ce6c4;
+  --accent-dim:#1f8c78;
+  --pos:#3ce6a0;
+  --neg:#ff6b7d;
+  --warn:#f5c451;
+  --violet:#8b7ff5;
+  --blue:#5b9dff;
+  --grid: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  font-size:14px;
+  line-height:1.45;
+}
+::selection{background:rgba(60,230,196,.25);}
+.mono{font-family:'IBM Plex Mono',monospace;font-feature-settings:"tnum";}
+a{color:inherit;text-decoration:none;}
+
+/* ============ LAYOUT ============ */
+.shell{display:flex;min-height:100vh;}
+.sidebar{
+  width:232px;flex-shrink:0;
+  background:var(--bg-elev);
+  border-right:1px solid var(--border-soft);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+
+/* ============ SIDEBAR ============ */
+.brand{
+  display:flex;align-items:center;gap:10px;
+  padding:20px 20px 18px;
+  border-bottom:1px solid var(--border-soft);
+}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#06120f;font-size:15px;
+  box-shadow:0 0 0 1px rgba(60,230,196,.2),0 4px 16px rgba(60,230,196,.15);
+}
+.brand-name{font-weight:700;font-size:15px;letter-spacing:-.01em;}
+.brand-sub{font-size:10px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;}
+.nav{padding:14px 12px;flex:1;overflow-y:auto;}
+.nav-group{margin-bottom:18px;}
+.nav-label{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-3);padding:0 10px 8px;font-weight:600;
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:8px 10px;border-radius:7px;
+  color:var(--text-2);font-size:13px;font-weight:500;
+  cursor:pointer;transition:.13s;margin-bottom:1px;
+}
+.nav-item:hover{background:var(--panel);color:var(--text);}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(60,230,196,.1),transparent);
+  color:var(--text);
+}
+.nav-item.active .ic{color:var(--accent);}
+.ic{width:16px;height:16px;flex-shrink:0;opacity:.85;}
+.nav-item .badge{
+  margin-left:auto;font-size:9px;font-weight:600;
+  padding:2px 6px;border-radius:5px;
+  background:rgba(60,230,196,.12);color:var(--accent);
+}
+.sidebar-foot{
+  padding:14px 16px;border-top:1px solid var(--border-soft);
+  display:flex;align-items:center;gap:10px;
+}
+.net-dot{width:7px;height:7px;border-radius:50%;background:var(--pos);box-shadow:0 0 8px var(--pos);}
+.net-txt{font-size:11px;color:var(--text-2);}
+.net-txt b{color:var(--text);font-weight:600;}
+
+/* ============ TOPBAR ============ */
+.topbar{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 28px;
+  border-bottom:1px solid var(--border-soft);
+  background:rgba(10,12,16,.8);
+  backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:20;
+}
+.page-title{font-size:16px;font-weight:600;letter-spacing:-.01em;}
+.page-crumb{font-size:12px;color:var(--text-3);}
+.search{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;width:280px;
+  color:var(--text-3);font-size:12px;
+}
+.search input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-family:inherit;font-size:12px;flex:1;
+}
+.search kbd{
+  font-size:10px;background:var(--bg);border:1px solid var(--border);
+  border-radius:4px;padding:1px 5px;color:var(--text-3);
+}
+.tb-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);cursor:pointer;transition:.13s;
+}
+.tb-btn:hover{color:var(--text);border-color:#2a3140;}
+.tb-pill{
+  display:flex;align-items:center;gap:7px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:6px 11px;font-size:12px;
+  font-weight:500;cursor:pointer;
+}
+.avatar{
+  width:34px;height:34px;border-radius:8px;
+  background:linear-gradient(135deg,#8b7ff5,#5b9dff);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:12px;color:#fff;cursor:pointer;
+}
+
+/* ============ CONTENT ============ */
+.content{padding:24px 28px 48px;max-width:1640px;width:100%;margin:0 auto;}
+.section-head{
+  display:flex;align-items:baseline;gap:12px;margin:0 0 14px;
+}
+.section-head h2{font-size:14px;font-weight:600;letter-spacing:-.005em;}
+.section-head .sub{font-size:11px;color:var(--text-3);}
+.section-head .link{
+  margin-left:auto;font-size:11px;color:var(--text-2);font-weight:500;
+  cursor:pointer;display:flex;align-items:center;gap:4px;
+}
+.section-head .link:hover{color:var(--accent);}
+
+/* ===== STAT STRIP ===== */
+.stat-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:1px;background:var(--border-soft);
+  border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;margin-bottom:24px;
+}
+.stat-cell{
+  background:var(--panel);padding:15px 17px;
+  position:relative;transition:.14s;cursor:default;
+}
+.stat-cell:hover{background:var(--panel-2);}
+.stat-k{
+  font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;margin-bottom:7px;
+  display:flex;align-items:center;gap:6px;
+}
+.stat-v{font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1;}
+.stat-meta{
+  display:flex;align-items:center;gap:6px;margin-top:8px;
+  font-size:11px;
+}
+.delta{font-weight:600;display:flex;align-items:center;gap:2px;}
+.delta.up{color:var(--pos);}
+.delta.down{color:var(--neg);}
+.delta-since{color:var(--text-3);}
+.spark{height:22px;width:100%;margin-top:6px;}
+
+/* ===== GRID ===== */
+.grid{display:grid;gap:16px;}
+.g-main{grid-template-columns:1fr 360px;}
+.g-3{grid-template-columns:repeat(3,1fr);}
+.g-2{grid-template-columns:1fr 1fr;}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.card-head{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px 12px;
+  border-bottom:1px solid var(--border-soft);
+}
+.card-head h3{font-size:13px;font-weight:600;letter-spacing:-.005em;}
+.card-head .tag{
+  font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;
+  background:var(--panel-2);color:var(--text-3);
+  border:1px solid var(--border);
+}
+.card-head .live{
+  background:rgba(60,230,160,.1);color:var(--pos);
+  border-color:rgba(60,230,160,.25);
+  display:flex;align-items:center;gap:5px;
+}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--pos);
+  animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.card-head .right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.card-body{padding:16px;}
+.card-body.flush{padding:0;}
+
+/* ===== CHART CARD ===== */
+.chart-card .card-head{border-bottom:none;padding-bottom:0;}
+.chart-controls{display:flex;gap:6px;}
+.seg{
+  display:flex;background:var(--bg);border:1px solid var(--border);
+  border-radius:7px;padding:2px;gap:1px;
+}
+.seg button{
+  background:none;border:none;color:var(--text-3);
+  font-family:inherit;font-size:11px;font-weight:500;
+  padding:4px 9px;border-radius:5px;cursor:pointer;transition:.12s;
+}
+.seg button.on{background:var(--panel-2);color:var(--text);}
+.seg button:hover:not(.on){color:var(--text-2);}
+.chart-legend{
+  display:flex;gap:18px;padding:14px 16px 6px;flex-wrap:wrap;
+}
+.leg-item{display:flex;align-items:center;gap:7px;cursor:pointer;}
+.leg-dot{width:8px;height:8px;border-radius:2px;}
+.leg-name{font-size:11px;color:var(--text-2);font-weight:500;}
+.leg-val{font-size:11px;color:var(--text);font-weight:600;margin-left:2px;}
+.chart-wrap{padding:4px 8px 14px;position:relative;}
+.chart-foot{
+  display:flex;justify-content:space-between;
+  padding:0 18px 14px;font-size:10px;color:var(--text-3);
+}
+
+/* ===== TABLE ===== */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl thead th{
+  font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--text-3);font-weight:600;text-align:right;
+  padding:9px 16px;border-bottom:1px solid var(--border-soft);
+  background:var(--panel-2);
+}
+.tbl thead th:first-child{text-align:left;}
+.tbl tbody td{
+  padding:10px 16px;text-align:right;
+  border-bottom:1px solid var(--border-soft);
+  font-size:12.5px;
+}
+.tbl tbody tr:last-child td{border-bottom:none;}
+.tbl tbody td:first-child{text-align:left;}
+.tbl tbody tr{transition:.1s;}
+.tbl tbody tr:hover{background:var(--panel-2);}
+.asset{display:flex;align-items:center;gap:9px;}
+.coin{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#06120f;
+}
+.asset-name{font-weight:600;font-size:12.5px;}
+.asset-sub{font-size:10px;color:var(--text-3);}
+.tnum{font-feature-settings:"tnum";}
+.chg{font-weight:600;}
+.chg.up{color:var(--pos);}
+.chg.down{color:var(--neg);}
+.mini-spark{display:inline-block;vertical-align:middle;}
+.lev{
+  font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;
+  background:var(--panel-2);border:1px solid var(--border);color:var(--text-2);
+}
+.funding-pos{color:var(--pos);}
+.funding-neg{color:var(--neg);}
+
+/* ===== AUCTION ===== */
+.auction-live{
+  padding:16px;background:linear-gradient(160deg,rgba(60,230,196,.06),transparent 60%);
+}
+.auc-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.auc-coin{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,#3ce6a0,#3ce6c4);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#06120f;font-size:14px;
+}
+.auc-name{font-size:15px;font-weight:600;}
+.auc-type{font-size:11px;color:var(--text-3);}
+.auc-timer{
+  margin-left:auto;text-align:right;
+}
+.auc-timer .t{font-size:18px;font-weight:600;letter-spacing:-.01em;color:var(--warn);}
+.auc-timer .l{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;}
+.auc-price{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:10px;
+}
+.auc-price .big{font-size:24px;font-weight:600;letter-spacing:-.02em;}
+.auc-price .usd{font-size:12px;color:var(--text-3);}
+.auc-price .label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;}
+.progress{
+  height:6px;background:var(--bg);border-radius:4px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress span{
+  display:block;height:100%;
+  background:linear-gradient(90deg,var(--accent-dim),var(--accent));
+  border-radius:4px;
+}
+.prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:6px;}
+.auc-next{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-top:1px solid var(--border-soft);
+}
+.auc-next .ic-box{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--panel-2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--violet);
+}
+.auc-next .txt{flex:1;}
+.auc-next .txt b{font-size:12px;font-weight:600;}
+.auc-next .txt span{font-size:10px;color:var(--text-3);display:block;}
+.auc-next .when{font-size:12px;font-weight:600;color:var(--text-2);}
+
+/* ===== DEPLOY LIST ===== */
+.deploy-row{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px;border-bottom:1px solid var(--border-soft);
+  font-size:12px;
+}
+.deploy-row:last-child{border-bottom:none;}
+.deploy-row:hover{background:var(--panel-2);}
+.dp-coin{
+  width:22px;height:22px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;color:#06120f;
+}
+.dp-name{font-weight:600;}
+.dp-type{
+  font-size:9px;padding:1px 6px;border-radius:4px;
+  text-transform:uppercase;letter-spacing:.04em;font-weight:600;
+}
+.dp-type.spot{background:rgba(60,230,196,.1);color:var(--accent);}
+.dp-type.perp{background:rgba(139,127,245,.12);color:var(--violet);}
+.dp-price{margin-left:auto;font-weight:600;}
+
+/* ===== LIQ ===== */
+.liq-summary{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border-soft);
+}
+.liq-cell{background:var(--panel);padding:13px 16px;}
+.liq-cell .k{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.liq-cell .v{font-size:17px;font-weight:600;}
+.ls-bar{
+  display:flex;height:8px;border-radius:4px;overflow:hidden;
+  margin:12px 16px 6px;border:1px solid var(--border);
+}
+.ls-bar .lng{background:linear-gradient(90deg,var(--accent-dim),var(--pos));}
+.ls-bar .sht{background:linear-gradient(90deg,#a83a47,var(--neg));}
+.ls-leg{display:flex;justify-content:space-between;padding:0 16px 12px;font-size:10.5px;}
+.ls-leg .lng-t{color:var(--pos);font-weight:600;}
+.ls-leg .sht-t{color:var(--neg);font-weight:600;}
+.liq-flow{border-top:1px solid var(--border-soft);}
+.flow-row{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 16px;font-size:11.5px;
+  border-bottom:1px solid var(--border-soft);
+}
+.flow-row:last-child{border-bottom:none;}
+.side-tag{
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+  letter-spacing:.04em;min-width:46px;text-align:center;
+}
+.side-tag.long{background:rgba(60,230,160,.12);color:var(--pos);}
+.side-tag.short{background:rgba(255,107,125,.12);color:var(--neg);}
+.flow-coin{font-weight:600;}
+.flow-amt{margin-left:auto;font-weight:600;}
+.flow-time{font-size:10px;color:var(--text-3);min-width:34px;text-align:right;}
+
+/* ===== TWAP ===== */
+.twap-row{
+  padding:11px 16px;border-bottom:1px solid var(--border-soft);
+}
+.twap-row:last-child{border-bottom:none;}
+.twap-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.twap-side{
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+}
+.twap-side.buy{background:rgba(60,230,160,.12);color:var(--pos);}
+.twap-side.sell{background:rgba(255,107,125,.12);color:var(--neg);}
+.twap-coin{font-weight:600;font-size:12px;}
+.twap-vol{margin-left:auto;font-size:12px;font-weight:600;}
+.twap-bar{height:5px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border);}
+.twap-bar span{display:block;height:100%;border-radius:3px;}
+.twap-pct{font-size:10px;color:var(--text-3);margin-top:4px;}
+
+/* ===== DONUT / GAUGE ===== */
+.flex-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.builder-row,.perpdex-row{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 16px;border-bottom:1px solid var(--border-soft);
+}
+.builder-row:last-child,.perpdex-row:last-child{border-bottom:none;}
+.builder-row:hover,.perpdex-row:hover{background:var(--panel-2);}
+.rank{
+  width:20px;font-size:11px;font-weight:600;color:var(--text-3);
+  font-family:'IBM Plex Mono',monospace;
+}
+.b-logo{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;
+}
+.b-name{font-weight:600;font-size:12.5px;}
+.b-sub{font-size:10px;color:var(--text-3);}
+.b-stat{text-align:right;}
+.b-stat .v{font-size:12.5px;font-weight:600;}
+.b-stat .l{font-size:9px;color:var(--text-3);text-transform:uppercase;}
+.b-stats{margin-left:auto;display:flex;gap:22px;}
+
+/* footer */
+.foot{
+  display:flex;align-items:center;gap:8px;
+  padding:18px 28px;border-top:1px solid var(--border-soft);
+  font-size:11px;color:var(--text-3);margin-top:8px;
+}
+.foot .dot{width:3px;height:3px;border-radius:50%;background:var(--text-3);}
+
+.mb24{margin-bottom:24px;}
+.mb16{margin-bottom:16px;}
+@media(max-width:1280px){
+  .stat-strip{grid-template-columns:repeat(3,1fr);}
+  .g-main{grid-template-columns:1fr;}
+  .flex-cards{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-name">Liquid Terminal</div>
+        <div class="brand-sub">Hyperliquid Data</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-label">Overview</div>
+        <div class="nav-item active">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+          Markets
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          Activity
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Trading</div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l3 8 4-16 3 8h6"/></svg>
+          Perpetuals
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg>
+          Spot
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 7l7-5 7 5M5 17l7 5 7-5"/></svg>
+          Auctions <span class="badge">LIVE</span>
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+          Liquidations
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Ecosystem</div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+          Vaults
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7Z"/></svg>
+          Validators
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+          Builders & HIP-3
+        </div>
+        <div class="nav-item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M5 12l4-4M5 12l4 4M19 12l-4-4M19 12l-4 4"/></svg>
+          Bridge
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-foot">
+      <span class="net-dot"></span>
+      <div class="net-txt">Block <b>#48,210,773</b> · 0.07s</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="page-title">Hyperliquid Overview</div>
+        <div class="page-crumb">Real-time ecosystem analytics · Mainnet</div>
+      </div>
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input placeholder="Search tokens, vaults, addresses…">
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="tb-pill">
+        <span class="net-dot"></span> HYPE $38.94
+      </div>
+      <div class="tb-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      </div>
+      <div class="avatar">W3</div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== STAT STRIP ===== -->
+      <div class="section-head">
+        <h2>Network Pulse</h2>
+        <span class="sub">Last 24 hours · updated 11s ago</span>
+        <span class="link">All metrics →</span>
+      </div>
+      <div class="stat-strip" id="statStrip"></div>
+
+      <!-- ===== MAIN GRID: CHART + AUCTION ===== -->
+      <div class="grid g-main mb24">
+        <!-- CHART -->
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3>Ecosystem Volume & Flows</h3>
+            <span class="tag">USD</span>
+            <div class="right">
+              <div class="seg">
+                <button>1D</button>
+                <button>7D</button>
+                <button class="on">30D</button>
+                <button>90D</button>
+                <button>1Y</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="leg-item"><span class="leg-dot" style="background:#3ce6c4"></span><span class="leg-name">Perp Volume</span><span class="leg-val">$4.21B</span></div>
+            <div class="leg-item"><span class="leg-dot" style="background:#8b7ff5"></span><span class="leg-name">Open Interest</span><span class="leg-val">$8.14B</span></div>
+            <div class="leg-item"><span class="leg-dot" style="background:#5b9dff"></span><span class="leg-name">Bridge TVL</span><span class="leg-val">$3.12B</span></div>
+            <div class="leg-item"><span class="leg-dot" style="background:#f5c451"></span><span class="leg-name">24h Fees</span><span class="leg-val">$1.24M</span></div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="mainChart" viewBox="0 0 920 280" width="100%" height="280" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="chart-foot">
+            <span>Apr 18</span><span>Apr 25</span><span>May 2</span><span>May 9</span><span>May 16</span><span>May 18</span>
+          </div>
+        </div>
+
+        <!-- AUCTION -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Token Auction</h3>
+            <span class="tag live"><span class="live-dot"></span>LIVE</span>
+          </div>
+          <div class="auction-live">
+            <div class="auc-top">
+              <div class="auc-coin">FR</div>
+              <div>
+                <div class="auc-name">FROG</div>
+                <div class="auc-type">Spot deployment · Dutch auction</div>
+              </div>
+              <div class="auc-timer">
+                <div class="t mono">03:42:11</div>
+                <div class="l">Remaining</div>
+              </div>
+            </div>
+            <div class="auc-price">
+              <div>
+                <div class="label">Current price</div>
+                <div class="big mono">12.84 <span style="font-size:13px;color:var(--text-3)">HYPE</span></div>
+              </div>
+              <div class="usd mono">≈ $487.00</div>
+            </div>
+            <div class="progress"><span style="width:64%"></span></div>
+            <div class="prog-meta"><span>Auction progress</span><span>64%</span></div>
+          </div>
+          <div class="auc-next">
+            <div class="ic-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <div class="txt">
+              <b>Perp Auction · HIP-3</b>
+              <span>Next deployment slot opens</span>
+            </div>
+            <div class="when">2d 04h</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TRENDING SPOT + PERP ===== -->
+      <div class="grid g-2 mb24">
+        <!-- SPOT -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Trending Spot</h3>
+            <span class="tag">7 markets</span>
+            <div class="right"><span class="link" style="margin:0">View all →</span></div>
+          </div>
+          <div class="card-body flush">
+            <table class="tbl">
+              <thead><tr>
+                <th>Token</th><th>Price</th><th>24h</th><th>Volume</th><th>Mkt Cap</th><th>Liquidity</th>
+              </tr></thead>
+              <tbody id="spotBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- PERP -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Trending Perpetuals</h3>
+            <span class="tag">5 markets</span>
+            <div class="right"><span class="link" style="margin:0">View all →</span></div>
+          </div>
+          <div class="card-body flush">
+            <table class="tbl">
+              <thead><tr>
+                <th>Token</th><th>Price</th><th>24h</th><th>Funding</th><th>Open Int.</th><th>Volume</th><th>Lev</th>
+              </tr></thead>
+              <tbody id="perpBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LIQUIDATIONS + TWAP + DEPLOYMENTS ===== -->
+      <div class="grid g-3 mb24">
+        <!-- LIQUIDATIONS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Liquidations</h3>
+            <span class="tag">24h</span>
+            <div class="right"><span class="tag live"><span class="live-dot"></span>FEED</span></div>
+          </div>
+          <div class="liq-summary">
+            <div class="liq-cell"><div class="k">Total liquidated</div><div class="v mono">$8.41M</div></div>
+            <div class="liq-cell"><div class="k">Events</div><div class="v mono">1,204</div></div>
+            <div class="liq-cell"><div class="k">Avg size</div><div class="v mono">$6.98K</div></div>
+            <div class="liq-cell"><div class="k">Liq. fees</div><div class="v mono">$42K</div></div>
+          </div>
+          <div class="ls-bar">
+            <span class="lng" style="width:64%"></span>
+            <span class="sht" style="width:36%"></span>
+          </div>
+          <div class="ls-leg">
+            <span class="lng-t">Long 64%</span>
+            <span style="color:var(--text-3)">Top token · BTC</span>
+            <span class="sht-t">Short 36%</span>
+          </div>
+          <div class="liq-flow">
+            <div class="flow-row"><span class="side-tag long">LONG</span><span class="flow-coin">BTC</span><span class="flow-amt mono">$182K</span><span class="flow-time">12s</span></div>
+            <div class="flow-row"><span class="side-tag short">SHORT</span><span class="flow-coin">ETH</span><span class="flow-amt mono">$94K</span><span class="flow-time">41s</span></div>
+            <div class="flow-row"><span class="side-tag long">LONG</span><span class="flow-coin">HYPE</span><span class="flow-amt mono">$61K</span><span class="flow-time">1m</span></div>
+            <div class="flow-row"><span class="side-tag long">LONG</span><span class="flow-coin">SOL</span><span class="flow-amt mono">$49K</span><span class="flow-time">2m</span></div>
+            <div class="flow-row"><span class="side-tag short">SHORT</span><span class="flow-coin">AVAX</span><span class="flow-amt mono">$33K</span><span class="flow-time">3m</span></div>
+            <div class="flow-row"><span class="side-tag long">LONG</span><span class="flow-coin">DOGE</span><span class="flow-amt mono">$21K</span><span class="flow-time">5m</span></div>
+          </div>
+        </div>
+
+        <!-- TWAP -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Active TWAP Orders</h3>
+            <span class="tag">14 active</span>
+            <div class="right"><span class="tag" style="color:var(--accent);background:rgba(60,230,196,.08);border-color:rgba(60,230,196,.2)">$4.2M vol</span></div>
+          </div>
+          <div class="card-body flush">
+            <div class="twap-row">
+              <div class="twap-top"><span class="twap-side buy">BUY</span><span class="twap-coin">HYPE</span><span class="twap-vol mono">$1.2M</span></div>
+              <div class="twap-bar"><span style="width:62%;background:linear-gradient(90deg,var(--accent-dim),var(--pos))"></span></div>
+              <div class="twap-pct">62% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-top"><span class="twap-side sell">SELL</span><span class="twap-coin">BTC</span><span class="twap-vol mono">$840K</span></div>
+              <div class="twap-bar"><span style="width:38%;background:linear-gradient(90deg,#a83a47,var(--neg))"></span></div>
+              <div class="twap-pct">38% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-top"><span class="twap-side buy">BUY</span><span class="twap-coin">ETH</span><span class="twap-vol mono">$610K</span></div>
+              <div class="twap-bar"><span style="width:81%;background:linear-gradient(90deg,var(--accent-dim),var(--pos))"></span></div>
+              <div class="twap-pct">81% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-top"><span class="twap-side buy">BUY</span><span class="twap-coin">SOL</span><span class="twap-vol mono">$420K</span></div>
+              <div class="twap-bar"><span style="width:25%;background:linear-gradient(90deg,var(--accent-dim),var(--pos))"></span></div>
+              <div class="twap-pct">25% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-top"><span class="twap-side sell">SELL</span><span class="twap-coin">AVAX</span><span class="twap-vol mono">$180K</span></div>
+              <div class="twap-bar"><span style="width:54%;background:linear-gradient(90deg,#a83a47,var(--neg))"></span></div>
+              <div class="twap-pct">54% filled</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT DEPLOYMENTS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Recent Deployments</h3>
+            <span class="tag">Last 5</span>
+          </div>
+          <div class="card-body flush">
+            <div class="deploy-row"><span class="dp-coin" style="background:linear-gradient(135deg,#3ce6a0,#3ce6c4)">FR</span><span class="dp-name">FROG</span><span class="dp-type spot">Spot</span><span class="dp-price mono">12.84 HYPE</span></div>
+            <div class="deploy-row"><span class="dp-coin" style="background:linear-gradient(135deg,#5b9dff,#8b7ff5)">MN</span><span class="dp-name">MOON</span><span class="dp-type spot">Spot</span><span class="dp-price mono">10.40 HYPE</span></div>
+            <div class="deploy-row"><span class="dp-coin" style="background:linear-gradient(135deg,#f5c451,#f59e51)">PP</span><span class="dp-name">PEPE2</span><span class="dp-type spot">Spot</span><span class="dp-price mono">9.90 HYPE</span></div>
+            <div class="deploy-row"><span class="dp-coin" style="background:linear-gradient(135deg,#8b7ff5,#b07ff5)">VG</span><span class="dp-name">VEGA</span><span class="dp-type perp">Perp</span><span class="dp-price mono">1.8K USDC</span></div>
+            <div class="deploy-row"><span class="dp-coin" style="background:linear-gradient(135deg,#3ce6c4,#3c9de6)">GG</span><span class="dp-name">GIGA</span><span class="dp-type spot">Spot</span><span class="dp-price mono">9.10 HYPE</span></div>
+          </div>
+          <div class="card-head" style="border-top:1px solid var(--border-soft);border-bottom:none;margin-top:auto">
+            <h3 style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em">HIP-3 Perp DEXs</h3>
+          </div>
+          <div class="card-body flush">
+            <div class="perpdex-row"><span class="rank">01</span><span class="b-logo" style="background:rgba(60,230,196,.12);color:var(--accent)">UN</span><div><div class="b-name">Unit</div><div class="b-sub">24 markets</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$98M</div><div class="l">Vol</div></div><div class="b-stat"><div class="v mono">$210M</div><div class="l">OI</div></div></div></div>
+            <div class="perpdex-row"><span class="rank">02</span><span class="b-logo" style="background:rgba(139,127,245,.12);color:var(--violet)">BM</span><div><div class="b-name">Bolt Markets</div><div class="b-sub">12 markets</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$42M</div><div class="l">Vol</div></div><div class="b-stat"><div class="v mono">$88M</div><div class="l">OI</div></div></div></div>
+            <div class="perpdex-row"><span class="rank">03</span><span class="b-logo" style="background:rgba(91,157,255,.12);color:var(--blue)">VG</span><div><div class="b-name">Vega</div><div class="b-sub">8 markets</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$28M</div><div class="l">Vol</div></div><div class="b-stat"><div class="v mono">$54M</div><div class="l">OI</div></div></div></div>
+            <div class="perpdex-row"><span class="rank">04</span><span class="b-logo" style="background:rgba(245,196,81,.12);color:var(--warn)">XP</span><div><div class="b-name">xyz Perps</div><div class="b-sub">5 markets</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$11M</div><div class="l">Vol</div></div><div class="b-stat"><div class="v mono">$19M</div><div class="l">OI</div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== VAULTS + VALIDATORS ===== -->
+      <div class="grid g-2 mb24">
+        <!-- VAULTS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Top Vaults</h3>
+            <span class="tag">$1.91B TVL</span>
+            <div class="right"><span class="link" style="margin:0">All vaults →</span></div>
+          </div>
+          <div class="card-body flush">
+            <table class="tbl">
+              <thead><tr><th>Vault</th><th>APR</th><th>TVL</th><th>Leader</th></tr></thead>
+              <tbody>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#3ce6a0,#3ce6c4)">HL</span><div><div class="asset-name">HLP</div><div class="asset-sub">Protocol vault</div></div></div></td><td class="mono chg up">14.2%</td><td class="mono">$1.10B</td><td class="mono" style="color:var(--text-2)">0x7a3f…e21c</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#5b9dff,#8b7ff5)">HQ</span><div><div class="asset-name">Hyperliquidity</div><div class="asset-sub">Market making</div></div></div></td><td class="mono chg up">9.8%</td><td class="mono">$240M</td><td class="mono" style="color:var(--text-2)">0x1b9d…44a0</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#f5c451,#f59e51)">BK</span><div><div class="asset-name">Bonk Vault</div><div class="asset-sub">Strategy</div></div></div></td><td class="mono chg up">22.4%</td><td class="mono">$88M</td><td class="mono" style="color:var(--text-2)">0xc402…9f7e</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#8b7ff5,#b07ff5)">FX</span><div><div class="asset-name">Felix Stable</div><div class="asset-sub">Stablecoin</div></div></div></td><td class="mono chg up">6.1%</td><td class="mono">$54M</td><td class="mono" style="color:var(--text-2)">0x55e1…0db2</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#ff6b7d,#f59e51)">RT</span><div><div class="asset-name">Rage Trade</div><div class="asset-sub">Directional</div></div></div></td><td class="mono chg up">18.0%</td><td class="mono">$31M</td><td class="mono" style="color:var(--text-2)">0x9aa8…7c33</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- VALIDATORS -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Validators</h3>
+            <span class="tag">421.3M HYPE staked</span>
+            <div class="right"><span class="link" style="margin:0">All validators →</span></div>
+          </div>
+          <div class="card-body flush">
+            <table class="tbl">
+              <thead><tr><th>Validator</th><th>Stake</th><th>APR</th><th>Commission</th><th>Uptime</th></tr></thead>
+              <tbody>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#3ce6a0,#3ce6c4)">HF</span><div><div class="asset-name">Hyper Foundation</div><div class="asset-sub">Genesis node</div></div></div></td><td class="mono">38.2M</td><td class="mono">2.1%</td><td class="mono" style="color:var(--text-2)">5.0%</td><td class="mono chg up">99.9%</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#5b9dff,#8b7ff5)">AX</span><div><div class="asset-name">ASXN</div><div class="asset-sub">Research</div></div></div></td><td class="mono">24.1M</td><td class="mono">2.3%</td><td class="mono" style="color:var(--text-2)">4.0%</td><td class="mono chg up">99.8%</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#8b7ff5,#b07ff5)">NA</span><div><div class="asset-name">Nansen</div><div class="asset-sub">Analytics</div></div></div></td><td class="mono">19.8M</td><td class="mono">2.2%</td><td class="mono" style="color:var(--text-2)">5.0%</td><td class="mono chg up">99.7%</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#f5c451,#f59e51)">BH</span><div><div class="asset-name">B-Harvest</div><div class="asset-sub">Infra</div></div></div></td><td class="mono">16.4M</td><td class="mono">2.4%</td><td class="mono" style="color:var(--text-2)">3.0%</td><td class="mono chg up">99.9%</td></tr>
+                <tr><td><div class="asset"><span class="coin" style="background:linear-gradient(135deg,#3ce6c4,#3c9de6)">VX</span><div><div class="asset-name">Validator.xyz</div><div class="asset-sub">Community</div></div></div></td><td class="mono">12.0M</td><td class="mono">2.0%</td><td class="mono" style="color:var(--text-2)">6.0%</td><td class="mono chg down">98.4%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== BUILDERS ===== -->
+      <div class="section-head">
+        <h2>Builder Leaderboard</h2>
+        <span class="sub">Apps generating fees via the builder code program · 24h</span>
+        <span class="link">Full leaderboard →</span>
+      </div>
+      <div class="card mb16">
+        <div class="card-body flush">
+          <div class="builder-row"><span class="rank">01</span><span class="b-logo" style="background:rgba(60,230,196,.12);color:var(--accent)">PV</span><div><div class="b-name">pvp.trade</div><div class="b-sub">Social perp trading</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$31.2K</div><div class="l">Fees</div></div><div class="b-stat"><div class="v mono">$58M</div><div class="l">Volume</div></div><div class="b-stat"><div class="v mono">1,240</div><div class="l">Users</div></div></div></div>
+          <div class="builder-row"><span class="rank">02</span><span class="b-logo" style="background:rgba(139,127,245,.12);color:var(--violet)">OK</span><div><div class="b-name">Okto</div><div class="b-sub">Mobile wallet</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$22.8K</div><div class="l">Fees</div></div><div class="b-stat"><div class="v mono">$41M</div><div class="l">Volume</div></div><div class="b-stat"><div class="v mono">980</div><div class="l">Users</div></div></div></div>
+          <div class="builder-row"><span class="rank">03</span><span class="b-logo" style="background:rgba(91,157,255,.12);color:var(--blue)">DX</span><div><div class="b-name">Dexari</div><div class="b-sub">Trading terminal</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$14.1K</div><div class="l">Fees</div></div><div class="b-stat"><div class="v mono">$26M</div><div class="l">Volume</div></div><div class="b-stat"><div class="v mono">610</div><div class="l">Users</div></div></div></div>
+          <div class="builder-row"><span class="rank">04</span><span class="b-logo" style="background:rgba(245,196,81,.12);color:var(--warn)">IN</span><div><div class="b-name">Insilico</div><div class="b-sub">Algo strategies</div></div><div class="b-stats"><div class="b-stat"><div class="v mono">$9.7K</div><div class="l">Fees</div></div><div class="b-stat"><div class="v mono">$18M</div><div class="l">Volume</div></div><div class="b-stat"><div class="v mono">420</div><div class="l">Users</div></div></div></div>
+        </div>
+      </div>
+
+      <div class="foot">
+        <span>Liquid Terminal</span><span class="dot"></span>
+        <span>Data refreshed every block</span><span class="dot"></span>
+        <span>Mainnet · Chain ID 999</span><span class="dot"></span>
+        <span>Figures are illustrative</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ STAT STRIP ============ */
+const stats=[
+  {k:'24h Volume',v:'$4.21B',d:'+8.4%',up:1,s:[12,14,13,16,15,18,17,19,21,20,23,24]},
+  {k:'Open Interest',v:'$8.14B',d:'+3.1%',up:1,s:[40,41,39,42,44,43,45,44,46,48,47,49]},
+  {k:'24h Fees',v:'$1.24M',d:'+11.7%',up:1,s:[6,7,6,8,9,8,10,11,10,12,13,14]},
+  {k:'Vaults TVL',v:'$1.91B',d:'+1.9%',up:1,s:[30,31,30,32,31,33,34,33,35,36,35,37]},
+  {k:'HYPE Staked',v:'421.3M',d:'+2.4%',up:1,s:[20,21,22,22,23,24,24,25,26,27,28,29]},
+  {k:'Users',v:'540,219',d:'+0.9%',up:1,s:[44,45,46,47,47,48,49,50,51,52,53,54]},
+  {k:'Spot Mkt Cap',v:'$9.84B',d:'+6.2%',up:1,s:[60,58,62,61,64,66,65,68,70,72,71,74]},
+  {k:'Bridged USDC',v:'$3.12B',d:'+4.5%',up:1,s:[24,25,24,26,27,28,27,29,30,31,30,32]},
+  {k:'24h Trades',v:'2.41M',d:'+9.0%',up:1,s:[14,15,16,15,17,18,19,18,20,21,22,24]},
+  {k:'HLP TVL',v:'$482M',d:'-1.2%',up:0,s:[50,51,50,49,50,48,49,47,48,47,46,47]},
+];
+function sparkPath(arr,w,h){
+  const mn=Math.min(...arr),mx=Math.max(...arr),rg=mx-mn||1;
+  return arr.map((v,i)=>{
+    const x=(i/(arr.length-1))*w;
+    const y=h-((v-mn)/rg)*(h-3)-1.5;
+    return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+  }).join(' ');
+}
+const strip=document.getElementById('statStrip');
+stats.forEach((s,i)=>{
+  const col=s.up?'#3ce6a0':'#ff6b7d';
+  const path=sparkPath(s.s,120,22);
+  const area=path+` L120 22 L0 22 Z`;
+  strip.insertAdjacentHTML('beforeend',`
+    <div class="stat-cell">
+      <div class="stat-k">${s.k}</div>
+      <div class="stat-v mono">${s.v}</div>
+      <svg class="spark" viewBox="0 0 120 22" preserveAspectRatio="none">
+        <defs><linearGradient id="sg${i}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="${col}" stop-opacity=".28"/>
+          <stop offset="1" stop-color="${col}" stop-opacity="0"/>
+        </linearGradient></defs>
+        <path d="${area}" fill="url(#sg${i})"/>
+        <path d="${path}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="stat-meta">
+        <span class="delta ${s.up?'up':'down'}">${s.up?'▲':'▼'} ${s.d.replace(/[+-]/,'')}</span>
+        <span class="delta-since">vs prev. 24h</span>
+      </div>
+    </div>`);
+});
+
+/* ============ MAIN CHART ============ */
+(function(){
+  const W=920,H=280,PT=14,PB=26,PL=8,PR=8;
+  const N=30;
+  function gen(base,vol,trend){
+    const a=[];let v=base;
+    for(let i=0;i<N;i++){
+      v+=trend+(Math.sin(i*0.7)*vol*0.4)+((i*9301+49297)%233/233-0.5)*vol;
+      a.push(Math.max(v,base*0.3));
+    }
+    return a;
+  }
+  const series=[
+    {c:'#3ce6c4',d:gen(2.4,0.32,0.07)},
+    {c:'#8b7ff5',d:gen(5.6,0.4,0.09)},
+    {c:'#5b9dff',d:gen(2.0,0.18,0.04)},
+    {c:'#f5c451',d:gen(0.6,0.12,0.024)},
+  ];
+  let mn=Infinity,mx=-Infinity;
+  series.forEach(s=>s.d.forEach(v=>{if(v<mn)mn=v;if(v>mx)mx=v;}));
+  const rg=mx-mn;mn-=rg*0.12;mx+=rg*0.12;
+  const px=i=>PL+(i/(N-1))*(W-PL-PR);
+  const py=v=>PT+(1-(v-mn)/(mx-mn))*(H-PT-PB);
+  const svg=document.getElementById('mainChart');
+  let out='';
+  // grid
+  for(let g=0;g<=4;g++){
+    const y=PT+(g/4)*(H-PT-PB);
+    out+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="#1f2430" stroke-width="1"/>`;
+  }
+  // defs
+  out+='<defs>';
+  series.forEach((s,i)=>{
+    out+=`<linearGradient id="cg${i}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${s.c}" stop-opacity="${i===0?.22:.08}"/>
+      <stop offset="1" stop-color="${s.c}" stop-opacity="0"/></linearGradient>`;
+  });
+  out+='</defs>';
+  // areas + lines (draw fees & bridge faintly, OI + volume bold)
+  series.slice().reverse().forEach((s,ri)=>{
+    const i=series.length-1-ri;
+    let line=s.d.map((v,j)=>(j?'L':'M')+px(j).toFixed(1)+' '+py(v).toFixed(1)).join(' ');
+    let area=line+` L${px(N-1).toFixed(1)} ${H-PB} L${px(0).toFixed(1)} ${H-PB} Z`;
+    const bold=(i<=1);
+    out+=`<path d="${area}" fill="url(#cg${i})"/>`;
+    out+=`<path d="${line}" fill="none" stroke="${s.c}" stroke-width="${bold?2.2:1.5}" stroke-linejoin="round" stroke-opacity="${bold?1:.7}"/>`;
+  });
+  // end dots
+  series.forEach((s,i)=>{
+    const lx=px(N-1),ly=py(s.d[N-1]);
+    out+=`<circle cx="${lx}" cy="${ly}" r="3.4" fill="${s.c}"/>`;
+    out+=`<circle cx="${lx}" cy="${ly}" r="6" fill="${s.c}" fill-opacity=".18"/>`;
+  });
+  svg.innerHTML=out;
+})();
+
+/* ============ MINI SPARK FOR ROWS ============ */
+function mini(arr,col){
+  const w=58,h=18,mn=Math.min(...arr),mx=Math.max(...arr),rg=mx-mn||1;
+  const p=arr.map((v,i)=>(i?'L':'M')+((i/(arr.length-1))*w).toFixed(1)+' '+(h-((v-mn)/rg)*(h-3)-1.5).toFixed(1)).join(' ');
+  return `<svg class="mini-spark" width="${w}" height="${h}"><path d="${p}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+/* ============ TRENDING SPOT ============ */
+const spot=[
+  {n:'HYPE',f:'Hyperliquid',p:'$38.94',c:'+5.2%',u:1,v:'$182M',m:'$4.2B',l:'$61M',cl:'#3ce6c4',s:[1,2,2,3,3,4,4,5]},
+  {n:'HFUN',f:'HypurrFun',p:'$1.04',c:'+12.1%',u:1,v:'$14M',m:'$97M',l:'$9M',cl:'#f5c451',s:[1,1,2,2,3,4,5,6]},
+  {n:'PURR',f:'Purr',p:'$0.182',c:'-3.4%',u:0,v:'$8.9M',m:'$182M',l:'$22M',cl:'#ff6b7d',s:[6,5,5,4,4,3,3,2]},
+  {n:'LIQD',f:'Liquid',p:'$2.41',c:'+6.8%',u:1,v:'$6.4M',m:'$54M',l:'$7M',cl:'#5b9dff',s:[2,2,3,3,4,4,5,5]},
+  {n:'JEFF',f:'Jeff',p:'$0.094',c:'-1.1%',u:0,v:'$3.1M',m:'$18M',l:'$3M',cl:'#ff6b7d',s:[4,4,3,4,3,3,3,3]},
+  {n:'GIGA',f:'Gigachad',p:'$5.67',c:'+2.0%',u:1,v:'$6.4M',m:'$54M',l:'$8M',cl:'#8b7ff5',s:[3,3,3,4,3,4,4,4]},
+  {n:'MELON',f:'Melon',p:'$0.41',c:'+9.4%',u:1,v:'$2.2M',m:'$12M',l:'$2M',cl:'#3ce6a0',s:[1,2,2,3,3,4,5,5]},
+];
+const sb=document.getElementById('spotBody');
+spot.forEach(t=>{
+  const grad=`linear-gradient(135deg,${t.cl},${t.cl}99)`;
+  sb.insertAdjacentHTML('beforeend',`<tr>
+    <td><div class="asset"><span class="coin" style="background:${grad}">${t.n.slice(0,2)}</span>
+      <div><div class="asset-name">${t.n}</div><div class="asset-sub">${t.f}</div></div></div></td>
+    <td class="mono">${t.p}</td>
+    <td><span class="chg ${t.u?'up':'down'} mono">${t.c}</span> ${mini(t.s,t.u?'#3ce6a0':'#ff6b7d')}</td>
+    <td class="mono">${t.v}</td>
+    <td class="mono" style="color:var(--text-2)">${t.m}</td>
+    <td class="mono" style="color:var(--text-2)">${t.l}</td>
+  </tr>`);
+});
+
+/* ============ TRENDING PERP ============ */
+const perp=[
+  {n:'BTC',f:'Bitcoin',p:'$97,420',c:'+2.1%',u:1,fd:'+0.012%',fu:1,oi:'$2.14B',v:'$890M',lv:'40x',cl:'#f5c451'},
+  {n:'ETH',f:'Ethereum',p:'$3,510',c:'+3.4%',u:1,fd:'+0.009%',fu:1,oi:'$1.32B',v:'$610M',lv:'25x',cl:'#5b9dff'},
+  {n:'HYPE',f:'Hyperliquid',p:'$38.92',c:'+5.2%',u:1,fd:'-0.021%',fu:0,oi:'$890M',v:'$420M',lv:'20x',cl:'#3ce6c4'},
+  {n:'SOL',f:'Solana',p:'$214.6',c:'-1.2%',u:0,fd:'+0.004%',fu:1,oi:'$612M',v:'$310M',lv:'20x',cl:'#8b7ff5'},
+  {n:'AVAX',f:'Avalanche',p:'$48.20',c:'+0.9%',u:1,fd:'+0.007%',fu:1,oi:'$208M',v:'$94M',lv:'10x',cl:'#ff6b7d'},
+];
+const pb=document.getElementById('perpBody');
+perp.forEach(t=>{
+  const grad=`linear-gradient(135deg,${t.cl},${t.cl}99)`;
+  pb.insertAdjacentHTML('beforeend',`<tr>
+    <td><div class="asset"><span class="coin" style="background:${grad}">${t.n.slice(0,2)}</span>
+      <div><div class="asset-name">${t.n}</div><div class="asset-sub">${t.f}-PERP</div></div></div></td>
+    <td class="mono">${t.p}</td>
+    <td><span class="chg ${t.u?'up':'down'} mono">${t.c}</span></td>
+    <td class="mono ${t.fu?'funding-pos':'funding-neg'}">${t.fd}</td>
+    <td class="mono" style="color:var(--text-2)">${t.oi}</td>
+    <td class="mono">${t.v}</td>
+    <td><span class="lev">${t.lv}</span></td>
+  </tr>`);
+});
+
+/* ============ COUNTDOWN ============ */
+(function(){
+  let total=3*3600+42*60+11;
+  const el=document.querySelector('.auc-timer .t');
+  setInterval(()=>{
+    total--;if(total<0)total=4*3600;
+    const h=String(Math.floor(total/3600)).padStart(2,'0');
+    const m=String(Math.floor(total%3600/60)).padStart(2,'0');
+    const s=String(total%60).padStart(2,'0');
+    el.textContent=`${h}:${m}:${s}`;
+  },1000);
+})();
+</script>
+</body>
+</html>

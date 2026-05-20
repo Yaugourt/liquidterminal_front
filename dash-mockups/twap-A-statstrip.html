@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TWAP Panel — Variant A · Stat strip + table</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { background:#0A0B0F; color:#F1F4FA; font-family: Inter, ui-sans-serif, system-ui; padding: 32px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .card { background:#0F1421; border:1px solid rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:.625rem; padding:.625rem .875rem; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .icon-wrap { width:1.5rem; height:1.5rem; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .pill { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:#141B2A; color:#6B7689; border:1px solid rgba(255,255,255,0.06); }
+  .pill-brand { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .stat-cell { padding: 10px 12px; flex: 1; border-right: 1px solid rgba(255,255,255,0.06); }
+  .stat-cell:last-child { border-right: none; }
+  .stat-cell.center { background: linear-gradient(180deg, rgba(131,233,255,0.04) 0%, transparent 100%); }
+  .label-up { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7689; }
+  .col-side  { width: 56px; }
+  .col-fill  { width: 100px; }
+  .col-value { width: 84px; }
+</style>
+</head>
+<body>
+<div style="max-width:520px; margin:0 auto;">
+  <div class="text-[10px] mono uppercase tracking-widest text-[#6B7689] mb-2">Variant A · stat-strip + table aligned</div>
+  <div class="card">
+    <!-- card-head -->
+    <div class="card-head">
+      <span class="icon-wrap">
+        <svg width="13" height="13" viewBox="0 0 24 24" stroke="#83E9FF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </span>
+      <h3 class="text-[13px] font-semibold">Active TWAP Orders</h3>
+      <span class="pill">42 active</span>
+      <span class="ml-auto pill-brand mono">$32.4M vol</span>
+    </div>
+
+    <!-- HYPE pressure stat strip (3 cells) -->
+    <div class="border-b border-[rgba(255,255,255,0.06)]">
+      <div class="flex">
+        <div class="stat-cell">
+          <div class="label-up">Buys HYPE</div>
+          <div class="mono text-[15px] font-semibold text-[#1FA85B] mt-0.5">$2.18M</div>
+        </div>
+        <div class="stat-cell center">
+          <div class="label-up">Net Pressure</div>
+          <div class="mono text-[20px] font-bold text-[#1FA85B] mt-0.5 tracking-tight">+$1.24M</div>
+        </div>
+        <div class="stat-cell">
+          <div class="label-up text-right">Sells HYPE</div>
+          <div class="mono text-[15px] font-semibold text-[#E53E3E] mt-0.5 text-right">$940K</div>
+        </div>
+      </div>
+      <!-- bar split outside the cells, full width, sub-header style -->
+      <div class="px-3.5 pb-2.5 pt-1">
+        <div class="flex h-1 rounded overflow-hidden bg-[#0A0B0F]">
+          <span class="bg-[#1FA85B]" style="width:70%"></span>
+          <span class="bg-[#E53E3E]" style="width:30%"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TWAP rows — column headers + 4 rows -->
+    <div>
+      <!-- column headers -->
+      <div class="flex items-center gap-3 px-3.5 py-1.5 bg-[#141B2A]/40 text-[9px] uppercase tracking-[0.06em] text-[#6B7689] font-semibold">
+        <span class="col-side">Side</span>
+        <span class="flex-1">Token</span>
+        <span class="col-fill text-right">Filled</span>
+        <span class="col-value text-right">Value</span>
+      </div>
+
+      <!-- row 1 -->
+      <div class="flex items-center gap-3 px-3.5 py-2.5 border-b border-[rgba(255,255,255,0.06)] hover:bg-[#141B2A] transition-colors cursor-pointer">
+        <span class="col-side text-[10px] font-bold px-1.5 py-1 rounded text-center bg-[#1FA85B]/10 text-[#1FA85B]">BUY</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[12.5px] font-semibold leading-tight">HYPE</div>
+          <div class="text-[10.5px] text-[#6B7689] mono leading-tight mt-0.5">12.4K · 2h 14m</div>
+        </div>
+        <div class="col-fill flex items-center gap-2">
+          <span class="flex-1 h-1.5 rounded bg-[#0A0B0F] overflow-hidden">
+            <i class="block h-full bg-[#1FA85B]" style="width:42%"></i>
+          </span>
+          <span class="mono text-[10.5px] text-[#A6B0C3] font-semibold w-7 text-right">42%</span>
+        </div>
+        <div class="col-value mono text-[13px] font-semibold text-[#F9E370] text-right tracking-tight">$302K</div>
+      </div>
+
+      <!-- row 2 -->
+      <div class="flex items-center gap-3 px-3.5 py-2.5 border-b border-[rgba(255,255,255,0.06)] hover:bg-[#141B2A] transition-colors cursor-pointer">
+        <span class="col-side text-[10px] font-bold px-1.5 py-1 rounded text-center bg-[#E53E3E]/10 text-[#E53E3E]">SELL</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[12.5px] font-semibold leading-tight">BTC</div>
+          <div class="text-[10.5px] text-[#6B7689] mono leading-tight mt-0.5">2.41 · 45m</div>
+        </div>
+        <div class="col-fill flex items-center gap-2">
+          <span class="flex-1 h-1.5 rounded bg-[#0A0B0F] overflow-hidden">
+            <i class="block h-full bg-[#E53E3E]" style="width:78%"></i>
+          </span>
+          <span class="mono text-[10.5px] text-[#A6B0C3] font-semibold w-7 text-right">78%</span>
+        </div>
+        <div class="col-value mono text-[13px] font-semibold text-[#F9E370] text-right tracking-tight">$248K</div>
+      </div>
+
+      <!-- row 3 -->
+      <div class="flex items-center gap-3 px-3.5 py-2.5 border-b border-[rgba(255,255,255,0.06)] hover:bg-[#141B2A] transition-colors cursor-pointer">
+        <span class="col-side text-[10px] font-bold px-1.5 py-1 rounded text-center bg-[#1FA85B]/10 text-[#1FA85B]">BUY</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[12.5px] font-semibold leading-tight">ETH</div>
+          <div class="text-[10.5px] text-[#6B7689] mono leading-tight mt-0.5">120 · 1h 30m</div>
+        </div>
+        <div class="col-fill flex items-center gap-2">
+          <span class="flex-1 h-1.5 rounded bg-[#0A0B0F] overflow-hidden">
+            <i class="block h-full bg-[#1FA85B]" style="width:21%"></i>
+          </span>
+          <span class="mono text-[10.5px] text-[#A6B0C3] font-semibold w-7 text-right">21%</span>
+        </div>
+        <div class="col-value mono text-[13px] font-semibold text-[#F9E370] text-right tracking-tight">$182K</div>
+      </div>
+
+      <!-- row 4 -->
+      <div class="flex items-center gap-3 px-3.5 py-2.5 hover:bg-[#141B2A] transition-colors cursor-pointer">
+        <span class="col-side text-[10px] font-bold px-1.5 py-1 rounded text-center bg-[#1FA85B]/10 text-[#1FA85B]">BUY</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[12.5px] font-semibold leading-tight">SOL</div>
+          <div class="text-[10.5px] text-[#6B7689] mono leading-tight mt-0.5">680 · 3h</div>
+        </div>
+        <div class="col-fill flex items-center gap-2">
+          <span class="flex-1 h-1.5 rounded bg-[#0A0B0F] overflow-hidden">
+            <i class="block h-full bg-[#1FA85B]" style="width:54%"></i>
+          </span>
+          <span class="mono text-[10.5px] text-[#A6B0C3] font-semibold w-7 text-right">54%</span>
+        </div>
+        <div class="col-value mono text-[13px] font-semibold text-[#F9E370] text-right tracking-tight">$124K</div>
+      </div>
+    </div>
+
+    <!-- pagination -->
+    <div class="flex items-center justify-between px-3.5 py-2 border-t border-[rgba(255,255,255,0.06)]">
+      <button class="p-1 rounded text-[#6B7689]">‹</button>
+      <span class="text-[10px] mono text-[#6B7689]">Page 1 / 11</span>
+      <button class="p-1 rounded text-[#6B7689]">›</button>
+    </div>
+  </div>
+
+  <div class="mt-4 text-[11px] text-[#6B7689] leading-relaxed">
+    <strong class="text-[#F1F4FA]">Pourquoi c'est plus clair :</strong>
+    Le Net est dominant (20px bold) au centre du stat-strip, encadré de Buys/Sells (15px) — l'œil voit "Net" en premier. La barre split sous les 3 cellules clarifie la proportion sans concurrencer les chiffres. Les TWAPs ont enfin des <em>colonnes</em> (Side/Token/Filled/Value) avec entêtes — scan vertical possible. Size+duration regroupés sur 1 sous-ligne mono libère la ligne principale pour le ticker en gras.
+  </div>
+</div>
+</body>
+</html>

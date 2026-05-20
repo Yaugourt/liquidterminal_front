@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — Dashboard Liquid Terminal · forme convergée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens V4 (globals.css / tailwind.config.ts du repo) ===== */
+:root{
+  --bg-base:#0A0B0F; --bg-surface:#0F1421; --bg-surface-2:#141B2A; --bg-surface-3:#1C2436;
+  --border-subtle:#1E2535; --border-default:#2C354A; --border-strong:#3D4760;
+  --text-primary:#E8EAED; --text-secondary:#9CA3AF; --text-tertiary:#6B7280;
+  --brand:#83E9FF; --brand-deep:#1692AD; --gold:#F9E370;
+  --success:#1FA85B; --danger:#E53E3E;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg-base);color:var(--text-primary);
+  font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(ellipse 100% 50% at 50% -10%,rgb(131 233 255/.035),transparent 70%);
+}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.pos{color:var(--success)} .neg{color:var(--danger)}
+a{color:inherit;text-decoration:none}
+
+.wrap{max-width:1600px;margin:0 auto;padding:20px 24px 48px}
+
+/* ===== Header ===== */
+.head{display:flex;align-items:baseline;justify-content:space-between;padding:4px 2px 18px}
+.head h1{font-size:22px;font-weight:600;letter-spacing:-.02em}
+.head .live{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text-tertiary)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 0 rgba(31,168,91,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(31,168,91,.45)}50%{box-shadow:0 0 0 5px rgba(31,168,91,0)}}
+
+/* ===== Carte — famille unique ===== */
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border-subtle)}
+.card-head .t{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.card-head .ico{width:24px;height:24px;border-radius:6px;background:rgb(131 233 255/.10);display:grid;place-items:center;color:var(--brand)}
+.viewall{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--brand)}
+.sub{font-size:11px;color:var(--text-tertiary)}
+
+/* ===== Pulse bar ===== */
+.pulse{display:grid;grid-template-columns:repeat(6,1fr);background:var(--bg-surface);
+  border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.kpi{padding:13px 16px;border-left:1px solid var(--border-subtle);position:relative}
+.kpi:first-child{border-left:0}
+.kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-tertiary);font-weight:600}
+.kpi .val{font-size:21px;font-weight:600;margin-top:6px;line-height:1}
+.kpi .meta{display:flex;align-items:center;gap:8px;margin-top:7px}
+.kpi .delta{font-size:11px;font-weight:600}
+.kpi svg{display:block}
+
+/* ===== Layout 12 col ===== */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.main{grid-column:span 8;display:flex;flex-direction:column;gap:16px}
+.rail{grid-column:span 4;display:flex;flex-direction:column;gap:16px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ===== Table compacte ===== */
+table{width:100%;border-collapse:collapse}
+thead th{font-size:9px;text-transform:uppercase;letter-spacing:.07em;font-weight:600;
+  color:var(--text-tertiary);text-align:right;padding:7px 14px 6px;background:var(--bg-surface-2)}
+thead th:first-child{text-align:left}
+tbody td{padding:7px 14px;text-align:right;font-size:12px;border-top:1px solid var(--border-subtle)}
+tbody td:first-child{text-align:left}
+tbody tr:hover{background:var(--bg-surface-2)}
+.tok{display:flex;align-items:center;gap:8px}
+.av{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#06121f;flex:none}
+.nm{font-weight:600}
+
+/* ===== Chart ===== */
+.chart-tabs{display:flex;gap:2px;background:var(--bg-surface-2);border-radius:6px;padding:3px}
+.chart-tabs button{font:inherit;font-size:11px;font-weight:600;cursor:pointer;border:0;background:transparent;
+  color:var(--text-tertiary);padding:4px 10px;border-radius:4px}
+.chart-tabs button.on{background:var(--brand);color:#06121f}
+.periods{display:flex;gap:10px;font-size:11px;color:var(--text-tertiary)}
+.periods .on{color:var(--text-primary);font-weight:600}
+.chart-body{padding:14px}
+
+/* ===== Live rail items ===== */
+.auc{padding:12px 14px;border-top:1px solid var(--border-subtle)}
+.auc:first-of-type{border-top:0}
+.auc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.auc-name{font-weight:600;font-size:13px}
+.badge{font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 6px;border-radius:4px}
+.badge.live{background:rgb(31 168 91/.12);color:var(--success)}
+.badge.soon{background:rgb(107 114 128/.15);color:var(--text-tertiary)}
+.auc-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-tertiary);margin-bottom:3px}
+.bar{height:5px;border-radius:3px;background:var(--bg-surface-3);overflow:hidden;margin-top:7px}
+.bar > i{display:block;height:100%;background:var(--brand-deep)}
+
+/* liquidations */
+.ls{padding:12px 14px;border-bottom:1px solid var(--border-subtle)}
+.ls-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.ls-bar{height:6px;border-radius:3px;overflow:hidden;display:flex}
+.ls-bar .l{background:var(--success)} .ls-bar .s{background:var(--danger)}
+.ls-leg{display:flex;justify-content:space-between;font-size:10px;margin-top:5px}
+.feed{max-height:188px;overflow:hidden}
+.feed-row{display:flex;align-items:center;gap:8px;padding:6px 14px;border-top:1px solid var(--border-subtle);font-size:11px}
+.feed-row:first-child{border-top:0}
+.side{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px}
+.side.L{background:rgb(31 168 91/.12);color:var(--success)}
+.side.S{background:rgb(229 62 62/.12);color:var(--danger)}
+.feed-row .age{margin-left:auto;color:var(--text-tertiary);font-size:10px}
+
+/* twap */
+.twap-row{display:flex;align-items:center;gap:9px;padding:8px 14px;border-top:1px solid var(--border-subtle)}
+.twap-row:first-child{border-top:0}
+.twap-prog{flex:1;height:4px;border-radius:2px;background:var(--bg-surface-3);overflow:hidden}
+.twap-prog > i{display:block;height:100%;background:var(--brand)}
+
+/* ===== Capital ===== */
+.capital{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px}
+.mod-kpi{display:flex;gap:16px;padding:9px 14px;background:var(--bg-surface-2);border-bottom:1px solid var(--border-subtle)}
+.mod-kpi div{font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.mod-kpi b{display:block;font-size:14px;color:var(--text-primary);font-weight:600;margin-top:2px}
+.mrow{display:flex;align-items:center;gap:8px;padding:6px 14px;border-top:1px solid var(--border-subtle);font-size:11px}
+.mrow:first-child{border-top:0}
+.mrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .m1{color:var(--text-secondary)}
+.gold{color:var(--gold)}
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);
+  font-weight:600;margin:22px 2px 2px}
+.note{margin-top:28px;padding:12px 14px;border:1px dashed var(--border-default);border-radius:7px;
+  font-size:11px;color:var(--text-tertiary);background:var(--bg-surface)}
+.note b{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="head">
+    <h1>Ecosystem Overview</h1>
+    <div class="live"><span class="dot"></span> HyperCore · live <span class="mono">·</span> 14:32:08 UTC</div>
+  </div>
+
+  <!-- PULSE BAR -->
+  <div class="pulse">
+    <div class="kpi">
+      <div class="lbl">24h Volume</div>
+      <div class="val mono">$4.21B</div>
+      <div class="meta">
+        <span class="delta pos mono">▲ 8.2%</span>
+        <svg width="56" height="16" viewBox="0 0 56 16"><polyline fill="none" stroke="#1FA85B" stroke-width="1.5" points="0,13 9,11 18,12 27,7 36,9 45,4 56,3"/></svg>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Open Interest</div>
+      <div class="val mono">$8.14B</div>
+      <div class="meta">
+        <span class="delta neg mono">▼ 2.1%</span>
+        <svg width="56" height="16" viewBox="0 0 56 16"><polyline fill="none" stroke="#E53E3E" stroke-width="1.5" points="0,4 9,5 18,3 27,7 36,8 45,10 56,12"/></svg>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">24h Fees</div>
+      <div class="val mono">$1.24M</div>
+      <div class="meta">
+        <span class="delta pos mono">▲ 3.4%</span>
+        <svg width="56" height="16" viewBox="0 0 56 16"><polyline fill="none" stroke="#1FA85B" stroke-width="1.5" points="0,10 9,11 18,8 27,9 36,6 45,7 56,5"/></svg>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Vaults TVL</div>
+      <div class="val mono">$1.91B</div>
+      <div class="meta"><span class="delta pos mono">▲ 1.2%</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">HYPE Staked</div>
+      <div class="val mono">421.3M</div>
+      <div class="meta"><span class="delta pos mono">▲ 0.4%</span></div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Users</div>
+      <div class="val mono">540,219</div>
+      <div class="meta"><span class="delta pos mono">▲ 1,204</span></div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+
+    <!-- ===== COLONNE PRINCIPALE ===== -->
+    <div class="main">
+
+      <!-- Movers spot + perp -->
+      <div class="duo">
+        <div class="card">
+          <div class="card-head">
+            <div class="t"><span class="ico">◇</span> Trending Spot</div>
+            <a class="viewall">View all ↗</a>
+          </div>
+          <table>
+            <thead><tr><th>Token</th><th>Price</th><th>24h</th><th>Volume</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tok"><span class="av" style="background:#83E9FF">H</span><span class="nm">HYPE</span></span></td><td class="mono">$38.94</td><td class="mono pos">+5.21%</td><td class="mono">$182M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#A78BFA">H</span><span class="nm">HFUN</span></span></td><td class="mono">$1.04</td><td class="mono pos">+12.1%</td><td class="mono">$14.0M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#F9E370">P</span><span class="nm">PURR</span></span></td><td class="mono">$0.182</td><td class="mono neg">−3.44%</td><td class="mono">$8.9M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#34D399">L</span><span class="nm">LIQD</span></span></td><td class="mono">$2.41</td><td class="mono pos">+6.80%</td><td class="mono">$6.4M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#FB923C">J</span><span class="nm">JEFF</span></span></td><td class="mono">$0.094</td><td class="mono neg">−1.10%</td><td class="mono">$3.1M</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div class="t"><span class="ico">∞</span> Trending Perp</div>
+            <a class="viewall">View all ↗</a>
+          </div>
+          <table>
+            <thead><tr><th>Token</th><th>Price</th><th>24h</th><th>Funding</th><th>OI</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tok"><span class="av" style="background:#F7931A">B</span><span class="nm">BTC</span></span></td><td class="mono">$97,420</td><td class="mono pos">+2.10%</td><td class="mono pos">+0.012%</td><td class="mono">$2.14B</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#627EEA">E</span><span class="nm">ETH</span></span></td><td class="mono">$3,510</td><td class="mono pos">+3.42%</td><td class="mono pos">+0.009%</td><td class="mono">$1.32B</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#83E9FF">H</span><span class="nm">HYPE</span></span></td><td class="mono">$38.92</td><td class="mono pos">+5.18%</td><td class="mono neg">−0.021%</td><td class="mono">$890M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#14F195">S</span><span class="nm">SOL</span></span></td><td class="mono">$214.6</td><td class="mono neg">−1.24%</td><td class="mono pos">+0.004%</td><td class="mono">$612M</td></tr>
+              <tr><td><span class="tok"><span class="av" style="background:#E84142">A</span><span class="nm">AVAX</span></span></td><td class="mono">$48.20</td><td class="mono pos">+0.90%</td><td class="mono pos">+0.007%</td><td class="mono">$208M</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Activity chart -->
+      <div class="card">
+        <div class="card-head">
+          <div class="chart-tabs">
+            <button class="on">Bridge TVL</button><button>Fees</button><button>Auction Price</button>
+          </div>
+          <div class="periods"><span>7d</span><span class="on">30d</span><span>90d</span><span>1y</span></div>
+        </div>
+        <div class="chart-body">
+          <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+            <span class="mono" style="font-size:18px;font-weight:600">$1.42B</span>
+            <span class="mono pos" style="font-size:11px;font-weight:600">▲ 6.1% · 30d</span>
+          </div>
+          <svg width="100%" height="170" viewBox="0 0 760 170" preserveAspectRatio="none">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+            </linearGradient></defs>
+            <path d="M0,140 L60,132 L120,136 L180,118 L240,122 L300,100 L360,108 L420,82 L480,90 L540,64 L600,72 L660,46 L720,40 L760,34 L760,170 L0,170 Z" fill="url(#g)"/>
+            <path d="M0,140 L60,132 L120,136 L180,118 L240,122 L300,100 L360,108 L420,82 L480,90 L540,64 L600,72 L660,46 L720,40 L760,34" fill="none" stroke="#83E9FF" stroke-width="1.75"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== COLONNE LIVE ===== -->
+    <div class="rail">
+
+      <!-- Auctions -->
+      <div class="card">
+        <div class="card-head"><div class="t"><span class="ico">⚖</span> Auctions</div></div>
+        <div class="auc">
+          <div class="auc-top"><span class="auc-name">FROG <span class="sub">/ spot</span></span><span class="badge live">● LIVE</span></div>
+          <div class="auc-row"><span>Current price</span><span class="mono" style="color:var(--text-primary)">12.84 HYPE</span></div>
+          <div class="auc-row"><span>Time left</span><span class="mono" style="color:var(--gold)">03:42:11</span></div>
+          <div class="bar"><i style="width:64%"></i></div>
+        </div>
+        <div class="auc">
+          <div class="auc-top"><span class="auc-name">Perp Deploy <span class="sub">/ HIP-3</span></span><span class="badge soon">UPCOMING</span></div>
+          <div class="auc-row"><span>Starts in</span><span class="mono" style="color:var(--text-primary)">2d 04h 18m</span></div>
+          <div class="auc-row"><span>Last deploy cost</span><span class="mono">1.8K USDC</span></div>
+        </div>
+      </div>
+
+      <!-- Liquidations -->
+      <div class="card">
+        <div class="card-head"><div class="t"><span class="ico">🔥</span> Liquidations</div><span class="sub">24h</span></div>
+        <div class="ls">
+          <div class="ls-top"><span class="mono" style="font-size:18px;font-weight:600">$8.41M</span><span class="sub mono">1,204 liqs</span></div>
+          <div class="ls-bar"><span class="l" style="width:64%"></span><span class="s" style="width:36%"></span></div>
+          <div class="ls-leg"><span class="pos mono">64% Long</span><span class="neg mono">36% Short</span></div>
+        </div>
+        <div class="feed">
+          <div class="feed-row"><span class="side L">LONG</span><span class="nm">BTC</span><span class="mono">$182K</span><span class="age">12s</span></div>
+          <div class="feed-row"><span class="side S">SHORT</span><span class="nm">ETH</span><span class="mono">$94.2K</span><span class="age">41s</span></div>
+          <div class="feed-row"><span class="side L">LONG</span><span class="nm">HYPE</span><span class="mono">$61.0K</span><span class="age">1m</span></div>
+          <div class="feed-row"><span class="side L">LONG</span><span class="nm">SOL</span><span class="mono">$48.7K</span><span class="age">2m</span></div>
+          <div class="feed-row"><span class="side S">SHORT</span><span class="nm">AVAX</span><span class="mono">$33.1K</span><span class="age">3m</span></div>
+        </div>
+      </div>
+
+      <!-- TWAP -->
+      <div class="card">
+        <div class="card-head"><div class="t"><span class="ico">⟳</span> Active TWAPs</div><span class="sub mono">14 · $4.2M</span></div>
+        <div>
+          <div class="twap-row"><span class="side L">BUY</span><span class="nm" style="width:42px">HYPE</span><span class="twap-prog"><i style="width:62%"></i></span><span class="mono sub">62%</span></div>
+          <div class="twap-row"><span class="side S">SELL</span><span class="nm" style="width:42px">BTC</span><span class="twap-prog"><i style="width:38%"></i></span><span class="mono sub">38%</span></div>
+          <div class="twap-row"><span class="side L">BUY</span><span class="nm" style="width:42px">ETH</span><span class="twap-prog"><i style="width:81%"></i></span><span class="mono sub">81%</span></div>
+          <div class="twap-row"><span class="side L">BUY</span><span class="nm" style="width:42px">SOL</span><span class="twap-prog"><i style="width:25%"></i></span><span class="mono sub">25%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CAPITAL & CHAÎNE ===== -->
+  <div class="section-label">Capital &amp; infrastructure</div>
+  <div class="capital">
+    <div class="card">
+      <div class="card-head"><div class="t"><span class="ico">▦</span> Vaults</div><a class="viewall">All ↗</a></div>
+      <div class="mod-kpi"><div>TVL<b class="mono">$1.91B</b></div><div>Count<b class="mono">312</b></div></div>
+      <div class="mrow"><span class="nm">HLP</span><span class="m1 mono">14.2%</span><span class="mono">$1.10B</span></div>
+      <div class="mrow"><span class="nm">Hyperliquidity</span><span class="m1 mono">9.8%</span><span class="mono">$240M</span></div>
+      <div class="mrow"><span class="nm">Bonk Vault</span><span class="m1 mono">22.4%</span><span class="mono">$88M</span></div>
+      <div class="mrow"><span class="nm">Felix Stable</span><span class="m1 mono">6.1%</span><span class="mono">$54M</span></div>
+      <div class="mrow"><span class="nm">Rage Trade</span><span class="m1 mono">18.0%</span><span class="mono">$31M</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="t"><span class="ico">⬡</span> Validators</div><a class="viewall">All ↗</a></div>
+      <div class="mod-kpi"><div>Active<b class="mono">21 / 24</b></div><div>Staked<b class="mono">421M</b></div></div>
+      <div class="mrow"><span class="dot" style="position:static;animation:none;background:var(--success)"></span><span class="nm">Hyper Foundation</span><span class="mono">38.2M</span></div>
+      <div class="mrow"><span class="dot" style="position:static;animation:none;background:var(--success)"></span><span class="nm">ASXN</span><span class="mono">24.1M</span></div>
+      <div class="mrow"><span class="dot" style="position:static;animation:none;background:var(--success)"></span><span class="nm">Nansen</span><span class="mono">19.8M</span></div>
+      <div class="mrow"><span class="dot" style="position:static;animation:none;background:var(--success)"></span><span class="nm">B-Harvest</span><span class="mono">16.4M</span></div>
+      <div class="mrow"><span class="dot" style="position:static;animation:none;background:var(--text-tertiary)"></span><span class="nm">Validator.xyz</span><span class="mono">12.0M</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="t"><span class="ico">◈</span> Builders</div><a class="viewall">All ↗</a></div>
+      <div class="mod-kpi"><div>Fees 24h<b class="mono gold">$94.3K</b></div><div>Builders<b class="mono">48</b></div></div>
+      <div class="mrow"><span class="nm">pvp.trade</span><span class="mono gold">$31.2K</span></div>
+      <div class="mrow"><span class="nm">Okto</span><span class="mono gold">$22.8K</span></div>
+      <div class="mrow"><span class="nm">Dexari</span><span class="mono gold">$14.1K</span></div>
+      <div class="mrow"><span class="nm">Insilico</span><span class="mono gold">$9.7K</span></div>
+      <div class="mrow"><span class="nm">0x7a3f…e21c</span><span class="mono gold">$6.2K</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="t"><span class="ico">▣</span> PerpDexs · HIP-3</div><a class="viewall">All ↗</a></div>
+      <div class="mod-kpi"><div>Dexs<b class="mono">7</b></div><div>Vol 24h<b class="mono">$184M</b></div></div>
+      <div class="mrow"><span class="nm">Unit</span><span class="m1 mono">24 mkts</span><span class="mono">$98M</span></div>
+      <div class="mrow"><span class="nm">Bolt Markets</span><span class="m1 mono">12 mkts</span><span class="mono">$42M</span></div>
+      <div class="mrow"><span class="nm">Vega</span><span class="m1 mono">8 mkts</span><span class="mono">$28M</span></div>
+      <div class="mrow"><span class="nm">xyz Perps</span><span class="m1 mono">5 mkts</span><span class="mono">$11M</span></div>
+      <div class="mrow"><span class="nm">Helix HIP3</span><span class="m1 mono">3 mkts</span><span class="mono">$5M</span></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Maquette — données fictives.</b> Forme convergée des 6 agents de design : pulse bar (état) en haut ·
+    colonne principale (marchés + chart) · colonne live (auctions / liquidations / TWAP) · capital en bas.
+    Réserve honnête : les <b>sparklines + deltas</b> de la pulse bar supposent un endpoint d'historique par
+    métrique — l'API actuelle ne renvoie que des valeurs instantanées (sauf bridge/fees/auction → le chart).
+    À l'implémentation : pulse bar sans sparkline/delta tant que la donnée n'existe pas.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquid Terminal — 5 directions de dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:48px 32px;line-height:1.5}
+.wrap{max-width:880px;margin:0 auto}
+h1{font-size:24px;font-weight:700;letter-spacing:-.02em}
+p.sub{color:#9CA3AF;font-size:14px;margin-top:8px;margin-bottom:32px}
+a.card{display:block;text-decoration:none;color:inherit;background:#0F1421;border:1px solid #1E2535;
+  border-radius:10px;padding:20px 22px;margin-bottom:14px;transition:border-color .15s,transform .15s}
+a.card:hover{border-color:#83E9FF;transform:translateY(-2px)}
+.n{font-size:11px;font-weight:700;color:#83E9FF;letter-spacing:.1em}
+.t{font-size:17px;font-weight:600;margin-top:4px}
+.d{color:#9CA3AF;font-size:13px;margin-top:4px}
+</style></head><body>
+<div class="wrap">
+<h1>Liquid Terminal — Dashboard</h1>
+<p class="sub">5 directions distinctes. Calibre DefiLlama / Dune / Token Terminal. Clique pour ouvrir chacune.</p>
+
+<a class="card" href="1-defillama.html">
+  <div class="n">DIRECTION 01</div>
+  <div class="t">DefiLlama</div>
+  <div class="d">Densité maximale, tableaux triables, onglets de catégorie, chrome minimal. La référence des plateformes de données DeFi.</div>
+</a>
+<a class="card" href="2-bloomberg.html">
+  <div class="n">DIRECTION 02</div>
+  <div class="t">Bloomberg Terminal</div>
+  <div class="d">Grille de panneaux ultra-dense, monospace, ambre sur noir, ticker tape. L'instrument d'un pro.</div>
+</a>
+<a class="card" href="3-analytics.html">
+  <div class="n">DIRECTION 03</div>
+  <div class="t">Analytics raffiné — Token Terminal / Artemis</div>
+  <div class="d">Chart-forward, cartes à sparklines, espacement maîtrisé, premium. Crédible auprès d'un fonds.</div>
+</a>
+<a class="card" href="4-dune.html">
+  <div class="n">DIRECTION 04</div>
+  <div class="t">Dune — grille de panneaux</div>
+  <div class="d">22 panneaux modulaires, viz variées (line/bar/donut/heatmap/gauge). Aspect data-lab composable.</div>
+</a>
+<a class="card" href="5-hl-native.html">
+  <div class="n">DIRECTION 05</div>
+  <div class="t">Produit HL-natif premium</div>
+  <div class="d">Whisper navy + accent cyan, JetBrains Mono, cartes denses soignées. L'univers visuel d'Hyperliquid.</div>
+</a>
+
+<h1 style="margin-top:48px;font-size:18px">Refonte V4 — disposition</h1>
+<p class="sub">2 variantes pour réorganiser le dashboard V4 actuel + intégrer HIP-4 outcomes.</p>
+
+<a class="card" href="v4-A-thematic.html">
+  <div class="n">VARIANT A · recommandé</div>
+  <div class="t">Thématique stricte — 5 SectionHeads</div>
+  <div class="d">5 groupes étiquetés (Pulse · Capital Flow · Markets · Live Activity · Extensions · Capital Allocators) · gap-8 entre groupes · HIP-4 à côté de HIP-3 dans "Hyperliquid Extensions" · Liquidations+TWAP en 2 colonnes.</div>
+</a>
+<a class="card" href="v4-B-hybrid.html">
+  <div class="n">VARIANT B</div>
+  <div class="t">Compact hybride — 3 SectionHeads</div>
+  <div class="d">3 méta-groupes (Network Pulse · Markets &amp; Live Activity · Ecosystem) · sub-rows en gap-4 dans chaque groupe · HIP-4 en pleine largeur en bas (4 outcomes en grille horizontale).</div>
+</a>
+
+<h1 style="margin-top:48px;font-size:18px">TWAP Panel — refonte</h1>
+<p class="sub">2 variantes pour clarifier la section TWAP (HYPE pressure + liste).</p>
+
+<a class="card" href="twap-A-statstrip.html">
+  <div class="n">TWAP · VARIANT A</div>
+  <div class="t">Stat strip + table aligned</div>
+  <div class="d">HYPE pressure en 3 cellules type PulseBar (Buys · Net dominant · Sells) avec barre split en sub-header. Rows TWAPs en vraies colonnes (Side · Token · Filled · Value) avec entêtes mono.</div>
+</a>
+<a class="card" href="twap-B-hero.html">
+  <div class="n">TWAP · VARIANT B</div>
+  <div class="t">Hero pressure + donut cards</div>
+  <div class="d">Net pressure en hero 26px gradient gauche, Buys/Sells stackés droite avec mini bar entre. TWAPs en cards plus aérées avec donut circulaire % filled à droite — signal visuel fort.</div>
+</a>
+</div></body></html>

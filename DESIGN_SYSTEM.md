@@ -133,11 +133,15 @@
 
 ## 5. Tables
 
-**Règle absolue** : passer par `<TypedDataTable<Row>>` de `@/components/common`. Le `<Table>` brut de `@/components/ui/table` est **interdit hors de `src/components/common/`** (ESLint).
+**Règle absolue** : `<Table>` brut de `@/components/ui/table` **interdit hors de `src/components/common/`** (ESLint). Deux pattern selon le contexte :
+
+### 5.a — Tables de page (market, explorer, …)
+
+Pour une table autonome dans une page, utiliser `<TypedDataTable<Row>>` de `@/components/common` :
 
 ```tsx
 <TypedDataTable<Row>
-  title={…}              // optionnel — sans title, pas de wrap Card
+  title={…}
   icon={…}
   columns={[
     { key: "name",   header: "Token",  accessor: (r) => <TokenCell … /> },
@@ -146,9 +150,8 @@
     { key: "chg",    header: "24h",    type: "change",   accessor: (r) => r.change24h },
   ]}
   data={rows}
-  getRowKey={(r, i) => `${market}-${r.name}-${i}`}
-  isLoading={…}
-  error={…}
+  getRowKey={(r, i) => `${r.name}-${i}`}
+  isLoading={…} error={…}
   density="compact"
   onRowClick={…}
   rowMotion
@@ -156,6 +159,63 @@
 ```
 
 `Column.type` applique automatiquement `.mono` + alignement droit + couleur signée selon le type.
+
+### 5.b — Tables de carte Dashboard (leaderboard top N)
+
+**Toutes** les cartes leaderboard du dashboard (Top Vaults, Top Validators, Top Builders, Trending Spot, Trending Perpetuals, Top HIP-3 Markets, etc.) **doivent** utiliser le triplet `OverviewModule` + `ModuleTable` + `ModuleTableRow` + `ModuleAsset` de `@/components/dashboard/OverviewModule`.
+
+C'est le **seul moyen** de garantir un avatar, un espacement, un card-head et un comportement de row identiques sur toutes les cartes du dashboard. Pas de `TypedDataTable` direct dans une carte de dashboard.
+
+```tsx
+<OverviewModule
+  title="Top Vaults"
+  tag={`${compactUsd(totalTvl)} TVL`}
+  viewAllLabel="All vaults"
+  href="/explorer/vaults"
+>
+  <ModuleTable
+    columns={[
+      { header: "Vault" },
+      { header: "APR" },
+      { header: "TVL" },
+      { header: "Leader" },
+    ]}
+  >
+    {rows.map((v) => (
+      <ModuleTableRow
+        key={v.address}
+        href={`/explorer/vaults/${v.address}`}
+        cells={[
+          <ModuleAsset key="vault" logo={v.name.slice(0, 2).toUpperCase()} name={v.name} />,
+          <span key="apr"    className="mono text-success">{v.apr.toFixed(1)}%</span>,
+          <span key="tvl"    className="mono text-text-primary">{compactUsd(v.tvl)}</span>,
+          <span key="leader" className="mono text-text-secondary">{truncateAddress(v.leader)}</span>,
+        ]}
+      />
+    ))}
+  </ModuleTable>
+</OverviewModule>
+```
+
+### 5.c — `ModuleAsset` (avatar unifié)
+
+C'est **l'unique cellule "nom + avatar"** sur le dashboard.
+
+```tsx
+<ModuleAsset
+  logo={'AB'}                              // 2 initiales (string) — fallback
+  // OU
+  logo={<Image src={url} … />}             // image réelle quand un logo existe
+  name={displayName}
+  sub={optionalSubtitle}
+/>
+```
+
+Le wrapper rend un carré `w-6 h-6 rounded-md bg-brand/10 text-brand overflow-hidden`. Quand on passe une `<Image>`, elle remplit le wrapper (object-cover) — le bg cyan reste visible uniquement sur les zones transparentes. Le label `name` est `text-[12.5px] font-semibold`, `sub` `text-[10px] text-text-tertiary`.
+
+**Ne jamais** :
+- ré-implémenter un avatar custom (carré, cercle, ou autre) sur une carte du dashboard ;
+- utiliser `<TokenIcon>` (cercle cyan-on-navy, design legacy) à l'intérieur d'une carte du dashboard.
 
 ## 6. Charts
 
@@ -194,14 +254,17 @@ Ne pas superposer plus de 3 séries de **natures différentes** (flow vs stock) 
 - Chaque cellule : `bg-surface hover:bg-surface-2 px-4 py-3 flex flex-col` avec label uppercase + valeur `.mono text-[20px] font-semibold`.
 - Sparkline optionnelle en bas de cellule via `mt-auto`.
 
-### OverviewModule (carte « résumé d'une page »)
+### OverviewModule (THE primitive carte dashboard)
 
-Primitive de `src/components/dashboard/OverviewModule.tsx` :
-- `<OverviewModule title tag href viewAllLabel>` — wrapper avec card-head.
-- `<ModuleTable columns><ModuleTableRow cells href? /></ModuleTable>` — table à la `.tbl` de la maquette.
-- `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — ligne de leaderboard.
-- `<ModuleAsset logo name sub />` — cellule asset standard.
+Source : `src/components/dashboard/OverviewModule.tsx`. C'est **l'unique** primitive pour composer une carte de leaderboard / top N sur le dashboard.
+
+- `<OverviewModule title tag href viewAllLabel>` — wrapper avec **card-head V4 standardisé** (titre + pill `tag` + lien "View all → ml-auto").
+- `<ModuleTable columns><ModuleTableRow cells href? /></ModuleTable>` — table à la `.tbl` de la maquette. Header `bg-surface-2 uppercase tracking-[0.05em]`, lignes `hover:bg-surface-2`, 1re cellule à gauche, autres à droite, padding `px-4 py-2.5`, hauteur de row constante.
+- `<ModuleAsset logo name sub />` — cellule asset standard (voir §5.c).
+- `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — variante "leaderboard list" (non-table, rangs explicites). À utiliser si un layout sans header n'a aucun sens.
 - `<ModuleSubhead>HIP-3 Perp DEXs</ModuleSubhead>` — sous-titre dans le corps.
+
+**Garantie d'uniformité** : si toutes les cartes leaderboard utilisent cette primitive, elles partagent au pixel près le card-head, l'avatar, la hauteur de row, la couleur de hover, le `View all`.
 
 ### Grilles de cartes pairs (g-2, g-3)
 
@@ -255,6 +318,7 @@ Documenter ces limites pour éviter de re-buter dessus :
 
 - **Pas d'historique par KPI** côté API pour la majorité des métriques (volume global, OI, users, market cap…). Donc pas de sparkline / delta sur la PulseBar — **valeur seule, homogène**. Les seules exceptions sont les données qui ONT une vraie série temporelle (fees, stablecoins, bridge TVL, liquidations).
 - **Hypedexer instable** — l'API `api.hypedexer.com` peut tomber en **402 Payment Required** sur l'ensemble de ses endpoints (`/indexer/*`, `/liquidations/recent`, `/liquidations/analytics/stats`). Tout composant en dépendant doit dégrader proprement.
+- **`/liquidations/recent` retourne ~20 % de `time_ms` corrompus** (valeurs ~3.5e12 = année 2082) alors que le champ ISO `time` reste fiable. Toujours reparser via `Date.parse(time + "Z")` avec fallback `time_ms` ; ne jamais trier ou bucketiser sur `time_ms` directement (voir `LiquidationsPanel.getLiqTimeMs`).
 - **Sources de séries temporelles robustes** (ne dépendent pas de hypedexer) :
   - `/liquidations/historical/chart` — DB locale, jusqu'à **90 jours**, granularité adaptative.
   - `/market/fees/raw` — Hypurrscan, historique complet de fees.
@@ -267,23 +331,40 @@ Documenter ces limites pour éviter de re-buter dessus :
 ## 12. Index des primitives & composants V4
 
 ### Primitives (`src/components/common/`)
-- `TypedDataTable`, `Column<T>` — tables.
-- `AuroraAreaChart`, `MultiSeriesAreaChart` — charts.
-- `chartPalette` — palette charts.
+- `TypedDataTable`, `Column<T>` — tables (pages standalone, voir §5.a).
+- `AuroraAreaChart` — chart mono-série standard.
+- `MultiSeriesAreaChart` — chart dual-axis multi-séries (vendu par `@/components/dashboard/chart`, mais utilisable hors dashboard).
+- `chartPalette` — palette charts (cyan, gold, violet, down, multiSeries[0–7]).
 - `PeriodSelector`, `useChartPeriod` — sélecteur de période.
 - `PageHeader`, `PageSection` — en-tête de page.
 - `TimeframeTabs`, `PillTabs` — tabs.
 - `LoadingState`, `ErrorState`, `EmptyState`, `ChartLoading`, `ChartEmpty`, `ChartError`.
-- `TokenIcon`, `StatsCard`, `StatsPanel`.
+- `StatsCard`, `StatsPanel`.
+- `Num` — primitif d'affichage numérique tabulaire.
+- `TokenIcon` — **legacy** (cercle cyan-on-navy). Conservé pour pages legacy. **À ne pas utiliser sur le dashboard** — toujours passer par `<ModuleAsset>`.
 
 ### Dashboard (`src/components/dashboard/`)
-- `SectionHead` — titre de section.
-- `Sparkline` — mini-courbe inline.
-- `PulseBar` — ruban de stats.
-- `OverviewModule` (+ `ModuleRow`, `ModuleTable`, `ModuleTableRow`, `ModuleCell`, `ModuleAsset`, `ModuleSubhead`).
-- `MoversCard`, `AuctionsPanel`, `LiquidationsPanel`, `TwapPanel`, `Hip3MarketsPanel`, `StablecoinsCard`.
-- `chart/ChartSection`, `chart/FeesChartSection`, `chart/MultiSeriesAreaChart`.
-- `modules/VaultsModule`, `ValidatorsModule`, `BuildersModule`.
+- `SectionHead` — titre de section (`title` + `subtitle` + lien optionnel).
+- `Sparkline` — mini-courbe SVG inline (cellule de stat ou de hero).
+- `PulseBar` — ruban de KPI 6 cells.
+- `OverviewModule` (+ `ModuleTable`, `ModuleTableRow`, `ModuleAsset`, `ModuleRow`, `ModuleSubhead`) — **THE** primitive carte dashboard (voir §7).
+- Cartes V4 dashboard :
+  - `MoversCard` (spot/perp) — top tokens d'un marché.
+  - `AuctionsPanel` (spot/perp) — auction de déploiement.
+  - `LiquidationsPanel` — stats 24h + feed + histogramme interactif (bucket hover, tooltip Long/Short).
+  - `TwapPanel` — HYPE buy pressure + liste paginée des TWAP actifs.
+  - `Hip3MarketsPanel` — top markets HIP-3 + perp auction mini + top perp DEXs.
+  - `Hip4OutcomesCard` — top markets de prédiction HIP-4 actifs (Yes/No mid_price + countdown).
+  - `StablecoinsCard` — hero supply + sparkline + 4 stablecoins.
+  - `BuildersConcentrationCard` — donut "Top 5 vs Rest" sur builder fees 24h, hover synchronisé donut ↔ légende.
+- `chart/ChartSection` — chart multi-séries 4 metrics (Bridge TVL · Stablecoins · Liquidations · Fees) avec sélecteur de période.
+- `chart/MultiSeriesAreaChart` — primitive lightweight-charts dual-axis (réutilisable).
+- `modules/VaultsModule`, `modules/ValidatorsModule`, `modules/BuildersModule` — leaderboards top 5 (tous via `OverviewModule + ModuleTable + ModuleAsset`).
+
+### Hooks utiles (en plus des hooks de service)
+- `useHip4ActiveMarkets(limit)` — questions HIP-4 ouvertes (`status==="live"`) triées par volume, avec total volume et active count.
+- `useLiquidationsData("24h")` — stats agrégées 24h depuis `/liquidations/data` (endpoint robuste, voir §11).
+- `useRecentLiquidations({ limit: 1000, hours: 24 })` — flux brut pour bucket-side client (voir §11 sur le `time_ms` corrompu).
 
 ### Shell (`src/components/`)
 - `Sidebar`, `Header`, `ExplorerSearchBar`.

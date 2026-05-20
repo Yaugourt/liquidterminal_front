@@ -7,14 +7,15 @@ import { useTwapOrders, useHypeBuyPressure } from "@/services/market/order";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 
 /**
- * TwapPanel — carte « Active TWAP Orders » du Dashboard.
+ * TwapPanel — carte « Active TWAP Orders » du Dashboard (Variant A).
  *
- * Section haute : **HYPE Buy Pressure** (net + répartition buys/sells)
- * calculée par `useHypeBuyPressure` sur les TWAP HYPE actifs.
- * Section basse : liste paginée des TWAP les plus gros.
+ * Section haute : **HYPE Buy Pressure** en stat-strip 3 cellules
+ *   (Buys · Net dominant · Sells) + barre split sous les cellules.
+ * Section basse : table TWAPs en colonnes alignées (Side · Token · Filled
+ *   · Value) avec entêtes mono, paginée 4 lignes / page.
  */
 
-const ROWS_PER_PAGE = 8;
+const ROWS_PER_PAGE = 4;
 
 /** Formate une durée en minutes vers un libellé compact "Xh Ym". */
 function formatDuration(minutes: number): string {
@@ -100,36 +101,60 @@ export const TwapPanel = memo(function TwapPanel() {
         </span>
       </div>
 
-      {/* HYPE Buy Pressure — section réservée, net + répartition */}
-      <div className="px-3.5 py-2.5 border-b border-border-subtle bg-gradient-to-b from-brand/[0.04] to-transparent">
-        <div className="flex items-baseline justify-between gap-2 mb-1.5">
-          <span className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-            HYPE Buy Pressure
-          </span>
-          <span
-            className={`mono text-[14px] font-semibold ${
-              netPositive ? "text-success" : "text-danger"
-            }`}
-          >
-            {hasHypeData ? formatSignedUsd(buyPressure) : pressureLoading ? "…" : "—"}
-          </span>
+      {/* HYPE Buy Pressure — 3-cell stat strip */}
+      <div className="border-b border-border-subtle">
+        <div className="flex">
+          {/* Buys */}
+          <div className="flex-1 px-3 py-2.5 border-r border-border-subtle">
+            <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+              Buys HYPE
+            </div>
+            <div className="mono text-[15px] font-semibold text-success mt-0.5">
+              {hasHypeData ? compactUsd(totalBuyValue) : pressureLoading ? "…" : "—"}
+            </div>
+          </div>
+          {/* Net (dominant) */}
+          <div className="flex-1 px-3 py-2.5 border-r border-border-subtle bg-gradient-to-b from-brand/[0.04] to-transparent">
+            <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold text-center">
+              Net Pressure
+            </div>
+            <div
+              className={`mono text-[20px] font-bold mt-0.5 tracking-tight text-center ${
+                netPositive ? "text-success" : "text-danger"
+              }`}
+            >
+              {hasHypeData ? formatSignedUsd(buyPressure) : pressureLoading ? "…" : "—"}
+            </div>
+          </div>
+          {/* Sells */}
+          <div className="flex-1 px-3 py-2.5">
+            <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold text-right">
+              Sells HYPE
+            </div>
+            <div className="mono text-[15px] font-semibold text-danger mt-0.5 text-right">
+              {hasHypeData ? compactUsd(totalSellValue) : pressureLoading ? "…" : "—"}
+            </div>
+          </div>
         </div>
-        <div className="flex h-1.5 rounded overflow-hidden border border-border-default">
-          <span className="bg-success" style={{ width: `${buyPct}%` }} />
-          <span className="bg-danger" style={{ width: `${sellPct}%` }} />
-        </div>
-        <div className="flex items-center justify-between mt-1 text-[10px] mono">
-          <span className="text-success font-semibold">
-            Buy {compactUsd(totalBuyValue)}
-          </span>
-          <span className="text-danger font-semibold">
-            {compactUsd(totalSellValue)} Sell
-          </span>
+        {/* Barre split — sub-header full width */}
+        <div className="px-3.5 pb-2.5 pt-0.5">
+          <div className="flex h-1 rounded overflow-hidden bg-base">
+            <span className="bg-success" style={{ width: `${buyPct}%` }} />
+            <span className="bg-danger" style={{ width: `${sellPct}%` }} />
+          </div>
         </div>
       </div>
 
-      {/* twap-row : side tag + barre de progression + % filled */}
+      {/* TWAP table — column headers + rows */}
       <div className="flex-1">
+        {/* Headers */}
+        <div className="flex items-center gap-3 px-3.5 py-1.5 bg-surface-2/40 text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+          <span className="w-[48px]">Side</span>
+          <span className="flex-1">Token</span>
+          <span className="w-[100px] text-right">Filled</span>
+          <span className="w-[72px] text-right">Value</span>
+        </div>
+
         {pageOrders.length === 0 ? (
           <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">
             No active TWAP orders
@@ -146,39 +171,40 @@ export const TwapPanel = memo(function TwapPanel() {
             return (
               <div
                 key={order.hash}
-                className="px-3.5 py-2.5 border-b border-border-subtle last:border-b-0"
+                className="flex items-center gap-3 px-3.5 py-2.5 border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors"
               >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span
-                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                      isBuy ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
-                    }`}
-                  >
-                    {isBuy ? "BUY" : "SELL"}
-                  </span>
-                  <span className="font-semibold text-[12px] text-text-primary truncate">
+                <span
+                  className={`w-[48px] text-[10px] font-bold px-1.5 py-1 rounded text-center ${
+                    isBuy
+                      ? "bg-success/10 text-success"
+                      : "bg-danger/10 text-danger"
+                  }`}
+                >
+                  {isBuy ? "BUY" : "SELL"}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12.5px] font-semibold text-text-primary leading-tight truncate">
                     {order.tokenSymbol}
+                  </div>
+                  <div className="text-[10.5px] text-text-tertiary mono leading-tight mt-0.5">
+                    {formatSize(twap.s)} · {formatDuration(twap.m)}
+                  </div>
+                </div>
+                <div className="w-[100px] flex items-center gap-2">
+                  <span className="flex-1 h-1.5 rounded bg-base overflow-hidden">
+                    <i
+                      className={`block h-full ${
+                        isBuy ? "bg-success" : "bg-danger"
+                      }`}
+                      style={{ width: `${pct}%` }}
+                    />
                   </span>
-                  <span className="mono text-[11px] text-text-tertiary">
-                    {formatSize(twap.s)}
-                  </span>
-                  <span className="mono text-[10px] text-text-tertiary">
-                    {formatDuration(twap.m)}
-                  </span>
-                  <span className="mono text-[12px] font-semibold text-text-primary ml-auto">
-                    {compactUsd(order.totalValueUSD)}
+                  <span className="mono text-[10.5px] text-text-secondary font-semibold w-7 text-right">
+                    {pct}%
                   </span>
                 </div>
-                <span className="block h-[5px] rounded bg-base overflow-hidden border border-border-default">
-                  <i
-                    className={`block h-full rounded ${
-                      isBuy ? "bg-success" : "bg-danger"
-                    }`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </span>
-                <div className="text-[10px] text-text-tertiary mt-1">
-                  {pct}% filled
+                <div className="w-[72px] mono text-[13px] font-semibold text-gold text-right tracking-tight">
+                  {compactUsd(order.totalValueUSD)}
                 </div>
               </div>
             );

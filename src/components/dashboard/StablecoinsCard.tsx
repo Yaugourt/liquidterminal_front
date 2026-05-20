@@ -3,7 +3,6 @@
 import { memo, useMemo } from "react";
 import { Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { TokenIcon } from "@/components/common";
 import { Sparkline } from "@/components/dashboard/Sparkline";
 import { useSpotStablecoins } from "@/services/market/stablecoins";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
@@ -81,14 +80,16 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
           stablecoins.map((s) => (
             <div
               key={s.symbol}
-              className="flex items-center gap-2 px-3.5 py-2 border-b border-border-subtle last:border-b-0"
+              className="flex items-center gap-2.5 px-3.5 py-2 border-b border-border-subtle last:border-b-0"
             >
-              <TokenIcon src={null} name={s.symbol} size="sm" />
+              <div className="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">
+                {s.symbol.slice(0, 2).toUpperCase()}
+              </div>
               <div className="min-w-0">
-                <div className="text-[11.5px] font-semibold text-text-primary leading-tight">
+                <div className="text-[12.5px] font-semibold text-text-primary leading-tight">
                   {s.symbol}
                 </div>
-                <div className="text-[9px] text-text-tertiary mono">
+                <div className="text-[10px] text-text-tertiary mono">
                   {compactCount(s.holders)} holders
                 </div>
               </div>
