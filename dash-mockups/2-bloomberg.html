@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIQUID TERMINAL — HYPERLIQUID MARKET DESK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;
+  --panel:#0e0e0e;
+  --panel-2:#111111;
+  --line:#222220;
+  --line-2:#2e2e2a;
+  --amber:#ffb000;
+  --amber-dim:#9c6c00;
+  --txt:#d4d4cc;
+  --txt-dim:#76766c;
+  --txt-faint:#4a4a44;
+  --green:#27d07a;
+  --green-dim:#0e3a26;
+  --red:#ff4d4d;
+  --red-dim:#3a1010;
+  --blue:#4aa3ff;
+  --hdr:#0c0c0c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  line-height:1.35;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:.2px;
+  overflow-x:hidden;
+}
+::selection{background:var(--amber);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#2e2e2a}
+::-webkit-scrollbar-thumb:hover{background:#3e3e38}
+
+.up{color:var(--green)}
+.dn{color:var(--red)}
+.amber{color:var(--amber)}
+.dim{color:var(--txt-dim)}
+.faint{color:var(--txt-faint)}
+.mono-num{font-variant-numeric:tabular-nums}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  display:flex;align-items:stretch;
+  background:var(--hdr);
+  border-bottom:1px solid var(--line-2);
+  height:30px;
+}
+.brand{
+  display:flex;align-items:center;gap:8px;
+  padding:0 12px;
+  border-right:1px solid var(--line-2);
+  background:#000;
+}
+.brand .logo{
+  width:14px;height:14px;
+  background:var(--amber);
+  border-radius:1px;
+  box-shadow:0 0 8px rgba(255,176,0,.5);
+}
+.brand .name{
+  font-weight:700;font-size:12px;
+  color:var(--amber);letter-spacing:1.5px;
+}
+.brand .sub{color:var(--txt-faint);font-size:9px;letter-spacing:1px}
+.cmdline{
+  flex:1;display:flex;align-items:center;
+  padding:0 10px;gap:8px;
+  border-right:1px solid var(--line-2);
+}
+.cmdline .prompt{color:var(--amber);font-weight:700}
+.cmdline input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--txt);font-family:inherit;font-size:11px;
+  letter-spacing:.5px;
+}
+.cmdline input::placeholder{color:var(--txt-faint)}
+.cmdline .hint{color:var(--txt-faint);font-size:9px}
+.cmdline .hint kbd{
+  background:#1a1a18;border:1px solid var(--line-2);
+  padding:1px 4px;border-radius:2px;color:var(--txt-dim);
+}
+.topstat{
+  display:flex;align-items:center;gap:6px;
+  padding:0 10px;border-right:1px solid var(--line-2);
+  white-space:nowrap;
+}
+.topstat .k{color:var(--txt-faint);font-size:9px}
+.topstat .v{font-weight:600;font-size:11px}
+.clock{
+  display:flex;align-items:center;gap:8px;
+  padding:0 12px;color:var(--txt-dim);font-size:10px;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 6px var(--green);
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ============ FUNCTION KEYS ============ */
+.fkeys{
+  display:flex;background:#080808;
+  border-bottom:1px solid var(--line);
+  height:22px;
+}
+.fkey{
+  display:flex;align-items:center;gap:5px;
+  padding:0 12px;
+  border-right:1px solid var(--line);
+  color:var(--txt-dim);font-size:9px;
+  letter-spacing:.6px;cursor:pointer;
+  white-space:nowrap;
+}
+.fkey:hover{background:#141412;color:var(--txt)}
+.fkey.active{background:var(--amber);color:#000;font-weight:700}
+.fkey .fn{color:var(--amber-dim);font-weight:700}
+.fkey.active .fn{color:#000}
+.fkeys .spacer{flex:1;border-right:1px solid var(--line)}
+.fkey.tag{color:var(--txt-faint);cursor:default}
+.fkey.tag:hover{background:transparent;color:var(--txt-faint)}
+
+/* ============ TICKER ============ */
+.ticker{
+  display:flex;align-items:center;
+  background:#000;
+  border-bottom:1px solid var(--line-2);
+  height:26px;overflow:hidden;
+}
+.ticker-label{
+  display:flex;align-items:center;
+  padding:0 10px;height:100%;
+  background:var(--amber);color:#000;
+  font-weight:700;font-size:9px;letter-spacing:1px;
+  flex-shrink:0;
+}
+.ticker-track{
+  display:flex;white-space:nowrap;
+  animation:scroll 60s linear infinite;
+}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick{
+  display:flex;align-items:center;gap:7px;
+  padding:0 16px;
+  border-right:1px solid var(--line);
+  font-size:10px;
+}
+.tick .sym{font-weight:700;color:var(--txt)}
+.tick .px{color:var(--txt-dim)}
+.tick .arrow{font-size:8px}
+
+/* ============ GRID ============ */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:min-content;
+  gap:1px;
+  background:var(--line);
+  border-bottom:1px solid var(--line);
+}
+.panel{
+  background:var(--panel);
+  display:flex;flex-direction:column;
+  min-width:0;
+}
+.panel-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--hdr);
+  border-bottom:1px solid var(--line-2);
+  padding:4px 8px;
+  height:21px;flex-shrink:0;
+}
+.panel-hd .ttl{
+  display:flex;align-items:center;gap:6px;
+  font-weight:700;font-size:9.5px;
+  letter-spacing:1px;color:var(--amber);
+}
+.panel-hd .ttl .idx{
+  color:#000;background:var(--amber-dim);
+  padding:0 4px;border-radius:1px;font-size:8px;
+}
+.panel-hd .meta{
+  display:flex;align-items:center;gap:8px;
+  font-size:9px;color:var(--txt-faint);
+}
+.panel-hd .meta .badge-live{
+  display:flex;align-items:center;gap:4px;
+  color:var(--green);
+}
+.panel-hd .tabs{display:flex;gap:0}
+.panel-hd .tab{
+  padding:0 6px;font-size:8.5px;color:var(--txt-faint);
+  cursor:pointer;letter-spacing:.5px;
+}
+.panel-hd .tab.on{color:var(--amber);font-weight:700}
+.panel-bd{flex:1;min-height:0}
+
+/* span helpers */
+.c12{grid-column:span 12}.c9{grid-column:span 9}.c8{grid-column:span 8}
+.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}
+.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
+
+/* ============ STAT STRIP ============ */
+.statstrip{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+}
+.stat{
+  padding:5px 8px;
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;gap:2px;
+}
+.stat:last-child{border-right:none}
+.stat .lbl{
+  font-size:8.5px;color:var(--txt-faint);
+  letter-spacing:.8px;
+  display:flex;justify-content:space-between;
+}
+.stat .val{
+  font-size:15px;font-weight:600;color:var(--txt);
+  font-variant-numeric:tabular-nums;
+  line-height:1.1;
+}
+.stat .val .cur{color:var(--amber-dim);font-size:11px}
+.stat .chg{font-size:8.5px;font-variant-numeric:tabular-nums}
+.spark{height:14px;display:flex;align-items:flex-end;gap:1px;margin-top:1px}
+.spark i{flex:1;background:var(--amber-dim);opacity:.55}
+
+/* ============ TABLES ============ */
+table{
+  width:100%;border-collapse:collapse;
+  font-variant-numeric:tabular-nums;
+}
+thead th{
+  background:#0c0c0c;
+  font-size:8.5px;font-weight:600;
+  color:var(--txt-faint);letter-spacing:.7px;
+  padding:3px 8px;text-align:right;
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;
+  white-space:nowrap;
+}
+thead th:first-child{text-align:left}
+tbody td{
+  padding:3px 8px;text-align:right;
+  border-bottom:1px solid #161614;
+  font-size:10.5px;white-space:nowrap;
+}
+tbody td:first-child{text-align:left}
+tbody tr:hover{background:#16160f}
+tbody tr:last-child td{border-bottom:none}
+.sym-cell{display:flex;align-items:center;gap:6px}
+.sym-tag{
+  width:16px;height:16px;border-radius:2px;
+  background:#1c1c18;border:1px solid var(--line-2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:7px;font-weight:700;color:var(--amber);
+  flex-shrink:0;
+}
+.sym-name{font-weight:700;color:var(--txt)}
+.rk{color:var(--txt-faint);width:14px;display:inline-block;text-align:right}
+.pill{
+  display:inline-block;padding:0 4px;border-radius:2px;
+  font-size:8.5px;font-weight:600;
+}
+.pill.g{background:var(--green-dim);color:var(--green)}
+.pill.r{background:var(--red-dim);color:var(--red)}
+.pill.a{background:#2a1f00;color:var(--amber)}
+.bar-mini{
+  display:inline-block;height:6px;width:42px;
+  background:#1a1a16;border-radius:1px;vertical-align:middle;
+  overflow:hidden;
+}
+.bar-mini i{display:block;height:100%;background:var(--amber)}
+.lev{color:var(--blue);font-weight:600}
+
+/* ============ AUCTION PANEL ============ */
+.auction-bd{padding:8px;display:flex;flex-direction:column;gap:8px}
+.auction-live{
+  border:1px solid var(--amber-dim);
+  background:linear-gradient(180deg,#1a1300,#0e0e0e);
+  border-radius:2px;padding:8px;
+}
+.auction-live .row1{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:6px;
+}
+.auction-live .tk{
+  display:flex;align-items:center;gap:6px;
+  font-weight:700;font-size:13px;color:var(--txt);
+}
+.auction-live .tk .sym-tag{width:18px;height:18px}
+.live-tag{
+  background:var(--red);color:#fff;font-size:8px;
+  font-weight:700;padding:1px 5px;border-radius:2px;
+  letter-spacing:1px;
+}
+.auction-live .price-big{
+  font-size:22px;font-weight:700;color:var(--amber);
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.auction-live .price-usd{color:var(--txt-dim);font-size:10px}
+.auction-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  margin-top:8px;
+}
+.auction-cell{
+  border:1px solid var(--line);background:#0c0c0c;
+  padding:4px 6px;
+}
+.auction-cell .k{font-size:8px;color:var(--txt-faint);letter-spacing:.6px}
+.auction-cell .v{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.prog{
+  margin-top:8px;height:8px;background:#1a1a16;
+  border-radius:1px;overflow:hidden;position:relative;
+  border:1px solid var(--line);
+}
+.prog i{
+  display:block;height:100%;
+  background:repeating-linear-gradient(45deg,var(--amber),var(--amber) 4px,var(--amber-dim) 4px,var(--amber-dim) 8px);
+}
+.countdown{
+  font-size:16px;font-weight:700;color:var(--amber);
+  letter-spacing:2px;font-variant-numeric:tabular-nums;
+}
+.next-auction{
+  display:flex;align-items:center;justify-content:space-between;
+  border:1px solid var(--line);background:#0c0c0c;
+  padding:5px 7px;
+}
+.next-auction .lbl{font-size:8.5px;color:var(--txt-faint)}
+
+/* ============ DEPLOY LIST ============ */
+.deploy-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:3px 8px;border-bottom:1px solid #161614;font-size:10px;
+}
+.deploy-row:hover{background:#16160f}
+.deploy-row .l{display:flex;align-items:center;gap:6px}
+
+/* ============ LIQ FLOW ============ */
+.liq-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-bottom:1px solid var(--line);
+}
+.liq-stat{
+  padding:5px 8px;border-right:1px solid var(--line);
+}
+.liq-stat:last-child{border-right:none}
+.liq-stat .k{font-size:8px;color:var(--txt-faint);letter-spacing:.6px}
+.liq-stat .v{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.ls-bar{
+  display:flex;height:16px;border-bottom:1px solid var(--line);
+  font-size:8.5px;font-weight:700;
+}
+.ls-bar .lng{
+  background:var(--green-dim);color:var(--green);
+  display:flex;align-items:center;padding:0 6px;
+}
+.ls-bar .sht{
+  background:var(--red-dim);color:var(--red);
+  display:flex;align-items:center;justify-content:flex-end;
+  padding:0 6px;
+}
+.flow-row{
+  display:flex;align-items:center;
+  padding:3px 8px;gap:8px;
+  border-bottom:1px solid #161614;font-size:10px;
+  font-variant-numeric:tabular-nums;
+}
+.flow-row:first-child{background:#16160f}
+.flow-side{
+  font-weight:700;font-size:8.5px;width:40px;
+  padding:0 3px;border-radius:2px;text-align:center;
+}
+.flow-side.L{background:var(--green-dim);color:var(--green)}
+.flow-side.S{background:var(--red-dim);color:var(--red)}
+.flow-row .sz{flex:1;text-align:right;font-weight:600}
+.flow-row .ago{color:var(--txt-faint);width:34px;text-align:right;font-size:9px}
+
+/* ============ CHART ============ */
+.chart-bd{padding:8px 6px 6px}
+.chart-wrap{position:relative;height:138px}
+.chart-yaxis{
+  position:absolute;left:0;top:0;bottom:14px;width:34px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  font-size:8px;color:var(--txt-faint);
+}
+.chart-svg{position:absolute;left:34px;right:0;top:0;bottom:14px}
+.chart-xaxis{
+  position:absolute;left:34px;right:0;bottom:0;height:12px;
+  display:flex;justify-content:space-between;
+  font-size:8px;color:var(--txt-faint);
+}
+.chart-legend{
+  display:flex;gap:14px;padding:4px 8px 0;
+  font-size:9px;color:var(--txt-dim);
+}
+.chart-legend .dot{
+  width:8px;height:2px;display:inline-block;
+  vertical-align:middle;margin-right:4px;
+}
+
+/* ============ TWAP ============ */
+.twap-hd{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--line);
+}
+.twap-hd .c{padding:5px 8px;border-right:1px solid var(--line)}
+.twap-hd .c:last-child{border-right:none}
+.twap-hd .k{font-size:8px;color:var(--txt-faint)}
+.twap-hd .v{font-size:14px;font-weight:700}
+
+/* ============ MINI METRICS ROW ============ */
+.heat{
+  display:grid;grid-template-columns:repeat(2,1fr);
+}
+.heat-cell{
+  padding:4px 8px;border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;flex-direction:column;gap:1px;
+}
+.heat-cell:nth-child(2n){border-right:none}
+.heat-cell .k{font-size:8px;color:var(--txt-faint)}
+.heat-cell .v{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ============ FOOTER ============ */
+.statusbar{
+  display:flex;align-items:center;
+  background:#000;border-top:1px solid var(--line-2);
+  height:20px;font-size:9px;
+}
+.statusbar .sb{
+  padding:0 10px;border-right:1px solid var(--line);
+  color:var(--txt-dim);display:flex;align-items:center;gap:5px;
+  white-space:nowrap;
+}
+.statusbar .sb:last-child{border-right:none}
+.statusbar .grow{flex:1;border-right:none}
+.dot-g{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.dot-a{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+
+@media(max-width:1100px){
+  .grid{grid-template-columns:repeat(6,1fr)}
+  .c9,.c8,.c7,.c6{grid-column:span 6}
+  .c5,.c4,.c3{grid-column:span 3}
+  .statstrip{grid-template-columns:repeat(5,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== TOP BAR ===================== -->
+<div class="topbar">
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <span class="name">LIQTERM</span>
+      <span class="sub"> / HL</span>
+    </div>
+  </div>
+  <div class="cmdline">
+    <span class="prompt">&gt;</span>
+    <input type="text" placeholder="HYPE &lt;GO&gt;  ·  type ticker or function — VOL, OI, LIQ, AUCT, VLT">
+    <span class="hint"><kbd>F1</kbd> HELP</span>
+  </div>
+  <div class="topstat"><span class="k">L1 BLK</span><span class="v amber mono-num">19,482,113</span></div>
+  <div class="topstat"><span class="k">GAS</span><span class="v mono-num up">0.012</span></div>
+  <div class="topstat"><span class="k">HYPE</span><span class="v mono-num">38.94</span><span class="up">▲5.2%</span></div>
+  <div class="clock">
+    <span class="live-dot"></span>
+    <span>MAINNET</span>
+    <span class="amber mono-num" id="utc">14:21:08 UTC</span>
+  </div>
+</div>
+
+<!-- ===================== FUNCTION KEYS ===================== -->
+<div class="fkeys">
+  <div class="fkey active"><span class="fn">F1</span> DASH</div>
+  <div class="fkey"><span class="fn">F2</span> PERPS</div>
+  <div class="fkey"><span class="fn">F3</span> SPOT</div>
+  <div class="fkey"><span class="fn">F4</span> AUCTIONS</div>
+  <div class="fkey"><span class="fn">F5</span> VAULTS</div>
+  <div class="fkey"><span class="fn">F6</span> STAKING</div>
+  <div class="fkey"><span class="fn">F7</span> LIQS</div>
+  <div class="fkey"><span class="fn">F8</span> HIP-3</div>
+  <div class="fkey"><span class="fn">F9</span> BRIDGE</div>
+  <div class="fkey"><span class="fn">F10</span> EVM</div>
+  <div class="spacer"></div>
+  <div class="fkey tag">DESK: HL-MKT-01</div>
+  <div class="fkey tag amber">● SYNCED 0.4s</div>
+</div>
+
+<!-- ===================== TICKER TAPE ===================== -->
+<div class="ticker">
+  <div class="ticker-label">HL TAPE</div>
+  <div class="ticker-track" id="tape">
+    <span class="tick"><span class="sym">BTC-PERP</span><span class="px">97,420</span><span class="up arrow">▲</span><span class="up">2.1%</span></span>
+    <span class="tick"><span class="sym">ETH-PERP</span><span class="px">3,510</span><span class="up arrow">▲</span><span class="up">3.4%</span></span>
+    <span class="tick"><span class="sym">HYPE</span><span class="px">38.94</span><span class="up arrow">▲</span><span class="up">5.2%</span></span>
+    <span class="tick"><span class="sym">SOL-PERP</span><span class="px">214.60</span><span class="dn arrow">▼</span><span class="dn">1.2%</span></span>
+    <span class="tick"><span class="sym">HFUN</span><span class="px">1.04</span><span class="up arrow">▲</span><span class="up">12.1%</span></span>
+    <span class="tick"><span class="sym">PURR</span><span class="px">0.182</span><span class="dn arrow">▼</span><span class="dn">3.4%</span></span>
+    <span class="tick"><span class="sym">AVAX-PERP</span><span class="px">48.20</span><span class="up arrow">▲</span><span class="up">0.9%</span></span>
+    <span class="tick"><span class="sym">LIQD</span><span class="px">2.41</span><span class="up arrow">▲</span><span class="up">6.8%</span></span>
+    <span class="tick"><span class="sym">GIGA</span><span class="px">5.67</span><span class="up arrow">▲</span><span class="up">2.0%</span></span>
+    <span class="tick"><span class="sym">JEFF</span><span class="px">0.094</span><span class="dn arrow">▼</span><span class="dn">1.1%</span></span>
+    <span class="tick"><span class="sym">MELON</span><span class="px">0.41</span><span class="up arrow">▲</span><span class="up">9.4%</span></span>
+    <span class="tick"><span class="sym amber">24H VOL</span><span class="px">$4.21B</span></span>
+    <span class="tick"><span class="sym amber">OPEN INT</span><span class="px">$8.14B</span></span>
+    <span class="tick"><span class="sym amber">HLP TVL</span><span class="px">$482M</span></span>
+    <span class="tick"><span class="sym amber">LIQS 24H</span><span class="px">$8.41M</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="tick"><span class="sym">BTC-PERP</span><span class="px">97,420</span><span class="up arrow">▲</span><span class="up">2.1%</span></span>
+    <span class="tick"><span class="sym">ETH-PERP</span><span class="px">3,510</span><span class="up arrow">▲</span><span class="up">3.4%</span></span>
+    <span class="tick"><span class="sym">HYPE</span><span class="px">38.94</span><span class="up arrow">▲</span><span class="up">5.2%</span></span>
+    <span class="tick"><span class="sym">SOL-PERP</span><span class="px">214.60</span><span class="dn arrow">▼</span><span class="dn">1.2%</span></span>
+    <span class="tick"><span class="sym">HFUN</span><span class="px">1.04</span><span class="up arrow">▲</span><span class="up">12.1%</span></span>
+    <span class="tick"><span class="sym">PURR</span><span class="px">0.182</span><span class="dn arrow">▼</span><span class="dn">3.4%</span></span>
+    <span class="tick"><span class="sym">AVAX-PERP</span><span class="px">48.20</span><span class="up arrow">▲</span><span class="up">0.9%</span></span>
+    <span class="tick"><span class="sym">LIQD</span><span class="px">2.41</span><span class="up arrow">▲</span><span class="up">6.8%</span></span>
+    <span class="tick"><span class="sym">GIGA</span><span class="px">5.67</span><span class="up arrow">▲</span><span class="up">2.0%</span></span>
+    <span class="tick"><span class="sym">JEFF</span><span class="px">0.094</span><span class="dn arrow">▼</span><span class="dn">1.1%</span></span>
+    <span class="tick"><span class="sym">MELON</span><span class="px">0.41</span><span class="up arrow">▲</span><span class="up">9.4%</span></span>
+    <span class="tick"><span class="sym amber">24H VOL</span><span class="px">$4.21B</span></span>
+    <span class="tick"><span class="sym amber">OPEN INT</span><span class="px">$8.14B</span></span>
+    <span class="tick"><span class="sym amber">HLP TVL</span><span class="px">$482M</span></span>
+    <span class="tick"><span class="sym amber">LIQS 24H</span><span class="px">$8.41M</span></span>
+  </div>
+</div>
+
+<!-- ===================== STAT STRIP ===================== -->
+<div class="grid">
+  <div class="panel c12">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">01</span> HYPERLIQUID — NETWORK SNAPSHOT</div>
+      <div class="meta"><span class="badge-live"><span class="live-dot"></span>STREAMING</span><span>UPD 14:21:08</span></div>
+    </div>
+    <div class="statstrip">
+      <div class="stat">
+        <div class="lbl"><span>24H VOLUME</span><span class="up">+8.4%</span></div>
+        <div class="val"><span class="cur">$</span>4.21<span class="cur">B</span></div>
+        <div class="spark"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:62%"></i><i style="height:58%"></i><i style="height:70%"></i><i style="height:66%"></i><i style="height:84%"></i><i style="height:78%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>OPEN INTEREST</span><span class="up">+3.1%</span></div>
+        <div class="val"><span class="cur">$</span>8.14<span class="cur">B</span></div>
+        <div class="spark"><i style="height:60%"></i><i style="height:58%"></i><i style="height:64%"></i><i style="height:62%"></i><i style="height:70%"></i><i style="height:68%"></i><i style="height:74%"></i><i style="height:80%"></i><i style="height:88%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>24H FEES</span><span class="up">+5.0%</span></div>
+        <div class="val"><span class="cur">$</span>1.24<span class="cur">M</span></div>
+        <div class="spark"><i style="height:50%"></i><i style="height:46%"></i><i style="height:58%"></i><i style="height:54%"></i><i style="height:62%"></i><i style="height:60%"></i><i style="height:72%"></i><i style="height:68%"></i><i style="height:90%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>VAULTS TVL</span><span class="up">+1.2%</span></div>
+        <div class="val"><span class="cur">$</span>1.91<span class="cur">B</span></div>
+        <div class="spark"><i style="height:72%"></i><i style="height:70%"></i><i style="height:74%"></i><i style="height:76%"></i><i style="height:75%"></i><i style="height:80%"></i><i style="height:82%"></i><i style="height:86%"></i><i style="height:92%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>HYPE STAKED</span><span class="up">+0.4%</span></div>
+        <div class="val">421.3<span class="cur">M</span></div>
+        <div class="spark"><i style="height:80%"></i><i style="height:82%"></i><i style="height:83%"></i><i style="height:85%"></i><i style="height:86%"></i><i style="height:88%"></i><i style="height:90%"></i><i style="height:93%"></i><i style="height:96%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>USERS</span><span class="up">+0.9%</span></div>
+        <div class="val">540,219</div>
+        <div class="spark"><i style="height:62%"></i><i style="height:66%"></i><i style="height:68%"></i><i style="height:71%"></i><i style="height:74%"></i><i style="height:78%"></i><i style="height:82%"></i><i style="height:88%"></i><i style="height:94%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>SPOT MCAP</span><span class="up">+4.6%</span></div>
+        <div class="val"><span class="cur">$</span>9.84<span class="cur">B</span></div>
+        <div class="spark"><i style="height:54%"></i><i style="height:52%"></i><i style="height:60%"></i><i style="height:58%"></i><i style="height:66%"></i><i style="height:70%"></i><i style="height:74%"></i><i style="height:82%"></i><i style="height:90%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>BRIDGED USDC</span><span class="up">+2.0%</span></div>
+        <div class="val"><span class="cur">$</span>3.12<span class="cur">B</span></div>
+        <div class="spark"><i style="height:70%"></i><i style="height:72%"></i><i style="height:71%"></i><i style="height:75%"></i><i style="height:78%"></i><i style="height:80%"></i><i style="height:84%"></i><i style="height:88%"></i><i style="height:94%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>24H TRADES</span><span class="up">+6.7%</span></div>
+        <div class="val">2.41<span class="cur">M</span></div>
+        <div class="spark"><i style="height:44%"></i><i style="height:52%"></i><i style="height:48%"></i><i style="height:60%"></i><i style="height:64%"></i><i style="height:68%"></i><i style="height:76%"></i><i style="height:82%"></i><i style="height:90%"></i><i style="height:100%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lbl"><span>HLP TVL</span><span class="dn">−0.3%</span></div>
+        <div class="val"><span class="cur">$</span>482<span class="cur">M</span></div>
+        <div class="spark"><i style="height:88%"></i><i style="height:90%"></i><i style="height:86%"></i><i style="height:92%"></i><i style="height:89%"></i><i style="height:94%"></i><i style="height:91%"></i><i style="height:96%"></i><i style="height:100%"></i><i style="height:97%"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHART ===================== -->
+  <div class="panel c8">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">02</span> NETWORK ACTIVITY — 30D</div>
+      <div class="tabs">
+        <span class="tab on">VOLUME</span>
+        <span class="tab">FEES</span>
+        <span class="tab">BRIDGE TVL</span>
+        <span class="tab">OI</span>
+      </div>
+    </div>
+    <div class="panel-bd chart-bd">
+      <div class="chart-wrap">
+        <div class="chart-yaxis">
+          <span>5.0B</span><span>4.0B</span><span>3.0B</span><span>2.0B</span><span>1.0B</span>
+        </div>
+        <svg class="chart-svg" viewBox="0 0 600 138" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffb000" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#ffb000" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="27.6" x2="600" y2="27.6" stroke="#1c1c18" stroke-width="1"/>
+          <line x1="0" y1="55.2" x2="600" y2="55.2" stroke="#1c1c18" stroke-width="1"/>
+          <line x1="0" y1="82.8" x2="600" y2="82.8" stroke="#1c1c18" stroke-width="1"/>
+          <line x1="0" y1="110.4" x2="600" y2="110.4" stroke="#1c1c18" stroke-width="1"/>
+          <path d="M0,118 L20,112 L40,116 L60,104 L80,108 L100,96 L120,100 L140,90 L160,94 L180,86 L200,92 L220,80 L240,84 L260,74 L280,78 L300,68 L320,72 L340,64 L360,60 L380,66 L400,54 L420,58 L440,48 L460,52 L480,42 L500,46 L520,36 L540,40 L560,30 L600,24 L600,138 L0,138 Z" fill="url(#fill)"/>
+          <path d="M0,118 L20,112 L40,116 L60,104 L80,108 L100,96 L120,100 L140,90 L160,94 L180,86 L200,92 L220,80 L240,84 L260,74 L280,78 L300,68 L320,72 L340,64 L360,60 L380,66 L400,54 L420,58 L440,48 L460,52 L480,42 L500,46 L520,36 L540,40 L560,30 L600,24" fill="none" stroke="#ffb000" stroke-width="1.6"/>
+          <circle cx="600" cy="24" r="3" fill="#ffb000"/>
+          <circle cx="600" cy="24" r="6" fill="none" stroke="#ffb000" stroke-opacity="0.4" stroke-width="1"/>
+        </svg>
+        <div class="chart-xaxis">
+          <span>APR 18</span><span>APR 25</span><span>MAY 02</span><span>MAY 09</span><span>MAY 16</span><span>NOW</span>
+        </div>
+      </div>
+      <div class="chart-legend">
+        <span><span class="dot" style="background:#ffb000"></span>24H VOLUME</span>
+        <span class="dim">30D HIGH <span class="amber">$4.21B</span></span>
+        <span class="dim">30D LOW <span class="amber">$1.84B</span></span>
+        <span class="dim">30D AVG <span class="amber">$2.96B</span></span>
+        <span class="dim">Δ30D <span class="up">+128.8%</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== AUCTION ===================== -->
+  <div class="panel c4">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">03</span> DUTCH AUCTION</div>
+      <div class="meta"><span class="badge-live"><span class="live-dot"></span>SPOT LIVE</span></div>
+    </div>
+    <div class="panel-bd auction-bd">
+      <div class="auction-live">
+        <div class="row1">
+          <div class="tk"><span class="sym-tag">FR</span> FROG <span class="dim" style="font-size:9px">/ SPOT</span></div>
+          <span class="live-tag">LIVE</span>
+        </div>
+        <div class="price-big">12.84 <span style="font-size:11px;color:var(--amber-dim)">HYPE</span></div>
+        <div class="price-usd">≈ $487.00 USD · DUTCH DESCENDING</div>
+        <div class="auction-grid">
+          <div class="auction-cell">
+            <div class="k">TIME LEFT</div>
+            <div class="v countdown" id="cd">03:42:11</div>
+          </div>
+          <div class="auction-cell">
+            <div class="k">PROGRESS</div>
+            <div class="v amber">64%</div>
+          </div>
+        </div>
+        <div class="prog"><i style="width:64%"></i></div>
+      </div>
+      <div class="next-auction">
+        <div class="l" style="display:flex;align-items:center;gap:6px">
+          <span class="pill a">HIP-3</span>
+          <span class="lbl">NEXT PERP AUCTION</span>
+        </div>
+        <span class="amber mono-num" style="font-weight:600">2D 04H</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TRENDING PERP ===================== -->
+  <div class="panel c7">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">04</span> TRENDING PERPETUALS</div>
+      <div class="meta"><span>SORT: VOL ▼</span><span>5 MKTS</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr>
+          <th>TICKER</th><th>LAST</th><th>24H%</th><th>FUNDING</th><th>OPEN INT</th><th>24H VOL</th><th>LEV</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="sym-cell"><span class="rk">1</span><span class="sym-tag">BT</span><span class="sym-name">BTC</span></span></td>
+            <td>97,420.0</td><td class="up">▲ 2.1%</td><td class="up">+0.012%</td><td>$2.14B</td><td>$890M</td><td class="lev">40×</td>
+          </tr>
+          <tr>
+            <td><span class="sym-cell"><span class="rk">2</span><span class="sym-tag">ET</span><span class="sym-name">ETH</span></span></td>
+            <td>3,510.00</td><td class="up">▲ 3.4%</td><td class="up">+0.009%</td><td>$1.32B</td><td>$610M</td><td class="lev">25×</td>
+          </tr>
+          <tr>
+            <td><span class="sym-cell"><span class="rk">3</span><span class="sym-tag">HY</span><span class="sym-name">HYPE</span></span></td>
+            <td>38.92</td><td class="up">▲ 5.2%</td><td class="dn">−0.021%</td><td>$890M</td><td>$420M</td><td class="lev">20×</td>
+          </tr>
+          <tr>
+            <td><span class="sym-cell"><span class="rk">4</span><span class="sym-tag">SO</span><span class="sym-name">SOL</span></span></td>
+            <td>214.60</td><td class="dn">▼ 1.2%</td><td class="up">+0.004%</td><td>$612M</td><td>$310M</td><td class="lev">20×</td>
+          </tr>
+          <tr>
+            <td><span class="sym-cell"><span class="rk">5</span><span class="sym-tag">AV</span><span class="sym-name">AVAX</span></span></td>
+            <td>48.20</td><td class="up">▲ 0.9%</td><td class="up">+0.007%</td><td>$208M</td><td>$94M</td><td class="lev">10×</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== TRENDING SPOT ===================== -->
+  <div class="panel c5">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">05</span> TRENDING SPOT</div>
+      <div class="meta"><span>SORT: VOL ▼</span><span>7 PAIRS</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr>
+          <th>TKN</th><th>PRICE</th><th>24H%</th><th>VOL</th><th>MCAP</th><th>LIQ</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="sym-cell"><span class="rk">1</span><span class="sym-tag">HY</span><span class="sym-name">HYPE</span></span></td><td>38.940</td><td class="up">▲5.2%</td><td>$182M</td><td>$4.2B</td><td>$61M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">2</span><span class="sym-tag">HF</span><span class="sym-name">HFUN</span></span></td><td>1.0400</td><td class="up">▲12.1%</td><td>$14M</td><td>$97M</td><td>$9M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">3</span><span class="sym-tag">PU</span><span class="sym-name">PURR</span></span></td><td>0.1820</td><td class="dn">▼3.4%</td><td>$8.9M</td><td>$182M</td><td>$22M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">4</span><span class="sym-tag">LQ</span><span class="sym-name">LIQD</span></span></td><td>2.4100</td><td class="up">▲6.8%</td><td>$6.4M</td><td>$54M</td><td>$7M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">5</span><span class="sym-tag">JF</span><span class="sym-name">JEFF</span></span></td><td>0.0940</td><td class="dn">▼1.1%</td><td>$3.1M</td><td>$18M</td><td>$3M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">6</span><span class="sym-tag">GG</span><span class="sym-name">GIGA</span></span></td><td>5.6700</td><td class="up">▲2.0%</td><td>$6.4M</td><td>$54M</td><td>$8M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">7</span><span class="sym-tag">ML</span><span class="sym-name">MELON</span></span></td><td>0.4100</td><td class="up">▲9.4%</td><td>$2.2M</td><td>$12M</td><td>$2M</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== LIQUIDATIONS ===================== -->
+  <div class="panel c5">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">06</span> LIQUIDATIONS — 24H</div>
+      <div class="meta"><span class="badge-live"><span class="live-dot"></span>FEED</span></div>
+    </div>
+    <div class="panel-bd">
+      <div class="liq-stats">
+        <div class="liq-stat"><div class="k">TOTAL 24H</div><div class="v amber">$8.41M</div></div>
+        <div class="liq-stat"><div class="k">EVENTS</div><div class="v">1,204</div></div>
+        <div class="liq-stat"><div class="k">AVG SIZE</div><div class="v">$6.98K</div></div>
+      </div>
+      <div class="ls-bar">
+        <div class="lng" style="width:64%">LONG 64%</div>
+        <div class="sht" style="width:36%">36% SHORT</div>
+      </div>
+      <div class="liq-stats" style="border-bottom:1px solid var(--line)">
+        <div class="liq-stat"><div class="k">TOP TOKEN</div><div class="v amber" style="font-size:12px">BTC</div></div>
+        <div class="liq-stat"><div class="k">LIQ FEES</div><div class="v" style="font-size:12px">$42K</div></div>
+        <div class="liq-stat"><div class="k">LARGEST</div><div class="v" style="font-size:12px">$182K</div></div>
+      </div>
+      <div style="padding:3px 8px;font-size:8px;color:var(--txt-faint);letter-spacing:.6px;border-bottom:1px solid #161614">RECENT FLOW</div>
+      <div class="flow-row"><span class="flow-side L">LONG</span><span class="sym-name">BTC</span><span class="sz">$182K</span><span class="ago">12s</span></div>
+      <div class="flow-row"><span class="flow-side S">SHORT</span><span class="sym-name">ETH</span><span class="sz">$94K</span><span class="ago">41s</span></div>
+      <div class="flow-row"><span class="flow-side L">LONG</span><span class="sym-name">HYPE</span><span class="sz">$61K</span><span class="ago">1m</span></div>
+      <div class="flow-row"><span class="flow-side L">LONG</span><span class="sym-name">SOL</span><span class="sz">$49K</span><span class="ago">2m</span></div>
+      <div class="flow-row"><span class="flow-side S">SHORT</span><span class="sym-name">AVAX</span><span class="sz">$33K</span><span class="ago">3m</span></div>
+      <div class="flow-row"><span class="flow-side L">LONG</span><span class="sym-name">DOGE</span><span class="sz">$21K</span><span class="ago">5m</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== TWAP ===================== -->
+  <div class="panel c4">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">07</span> TWAP ENGINE</div>
+      <div class="meta"><span class="badge-live"><span class="live-dot"></span>ACTIVE</span></div>
+    </div>
+    <div class="panel-bd">
+      <div class="twap-hd">
+        <div class="c"><div class="k">ACTIVE ORDERS</div><div class="v amber">14</div></div>
+        <div class="c"><div class="k">TOTAL VOLUME</div><div class="v">$4.2M</div></div>
+      </div>
+      <table>
+        <thead><tr><th>ORDER</th><th>SIZE</th><th>FILL</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill g">BUY</span> <span class="sym-name">HYPE</span></td><td>$1.2M</td><td><span class="bar-mini"><i style="width:62%"></i></span> 62%</td></tr>
+          <tr><td><span class="pill r">SELL</span> <span class="sym-name">BTC</span></td><td>$840K</td><td><span class="bar-mini"><i style="width:38%"></i></span> 38%</td></tr>
+          <tr><td><span class="pill g">BUY</span> <span class="sym-name">ETH</span></td><td>$610K</td><td><span class="bar-mini"><i style="width:81%"></i></span> 81%</td></tr>
+          <tr><td><span class="pill g">BUY</span> <span class="sym-name">SOL</span></td><td>$420K</td><td><span class="bar-mini"><i style="width:25%"></i></span> 25%</td></tr>
+          <tr><td><span class="pill r">SELL</span> <span class="sym-name">AVAX</span></td><td>$180K</td><td><span class="bar-mini"><i style="width:54%"></i></span> 54%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== RECENT DEPLOYMENTS ===================== -->
+  <div class="panel c3">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">08</span> DEPLOYMENTS</div>
+      <div class="meta"><span>5 RECENT</span></div>
+    </div>
+    <div class="panel-bd">
+      <div style="padding:3px 8px;font-size:8px;color:var(--txt-faint);letter-spacing:.6px;border-bottom:1px solid #161614">TKN · TYPE · CLEARING PRICE</div>
+      <div class="deploy-row"><span class="l"><span class="sym-tag">FR</span><span class="sym-name">FROG</span><span class="pill a">SPOT</span></span><span class="amber mono-num">12.84 HYPE</span></div>
+      <div class="deploy-row"><span class="l"><span class="sym-tag">MO</span><span class="sym-name">MOON</span><span class="pill a">SPOT</span></span><span class="amber mono-num">10.4 HYPE</span></div>
+      <div class="deploy-row"><span class="l"><span class="sym-tag">PE</span><span class="sym-name">PEPE2</span><span class="pill a">SPOT</span></span><span class="amber mono-num">9.9 HYPE</span></div>
+      <div class="deploy-row"><span class="l"><span class="sym-tag">VG</span><span class="sym-name">VEGA</span><span class="pill" style="background:#0e2a3a;color:var(--blue)">PERP</span></span><span class="mono-num" style="color:var(--blue)">1.8K USDC</span></div>
+      <div class="deploy-row"><span class="l"><span class="sym-tag">GG</span><span class="sym-name">GIGA</span><span class="pill a">SPOT</span></span><span class="amber mono-num">9.1 HYPE</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== VAULTS ===================== -->
+  <div class="panel c4">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">09</span> VAULTS</div>
+      <div class="meta"><span>TVL $1.91B</span><span>SORT: TVL ▼</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr><th>VAULT</th><th>APR</th><th>TVL</th><th>LEADER</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sym-cell"><span class="rk">1</span><span class="sym-name">HLP</span></span></td><td class="up">14.2%</td><td>$1.10B</td><td class="dim">0x7a3f…e21c</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">2</span><span class="sym-name">Hyperliquidity</span></span></td><td class="up">9.8%</td><td>$240M</td><td class="dim">0x1b9d…44a0</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">3</span><span class="sym-name">Bonk Vault</span></span></td><td class="up">22.4%</td><td>$88M</td><td class="dim">0xc402…9f7e</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">4</span><span class="sym-name">Felix Stable</span></span></td><td class="up">6.1%</td><td>$54M</td><td class="dim">0x55e1…0db2</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">5</span><span class="sym-name">Rage Trade</span></span></td><td class="up">18.0%</td><td>$31M</td><td class="dim">0x9aa8…7c33</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== VALIDATORS ===================== -->
+  <div class="panel c5">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">10</span> VALIDATORS / STAKING</div>
+      <div class="meta"><span>STAKED 421.3M HYPE</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr><th>VALIDATOR</th><th>STAKE</th><th>APR</th><th>COMM</th><th>UPTIME</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sym-cell"><span class="rk">1</span><span class="sym-name">Hyper Foundation</span></span></td><td>38.2M</td><td class="up">2.1%</td><td class="dim">5.0%</td><td class="up">99.9%</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">2</span><span class="sym-name">ASXN</span></span></td><td>24.1M</td><td class="up">2.3%</td><td class="dim">4.0%</td><td class="up">99.8%</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">3</span><span class="sym-name">Nansen</span></span></td><td>19.8M</td><td class="up">2.2%</td><td class="dim">5.0%</td><td class="up">99.7%</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">4</span><span class="sym-name">B-Harvest</span></span></td><td>16.4M</td><td class="up">2.4%</td><td class="dim">3.0%</td><td class="up">99.9%</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">5</span><span class="sym-name">Validator.xyz</span></span></td><td>12.0M</td><td class="up">2.0%</td><td class="dim">6.0%</td><td class="dn">98.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== BUILDERS ===================== -->
+  <div class="panel c3">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">11</span> BUILDERS</div>
+      <div class="meta"><span>SORT: FEES ▼</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr><th>APP</th><th>FEES</th><th>VOL</th><th>USERS</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sym-cell"><span class="rk">1</span><span class="sym-name">pvp.trade</span></span></td><td class="amber">$31.2K</td><td>$58M</td><td>1,240</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">2</span><span class="sym-name">Okto</span></span></td><td class="amber">$22.8K</td><td>$41M</td><td>980</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">3</span><span class="sym-name">Dexari</span></span></td><td class="amber">$14.1K</td><td>$26M</td><td>610</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">4</span><span class="sym-name">Insilico</span></span></td><td class="amber">$9.7K</td><td>$18M</td><td>420</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== HIP-3 PERPDEXS ===================== -->
+  <div class="panel c4">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">12</span> HIP-3 PERP DEXS</div>
+      <div class="meta"><span>4 DEPLOYERS</span></div>
+    </div>
+    <div class="panel-bd">
+      <table>
+        <thead><tr><th>DEX</th><th>MKTS</th><th>24H VOL</th><th>OPEN INT</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sym-cell"><span class="rk">1</span><span class="sym-tag">UN</span><span class="sym-name">Unit</span></span></td><td>24</td><td>$98M</td><td>$210M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">2</span><span class="sym-tag">BO</span><span class="sym-name">Bolt Markets</span></span></td><td>12</td><td>$42M</td><td>$88M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">3</span><span class="sym-tag">VG</span><span class="sym-name">Vega</span></span></td><td>8</td><td>$28M</td><td>$54M</td></tr>
+          <tr><td><span class="sym-cell"><span class="rk">4</span><span class="sym-tag">XY</span><span class="sym-name">xyz Perps</span></span></td><td>5</td><td>$11M</td><td>$19M</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== HEAT / DERIVED METRICS ===================== -->
+  <div class="panel c4">
+    <div class="panel-hd">
+      <div class="ttl"><span class="idx">13</span> DERIVED METRICS</div>
+      <div class="meta"><span>RT CALC</span></div>
+    </div>
+    <div class="panel-bd">
+      <div class="heat">
+        <div class="heat-cell"><div class="k">VOL / OI RATIO</div><div class="v amber">0.52×</div></div>
+        <div class="heat-cell"><div class="k">FEES / VOL (BPS)</div><div class="v">2.95</div></div>
+        <div class="heat-cell"><div class="k">SPOT / PERP VOL</div><div class="v">0.06×</div></div>
+        <div class="heat-cell"><div class="k">TVL / MCAP</div><div class="v">0.19×</div></div>
+        <div class="heat-cell"><div class="k">AVG TRADE SIZE</div><div class="v">$1,747</div></div>
+        <div class="heat-cell"><div class="k">STAKE RATIO</div><div class="v up">42.7%</div></div>
+        <div class="heat-cell" style="border-bottom:none"><div class="k">FUND RATE AVG</div><div class="v up">+0.002%</div></div>
+        <div class="heat-cell" style="border-bottom:none"><div class="k">LIQ / OI (24H)</div><div class="v">0.10%</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== STATUS BAR ===================== -->
+<div class="statusbar">
+  <div class="sb"><span class="dot-g"></span> WS FEED OK</div>
+  <div class="sb"><span class="dot-g"></span> RPC 42ms</div>
+  <div class="sb"><span class="dot-a"></span> 13 PANELS</div>
+  <div class="sb">LATENCY <span class="amber">0.41s</span></div>
+  <div class="sb">SRC: HL-API · NODE-INFO · EXPLORER</div>
+  <div class="sb grow"></div>
+  <div class="sb">VOL24H $4.21B</div>
+  <div class="sb">OI $8.14B</div>
+  <div class="sb">HYPE $38.94 <span class="up">▲5.2%</span></div>
+  <div class="sb amber">LIQUID TERMINAL v3.1 · © 2026</div>
+</div>
+
+<script>
+// live UTC clock
+function tick(){
+  var d=new Date();
+  var p=function(n){return String(n).padStart(2,'0')};
+  document.getElementById('utc').textContent=
+    p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())+' UTC';
+}
+tick();setInterval(tick,1000);
+
+// auction countdown
+var t=3*3600+42*60+11;
+function cd(){
+  if(t<=0)t=4*3600;
+  t--;
+  var h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;
+  var p=function(n){return String(n).padStart(2,'0')};
+  document.getElementById('cd').textContent=p(h)+':'+p(m)+':'+p(s);
+}
+setInterval(cd,1000);
+
+// chart tab toggle (visual only)
+document.querySelectorAll('.panel-hd .tab').forEach(function(tab){
+  tab.addEventListener('click',function(){
+    var sibs=this.parentNode.querySelectorAll('.tab');
+    sibs.forEach(function(s){s.classList.remove('on')});
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

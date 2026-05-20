@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>V4 Dashboard — Variant B · Compact hybrid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { background:#0A0B0F; color:#F1F4FA; font-family: Inter, ui-sans-serif, system-ui; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .card { background:#0F1421; border:1px solid rgba(255,255,255,0.06); border-radius:10px; }
+  .card-head { display:flex; align-items:center; gap:.625rem; padding:.625rem .875rem; border-bottom:1px solid rgba(255,255,255,0.06); }
+  .icon-wrap { width:1.5rem; height:1.5rem; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .tag-pill { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:#141B2A; color:#6B7689; border:1px solid rgba(255,255,255,0.06); }
+  .tag-pill-brand { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .tag-pill-gold { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(249,227,112,0.10); color:#F9E370; border:1px solid rgba(249,227,112,0.25); }
+  .tag-pill-violet { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(167,139,250,0.10); color:#A78BFA; border:1px solid rgba(167,139,250,0.25); }
+  .grid-cell { background:#0F1421; border-right:1px solid rgba(255,255,255,0.06); padding:.625rem .875rem; }
+  .grid-cell:last-child { border-right:none; }
+  .halo { position:fixed; inset:0 0 auto 0; height:340px; background:linear-gradient(to bottom, rgba(15,20,33,0.6), transparent); pointer-events:none; z-index:0; }
+  .spark { display:block; height:34px; width:100%; }
+</style>
+</head>
+<body>
+<div class="halo"></div>
+<div class="relative z-10 flex min-h-screen">
+  <aside class="w-[232px] shrink-0 border-r border-[rgba(255,255,255,0.06)] p-3.5 space-y-1">
+    <div class="text-[15px] font-bold mb-4 px-2">Liquid Terminal</div>
+    <a class="block px-2 py-1.5 rounded text-[13px] bg-[#83E9FF]/10 text-[#83E9FF] font-semibold">Dashboard</a>
+    <a class="block px-2 py-1.5 rounded text-[13px] text-[#A6B0C3]">Market</a>
+    <a class="block px-2 py-1.5 rounded text-[13px] text-[#A6B0C3]">Explorer</a>
+    <a class="block px-2 py-1.5 rounded text-[13px] text-[#A6B0C3]">HIP-4</a>
+    <a class="block px-2 py-1.5 rounded text-[13px] text-[#A6B0C3]">Vaults</a>
+    <a class="block px-2 py-1.5 rounded text-[13px] text-[#A6B0C3]">Builders</a>
+  </aside>
+
+  <main class="flex-1 min-w-0">
+    <header class="sticky top-0 z-30 bg-[#0A0B0F]/80 backdrop-blur-xl">
+      <div class="flex items-center gap-3 px-6 py-3">
+        <div class="flex-1 max-w-md">
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7689] text-[12px]">⌕</span>
+            <input class="w-full h-9 pl-9 pr-3 bg-[#0F1421] border border-[rgba(255,255,255,0.10)] rounded-lg text-[13px] placeholder:text-[#6B7689] focus:border-[#83E9FF] outline-none" placeholder="Search asset, address, tx…" />
+          </div>
+        </div>
+        <button class="text-[13px] text-[#A6B0C3] hover:text-white">Light/Dark</button>
+        <button class="text-[13px] px-3 h-9 rounded bg-[#83E9FF] text-[#0A0B0F] font-semibold">Connect</button>
+      </div>
+    </header>
+
+    <div class="p-6 space-y-8">
+      <div class="space-y-1">
+        <h1 class="text-[22px] font-bold tracking-tight">Ecosystem Overview</h1>
+        <p class="text-[12px] text-[#A6B0C3]">Real-time pulse of the Hyperliquid ecosystem.</p>
+      </div>
+
+      <!-- ===== Group 1 : Network Pulse (KPI + chart + stables collés en 2 rows) ===== -->
+      <section class="space-y-2.5">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[12px] font-bold uppercase tracking-[0.08em]">Network Pulse</h2>
+          <span class="text-[11px] text-[#6B7689]">— real-time ecosystem state</span>
+        </div>
+        <div class="space-y-4">
+          <!-- KPI strip -->
+          <div class="card overflow-hidden">
+            <div class="grid grid-cols-6">
+              <div class="grid-cell"><div class="text-[9px] uppercase text-[#6B7689] font-semibold">24h Volume</div><div class="mono text-[18px] font-semibold mt-1">$2.84B</div><div class="text-[10px] text-[#1FA85B] mono">+4.2%</div></div>
+              <div class="grid-cell"><div class="text-[9px] uppercase text-[#6B7689] font-semibold">Open Interest</div><div class="mono text-[18px] font-semibold mt-1">$8.21B</div><div class="text-[10px] text-[#1FA85B] mono">+1.8%</div></div>
+              <div class="grid-cell"><div class="text-[9px] uppercase text-[#6B7689] font-semibold">Vaults TVL</div><div class="mono text-[18px] font-semibold mt-1">$612M</div><div class="text-[10px] text-[#E53E3E] mono">-0.6%</div></div>
+              <div class="grid-cell"><div class="text-[9px] uppercase text-[#6B7689] font-semibold">HYPE Staked</div><div class="mono text-[18px] font-semibold mt-1">$1.74B</div><div class="text-[10px] text-[#1FA85B] mono">+0.4%</div></div>
+              <div class="grid-cell">
+                <div class="text-[9px] uppercase text-[#6B7689] font-semibold">24h Fees</div>
+                <div class="mono text-[18px] font-semibold mt-1 text-[#F9E370]">$1.41M</div>
+                <svg class="spark mt-1" viewBox="0 0 100 34" preserveAspectRatio="none">
+                  <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F9E370" stop-opacity="0.4"/><stop offset="100%" stop-color="#F9E370" stop-opacity="0"/></linearGradient></defs>
+                  <path d="M0,28 L10,22 L20,24 L30,18 L40,20 L50,12 L60,16 L70,8 L80,12 L90,6 L100,10 L100,34 L0,34 Z" fill="url(#g1)"/>
+                  <path d="M0,28 L10,22 L20,24 L30,18 L40,20 L50,12 L60,16 L70,8 L80,12 L90,6 L100,10" stroke="#F9E370" fill="none" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="grid-cell"><div class="text-[9px] uppercase text-[#6B7689] font-semibold">Assistance Fund</div><div class="mono text-[18px] font-semibold mt-1">$248M</div><div class="text-[10px] text-[#A6B0C3] mono">stable</div></div>
+            </div>
+          </div>
+          <!-- Chart + Stables -->
+          <div class="grid grid-cols-[1fr_380px] gap-4">
+            <div class="card min-h-[300px]">
+              <div class="card-head">
+                <span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">⌕</span></span>
+                <h3 class="text-[13px] font-semibold">Ecosystem Capital — multi-series</h3>
+                <span class="tag-pill">90d</span>
+                <div class="ml-auto flex gap-1">
+                  <span class="tag-pill-brand">Bridge</span>
+                  <span class="tag-pill" style="color:#A78BFA;border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.10);">Stables</span>
+                  <span class="tag-pill" style="color:#E53E3E;border-color:rgba(229,62,62,0.25);background:rgba(229,62,62,0.10);">Liq</span>
+                  <span class="tag-pill-gold">Fees</span>
+                </div>
+              </div>
+              <div class="p-4 h-[240px]">
+                <svg viewBox="0 0 600 200" class="w-full h-full" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="bBrand" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#83E9FF" stop-opacity="0.30"/><stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/></linearGradient>
+                    <linearGradient id="bViolet" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity="0.30"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient>
+                  </defs>
+                  <path d="M0,150 L60,140 L120,135 L180,120 L240,110 L300,100 L360,80 L420,90 L480,70 L540,60 L600,50 L600,200 L0,200 Z" fill="url(#bBrand)"/>
+                  <path d="M0,150 L60,140 L120,135 L180,120 L240,110 L300,100 L360,80 L420,90 L480,70 L540,60 L600,50" stroke="#83E9FF" fill="none" stroke-width="1.5"/>
+                  <path d="M0,170 L60,160 L120,158 L180,150 L240,148 L300,140 L360,130 L420,125 L480,118 L540,110 L600,100" stroke="#A78BFA" fill="none" stroke-width="1.5"/>
+                  <path d="M0,90 L60,100 L120,80 L180,95 L240,70 L300,85 L360,60 L420,75 L480,55 L540,40 L600,50" stroke="#E53E3E" fill="none" stroke-width="1.5"/>
+                  <path d="M0,180 L60,178 L120,175 L180,170 L240,168 L300,160 L360,155 L420,148 L480,140 L540,135 L600,125" stroke="#F9E370" fill="none" stroke-width="1.5"/>
+                </svg>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <span class="icon-wrap" style="background:rgba(167,139,250,0.10);"><span class="text-[#A78BFA] text-[12px]">$</span></span>
+                <h3 class="text-[13px] font-semibold">Stablecoins on HL</h3>
+                <span class="tag-pill">4 assets</span>
+              </div>
+              <div class="p-3.5 space-y-3">
+                <div>
+                  <div class="text-[9px] uppercase text-[#6B7689] font-semibold">Total supply</div>
+                  <div class="mono text-[23px] font-semibold mt-1">$3.21B</div>
+                  <svg class="spark" viewBox="0 0 100 36" preserveAspectRatio="none">
+                    <path d="M0,30 L10,28 L20,26 L30,20 L40,22 L50,18 L60,16 L70,12 L80,14 L90,10 L100,8" stroke="#A78BFA" fill="none" stroke-width="1.5"/>
+                  </svg>
+                </div>
+                <div class="border-t border-[rgba(255,255,255,0.06)] -mx-3.5"></div>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-[#2775CA] grid place-items-center text-[10px] font-bold">U</div><div class="flex-1"><div class="text-[12px] font-semibold">USDC</div><div class="text-[10px] text-[#6B7689] mono">8.4k</div></div><div class="mono text-[12px] font-semibold">$1.82B</div></div>
+                  <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-[#26A17B] grid place-items-center text-[10px] font-bold">T</div><div class="flex-1"><div class="text-[12px] font-semibold">USDT0</div><div class="text-[10px] text-[#6B7689] mono">3.1k</div></div><div class="mono text-[12px] font-semibold">$890M</div></div>
+                  <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-[#F9E370] grid place-items-center text-[10px] font-bold text-[#0A0B0F]">H</div><div class="flex-1"><div class="text-[12px] font-semibold">USDH</div><div class="text-[10px] text-[#6B7689] mono">1.8k</div></div><div class="mono text-[12px] font-semibold">$340M</div></div>
+                  <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-[#A78BFA] grid place-items-center text-[10px] font-bold">E</div><div class="flex-1"><div class="text-[12px] font-semibold">USDE</div><div class="text-[10px] text-[#6B7689] mono">0.9k</div></div><div class="mono text-[12px] font-semibold">$165M</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Group 2 : Markets & Live Activity (2 rows collées) ===== -->
+      <section class="space-y-2.5">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[12px] font-bold uppercase tracking-[0.08em]">Markets & Live Activity</h2>
+          <span class="text-[11px] text-[#6B7689]">— spot · perp · liquidations · TWAPs · HIP-3</span>
+        </div>
+        <div class="space-y-4">
+          <!-- Row 1: Movers + Auction + Movers Perp -->
+          <div class="grid grid-cols-[minmax(0,1fr)_264px_minmax(0,1fr)] gap-4">
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">▲</span></span><h3 class="text-[13px] font-semibold">Trending Spot</h3><span class="tag-pill">5 markets</span></div>
+              <div class="text-[12px]">
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-1.5 text-[10px] uppercase text-[#6B7689] font-semibold border-b border-[rgba(255,255,255,0.06)]"><span>Token</span><span class="text-right">Price</span><span class="text-right">24h</span><span class="text-right">Vol</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">PURR</span><span class="mono text-right">$0.082</span><span class="mono text-right text-[#1FA85B]">+12%</span><span class="mono text-right text-[#A6B0C3]">$4.2M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">HYPE</span><span class="mono text-right">$24.18</span><span class="mono text-right text-[#1FA85B]">+3.4%</span><span class="mono text-right text-[#A6B0C3]">$182M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">JEFF</span><span class="mono text-right">$0.0034</span><span class="mono text-right text-[#E53E3E]">-2.1%</span><span class="mono text-right text-[#A6B0C3]">$1.1M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">LIQD</span><span class="mono text-right">$0.184</span><span class="mono text-right text-[#1FA85B]">+8.9%</span><span class="mono text-right text-[#A6B0C3]">$640K</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center"><span class="font-semibold">PIP</span><span class="mono text-right">$1.42</span><span class="mono text-right text-[#1FA85B]">+5.6%</span><span class="mono text-right text-[#A6B0C3]">$520K</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">⌛</span></span><h3 class="text-[13px] font-semibold">Spot Auction</h3></div>
+              <div class="p-3 space-y-2">
+                <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-[#1C2436]"></div><div class="flex-1"><div class="text-[12px] font-semibold">@PEPEHL</div><div class="text-[10px] text-[#6B7689]">Live now</div></div></div>
+                <div class="text-center py-2 bg-[#141B2A] rounded"><div class="mono text-[16px] font-semibold">$1,240</div><div class="text-[10px] text-[#6B7689] mono">≈ 1.4h left</div></div>
+                <div class="border-t border-[rgba(255,255,255,0.06)] pt-2 space-y-1.5">
+                  <div class="text-[9px] uppercase text-[#6B7689] font-semibold">Last deploys</div>
+                  <div class="flex items-center justify-between text-[11px]"><span class="text-[#A6B0C3]">@SPRINT</span><span class="mono text-[#A6B0C3]">$890</span></div>
+                  <div class="flex items-center justify-between text-[11px]"><span class="text-[#A6B0C3]">@MIST</span><span class="mono text-[#A6B0C3]">$1.2k</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">▼</span></span><h3 class="text-[13px] font-semibold">Trending Perpetuals</h3><span class="tag-pill">5 markets</span></div>
+              <div class="text-[12px]">
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-1.5 text-[10px] uppercase text-[#6B7689] font-semibold border-b border-[rgba(255,255,255,0.06)]"><span>Asset</span><span class="text-right">Price</span><span class="text-right">24h</span><span class="text-right">Vol</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">BTC</span><span class="mono text-right">$104.2k</span><span class="mono text-right text-[#1FA85B]">+1.1%</span><span class="mono text-right text-[#A6B0C3]">$842M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">ETH</span><span class="mono text-right">$3,621</span><span class="mono text-right text-[#1FA85B]">+2.4%</span><span class="mono text-right text-[#A6B0C3]">$321M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">SOL</span><span class="mono text-right">$182</span><span class="mono text-right text-[#E53E3E]">-0.8%</span><span class="mono text-right text-[#A6B0C3]">$180M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">HYPE</span><span class="mono text-right">$24.4</span><span class="mono text-right text-[#1FA85B]">+5.2%</span><span class="mono text-right text-[#A6B0C3]">$140M</span></div>
+                <div class="grid grid-cols-[1fr_70px_50px_70px] gap-2 px-3.5 py-2 items-center"><span class="font-semibold">DOGE</span><span class="mono text-right">$0.41</span><span class="mono text-right text-[#1FA85B]">+1.9%</span><span class="mono text-right text-[#A6B0C3]">$95M</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2 : Liq + TWAP + Hip3 (resté en 3 colonnes) -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#E53E3E] text-[12px]">⚡</span></span><h3 class="text-[13px] font-semibold">Liquidations · 24h</h3><span class="tag-pill" style="color:#E53E3E;border-color:rgba(229,62,62,0.25);background:rgba(229,62,62,0.10);">$24.1M</span></div>
+              <div class="p-3.5 space-y-3">
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                  <div><div class="text-[#6B7689]">Total</div><div class="mono font-semibold mt-0.5">$24.1M</div></div>
+                  <div><div class="text-[#6B7689]">Events</div><div class="mono font-semibold mt-0.5">1,284</div></div>
+                  <div><div class="text-[#6B7689]">Avg</div><div class="mono font-semibold mt-0.5">$18.8K</div></div>
+                  <div><div class="text-[#6B7689]">Largest</div><div class="mono font-semibold mt-0.5">$1.42M</div></div>
+                </div>
+                <div>
+                  <div class="flex h-2 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]"><span class="bg-[#1FA85B]" style="width:38%"></span><span class="bg-[#E53E3E]" style="width:62%"></span></div>
+                  <div class="flex justify-between text-[10px] mono mt-1"><span class="text-[#1FA85B]">Long 38%</span><span class="text-[#E53E3E]">62% Short</span></div>
+                </div>
+                <div class="border-t border-[rgba(255,255,255,0.06)] pt-2 space-y-1">
+                  <div class="text-[9px] uppercase text-[#6B7689] font-semibold">Recent</div>
+                  <div class="grid grid-cols-[50px_1fr_70px] gap-2 text-[11px] py-0.5"><span class="text-[#E53E3E] font-bold">SHORT</span><span>BTC</span><span class="mono text-right">$240k</span></div>
+                  <div class="grid grid-cols-[50px_1fr_70px] gap-2 text-[11px] py-0.5"><span class="text-[#1FA85B] font-bold">LONG</span><span>HYPE</span><span class="mono text-right">$92k</span></div>
+                  <div class="grid grid-cols-[50px_1fr_70px] gap-2 text-[11px] py-0.5"><span class="text-[#E53E3E] font-bold">SHORT</span><span>ETH</span><span class="mono text-right">$58k</span></div>
+                </div>
+                <div class="h-10 bg-[#141B2A] rounded border border-[rgba(255,255,255,0.06)] grid place-items-center text-[10px] text-[#6B7689]">30-min histogram</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">⏱</span></span><h3 class="text-[13px] font-semibold">Active TWAPs</h3><span class="tag-pill">42 active</span></div>
+              <div class="p-3.5 bg-gradient-to-b from-[#83E9FF]/[0.04] to-transparent border-b border-[rgba(255,255,255,0.06)]">
+                <div class="flex items-baseline justify-between mb-1.5"><span class="text-[9px] uppercase text-[#6B7689] font-semibold">HYPE Buy Pressure</span><span class="mono text-[14px] font-semibold text-[#1FA85B]">+$1.24M</span></div>
+                <div class="flex h-1.5 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]"><span class="bg-[#1FA85B]" style="width:64%"></span><span class="bg-[#E53E3E]" style="width:36%"></span></div>
+                <div class="flex justify-between mt-1 text-[10px] mono"><span class="text-[#1FA85B] font-semibold">Buy $2.18M</span><span class="text-[#E53E3E] font-semibold">$940K Sell</span></div>
+              </div>
+              <div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)]">
+                  <div class="flex items-center gap-2 mb-1"><span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#1FA85B]/10 text-[#1FA85B]">BUY</span><span class="font-semibold text-[12px]">HYPE</span><span class="mono text-[12px] font-semibold ml-auto">$302K</span></div>
+                  <span class="block h-1 rounded bg-[#0A0B0F] overflow-hidden"><i class="block h-full bg-[#1FA85B]" style="width:42%"></i></span>
+                </div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)]">
+                  <div class="flex items-center gap-2 mb-1"><span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#E53E3E]/10 text-[#E53E3E]">SELL</span><span class="font-semibold text-[12px]">BTC</span><span class="mono text-[12px] font-semibold ml-auto">$248K</span></div>
+                  <span class="block h-1 rounded bg-[#0A0B0F] overflow-hidden"><i class="block h-full bg-[#E53E3E]" style="width:78%"></i></span>
+                </div>
+                <div class="px-3.5 py-2">
+                  <div class="flex items-center gap-2 mb-1"><span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#1FA85B]/10 text-[#1FA85B]">BUY</span><span class="font-semibold text-[12px]">ETH</span><span class="mono text-[12px] font-semibold ml-auto">$182K</span></div>
+                  <span class="block h-1 rounded bg-[#0A0B0F] overflow-hidden"><i class="block h-full bg-[#1FA85B]" style="width:21%"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">⚡</span></span><h3 class="text-[13px] font-semibold">HIP-3 Markets</h3><span class="tag-pill">top 5</span></div>
+              <div class="text-[11px]">
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 text-[10px] uppercase text-[#6B7689] font-semibold border-b border-[rgba(255,255,255,0.06)]"><span>Ticker</span><span class="text-right">Vol</span><span class="text-right">OI</span></div>
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">XYZ</span><span class="mono text-right text-[#A6B0C3]">$8.2M</span><span class="mono text-right text-[#A6B0C3]">$2.1M</span></div>
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">ABC</span><span class="mono text-right text-[#A6B0C3]">$4.1M</span><span class="mono text-right text-[#A6B0C3]">$1.2M</span></div>
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">FOO</span><span class="mono text-right text-[#A6B0C3]">$2.8M</span><span class="mono text-right text-[#A6B0C3]">$890K</span></div>
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 items-center border-b border-[rgba(255,255,255,0.06)]"><span class="font-semibold">BAR</span><span class="mono text-right text-[#A6B0C3]">$1.4M</span><span class="mono text-right text-[#A6B0C3]">$320K</span></div>
+                <div class="grid grid-cols-[1fr_60px_60px] gap-2 px-3.5 py-1.5 items-center"><span class="font-semibold">BAZ</span><span class="mono text-right text-[#A6B0C3]">$890K</span><span class="mono text-right text-[#A6B0C3]">$180K</span></div>
+              </div>
+              <div class="px-3.5 py-2 border-t border-[rgba(255,255,255,0.06)] space-y-1">
+                <div class="text-[9px] uppercase text-[#6B7689] font-semibold">Perp Auction</div>
+                <div class="text-[11px] text-[#A6B0C3]">$8,420 · 1h 12m left</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Group 3 : Ecosystem (capital + HIP-4 pleine largeur) ===== -->
+      <section class="space-y-2.5">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[12px] font-bold uppercase tracking-[0.08em]">Ecosystem</h2>
+          <span class="text-[11px] text-[#6B7689]">— capital allocators & native extensions</span>
+        </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">◇</span></span><h3 class="text-[13px] font-semibold">Top Vaults</h3><span class="tag-pill">$612M TVL</span></div>
+              <div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">1</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Hyperliquidity</span><span class="mono text-[11px] text-[#F9E370]">+12.4%</span></div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">2</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Selini</span><span class="mono text-[11px] text-[#F9E370]">+8.9%</span></div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">3</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Bonding</span><span class="mono text-[11px] text-[#F9E370]">+6.1%</span></div>
+                <div class="px-3.5 py-2 flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">4</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Astera</span><span class="mono text-[11px] text-[#F9E370]">+4.2%</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">★</span></span><h3 class="text-[13px] font-semibold">Top Validators</h3><span class="tag-pill">21 active</span></div>
+              <div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">1</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Nansen</span><span class="mono text-[11px] text-[#A6B0C3]">98M</span></div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">2</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">B Harvest</span><span class="mono text-[11px] text-[#A6B0C3]">82M</span></div>
+                <div class="px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">3</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Hypio</span><span class="mono text-[11px] text-[#A6B0C3]">71M</span></div>
+                <div class="px-3.5 py-2 flex items-center gap-2.5"><span class="text-[10px] text-[#6B7689] mono w-3">4</span><div class="w-6 h-6 rounded bg-[#1C2436]"></div><span class="text-[12px] font-semibold flex-1 truncate">Validator X</span><span class="mono text-[11px] text-[#A6B0C3]">54M</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><span class="icon-wrap"><span class="text-[#83E9FF] text-[12px]">⚒</span></span><h3 class="text-[13px] font-semibold">Builders</h3><span class="tag-pill-gold">$184K fees</span></div>
+              <div class="text-[11px]">
+                <div class="grid grid-cols-[16px_24px_1fr_52px] gap-2 items-center px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)]"><span class="text-[10px] text-[#6B7689] mono">1</span><div class="w-6 h-6 rounded bg-[#1C2436] grid place-items-center text-[10px] font-bold">PV</div><span class="font-semibold truncate">PvP.trade</span><span class="mono text-[#F9E370] text-right">$92K</span></div>
+                <div class="grid grid-cols-[16px_24px_1fr_52px] gap-2 items-center px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)]"><span class="text-[10px] text-[#6B7689] mono">2</span><div class="w-6 h-6 rounded bg-[#1C2436] grid place-items-center text-[10px] font-bold">DX</div><span class="font-semibold truncate">Dexari</span><span class="mono text-[#F9E370] text-right">$42K</span></div>
+                <div class="grid grid-cols-[16px_24px_1fr_52px] gap-2 items-center px-3.5 py-2 border-b border-[rgba(255,255,255,0.06)]"><span class="text-[10px] text-[#6B7689] mono">3</span><div class="w-6 h-6 rounded bg-[#1C2436] grid place-items-center text-[10px] font-bold">VS</div><span class="font-semibold truncate">Vest</span><span class="mono text-[#F9E370] text-right">$28K</span></div>
+                <div class="grid grid-cols-[16px_24px_1fr_52px] gap-2 items-center px-3.5 py-2"><span class="text-[10px] text-[#6B7689] mono">4</span><div class="w-6 h-6 rounded bg-[#1C2436] grid place-items-center text-[10px] font-bold">PR</div><span class="font-semibold truncate">Prime</span><span class="mono text-[#F9E370] text-right">$18K</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HIP-4 pleine largeur, layout horizontal -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap" style="background:rgba(167,139,250,0.10);"><span class="text-[#A78BFA] text-[12px]">◎</span></span>
+              <h3 class="text-[13px] font-semibold">HIP-4 Outcomes · Live</h3>
+              <span class="tag-pill">12 active</span>
+              <span class="ml-auto tag-pill-violet">$1.84M vol</span>
+              <span class="text-[10px] text-[#83E9FF] hover:underline ml-2">View all →</span>
+            </div>
+            <div class="grid grid-cols-4 divide-x divide-[rgba(255,255,255,0.06)]">
+              <div class="p-3.5 space-y-2">
+                <div class="text-[12px] font-semibold line-clamp-2 min-h-[2.5em]">Will BTC close above $110K by Dec 31?</div>
+                <div class="flex items-center gap-1.5">
+                  <div class="flex-1 flex h-1.5 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]">
+                    <span class="bg-[#1FA85B]" style="width:68%"></span><span class="bg-[#E53E3E]" style="width:32%"></span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] mono">
+                  <span class="text-[#1FA85B] font-semibold">Yes 68¢</span>
+                  <span class="text-[#E53E3E] font-semibold">No 32¢</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] mono text-[#6B7689]">
+                  <span>$420K vol</span><span>⏳ 24d</span>
+                </div>
+              </div>
+              <div class="p-3.5 space-y-2">
+                <div class="text-[12px] font-semibold line-clamp-2 min-h-[2.5em]">Will HL hit $1B daily volume in 2025?</div>
+                <div class="flex items-center gap-1.5">
+                  <div class="flex-1 flex h-1.5 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]">
+                    <span class="bg-[#1FA85B]" style="width:81%"></span><span class="bg-[#E53E3E]" style="width:19%"></span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] mono"><span class="text-[#1FA85B] font-semibold">Yes 81¢</span><span class="text-[#E53E3E] font-semibold">No 19¢</span></div>
+                <div class="flex items-center justify-between text-[10px] mono text-[#6B7689]"><span>$320K vol</span><span>⏳ 42d</span></div>
+              </div>
+              <div class="p-3.5 space-y-2">
+                <div class="text-[12px] font-semibold line-clamp-2 min-h-[2.5em]">Will ETH ETF approve staking by Q1 2026?</div>
+                <div class="flex items-center gap-1.5">
+                  <div class="flex-1 flex h-1.5 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]">
+                    <span class="bg-[#1FA85B]" style="width:42%"></span><span class="bg-[#E53E3E]" style="width:58%"></span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] mono"><span class="text-[#1FA85B] font-semibold">Yes 42¢</span><span class="text-[#E53E3E] font-semibold">No 58¢</span></div>
+                <div class="flex items-center justify-between text-[10px] mono text-[#6B7689]"><span>$280K vol</span><span>⏳ 68d</span></div>
+              </div>
+              <div class="p-3.5 space-y-2">
+                <div class="text-[12px] font-semibold line-clamp-2 min-h-[2.5em]">Will HYPE flip ARB market cap by EOY?</div>
+                <div class="flex items-center gap-1.5">
+                  <div class="flex-1 flex h-1.5 rounded overflow-hidden border border-[rgba(255,255,255,0.10)]">
+                    <span class="bg-[#1FA85B]" style="width:56%"></span><span class="bg-[#E53E3E]" style="width:44%"></span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-[10px] mono"><span class="text-[#1FA85B] font-semibold">Yes 56¢</span><span class="text-[#E53E3E] font-semibold">No 44¢</span></div>
+                <div class="flex items-center justify-between text-[10px] mono text-[#6B7689]"><span>$210K vol</span><span>⏳ 12d</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="text-center text-[10px] text-[#6B7689] py-4">
+        Variant B — 3 SectionHeads · sub-rows in gap-4 inside groups, gap-8 between · HIP-4 full-width teaser in bottom Ecosystem group
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

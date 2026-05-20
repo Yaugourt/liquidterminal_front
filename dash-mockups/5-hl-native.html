@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Terminal — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0B0F;
+  --bg-2:#0F1421;
+  --panel:#10141F;
+  --panel-2:#131826;
+  --panel-hi:#161C2C;
+  --line:#1E2536;
+  --line-2:#262E42;
+  --txt:#E7EAF2;
+  --txt-2:#9AA3B8;
+  --txt-3:#5D6680;
+  --cyan:#83E9FF;
+  --cyan-dim:#3FB8D4;
+  --green:#3BE8A8;
+  --red:#FF5C7A;
+  --amber:#FFC65C;
+  --violet:#A98BFF;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Inter',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 480px at 84% -8%, rgba(131,233,255,.06), transparent 70%),
+    radial-gradient(700px 420px at 6% 4%, rgba(169,139,255,.045), transparent 70%);
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#222a3d;border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#2c3650}
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+
+/* ---------- Layout ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:62px;flex-shrink:0;
+  background:linear-gradient(180deg,#0C0F18,#0A0B0F);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;
+  padding:14px 0;gap:6px;position:sticky;top:0;height:100vh;
+}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(150deg,#83E9FF,#3FB8D4);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#06222B;font-size:16px;
+  box-shadow:0 0 0 1px rgba(131,233,255,.25),0 6px 16px rgba(131,233,255,.18);
+  margin-bottom:12px;
+}
+.nav-i{
+  width:40px;height:40px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--txt-3);cursor:pointer;transition:.15s;position:relative;
+}
+.nav-i svg{width:19px;height:19px}
+.nav-i:hover{color:var(--txt);background:var(--panel-2)}
+.nav-i.active{color:var(--cyan);background:rgba(131,233,255,.08)}
+.nav-i.active::before{
+  content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;
+  background:var(--cyan);border-radius:0 3px 3px 0;box-shadow:0 0 8px var(--cyan);
+}
+.nav-sp{flex:1}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ---------- Topbar ---------- */
+.topbar{
+  height:58px;flex-shrink:0;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,11,15,.82);backdrop-filter:blur(10px);
+  display:flex;align-items:center;gap:18px;padding:0 22px;
+  position:sticky;top:0;z-index:20;
+}
+.tb-title{display:flex;flex-direction:column;gap:1px}
+.tb-title b{font-size:14px;font-weight:600;letter-spacing:-.2px}
+.tb-title span{font-size:11px;color:var(--txt-3)}
+.tb-search{
+  flex:1;max-width:380px;height:34px;
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  display:flex;align-items:center;gap:8px;padding:0 11px;color:var(--txt-3);
+}
+.tb-search input{
+  background:none;border:none;outline:none;color:var(--txt);
+  font-family:var(--sans);font-size:12.5px;flex:1;
+}
+.tb-search kbd{
+  font-family:var(--mono);font-size:10px;background:var(--panel-hi);
+  border:1px solid var(--line-2);border-radius:5px;padding:2px 5px;color:var(--txt-3);
+}
+.tb-sp{flex:1}
+.net-pill{
+  display:flex;align-items:center;gap:7px;height:32px;padding:0 11px;
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  font-size:11.5px;color:var(--txt-2);font-family:var(--mono);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 7px var(--green);position:relative}
+.dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;
+  border:1px solid var(--green);opacity:.4;animation:pulse 2.4s infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.6}100%{transform:scale(1.9);opacity:0}}
+.btn{
+  height:32px;padding:0 13px;border-radius:8px;font-size:12px;font-weight:500;
+  border:1px solid var(--line-2);background:var(--panel);color:var(--txt-2);
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s;
+}
+.btn:hover{background:var(--panel-hi);color:var(--txt)}
+.btn-c{background:var(--cyan);color:#06222B;border-color:var(--cyan);font-weight:600}
+.btn-c:hover{background:#9BEFFF;color:#06222B}
+.avatar{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(140deg,#A98BFF,#83E9FF);flex-shrink:0;
+}
+
+/* ---------- Content ---------- */
+.content{padding:20px 22px 40px;display:flex;flex-direction:column;gap:18px}
+
+.section-h{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.section-h h2{font-size:13px;font-weight:600;letter-spacing:.2px}
+.section-h .tag{
+  font-size:9.5px;font-family:var(--mono);text-transform:uppercase;
+  letter-spacing:.6px;color:var(--txt-3);border:1px solid var(--line);
+  padding:2px 6px;border-radius:5px;
+}
+.section-h a{margin-left:auto;font-size:11px;color:var(--cyan-dim);display:flex;align-items:center;gap:3px}
+.section-h a:hover{color:var(--cyan)}
+
+/* ---------- Stat strip ---------- */
+.stats{
+  display:grid;grid-template-columns:repeat(10,1fr);
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;
+}
+.stat{
+  padding:13px 14px;border-right:1px solid var(--line);position:relative;
+  transition:.15s;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--panel-2)}
+.stat .lbl{
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--txt-3);font-weight:600;margin-bottom:6px;
+}
+.stat .val{font-family:var(--mono);font-size:16px;font-weight:600;letter-spacing:-.4px}
+.stat .sub{font-size:10px;margin-top:3px;font-family:var(--mono);color:var(--txt-3)}
+.spark{display:flex;align-items:flex-end;gap:1.5px;height:13px;margin-top:7px}
+.spark i{flex:1;background:var(--line-2);border-radius:1px}
+.stat:hover .spark i{background:rgba(131,233,255,.4)}
+
+/* ---------- Grid ---------- */
+.grid{display:grid;gap:18px}
+.g-main{grid-template-columns:1.62fr 1fr}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.g-2{grid-template-columns:1fr 1fr}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.card-h{
+  display:flex;align-items:center;gap:9px;padding:13px 15px;
+  border-bottom:1px solid var(--line);
+}
+.card-h h3{font-size:12.5px;font-weight:600;letter-spacing:.1px}
+.card-h .ico{
+  width:26px;height:26px;border-radius:7px;background:var(--panel-hi);
+  border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;
+  color:var(--cyan);flex-shrink:0;
+}
+.card-h .ico svg{width:14px;height:14px}
+.card-h .meta{margin-left:auto;font-size:10.5px;color:var(--txt-3);font-family:var(--mono)}
+.card-b{padding:14px 15px;flex:1}
+.card-b.flush{padding:0}
+
+/* tabs */
+.tabs{display:flex;gap:3px;margin-left:auto}
+.tab{
+  font-size:11px;padding:4px 9px;border-radius:6px;cursor:pointer;
+  color:var(--txt-3);font-weight:500;transition:.12s;
+}
+.tab:hover{color:var(--txt-2)}
+.tab.on{background:rgba(131,233,255,.1);color:var(--cyan)}
+
+/* ---------- Chart ---------- */
+.chart-wrap{padding:8px 8px 0}
+.chart-stats{
+  display:flex;gap:26px;padding:4px 8px 14px;
+}
+.cs-item .cs-l{font-size:10px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.5px}
+.cs-item .cs-v{font-family:var(--mono);font-size:19px;font-weight:600;margin-top:2px}
+.cs-item .cs-d{font-size:10.5px;font-family:var(--mono);margin-top:1px}
+svg.chart{display:block;width:100%;height:194px}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse}
+thead th{
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--txt-3);font-weight:600;text-align:right;
+  padding:9px 15px;border-bottom:1px solid var(--line);background:var(--panel-2);
+}
+thead th:first-child{text-align:left}
+tbody td{
+  padding:9px 15px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;text-align:right;
+}
+tbody td:first-child{text-align:left;font-family:var(--sans)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:.1s;cursor:pointer}
+tbody tr:hover{background:var(--panel-hi)}
+.tk{display:flex;align-items:center;gap:9px}
+.tk-ic{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:10px;font-family:var(--mono);
+}
+.tk-name{font-weight:600;font-size:12.5px}
+.tk-sub{font-size:10px;color:var(--txt-3);font-family:var(--mono)}
+.lev{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  padding:2px 5px;border-radius:4px;background:var(--panel-hi);
+  border:1px solid var(--line-2);color:var(--txt-2);
+}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:10.5px;font-weight:600;
+  padding:2px 7px;border-radius:5px;
+}
+.chip.up{background:rgba(59,232,168,.1);color:var(--green)}
+.chip.dn{background:rgba(255,92,122,.1);color:var(--red)}
+
+/* mini bar in cell */
+.cellbar{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.cellbar .track{width:46px;height:4px;border-radius:3px;background:var(--line-2);overflow:hidden}
+.cellbar .fill{height:100%;border-radius:3px}
+
+/* ---------- Auction ---------- */
+.auc-live{
+  background:linear-gradient(135deg,#121A1E,#0F1421);
+  border:1px solid rgba(131,233,255,.22);
+}
+.auc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.auc-tk{
+  width:46px;height:46px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(145deg,#3BE8A8,#1E9C72);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#06231A;
+}
+.live-badge{
+  display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--green);
+  background:rgba(59,232,168,.1);border:1px solid rgba(59,232,168,.25);
+  padding:2px 7px;border-radius:5px;
+}
+.auc-price{display:flex;align-items:baseline;gap:8px;margin:3px 0}
+.auc-price b{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-.5px}
+.auc-price span{font-size:11px;color:var(--txt-3);font-family:var(--mono)}
+.countdown{
+  font-family:var(--mono);font-size:13px;font-weight:600;color:var(--amber);
+  margin-left:auto;text-align:right;
+}
+.countdown small{display:block;font-size:9px;color:var(--txt-3);font-weight:500;letter-spacing:.5px}
+.prog{height:6px;border-radius:4px;background:var(--line-2);overflow:hidden;margin:5px 0 4px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,#3FB8D4,#83E9FF);border-radius:4px}
+.prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--txt-3);font-family:var(--mono)}
+.auc-next{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;margin-top:12px;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:9px;
+}
+.auc-next .nt{font-size:11.5px;font-weight:600}
+.auc-next .ns{font-size:10px;color:var(--txt-3);font-family:var(--mono)}
+.auc-next .nc{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--violet);font-weight:600}
+
+.deploy-row{
+  display:flex;align-items:center;gap:10px;padding:8px 15px;
+  border-bottom:1px solid var(--line);transition:.1s;
+}
+.deploy-row:last-child{border-bottom:none}
+.deploy-row:hover{background:var(--panel-hi)}
+.dpl-ic{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:9px;font-family:var(--mono);
+}
+.dpl-kind{
+  font-family:var(--mono);font-size:9px;font-weight:600;text-transform:uppercase;
+  padding:1.5px 5px;border-radius:4px;letter-spacing:.4px;
+}
+.dpl-spot{background:rgba(131,233,255,.1);color:var(--cyan)}
+.dpl-perp{background:rgba(169,139,255,.12);color:var(--violet)}
+
+/* ---------- Liquidations ---------- */
+.liq-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:13px}
+.liq-cell{background:var(--panel-2);padding:9px 11px}
+.liq-cell .ll{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--txt-3)}
+.liq-cell .lv{font-family:var(--mono);font-size:14px;font-weight:600;margin-top:3px}
+.ratio-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;margin:11px 0 5px}
+.ratio-bar .l{background:linear-gradient(90deg,#1E9C72,#3BE8A8)}
+.ratio-bar .s{background:linear-gradient(90deg,#FF5C7A,#C73A57)}
+.ratio-leg{display:flex;justify-content:space-between;font-size:10px;font-family:var(--mono);color:var(--txt-2)}
+.flow-row{
+  display:flex;align-items:center;gap:9px;padding:7px 0;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11.5px;
+}
+.flow-row:last-child{border-bottom:none}
+.side-tag{
+  font-size:9px;font-weight:700;padding:1.5px 6px;border-radius:4px;
+  text-transform:uppercase;letter-spacing:.3px;
+}
+.side-long{background:rgba(59,232,168,.1);color:var(--green)}
+.side-short{background:rgba(255,92,122,.1);color:var(--red)}
+.flow-time{margin-left:auto;color:var(--txt-3);font-size:10px}
+
+/* ---------- TWAP ---------- */
+.twap-row{padding:9px 0;border-bottom:1px solid var(--line)}
+.twap-row:last-child{border-bottom:none}
+.twap-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.twap-side{font-size:9px;font-weight:700;padding:1.5px 6px;border-radius:4px;
+  text-transform:uppercase;letter-spacing:.3px}
+.twap-amt{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600}
+.twap-prog{height:5px;border-radius:3px;background:var(--line-2);overflow:hidden}
+.twap-prog i{display:block;height:100%;border-radius:3px}
+.twap-pct{font-family:var(--mono);font-size:9.5px;color:var(--txt-3);margin-top:3px;text-align:right}
+
+/* perpdex / builder list */
+.lite-row{
+  display:flex;align-items:center;gap:11px;padding:9px 15px;
+  border-bottom:1px solid var(--line);transition:.1s;cursor:pointer;
+}
+.lite-row:last-child{border-bottom:none}
+.lite-row:hover{background:var(--panel-hi)}
+.lite-ic{
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;font-family:var(--mono);
+}
+.lite-name{font-weight:600;font-size:12px}
+.lite-sub{font-size:10px;color:var(--txt-3);font-family:var(--mono)}
+.lite-stat{text-align:right;font-family:var(--mono)}
+.lite-stat .lsv{font-size:12px;font-weight:600}
+.lite-stat .lsl{font-size:9px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.4px}
+
+.footer{
+  text-align:center;padding:14px;color:var(--txt-3);font-size:10.5px;
+  font-family:var(--mono);border-top:1px solid var(--line);margin-top:6px;
+}
+@media(max-width:1240px){
+  .stats{grid-template-columns:repeat(5,1fr)}
+  .stat:nth-child(5){border-right:none}
+  .stat:nth-child(-n+5){border-bottom:1px solid var(--line)}
+  .g-main,.g-3,.g-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo-mark">L</div>
+    <div class="nav-i active" title="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+    </div>
+    <div class="nav-i" title="Markets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v4M21 7h-4"/></svg>
+    </div>
+    <div class="nav-i" title="Vaults">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 4v3M12 17v3"/></svg>
+    </div>
+    <div class="nav-i" title="Auctions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4l6 6M4 20l9-9M9 9l6 6M13 3l8 8"/></svg>
+    </div>
+    <div class="nav-i" title="Staking">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
+    </div>
+    <div class="nav-i" title="Liquidations">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-2 8 9-12h-7l2-8z"/></svg>
+    </div>
+    <div class="nav-sp"></div>
+    <div class="nav-i" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.3l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.3-1.3L13.8 2h-3.6l-.4 2.4a7 7 0 0 0-2.3 1.3l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .9.1 1.3l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2.3 1.3l.4 2.4h3.6l.4-2.4a7 7 0 0 0 2.3-1.3l2.4 1 2-3.4-2-1.6c.1-.4.1-.9.1-1.3z"/></svg>
+    </div>
+  </aside>
+
+  <div class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="tb-title">
+        <b>Liquid Terminal</b>
+        <span>Hyperliquid ecosystem cockpit</span>
+      </div>
+      <div class="tb-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search tokens, vaults, validators, addresses…">
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="tb-sp"></div>
+      <div class="net-pill"><span class="dot"></span>HyperBFT · 0.21s</div>
+      <div class="net-pill">HYPE&nbsp;<span style="color:var(--cyan)">$38.94</span>&nbsp;<span class="pos">+5.2%</span></div>
+      <button class="btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+      <button class="btn btn-c">Connect Wallet</button>
+      <div class="avatar"></div>
+    </header>
+
+    <div class="content">
+
+      <!-- Global stats -->
+      <section>
+        <div class="section-h">
+          <h2>Network Overview</h2>
+          <span class="tag">Live · Hyperliquid L1</span>
+          <a href="#">All metrics
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="stats" id="stats"></div>
+      </section>
+
+      <!-- Chart + Auctions -->
+      <div class="grid g-main">
+        <!-- Chart -->
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg>
+            </div>
+            <h3>Protocol Activity</h3>
+            <div class="tabs">
+              <span class="tab on" data-chart="vol">Volume</span>
+              <span class="tab" data-chart="fees">Fees</span>
+              <span class="tab" data-chart="bridge">Bridge TVL</span>
+            </div>
+          </div>
+          <div class="chart-stats">
+            <div class="cs-item">
+              <div class="cs-l" id="cs-l">30D Volume</div>
+              <div class="cs-v mono" id="cs-v">$112.4B</div>
+              <div class="cs-d pos" id="cs-d">▲ 18.6% vs prev. 30D</div>
+            </div>
+            <div class="cs-item">
+              <div class="cs-l">Peak Day</div>
+              <div class="cs-v mono">$6.02B</div>
+              <div class="cs-d" style="color:var(--txt-3)">May 14, 2026</div>
+            </div>
+            <div class="cs-item">
+              <div class="cs-l">Daily Avg</div>
+              <div class="cs-v mono">$3.74B</div>
+              <div class="cs-d pos">▲ 4.1% 7D</div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg class="chart" id="chart" viewBox="0 0 720 194" preserveAspectRatio="none"></svg>
+          </div>
+        </div>
+
+        <!-- Auctions -->
+        <div class="card auc-live">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4l6 6M4 20l9-9M9 9l6 6"/></svg>
+            </div>
+            <h3>Token Auctions</h3>
+            <span class="live-badge"><span class="dot"></span>Live</span>
+          </div>
+          <div class="card-b">
+            <div class="auc-top">
+              <div class="auc-tk">F</div>
+              <div>
+                <div class="dpl-kind dpl-spot" style="margin-bottom:4px;display:inline-block">Spot · Dutch</div>
+                <div class="auc-price"><b>12.84</b><span>HYPE&nbsp;·&nbsp;≈ $487</span></div>
+                <div style="font-size:11px;color:var(--txt-2)">FROG ticker auction</div>
+              </div>
+              <div class="countdown">03:42:11<small>REMAINING</small></div>
+            </div>
+            <div class="prog"><i style="width:64%"></i></div>
+            <div class="prog-meta"><span>Price decay · 64%</span><span>Start 31.2 → Floor 6.0 HYPE</span></div>
+            <div class="auc-next">
+              <div class="dpl-ic dpl-perp" style="background:rgba(169,139,255,.15);color:var(--violet)">P</div>
+              <div>
+                <div class="nt">Perp Auction · HIP-3</div>
+                <div class="ns">Next deployment slot opens</div>
+              </div>
+              <div class="nc">2d 04h</div>
+            </div>
+          </div>
+          <div class="card-h" style="border-top:1px solid var(--line)">
+            <h3 style="font-size:11px;color:var(--txt-2)">Recent Deployments</h3>
+            <span class="meta">last 24h</span>
+          </div>
+          <div class="card-b flush">
+            <div class="deploy-row">
+              <div class="dpl-ic" style="background:linear-gradient(145deg,#3BE8A8,#1E9C72);color:#06231A">FR</div>
+              <div style="font-weight:600;font-size:12px">FROG</div>
+              <span class="dpl-kind dpl-spot">Spot</span>
+              <div style="margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600">12.84 HYPE</div>
+            </div>
+            <div class="deploy-row">
+              <div class="dpl-ic" style="background:linear-gradient(145deg,#83E9FF,#3FB8D4);color:#06222B">MO</div>
+              <div style="font-weight:600;font-size:12px">MOON</div>
+              <span class="dpl-kind dpl-spot">Spot</span>
+              <div style="margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600">10.40 HYPE</div>
+            </div>
+            <div class="deploy-row">
+              <div class="dpl-ic" style="background:linear-gradient(145deg,#FFC65C,#D99A2E);color:#2A1C04">PE</div>
+              <div style="font-weight:600;font-size:12px">PEPE2</div>
+              <span class="dpl-kind dpl-spot">Spot</span>
+              <div style="margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600">9.90 HYPE</div>
+            </div>
+            <div class="deploy-row">
+              <div class="dpl-ic" style="background:linear-gradient(145deg,#A98BFF,#7857D6);color:#160B33">VE</div>
+              <div style="font-weight:600;font-size:12px">VEGA</div>
+              <span class="dpl-kind dpl-perp">Perp</span>
+              <div style="margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600">1.8K USDC</div>
+            </div>
+            <div class="deploy-row">
+              <div class="dpl-ic" style="background:linear-gradient(145deg,#FF5C7A,#C73A57);color:#330912">GI</div>
+              <div style="font-weight:600;font-size:12px">GIGA</div>
+              <span class="dpl-kind dpl-spot">Spot</span>
+              <div style="margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600">9.10 HYPE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending Spot + Perp -->
+      <div class="grid g-2">
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10l3-3 3 3"/></svg>
+            </div>
+            <h3>Trending Spot</h3>
+            <span class="meta">7 markets</span>
+          </div>
+          <div class="card-b flush">
+            <table>
+              <thead><tr><th>Token</th><th>Price</th><th>24h</th><th>Volume</th><th>Mkt Cap</th><th>Liquidity</th></tr></thead>
+              <tbody id="spot"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+            </div>
+            <h3>Trending Perpetuals</h3>
+            <span class="meta">5 markets</span>
+          </div>
+          <div class="card-b flush">
+            <table>
+              <thead><tr><th>Token</th><th>Price</th><th>24h</th><th>Funding</th><th>Open Int.</th><th>Volume</th><th>Lev</th></tr></thead>
+              <tbody id="perp"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liquidations + TWAP + PerpDEXs -->
+      <div class="grid g-3">
+        <!-- Liquidations -->
+        <div class="card">
+          <div class="card-h">
+            <div class="ico" style="color:var(--red)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-2 8 9-12h-7l2-8z"/></svg>
+            </div>
+            <h3>Liquidations</h3>
+            <span class="meta">24h</span>
+          </div>
+          <div class="card-b">
+            <div class="liq-summary">
+              <div class="liq-cell"><div class="ll">Total</div><div class="lv neg">$8.41M</div></div>
+              <div class="liq-cell"><div class="ll">Count</div><div class="lv">1,204</div></div>
+              <div class="liq-cell"><div class="ll">Avg Size</div><div class="lv">$6.98K</div></div>
+            </div>
+            <div class="ratio-bar"><div class="l" style="width:64%"></div><div class="s" style="width:36%"></div></div>
+            <div class="ratio-leg"><span class="pos">Long 64%</span><span style="color:var(--txt-3)">Top: BTC · Fees $42K</span><span class="neg">Short 36%</span></div>
+            <div style="margin-top:11px">
+              <div class="flow-row"><span class="side-tag side-long">Long</span><span style="font-weight:600">BTC</span><span style="color:var(--txt-2)">$182K</span><span class="flow-time">12s</span></div>
+              <div class="flow-row"><span class="side-tag side-short">Short</span><span style="font-weight:600">ETH</span><span style="color:var(--txt-2)">$94K</span><span class="flow-time">41s</span></div>
+              <div class="flow-row"><span class="side-tag side-long">Long</span><span style="font-weight:600">HYPE</span><span style="color:var(--txt-2)">$61K</span><span class="flow-time">1m</span></div>
+              <div class="flow-row"><span class="side-tag side-long">Long</span><span style="font-weight:600">SOL</span><span style="color:var(--txt-2)">$49K</span><span class="flow-time">2m</span></div>
+              <div class="flow-row"><span class="side-tag side-short">Short</span><span style="font-weight:600">AVAX</span><span style="color:var(--txt-2)">$33K</span><span class="flow-time">3m</span></div>
+              <div class="flow-row"><span class="side-tag side-long">Long</span><span style="font-weight:600">DOGE</span><span style="color:var(--txt-2)">$21K</span><span class="flow-time">5m</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TWAP -->
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <h3>TWAP Orders</h3>
+            <span class="meta">14 active · $4.2M</span>
+          </div>
+          <div class="card-b">
+            <div class="twap-row">
+              <div class="twap-head"><span class="twap-side side-long">Buy</span><span style="font-weight:600">HYPE</span><span class="twap-amt">$1.20M</span></div>
+              <div class="twap-prog"><i style="width:62%;background:linear-gradient(90deg,#1E9C72,#3BE8A8)"></i></div>
+              <div class="twap-pct">62% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-head"><span class="twap-side side-short">Sell</span><span style="font-weight:600">BTC</span><span class="twap-amt">$840K</span></div>
+              <div class="twap-prog"><i style="width:38%;background:linear-gradient(90deg,#C73A57,#FF5C7A)"></i></div>
+              <div class="twap-pct">38% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-head"><span class="twap-side side-long">Buy</span><span style="font-weight:600">ETH</span><span class="twap-amt">$610K</span></div>
+              <div class="twap-prog"><i style="width:81%;background:linear-gradient(90deg,#1E9C72,#3BE8A8)"></i></div>
+              <div class="twap-pct">81% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-head"><span class="twap-side side-long">Buy</span><span style="font-weight:600">SOL</span><span class="twap-amt">$420K</span></div>
+              <div class="twap-prog"><i style="width:25%;background:linear-gradient(90deg,#1E9C72,#3BE8A8)"></i></div>
+              <div class="twap-pct">25% filled</div>
+            </div>
+            <div class="twap-row">
+              <div class="twap-head"><span class="twap-side side-short">Sell</span><span style="font-weight:600">AVAX</span><span class="twap-amt">$180K</span></div>
+              <div class="twap-prog"><i style="width:54%;background:linear-gradient(90deg,#C73A57,#FF5C7A)"></i></div>
+              <div class="twap-pct">54% filled</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PerpDEXs HIP-3 -->
+        <div class="card">
+          <div class="card-h">
+            <div class="ico" style="color:var(--violet)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+            </div>
+            <h3>PerpDEXs · HIP-3</h3>
+            <span class="meta">4 builders</span>
+          </div>
+          <div class="card-b flush">
+            <div class="lite-row">
+              <div class="lite-ic" style="background:linear-gradient(145deg,#83E9FF,#3FB8D4);color:#06222B">U</div>
+              <div><div class="lite-name">Unit</div><div class="lite-sub">24 markets</div></div>
+              <div class="lite-stat" style="margin-left:auto"><div class="lsv">$98M</div><div class="lsl">Vol 24h</div></div>
+              <div class="lite-stat" style="min-width:60px"><div class="lsv" style="color:var(--violet)">$210M</div><div class="lsl">Open Int.</div></div>
+            </div>
+            <div class="lite-row">
+              <div class="lite-ic" style="background:linear-gradient(145deg,#A98BFF,#7857D6);color:#160B33">B</div>
+              <div><div class="lite-name">Bolt Markets</div><div class="lite-sub">12 markets</div></div>
+              <div class="lite-stat" style="margin-left:auto"><div class="lsv">$42M</div><div class="lsl">Vol 24h</div></div>
+              <div class="lite-stat" style="min-width:60px"><div class="lsv" style="color:var(--violet)">$88M</div><div class="lsl">Open Int.</div></div>
+            </div>
+            <div class="lite-row">
+              <div class="lite-ic" style="background:linear-gradient(145deg,#3BE8A8,#1E9C72);color:#06231A">V</div>
+              <div><div class="lite-name">Vega</div><div class="lite-sub">8 markets</div></div>
+              <div class="lite-stat" style="margin-left:auto"><div class="lsv">$28M</div><div class="lsl">Vol 24h</div></div>
+              <div class="lite-stat" style="min-width:60px"><div class="lsv" style="color:var(--violet)">$54M</div><div class="lsl">Open Int.</div></div>
+            </div>
+            <div class="lite-row">
+              <div class="lite-ic" style="background:linear-gradient(145deg,#FFC65C,#D99A2E);color:#2A1C04">X</div>
+              <div><div class="lite-name">xyz Perps</div><div class="lite-sub">5 markets</div></div>
+              <div class="lite-stat" style="margin-left:auto"><div class="lsv">$11M</div><div class="lsl">Vol 24h</div></div>
+              <div class="lite-stat" style="min-width:60px"><div class="lsv" style="color:var(--violet)">$19M</div><div class="lsl">Open Int.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vaults + Validators -->
+      <div class="grid g-2">
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.5"/></svg>
+            </div>
+            <h3>Top Vaults</h3>
+            <span class="meta">by TVL</span>
+            <a href="#" class="meta" style="color:var(--cyan-dim)">View all →</a>
+          </div>
+          <div class="card-b flush">
+            <table>
+              <thead><tr><th>Vault</th><th>APR</th><th>TVL</th><th>Leader</th></tr></thead>
+              <tbody id="vaults"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h">
+            <div class="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/></svg>
+            </div>
+            <h3>Validators</h3>
+            <span class="meta">540M HYPE staked</span>
+            <a href="#" class="meta" style="color:var(--cyan-dim)">View all →</a>
+          </div>
+          <div class="card-b flush">
+            <table>
+              <thead><tr><th>Validator</th><th>Stake</th><th>APR</th><th>Comm.</th><th>Uptime</th></tr></thead>
+              <tbody id="vals"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Builders -->
+      <div class="card">
+        <div class="card-h">
+          <div class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1L12 16.5 5.7 21l2.3-7.1-6-4.5h7.6z"/></svg>
+          </div>
+          <h3>Builder Codes</h3>
+          <span class="meta">by fees · 24h</span>
+        </div>
+        <div class="card-b flush">
+          <table>
+            <thead><tr><th>Builder</th><th>Fees 24h</th><th>Volume 24h</th><th>Users</th><th>Fee Share</th></tr></thead>
+            <tbody id="builders"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        Liquid Terminal · Hyperliquid ecosystem data · figures illustrative · last block #18,402,118 · updated 2s ago
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Stats ---------- */
+const stats=[
+  {l:"24h Volume",v:"$4.21B",s:"▲ 6.4%",c:"var(--green)"},
+  {l:"Open Interest",v:"$8.14B",s:"▲ 2.1%",c:"var(--green)"},
+  {l:"24h Fees",v:"$1.24M",s:"▲ 8.0%",c:"var(--green)"},
+  {l:"Vaults TVL",v:"$1.91B",s:"▲ 1.3%",c:"var(--green)"},
+  {l:"HYPE Staked",v:"421.3M",s:"▲ 0.4%",c:"var(--green)"},
+  {l:"Users",v:"540,219",s:"▲ 1,840 24h",c:"var(--txt-3)"},
+  {l:"Spot Mkt Cap",v:"$9.84B",s:"▲ 3.2%",c:"var(--green)"},
+  {l:"Bridged USDC",v:"$3.12B",s:"▼ 0.6%",c:"var(--red)"},
+  {l:"24h Trades",v:"2.41M",s:"▲ 5.5%",c:"var(--green)"},
+  {l:"HLP TVL",v:"$482M",s:"▲ 2.7%",c:"var(--green)"}
+];
+function spark(seed){
+  let h="";for(let i=0;i<14;i++){
+    const v=22+Math.abs(Math.sin(seed+i*0.9))*78;
+    h+=`<i style="height:${v}%"></i>`;
+  }return h;
+}
+document.getElementById('stats').innerHTML=stats.map((s,i)=>`
+  <div class="stat">
+    <div class="lbl">${s.l}</div>
+    <div class="val">${s.v}</div>
+    <div class="sub" style="color:${s.c}">${s.s}</div>
+    <div class="spark">${spark(i*1.7)}</div>
+  </div>`).join('');
+
+/* ---------- Token icon helper ---------- */
+const grad={
+  HYPE:["#83E9FF","#3FB8D4","#06222B"],HFUN:["#FFC65C","#D99A2E","#2A1C04"],
+  PURR:["#A98BFF","#7857D6","#160B33"],LIQD:["#3BE8A8","#1E9C72","#06231A"],
+  JEFF:["#FF5C7A","#C73A57","#330912"],GIGA:["#5CC8FF","#2E80D9","#04162A"],
+  MELON:["#9BE85C","#5FA32E","#16280B"],BTC:["#F7931A","#C76F0E","#2A1804"],
+  ETH:["#9AA3FF","#6B73D6","#0B0F33"],SOL:["#3BE8A8","#9945FF","#06231A"],
+  AVAX:["#FF5C7A","#C73A57","#330912"]
+};
+function tkic(sym,size){
+  const g=grad[sym]||["#5D6680","#3A4257","#0A0B0F"];
+  const s=size||24;
+  return `<div class="tk-ic" style="width:${s}px;height:${s}px;background:linear-gradient(145deg,${g[0]},${g[1]});color:${g[2]}">${sym.slice(0,2)}</div>`;
+}
+
+/* ---------- Trending Spot ---------- */
+const spot=[
+  ["HYPE","$38.94",5.2,"$182M","$4.2B","$61M"],
+  ["HFUN","$1.04",12.1,"$14M","$97M","$9M"],
+  ["PURR","$0.182",-3.4,"$8.9M","$182M","$22M"],
+  ["LIQD","$2.41",6.8,"$6.4M","$54M","$7M"],
+  ["JEFF","$0.094",-1.1,"$3.1M","$18M","$3M"],
+  ["GIGA","$5.67",2.0,"$6.4M","$54M","$8M"],
+  ["MELON","$0.41",9.4,"$2.2M","$12M","$2M"]
+];
+document.getElementById('spot').innerHTML=spot.map(r=>{
+  const up=r[2]>=0;
+  return `<tr>
+    <td><div class="tk">${tkic(r[0])}<div><div class="tk-name">${r[0]}</div><div class="tk-sub">spot</div></div></div></td>
+    <td>${r[1]}</td>
+    <td><span class="chip ${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(r[2])}%</span></td>
+    <td>${r[3]}</td>
+    <td style="color:var(--txt-2)">${r[4]}</td>
+    <td style="color:var(--txt-2)">${r[5]}</td>
+  </tr>`;
+}).join('');
+
+/* ---------- Trending Perp ---------- */
+const perp=[
+  ["BTC","$97,420",2.1,"+0.012%","$2.14B","$890M","40x"],
+  ["ETH","$3,510",3.4,"+0.009%","$1.32B","$610M","25x"],
+  ["HYPE","$38.92",5.2,"-0.021%","$890M","$420M","20x"],
+  ["SOL","$214.6",-1.2,"+0.004%","$612M","$310M","20x"],
+  ["AVAX","$48.20",0.9,"+0.007%","$208M","$94M","10x"]
+];
+document.getElementById('perp').innerHTML=perp.map(r=>{
+  const up=r[2]>=0;const fneg=r[3].startsWith('-');
+  return `<tr>
+    <td><div class="tk">${tkic(r[0])}<div><div class="tk-name">${r[0]}</div><div class="tk-sub">perp</div></div></div></td>
+    <td>${r[1]}</td>
+    <td><span class="chip ${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(r[2])}%</span></td>
+    <td style="color:${fneg?'var(--red)':'var(--green)'}">${r[3]}</td>
+    <td style="color:var(--txt-2)">${r[4]}</td>
+    <td>${r[5]}</td>
+    <td><span class="lev">${r[6]}</span></td>
+  </tr>`;
+}).join('');
+
+/* ---------- Vaults ---------- */
+const vaults=[
+  ["HLP",14.2,"$1.10B","0x7a3f…e21c",100],
+  ["Hyperliquidity",9.8,"$240M","0x1b9d…44a0",22],
+  ["Bonk Vault",22.4,"$88M","0xc402…9f7e",8],
+  ["Felix Stable",6.1,"$54M","0x55e1…0db2",5],
+  ["Rage Trade",18.0,"$31M","0x9aa8…7c33",3]
+];
+document.getElementById('vaults').innerHTML=vaults.map(r=>`
+  <tr>
+    <td><div class="tk">
+      <div class="tk-ic" style="width:24px;height:24px;background:linear-gradient(145deg,#83E9FF,#3FB8D4);color:#06222B">${r[0].slice(0,2).toUpperCase()}</div>
+      <div class="tk-name">${r[0]}</div>
+    </div></td>
+    <td style="color:var(--green)">${r[1].toFixed(1)}%</td>
+    <td>
+      <div class="cellbar">
+        <span>${r[2]}</span>
+        <div class="track"><div class="fill" style="width:${r[4]}%;background:linear-gradient(90deg,#3FB8D4,#83E9FF)"></div></div>
+      </div>
+    </td>
+    <td style="color:var(--cyan-dim);font-size:11px">${r[3]}</td>
+  </tr>`).join('');
+
+/* ---------- Validators ---------- */
+const vals=[
+  ["Hyper Foundation","38.2M",2.1,"5.0%","99.9%",100],
+  ["ASXN","24.1M",2.3,"4.0%","99.8%",63],
+  ["Nansen","19.8M",2.2,"5.0%","99.7%",52],
+  ["B-Harvest","16.4M",2.4,"3.0%","99.9%",43],
+  ["Validator.xyz","12.0M",2.0,"6.0%","98.4%",31]
+];
+document.getElementById('vals').innerHTML=vals.map(r=>{
+  const up=parseFloat(r[4])>=99.5;
+  return `<tr>
+    <td><div class="tk">
+      <div class="tk-ic" style="width:24px;height:24px;background:linear-gradient(145deg,#A98BFF,#7857D6);color:#160B33">${r[0].slice(0,2).toUpperCase()}</div>
+      <div class="tk-name">${r[0]}</div>
+    </div></td>
+    <td>
+      <div class="cellbar"><span>${r[1]}</span>
+      <div class="track"><div class="fill" style="width:${r[5]}%;background:linear-gradient(90deg,#7857D6,#A98BFF)"></div></div></div>
+    </td>
+    <td style="color:var(--green)">${r[2].toFixed(1)}%</td>
+    <td style="color:var(--txt-2)">${r[3]}</td>
+    <td style="color:${up?'var(--green)':'var(--amber)'}">${r[4]}</td>
+  </tr>`;
+}).join('');
+
+/* ---------- Builders ---------- */
+const builders=[
+  ["pvp.trade","$31.2K","$58M","1,240",100],
+  ["Okto","$22.8K","$41M","980",73],
+  ["Dexari","$14.1K","$26M","610",45],
+  ["Insilico","$9.7K","$18M","420",31]
+];
+document.getElementById('builders').innerHTML=builders.map(r=>`
+  <tr>
+    <td><div class="tk">
+      <div class="tk-ic" style="width:24px;height:24px;background:linear-gradient(145deg,#3BE8A8,#1E9C72);color:#06231A">${r[0].slice(0,2).toUpperCase()}</div>
+      <div class="tk-name">${r[0]}</div>
+    </div></td>
+    <td style="color:var(--cyan)">${r[1]}</td>
+    <td style="color:var(--txt-2)">${r[2]}</td>
+    <td>${r[3]}</td>
+    <td>
+      <div class="cellbar">
+        <span style="font-size:10px;color:var(--txt-3)">${r[4]}%</span>
+        <div class="track" style="width:80px"><div class="fill" style="width:${r[4]}%;background:linear-gradient(90deg,#3FB8D4,#83E9FF)"></div></div>
+      </div>
+    </td>
+  </tr>`).join('');
+
+/* ---------- Chart ---------- */
+const series={
+  vol:  {label:"30D Volume", v:"$112.4B", d:"▲ 18.6% vs prev. 30D", dc:"pos", base:30, amp:1.0},
+  fees: {label:"30D Fees",   v:"$33.8M",  d:"▲ 14.2% vs prev. 30D", dc:"pos", base:24, amp:0.8},
+  bridge:{label:"Bridge TVL",v:"$3.12B",  d:"▲ 9.1% vs prev. 30D",  dc:"pos", base:40, amp:0.55}
+};
+function genData(seed,base,amp){
+  const pts=[];let v=base;
+  for(let i=0;i<30;i++){
+    v+=(Math.sin(seed+i*0.55)*7+Math.cos(i*0.31)*4)*amp + i*0.9*amp;
+    pts.push(Math.max(8,v));
+  }return pts;
+}
+function drawChart(key){
+  const cfg=series[key];
+  const data=genData(key==='vol'?1.2:key==='fees'?3.7:5.1,cfg.base,cfg.amp);
+  const W=720,H=194,pad=6;
+  const max=Math.max(...data)*1.12,min=Math.min(...data)*0.7;
+  const x=i=>pad+i*(W-pad*2)/(data.length-1);
+  const y=v=>H-pad-((v-min)/(max-min))*(H-pad*2-14);
+  let line="",area="";
+  data.forEach((v,i)=>{
+    line+=(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)+" ";
+  });
+  area=line+`L${x(data.length-1).toFixed(1)} ${H} L${x(0).toFixed(1)} ${H} Z`;
+  // bars (light) behind
+  let bars="";
+  data.forEach((v,i)=>{
+    const bw=(W-pad*2)/data.length*0.52;
+    const bx=x(i)-bw/2;
+    bars+=`<rect x="${bx.toFixed(1)}" y="${y(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H-pad-y(v)).toFixed(1)}" rx="1.5" fill="rgba(131,233,255,0.05)"/>`;
+  });
+  // gridlines
+  let grid="";
+  for(let g=0;g<4;g++){
+    const gy=pad+g*(H-pad*2)/3;
+    grid+=`<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="#1A2030" stroke-width="1" stroke-dasharray="2 4"/>`;
+  }
+  const lastX=x(data.length-1),lastY=y(data[data.length-1]);
+  document.getElementById('chart').innerHTML=`
+    <defs>
+      <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.28"/>
+        <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}${bars}
+    <path d="${area}" fill="url(#ag)"/>
+    <path d="${line}" fill="none" stroke="#83E9FF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="8" fill="rgba(131,233,255,0.15)"/>
+    <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.6" fill="#83E9FF" stroke="#0A0B0F" stroke-width="2"/>
+  `;
+  document.getElementById('cs-l').textContent=cfg.label;
+  document.getElementById('cs-v').textContent=cfg.v;
+  const d=document.getElementById('cs-d');
+  d.textContent=cfg.d;d.className="cs-d "+cfg.dc;
+}
+drawChart('vol');
+document.querySelectorAll('.tab[data-chart]').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab[data-chart]').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    drawChart(t.dataset.chart);
+  });
+});
+
+/* ---------- Live countdown ---------- */
+let secs=3*3600+42*60+11;
+const cd=document.querySelector('.countdown');
+setInterval(()=>{
+  secs=Math.max(0,secs-1);
+  const h=String(Math.floor(secs/3600)).padStart(2,'0');
+  const m=String(Math.floor(secs%3600/60)).padStart(2,'0');
+  const s=String(secs%60).padStart(2,'0');
+  cd.innerHTML=`${h}:${m}:${s}<small>REMAINING</small>`;
+},1000);
+</script>
+</body>
+</html>

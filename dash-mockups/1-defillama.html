@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Liquid Terminal — Hyperliquid Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0c0e14;
+    --bg-1: #11131c;
+    --bg-2: #161924;
+    --bg-3: #1c2030;
+    --row-alt: #131622;
+    --border: #232838;
+    --border-soft: #1c2030;
+    --text: #e8eaf0;
+    --text-2: #9aa3b8;
+    --text-3: #5f6880;
+    --accent: #2f7bff;
+    --accent-soft: rgba(47,123,255,0.12);
+    --green: #1fc77a;
+    --red: #f0556d;
+    --yellow: #f0b429;
+    --purple: #9a6cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent-soft); }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; text-align: right; }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .muted { color: var(--text-2); }
+  .dim { color: var(--text-3); }
+
+  /* ---------- TOP NAV ---------- */
+  header.topbar {
+    display: flex; align-items: center; gap: 24px;
+    padding: 0 18px; height: 50px;
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; letter-spacing: -0.2px; }
+  .brand .logo {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), #5fa0ff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: #fff;
+  }
+  nav.mainnav { display: flex; gap: 2px; }
+  nav.mainnav a {
+    padding: 6px 10px; border-radius: 6px; color: var(--text-2);
+    font-weight: 500; font-size: 12.5px;
+  }
+  nav.mainnav a:hover { background: var(--bg-3); color: var(--text); }
+  nav.mainnav a.active { background: var(--accent-soft); color: #6fa6ff; }
+  .topbar .spacer { flex: 1; }
+  .search {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 7px; padding: 6px 10px; width: 230px;
+    color: var(--text-3); font-size: 12px;
+  }
+  .search input { background: none; border: none; color: var(--text); flex: 1; font-size: 12px; outline: none; font-family: inherit; }
+  .pill {
+    font-size: 11px; padding: 4px 9px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--bg-2);
+    color: var(--text-2); font-weight: 500; display: flex; align-items: center; gap: 6px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .connect {
+    background: var(--accent); color: #fff; font-weight: 600;
+    padding: 6px 13px; border-radius: 7px; font-size: 12px; cursor: pointer; border: none;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  main { padding: 14px 18px 60px; max-width: 1640px; margin: 0 auto; }
+  .page-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .page-head h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .page-head .sub { font-size: 12px; color: var(--text-3); }
+  .updated { margin-left: auto; font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- STAT BAR ---------- */
+  .statbar {
+    display: grid; grid-template-columns: repeat(10, 1fr);
+    background: var(--bg-1); border: 1px solid var(--border);
+    border-radius: 9px; overflow: hidden; margin-bottom: 14px;
+  }
+  .stat {
+    padding: 11px 13px; border-right: 1px solid var(--border-soft);
+    position: relative;
+  }
+  .stat:last-child { border-right: none; }
+  .stat .label {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-3); font-weight: 600; margin-bottom: 4px;
+  }
+  .stat .value { font-size: 16px; font-weight: 600; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.4px; }
+  .stat .delta { font-size: 10.5px; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- GRID ---------- */
+  .grid { display: grid; gap: 14px; }
+  .grid.cols-2 { grid-template-columns: 2fr 1fr; }
+  .grid.cols-2e { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .span-row { margin-bottom: 14px; }
+
+  /* ---------- PANEL ---------- */
+  .panel {
+    background: var(--bg-1); border: 1px solid var(--border);
+    border-radius: 9px; overflow: hidden;
+  }
+  .panel-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 13px; border-bottom: 1px solid var(--border-soft);
+    min-height: 40px;
+  }
+  .panel-head h2 { font-size: 12.5px; font-weight: 600; letter-spacing: -0.1px; }
+  .panel-head .badge {
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+    background: var(--bg-3); color: var(--text-2); text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .panel-head .badge.live { background: rgba(31,199,122,0.14); color: var(--green); }
+  .panel-head .spacer { flex: 1; }
+  .panel-head .link { font-size: 11.5px; color: var(--text-3); cursor: pointer; }
+  .panel-head .link:hover { color: var(--accent); }
+
+  /* ---------- TABS ---------- */
+  .tabs { display: flex; gap: 2px; }
+  .tab {
+    padding: 4px 9px; font-size: 11.5px; border-radius: 6px;
+    color: var(--text-3); cursor: pointer; font-weight: 500; user-select: none;
+    border: 1px solid transparent;
+  }
+  .tab:hover { color: var(--text-2); }
+  .tab.active { background: var(--bg-3); color: var(--text); border-color: var(--border); }
+
+  /* ---------- TABLE ---------- */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.4px;
+    color: var(--text-3); font-weight: 600; text-align: left;
+    padding: 7px 13px; background: var(--bg-2);
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  thead th.r { text-align: right; }
+  thead th:hover { color: var(--text-2); }
+  thead th .arrow { opacity: 0.4; font-size: 9px; margin-left: 2px; }
+  thead th.sorted { color: var(--accent); }
+  thead th.sorted .arrow { opacity: 1; }
+  tbody td {
+    padding: 7px 13px; border-bottom: 1px solid var(--border-soft);
+    font-size: 12px; white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  tbody tr:hover { background: var(--bg-3); }
+  td.r, th.r { text-align: right; }
+  .asset { display: flex; align-items: center; gap: 8px; }
+  .ticon {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .asset .sym { font-weight: 600; }
+  .asset .rank { color: var(--text-3); font-size: 11px; width: 14px; text-align: right; }
+  .lev { font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--bg-3); color: var(--text-2); font-weight: 600; }
+  .tag-buy { color: var(--green); font-weight: 600; }
+  .tag-sell { color: var(--red); font-weight: 600; }
+
+  /* bar in cell */
+  .cellbar { position: relative; }
+  .cellbar .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--accent-soft); z-index: 0;
+  }
+  .cellbar .fill.g { background: rgba(31,199,122,0.12); }
+  .cellbar > * { position: relative; z-index: 1; }
+
+  /* mini progress */
+  .mbar { height: 5px; background: var(--bg-3); border-radius: 3px; overflow: hidden; min-width: 70px; }
+  .mbar > i { display: block; height: 100%; border-radius: 3px; }
+
+  /* ---------- CHART ---------- */
+  .chart-wrap { padding: 12px 13px 6px; }
+  .chart-meta { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+  .chart-meta .big { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.6px; }
+  .chart-meta .chg { font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .chart-meta .rng { margin-left: auto; display: flex; gap: 2px; }
+  .chart-meta .rng span {
+    font-size: 10.5px; padding: 3px 7px; border-radius: 5px; cursor: pointer;
+    color: var(--text-3); font-weight: 500;
+  }
+  .chart-meta .rng span.on { background: var(--bg-3); color: var(--text); }
+  svg.chart { display: block; width: 100%; height: 230px; }
+
+  /* ---------- AUCTION CARD ---------- */
+  .auction-live {
+    margin: 12px 13px; padding: 13px;
+    background: linear-gradient(135deg, rgba(31,199,122,0.07), rgba(47,123,255,0.05));
+    border: 1px solid rgba(31,199,122,0.25); border-radius: 9px;
+  }
+  .auction-live .top { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+  .auction-live .frog {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg,#1fc77a,#0e8f54);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .auction-live .tname { font-weight: 700; font-size: 14px; }
+  .auction-live .ttype { font-size: 10.5px; color: var(--text-3); }
+  .auction-live .timer {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 17px; font-weight: 600; color: var(--yellow);
+  }
+  .auction-live .priceline { display: flex; gap: 22px; margin-bottom: 9px; }
+  .auction-live .priceline .pl-lab { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .auction-live .priceline .pl-val { font-size: 15px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .progress-line { display: flex; align-items: center; gap: 9px; }
+  .progress-line .pbar { flex: 1; height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden; }
+  .progress-line .pbar > i { display: block; height: 100%; background: linear-gradient(90deg,#1fc77a,#5fa0ff); }
+  .progress-line .ppct { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-2); }
+
+  /* ---------- DONUT / split ---------- */
+  .split-row { display: flex; align-items: center; gap: 14px; padding: 12px 13px; border-bottom: 1px solid var(--border-soft); }
+  .donut { flex-shrink: 0; }
+  .split-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 18px; flex: 1; }
+  .split-stats .si .sl { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .split-stats .si .sv { font-size: 14px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- FLOW LIST ---------- */
+  .flow { padding: 4px 0; }
+  .flow .frow {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 13px; border-bottom: 1px solid var(--border-soft); font-size: 12px;
+  }
+  .flow .frow:last-child { border-bottom: none; }
+  .flow .frow:hover { background: var(--bg-3); }
+  .flow .frow .ago { margin-left: auto; color: var(--text-3); font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+  .sidebadge { font-size: 9.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; letter-spacing: 0.3px; }
+  .sidebadge.long { background: rgba(31,199,122,0.14); color: var(--green); }
+  .sidebadge.short { background: rgba(240,85,109,0.14); color: var(--red); }
+
+  footer {
+    margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--border-soft);
+    display: flex; gap: 18px; font-size: 11px; color: var(--text-3);
+  }
+  footer .spacer { flex: 1; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">L</span> Liquid Terminal</div>
+  <nav class="mainnav">
+    <a class="active">Dashboard</a>
+    <a>Perps</a>
+    <a>Spot</a>
+    <a>Vaults</a>
+    <a>Auctions</a>
+    <a>Validators</a>
+    <a>HyperEVM</a>
+    <a>Builders</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="search">
+    <span>⌕</span><input placeholder="Search token, address, vault…" /><span style="font-size:10px;border:1px solid var(--border);border-radius:3px;padding:1px 4px;">/</span>
+  </div>
+  <div class="pill"><span class="dot"></span> HL L1 · Block 41,802,114</div>
+  <div class="pill">HYPE <span style="color:var(--green)">$38.94</span></div>
+  <button class="connect">Connect</button>
+</header>
+
+<main>
+  <div class="page-head">
+    <h1>Hyperliquid Overview</h1>
+    <span class="sub">Real-time data across perps, spot, vaults & HyperEVM</span>
+    <span class="updated"><span class="dot"></span> Live · updated 3s ago</span>
+  </div>
+
+  <!-- STAT BAR -->
+  <div class="statbar">
+    <div class="stat"><div class="label">24h Volume</div><div class="value">$4.21B</div><div class="delta green">+8.4%</div></div>
+    <div class="stat"><div class="label">Open Interest</div><div class="value">$8.14B</div><div class="delta green">+2.1%</div></div>
+    <div class="stat"><div class="label">24h Fees</div><div class="value">$1.24M</div><div class="delta green">+5.7%</div></div>
+    <div class="stat"><div class="label">Vaults TVL</div><div class="value">$1.91B</div><div class="delta red">−0.6%</div></div>
+    <div class="stat"><div class="label">HYPE Staked</div><div class="value">421.3M</div><div class="delta green">+0.3%</div></div>
+    <div class="stat"><div class="label">Users</div><div class="value">540,219</div><div class="delta green">+1,842</div></div>
+    <div class="stat"><div class="label">Spot Mkt Cap</div><div class="value">$9.84B</div><div class="delta green">+3.9%</div></div>
+    <div class="stat"><div class="label">Bridged USDC</div><div class="value">$3.12B</div><div class="delta green">+1.4%</div></div>
+    <div class="stat"><div class="label">24h Trades</div><div class="value">2.41M</div><div class="delta green">+6.2%</div></div>
+    <div class="stat"><div class="label">HLP TVL</div><div class="value">$482M</div><div class="delta red">−1.1%</div></div>
+  </div>
+
+  <!-- CHART + AUCTION -->
+  <div class="grid cols-2 span-row">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Network Activity</h2>
+        <div class="tabs" id="chartTabs">
+          <span class="tab active" data-c="vol">Volume</span>
+          <span class="tab" data-c="fees">Fees</span>
+          <span class="tab" data-c="bridge">Bridge TVL</span>
+        </div>
+        <div class="spacer"></div>
+        <span class="link">Export ↗</span>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-meta">
+          <span class="big" id="chartBig">$4.21B</span>
+          <span class="chg green" id="chartChg">+8.4% · 30d</span>
+          <div class="rng">
+            <span>7D</span><span class="on">30D</span><span>90D</span><span>1Y</span><span>All</span>
+          </div>
+        </div>
+        <svg class="chart" viewBox="0 0 760 230" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2f7bff" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#2f7bff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="40" x2="760" y2="40" stroke="#1c2030" stroke-width="1"/>
+          <line x1="0" y1="95" x2="760" y2="95" stroke="#1c2030" stroke-width="1"/>
+          <line x1="0" y1="150" x2="760" y2="150" stroke="#1c2030" stroke-width="1"/>
+          <line x1="0" y1="205" x2="760" y2="205" stroke="#1c2030" stroke-width="1"/>
+          <path id="chartArea" fill="url(#gfill)" d=""></path>
+          <path id="chartLine" fill="none" stroke="#2f7bff" stroke-width="2" stroke-linejoin="round"></path>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;padding:2px 2px 8px;">
+          <span>Apr 18</span><span>Apr 25</span><span>May 2</span><span>May 9</span><span>May 16</span><span>May 18</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Auctions</h2>
+        <span class="badge live">● Spot Live</span>
+        <div class="spacer"></div>
+        <span class="link">All auctions ↗</span>
+      </div>
+      <div class="auction-live">
+        <div class="top">
+          <div class="frog">🐸</div>
+          <div>
+            <div class="tname">FROG</div>
+            <div class="ttype">Spot deployment · Dutch auction</div>
+          </div>
+          <div class="timer">03:42:11</div>
+        </div>
+        <div class="priceline">
+          <div>
+            <div class="pl-lab">Current price</div>
+            <div class="pl-val">12.84 HYPE</div>
+          </div>
+          <div>
+            <div class="pl-lab">≈ USD</div>
+            <div class="pl-val">$487</div>
+          </div>
+          <div>
+            <div class="pl-lab">Next perp (HIP-3)</div>
+            <div class="pl-val" style="color:var(--text-2);font-size:13px;">in 2d 04h</div>
+          </div>
+        </div>
+        <div class="progress-line">
+          <div class="pbar"><i style="width:64%"></i></div>
+          <span class="ppct">64% elapsed</span>
+        </div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>Recent Deploys</th><th>Type</th><th class="r">Settled Price</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="rank">1</span><span class="sym">FROG</span></td><td><span class="muted">Spot</span></td><td class="num">12.84 HYPE</td></tr>
+          <tr><td class="asset"><span class="rank">2</span><span class="sym">MOON</span></td><td><span class="muted">Spot</span></td><td class="num">10.4 HYPE</td></tr>
+          <tr><td class="asset"><span class="rank">3</span><span class="sym">PEPE2</span></td><td><span class="muted">Spot</span></td><td class="num">9.9 HYPE</td></tr>
+          <tr><td class="asset"><span class="rank">4</span><span class="sym">VEGA</span></td><td><span class="muted" style="color:var(--purple)">Perp</span></td><td class="num">1.8K USDC</td></tr>
+          <tr><td class="asset"><span class="rank">5</span><span class="sym">GIGA</span></td><td><span class="muted">Spot</span></td><td class="num">9.1 HYPE</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TRENDING SPOT + PERP -->
+  <div class="grid cols-2e span-row">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Trending Spot</h2>
+        <span class="badge">HIP-1</span>
+        <div class="spacer"></div>
+        <span class="link">View all spot ↗</span>
+      </div>
+      <table data-sort>
+        <thead><tr>
+          <th>#&nbsp;Token</th>
+          <th class="r">Price</th>
+          <th class="r sorted">24h % <span class="arrow">▼</span></th>
+          <th class="r">Volume</th>
+          <th class="r">Mkt Cap</th>
+          <th class="r">Liquidity</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="rank">1</span><span class="ticon" style="background:#2f7bff">H</span><span class="sym">HYPE</span></td><td class="num">$38.94</td><td class="num green">+5.2%</td><td class="num">$182M</td><td class="num">$4.2B</td><td class="num">$61M</td></tr>
+          <tr><td class="asset"><span class="rank">2</span><span class="ticon" style="background:#9a6cff">HF</span><span class="sym">HFUN</span></td><td class="num">$1.04</td><td class="num green">+12.1%</td><td class="num">$14M</td><td class="num">$97M</td><td class="num">$9M</td></tr>
+          <tr><td class="asset"><span class="rank">3</span><span class="ticon" style="background:#f0b429">P</span><span class="sym">PURR</span></td><td class="num">$0.182</td><td class="num red">−3.4%</td><td class="num">$8.9M</td><td class="num">$182M</td><td class="num">$22M</td></tr>
+          <tr><td class="asset"><span class="rank">4</span><span class="ticon" style="background:#1fc77a">LQ</span><span class="sym">LIQD</span></td><td class="num">$2.41</td><td class="num green">+6.8%</td><td class="num">$6.4M</td><td class="num">$54M</td><td class="num">$7M</td></tr>
+          <tr><td class="asset"><span class="rank">5</span><span class="ticon" style="background:#e8704a">J</span><span class="sym">JEFF</span></td><td class="num">$0.094</td><td class="num red">−1.1%</td><td class="num">$3.1M</td><td class="num">$18M</td><td class="num">$3M</td></tr>
+          <tr><td class="asset"><span class="rank">6</span><span class="ticon" style="background:#5fa0ff">G</span><span class="sym">GIGA</span></td><td class="num">$5.67</td><td class="num green">+2.0%</td><td class="num">$6.4M</td><td class="num">$54M</td><td class="num">$8M</td></tr>
+          <tr><td class="asset"><span class="rank">7</span><span class="ticon" style="background:#1fc77a">M</span><span class="sym">MELON</span></td><td class="num">$0.41</td><td class="num green">+9.4%</td><td class="num">$2.2M</td><td class="num">$12M</td><td class="num">$2M</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Trending Perps</h2>
+        <span class="badge">Funding 1h</span>
+        <div class="spacer"></div>
+        <span class="link">View all perps ↗</span>
+      </div>
+      <table data-sort>
+        <thead><tr>
+          <th>#&nbsp;Market</th>
+          <th class="r">Price</th>
+          <th class="r">24h %</th>
+          <th class="r">Funding</th>
+          <th class="r sorted">Open Int. <span class="arrow">▼</span></th>
+          <th class="r">Volume</th>
+          <th class="r">Lev</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="rank">1</span><span class="ticon" style="background:#f0b429">B</span><span class="sym">BTC</span></td><td class="num">$97,420</td><td class="num green">+2.1%</td><td class="num green">+0.012%</td><td class="num">$2.14B</td><td class="num">$890M</td><td class="r"><span class="lev">40×</span></td></tr>
+          <tr><td class="asset"><span class="rank">2</span><span class="ticon" style="background:#627eea">E</span><span class="sym">ETH</span></td><td class="num">$3,510</td><td class="num green">+3.4%</td><td class="num green">+0.009%</td><td class="num">$1.32B</td><td class="num">$610M</td><td class="r"><span class="lev">25×</span></td></tr>
+          <tr><td class="asset"><span class="rank">3</span><span class="ticon" style="background:#2f7bff">H</span><span class="sym">HYPE</span></td><td class="num">$38.92</td><td class="num green">+5.2%</td><td class="num red">−0.021%</td><td class="num">$890M</td><td class="num">$420M</td><td class="r"><span class="lev">20×</span></td></tr>
+          <tr><td class="asset"><span class="rank">4</span><span class="ticon" style="background:#14c8b1">S</span><span class="sym">SOL</span></td><td class="num">$214.6</td><td class="num red">−1.2%</td><td class="num green">+0.004%</td><td class="num">$612M</td><td class="num">$310M</td><td class="r"><span class="lev">20×</span></td></tr>
+          <tr><td class="asset"><span class="rank">5</span><span class="ticon" style="background:#e84142">A</span><span class="sym">AVAX</span></td><td class="num">$48.20</td><td class="num green">+0.9%</td><td class="num green">+0.007%</td><td class="num">$208M</td><td class="num">$94M</td><td class="r"><span class="lev">10×</span></td></tr>
+        </tbody>
+      </table>
+      <div style="padding:9px 13px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border-soft);">
+        Aggregate perp OI <b style="color:var(--text)">$8.14B</b> · 24h perp volume <b style="color:var(--text)">$3.4B</b> · 187 markets
+      </div>
+    </div>
+  </div>
+
+  <!-- LIQUIDATIONS + TWAP -->
+  <div class="grid cols-2e span-row">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Liquidations</h2>
+        <span class="badge">24h</span>
+        <div class="spacer"></div>
+        <span class="link">Liquidation feed ↗</span>
+      </div>
+      <div class="split-row">
+        <svg class="donut" width="78" height="78" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="#1c2030" stroke-width="6"/>
+          <circle cx="21" cy="21" r="15.9" fill="none" stroke="#1fc77a" stroke-width="6"
+                  stroke-dasharray="64 36" stroke-dashoffset="25" stroke-linecap="butt"/>
+          <text x="21" y="20" text-anchor="middle" font-size="7" fill="#e8eaf0" font-weight="700" font-family="JetBrains Mono">$8.41M</text>
+          <text x="21" y="27" text-anchor="middle" font-size="3.6" fill="#5f6880" font-family="Inter">TOTAL 24H</text>
+        </svg>
+        <div class="split-stats">
+          <div class="si"><div class="sl">Long liquidated</div><div class="sv green">64%</div></div>
+          <div class="si"><div class="sl">Short liquidated</div><div class="sv red">36%</div></div>
+          <div class="si"><div class="sl">Liquidations</div><div class="sv">1,204</div></div>
+          <div class="si"><div class="sl">Avg size</div><div class="sv">$6.98K</div></div>
+          <div class="si"><div class="sl">Top token</div><div class="sv" style="font-size:13px">BTC</div></div>
+          <div class="si"><div class="sl">Fees</div><div class="sv">$42K</div></div>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="frow"><span class="sidebadge long">LONG</span><span class="ticon" style="background:#f0b429;width:18px;height:18px">B</span><b>BTC</b><span class="num mono">$182K</span><span class="ago">12s</span></div>
+        <div class="frow"><span class="sidebadge short">SHORT</span><span class="ticon" style="background:#627eea;width:18px;height:18px">E</span><b>ETH</b><span class="num mono">$94K</span><span class="ago">41s</span></div>
+        <div class="frow"><span class="sidebadge long">LONG</span><span class="ticon" style="background:#2f7bff;width:18px;height:18px">H</span><b>HYPE</b><span class="num mono">$61K</span><span class="ago">1m</span></div>
+        <div class="frow"><span class="sidebadge long">LONG</span><span class="ticon" style="background:#14c8b1;width:18px;height:18px">S</span><b>SOL</b><span class="num mono">$49K</span><span class="ago">2m</span></div>
+        <div class="frow"><span class="sidebadge short">SHORT</span><span class="ticon" style="background:#e84142;width:18px;height:18px">A</span><b>AVAX</b><span class="num mono">$33K</span><span class="ago">3m</span></div>
+        <div class="frow"><span class="sidebadge long">LONG</span><span class="ticon" style="background:#c2a633;width:18px;height:18px">D</span><b>DOGE</b><span class="num mono">$21K</span><span class="ago">5m</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Active TWAP Orders</h2>
+        <span class="badge">14 live</span>
+        <div class="spacer"></div>
+        <span class="link">TWAP explorer ↗</span>
+      </div>
+      <div style="padding:9px 13px;font-size:11px;color:var(--text-3);border-bottom:1px solid var(--border-soft);">
+        Total TWAP volume in progress <b style="color:var(--text)">$4.2M</b> across <b style="color:var(--text)">14 orders</b>
+      </div>
+      <table>
+        <thead><tr>
+          <th>Side</th><th>Market</th><th class="r">Size</th><th>Progress</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="tag-buy">BUY</span></td><td class="asset"><span class="ticon" style="background:#2f7bff">H</span><span class="sym">HYPE</span></td><td class="num">$1.2M</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="mbar"><i style="width:62%;background:var(--green)"></i></div><span class="mono" style="font-size:11px;color:var(--text-2)">62%</span></div></td></tr>
+          <tr><td><span class="tag-sell">SELL</span></td><td class="asset"><span class="ticon" style="background:#f0b429">B</span><span class="sym">BTC</span></td><td class="num">$840K</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="mbar"><i style="width:38%;background:var(--red)"></i></div><span class="mono" style="font-size:11px;color:var(--text-2)">38%</span></div></td></tr>
+          <tr><td><span class="tag-buy">BUY</span></td><td class="asset"><span class="ticon" style="background:#627eea">E</span><span class="sym">ETH</span></td><td class="num">$610K</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="mbar"><i style="width:81%;background:var(--green)"></i></div><span class="mono" style="font-size:11px;color:var(--text-2)">81%</span></div></td></tr>
+          <tr><td><span class="tag-buy">BUY</span></td><td class="asset"><span class="ticon" style="background:#14c8b1">S</span><span class="sym">SOL</span></td><td class="num">$420K</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="mbar"><i style="width:25%;background:var(--green)"></i></div><span class="mono" style="font-size:11px;color:var(--text-2)">25%</span></div></td></tr>
+          <tr><td><span class="tag-sell">SELL</span></td><td class="asset"><span class="ticon" style="background:#e84142">A</span><span class="sym">AVAX</span></td><td class="num">$180K</td>
+            <td><div style="display:flex;align-items:center;gap:8px"><div class="mbar"><i style="width:54%;background:var(--red)"></i></div><span class="mono" style="font-size:11px;color:var(--text-2)">54%</span></div></td></tr>
+        </tbody>
+      </table>
+      <div style="padding:9px 13px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border-soft);">
+        Showing 5 of 14 · <span style="color:var(--accent);cursor:pointer">show all</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAULTS + VALIDATORS + BUILDERS -->
+  <div class="grid cols-3 span-row">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Top Vaults</h2>
+        <span class="badge">By TVL</span>
+        <div class="spacer"></div>
+        <span class="link">All ↗</span>
+      </div>
+      <table data-sort>
+        <thead><tr>
+          <th>Vault</th><th class="r sorted">APR <span class="arrow">▼</span></th><th class="r">TVL</th><th class="r">Leader</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="ticon" style="background:#2f7bff">HL</span><span class="sym">HLP</span></td><td class="num green">14.2%</td><td class="num">$1.10B</td><td class="num mono dim">0x7a3f…e21c</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#5fa0ff">HQ</span><span class="sym">Hyperliquidity</span></td><td class="num green">9.8%</td><td class="num">$240M</td><td class="num mono dim">0x1b9d…44a0</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#f0b429">BV</span><span class="sym">Bonk Vault</span></td><td class="num green">22.4%</td><td class="num">$88M</td><td class="num mono dim">0xc402…9f7e</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#1fc77a">FX</span><span class="sym">Felix Stable</span></td><td class="num green">6.1%</td><td class="num">$54M</td><td class="num mono dim">0x55e1…0db2</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#9a6cff">RT</span><span class="sym">Rage Trade</span></td><td class="num green">18.0%</td><td class="num">$31M</td><td class="num mono dim">0x9aa8…7c33</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Validators</h2>
+        <span class="badge">PoS · 21 active</span>
+        <div class="spacer"></div>
+        <span class="link">All ↗</span>
+      </div>
+      <table data-sort>
+        <thead><tr>
+          <th>Validator</th><th class="r sorted">Stake <span class="arrow">▼</span></th><th class="r">APR</th><th class="r">Comm.</th><th class="r">Uptime</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="ticon" style="background:#2f7bff">HF</span><span class="sym">Hyper Foundation</span></td><td class="num">38.2M</td><td class="num">2.1%</td><td class="num muted">5.0%</td><td class="num green">99.9%</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#9a6cff">AX</span><span class="sym">ASXN</span></td><td class="num">24.1M</td><td class="num">2.3%</td><td class="num muted">4.0%</td><td class="num green">99.8%</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#1fc77a">NA</span><span class="sym">Nansen</span></td><td class="num">19.8M</td><td class="num">2.2%</td><td class="num muted">5.0%</td><td class="num green">99.7%</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#f0b429">BH</span><span class="sym">B-Harvest</span></td><td class="num">16.4M</td><td class="num">2.4%</td><td class="num muted">3.0%</td><td class="num green">99.9%</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#5fa0ff">VX</span><span class="sym">Validator.xyz</span></td><td class="num">12.0M</td><td class="num">2.0%</td><td class="num muted">6.0%</td><td class="num yellow" style="color:var(--yellow)">98.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Top Builders</h2>
+        <span class="badge">Builder codes</span>
+        <div class="spacer"></div>
+        <span class="link">All ↗</span>
+      </div>
+      <table data-sort>
+        <thead><tr>
+          <th>Builder</th><th class="r sorted">Fees <span class="arrow">▼</span></th><th class="r">Volume</th><th class="r">Users</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="asset"><span class="ticon" style="background:#f0556d">PV</span><span class="sym">pvp.trade</span></td><td class="num">$31.2K</td><td class="num">$58M</td><td class="num">1,240</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#2f7bff">OK</span><span class="sym">Okto</span></td><td class="num">$22.8K</td><td class="num">$41M</td><td class="num">980</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#9a6cff">DX</span><span class="sym">Dexari</span></td><td class="num">$14.1K</td><td class="num">$26M</td><td class="num">610</td></tr>
+          <tr><td class="asset"><span class="ticon" style="background:#1fc77a">IN</span><span class="sym">Insilico</span></td><td class="num">$9.7K</td><td class="num">$18M</td><td class="num">420</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:11px 13px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border-soft);">
+        Builder fees route a share of taker fees to integrators · 42 builders tracked
+      </div>
+    </div>
+  </div>
+
+  <!-- PERP DEXS HIP-3 -->
+  <div class="panel span-row">
+    <div class="panel-head">
+      <h2>Perp DEXs · HIP-3</h2>
+      <span class="badge">Permissionless markets</span>
+      <div class="spacer"></div>
+      <div class="tabs">
+        <span class="tab active">By Volume</span>
+        <span class="tab">By OI</span>
+        <span class="tab">By Markets</span>
+      </div>
+    </div>
+    <table data-sort>
+      <thead><tr>
+        <th>#&nbsp;Deployer</th>
+        <th class="r">Markets</th>
+        <th class="r sorted">24h Volume <span class="arrow">▼</span></th>
+        <th class="r">Open Interest</th>
+        <th>Volume share</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="asset"><span class="rank">1</span><span class="ticon" style="background:#2f7bff">U</span><span class="sym">Unit</span></td><td class="num">24</td><td class="num">$98M</td><td class="num">$210M</td>
+          <td class="cellbar"><div class="fill" style="width:54%"></div><span class="mono" style="font-size:11px">54%</span></td></tr>
+        <tr><td class="asset"><span class="rank">2</span><span class="ticon" style="background:#9a6cff">B</span><span class="sym">Bolt Markets</span></td><td class="num">12</td><td class="num">$42M</td><td class="num">$88M</td>
+          <td class="cellbar"><div class="fill" style="width:23%"></div><span class="mono" style="font-size:11px">23%</span></td></tr>
+        <tr><td class="asset"><span class="rank">3</span><span class="ticon" style="background:#1fc77a">V</span><span class="sym">Vega</span></td><td class="num">8</td><td class="num">$28M</td><td class="num">$54M</td>
+          <td class="cellbar"><div class="fill" style="width:15%"></div><span class="mono" style="font-size:11px">15%</span></td></tr>
+        <tr><td class="asset"><span class="rank">4</span><span class="ticon" style="background:#f0b429">X</span><span class="sym">xyz Perps</span></td><td class="num">5</td><td class="num">$11M</td><td class="num">$19M</td>
+          <td class="cellbar"><div class="fill" style="width:6%"></div><span class="mono" style="font-size:11px">6%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>Liquid Terminal — Hyperliquid ecosystem data platform</span>
+    <span class="spacer"></span>
+    <span>Data via HL Info API · HyperEVM RPC</span>
+    <span>Block 41,802,114</span>
+    <span>© 2026</span>
+  </footer>
+</main>
+
+<script>
+  // ---- chart rendering ----
+  var datasets = {
+    vol:   { big: "$4.21B",  chg: "+8.4% · 30d",  color: "#2f7bff",
+             pts: [38,41,36,44,40,47,43,52,48,55,51,49,58,54,62,57,66,63,71,68,74,70,79,76,83,88,84,91,95,98] },
+    fees:  { big: "$1.24M",  chg: "+5.7% · 30d",  color: "#1fc77a",
+             pts: [30,32,29,35,33,38,36,34,40,42,39,45,43,48,46,44,50,53,49,56,54,60,58,62,59,65,63,68,71,74] },
+    bridge:{ big: "$3.12B",  chg: "+1.4% · 30d",  color: "#9a6cff",
+             pts: [60,61,59,63,62,64,63,66,65,67,66,68,67,69,70,69,71,70,72,73,72,74,73,75,76,75,77,78,79,81] }
+  };
+  function buildPath(pts, close){
+    var w=760, h=230, pad=14, max=Math.max.apply(null,pts), min=Math.min.apply(null,pts);
+    var rng = (max-min)||1;
+    var step = w/(pts.length-1);
+    var d="";
+    for(var i=0;i<pts.length;i++){
+      var x=i*step;
+      var y= pad + (h-2*pad) * (1-(pts[i]-min)/rng);
+      d += (i===0?"M":"L")+x.toFixed(1)+" "+y.toFixed(1)+" ";
+    }
+    if(close){ d += "L"+w+" "+h+" L0 "+h+" Z"; }
+    return d;
+  }
+  function renderChart(key){
+    var ds = datasets[key];
+    document.getElementById("chartLine").setAttribute("d", buildPath(ds.pts,false));
+    document.getElementById("chartLine").setAttribute("stroke", ds.color);
+    document.getElementById("chartArea").setAttribute("d", buildPath(ds.pts,true));
+    document.getElementById("chartBig").textContent = ds.big;
+    document.getElementById("chartChg").textContent = ds.chg;
+    var grad = document.querySelector("#gfill stop");
+    document.querySelectorAll("#gfill stop")[0].setAttribute("stop-color", ds.color);
+    document.querySelectorAll("#gfill stop")[1].setAttribute("stop-color", ds.color);
+  }
+  renderChart("vol");
+  document.querySelectorAll("#chartTabs .tab").forEach(function(t){
+    t.addEventListener("click", function(){
+      document.querySelectorAll("#chartTabs .tab").forEach(function(x){x.classList.remove("active");});
+      t.classList.add("active");
+      renderChart(t.dataset.c);
+    });
+  });
+
+  // ---- simulated sortable tables ----
+  document.querySelectorAll("table[data-sort]").forEach(function(tbl){
+    var ths = tbl.querySelectorAll("thead th");
+    ths.forEach(function(th, idx){
+      th.addEventListener("click", function(){
+        ths.forEach(function(x){ x.classList.remove("sorted"); var a=x.querySelector(".arrow"); if(a)a.remove(); });
+        th.classList.add("sorted");
+        var asc = th.dataset.asc === "1";
+        th.dataset.asc = asc ? "0" : "1";
+        var arrow = document.createElement("span");
+        arrow.className="arrow"; arrow.textContent = asc ? "▲" : "▼";
+        th.appendChild(arrow);
+        var rows = Array.prototype.slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function(a,b){
+          var av = a.children[idx] ? a.children[idx].textContent.replace(/[^0-9.\-]/g,"") : "";
+          var bv = b.children[idx] ? b.children[idx].textContent.replace(/[^0-9.\-]/g,"") : "";
+          var an=parseFloat(av), bn=parseFloat(bv);
+          if(isNaN(an)&&isNaN(bn)){ return asc ? a.children[idx].textContent.localeCompare(b.children[idx].textContent) : b.children[idx].textContent.localeCompare(a.children[idx].textContent); }
+          if(isNaN(an)) an = -Infinity; if(isNaN(bn)) bn = -Infinity;
+          return asc ? an-bn : bn-an;
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function(r){ tb.appendChild(r); });
+      });
+    });
+  });
+</script>
+</body>
+</html>

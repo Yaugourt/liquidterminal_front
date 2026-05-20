@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — Spot Market · V4 + caractère</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS V4 (identiques au projet — globals.css / tailwind)
+   ============================================================ */
+:root{
+  --bg-base:#0A0B0F;
+  --bg-surface:#0F1421;
+  --bg-surface-2:#141B2A;
+  --bg-surface-3:#1C2436;
+  --border-subtle:#1E2535;
+  --border-default:#2C354A;
+  --border-strong:#3D4760;
+  --text-primary:#E8EAED;
+  --text-secondary:#9CA3AF;
+  --text-tertiary:#6B7280;
+  --brand:#83E9FF;
+  --brand-deep:#1692AD;
+  --gold:#F9E370;
+  --success:#1FA85B;
+  --danger:#E53E3E;
+
+  /* couche "caractère" — neutralisée en mode Actuel */
+  --elev:none;
+  --hairline:transparent;
+  --masthead-ambient:transparent;
+  --row-accent:transparent;
+}
+
+/* ====== MODE PROPOSÉ — la couche caractère s'active ici ====== */
+.v-proposed{
+  /* profondeur : ombre nette + sombre, jamais de glow */
+  --elev: inset 0 1px 0 rgba(255,255,255,.045),
+          0 1px 2px rgba(0,0,0,.55),
+          0 14px 30px -16px rgba(0,0,0,.8);
+  /* hairline "éclairé par le haut" — LA signature premium */
+  --hairline: rgba(255,255,255,.06);
+  /* chaleur : halo cyan très discret derrière le titre, pas un dégradé déco */
+  --masthead-ambient: radial-gradient(720px 220px at 3% -40%, rgba(131,233,255,.07), transparent 70%);
+  --row-accent: var(--brand);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg-base);
+  color:var(--text-primary);
+  font-family:'Inter',sans-serif;
+  font-size:13px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+
+/* ============================================================
+   BARRE DE COMPARAISON (hors maquette)
+   ============================================================ */
+.compare-bar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  padding:12px 24px;
+  background:rgba(10,11,15,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border-subtle);
+}
+.compare-bar h1{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.compare-bar .sub{font-size:11px;color:var(--text-tertiary)}
+.toggle{
+  display:flex;background:var(--bg-surface-2);
+  border:1px solid var(--border-subtle);border-radius:8px;padding:3px;
+}
+.toggle button{
+  font:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  padding:6px 16px;border:0;border-radius:6px;background:transparent;
+  color:var(--text-tertiary);transition:all .15s;
+}
+.toggle button.on{background:var(--brand);color:#051728}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text-secondary);margin-left:auto}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:2px;display:inline-block;font-style:normal}
+
+/* ============================================================
+   LAYOUT PAGE
+   ============================================================ */
+.page{max-width:1180px;margin:0 auto;padding:24px}
+.stack>*+*{margin-top:16px}
+
+/* ---- PageHeader / masthead ---- */
+.masthead{position:relative;padding:4px 2px 2px}
+.masthead::before{
+  content:"";position:absolute;inset:-24px -24px auto -24px;height:160px;
+  background:var(--masthead-ambient);pointer-events:none;
+}
+.masthead h2{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.masthead p{margin-top:4px;color:var(--text-secondary);font-size:13px;max-width:620px}
+/* mode proposé : un filet cyan sous le titre = ancrage de marque */
+.masthead .rule{display:none;height:2px;width:34px;margin-top:10px;border-radius:2px;
+  background:linear-gradient(90deg,var(--brand),transparent)}
+.v-proposed .masthead .rule{display:block}
+
+/* ---- Card primitive ---- */
+.card{
+  background:var(--bg-surface);
+  border:1px solid var(--border-subtle);
+  border-radius:8px;overflow:hidden;
+  box-shadow:var(--elev);
+  transition:border-color .15s, box-shadow .2s, transform .2s;
+}
+/* hairline éclairé par le haut — uniquement en proposé via la var */
+.card{position:relative}
+.card::before{
+  content:"";position:absolute;top:0;left:12px;right:12px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--hairline),transparent);
+  pointer-events:none;
+}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 14px;border-bottom:1px solid var(--border-subtle);
+}
+.card-title{font-size:12px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.chip-icon{
+  width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  background:var(--bg-surface-2);color:var(--text-tertiary);
+  border:1px solid var(--border-subtle);
+}
+/* proposé : l'icône prend la couleur de marque + un ring discret */
+.v-proposed .chip-icon{
+  background:rgba(131,233,255,.08);color:var(--brand);
+  border-color:rgba(131,233,255,.16);
+}
+
+/* ============================================================
+   KPI STRIP
+   ============================================================ */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{
+  background:var(--bg-surface);border:1px solid var(--border-subtle);
+  border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;
+  box-shadow:var(--elev);transition:transform .18s, border-color .15s;
+}
+.kpi::before{
+  content:"";position:absolute;top:0;left:12px;right:12px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--hairline),transparent);
+}
+.v-proposed .kpi:hover{transform:translateY(-2px);border-color:var(--border-default)}
+.kpi .label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text-tertiary);font-weight:600;
+}
+.kpi .row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.kpi .val{font-size:20px;font-weight:600;line-height:1.15;letter-spacing:-.01em}
+.delta{font-size:11px;font-weight:600}
+.delta.up{color:var(--success)} .delta.down{color:var(--danger)}
+/* sparkline : visible seulement en proposé — "profondeur de la donnée" */
+.kpi .spark{display:none;margin-top:9px;height:24px;width:100%}
+.v-proposed .kpi .spark{display:block}
+/* mode actuel : 4 cases grises identiques. proposé : accent latéral coloré discret */
+.kpi .accent{
+  position:absolute;left:0;top:10px;bottom:10px;width:2px;border-radius:2px;
+  background:transparent;
+}
+.v-proposed .kpi .accent{background:var(--brand-deep)}
+.v-proposed .kpi.k-gold .accent{background:var(--gold)}
+
+/* ============================================================
+   AUCTION ROW
+   ============================================================ */
+.auction-row{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;align-items:start}
+@media(max-width:880px){.auction-row{grid-template-columns:1fr}}
+
+.badge-live{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--success);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success)}
+.v-proposed .dot{animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(31,168,91,.5)}
+  50%{box-shadow:0 0 0 5px rgba(31,168,91,0)}
+}
+
+.auction-body{padding:16px 14px}
+.auction-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.auction-grid .k{font-size:11px;color:var(--text-tertiary);font-weight:500;margin-bottom:3px}
+.price{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.price .u{font-size:11px;color:var(--text-secondary);font-weight:500;margin-left:3px}
+.usd{font-size:10px;color:var(--text-tertiary);margin-top:2px}
+.timer{font-size:18px;font-weight:600;display:flex;align-items:center;gap:6px;justify-content:flex-end}
+
+.prog-track{
+  height:8px;border-radius:5px;background:var(--bg-surface-3);
+  border:1px solid var(--border-default);overflow:hidden;position:relative;
+}
+.prog-fill{
+  height:100%;width:64%;border-radius:5px;
+  background:var(--success);
+}
+/* proposé : la barre vit — shimmer qui balaie, signe "live" */
+.v-proposed .prog-fill{
+  background:linear-gradient(90deg,var(--brand-deep),var(--success));
+  position:relative;
+}
+.v-proposed .prog-fill::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  background-size:160px 100%;background-repeat:no-repeat;
+  animation:shimmer 1.9s linear infinite;
+}
+@keyframes shimmer{0%{background-position:-160px 0}100%{background-position:280px 0}}
+.prog-labels{display:flex;justify-content:space-between;font-size:10px;
+  color:var(--text-tertiary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.auction-foot{
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle);
+  display:flex;justify-content:space-between;font-size:11px;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.tbl-tabs{display:flex;background:var(--bg-surface-2);border-radius:7px;padding:3px;gap:2px}
+.tbl-tabs button{
+  font:inherit;font-size:11px;font-weight:600;cursor:pointer;border:0;
+  padding:5px 12px;border-radius:5px;background:transparent;color:var(--text-tertiary);
+}
+.tbl-tabs button.on{background:var(--brand);color:#051728}
+.search{
+  background:var(--bg-surface-2);border:1px solid var(--border-subtle);
+  border-radius:7px;padding:6px 12px;font:inherit;font-size:12px;
+  color:var(--text-secondary);width:200px;
+}
+table{width:100%;border-collapse:collapse}
+thead th{
+  font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;
+  color:var(--text-tertiary);text-align:right;padding:9px 14px;
+  background:var(--bg-surface-2);border-bottom:1px solid var(--border-subtle);
+}
+thead th:first-child,tbody td:first-child{text-align:left}
+tbody td{
+  padding:9px 14px;text-align:right;font-size:13px;
+  border-bottom:1px solid var(--border-subtle);
+}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{position:relative;transition:background .12s}
+tbody tr:hover{background:var(--bg-surface-2)}
+/* proposé : un accent gauche net glisse au hover — "mécanique", pas de glow */
+tbody tr td:first-child{position:relative}
+tbody tr td:first-child::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--row-accent);transform:scaleY(0);transition:transform .12s;
+}
+tbody tr:hover td:first-child::before{transform:scaleY(1)}
+.tk{display:flex;align-items:center;gap:9px}
+.tk .av{
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;
+  font-size:10px;font-weight:700;color:#051728;
+}
+.tk .nm{font-weight:600}
+.tk .full{color:var(--text-tertiary);font-size:11px;font-weight:400}
+.pos{color:var(--success)} .neg{color:var(--danger)}
+.fees{color:var(--text-secondary)}
+.v-proposed .fees{color:var(--gold)}
+
+/* flash de valeur — la vie du terminal : un tick met à jour, ça clignote */
+@keyframes flash-up{0%{background:rgba(31,168,91,.22)}100%{background:transparent}}
+@keyframes flash-dn{0%{background:rgba(229,62,62,.22)}100%{background:transparent}}
+.v-proposed .flash-up{animation:flash-up 1s ease-out}
+.v-proposed .flash-dn{animation:flash-dn 1s ease-out}
+
+/* entrée des cards en proposé */
+.v-proposed .stack>*{animation:rise .4s ease-out both}
+.v-proposed .stack>*:nth-child(2){animation-delay:.05s}
+.v-proposed .stack>*:nth-child(3){animation-delay:.1s}
+.v-proposed .stack>*:nth-child(4){animation-delay:.15s}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.note{
+  font-size:11px;color:var(--text-tertiary);padding:10px 14px;
+  border:1px dashed var(--border-default);border-radius:7px;
+  background:var(--bg-surface);
+}
+.v-proposed .note{display:none}
+</style>
+</head>
+<body>
+
+<div class="compare-bar">
+  <div>
+    <h1>Maquette — Spot Market</h1>
+    <div class="sub">même contenu, même tokens V4 · le toggle montre la couche « caractère »</div>
+  </div>
+  <div class="toggle">
+    <button id="b-cur" class="on" onclick="setMode('cur')">Actuel</button>
+    <button id="b-pro" onclick="setMode('pro')">Proposé</button>
+  </div>
+  <div class="legend">
+    <span><i style="background:#fff"></i>hairline éclairé</span>
+    <span><i style="background:#83E9FF"></i>profondeur / ombre nette</span>
+    <span><i style="background:#1FA85B"></i>vie (flash, shimmer)</span>
+    <span><i style="background:#F9E370"></i>chaleur ciblée</span>
+  </div>
+</div>
+
+<div class="page" id="root">
+  <div class="stack">
+
+    <!-- ===== PAGE HEADER ===== -->
+    <div class="masthead">
+      <h2>Spot Market</h2>
+      <p>Spot tokens on HyperLiquid — global market stats, recent auction activity, and the full token directory.</p>
+      <div class="rule"></div>
+    </div>
+
+    <div class="note">Mode <b>Actuel</b> : surfaces plates, pas de hiérarchie de profondeur, pas de mouvement, 4 KPI identiques. Bascule sur <b>Proposé</b> pour voir ce qu'on réinjecte sans toucher aux tokens.</div>
+
+    <!-- ===== KPI STRIP ===== -->
+    <div class="kpis">
+      <div class="kpi">
+        <div class="accent"></div>
+        <div class="row1"><span class="label">24h Volume</span><span class="delta up">+12.4%</span></div>
+        <div class="val mono">$182.5M</div>
+        <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#1FA85B" stroke-width="1.5"
+            points="0,18 15,16 30,19 45,12 60,14 75,9 90,11 105,5 120,7"/>
+        </svg>
+      </div>
+      <div class="kpi">
+        <div class="accent"></div>
+        <div class="row1"><span class="label">Market Cap</span><span class="delta up">+3.1%</span></div>
+        <div class="val mono">$4.21B</div>
+        <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#83E9FF" stroke-width="1.5"
+            points="0,14 15,13 30,15 45,12 60,13 75,10 90,12 105,9 120,8"/>
+        </svg>
+      </div>
+      <div class="kpi k-gold">
+        <div class="accent"></div>
+        <div class="row1"><span class="label">Daily Fees</span><span class="delta down">-1.8%</span></div>
+        <div class="val mono">$94.3K</div>
+        <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#F9E370" stroke-width="1.5"
+            points="0,8 15,10 30,7 45,11 60,9 75,13 90,12 105,15 120,14"/>
+        </svg>
+      </div>
+      <div class="kpi">
+        <div class="accent"></div>
+        <div class="row1"><span class="label">Tokens</span></div>
+        <div class="val mono">214</div>
+        <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#6B7280" stroke-width="1.5"
+            points="0,20 15,20 30,18 45,18 60,16 75,16 90,13 105,13 120,11"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ===== AUCTION ROW ===== -->
+    <div class="auction-row">
+
+      <!-- Auction status -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">
+            <div class="chip-icon">⚖</div>
+            <div>
+              <div>Auction Status</div>
+              <div class="badge-live" style="margin-top:3px"><span class="dot"></span>LIVE NOW</div>
+            </div>
+          </div>
+          <a style="font-size:11px;font-weight:600;color:var(--brand);text-decoration:none;
+             padding:6px 12px;border:1px solid rgba(131,233,255,.18);border-radius:7px;
+             background:rgba(131,233,255,.06)">Participate ↗</a>
+        </div>
+        <div class="auction-body">
+          <div class="auction-grid">
+            <div>
+              <div class="k">Current Price</div>
+              <div class="price mono" id="auc-price">12.84<span class="u">HYPE</span></div>
+              <div class="usd mono">≈ $487.20</div>
+            </div>
+            <div style="text-align:right">
+              <div class="k">Time Remaining</div>
+              <div class="timer mono"><span style="color:var(--gold)">◷</span>03:42:11</div>
+            </div>
+          </div>
+          <div class="prog-labels"><span>Start</span><span>64% Complete</span><span>End</span></div>
+          <div class="prog-track"><div class="prog-fill"></div></div>
+          <div class="auction-foot">
+            <span style="color:var(--text-tertiary)">Last Auction</span>
+            <span><span style="color:var(--gold);font-weight:600">FROG</span>
+              <span style="color:var(--text-tertiary);margin:0 6px">•</span>
+              <span class="mono" style="font-weight:600">11.92 HYPE</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent auctions -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><div class="chip-icon">⚖</div>Recent Auctions</div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Token</th><th>Deployer</th><th>Date</th><th>Deploy Gas</th>
+          </tr></thead>
+          <tbody id="auc-rows">
+            <tr><td><span class="tk"><span class="nm">FROG</span></span></td>
+              <td class="mono fees">0x7a3f…e21c</td><td class="mono" style="color:var(--text-secondary)">May 18, 14:02</td>
+              <td class="mono">11.92 HYPE</td></tr>
+            <tr><td><span class="tk"><span class="nm">MOON</span></span></td>
+              <td class="mono fees">0x1b9d…44a0</td><td class="mono" style="color:var(--text-secondary)">May 17, 09:31</td>
+              <td class="mono">10.40 HYPE</td></tr>
+            <tr><td><span class="tk"><span class="nm">PEPE2</span></span></td>
+              <td class="mono fees">0xc402…9f7e</td><td class="mono" style="color:var(--text-secondary)">May 16, 21:18</td>
+              <td class="mono">9.88 HYPE</td></tr>
+            <tr><td><span class="tk"><span class="nm">GIGA</span></span></td>
+              <td class="mono fees">0x55e1…0db2</td><td class="mono" style="color:var(--text-secondary)">May 15, 12:44</td>
+              <td class="mono">9.12 HYPE</td></tr>
+            <tr><td><span class="tk"><span class="nm">VOLT</span></span></td>
+              <td class="mono fees">0x9aa8…7c33</td><td class="mono" style="color:var(--text-secondary)">May 14, 18:07</td>
+              <td class="mono">8.75 HYPE</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== TOKENS TABLE ===== -->
+    <div class="card">
+      <div class="card-head">
+        <div class="tbl-tabs">
+          <button class="on">All</button><button>Strict</button>
+        </div>
+        <input class="search" placeholder="Search tokens…">
+      </div>
+      <table>
+        <thead><tr>
+          <th>Token</th><th>Price</th><th>24h</th><th>Volume</th>
+          <th>Market Cap</th><th>Fees</th>
+        </tr></thead>
+        <tbody id="tok-rows">
+          <tr data-base="38.94">
+            <td><span class="tk"><span class="av" style="background:#83E9FF">H</span>
+              <span class="nm">HYPE</span><span class="full">Hyperliquid</span></span></td>
+            <td class="mono price-cell">$38.94</td>
+            <td class="mono pos">+5.21%</td><td class="mono">$182.5M</td>
+            <td class="mono">$4.21B</td><td class="mono fees">$94.3K</td></tr>
+          <tr data-base="1.00">
+            <td><span class="tk"><span class="av" style="background:#2775CA;color:#fff">U</span>
+              <span class="nm">USDC</span><span class="full">USD Coin</span></span></td>
+            <td class="mono price-cell">$1.00</td>
+            <td class="mono pos">+0.01%</td><td class="mono">$61.2M</td>
+            <td class="mono">$1.84B</td><td class="mono fees">$12.1K</td></tr>
+          <tr data-base="0.182">
+            <td><span class="tk"><span class="av" style="background:#F9E370">P</span>
+              <span class="nm">PURR</span><span class="full">Purr</span></span></td>
+            <td class="mono price-cell">$0.182</td>
+            <td class="mono neg">-3.44%</td><td class="mono">$8.9M</td>
+            <td class="mono">$182.4M</td><td class="mono fees">$3.2K</td></tr>
+          <tr data-base="2.41">
+            <td><span class="tk"><span class="av" style="background:#A78BFA">F</span>
+              <span class="nm">FROG</span><span class="full">Frog</span></span></td>
+            <td class="mono price-cell">$2.41</td>
+            <td class="mono pos">+18.7%</td><td class="mono">$14.3M</td>
+            <td class="mono">$96.7M</td><td class="mono fees">$5.8K</td></tr>
+          <tr data-base="0.0094">
+            <td><span class="tk"><span class="av" style="background:#34D399">M</span>
+              <span class="nm">MOON</span><span class="full">Mooncoin</span></span></td>
+            <td class="mono price-cell">$0.0094</td>
+            <td class="mono neg">-7.12%</td><td class="mono">$2.1M</td>
+            <td class="mono">$18.3M</td><td class="mono fees">$0.9K</td></tr>
+          <tr data-base="5.67">
+            <td><span class="tk"><span class="av" style="background:#FB923C">G</span>
+              <span class="nm">GIGA</span><span class="full">Gigachad</span></span></td>
+            <td class="mono price-cell">$5.67</td>
+            <td class="mono pos">+2.03%</td><td class="mono">$6.4M</td>
+            <td class="mono">$54.1M</td><td class="mono fees">$2.4K</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function setMode(m){
+  const root=document.getElementById('root');
+  root.classList.toggle('v-proposed',m==='pro');
+  document.getElementById('b-cur').classList.toggle('on',m==='cur');
+  document.getElementById('b-pro').classList.toggle('on',m==='pro');
+}
+
+/* ---- Simulation de "vie" : ticks de prix (visible seulement en mode proposé) ---- */
+const rows=[...document.querySelectorAll('#tok-rows tr')];
+setInterval(()=>{
+  const tr=rows[Math.floor(Math.random()*rows.length)];
+  const base=parseFloat(tr.dataset.base);
+  const cell=tr.querySelector('.price-cell');
+  const up=Math.random()>.5;
+  const drift=base*(1+(Math.random()*0.012-0.006));
+  const dec = base<1 ? (base<0.01?4:3) : 2;
+  cell.textContent='$'+drift.toFixed(dec);
+  cell.classList.remove('flash-up','flash-dn');
+  void cell.offsetWidth;
+  cell.classList.add(up?'flash-up':'flash-dn');
+},1400);
+
+/* tick du prix d'auction */
+const ap=document.getElementById('auc-price');
+setInterval(()=>{
+  const v=(12.84+(Math.random()*0.2-0.1)).toFixed(2);
+  ap.innerHTML=v+'<span class="u">HYPE</span>';
+  ap.classList.remove('flash-up');void ap.offsetWidth;ap.classList.add('flash-up');
+},2600);
+</script>
+</body>
+</html>
