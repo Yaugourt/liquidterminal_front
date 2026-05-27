@@ -8,18 +8,19 @@ export interface UseHip4ActiveMarketsResult {
   activeCount: number;
   isLoading: boolean;
   error: Error | null;
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }
 
 /**
- * useHip4ActiveMarkets — top N marchés HIP-4 ouverts triés par volume.
+ * useHip4ActiveMarkets — top N open HIP-4 markets sorted by volume.
  *
- * Filtre `status === "live"` puis tri décroissant sur `total_volume`.
- * Renvoie aussi le volume cumulé et le compte total de markets actifs
- * (utile pour les tags du card-head).
+ * Filters `status === "live"` then sorts descending by `total_volume`.
+ * Also returns the cumulative volume and the total count of active markets
+ * (useful for card-head tags).
  */
 export function useHip4ActiveMarkets(limit = 5): UseHip4ActiveMarketsResult {
-  const { questions, isLoading, error, refetch } = useHip4QuestionsWithOutcomes({
+  const { questions, isLoading, error, dataUpdatedAt, refetch } = useHip4QuestionsWithOutcomes({
     limit: 200,
   });
 
@@ -42,6 +43,7 @@ export function useHip4ActiveMarkets(limit = 5): UseHip4ActiveMarketsResult {
     activeCount,
     isLoading,
     error,
+    dataUpdatedAt,
     refetch,
   };
 }

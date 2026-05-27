@@ -7,6 +7,7 @@ import { useHypePrice } from '@/services/market/hype/hooks/useHypePrice';
 
 // Prix de base selon la doc : descend toujours vers 500 HYPE
 const BASE_PRICE = 500;
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Calcule le prix actuel en temps réel selon la formule Dutch Auction
@@ -87,8 +88,8 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
     dependencies: []
   });
 
-  // Récupérer la dernière auction pour avoir le nom du token
-  const { auctions: latestAuctions, isLoading: auctionsLoading } = useLatestAuctions(1, "HYPE");
+  // 7d window — used both for the "last sold" row and the 7d aggregate stats.
+  const { auctions: latestAuctions, isLoading: auctionsLoading } = useLatestAuctions(200, "HYPE");
 
   // Récupérer le prix HYPE en temps réel via WebSocket
   const { price: hypePrice } = useHypePrice();
@@ -102,9 +103,14 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
         currentPrice: BASE_PRICE,
         currentPriceUSD: BASE_PRICE * (hypePrice || 0),
         progressPercentage: 0,
+        startPrice: BASE_PRICE,
+        floorPrice: BASE_PRICE,
         lastAuctionPrice: BASE_PRICE,
         lastAuctionName: "N/A",
-        nextAuctionStart: "N/A"
+        nextAuctionStart: "N/A",
+        avg7dPrice: 0,
+        deploys7d: 0,
+        etaToLastSold: "—",
       };
     }
 
@@ -150,15 +156,48 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
         : "Starting soon";
     }
 
+    const startPrice = parseFloat(currentAuction.startGas);
+    const floorPrice = currentAuction.endGas
+      ? parseFloat(currentAuction.endGas)
+      : BASE_PRICE;
+
+    // 7d window aggregates (avg winning bid + count).
+    const cutoff7d = now - SEVEN_DAYS_MS;
+    const recent = latestAuctions.filter(
+      (a) => a.time * 1000 >= cutoff7d && parseFloat(a.deployGas) > 0,
+    );
+    const deploys7d = recent.length;
+    const avg7dPrice = deploys7d
+      ? recent.reduce((sum, a) => sum + parseFloat(a.deployGas), 0) / deploys7d
+      : 0;
+
+    // ETA — when does the Dutch curve cross the last sold price?
+    let etaToLastSold = "—";
+    if (isActive && currentPrice > lastAuctionPrice && startPrice > floorPrice) {
+      const totalDuration = currentAuction.endTime - currentAuction.startTime;
+      const decayPerMs = (startPrice - floorPrice) / totalDuration; // HYPE / ms
+      const etaMs = (currentPrice - lastAuctionPrice) / decayPerMs;
+      if (Number.isFinite(etaMs) && etaMs > 0) {
+        etaToLastSold = formatTimeRemaining(etaMs);
+      }
+    } else if (isActive && currentPrice <= lastAuctionPrice) {
+      etaToLastSold = "Now";
+    }
+
     return {
       isActive,
       timeRemaining,
       currentPrice: Math.round(currentPrice * 100) / 100, // Plus de précision
       currentPriceUSD: Math.round(currentPriceUSD * 100) / 100,
       progressPercentage: Math.round(progressPercentage * 100) / 100, // Plus de précision
+      startPrice: Number.isFinite(startPrice) ? Math.round(startPrice) : BASE_PRICE,
+      floorPrice: Number.isFinite(floorPrice) ? Math.round(floorPrice) : BASE_PRICE,
       lastAuctionPrice: Math.round(lastAuctionPrice),
       lastAuctionName,
-      nextAuctionStart
+      nextAuctionStart,
+      avg7dPrice: Math.round(avg7dPrice),
+      deploys7d,
+      etaToLastSold,
     };
   }, [timingData, latestAuctions, hypePrice]); // Include hypePrice
 

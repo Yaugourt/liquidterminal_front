@@ -1,12 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { Wrench } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
-} from "../OverviewModule";
+} from "@/components/common";
 import { useBuildersStatsAllTimeframes } from "@/services/indexer/builders/hooks/useBuildersStatsAllTimeframes";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
 import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
@@ -45,6 +46,7 @@ export const BuildersModule = memo(function BuildersModule() {
   return (
     <OverviewModule
       title="Top Builders"
+      icon={<Wrench size={13} className="text-brand" />}
       tag={`${compactUsd(current?.totalBuilderFees)} fees 24h`}
       viewAllLabel="All builders"
       href="/market/builders"

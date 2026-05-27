@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useAuctions } from '@/services/market/auction/hooks/useAuctions';
-import { TypedDataTable, type Column } from '@/components/common';
+import { TypedDataTable, TokenAvatar, type Column } from '@/components/common';
 import { Copy, Check } from 'lucide-react';
 import Link from "next/link";
 import { useDateFormat } from '@/store/date-format.store';
@@ -116,7 +116,10 @@ export function AuctionTable({ marketType }: AuctionTableProps) {
       key: 'name',
       header: 'Name',
       accessor: (row) => (
-        <span className="text-text-primary text-sm font-medium">{row.name}</span>
+        <span className="inline-flex items-center gap-2">
+          <TokenAvatar assetName={row.name} kind="spot" size="md" />
+          <span className="text-text-primary text-sm font-medium">{row.name}</span>
+        </span>
       ),
     },
     {

@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import type { BuilderCoinBreakdownRow } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { TokenAvatar } from "@/components/common";
 
 interface BuilderCoinBreakdownProps {
   coins: BuilderCoinBreakdownRow[];
@@ -106,6 +107,7 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-text-tertiary text-xs w-4 tabular-nums shrink-0">{i + 1}</span>
+                    {coin.coin && <TokenAvatar assetName={coin.coin as string} size="sm" />}
                     <span className="text-text-primary text-sm font-medium truncate">{(coin.coin as string) ?? "—"}</span>
                   </div>
                   <div className="flex items-center gap-3 text-right shrink-0">

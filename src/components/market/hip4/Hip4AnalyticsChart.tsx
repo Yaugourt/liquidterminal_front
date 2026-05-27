@@ -12,8 +12,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { motion, AnimatePresence } from "framer-motion";
-import { TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart2, Activity } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { chartPalette, chartColors } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
@@ -29,9 +29,9 @@ const INTERVALS: { label: string; value: Hip4AnalyticsInterval; limit: number }[
 ];
 
 const VOL_SERIES = {
-  buy_volume: { label: "Buy Vol", color: chartPalette.emeraldLight, glow: "rgb(var(--chart-up-rgb) / 0.35)" },
-  sell_volume: { label: "Sell Vol", color: chartPalette.roseSoft, glow: "rgb(var(--chart-down-rgb) / 0.35)" },
-  fees_usdc: { label: "Fees", color: chartPalette.gold, glow: "rgb(var(--brand-gold-rgb) / 0.30)" },
+  buy_volume: { label: "Buy", color: chartPalette.success },
+  sell_volume: { label: "Sell", color: chartPalette.danger },
+  fees_usdc: { label: "Fees", color: chartPalette.gold },
 } as const;
 
 type VolKey = keyof typeof VOL_SERIES;
@@ -45,9 +45,13 @@ function compactNum(n: number) {
 }
 
 function formatBucket(iso: string, interval: Hip4AnalyticsInterval) {
-  const d = new Date(iso);
+  // Upstream bucket timestamps are UTC but emitted without a trailing Z.
+  // `new Date('2026-05-26T21:00:00')` would interpret as local time and shift
+  // every bar by the user's UTC offset. Force UTC by appending Z.
+  const utcIso = iso.endsWith("Z") ? iso : `${iso}Z`;
+  const d = new Date(utcIso);
   if (interval === "1d") {
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
   }
   return d.toLocaleString("en-US", {
     month: "short",
@@ -55,6 +59,7 @@ function formatBucket(iso: string, interval: Hip4AnalyticsInterval) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "UTC",
   });
 }
 
@@ -75,9 +80,19 @@ export function Hip4AnalyticsChart() {
     limit: cfg.limit,
   });
 
-  // Recharts needs ascending time order
+  // Normalize buy/sell volume: upstream `buy_volume` often equals `volume`
+  // (full notional) rather than the buy-only portion, so a naive stacked chart
+  // overdraws the bar to 2x the real total. We treat `sell_volume` as the true
+  // sell notional and derive buy = max(0, volume - sell_volume) so the stack
+  // sums back to `volume`.
   const data = useMemo(
-    () => [...buckets].sort((a, b) => a.bucket.localeCompare(b.bucket)),
+    () =>
+      [...buckets]
+        .sort((a, b) => a.bucket.localeCompare(b.bucket))
+        .map((b) => {
+          const buyDerived = Math.max(0, (b.volume ?? 0) - (b.sell_volume ?? 0));
+          return { ...b, buy_volume: buyDerived };
+        }),
     [buckets]
   );
 
@@ -98,75 +113,55 @@ export function Hip4AnalyticsChart() {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       {/* ── Volume area chart ── */}
-      <div className="xl:col-span-2 bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[380px] flex flex-col p-6">
-        <div className="pointer-events-none absolute -top-28 right-0 h-64 w-64 rounded-full bg-emerald-400/8 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 -left-20 h-56 w-56 rounded-full bg-rose-400/8 blur-3xl" />
-
-        {/* Header */}
-        <div className="relative z-10 flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
-              <span className="h-1 w-1 rounded-full bg-emerald-400" />
-              Trading Volume
-              {display && (
-                <>
-                  <span className="text-text-tertiary/60">·</span>
-                  <span>{formatBucket(display.bucket, interval)}</span>
-                </>
-              )}
-            </div>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={display?.bucket ?? "empty"}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="mt-1 text-[28px] font-bold text-text-primary tabular-nums tracking-tight"
-              >
-                {display
-                  ? compactUsd((visible.buy_volume ? display.buy_volume : 0) + (visible.sell_volume ? display.sell_volume : 0))
-                  : "—"}
-              </motion.div>
-            </AnimatePresence>
-            {totals && (
-              <div className="flex items-center gap-1.5 text-sm tabular-nums">
-                {totals.delta >= 0
-                  ? <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                  : <TrendingDown className="h-3.5 w-3.5 text-rose-400" />}
-                <span className={totals.delta >= 0 ? "text-emerald-400" : "text-rose-400"}>
-                  {totals.delta >= 0 ? "+" : ""}{compactUsd(totals.delta)}
-                </span>
-                <span className="text-text-tertiary">last bucket vs first</span>
-              </div>
-            )}
-          </div>
-
-          {/* Interval selector */}
-          <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+      <Card className="xl:col-span-2 overflow-hidden flex flex-col h-[380px]">
+        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+            <TrendingUp size={13} className="text-brand" />
+          </span>
+          <h3 className="text-[13px] font-semibold text-text-primary">Trading Volume</h3>
+          {display && (
+            <span className="mono text-[11px] text-text-tertiary">
+              · {formatBucket(display.bucket, interval)}
+            </span>
+          )}
+          <div className="ml-auto flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
             {INTERVALS.map((iv) => (
               <button
                 key={iv.value}
                 type="button"
                 onClick={() => setInterval(iv.value)}
-                className="relative rounded-lg px-3 py-1 text-[11px] font-semibold"
+                className={`rounded px-2 py-0.5 text-[10px] font-semibold transition-colors ${
+                  interval === iv.value
+                    ? "bg-surface text-text-primary"
+                    : "text-text-tertiary hover:text-text-secondary"
+                }`}
               >
-                {interval === iv.value && (
-                  <motion.span
-                    layoutId="hip4-analytics-interval"
-                    className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                )}
-                <span className={`relative z-10 ${interval === iv.value ? "text-text-primary" : "text-text-secondary hover:text-text-primary"}`}>
-                  {iv.label}
-                </span>
+                {iv.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Legend toggles */}
-        <div className="relative z-10 mt-3 flex flex-wrap gap-2">
+        <div className="px-3.5 py-3 flex items-baseline gap-3">
+          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary leading-none">
+            {display
+              ? compactUsd((visible.buy_volume ? display.buy_volume : 0) + (visible.sell_volume ? display.sell_volume : 0))
+              : "—"}
+          </div>
+          {totals && (
+            <div className="flex items-center gap-1.5 text-[11px]">
+              {totals.delta >= 0
+                ? <TrendingUp size={12} className="text-success" />
+                : <TrendingDown size={12} className="text-danger" />}
+              <span className={`mono ${totals.delta >= 0 ? "text-success" : "text-danger"}`}>
+                {totals.delta >= 0 ? "+" : ""}{compactUsd(totals.delta)}
+              </span>
+              <span className="text-text-tertiary">vs window start</span>
+            </div>
+          )}
+        </div>
+
+        <div className="px-3.5 pb-2 flex flex-wrap gap-1.5">
           {(Object.keys(VOL_SERIES) as VolKey[]).map((key) => {
             const meta = VOL_SERIES[key];
             const isOn = visible[key];
@@ -175,18 +170,16 @@ export function Hip4AnalyticsChart() {
                 key={key}
                 type="button"
                 onClick={() => setVisible((v) => ({ ...v, [key]: !v[key] }))}
-                className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 transition-all ${isOn ? "border-border-default bg-white/[0.03]" : "border-border-subtle opacity-40 hover:opacity-65"
-                  }`}
+                className={`flex items-center gap-1.5 rounded border px-2 py-0.5 transition-all ${
+                  isOn ? "border-border-default bg-surface-2" : "border-border-subtle opacity-50 hover:opacity-80"
+                }`}
               >
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ background: meta.color, boxShadow: isOn ? `0 0 10px ${meta.glow}` : "none" }}
-                />
+                <span className="h-1.5 w-1.5 rounded-full" style={{ background: meta.color }} />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
                   {meta.label}
                 </span>
                 {display && (
-                  <span className="text-[11px] font-bold text-text-primary tabular-nums">
+                  <span className="mono text-[10.5px] font-semibold text-text-primary">
                     {key === "fees_usdc" ? compactUsd(display[key]) : compactUsd(display[key as "buy_volume" | "sell_volume"])}
                   </span>
                 )}
@@ -195,18 +188,17 @@ export function Hip4AnalyticsChart() {
           })}
         </div>
 
-        {/* Chart body */}
-        <div className="relative z-10 mt-4 flex-1 min-h-0">
+        <div className="flex-1 min-h-0 px-3.5 pb-3">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
               <InlineSpinner className="h-5 w-5 text-brand" />
             </div>
           ) : error ? (
-            <div className="flex h-full items-center justify-center text-xs text-rose-400">
+            <div className="flex h-full items-center justify-center text-[11px] text-danger">
               Failed to load analytics
             </div>
           ) : data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-xs text-text-tertiary">
+            <div className="flex h-full items-center justify-center text-[11px] text-text-tertiary">
               No data available
             </div>
           ) : (
@@ -233,7 +225,7 @@ export function Hip4AnalyticsChart() {
                     <stop offset="100%" stopColor={VOL_SERIES.fees_usdc.color} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 5" stroke={chartColors.gridLine} vertical={false} />
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(v) => formatBucket(v, interval)}
@@ -250,7 +242,7 @@ export function Hip4AnalyticsChart() {
                   width={62}
                 />
                 <Tooltip
-                  cursor={{ stroke: "rgba(131,233,255,0.25)", strokeDasharray: "3 3" }}
+                  cursor={{ stroke: chartPalette.accent, strokeOpacity: 0.25, strokeDasharray: "3 3" }}
                   content={<VolumeTooltip visible={visible} interval={interval} />}
                 />
                 {visible.buy_volume && (
@@ -269,34 +261,36 @@ export function Hip4AnalyticsChart() {
             </ResponsiveContainer>
           )}
         </div>
-      </div>
+      </Card>
 
-      {/* ── Activity bar chart (fills + unique users) ── */}
-      <div className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden h-[380px] flex flex-col p-6">
-        <div className="pointer-events-none absolute -top-20 right-0 h-48 w-48 rounded-full bg-brand/8 blur-3xl" />
+      {/* ── Activity bar chart ── */}
+      <Card className="overflow-hidden flex flex-col h-[380px]">
+        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+            <Activity size={13} className="text-brand" />
+          </span>
+          <h3 className="text-[13px] font-semibold text-text-primary">Activity</h3>
+          <BarChart2 size={11} className="text-text-tertiary ml-auto" />
+        </div>
 
-        <div className="relative z-10 mb-4">
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
-            <BarChart2 className="h-3 w-3 text-brand" />
-            Activity
-          </div>
-          <div className="mt-1 text-[20px] font-bold text-text-primary tabular-nums">
+        <div className="px-3.5 py-3">
+          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary leading-none">
             {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.fills, 0))}
             <span className="ml-1.5 text-[13px] font-normal text-text-tertiary">fills</span>
           </div>
-          <div className="mt-0.5 text-[12px] text-text-secondary tabular-nums">
+          <div className="mt-1 mono text-[11px] text-text-secondary">
             {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.unique_users, 0))}
-            <span className="ml-1 text-text-tertiary">unique traders (total window)</span>
+            <span className="ml-1 text-text-tertiary">unique traders</span>
           </div>
         </div>
 
-        <div className="relative z-10 flex-1 min-h-0">
+        <div className="flex-1 min-h-0 px-3.5 pb-3">
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
               <InlineSpinner className="h-5 w-5 text-brand" />
             </div>
           ) : data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-xs text-text-tertiary">
+            <div className="flex h-full items-center justify-center text-[11px] text-text-tertiary">
               No data
             </div>
           ) : (
@@ -308,7 +302,7 @@ export function Hip4AnalyticsChart() {
                     <stop offset="100%" stopColor={chartPalette.accent} stopOpacity={0.2} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 5" stroke={chartColors.gridLine} vertical={false} />
                 <XAxis
                   dataKey="bucket"
                   tickFormatter={(v) => formatBucket(v, interval)}
@@ -325,7 +319,7 @@ export function Hip4AnalyticsChart() {
                   width={38}
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(255,255,255,0.03)" }}
+                  cursor={{ fill: chartColors.gridLine }}
                   content={<ActivityTooltip interval={interval} />}
                 />
                 <Bar dataKey="fills" fill="url(#hip4-g-fills)" radius={[3, 3, 0, 0]} isAnimationActive={false} />
@@ -333,7 +327,7 @@ export function Hip4AnalyticsChart() {
             </ResponsiveContainer>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -351,8 +345,8 @@ interface VolumeTooltipProps {
 function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTooltipProps) {
   if (!active || !payload || payload.length === 0 || !label) return null;
   return (
-    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[190px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
+    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl min-w-[180px]">
+      <div className="mono text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
         {formatBucket(label, interval)}
       </div>
       {(Object.keys(VOL_SERIES) as VolKey[]).map((key) => {
@@ -361,12 +355,12 @@ function VolumeTooltip({ active, payload, label, visible, interval }: VolumeTool
         const p = payload.find((x) => x.dataKey === key);
         if (!p) return null;
         return (
-          <div key={key} className="flex items-center justify-between gap-3 text-xs mb-1">
+          <div key={key} className="flex items-center justify-between gap-3 text-[11.5px] mb-1">
             <div className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: meta.color }} />
               <span className="text-text-secondary">{meta.label}</span>
             </div>
-            <span className="font-semibold text-text-primary tabular-nums">
+            <span className="mono font-semibold text-text-primary">
               {compactUsd(Number(p.value))}
             </span>
           </div>
@@ -387,16 +381,16 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
   if (!active || !payload || payload.length === 0 || !label) return null;
   const fills = Number(payload.find((x) => x.dataKey === "fills")?.value ?? 0);
   return (
-    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[160px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
+    <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl min-w-[140px]">
+      <div className="mono text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-2">
         {formatBucket(label, interval)}
       </div>
-      <div className="flex items-center justify-between gap-3 text-xs">
+      <div className="flex items-center justify-between gap-3 text-[11.5px]">
         <div className="flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-brand" />
           <span className="text-text-secondary">Fills</span>
         </div>
-        <span className="font-semibold text-text-primary tabular-nums">{compactNum(fills)}</span>
+        <span className="mono font-semibold text-text-primary">{compactNum(fills)}</span>
       </div>
     </div>
   );

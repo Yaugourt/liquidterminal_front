@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
-import { SidebarToggle } from "@/components/common";
+import { SidebarToggle, LegalFooter } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -19,9 +19,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="min-h-screen bg-base text-text-primary font-inter">
-            {/* Halo subtil en haut de page — donne de la profondeur au fond plat */}
-            <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[340px] bg-gradient-to-b from-surface/60 to-transparent" />
-
             {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
@@ -40,6 +37,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
                     {children}
                 </main>
+
+                <LegalFooter />
             </div>
         </div>
     );

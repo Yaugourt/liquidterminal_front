@@ -56,7 +56,12 @@ export interface Hip4QuestionWithOutcomesRow {
   total_volume: number;
   created_at: string | null;
   resolved_at: string | null;
-  status: "live" | "settled";
+  /**
+   * live              — open for trading, before expiry
+   * expired_unresolved — past expiry but no on-chain settlement yet
+   * settled           — resolved on-chain (winner determined)
+   */
+  status: "live" | "expired_unresolved" | "settled";
   singleton_outcome_id: number | null;
   expiry: string | null;
   period: string | null;
@@ -147,6 +152,8 @@ export interface UseHip4MarketsEnrichedResult {
   markets: Hip4MarketEnrichedRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }
 
@@ -154,6 +161,8 @@ export interface UseHip4QuestionsWithOutcomesResult {
   questions: Hip4QuestionWithOutcomesRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }
 
@@ -161,6 +170,8 @@ export interface UseHip4FillsResult {
   fills: Hip4FillRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }
 
@@ -168,6 +179,8 @@ export interface UseHip4SettlementsResult {
   settlements: Hip4SettlementRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }
 
@@ -186,5 +199,7 @@ export interface UseHip4AnalyticsResult {
   buckets: Hip4AnalyticsBucket[];
   isLoading: boolean;
   error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
   refetch: () => void;
 }

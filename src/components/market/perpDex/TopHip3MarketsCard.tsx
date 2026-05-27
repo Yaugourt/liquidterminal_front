@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { LineChart, ChevronRight } from "lucide-react";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
@@ -77,9 +77,7 @@ const COLUMNS: Column<AggregatedHip3MarketRow>[] = [
     header: "Ticker",
     accessor: (row) => (
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-label text-brand shrink-0">
-          {row.ticker.charAt(0)}
-        </div>
+        <TokenAvatar assetName={`xyz:${row.ticker}`} size="lg" />
         <span className="text-text-primary text-[11px] font-medium truncate">
           {row.ticker}
         </span>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Explorer · Variant E — Capital Explorer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#0A0B0F",
+          surface: "#0F1421",
+          "surface-2": "#141B2A",
+          "surface-3": "#1C2436",
+          "border-subtle": "#1E2535",
+          "border-default": "#2C354A",
+          "text-primary": "#E8EAED",
+          "text-secondary": "#9CA3AF",
+          "text-tertiary": "#6B7280",
+          brand: "#83E9FF",
+          "brand-deep": "#1692AD",
+          gold: "#F9E370",
+          success: "#1FA85B",
+          danger: "#E53E3E",
+          violet: "#A78BFA",
+          pink: "#F472B6",
+          emerald: "#34D399",
+          orange: "#FB923C",
+          blue: "#60A5FA",
+        },
+        fontFamily: {
+          inter: ["Inter", "ui-sans-serif", "system-ui"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { background:#0A0B0F; color:#E8EAED; font-family: Inter, ui-sans-serif, system-ui; }
+  .mono { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+
+  /* Card primitives — identical pattern to A/B */
+  .card { background:#0F1421; border:1px solid #1E2535; border-radius:8px; overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:.625rem; padding:.625rem .875rem; border-bottom:1px solid #1E2535; }
+  .icon-wrap { width:1.5rem; height:1.5rem; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .icon-wrap svg { color:#83E9FF; }
+
+  /* Pills */
+  .pill { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:#141B2A; color:#6B7280; border:1px solid #1E2535; }
+  .pill-brand { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .pill-gold { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(249,227,112,0.10); color:#F9E370; border:1px solid rgba(249,227,112,0.25); }
+  .pill-live { font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; background:rgba(31,168,91,0.12); color:#1FA85B; border:1px solid rgba(31,168,91,0.25); display:inline-flex; align-items:center; gap:5px; letter-spacing:.04em; }
+  .pill-live::before { content:""; width:6px; height:6px; border-radius:50%; background:#1FA85B; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+  .pill-spot { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(131,233,255,0.12); color:#83E9FF; }
+  .pill-perp { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(167,139,250,0.12); color:#A78BFA; }
+
+  /* Section head — same idiom as B */
+  .section-head { display:flex; align-items:baseline; gap:.625rem; margin-bottom:.625rem; }
+  .section-head h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#E8EAED; }
+  .section-head .sub { font-size:11px; color:#6B7280; }
+
+  /* ===== Network Ticker — top strip ===== */
+  .ticker {
+    height:32px; display:flex; align-items:center; gap:.875rem;
+    background:#141B2A; border-bottom:1px solid #1E2535;
+    padding:0 16px; overflow:hidden; position:relative;
+    font-size:11px; letter-spacing:.02em;
+  }
+  .ticker-dot { width:6px; height:6px; border-radius:50%; background:#1FA85B; animation:pulse 1.5s infinite; flex-shrink:0; }
+  .ticker-live { font-size:10px; font-weight:700; color:#1FA85B; letter-spacing:.08em; text-transform:uppercase; flex-shrink:0; }
+  .ticker-track { display:flex; align-items:center; gap:1.25rem; white-space:nowrap; animation:tickscroll 60s linear infinite; }
+  @keyframes tickscroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+  .ticker-item { display:inline-flex; align-items:center; gap:.5rem; color:#9CA3AF; }
+  .ticker-label { font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; }
+  .ticker-val { color:#E8EAED; font-weight:500; }
+  .ticker-up { color:#1FA85B; }
+  .ticker-dn { color:#E53E3E; }
+  .ticker-sep { width:3px; height:3px; border-radius:50%; background:#2C354A; flex-shrink:0; }
+  .ticker-edge { position:absolute; top:0; bottom:0; width:48px; pointer-events:none; }
+  .ticker-edge.l { left:108px; background:linear-gradient(to right, #141B2A, transparent); }
+  .ticker-edge.r { right:0; background:linear-gradient(to left, #141B2A, transparent); }
+
+  /* ===== Hero search ===== */
+  .hero-search { background:#0F1421; border:1px solid #2C354A; border-radius:10px; display:flex; align-items:center; gap:.75rem; padding:.875rem 1rem; transition:border-color .15s; }
+  .hero-search:focus-within { border-color:#83E9FF; }
+  .hero-search input { background:transparent; border:none; outline:none; color:#E8EAED; flex:1; font-size:14px; }
+  .hero-search input::placeholder { color:#6B7280; }
+  .hero-search .kbd { font-size:10px; color:#6B7280; border:1px solid #1E2535; padding:2px 6px; border-radius:4px; background:#141B2A; }
+
+  /* ===== KPI ribbon — 5 cells (capital-first) ===== */
+  .kpi-strip { display:grid; grid-template-columns: repeat(5, 1fr); gap:1px; background:#1E2535; border:1px solid #1E2535; border-radius:8px; overflow:hidden; }
+  .kpi-cell { background:#0F1421; padding:14px 18px; transition:background .15s; }
+  .kpi-cell:hover { background:#141B2A; }
+  .kpi-label { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; }
+  .kpi-value { font-size:22px; font-weight:600; letter-spacing:-.02em; margin-top:6px; line-height:1; color:#E8EAED; }
+  .kpi-sub { font-size:10.5px; color:#9CA3AF; margin-top:6px; }
+
+  /* Avatars (2 initials, rounded-md, never circle) */
+  .av { width:22px; height:22px; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; font-size:9.5px; font-weight:700; color:#83E9FF; flex-shrink:0; }
+  .av-sm { width:20px; height:20px; border-radius:5px; background:rgba(131,233,255,0.10); display:grid; place-items:center; font-size:8.5px; font-weight:700; color:#83E9FF; flex-shrink:0; }
+  .av-gold { background:rgba(249,227,112,0.10); color:#F9E370; }
+  .av-violet { background:rgba(167,139,250,0.10); color:#A78BFA; }
+  .av-emerald { background:rgba(31,168,91,0.10); color:#1FA85B; }
+  .av-pink { background:rgba(244,114,182,0.10); color:#F472B6; }
+  .av-orange { background:rgba(251,146,60,0.10); color:#FB923C; }
+  .av-blue { background:rgba(96,165,250,0.10); color:#60A5FA; }
+  .av-mint { background:rgba(52,211,153,0.10); color:#34D399; }
+
+  /* Donut legend */
+  .leg-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid #1E2535; cursor:pointer; transition:background .15s; }
+  .leg-row:last-child { border-bottom:none; }
+  .leg-row:hover { background:rgba(20,27,42,0.5); }
+  .leg-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+
+  /* Leaderboard tables (ModuleTable idiom) */
+  .lb-row { display:grid; gap:8px; padding:9px 14px; align-items:center; border-bottom:1px solid #1E2535; font-size:12px; transition:background .15s; }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-row:hover { background:#141B2A; cursor:pointer; }
+  .lb-th { display:grid; gap:8px; padding:6px 14px; background:rgba(20,27,42,0.4); font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; border-bottom:1px solid #1E2535; }
+
+  /* Address chip */
+  .addr { font-feature-settings:"tnum"; font-size:10.5px; color:#9CA3AF; }
+  .addr-link { color:#83E9FF; }
+  .addr-link:hover { text-decoration:underline; }
+
+  /* Halo */
+  .halo { position:fixed; inset:0 0 auto 0; height:340px; background:linear-gradient(to bottom, rgba(15,20,33,0.6), transparent); pointer-events:none; z-index:0; }
+
+  /* Page header */
+  .page-title { font-size:22px; font-weight:700; letter-spacing:-.02em; color:#E8EAED; }
+  .page-sub { font-size:12.5px; color:#9CA3AF; margin-top:4px; }
+
+  /* View all link */
+  .view-all { font-size:11px; font-weight:500; color:#83E9FF; display:inline-flex; align-items:center; gap:4px; }
+  .view-all:hover { color:#A8F0FF; }
+
+  /* Bridge mini area chart container */
+  .bridge-spark { height:36px; width:100%; }
+
+  /* Uptime bar — reused */
+  .uptime-bar { width:36px; height:4px; background:#0A0B0F; border-radius:2px; overflow:hidden; }
+  .uptime-fill { height:100%; background:#1FA85B; }
+</style>
+</head>
+<body class="font-inter">
+<div class="halo"></div>
+
+<!-- ===== Network Ticker (always-on, top of page) ===== -->
+<div class="relative z-20 ticker">
+  <span class="ticker-dot"></span>
+  <span class="ticker-live">Live</span>
+  <div class="ticker-edge l"></div>
+  <div class="ticker-track">
+    <!-- duplicated content for seamless loop -->
+    <span class="ticker-item"><span class="ticker-label">Block</span><span class="mono ticker-val">#18,824,193</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="mono ticker-val">142 tx</span><span class="text-text-tertiary">·</span><span class="mono text-text-tertiary">12s ago</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Rate</span><span class="mono ticker-val">2.1 tx/s</span><span class="mono text-text-tertiary">24h avg 1.84</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Bridge in</span><span class="mono ticker-up">+$1.24M</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Bridge out</span><span class="mono ticker-dn">−$812K</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Net 1h</span><span class="mono ticker-up">+$428K</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Gas</span><span class="mono ticker-val">38% used</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Validators</span><span class="mono ticker-val">21 active</span><span class="mono text-success">99.8% uptime</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">HYPE</span><span class="mono ticker-val">$7.21</span><span class="mono ticker-up">+1.84%</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Last deploy</span><span class="mono ticker-val">@PEPEHL</span><span class="text-text-tertiary">·</span><span class="mono text-text-tertiary">42m ago</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Fees 24h</span><span class="mono text-gold">$1.41M</span></span>
+    <span class="ticker-sep" style="margin-right:2rem"></span>
+    <!-- duplicate -->
+    <span class="ticker-item"><span class="ticker-label">Block</span><span class="mono ticker-val">#18,824,193</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="mono ticker-val">142 tx</span><span class="text-text-tertiary">·</span><span class="mono text-text-tertiary">12s ago</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Rate</span><span class="mono ticker-val">2.1 tx/s</span><span class="mono text-text-tertiary">24h avg 1.84</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Bridge in</span><span class="mono ticker-up">+$1.24M</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Bridge out</span><span class="mono ticker-dn">−$812K</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Net 1h</span><span class="mono ticker-up">+$428K</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Gas</span><span class="mono ticker-val">38% used</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Validators</span><span class="mono ticker-val">21 active</span><span class="mono text-success">99.8% uptime</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">HYPE</span><span class="mono ticker-val">$7.21</span><span class="mono ticker-up">+1.84%</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Last deploy</span><span class="mono ticker-val">@PEPEHL</span><span class="text-text-tertiary">·</span><span class="mono text-text-tertiary">42m ago</span></span>
+    <span class="ticker-sep"></span>
+    <span class="ticker-item"><span class="ticker-label">Fees 24h</span><span class="mono text-gold">$1.41M</span></span>
+  </div>
+  <div class="ticker-edge r"></div>
+</div>
+
+<div class="relative z-10" style="max-width:1320px; margin:0 auto;">
+  <div style="max-width:1280px; margin:0 auto; padding:32px 20px 64px;">
+
+    <!-- Variant label -->
+    <div class="text-[10px] mono uppercase tracking-[0.15em] text-text-tertiary mb-3">EXPLORER · VARIANT E — Capital Explorer</div>
+
+    <!-- Page header -->
+    <div class="mb-8">
+      <h1 class="page-title">Capital Explorer</h1>
+      <p class="page-sub">Capital story first — vaults, stake, builders, bridge — with an always-on network pulse above.</p>
+    </div>
+
+    <div class="space-y-8">
+
+      <!-- ===== Hero Search ===== -->
+      <section>
+        <div class="hero-search">
+          <span class="text-text-tertiary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input placeholder="Search address / tx hash / vault / validator" />
+          <span class="kbd mono">⌘ K</span>
+        </div>
+        <div class="flex items-center gap-3 mt-2 text-[10.5px] text-text-tertiary">
+          <span class="uppercase tracking-[0.06em] font-semibold">Try</span>
+          <span class="mono">0x42a8…f1c3</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span class="mono">Selini Capital</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span class="mono">block 18,824,193</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span class="mono">@PEPEHL</span>
+        </div>
+      </section>
+
+      <!-- ===== Section 1 · Capital Snapshot ===== -->
+      <section>
+        <div class="section-head">
+          <h2>Capital Snapshot</h2>
+          <span class="sub">— total value parked in each pillar of the ecosystem</span>
+        </div>
+        <div class="kpi-strip">
+          <div class="kpi-cell">
+            <div class="kpi-label">Total Vaults TVL</div>
+            <div class="kpi-value mono">$612.4M</div>
+            <div class="kpi-sub mono">312 vaults · <span class="text-success">+2.1% 24h</span></div>
+          </div>
+          <div class="kpi-cell">
+            <div class="kpi-label">HYPE Staked</div>
+            <div class="kpi-value mono">241.8M</div>
+            <div class="kpi-sub mono">21 validators · <span class="text-text-secondary">≈ $1.74B</span></div>
+          </div>
+          <div class="kpi-cell">
+            <div class="kpi-label">Builder Fees · 24h</div>
+            <div class="kpi-value mono" style="color:#F9E370">$184.2K</div>
+            <div class="kpi-sub mono">28 active builders · <span class="text-success">+8.4%</span></div>
+          </div>
+          <div class="kpi-cell">
+            <div class="kpi-label">Bridge TVL</div>
+            <div class="kpi-value mono">$2.41B</div>
+            <div class="kpi-sub mono">USDC inflow · <span class="text-success">+$18.4M 24h</span></div>
+          </div>
+          <div class="kpi-cell">
+            <div class="kpi-label">Active Vaults</div>
+            <div class="kpi-value mono">312</div>
+            <div class="kpi-sub mono">28 new · 7d · <span class="text-success">+9.8%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section 2 · Concentration & Flow ===== -->
+      <section>
+        <div class="section-head">
+          <h2>Capital Concentration &amp; Flow</h2>
+          <span class="sub">— how concentrated capital is and how it has evolved</span>
+        </div>
+        <div class="grid gap-4" style="grid-template-columns: 1fr 2fr;">
+
+          <!-- Donut Concentration -->
+          <div class="card flex flex-col">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 6"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Vault Concentration</h3>
+              <span class="pill">Top 5 vs Rest</span>
+              <a class="view-all ml-auto">All vaults
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="flex items-center gap-4 px-4 py-5">
+              <div class="relative shrink-0" style="width:148px; height:148px;">
+                <svg viewBox="0 0 42 42" width="148" height="148">
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#141B2A" stroke-width="6"/>
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#83E9FF" stroke-width="6"
+                          stroke-dasharray="22.4 77.6" stroke-dashoffset="25" transform="rotate(-90 21 21)" />
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#F9E370" stroke-width="6"
+                          stroke-dasharray="14.8 85.2" stroke-dashoffset="2.6" transform="rotate(-90 21 21)" />
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#A78BFA" stroke-width="6"
+                          stroke-dasharray="11.2 88.8" stroke-dashoffset="-12.2" transform="rotate(-90 21 21)" />
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#F472B6" stroke-width="6"
+                          stroke-dasharray="8.9 91.1" stroke-dashoffset="-23.4" transform="rotate(-90 21 21)" />
+                  <circle cx="21" cy="21" r="15.915" fill="none" stroke="#1FA85B" stroke-width="6"
+                          stroke-dasharray="6.9 93.1" stroke-dashoffset="-32.3" transform="rotate(-90 21 21)" />
+                </svg>
+                <div class="absolute inset-0 grid place-items-center text-center">
+                  <div>
+                    <div class="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">TVL Total</div>
+                    <div class="mono text-[20px] font-bold mt-0.5" style="letter-spacing:-.02em;">$612M</div>
+                    <div class="text-[10px] mono mt-0.5" style="color:#83E9FF">64.2% in top 5</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#83E9FF;"></span>
+                  <span class="text-[11.5px] flex-1 truncate">Hyperliquidity</span>
+                  <span class="mono text-[11px] text-text-secondary">$184M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">22.4%</span>
+                </div>
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#F9E370;"></span>
+                  <span class="text-[11.5px] flex-1 truncate">Selini Capital</span>
+                  <span class="mono text-[11px] text-text-secondary">$98M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">14.8%</span>
+                </div>
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#A78BFA;"></span>
+                  <span class="text-[11.5px] flex-1 truncate">Bonding Vault</span>
+                  <span class="mono text-[11px] text-text-secondary">$54M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">11.2%</span>
+                </div>
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#F472B6;"></span>
+                  <span class="text-[11.5px] flex-1 truncate">Astera Quant</span>
+                  <span class="mono text-[11px] text-text-secondary">$42M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">8.9%</span>
+                </div>
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#1FA85B;"></span>
+                  <span class="text-[11.5px] flex-1 truncate">HLP Native</span>
+                  <span class="mono text-[11px] text-text-secondary">$32M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">6.9%</span>
+                </div>
+                <div class="leg-row">
+                  <span class="leg-dot" style="background:#2C354A;"></span>
+                  <span class="text-[11.5px] flex-1 truncate text-text-tertiary">Rest of 307 vaults</span>
+                  <span class="mono text-[11px] text-text-tertiary">$202M</span>
+                  <span class="mono text-[10px] text-text-tertiary w-8 text-right">35.8%</span>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-border-subtle px-4 py-2.5">
+              <div class="flex items-center justify-between text-[10.5px]">
+                <span class="text-text-tertiary">HHI · Herfindahl index</span>
+                <span class="mono text-text-secondary">1,184 — <span style="color:#F9E370">moderately concentrated</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual-axis chart -->
+          <div class="card flex flex-col">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Capital Evolution</h3>
+              <span class="pill">30d</span>
+              <div class="ml-auto flex items-center gap-3 text-[10.5px]">
+                <span class="flex items-center gap-1.5"><span style="width:10px;height:2px;background:#83E9FF;display:inline-block;border-radius:1px"></span><span class="text-text-secondary">Vaults TVL</span></span>
+                <span class="flex items-center gap-1.5"><span style="width:10px;height:2px;background:#F9E370;display:inline-block;border-radius:1px"></span><span class="text-text-secondary">HYPE staked</span></span>
+              </div>
+            </div>
+            <div class="flex-1 px-4 pt-4 pb-2">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Vaults TVL · today</div>
+                  <div class="flex items-baseline gap-2 mt-1">
+                    <span class="mono text-[20px] font-semibold" style="letter-spacing:-.02em;">$612.4M</span>
+                    <span class="text-[11px] text-success mono">+$48.2M · 30d</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">HYPE staked</div>
+                  <div class="flex items-baseline gap-2 mt-1 justify-end">
+                    <span class="mono text-[20px] font-semibold" style="letter-spacing:-.02em; color:#F9E370">241.8M</span>
+                    <span class="text-[11px] text-success mono">+12.4M · 30d</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative" style="height:200px;">
+                <svg viewBox="0 0 720 200" preserveAspectRatio="none" style="width:100%; height:100%; display:block;">
+                  <defs>
+                    <linearGradient id="gTvl" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.28"/>
+                      <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="gStake" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#F9E370" stop-opacity="0.18"/>
+                      <stop offset="100%" stop-color="#F9E370" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="0" x2="720" y2="0" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="50" x2="720" y2="50" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="100" x2="720" y2="100" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="150" x2="720" y2="150" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="199" x2="720" y2="199" stroke="#1E2535"/>
+
+                  <!-- Vaults TVL area + line (cyan) -->
+                  <path d="M0,160 L24,158 L48,154 L72,150 L96,145 L120,138 L144,132 L168,125 L192,120 L216,118 L240,110 L264,106 L288,102 L312,98 L336,88 L360,82 L384,78 L408,72 L432,66 L456,62 L480,60 L504,54 L528,50 L552,48 L576,44 L600,40 L624,36 L648,32 L672,30 L696,28 L720,24 L720,200 L0,200 Z" fill="url(#gTvl)"/>
+                  <path d="M0,160 L24,158 L48,154 L72,150 L96,145 L120,138 L144,132 L168,125 L192,120 L216,118 L240,110 L264,106 L288,102 L312,98 L336,88 L360,82 L384,78 L408,72 L432,66 L456,62 L480,60 L504,54 L528,50 L552,48 L576,44 L600,40 L624,36 L648,32 L672,30 L696,28 L720,24" fill="none" stroke="#83E9FF" stroke-width="1.75"/>
+
+                  <!-- HYPE staked (gold) -->
+                  <path d="M0,125 L24,122 L48,118 L72,114 L96,110 L120,104 L144,100 L168,94 L192,90 L216,88 L240,82 L264,78 L288,74 L312,70 L336,66 L360,62 L384,58 L408,54 L432,52 L456,48 L480,46 L504,42 L528,40 L552,38 L576,34 L600,32 L624,30 L648,28 L672,26 L696,24 L720,20 L720,200 L0,200 Z" fill="url(#gStake)" opacity=".6"/>
+                  <path d="M0,125 L24,122 L48,118 L72,114 L96,110 L120,104 L144,100 L168,94 L192,90 L216,88 L240,82 L264,78 L288,74 L312,70 L336,66 L360,62 L384,58 L408,54 L432,52 L456,48 L480,46 L504,42 L528,40 L552,38 L576,34 L600,32 L624,30 L648,28 L672,26 L696,24 L720,20" fill="none" stroke="#F9E370" stroke-width="1.5"/>
+
+                  <line x1="528" y1="0" x2="528" y2="199" stroke="#83E9FF" stroke-width="1" stroke-dasharray="2 3" opacity=".5"/>
+                  <circle cx="528" cy="50" r="3" fill="#83E9FF"/>
+                  <circle cx="528" cy="40" r="3" fill="#F9E370"/>
+                </svg>
+
+                <div class="absolute" style="left:540px; top:8px; background:#141B2A; border:1px solid #2C354A; border-radius:6px; padding:8px 10px; min-width:148px;">
+                  <div class="text-[9.5px] text-text-tertiary mono uppercase tracking-[.06em] font-semibold">May 14, 2026</div>
+                  <div class="flex items-center justify-between mt-1.5 text-[11px]">
+                    <span class="text-text-secondary">Vaults TVL</span>
+                    <span class="mono font-semibold">$588M</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-1 text-[11px]">
+                    <span class="text-text-secondary">HYPE staked</span>
+                    <span class="mono font-semibold" style="color:#F9E370">232M</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between text-[9.5px] text-text-tertiary mono mt-1 pb-1">
+                <span>Apr 21</span><span>Apr 28</span><span>May 05</span><span>May 12</span><span>May 19</span><span>today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Section 3 · Capital Allocators (vaults + validators) ===== -->
+      <section>
+        <div class="section-head">
+          <h2>Capital Allocators</h2>
+          <span class="sub">— top capital pools and validator economics</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+
+          <!-- Top Vaults -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><path d="M2 7l10-4 10 4"/><circle cx="12" cy="12" r="2"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Top Vaults</h3>
+              <span class="pill mono">$612M TVL</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="lb-th" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span></span>
+              <span>Vault</span>
+              <span class="text-right">APR</span>
+              <span class="text-right">TVL</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">1</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av">HL</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Hyperliquidity</div>
+                  <div class="addr mono truncate">0x42a8…f1c3</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">28.4%</span>
+              <span class="mono text-right">$184M</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">2</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-gold">SE</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Selini Capital</div>
+                  <div class="addr mono truncate">0x9ac4…2b8e</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">22.1%</span>
+              <span class="mono text-right">$98M</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">3</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-violet">BV</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Bonding Vault</div>
+                  <div class="addr mono truncate">0x71f2…a3d4</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">18.9%</span>
+              <span class="mono text-right">$54M</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">4</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-pink">AS</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Astera Quant</div>
+                  <div class="addr mono truncate">0x3d8c…7e92</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">15.2%</span>
+              <span class="mono text-right">$42M</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">5</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-emerald">HN</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">HLP Native</div>
+                  <div class="addr mono truncate">0x18b1…cc04</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">12.6%</span>
+              <span class="mono text-right">$32M</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 60px 80px;">
+              <span class="mono text-[10px] text-text-tertiary">6</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-orange">DV</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Delta Vault</div>
+                  <div class="addr mono truncate">0x6f3a…91b8</div>
+                </div>
+              </div>
+              <span class="mono text-success text-right">11.8%</span>
+              <span class="mono text-right">$28M</span>
+            </div>
+          </div>
+
+          <!-- Top Validators -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v5c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Top Validators</h3>
+              <span class="pill mono">241.8M HYPE</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="lb-th" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span></span>
+              <span>Validator</span>
+              <span class="text-right">Comm.</span>
+              <span class="text-right">Stake</span>
+              <span class="text-right">Uptime</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">1</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av">NA</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Nansen</div>
+                  <div class="addr mono truncate">0x9f2a…0b14</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">4.0%</span>
+              <span class="mono text-right">98.4M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.8%"></span></span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">2</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-gold">BH</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">B.Harvest</div>
+                  <div class="addr mono truncate">0x8d4e…cc91</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">5.0%</span>
+              <span class="mono text-right">82.1M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.6%"></span></span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">3</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-violet">HY</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Hypio Node</div>
+                  <div class="addr mono truncate">0x2c10…ff04</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">3.5%</span>
+              <span class="mono text-right">71.2M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.9%"></span></span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">4</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-pink">CH</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Chorus One</div>
+                  <div class="addr mono truncate">0x6b22…1180</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">5.0%</span>
+              <span class="mono text-right">54.3M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.4%"></span></span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">5</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-emerald">FG</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Figment</div>
+                  <div class="addr mono truncate">0xa770…2218</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">4.5%</span>
+              <span class="mono text-right">48.7M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.7%"></span></span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 56px 76px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">6</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-orange">P2</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">P2P Validator</div>
+                  <div class="addr mono truncate">0x33b0…d402</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">4.0%</span>
+              <span class="mono text-right">38.2M</span>
+              <span class="flex items-center justify-end"><span class="uptime-bar"><span class="uptime-fill" style="width:99.2%"></span></span></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== Section 4 · Builders + Stakers ===== -->
+      <section>
+        <div class="grid grid-cols-2 gap-4">
+
+          <!-- Top Builders -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94L6.21 19.79a2.12 2.12 0 0 1-3-3l8.32-8.32a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Top Builders</h3>
+              <span class="pill-gold">$184K · 24h</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="lb-th" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span></span>
+              <span>Builder</span>
+              <span class="text-right">Vol 24h</span>
+              <span class="text-right">Fees 24h</span>
+              <span class="text-right">Users</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">1</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av">PV</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">PvP.trade</div>
+                  <div class="addr mono truncate">0x9c4f…2ab8</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$48M</span>
+              <span class="mono text-right" style="color:#F9E370">$92.4K</span>
+              <span class="mono text-text-secondary text-right">1,420</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">2</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-gold">DX</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Dexari</div>
+                  <div class="addr mono truncate">0x73a1…b46c</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$21M</span>
+              <span class="mono text-right" style="color:#F9E370">$42.1K</span>
+              <span class="mono text-text-secondary text-right">683</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">3</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-violet">VS</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Vest Labs</div>
+                  <div class="addr mono truncate">0x1d68…cf94</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$14M</span>
+              <span class="mono text-right" style="color:#F9E370">$28.6K</span>
+              <span class="mono text-text-secondary text-right">421</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">4</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-pink">PR</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Prime Markets</div>
+                  <div class="addr mono truncate">0x5e02…7138</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$9.2M</span>
+              <span class="mono text-right" style="color:#F9E370">$18.2K</span>
+              <span class="mono text-text-secondary text-right">240</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">5</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-emerald">AE</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Aetheris</div>
+                  <div class="addr mono truncate">0xb89c…f0e2</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$5.4M</span>
+              <span class="mono text-right" style="color:#F9E370">$11.8K</span>
+              <span class="mono text-text-secondary text-right">186</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 70px 70px 50px;">
+              <span class="mono text-[10px] text-text-tertiary">6</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-orange">PU</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Pulse Tools</div>
+                  <div class="addr mono truncate">0x2c11…84d6</div>
+                </div>
+              </div>
+              <span class="mono text-text-secondary text-right">$3.1M</span>
+              <span class="mono text-right" style="color:#F9E370">$7.4K</span>
+              <span class="mono text-text-secondary text-right">142</span>
+            </div>
+          </div>
+
+          <!-- Top HYPE Stakers -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 12v2M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M2 12h6m12 0h2"/><circle cx="12" cy="12" r="4"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Top HYPE Stakers</h3>
+              <span class="pill-brand">42.8% of staked</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="lb-th" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span></span>
+              <span>Staker</span>
+              <span class="text-right">Stake</span>
+              <span class="text-right">Share</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">1</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av">FR</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Foundation Reserve</div>
+                  <div class="addr mono truncate">0xf1ab…c042</div>
+                </div>
+              </div>
+              <span class="mono text-right">28.4M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">11.7%</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">2</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-gold">JU</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Jump Crypto</div>
+                  <div class="addr mono truncate">0x2c98…7b41</div>
+                </div>
+              </div>
+              <span class="mono text-right">18.2M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">7.5%</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">3</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-violet">PA</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Paradigm</div>
+                  <div class="addr mono truncate">0xb3a4…d811</div>
+                </div>
+              </div>
+              <span class="mono text-right">14.6M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">6.0%</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">4</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-pink">DR</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Dragonfly</div>
+                  <div class="addr mono truncate">0x4f12…ae37</div>
+                </div>
+              </div>
+              <span class="mono text-right">11.8M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">4.9%</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">5</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-emerald">AW</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Anonymous Whale</div>
+                  <div class="addr mono truncate">0x88e1…0fab</div>
+                </div>
+              </div>
+              <span class="mono text-right">9.4M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">3.9%</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 18px 1fr 80px 56px;">
+              <span class="mono text-[10px] text-text-tertiary">6</span>
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="av av-orange">PO</span>
+                <div class="min-w-0">
+                  <div class="text-[12.5px] font-semibold truncate">Polychain</div>
+                  <div class="addr mono truncate">0xc7d2…612e</div>
+                </div>
+              </div>
+              <span class="mono text-right">7.8M HYPE</span>
+              <span class="mono text-right" style="color:#83E9FF">3.2%</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== Section 5 · Network Side ===== -->
+      <section>
+        <div class="section-head">
+          <h2>Network Side</h2>
+          <span class="sub">— live consensus and EVM bridge activity</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+
+          <!-- Live Blocks (compact) -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Live Blocks</h3>
+              <span class="pill-live">LIVE</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="lb-th" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span>Block</span>
+              <span class="text-right">Age</span>
+              <span class="text-right">Txs</span>
+              <span class="text-right">Builder</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824193</span>
+              <span class="mono text-text-tertiary text-right">2s</span>
+              <span class="mono text-right">312</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm">PV</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824192</span>
+              <span class="mono text-text-tertiary text-right">3s</span>
+              <span class="mono text-right">284</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-gold">DX</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824191</span>
+              <span class="mono text-text-tertiary text-right">4s</span>
+              <span class="mono text-right">421</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm">PV</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824190</span>
+              <span class="mono text-text-tertiary text-right">5s</span>
+              <span class="mono text-right">198</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-violet">VS</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824189</span>
+              <span class="mono text-text-tertiary text-right">6s</span>
+              <span class="mono text-right">356</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-pink">PR</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 1fr 50px 50px 70px;">
+              <span class="mono font-semibold" style="color:#83E9FF">#18824188</span>
+              <span class="mono text-text-tertiary text-right">7s</span>
+              <span class="mono text-right">240</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-gold">DX</span></span>
+            </div>
+          </div>
+
+          <!-- EVM Bridge Events -->
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 6l-4 4M21 18l-4-4"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">EVM Bridge · 24h</h3>
+              <span class="pill-brand mono">+$428K net</span>
+              <a class="view-all ml-auto">View all
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+
+            <!-- Mini split area sub-header -->
+            <div class="px-3.5 pt-2.5 pb-1 border-b border-border-subtle">
+              <div class="flex items-baseline justify-between mb-1">
+                <div class="flex items-center gap-3 text-[10px]">
+                  <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm" style="background:#1FA85B"></span><span class="text-text-secondary">In <span class="mono text-text-primary">$1.24M</span></span></span>
+                  <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm" style="background:#E53E3E"></span><span class="text-text-secondary">Out <span class="mono text-text-primary">$812K</span></span></span>
+                </div>
+                <span class="text-[9.5px] text-text-tertiary mono">last 24h</span>
+              </div>
+              <svg viewBox="0 0 320 36" preserveAspectRatio="none" class="bridge-spark">
+                <defs>
+                  <linearGradient id="bSparkIn" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1FA85B" stop-opacity=".5"/>
+                    <stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="bSparkOut" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#E53E3E" stop-opacity="0"/>
+                    <stop offset="100%" stop-color="#E53E3E" stop-opacity=".5"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="18" x2="320" y2="18" stroke="#1E2535" stroke-width="1"/>
+                <path d="M0,14 L20,12 L40,10 L60,13 L80,8 L100,11 L120,6 L140,9 L160,5 L180,8 L200,4 L220,7 L240,3 L260,6 L280,2 L300,5 L320,1 L320,18 L0,18 Z" fill="url(#bSparkIn)"/>
+                <path d="M0,14 L20,12 L40,10 L60,13 L80,8 L100,11 L120,6 L140,9 L160,5 L180,8 L200,4 L220,7 L240,3 L260,6 L280,2 L300,5 L320,1" stroke="#1FA85B" fill="none" stroke-width="1.25"/>
+                <path d="M0,22 L20,24 L40,23 L60,25 L80,26 L100,24 L120,28 L140,26 L160,29 L180,27 L200,30 L220,28 L240,31 L260,29 L280,32 L300,30 L320,33 L320,18 L0,18 Z" fill="url(#bSparkOut)"/>
+                <path d="M0,22 L20,24 L40,23 L60,25 L80,26 L100,24 L120,28 L140,26 L160,29 L180,27 L200,30 L220,28 L240,31 L260,29 L280,32 L300,30 L320,33" stroke="#E53E3E" fill="none" stroke-width="1.25"/>
+              </svg>
+            </div>
+
+            <div class="lb-th" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span>Age</span>
+              <span>Direction</span>
+              <span class="text-right">Amount</span>
+              <span class="text-right">Asset</span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">12s</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xa1f2…34ce</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">L1</span></span>
+              <span class="mono text-right" style="color:#1FA85B">+$420K</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">48s</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">L1</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x88aa…77b2</span></span>
+              <span class="mono text-right" style="color:#E53E3E">−$210K</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">2m</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x44de…91ac</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">L1</span></span>
+              <span class="mono text-right" style="color:#1FA85B">+$1.42M</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-gold">HY</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">4m</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">L1</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xcc12…4421</span></span>
+              <span class="mono text-right" style="color:#E53E3E">−$94K</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-emerald">UT</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">6m</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x71ab…2017</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">L1</span></span>
+              <span class="mono text-right" style="color:#1FA85B">+$640K</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span></span>
+            </div>
+            <div class="lb-row" style="grid-template-columns: 50px 1fr 80px 60px;">
+              <span class="mono text-text-tertiary">9m</span>
+              <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xb2e4…ff09</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">L1</span></span>
+              <span class="mono text-right" style="color:#1FA85B">+$182K</span>
+              <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-violet">UE</span></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== Section 6 · Token Deploys ===== -->
+      <section>
+        <div class="section-head">
+          <h2>Token Deploys</h2>
+          <span class="sub">— latest spot and perp deployments</span>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="icon-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+            </span>
+            <h3 class="text-[13px] font-semibold">Recent Deploys</h3>
+            <span class="pill">6 newest · 24h</span>
+            <a class="view-all ml-auto">All deploys
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+          <div class="lb-th" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span>Age</span>
+            <span>Token</span>
+            <span>Deployer</span>
+            <span class="text-right">Supply</span>
+            <span class="text-right">FDV est.</span>
+            <span class="text-right">Type</span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">42m</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av">PE</span>
+              <span class="text-[12.5px] font-semibold truncate">@PEPEHL</span>
+            </div>
+            <span class="mono addr truncate">0xa1f2…34ce</span>
+            <span class="mono text-right">1.0B</span>
+            <span class="mono text-right text-text-secondary">$2.1M</span>
+            <span class="text-right"><span class="pill-spot">SPOT</span></span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">1h</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av av-gold">SP</span>
+              <span class="text-[12.5px] font-semibold truncate">@SPRINT</span>
+            </div>
+            <span class="mono addr truncate">0x44de…91ac</span>
+            <span class="mono text-right">500M</span>
+            <span class="mono text-right text-text-secondary">$840K</span>
+            <span class="text-right"><span class="pill-spot">SPOT</span></span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">3h</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av av-violet">MI</span>
+              <span class="text-[12.5px] font-semibold truncate">@MIST</span>
+            </div>
+            <span class="mono addr truncate">0x71ab…2017</span>
+            <span class="mono text-right">10M</span>
+            <span class="mono text-right text-text-secondary">$1.4M</span>
+            <span class="text-right"><span class="pill-spot">SPOT</span></span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">5h</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av av-pink">XY</span>
+              <span class="text-[12.5px] font-semibold truncate">XYZ-PERP</span>
+            </div>
+            <span class="mono addr truncate">0xb2e4…ff09</span>
+            <span class="mono text-right text-text-tertiary">—</span>
+            <span class="mono text-right text-text-tertiary">—</span>
+            <span class="text-right"><span class="pill-perp">PERP</span></span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">8h</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av av-emerald">JE</span>
+              <span class="text-[12.5px] font-semibold truncate">@JEFF</span>
+            </div>
+            <span class="mono addr truncate">0x18b4…0021</span>
+            <span class="mono text-right">2.5B</span>
+            <span class="mono text-right text-text-secondary">$680K</span>
+            <span class="text-right"><span class="pill-spot">SPOT</span></span>
+          </div>
+          <div class="lb-row" style="grid-template-columns: 60px 1fr 130px 90px 90px 70px;">
+            <span class="mono text-text-tertiary">12h</span>
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="av av-orange">BR</span>
+              <span class="text-[12.5px] font-semibold truncate">BRENT-PERP</span>
+            </div>
+            <span class="mono addr truncate">0xee10…14d2</span>
+            <span class="mono text-right text-text-tertiary">—</span>
+            <span class="mono text-right text-text-tertiary">—</span>
+            <span class="text-right"><span class="pill-perp">PERP</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Footer ===== -->
+      <footer class="pt-3 pb-1 flex items-center gap-3 text-[10.5px] text-text-tertiary border-t border-border-subtle">
+        <span class="uppercase tracking-[0.08em] font-semibold">Sources</span>
+        <span>Hypurrscan</span>
+        <span class="text-text-tertiary/60">·</span>
+        <span>HypeDexer</span>
+        <span class="text-text-tertiary/60">·</span>
+        <span>DefiLlama</span>
+        <span class="ml-auto mono">Updated 6s ago · auto-refresh 10s</span>
+      </footer>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

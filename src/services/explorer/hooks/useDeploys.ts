@@ -101,29 +101,37 @@ const formatDeploy = (deploy: DeployData, auctionsData: AuctionData[]): Formatte
  * Hook pour récupérer et formater les derniers déploiements
  */
 export const useDeploys = (): UseDeploysResult => {
-  // Récupérer les données d'auctions pour obtenir les noms des tokens
+  // Auctions are used only to resolve `tokenIndex → name` when formatting.
+  // They must NOT be a dependency of the deploy fetch: `useAuctions` returns
+  // a brand-new `[]` reference on every render while loading, which would
+  // re-trigger `useDataFetching` on each render and blow up React with
+  // "Maximum update depth exceeded". We fetch the raw deploys with stable
+  // deps, then format them in a memo gated on the actual array contents.
   const { auctions } = useAuctions({
-    limit: 10000, // Limite élevée pour avoir tous les tokens
-    currency: "ALL"
+    limit: 10000,
+    currency: "ALL",
   });
 
-  // Stabiliser les dépendances avec useMemo pour éviter les boucles infinies
-  const stableAuctions = useMemo(() => auctions, [auctions]);
-
-  const { data, isLoading, error } = useDataFetching<FormattedDeploy[]>({
-    fetchFn: async () => {
-      const rawDeploys = await fetchDeploys();
-      return rawDeploys
-        .filter(deploy => deploy.error === null) // Filtrer les déploiements sans erreur
-        .map(deploy => formatDeploy(deploy, stableAuctions));
-    },
-    dependencies: [stableAuctions], // Utiliser la version stable
-    refreshInterval: 15000 // Rafraîchir toutes les 15 secondes
+  const { data: rawDeploys, isLoading, error } = useDataFetching<DeployData[]>({
+    fetchFn: fetchDeploys,
+    dependencies: [],
+    refreshInterval: 15000,
   });
+
+  const deploys = useMemo<FormattedDeploy[] | null>(() => {
+    if (!rawDeploys) return null;
+    return rawDeploys
+      .filter((d) => d.error === null)
+      .map((d) => formatDeploy(d, auctions));
+    // `auctions.length` is the right granularity here — the array identity
+    // churns even when contents are stable, but the length only changes when
+    // the upstream fetch actually returns new data.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawDeploys, auctions.length]);
 
   return {
-    deploys: data,
+    deploys,
     isLoading,
-    error
+    error,
   };
 }; 

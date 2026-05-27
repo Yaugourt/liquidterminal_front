@@ -3,7 +3,7 @@ import { fetchHip4Settlements } from "../api";
 import type { Hip4SettlementRow, Hip4SettlementsQuery, UseHip4SettlementsResult } from "../types";
 
 export function useHip4Settlements(params?: Hip4SettlementsQuery): UseHip4SettlementsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<Hip4SettlementRow[]>({
+  const { data, isLoading, error, dataUpdatedAt, refetch } = useDataFetching<Hip4SettlementRow[]>({
     fetchFn: () => fetchHip4Settlements(params),
     refreshInterval: 30000,
     dependencies: [JSON.stringify(params)],
@@ -14,6 +14,7 @@ export function useHip4Settlements(params?: Hip4SettlementsQuery): UseHip4Settle
     settlements: Array.isArray(data) ? data : [],
     isLoading,
     error,
+    dataUpdatedAt,
     refetch,
   };
 }

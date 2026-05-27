@@ -9,7 +9,7 @@ import type {
 export function useHip4QuestionsWithOutcomes(
   params?: Hip4QuestionsWithOutcomesQuery
 ): UseHip4QuestionsWithOutcomesResult {
-  const { data, isLoading, error, refetch } = useDataFetching<Hip4QuestionWithOutcomesRow[]>({
+  const { data, isLoading, error, dataUpdatedAt, refetch } = useDataFetching<Hip4QuestionWithOutcomesRow[]>({
     fetchFn: () => fetchHip4QuestionsWithOutcomes(params),
     refreshInterval: 30000,
     dependencies: [JSON.stringify(params)],
@@ -20,6 +20,7 @@ export function useHip4QuestionsWithOutcomes(
     questions: Array.isArray(data) ? data : [],
     isLoading,
     error,
+    dataUpdatedAt,
     refetch,
   };
 }

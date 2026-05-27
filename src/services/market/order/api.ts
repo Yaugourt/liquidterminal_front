@@ -106,6 +106,15 @@ export const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<Enriche
           tokenSymbol = 'USDT0';
         }
 
+        // HIP-3 lives in the "isSpot" numeric range (a >= 10000) but in slot 1+,
+        // so the slot check must come BEFORE the spot fallback. Native perps
+        // are the only ones with a < 10000.
+        const marketType: 'spot' | 'perp' | 'hip3' = !isSpot
+          ? 'perp'
+          : hip3Slot > 0
+            ? 'hip3'
+            : 'spot';
+
         return {
           ...order,
           tokenSymbol,
@@ -120,7 +129,8 @@ export const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<Enriche
           formattedSize: size.toFixed(2),
           formattedPrice: 'Market', // TWAP orders don't have a fixed price
           isBuy: order.action.twap.b,
-          marketIndex
+          marketIndex,
+          marketType
         };
       });
   }, 'enriching TWAP orders');

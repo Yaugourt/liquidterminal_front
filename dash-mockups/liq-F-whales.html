@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant F — Whale Rekt Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .top{margin-left:auto;font-size:11px;color:#83E9FF;font-weight:500;text-decoration:none}
+
+/* compact strip */
+.strip{display:flex;border-bottom:1px solid #1E2535}
+.strip .c{flex:1;padding:9px 12px;border-right:1px solid #1E2535}
+.strip .c:last-child{border-right:none}
+.strip .c .lb{font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.strip .c .v{font-size:13.5px;font-weight:600;margin-top:2px;letter-spacing:-.01em}
+.strip .c.gold .v{color:#F9E370}
+
+/* hero — biggest one of all */
+.hero-rekt{padding:12px 14px;border-bottom:1px solid #1E2535;background:linear-gradient(180deg,rgba(249,227,112,.04) 0%,transparent 100%)}
+.hero-rekt .top-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.hero-rekt .top-row .badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(249,227,112,.14);color:#F9E370;border:1px solid rgba(249,227,112,.32);text-transform:uppercase;letter-spacing:.06em}
+.hero-rekt .top-row .meta{font-size:10px;color:#6B7280}
+.hero-rekt .body{display:flex;align-items:center;gap:12px}
+.hero-rekt .icon{width:38px;height:38px;border-radius:8px;background:rgba(229,62,62,.12);color:#E53E3E;display:grid;place-items:center;font-weight:700;font-size:11px;flex-shrink:0;border:1px solid rgba(229,62,62,.25)}
+.hero-rekt .desc{flex:1;min-width:0}
+.hero-rekt .desc .addr{font-size:11px;color:#83E9FF;font-feature-settings:"tnum"}
+.hero-rekt .desc .summary{font-size:11.5px;color:#9CA3AF;margin-top:3px}
+.hero-rekt .desc .summary b{color:#E8EAED;font-weight:600}
+.hero-rekt .size{font-size:22px;font-weight:600;letter-spacing:-.02em;color:#F9E370;font-feature-settings:"tnum";text-align:right;line-height:1}
+.hero-rekt .size .pill-side{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;background:rgba(229,62,62,.14);color:#E53E3E;vertical-align:middle}
+
+/* list — rekt rows */
+.list-h{padding:8px 14px 6px;font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.list{flex:1;display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid rgba(30,37,53,.5);cursor:pointer}
+.row:hover{background:#141B2A}
+.row .ix{width:18px;font-size:10px;color:#6B7280;font-weight:700;font-feature-settings:"tnum";text-align:right}
+.row .ic{width:24px;height:24px;border-radius:5px;background:rgba(131,233,255,.1);color:#83E9FF;display:grid;place-items:center;font-size:9px;font-weight:700;flex-shrink:0}
+.row .info{flex:1;min-width:0}
+.row .info .a{font-size:11px;color:#83E9FF;font-feature-settings:"tnum"}
+.row .info .b{font-size:10px;color:#6B7280;margin-top:1.5px}
+.row .info .b .coin{color:#E8EAED;font-weight:500}
+.row .pill{font-size:9px;font-weight:700;padding:1.5px 5px;border-radius:3px}
+.row .long{background:rgba(31,168,91,.12);color:#1FA85B}
+.row .short{background:rgba(229,62,62,.12);color:#E53E3E}
+.row .v{font-size:12px;font-weight:600;font-feature-settings:"tnum";text-align:right;min-width:62px;color:#E8EAED}
+.row .t{font-size:9.5px;color:#6B7280;min-width:36px;text-align:right;font-feature-settings:"tnum"}
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT F · whale rekt feed — focus on who got liquidated</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <a class="top" href="#">View all →</a>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="strip">
+    <div class="c"><div class="lb">Total 24h</div><div class="v mono">$11.5M</div></div>
+    <div class="c"><div class="lb">Events</div><div class="v mono">847</div></div>
+    <div class="c gold"><div class="lb">Whales (≥ $50K)</div><div class="v mono">23</div></div>
+    <div class="c"><div class="lb">L / S</div><div class="v mono"><span style="color:#1FA85B">73%</span> · <span style="color:#E53E3E">27%</span></div></div>
+  </div>
+
+  <!-- Hero — biggest rekt of the day -->
+  <div class="hero-rekt">
+    <div class="top-row">
+      <span class="badge">★ Biggest 24h</span>
+      <span class="meta mono">3h 52m ago · block #18,824,193</span>
+    </div>
+    <div class="body">
+      <div class="icon">HY</div>
+      <div class="desc">
+        <div class="addr mono">0x7c2a…f1Ee</div>
+        <div class="summary"><b>HYPE long</b> · entry $42.10 · liquidated at <span class="mono">$38.41</span></div>
+      </div>
+      <div class="size">
+        $420K
+        <span class="pill-side">LONG</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Whale list header -->
+  <div class="list-h">Next biggest · click row → trader</div>
+
+  <!-- Whale rows -->
+  <div class="list">
+    <div class="row">
+      <span class="ix">02</span>
+      <span class="ic">BT</span>
+      <div class="info">
+        <div class="a mono">0x91Ce…a8F2</div>
+        <div class="b"><span class="coin">BTC</span> short · entry $96,420 → $98,212</div>
+      </div>
+      <span class="pill short">SHORT</span>
+      <span class="v mono">$182K</span>
+      <span class="t mono">28m</span>
+    </div>
+    <div class="row">
+      <span class="ix">03</span>
+      <span class="ic">SO</span>
+      <div class="info">
+        <div class="a mono">0x44d1…b007</div>
+        <div class="b"><span class="coin">SOL</span> long · entry $221 → $214.30</div>
+      </div>
+      <span class="pill long">LONG</span>
+      <span class="v mono">$154K</span>
+      <span class="t mono">42m</span>
+    </div>
+    <div class="row">
+      <span class="ix">04</span>
+      <span class="ic">HY</span>
+      <div class="info">
+        <div class="a mono">0xab33…E2c5</div>
+        <div class="b"><span class="coin">HYPE</span> long · entry $40.20 → $38.42</div>
+      </div>
+      <span class="pill long">LONG</span>
+      <span class="v mono">$131K</span>
+      <span class="t mono">1h</span>
+    </div>
+    <div class="row">
+      <span class="ix">05</span>
+      <span class="ic">ET</span>
+      <div class="info">
+        <div class="a mono">0xfe71…D9A0</div>
+        <div class="b"><span class="coin">ETH</span> long · entry $3,820 → $3,612</div>
+      </div>
+      <span class="pill long">LONG</span>
+      <span class="v mono">$108K</span>
+      <span class="t mono">2h</span>
+    </div>
+    <div class="row">
+      <span class="ix">06</span>
+      <span class="ic">FA</span>
+      <div class="info">
+        <div class="a mono">0x1d09…40Bb</div>
+        <div class="b"><span class="coin">FARTCOIN</span> short · entry $1.05 → $1.183</div>
+      </div>
+      <span class="pill short">SHORT</span>
+      <span class="v mono">$92K</span>
+      <span class="t mono">2h</span>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> ce qui intéresse le trader, c'est <i>qui s'est fait rekt</i> et combien. Stats strip 24h (avec "Whales ≥ $50K" en or comme indicateur de stress). Hero box = la plus grosse liquidation de la journée (asset, trader address, entry → liquidation price, taille en or, side pill rouge/vert). Liste des 5 suivantes : rang, asset, address tronquée du trader, contexte (entry → out), side, taille, âge — clickable vers le profil du trader. C'est un mini-explorer du carnage. Pas de chart.
+</p>
+</div>
+</body></html>

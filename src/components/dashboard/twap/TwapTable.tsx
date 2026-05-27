@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -55,11 +55,12 @@ const TokenCellComponent = ({
     : parseFloat(twap.amount);
 
   return (
-    <span className="text-text-secondary text-sm">
+    <span className="inline-flex items-center gap-1.5 text-text-secondary text-sm">
+      <TokenAvatar assetName={twap.token} size="sm" />
       <span className="text-text-primary font-medium">
         {formatNumber(displayAmount, format)}
       </span>{" "}
-      {twap.token}
+      <span>{twap.token}</span>
     </span>
   );
 };

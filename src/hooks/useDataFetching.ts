@@ -30,6 +30,9 @@ export function useDataFetching<T>({
   const [isRefreshing, setIsRefreshing] = useState(false); // NEW: True during background refresh
   const [error, setError] = useState<Error | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  /** Epoch ms of the most recent successful fetch — null until first success.
+   * Use to drive staleness indicators in the UI. */
+  const [dataUpdatedAt, setDataUpdatedAt] = useState<number | null>(null);
 
   // Only keep necessary refs
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
@@ -88,6 +91,7 @@ export function useDataFetching<T>({
         setData(result);
         setError(null);
         setRetryCount(0);
+        setDataUpdatedAt(Date.now());
         hasInitialDataRef.current = true; // Mark that we have data now
       }
     } catch (err) {
@@ -159,6 +163,7 @@ export function useDataFetching<T>({
     isInitialLoading, // NEW: Only true during first load
     isRefreshing, // NEW: True during background refresh
     error,
+    dataUpdatedAt,
     refetch: () => fetchData()
   };
 } 

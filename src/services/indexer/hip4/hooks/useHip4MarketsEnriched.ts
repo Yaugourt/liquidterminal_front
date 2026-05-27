@@ -9,7 +9,7 @@ import type {
 export function useHip4MarketsEnriched(
   params?: Hip4MarketsEnrichedQuery
 ): UseHip4MarketsEnrichedResult {
-  const { data, isLoading, error, refetch } = useDataFetching<Hip4MarketEnrichedRow[]>({
+  const { data, isLoading, error, dataUpdatedAt, refetch } = useDataFetching<Hip4MarketEnrichedRow[]>({
     fetchFn: () => fetchHip4MarketsEnriched(params),
     refreshInterval: 30000,
     dependencies: [JSON.stringify(params)],
@@ -20,6 +20,7 @@ export function useHip4MarketsEnriched(
     markets: Array.isArray(data) ? data : [],
     isLoading,
     error,
+    dataUpdatedAt,
     refetch,
   };
 }

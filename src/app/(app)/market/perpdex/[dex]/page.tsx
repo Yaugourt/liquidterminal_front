@@ -85,9 +85,9 @@ export default function PerpDexDetailPage() {
     return (
       <div className="p-8 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
         <div className="flex flex-col items-center justify-center text-center">
-          <Database className="w-12 h-12 mb-4 text-zinc-600" />
+          <Database className="w-12 h-12 mb-4 text-text-tertiary" />
           <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
-          <p className="text-zinc-400 mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
+          <p className="text-text-secondary mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
           <Button onClick={() => router.push('/market/perpdex')} className="bg-brand hover:bg-brand/90 text-brand-text-on">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to PerpDexs
@@ -202,7 +202,7 @@ export default function PerpDexDetailPage() {
           <span className="text-white font-bold text-lg">
             {dex.activeAssets}
             {dex.activeAssets !== dex.totalAssets && (
-              <span className="text-zinc-500 text-sm font-normal ml-1">
+              <span className="text-text-tertiary text-sm font-normal ml-1">
                 / {dex.totalAssets}
               </span>
             )}
@@ -283,7 +283,7 @@ export default function PerpDexDetailPage() {
             address={dex.oracleUpdater!}
             label="Oracle Updater"
             copyMessage="Oracle updater address copied"
-            className="text-zinc-400 text-sm"
+            className="text-text-secondary text-sm"
           />
         ) : dex.subDeployers.length > 0 ? (
           <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
@@ -304,19 +304,19 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-zinc-400 text-label hover:text-brand transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-text-secondary text-label hover:text-brand transition-colors bg-white/5 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>
                     ))}
                     {sub.addresses.length > 2 && (
-                      <span className="text-zinc-600 text-label">+{sub.addresses.length - 2}</span>
+                      <span className="text-text-tertiary text-label">+{sub.addresses.length - 2}</span>
                     )}
                   </div>
                 </div>
               ))}
               {dex.subDeployers.length > 4 && (
-                <span className="text-zinc-600 text-xs">+{dex.subDeployers.length - 4} more permissions</span>
+                <span className="text-text-tertiary text-xs">+{dex.subDeployers.length - 4} more permissions</span>
               )}
             </div>
           </div>

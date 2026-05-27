@@ -57,7 +57,7 @@ export default function PendingReviewPage() {
         <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
           <div className="text-center space-y-4">
             <h2 className="text-xl font-bold text-white">Authentication Required</h2>
-            <p className="text-zinc-400">Please login to access this page</p>
+            <p className="text-text-secondary">Please login to access this page</p>
             <Button onClick={() => login()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full">
               Login
             </Button>
@@ -77,8 +77,8 @@ export default function PendingReviewPage() {
               <AlertCircle className="w-8 h-8 text-rose-400" />
             </div>
             <h2 className="text-xl font-bold text-white">Access Denied</h2>
-            <p className="text-zinc-400">You don&apos;t have permission to access this page</p>
-            <p className="text-xs text-zinc-500">Moderator or Admin role required</p>
+            <p className="text-text-secondary">You don&apos;t have permission to access this page</p>
+            <p className="text-xs text-text-tertiary">Moderator or Admin role required</p>
             <Button
               onClick={() => router.push('/ecosystem/publicgoods')}
               className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full"
@@ -101,13 +101,13 @@ export default function PendingReviewPage() {
               variant="ghost"
               size="icon"
               onClick={() => router.back()}
-              className="text-zinc-400 hover:text-white hover:bg-white/5"
+              className="text-text-secondary hover:text-white hover:bg-white/5"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <h1 className="text-3xl font-bold text-white">Pending Submissions</h1>
           </div>
-          <p className="text-zinc-400 max-w-2xl ml-11">
+          <p className="text-text-secondary max-w-2xl ml-11">
             Review and vote on new project submissions. Community approval is required before projects are listed.
           </p>
         </div>
@@ -149,7 +149,7 @@ export default function PendingReviewPage() {
       {pendingPublicGoods.length > 0 && (
         <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
           <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
-          <ul className="text-zinc-400 text-sm space-y-2">
+          <ul className="text-text-secondary text-sm space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>
               Check that the project has a valid GitHub repository

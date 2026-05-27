@@ -2,7 +2,23 @@
 
 import { TypedDataTable, type Column, TokenIcon, chartPalette } from "@/components/common";
 import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
-import { SortKey } from "./TableHeader";
+
+// Sort keys shared by spot & perp holdings tables. Kept here as the canonical
+// owner now that the legacy TableHeader/TableRow/TableLoadingState files are
+// gone (TypedDataTable replaces them).
+export type SortKey =
+  | 'coin'
+  | 'price'
+  | 'type'
+  | 'marginUsedValue'
+  | 'positionValueNum'
+  | 'entryPriceNum'
+  | 'liquidationNum'
+  | 'total'
+  | 'pnlPercentage'
+  | 'totalValue'
+  | 'unrealizedPnl'
+  | 'funding';
 
 interface AssetsTableProps {
   type: 'spot' | 'perp';

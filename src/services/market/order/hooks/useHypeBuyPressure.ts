@@ -2,12 +2,11 @@
 import { useTwapOrders } from './useTwapOrders';
 import { EnrichedTwapOrder } from '../types';
 
-const HYPE_MARKET_INDEX = 10107; // 10000 + 107 for HYPE token
-
 export interface HypeBuyPressureResult {
-  buyPressure: number; // Net buy pressure in USD (positive = more buys, negative = more sells)
-  totalBuyValue: number; // Total value of buy orders
-  totalSellValue: number; // Total value of sell orders
+  /** Combined HYPE buy/sell pressure across spot HYPE + perp HYPE TWAPs. */
+  buyPressure: number;
+  totalBuyValue: number;
+  totalSellValue: number;
   isLoading: boolean;
   error: Error | null;
 }
@@ -77,61 +76,40 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
     return () => clearInterval(interval);
   }, [orders]);
 
-  const hypeBuyPressure = useMemo(() => {
+  const aggregated = useMemo(() => {
     if (!orders || orders.length === 0) {
-      return {
-        buyPressure: 0,
-        totalBuyValue: 0,
-        totalSellValue: 0
-      };
+      return { buyPressure: 0, totalBuyValue: 0, totalSellValue: 0 };
     }
 
-    // Filter TWAP orders for HYPE token only AND make sure they're active
-    const allHypeOrders = orders.filter(order => {
-      const assetIndex = order.action.twap.a;
-      return assetIndex === HYPE_MARKET_INDEX;
-    });
+    let buy = 0;
+    let sell = 0;
 
-    const hypeOrders = allHypeOrders.filter(order => {
-      const isActive = !order.ended && !order.error; // Double-check active status
-      return isActive;
-    });
+    for (const order of orders) {
+      if (order.ended || order.error) continue;
+      // Only HYPE — spot HYPE pair OR native perp HYPE. HIP-3 never carries
+      // HYPE as the traded ticker, so marketType `hip3` is skipped implicitly.
+      const sym = order.tokenSymbol.toUpperCase();
+      const isHype =
+        sym === 'HYPE' &&
+        (order.marketType === 'spot' || order.marketType === 'perp');
+      if (!isHype) continue;
 
-
-
-    let totalBuyValue = 0;
-    let totalSellValue = 0;
-
-    hypeOrders.forEach(order => {
-      const isBuy = order.action.twap.b;
-      
-      // Use exactly the same logic as TwapTable.getTwapValue()
-      const realTime = realTimeData.get(order.hash);
-      const value = realTime ? realTime.remainingValue : order.totalValueUSD;
-
-      // Debug individual orders
-
-      if (isBuy) {
-        totalBuyValue += value;
-      } else {
-        totalSellValue += value;
-      }
-    });
-
-    const buyPressure = totalBuyValue - totalSellValue;
-
-    // Debug logs to understand the difference with reference site
+      const rt = realTimeData.get(order.hash);
+      const value = rt ? rt.remainingValue : order.totalValueUSD;
+      if (order.action.twap.b) buy += value;
+      else sell += value;
+    }
 
     return {
-      buyPressure,
-      totalBuyValue,
-      totalSellValue
+      buyPressure: buy - sell,
+      totalBuyValue: buy,
+      totalSellValue: sell,
     };
   }, [orders, realTimeData]);
 
   return {
-    ...hypeBuyPressure,
+    ...aggregated,
     isLoading,
     error
   };
-} 
+}

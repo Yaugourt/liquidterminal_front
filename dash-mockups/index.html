@@ -72,4 +72,73 @@ a.card:hover{border-color:#83E9FF;transform:translateY(-2px)}
   <div class="t">Hero pressure + donut cards</div>
   <div class="d">Net pressure en hero 26px gradient gauche, Buys/Sells stackés droite avec mini bar entre. TWAPs en cards plus aérées avec donut circulaire % filled à droite — signal visuel fort.</div>
 </a>
+
+<h1 style="margin-top:48px;font-size:18px">Liquidations — refonte</h1>
+<p class="sub">3 directions pour repenser le panel Liquidations du dashboard.</p>
+
+<a class="card" href="liq-A-pressure.html">
+  <div class="n">LIQ · VARIANT A</div>
+  <div class="t">Pressure gauge — biais directionnel</div>
+  <div class="d">Half-donut gauge hero 73% long / 27% short avec needle, légende compacte. Stats 4-strip. Histogramme bipolaire (longs au-dessus, shorts en-dessous d'un axe zéro). Signal majeur = qui dominait.</div>
+</a>
+<a class="card" href="liq-B-tape.html">
+  <div class="n">LIQ · VARIANT B</div>
+  <div class="t">Live tape — exchange feel</div>
+  <div class="d">Stats compactes 4 colonnes + mini L/S bar. Tape verticale des 9 derniers fills (time · asset · side · size · price), la plus grosse en or. Pill "LIVE" pulsante. Footer sparkline 24h.</div>
+</a>
+<a class="card" href="liq-C-heatmap.html">
+  <div class="n">LIQ · VARIANT C</div>
+  <div class="t">Heatmap by asset — quel coin et quand</div>
+  <div class="d">Grid 6 assets × 24 buckets : teinte verte = longs liquidés dominants, rouge = shorts, violet = mix. Intensité = volume relatif. Légende bipolaire en gradient. Stats strip L/S absolu en haut.</div>
+</a>
+<a class="card" href="liq-D-cumulative.html">
+  <div class="n">LIQ · VARIANT D</div>
+  <div class="t">Cumulative curve — bursts as slope changes</div>
+  <div class="d">Hero 3-col (Total · Long · Short). Chart cumulatif 24h avec 2 courbes (longs vert, shorts rouge). Chaque rafale = cassure de pente verticale. Marqueur cyan sur le pic. Footer liste les 3 bursts notables.</div>
+</a>
+<a class="card" href="liq-E-scatter.html">
+  <div class="n">LIQ · VARIANT E</div>
+  <div class="t">Magnitude scatter — bubbles standing out</div>
+  <div class="d">Bubble plot temps × taille (log scale $1K → $500K). Vert = long, rouge = short. La plus grosse cerclée or avec tooltip. Stats strip focus outliers (">$100K", "Whales hit").</div>
+</a>
+<a class="card" href="liq-F-whales.html">
+  <div class="n">LIQ · VARIANT F</div>
+  <div class="t">Whale rekt feed — who got liquidated</div>
+  <div class="d">Mini-explorer du carnage. Stats strip + hero "Biggest 24h" (asset, trader address, entry → liquidation, taille gold). Top 5 suivants en liste avec rang, address tronquée, contexte, side, age. Click → profil trader.</div>
+</a>
+
+<h1 style="margin-top:48px;font-size:18px">Explorer — refonte</h1>
+<p class="sub">Refonte de la page /explorer V4. Variantes orientées explorateur blockchain et data réseau.</p>
+
+<a class="card" href="explorer-A-chainpulse.html">
+  <div class="n">EXPLORER · VARIANT A</div>
+  <div class="t">Chain Pulse — classical blockchain explorer</div>
+  <div class="d">Style Etherscan + DefiLlama. Hero search hash/address/block, KPI ribbon 6 cells (height · tx/s · addresses · vol · fees · bridge net), feeds blocs+tx LIVE côte à côte, bridge events 24h split area + table, deploys récents et top validators. Aucune métrique trader-centric.</div>
+</a>
+<a class="card" href="explorer-B-allocators.html">
+  <div class="n">EXPLORER · VARIANT B</div>
+  <div class="t">Capital Allocators — who controls the capital</div>
+  <div class="d">Angle Token Terminal / Bubblemaps. KPI strip (Vaults TVL · HYPE staked · Builder fees · Bridge TVL), donut concentration top-5 vaults vs rest, TVL+stake dual-axis 30j, 4 leaderboards (vaults · validators · builders · stakers) et Sankey-lite des flux capital 24h.</div>
+</a>
+<a class="card" href="explorer-C-traders.html">
+  <div class="n">EXPLORER · VARIANT C</div>
+  <div class="t">Trader Leaderboard — who's winning, who's getting rekt</div>
+  <div class="d">Angle trader-centric / Hyperdash. Hero "duel scoreboard" (winner ↑ vs loser ↓ + 3 KPIs neutres), leaderboard top 10 (tabs PnL/Vol/Trades), Whale Rekt feed LIVE, funding strip 6 mini-cards à sparklines, Builder podium 1-2-3 or/argent/bronze, largest fills LIVE, 24h coin summary (profitable · traded · liquidated).</div>
+</a>
+<a class="card" href="explorer-D-living.html">
+  <div class="n">EXPLORER · VARIANT D</div>
+  <div class="t">Living Explorer — hybrid network-first × capital snapshot</div>
+  <div class="d">Mix ~60% Chain Pulse / 40% Capital Allocators. Hero search + KPI ribbon 6 cells (network+capital), live blocks/tx LIVE côte à côte, bridge flow 24h full width (split area + 4 rows), capital snapshot bas de page (donut concentration + 3 mini-leaderboards Vaults/Validators/Builders), deploys 24h.</div>
+</a>
+<a class="card" href="explorer-E-capital.html">
+  <div class="n">EXPLORER · VARIANT E</div>
+  <div class="t">Capital Explorer — capital-first with always-on network ticker</div>
+  <div class="d">Hybride ~40% Chain Pulse / ~60% Capital Allocators. Bandeau ticker scrolling LIVE en haut (block · tx/s · bridge in/out), puis hero search, KPI ribbon 5 cells capital, donut concentration + chart dual-axis 30j, 4 leaderboards (vaults · validators · builders · stakers), Network Side (live blocks + bridge events avec mini split-area), et table deploys.</div>
+</a>
+<a class="card" href="explorer-F-hybrid.html">
+  <div class="n">EXPLORER · VARIANT F · recommandé</div>
+  <div class="t">Living Explorer + — D enrichi capital</div>
+  <div class="d">Variante D avec KPI ribbon élargi à 8 cells (ajout Vaults TVL · Builder fees 24h) et nouvelle section "Capital Evolution · 30d" (donut concentration + dual-axis 30j TVL × HYPE staked) insérée entre Bridge Flow et Capital Snapshot.</div>
+</a>
+
 </div></body></html>

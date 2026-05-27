@@ -61,6 +61,16 @@ const eslintConfig = [
           message:
             'Utilise <Checkbox> de @/components/ui/checkbox au lieu de <input type="checkbox">.',
         },
+        {
+          // Match grid-cols-[…] with 3+ track segments AND at least one px-fixed
+          // width — the typical signature of a hand-rolled table layout.
+          // Layouts like grid-cols-[1fr_2fr] or grid-cols-[280px_1fr] are 2-col
+          // page-shell patterns and stay allowed.
+          selector:
+            "JSXAttribute[name.name='className'] Literal[value=/grid-cols-\\[[^\\]]*[0-9]+px[^\\]]*_[^\\]]+_[^\\]]+\\]/]",
+          message:
+            "Pas de grid-template hardcodé pour une table. Utilise <ModuleTable> (compact card) ou <TypedDataTable> (page) — les largeurs viennent de la prop `columns`, plus de duplication header/rows.",
+        },
       ],
       "no-restricted-imports": [
         "error",
@@ -105,6 +115,10 @@ const eslintConfig = [
       "src/components/ui/table-states.tsx",
       // labs/charts/** are isolated showcases (see AGENTS.md); hex is permitted there.
       "src/components/labs/charts/**/*.{ts,tsx}",
+      // OverviewModule is the canonical compact-table primitive — it's allowed
+      // to render the underlying <table>; the grid-cols rule isn't relevant
+      // here either since it doesn't use Tailwind arbitrary grids.
+      "src/components/common/OverviewModule.tsx",
     ],
     rules: {
       "no-restricted-syntax": "off",
@@ -122,13 +136,6 @@ const eslintConfig = [
     files: [
       "src/components/common/DataTable.tsx",
       "src/components/common/tables/SortableTableHead.tsx",
-      "src/components/explorer/address/AddressTransactionList.tsx",
-      "src/components/explorer/address/TransactionRow.tsx",
-      "src/components/explorer/address/orders/UserTwapTable.tsx",
-      "src/components/hip4/Hip4CompareTable.tsx",
-      "src/components/market/tracker/assets/TableHeader.tsx",
-      "src/components/market/tracker/assets/TableRow.tsx",
-      "src/components/market/tracker/assets/TableLoadingState.tsx",
     ],
     rules: {
       "no-restricted-imports": "off",

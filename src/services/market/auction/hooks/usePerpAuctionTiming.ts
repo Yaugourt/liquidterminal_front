@@ -3,9 +3,11 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchPerpAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, PerpAuctionTiming } from '../types';
 import { useHypePrice } from '@/services/market/hype/hooks/useHypePrice';
+import { usePastAuctionsPerp } from '@/services/market/perpDex/hooks/usePastAuctionsPerp';
 
 // Prix de base selon la doc : descend toujours vers 500 HYPE
 const BASE_PRICE = 500;
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Calcule le prix actuel en temps réel selon la formule Dutch Auction
@@ -89,6 +91,9 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
   // Récupérer le prix HYPE en temps réel via WebSocket
   const { price: hypePrice } = useHypePrice();
 
+  // Past perp auctions — feeds the "last sold" stat under the live progress bar.
+  const { auctions: pastPerpAuctions } = usePastAuctionsPerp();
+
   // Calculer l'état de l'auction en temps réel
   const auctionState = useMemo((): AuctionState => {
     if (!timingData) {
@@ -98,9 +103,14 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
         currentPrice: BASE_PRICE,
         currentPriceUSD: BASE_PRICE * (hypePrice || 0),
         progressPercentage: 0,
+        startPrice: BASE_PRICE,
+        floorPrice: BASE_PRICE,
         lastAuctionPrice: BASE_PRICE,
         lastAuctionName: "N/A",
-        nextAuctionStart: "N/A"
+        nextAuctionStart: "N/A",
+        avg7dPrice: 0,
+        deploys7d: 0,
+        etaToLastSold: "—",
       };
     }
 
@@ -126,9 +136,13 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
     const currentPriceUSD = currentPrice * (hypePrice || 0);
     const progressPercentage = calculateProgress(timingData);
     
-    // Pour perp, pas d'historique encore donc on met des valeurs par défaut
-    const lastAuctionPrice = BASE_PRICE;
-    const lastAuctionName = "N/A";
+    // Last sold perp deploy — latest entry from Hypurrscan past auctions.
+    const lastPerp = [...pastPerpAuctions].sort(
+      (a, b) => b.time.getTime() - a.time.getTime(),
+    )[0];
+    const lastAuctionPrice =
+      lastPerp && Number.isFinite(lastPerp.maxGas) ? (lastPerp.maxGas as number) : BASE_PRICE;
+    const lastAuctionName = lastPerp ? lastPerp.symbol : "N/A";
     
     // Formater le temps jusqu'à la prochaine auction
     // Si l'auction actuelle est encore en période mais inactive (currentGas null),
@@ -145,17 +159,49 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
         : "Starting soon";
     }
 
+    const startPrice = parseFloat(currentAuction.startGas);
+    const floorPrice = currentAuction.endGas
+      ? parseFloat(currentAuction.endGas)
+      : BASE_PRICE;
+
+    // 7d window aggregates from past perp deploys.
+    const cutoff7d = now - SEVEN_DAYS_MS;
+    const recent = pastPerpAuctions.filter(
+      (a) => a.time.getTime() >= cutoff7d && Number.isFinite(a.maxGas) && (a.maxGas as number) > 0,
+    );
+    const deploys7d = recent.length;
+    const avg7dPrice = deploys7d
+      ? recent.reduce((sum, a) => sum + (a.maxGas as number), 0) / deploys7d
+      : 0;
+
+    let etaToLastSold = "—";
+    if (isActive && currentPrice > lastAuctionPrice && startPrice > floorPrice) {
+      const totalDuration = currentAuction.endTime - currentAuction.startTime;
+      const decayPerMs = (startPrice - floorPrice) / totalDuration;
+      const etaMs = (currentPrice - lastAuctionPrice) / decayPerMs;
+      if (Number.isFinite(etaMs) && etaMs > 0) {
+        etaToLastSold = formatTimeRemaining(etaMs);
+      }
+    } else if (isActive && currentPrice <= lastAuctionPrice) {
+      etaToLastSold = "Now";
+    }
+
     return {
       isActive,
       timeRemaining,
       currentPrice: Math.round(currentPrice * 100) / 100,
       currentPriceUSD: Math.round(currentPriceUSD * 100) / 100,
       progressPercentage: Math.round(progressPercentage * 100) / 100,
+      startPrice: Number.isFinite(startPrice) ? Math.round(startPrice) : BASE_PRICE,
+      floorPrice: Number.isFinite(floorPrice) ? Math.round(floorPrice) : BASE_PRICE,
       lastAuctionPrice: Math.round(lastAuctionPrice),
       lastAuctionName,
-      nextAuctionStart
+      nextAuctionStart,
+      avg7dPrice: Math.round(avg7dPrice),
+      deploys7d,
+      etaToLastSold,
     };
-  }, [timingData, hypePrice]);
+  }, [timingData, hypePrice, pastPerpAuctions]);
 
   return {
     auctionState,

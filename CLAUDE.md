@@ -98,36 +98,41 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 ## Design System (V4)
 
-**Référence complète** : [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Lire ce fichier avant tout nouvel écran ou composant.
+**Full reference**: [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Read this file before any new screen or component.
 
-### Tokens essentiels
+### Essential tokens
 
 | Token | Usage |
 |-------|-------|
-| `bg-base` `#0A0B0F` | Fond de l'app |
-| `bg-surface` `#0F1421` | Cartes, sidebar |
-| `bg-surface-2` `#141B2A` | Header de table, hover, pills |
-| `border-subtle` / `border-default` | Séparateurs / bordures |
-| `text-primary` / `secondary` / `tertiary` | Hiérarchie de texte |
-| `brand` `#83E9FF` | Cyan accent (focus, actifs) |
-| `gold` `#F9E370` | Fees, accent secondaire |
+| `bg-base` `#0A0B0F` | App background |
+| `bg-surface` `#0F1421` | Cards, sidebar |
+| `bg-surface-2` `#141B2A` | Table header, hover, pills |
+| `border-subtle` / `border-default` | Separators / borders |
+| `text-primary` / `secondary` / `tertiary` | Text hierarchy |
+| `brand` `#83E9FF` | Cyan accent (focus, active) |
+| `gold` `#F9E370` | Fees, secondary accent |
 | `success` `#1FA85B` / `danger` `#E53E3E` | Long/buy · Short/sell |
 
-### Primitives (toujours composer à partir de là)
+### Primitives (always compose from here — import via `@/components/common` barrel)
 
-- **Cartes** : `<Card>` + card-head V4 (icône brand + titre 13px + tag pill + action `ml-auto`).
-- **Tables** : `<TypedDataTable>` uniquement — le `<Table>` brut hors `common/` est bloqué par ESLint.
-- **Charts** : `<AuroraAreaChart>` mono-série / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Couleurs via `chartPalette` — hex hardcodé bloqué par ESLint.
-- **Layout shell** : `bg-base` + halo subtil `z-0` ; contenu `relative z-10` ; sidebar 232px ; header sticky `bg-base/80 backdrop-blur-xl` sans border-b.
+- **Cards**: `<Card>` + V4 card-head (brand icon + 13px title + tag pill + `ml-auto` action). CVA variants: `padding` (`none|sm|md|lg`), `interactive`, and `density` on `CardHeader/Content/Footer`.
+- **Page tables**: `<TypedDataTable>` only — raw `<Table>` outside `common/` blocked by ESLint. Columns carry semantic `type`: `text | numeric | fees | change | address | custom`. Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
+- **Leaderboard cards (top N, any page)**: `OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset` (see DESIGN_SYSTEM §5.b / §7.a). Lives in `common/` — usable from any domain.
+- **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
+- **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
+- **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).
+- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
+- **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
 
-### Règles dures
+### Hard rules
 
-- Aucun hex hardcodé dans le style — toujours un token.
-- `.mono` pour les nombres tabulaires.
-- Pas de sparkline/delta inventé : si l'API n'a pas d'historique pour la métrique, on ne l'affiche pas.
-- Hypedexer (`/indexer/*`) est instable (402) — tout chart qui en dépend doit dégrader proprement. Sources robustes : DB locale `/liquidations/historical/chart`, Hypurrscan fees + `/spotUSDC`, DefiLlama bridge.
+- No hardcoded hex in styles — always a token (charts go through `chartPalette`).
+- `.mono` for tabular numbers.
+- Use semantic text tokens (`text-text-primary/secondary/tertiary`) — never `text-zinc-*`.
+- No fake sparkline/delta: if the API has no history for the metric, don't display it.
+- Hypedexer (`/indexer/*`) is unstable (402) — any dependent chart must degrade gracefully. Robust sources: local DB `/liquidations/historical/chart`, Hypurrscan fees + `/spotUSDC`, DefiLlama bridge.
 
-Voir [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) pour le détail des patterns Dashboard (PulseBar, OverviewModule, SectionHead), des paddings, des tailles de police et de l'inventaire complet des primitives.
+See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patterns (Leaderboard card, KPI ribbon, card grids), paddings, font sizes and the full primitive inventory.
 
 ## Key Files Reference
 

@@ -1,12 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { Shield } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
-} from "../OverviewModule";
+} from "@/components/common";
 import { useValidators } from "@/services/explorer/validator";
 import { formatStakeValue } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -27,6 +28,7 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
   return (
     <OverviewModule
       title="Validators"
+      icon={<Shield size={13} className="text-brand" />}
       tag={`${formatStakeValue(stats.totalHypeStaked, format)} HYPE staked`}
       viewAllLabel="All validators"
       href="/explorer/validator"

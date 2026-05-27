@@ -1,9 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { BarChart3, CheckCircle2, TrendingUp, Layers } from "lucide-react";
-import { StatsCard } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type {
   Hip4QuestionWithOutcomesRow,
@@ -16,58 +13,57 @@ interface Hip4GlobalStatsStripProps {
   isLoading: boolean;
 }
 
-export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4GlobalStatsStripProps) {
-  const stats = useMemo(() => {
-    const activeMarkets = questions.filter((q) => q.status === "live").length;
-    const settledMarkets = settlements.length;
-    const totalVolume = questions.reduce((s, q) => s + (q.total_volume ?? 0), 0);
-    return { activeMarkets, settledMarkets, totalVolume, questions: questions.length };
-  }, [questions, settlements]);
+interface KpiCell {
+  label: string;
+  value: string;
+}
 
-  const cards = [
-    {
-      title: "Active Markets",
-      value: isLoading ? "—" : stats.activeMarkets.toString(),
-      icon: <BarChart3 className="h-4 w-4 text-brand" />,
-      valueClassName: "text-lg font-bold text-brand tracking-tight",
-    },
-    {
-      title: "Questions",
-      value: isLoading ? "—" : stats.questions.toString(),
-      icon: <Layers className="h-4 w-4 text-violet-400" />,
-      valueClassName: "text-lg font-bold text-violet-400 tracking-tight",
-    },
-    {
-      title: "Total Volume",
-      value: isLoading ? "—" : compactUsd(stats.totalVolume),
-      icon: <TrendingUp className="h-4 w-4 text-gold" />,
-      valueClassName: "text-lg font-bold text-gold tracking-tight",
-    },
-    {
-      title: "Settled Markets",
-      value: isLoading ? "—" : stats.settledMarkets.toString(),
-      icon: <CheckCircle2 className="h-4 w-4 text-emerald-400" />,
-      valueClassName: "text-lg font-bold text-emerald-400 tracking-tight",
-    },
-  ];
+/**
+ * KPI ribbon — V4 §7.b. Continuous strip of stat cells, no per-cell card,
+ * no sparkline (HIP-4 has no per-KPI history series exposed by the indexer).
+ */
+export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4GlobalStatsStripProps) {
+  const kpis = useMemo<KpiCell[]>(() => {
+    const placeholder = isLoading ? "…" : "—";
+    const liveCount = questions.filter((q) => q.status === "live").length;
+    const pendingCount = questions.filter((q) => q.status === "expired_unresolved").length;
+    const settledCount = questions.filter((q) => q.status === "settled").length;
+    const totalVolume = questions.reduce((s, q) => s + (q.total_volume ?? 0), 0);
+
+    return [
+      {
+        label: "Live Markets",
+        value: isLoading && questions.length === 0 ? placeholder : String(liveCount),
+      },
+      {
+        label: "Pending Resolution",
+        value: isLoading && questions.length === 0 ? placeholder : String(pendingCount),
+      },
+      {
+        label: "Total Volume",
+        value: isLoading && questions.length === 0 ? placeholder : compactUsd(totalVolume),
+      },
+      {
+        label: "Settled",
+        value: isLoading && settlements.length === 0 ? placeholder : String(settledCount || settlements.length),
+      },
+    ];
+  }, [questions, settlements, isLoading]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      {cards.map((card, i) => (
-        <motion.div
-          key={card.title}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.06, duration: 0.3 }}
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden">
+      {kpis.map((kpi) => (
+        <div
+          key={kpi.label}
+          className="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col"
         >
-          <StatsCard
-            title={card.title}
-            value={card.value}
-            icon={card.icon}
-            isLoading={isLoading}
-            valueClassName={card.valueClassName}
-          />
-        </motion.div>
+          <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
+            {kpi.label}
+          </div>
+          <div className="mono text-[20px] font-semibold tracking-[-0.02em] leading-none text-text-primary mt-1.5">
+            {kpi.value}
+          </div>
+        </div>
       ))}
     </div>
   );

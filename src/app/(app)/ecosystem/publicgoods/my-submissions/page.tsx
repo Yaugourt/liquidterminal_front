@@ -137,14 +137,14 @@ export default function MySubmissionsPage() {
               variant="ghost"
               size="icon"
               onClick={() => router.back()}
-              className="text-zinc-400 hover:text-white hover:bg-white/5"
+              className="text-text-secondary hover:text-white hover:bg-white/5"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <h1 className="text-3xl font-bold text-white">My Submissions</h1>
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <p className="text-zinc-400 max-w-2xl ml-11">
+            <p className="text-text-secondary max-w-2xl ml-11">
               Track the status of your submitted projects and manage your applications.
             </p>
             <Button
@@ -206,19 +206,19 @@ export default function MySubmissionsPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-brand">{counts.all}</div>
-            <div className="text-xs text-zinc-400 uppercase tracking-wider">Total Submissions</div>
+            <div className="text-xs text-text-secondary uppercase tracking-wider">Total Submissions</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-emerald-400">{counts.approved}</div>
-            <div className="text-xs text-zinc-400 uppercase tracking-wider">Approved</div>
+            <div className="text-xs text-text-secondary uppercase tracking-wider">Approved</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-amber-400">{counts.pending}</div>
-            <div className="text-xs text-zinc-400 uppercase tracking-wider">Pending</div>
+            <div className="text-xs text-text-secondary uppercase tracking-wider">Pending</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-rose-400">{counts.rejected}</div>
-            <div className="text-xs text-zinc-400 uppercase tracking-wider">Rejected</div>
+            <div className="text-xs text-text-secondary uppercase tracking-wider">Rejected</div>
           </div>
         </div>
       </div>

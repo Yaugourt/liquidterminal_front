@@ -1,28 +1,20 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { chartPalette } from "@/components/common";
 import type { Hip4QuestionOutcome } from "@/services/indexer/hip4";
 
 interface Hip4OutcomeBarProps {
   outcome: Hip4QuestionOutcome;
   /** 0–9; for distinct colors when a question has multiple named outcomes. */
   colorIndex?: number;
-  /** Animation delay (seconds) for staggering children in a card. */
-  delay?: number;
 }
 
-const PALETTE = [
-  { from: "rgba(131,233,255,0.8)", to: "rgba(131,233,255,0.25)", text: "text-brand" },
-  { from: "rgba(249,227,112,0.8)", to: "rgba(249,227,112,0.25)", text: "text-gold" },
-  { from: "rgba(167,139,250,0.8)", to: "rgba(167,139,250,0.25)", text: "text-violet-300" },
-  { from: "rgba(16,185,129,0.8)",  to: "rgba(16,185,129,0.25)",  text: "text-emerald-300" },
-  { from: "rgba(244,63,94,0.8)",   to: "rgba(244,63,94,0.25)",   text: "text-rose-300" },
-  { from: "rgba(251,146,60,0.8)",  to: "rgba(251,146,60,0.25)",  text: "text-orange-300" },
-  { from: "rgba(236,72,153,0.8)",  to: "rgba(236,72,153,0.25)",  text: "text-pink-300" },
-  { from: "rgba(34,211,238,0.8)",  to: "rgba(34,211,238,0.25)",  text: "text-cyan-300" },
-  { from: "rgba(234,179,8,0.8)",   to: "rgba(234,179,8,0.25)",   text: "text-yellow-300" },
-  { from: "rgba(139,92,246,0.8)",  to: "rgba(139,92,246,0.25)",  text: "text-purple-300" },
-];
+/**
+ * Multi-outcome bar — colored via `chartPalette.multiSeries` to stay consistent
+ * with the dashboard's category palette. For Yes/No binary markets prefer
+ * `<ProbRow>` inside Hip4QuestionCard (success/danger tokens).
+ */
+const PALETTE = chartPalette.multiSeries;
 
 function priceToCents(px: number | null): string {
   if (px == null || !Number.isFinite(px)) return "—";
@@ -30,27 +22,27 @@ function priceToCents(px: number | null): string {
   return `${pct.toFixed(0)}¢`;
 }
 
-export function Hip4OutcomeBar({ outcome, colorIndex = 0, delay = 0 }: Hip4OutcomeBarProps) {
-  const color = PALETTE[colorIndex % PALETTE.length];
+export function Hip4OutcomeBar({ outcome, colorIndex = 0 }: Hip4OutcomeBarProps) {
+  const color = PALETTE[colorIndex % PALETTE.length] ?? chartPalette.accent;
   const ratio = outcome.mid_price != null && Number.isFinite(outcome.mid_price)
     ? Math.max(0, Math.min(1, outcome.mid_price))
     : 0;
 
   return (
     <div className="flex items-center gap-3">
-      <span className="flex-1 min-w-0 truncate text-xs font-semibold text-text-primary">
+      <span className="flex-1 min-w-0 truncate text-[12px] font-semibold text-text-primary">
         {outcome.display_name || `#${outcome.outcome_id}`}
       </span>
-      <div className="relative h-1.5 w-24 sm:w-32 rounded-full bg-white/5 overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${ratio * 100}%` }}
-          transition={{ duration: 0.6, delay, ease: "easeOut" }}
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{ background: `linear-gradient(90deg, ${color.to}, ${color.from})` }}
+      <div className="relative h-1 w-24 sm:w-32 rounded-full bg-surface-2 overflow-hidden">
+        <div
+          className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-500 ease-out"
+          style={{ width: `${ratio * 100}%`, background: color }}
         />
       </div>
-      <span className={`shrink-0 tabular-nums text-[11px] font-bold ${color.text} w-10 text-right`}>
+      <span
+        className="mono shrink-0 text-[11px] font-semibold w-10 text-right"
+        style={{ color }}
+      >
         {priceToCents(outcome.mid_price)}
       </span>
     </div>

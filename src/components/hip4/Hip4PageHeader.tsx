@@ -26,10 +26,15 @@ export function Hip4ChapterHubHeader({
   );
 }
 
+/** Static facts about the third-party HIP-4 EVM contracts (V1/V2). Values
+ * marked `dynamic` are RPC-derived snapshots — surface the snapshot date so
+ * readers know they aren't auto-refreshing. Update via HIP4_CONFIG when the
+ * on-chain state changes. */
+const STATS_SNAPSHOT_DATE = HIP4_CONFIG.snapshotDate;
 const STATS = [
-  { label: "Balance", value: "94.37 HYPE", sub: "Active deposited balance", accent: "text-brand" },
+  { label: "Balance", value: HIP4_CONFIG.snapshot.balance, sub: "Active deposited balance", accent: "text-brand", dynamic: true },
   { label: "Platform fee", value: "0.9% / implicit", sub: "V1: 90 bps view · V2: from pools", accent: "text-gold" },
-  { label: "Active contests", value: "4", sub: "IDs: 595, 596, 604, 608" },
+  { label: "Active contests", value: HIP4_CONFIG.snapshot.activeContests, sub: HIP4_CONFIG.snapshot.activeContestIds, dynamic: true },
   { label: "Ownership", value: "0xe21c…0d135", sub: "Renounce disabled", small: true },
   { label: "Mainnet", value: "Not deployed", sub: "Testnet only", accent: "text-red-400" },
   { label: "Versions", value: "2", sub: "V1 reverse-engineered · V2 source + bytecode", accent: "text-brand" },
@@ -108,8 +113,13 @@ export function Hip4PageHeader({
             key={s.label}
             className="rounded-lg border border-border-subtle bg-surface/50 p-3"
           >
-            <div className="text-[10px] font-medium uppercase tracking-wide text-text-secondary">
-              {s.label}
+            <div className="flex items-center justify-between text-[10px] font-medium uppercase tracking-wide text-text-secondary">
+              <span>{s.label}</span>
+              {s.dynamic ? (
+                <span className="rounded bg-surface-2 px-1 text-[9px] text-text-tertiary">
+                  snapshot
+                </span>
+              ) : null}
             </div>
             <div
               className={cn(
@@ -124,6 +134,11 @@ export function Hip4PageHeader({
           </div>
         ))}
       </div>
+      <p className="text-[10px] text-text-tertiary">
+        Dynamic stats (Balance, Active contests) are snapshots as of{" "}
+        <span className="font-mono">{STATS_SNAPSHOT_DATE}</span>. Refresh via on-chain RPC scan on
+        the V1/V2 contracts page for live values.
+      </p>
     </header>
   );
 }

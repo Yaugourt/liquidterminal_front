@@ -7,7 +7,7 @@ import type {
 } from "../types";
 
 export function useHip4Analytics(params?: Hip4AnalyticsQuery): UseHip4AnalyticsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<Hip4AnalyticsBucket[]>({
+  const { data, isLoading, error, dataUpdatedAt, refetch } = useDataFetching<Hip4AnalyticsBucket[]>({
     fetchFn: () => fetchHip4Analytics(params),
     refreshInterval: 60000,
     dependencies: [JSON.stringify(params)],
@@ -18,6 +18,7 @@ export function useHip4Analytics(params?: Hip4AnalyticsQuery): UseHip4AnalyticsR
     buckets: Array.isArray(data) ? data : [],
     isLoading,
     error,
+    dataUpdatedAt,
     refetch,
   };
 }

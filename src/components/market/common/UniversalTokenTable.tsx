@@ -8,7 +8,7 @@ import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
-import { TokenIcon, formatPriceChange, TypedDataTable, type Column } from "@/components/common";
+import { TokenAvatar, formatPriceChange, TypedDataTable, type Column } from "@/components/common";
 import {
     SpotToken,
     PerpToken,
@@ -122,7 +122,11 @@ export function UniversalTokenTable({
         header: "Name",
         accessor: (t) => (
             <div className="flex items-center gap-2 min-w-0">
-                <TokenIcon src={t.logo} name={t.name} size="sm" />
+                <TokenAvatar
+                    assetName={t.name}
+                    kind={market === "spot" ? "spot" : "auto"}
+                    size="md"
+                />
                 <span className="text-text-primary text-sm font-medium truncate">{t.name}</span>
             </div>
         ),

@@ -23,6 +23,9 @@ export interface TwapOrder {
   ended?: string | null;
 }
 
+/** Hyperliquid market family encoded in the TWAP asset index. */
+export type TwapMarketType = "spot" | "perp" | "hip3";
+
 // TWAP enrichi avec les données de marché
 export interface EnrichedTwapOrder extends TwapOrder {
   tokenSymbol: string;
@@ -30,6 +33,8 @@ export interface EnrichedTwapOrder extends TwapOrder {
   totalValueUSD: number;
   progressionPercent: number;
   estimatedEndTime: number;
+  /** Resolved from `action.twap.a` — drives the badge in the UI. */
+  marketType: TwapMarketType;
 }
 
 // Type pour la réponse API des ordres TWAP

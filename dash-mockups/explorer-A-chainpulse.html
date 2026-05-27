@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Explorer — Variant A · Chain Pulse</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#0A0B0F",
+          surface: "#0F1421",
+          "surface-2": "#141B2A",
+          "surface-3": "#1C2436",
+          "border-subtle": "#1E2535",
+          "border-default": "#2C354A",
+          "text-primary": "#E8EAED",
+          "text-secondary": "#9CA3AF",
+          "text-tertiary": "#6B7280",
+          brand: "#83E9FF",
+          "brand-deep": "#1692AD",
+          gold: "#F9E370",
+          success: "#1FA85B",
+          danger: "#E53E3E",
+          violet: "#A78BFA",
+        },
+        fontFamily: {
+          inter: ["Inter", "ui-sans-serif", "system-ui"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { background:#0A0B0F; }
+  .mono { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+  .card { background:#0F1421; border:1px solid #1E2535; border-radius:8px; }
+  .card-head { display:flex; align-items:center; gap:.625rem; padding:.625rem .875rem; border-bottom:1px solid #1E2535; }
+  .icon-wrap { width:1.5rem; height:1.5rem; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .tag { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:#141B2A; color:#6B7280; border:1px solid #1E2535; }
+  .tag-live { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(31,168,91,0.10); color:#1FA85B; border:1px solid rgba(31,168,91,0.25); display:inline-flex; align-items:center; gap:5px; }
+  .tag-live::before { content:""; width:6px; height:6px; border-radius:50%; background:#1FA85B; animation:pulse 1.5s infinite; }
+  .tag-brand { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .tag-gold { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(249,227,112,0.10); color:#F9E370; border:1px solid rgba(249,227,112,0.25); }
+  .tag-danger { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(229,62,62,0.10); color:#E53E3E; border:1px solid rgba(229,62,62,0.25); }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+  .halo { position:fixed; inset:0 0 auto 0; height:340px; background:linear-gradient(to bottom, rgba(15,20,33,0.6), transparent); pointer-events:none; z-index:0; }
+  .view-all { font-size:11px; font-weight:500; color:#83E9FF; display:inline-flex; align-items:center; gap:4px; }
+  .view-all:hover { color:#A8F0FF; }
+
+  /* Avatars */
+  .av { width:24px; height:24px; border-radius:6px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; font-size:9.5px; font-weight:700; letter-spacing:.02em; flex-shrink:0; overflow:hidden; }
+  .av-sm { width:20px; height:20px; border-radius:5px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; font-size:8.5px; font-weight:700; flex-shrink:0; }
+
+  /* Hero search */
+  .hero-search { background:#0F1421; border:1px solid #2C354A; border-radius:10px; display:flex; align-items:center; gap:.75rem; padding:.875rem 1rem; transition:border-color .15s; }
+  .hero-search:focus-within { border-color:#83E9FF; }
+  .hero-search input { background:transparent; border:none; outline:none; color:#E8EAED; flex:1; font-size:14px; }
+  .hero-search input::placeholder { color:#6B7280; }
+  .hero-search .kbd { font-size:10px; color:#6B7280; border:1px solid #1E2535; padding:2px 6px; border-radius:4px; background:#141B2A; }
+
+  /* KPI ribbon */
+  .ribbon { display:grid; grid-template-columns:repeat(6,1fr); gap:1px; background:#1E2535; border:1px solid #2C354A; border-radius:8px; overflow:hidden; }
+  .ribbon .cell { background:#0F1421; padding:.75rem 1rem; transition:background .15s; }
+  .ribbon .cell:hover { background:#141B2A; }
+  .ribbon .lb { font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; }
+  .ribbon .v { font-size:20px; font-weight:600; letter-spacing:-.01em; margin-top:.25rem; color:#E8EAED; }
+  .ribbon .sub { font-size:10.5px; color:#6B7280; margin-top:.125rem; }
+  .ribbon .sub.up { color:#1FA85B; }
+  .ribbon .sub.dn { color:#E53E3E; }
+
+  /* table rows */
+  .feed-h { display:grid; padding:8px 14px; font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; background:#141B2A; border-bottom:1px solid #1E2535; }
+  .feed-row { display:grid; padding:8px 14px; font-size:11.5px; align-items:center; border-bottom:1px solid rgba(30,37,53,.6); transition:background .12s; }
+  .feed-row:hover { background:#141B2A; }
+  .feed-row:last-child { border-bottom:none; }
+
+  /* block / tx grids */
+  .grid-blocks { grid-template-columns: 64px 56px 60px 1fr 110px; }
+  .grid-tx { grid-template-columns: 56px 1fr 80px 64px; }
+  .grid-bridge { grid-template-columns: 70px 1fr 1fr 90px 90px; }
+  .grid-deploys { grid-template-columns: 56px 1fr 110px 80px 70px; }
+
+  .addr { font-size:11px; color:#9CA3AF; }
+  .addr-link { color:#83E9FF; }
+  .addr-link:hover { text-decoration:underline; }
+
+  /* status pills */
+  .pill-ok { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(31,168,91,0.12); color:#1FA85B; }
+  .pill-fail { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(229,62,62,0.12); color:#E53E3E; }
+  .pill-spot { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(131,233,255,0.12); color:#83E9FF; }
+  .pill-perp { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(167,139,250,0.12); color:#A78BFA; }
+
+  /* gas bar */
+  .gasbar { display:inline-block; vertical-align:middle; height:4px; width:64px; background:#141B2A; border-radius:2px; overflow:hidden; }
+  .gasbar i { display:block; height:100%; background:#83E9FF; border-radius:2px; }
+
+  /* sidebar */
+  .side-link { display:flex; align-items:center; gap:.625rem; padding:.5rem .625rem; border-radius:6px; font-size:13px; color:#9CA3AF; }
+  .side-link:hover { background:#141B2A; color:#E8EAED; }
+  .side-link.active { background:rgba(131,233,255,0.10); color:#E8EAED; position:relative; }
+  .side-link.active::before { content:""; position:absolute; left:-2px; top:50%; transform:translateY(-50%); width:2px; height:16px; background:#83E9FF; border-radius:2px; }
+  .side-link.active .side-ic { color:#83E9FF; }
+  .side-ic { width:16px; color:#6B7280; }
+
+</style>
+</head>
+<body class="font-inter text-text-primary">
+<div class="halo"></div>
+
+<div class="relative z-10 flex min-h-screen">
+  <!-- sidebar V4 -->
+  <aside class="w-[232px] shrink-0 border-r border-border-subtle bg-surface p-3 space-y-0.5">
+    <div class="px-2 py-3 mb-2">
+      <div class="text-[15px] font-bold tracking-tight">Liquid Terminal</div>
+      <div class="text-[9.5px] uppercase tracking-[0.12em] text-text-tertiary font-semibold mt-0.5">Hyperliquid Data</div>
+    </div>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-2 pb-1.5">Overview</div>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>Market</a>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-3 pb-1.5">Chain</div>
+    <a class="side-link active"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Explorer</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Bridge</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v5c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>Validators</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Vaults</a>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-3 pb-1.5">Extensions</div>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>HIP-3 / HIP-4</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94L6.21 19.79a2.12 2.12 0 0 1-3-3l8.32-8.32a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Builders</a>
+  </aside>
+
+  <!-- main -->
+  <main class="flex-1 min-w-0">
+    <!-- sticky header -->
+    <header class="sticky top-0 z-30 bg-base/80 backdrop-blur-xl">
+      <div class="flex items-center gap-3 px-6 py-3">
+        <div class="flex-1 max-w-md">
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input class="w-full h-9 pl-9 pr-3 bg-surface border border-border-default rounded-lg text-[13px] text-text-primary placeholder:text-text-tertiary focus:border-brand outline-none transition-colors" placeholder="Search asset, address, tx…" />
+          </div>
+        </div>
+        <button class="text-[12px] font-medium text-text-secondary hover:text-text-primary px-2.5">Docs</button>
+        <button class="text-[12px] font-semibold px-3 h-9 rounded-lg bg-brand text-base">Connect</button>
+      </div>
+    </header>
+
+    <div class="px-6 py-8 max-w-[1320px]">
+    <div class="mx-auto" style="max-width:1280px">
+
+      <!-- Page header -->
+      <div class="space-y-1 mb-6">
+        <h1 class="text-[22px] font-bold tracking-tight">Explorer</h1>
+        <p class="text-[12px] text-text-secondary">Real-time blockchain pulse — blocks, transactions, deploys, bridge and validators on Hyperliquid.</p>
+      </div>
+
+      <div class="space-y-8">
+
+        <!-- ====== Hero search ====== -->
+        <section>
+          <div class="hero-search">
+            <span class="text-text-tertiary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input placeholder="Search by address, tx hash, block number or token ticker" />
+            <span class="kbd mono">⌘ K</span>
+          </div>
+          <div class="flex items-center gap-3 mt-2 text-[10.5px] text-text-tertiary">
+            <span class="uppercase tracking-[0.06em] font-semibold">Try</span>
+            <span class="mono">0xa1f2…34ce</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">block 8,142,901</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">HYPE</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">tx 0x9b…</span>
+          </div>
+        </section>
+
+        <!-- ====== Network Pulse ====== -->
+        <section class="space-y-3">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">Network Pulse</h2>
+            <span class="text-[11px] text-text-tertiary">Live ecosystem metrics across the L1 and EVM bridge</span>
+            <span class="ml-auto tag-live">LIVE</span>
+          </div>
+          <div class="ribbon">
+            <div class="cell">
+              <div class="lb">Block height</div>
+              <div class="v mono">8,142,901</div>
+              <div class="sub mono">+1 every ~0.21s</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Tx / sec · 24h</div>
+              <div class="v mono">214.6</div>
+              <div class="sub mono">18.5M tx · 24h</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Active addr · 24h</div>
+              <div class="v mono">74,182</div>
+              <div class="sub mono">unique signers</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Volume · 24h</div>
+              <div class="v mono">$2.84B</div>
+              <div class="sub mono">perp + spot</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Fees · 24h</div>
+              <div class="v mono" style="color:#F9E370">$1.41M</div>
+              <div class="sub mono">paid to AF</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Bridge net · 24h</div>
+              <div class="v mono" style="color:#1FA85B">+$18.2M</div>
+              <div class="sub mono">in $62.1M · out $43.9M</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Live blocks + Live tx ====== -->
+        <section class="space-y-3">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">Live activity</h2>
+            <span class="text-[11px] text-text-tertiary">Real-time blocks and transactions on the canonical chain</span>
+          </div>
+          <div class="grid gap-4" style="grid-template-columns: 1.2fr 1fr;">
+
+            <!-- Live blocks -->
+            <div class="card overflow-hidden">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Latest blocks</h3>
+                <span class="tag">12 newest</span>
+                <span class="tag-live">LIVE</span>
+                <a class="view-all ml-auto">View all
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div class="feed-h grid-blocks">
+                <span>Block</span><span>Age</span><span>Txs</span><span>Builder</span><span class="text-right">Gas used</span>
+              </div>
+              <div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142901</span>
+                  <span class="mono text-text-tertiary">2s</span>
+                  <span class="mono">312</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:42%"></i></span><span class="mono text-[10.5px] text-text-secondary">42%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142900</span>
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="mono">284</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:38%"></i></span><span class="mono text-[10.5px] text-text-secondary">38%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142899</span>
+                  <span class="mono text-text-tertiary">4s</span>
+                  <span class="mono">421</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:54%"></i></span><span class="mono text-[10.5px] text-text-secondary">54%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142898</span>
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="mono">198</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">VS</span><span class="addr mono truncate">Vest</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:26%"></i></span><span class="mono text-[10.5px] text-text-secondary">26%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142897</span>
+                  <span class="mono text-text-tertiary">6s</span>
+                  <span class="mono">356</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PR</span><span class="addr mono truncate">Prime</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:48%"></i></span><span class="mono text-[10.5px] text-text-secondary">48%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142896</span>
+                  <span class="mono text-text-tertiary">7s</span>
+                  <span class="mono">240</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:32%"></i></span><span class="mono text-[10.5px] text-text-secondary">32%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142895</span>
+                  <span class="mono text-text-tertiary">8s</span>
+                  <span class="mono">298</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:41%"></i></span><span class="mono text-[10.5px] text-text-secondary">41%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142894</span>
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="mono">344</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">HL</span><span class="addr mono truncate">Hyperliquid</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:46%"></i></span><span class="mono text-[10.5px] text-text-secondary">46%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142893</span>
+                  <span class="mono text-text-tertiary">10s</span>
+                  <span class="mono">210</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">VS</span><span class="addr mono truncate">Vest</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:29%"></i></span><span class="mono text-[10.5px] text-text-secondary">29%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142892</span>
+                  <span class="mono text-text-tertiary">11s</span>
+                  <span class="mono">412</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:58%"></i></span><span class="mono text-[10.5px] text-text-secondary">58%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142891</span>
+                  <span class="mono text-text-tertiary">12s</span>
+                  <span class="mono">286</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:39%"></i></span><span class="mono text-[10.5px] text-text-secondary">39%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142890</span>
+                  <span class="mono text-text-tertiary">13s</span>
+                  <span class="mono">221</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PR</span><span class="addr mono truncate">Prime</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:31%"></i></span><span class="mono text-[10.5px] text-text-secondary">31%</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live tx -->
+            <div class="card overflow-hidden">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Latest transactions</h3>
+                <span class="tag">15 newest</span>
+                <span class="tag-live">LIVE</span>
+                <a class="view-all ml-auto">View all
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div class="feed-h grid-tx">
+                <span>Age</span><span>From → To</span><span class="text-right">Value</span><span class="text-right">Status</span>
+              </div>
+              <div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">1s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xa1f2…34ce</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x88aa…77b2</span></span>
+                  <span class="mono text-right font-semibold">$184K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">2s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x44de…91ac</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xcc12…4421</span></span>
+                  <span class="mono text-right font-semibold">$92K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x71ab…2017</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xb2e4…ff09</span></span>
+                  <span class="mono text-right font-semibold" style="color:#F9E370">$640K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x9b1c…44d2</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x3fe8…7a01</span></span>
+                  <span class="mono text-right font-semibold">$48K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">4s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x05a2…61ef</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x77c1…0b10</span></span>
+                  <span class="mono text-right font-semibold">$21K</span>
+                  <span class="text-right"><span class="pill-fail">FAIL</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x18b4…0021</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xfa54…2e91</span></span>
+                  <span class="mono text-right font-semibold">$310K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xee10…14d2</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x6629…8801</span></span>
+                  <span class="mono text-right font-semibold">$58K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">6s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xa011…00b1</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x1198…0042</span></span>
+                  <span class="mono text-right font-semibold">$128K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">7s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xd2e1…6612</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xb904…5fff</span></span>
+                  <span class="mono text-right font-semibold">$72K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">8s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x70aa…cc31</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x42e0…1190</span></span>
+                  <span class="mono text-right font-semibold" style="color:#F9E370">$1.42M</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x9c44…d014</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xff20…4480</span></span>
+                  <span class="mono text-right font-semibold">$33K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x33b8…0010</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xc488…91ee</span></span>
+                  <span class="mono text-right font-semibold">$210K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">10s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xae66…0e20</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x5512…aaa0</span></span>
+                  <span class="mono text-right font-semibold">$15K</span>
+                  <span class="text-right"><span class="pill-fail">FAIL</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">11s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x6611…d901</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x8e02…1240</span></span>
+                  <span class="mono text-right font-semibold">$84K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">12s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x1abc…22ff</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xdd44…6100</span></span>
+                  <span class="mono text-right font-semibold">$46K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====== EVM Bridge ====== -->
+        <section class="space-y-3">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">EVM Bridge</h2>
+            <span class="text-[11px] text-text-tertiary">24h inflows vs outflows across Hyperliquid's canonical bridge</span>
+          </div>
+          <div class="card overflow-hidden">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 6l-4 4M21 18l-4-4"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Bridge events · 24h</h3>
+              <span class="tag-brand mono">+$18.2M net</span>
+              <span class="tag">1,284 events</span>
+              <a class="view-all ml-auto">View all events
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1.4fr 1fr;">
+              <!-- chart side -->
+              <div class="p-4 border-r border-border-subtle">
+                <div class="flex items-baseline gap-4 mb-3">
+                  <div>
+                    <div class="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Inflow · 24h</div>
+                    <div class="mono text-[20px] font-semibold text-success mt-0.5">$62.1M</div>
+                  </div>
+                  <div>
+                    <div class="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Outflow · 24h</div>
+                    <div class="mono text-[20px] font-semibold text-danger mt-0.5">$43.9M</div>
+                  </div>
+                  <div class="ml-auto flex gap-3 text-[10.5px]">
+                    <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm bg-success"></span><span class="text-text-secondary">In</span></span>
+                    <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm bg-danger"></span><span class="text-text-secondary">Out</span></span>
+                  </div>
+                </div>
+                <!-- split area chart: in (positive), out (negative mirrored) -->
+                <svg viewBox="0 0 600 180" class="w-full" style="height:180px" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="grIn" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#1FA85B" stop-opacity="0.45"/>
+                      <stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="grOut" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#E53E3E" stop-opacity="0"/>
+                      <stop offset="100%" stop-color="#E53E3E" stop-opacity="0.45"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="90" x2="600" y2="90" stroke="#1E2535" stroke-width="1"/>
+                  <!-- IN: positive area above axis -->
+                  <path d="M0,72 L40,68 L80,55 L120,62 L160,48 L200,52 L240,40 L280,46 L320,32 L360,38 L400,28 L440,35 L480,22 L520,30 L560,18 L600,24 L600,90 L0,90 Z" fill="url(#grIn)"/>
+                  <path d="M0,72 L40,68 L80,55 L120,62 L160,48 L200,52 L240,40 L280,46 L320,32 L360,38 L400,28 L440,35 L480,22 L520,30 L560,18 L600,24" stroke="#1FA85B" fill="none" stroke-width="1.5"/>
+                  <!-- OUT: mirrored under axis -->
+                  <path d="M0,108 L40,114 L80,118 L120,110 L160,124 L200,128 L240,120 L280,132 L320,138 L360,126 L400,144 L440,138 L480,148 L520,140 L560,154 L600,148 L600,90 L0,90 Z" fill="url(#grOut)"/>
+                  <path d="M0,108 L40,114 L80,118 L120,110 L160,124 L200,128 L240,120 L280,132 L320,138 L360,126 L400,144 L440,138 L480,148 L520,140 L560,154 L600,148" stroke="#E53E3E" fill="none" stroke-width="1.5"/>
+                </svg>
+                <div class="flex justify-between text-[9.5px] mono text-text-tertiary mt-1 px-1">
+                  <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>now</span>
+                </div>
+              </div>
+
+              <!-- table side -->
+              <div>
+                <div class="feed-h grid-bridge">
+                  <span>Age</span><span>From</span><span>To</span><span class="text-right">Amount</span><span class="text-right">Asset</span>
+                </div>
+                <div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">12s</span>
+                    <span class="mono addr truncate">0xa1f2…34ce</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono text-right font-semibold text-success">+$420K</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span><span class="text-[11px] font-semibold">USDC</span></span>
+                  </div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">48s</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono addr truncate">0x88aa…77b2</span>
+                    <span class="mono text-right font-semibold text-danger">−$210K</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span><span class="text-[11px] font-semibold">USDC</span></span>
+                  </div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">2m</span>
+                    <span class="mono addr truncate">0x44de…91ac</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono text-right font-semibold text-success">+$1.42M</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">HY</span><span class="text-[11px] font-semibold">HYPE</span></span>
+                  </div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">4m</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono addr truncate">0xcc12…4421</span>
+                    <span class="mono text-right font-semibold text-danger">−$94K</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UT</span><span class="text-[11px] font-semibold">USDT0</span></span>
+                  </div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">6m</span>
+                    <span class="mono addr truncate">0x71ab…2017</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono text-right font-semibold text-success">+$640K</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UC</span><span class="text-[11px] font-semibold">USDC</span></span>
+                  </div>
+                  <div class="feed-row grid-bridge">
+                    <span class="mono text-text-tertiary">9m</span>
+                    <span class="mono addr truncate">0xb2e4…ff09</span>
+                    <span class="mono addr-link truncate">L1 bridge</span>
+                    <span class="mono text-right font-semibold text-success">+$182K</span>
+                    <span class="flex items-center justify-end gap-1.5"><span class="av-sm">UE</span><span class="text-[11px] font-semibold">USDE</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Recent deploys + Top validators ====== -->
+        <section class="space-y-3">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">Network actors</h2>
+            <span class="text-[11px] text-text-tertiary">Latest token deployments and validators currently securing consensus</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+
+            <!-- Recent deploys -->
+            <div class="card overflow-hidden">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Recent deploys</h3>
+                <span class="tag">6 newest</span>
+                <a class="view-all ml-auto">All deploys
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div class="feed-h grid-deploys">
+                <span>Age</span><span>Token</span><span>Deployer</span><span class="text-right">Supply</span><span class="text-right">Type</span>
+              </div>
+              <div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">42m</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">PE</span><span class="text-[12.5px] font-semibold truncate">@PEPEHL</span></span>
+                  <span class="mono addr truncate">0xa1f2…34ce</span>
+                  <span class="mono text-right">1.0B</span>
+                  <span class="text-right"><span class="pill-spot">SPOT</span></span>
+                </div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">1h</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">SP</span><span class="text-[12.5px] font-semibold truncate">@SPRINT</span></span>
+                  <span class="mono addr truncate">0x44de…91ac</span>
+                  <span class="mono text-right">500M</span>
+                  <span class="text-right"><span class="pill-spot">SPOT</span></span>
+                </div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">3h</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">MI</span><span class="text-[12.5px] font-semibold truncate">@MIST</span></span>
+                  <span class="mono addr truncate">0x71ab…2017</span>
+                  <span class="mono text-right">10M</span>
+                  <span class="text-right"><span class="pill-spot">SPOT</span></span>
+                </div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">5h</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">XY</span><span class="text-[12.5px] font-semibold truncate">XYZ/USDC</span></span>
+                  <span class="mono addr truncate">0xb2e4…ff09</span>
+                  <span class="mono text-right">—</span>
+                  <span class="text-right"><span class="pill-perp">PERP</span></span>
+                </div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">8h</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">JE</span><span class="text-[12.5px] font-semibold truncate">@JEFF</span></span>
+                  <span class="mono addr truncate">0x18b4…0021</span>
+                  <span class="mono text-right">2.5B</span>
+                  <span class="text-right"><span class="pill-spot">SPOT</span></span>
+                </div>
+                <div class="feed-row grid-deploys">
+                  <span class="mono text-text-tertiary">12h</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av">BR</span><span class="text-[12.5px] font-semibold truncate">BRENTOIL</span></span>
+                  <span class="mono addr truncate">0xee10…14d2</span>
+                  <span class="mono text-right">—</span>
+                  <span class="text-right"><span class="pill-perp">PERP</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top validators -->
+            <div class="card overflow-hidden">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2"><path d="M12 2 4 7v5c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Top validators</h3>
+                <span class="tag mono">372M HYPE staked</span>
+                <a class="view-all ml-auto">All validators
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">1</span>
+                  <span class="av">NA</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">Nansen</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0x9f2a…0b14</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">98.4M HYPE</span>
+                  <span class="mono text-right text-text-secondary">4.0%</span>
+                </div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">2</span>
+                  <span class="av">BH</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">B Harvest</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0x8d4e…cc91</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">82.1M HYPE</span>
+                  <span class="mono text-right text-text-secondary">5.0%</span>
+                </div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">3</span>
+                  <span class="av">HY</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">Hypio</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0x2c10…ff04</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">71.0M HYPE</span>
+                  <span class="mono text-right text-text-secondary">3.5%</span>
+                </div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">4</span>
+                  <span class="av">VX</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">Validator X</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0x6b22…1180</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">54.2M HYPE</span>
+                  <span class="mono text-right text-text-secondary">4.5%</span>
+                </div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">5</span>
+                  <span class="av">SL</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">Selini</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0xa770…2218</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">42.8M HYPE</span>
+                  <span class="mono text-right text-text-secondary">4.0%</span>
+                </div>
+                <div class="feed-row" style="grid-template-columns: 22px 24px 1fr 90px 70px;">
+                  <span class="mono text-[10px] text-text-tertiary">6</span>
+                  <span class="av">AS</span>
+                  <span class="min-w-0">
+                    <div class="text-[12.5px] font-semibold truncate">Astera</div>
+                    <div class="text-[10px] text-text-tertiary mono truncate">0x33b0…d402</div>
+                  </span>
+                  <span class="mono text-right text-text-primary">23.9M HYPE</span>
+                  <span class="mono text-right text-text-secondary">5.5%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====== Footer ====== -->
+        <footer class="pt-2 pb-1 flex items-center gap-3 text-[10.5px] text-text-tertiary border-t border-border-subtle">
+          <span class="uppercase tracking-[0.08em] font-semibold">Data sources</span>
+          <span>Hypurrscan</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span>HypeDexer</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span>DefiLlama</span>
+          <span class="ml-auto mono">Updated 6s ago · auto-refresh 10s</span>
+        </footer>
+
+      </div>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

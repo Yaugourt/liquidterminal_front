@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { ArrowRight, Vote } from "lucide-react";
+import { ArrowRight, Clock, Vote } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useHip4ActiveMarkets } from "@/services/indexer/hip4";
 import type {
@@ -11,21 +11,18 @@ import type {
 } from "@/services/indexer/hip4";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
-import { chartPalette } from "@/components/common";
 
 /**
- * Hip4OutcomesCard — top marchés HIP-4 ouverts par volume.
+ * Hip4OutcomesCard — top open HIP-4 markets by volume.
  *
- * Card-head V4 violet (pour différencier du HIP-3 cyan). Chaque rangée :
- * titre tronqué, paire Yes/No (ou 2 premiers outcomes) avec leur mid_price
- * en cents, volume cumulé et countdown jusqu'à expiry.
+ * Card-head V4 purple (to distinguish from HIP-3 cyan). Each row:
+ * truncated title, Yes/No pair (or top 2 outcomes) with mid_price in cents,
+ * cumulative volume, and countdown to expiry.
  */
 
 const TOP_N = 5;
 
-const HIP4_VIOLET = chartPalette.violet;
-
-/** Couleur "fixée" pour une outcome Yes/No (binaire) ou par index. */
+/** Color for an outcome — green/red for binary Yes/No, brand cyan otherwise. */
 function outcomeColor(name: string | null, index: number): string {
   if (name === "Yes") return "text-success";
   if (name === "No") return "text-danger";
@@ -80,8 +77,9 @@ function OutcomeRow({ question }: { question: Hip4QuestionWithOutcomesRow }) {
           {compactUsd(question.total_volume)} vol
         </span>
         {countdown && (
-          <span className="text-text-tertiary mono text-[10px] whitespace-nowrap">
-            {countdown.replace("Expires in ", "⏳ ")}
+          <span className="text-text-tertiary mono text-[10px] whitespace-nowrap inline-flex items-center gap-1">
+            <Clock size={10} />
+            {countdown.replace("Expires in ", "")}
           </span>
         )}
       </div>
@@ -95,13 +93,10 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head V4 violet */}
+      {/* card-head V4 */}
       <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
-        <span
-          className="w-6 h-6 rounded-md grid place-items-center shrink-0"
-          style={{ background: `${HIP4_VIOLET}1A` }}
-        >
-          <Vote size={13} style={{ color: HIP4_VIOLET }} />
+        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+          <Vote size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">
           HIP-4 Outcomes
@@ -109,14 +104,7 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {activeCount} live
         </span>
-        <span
-          className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded mono"
-          style={{
-            background: `${HIP4_VIOLET}1A`,
-            color: HIP4_VIOLET,
-            border: `1px solid ${HIP4_VIOLET}40`,
-          }}
-        >
+        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded mono bg-surface-2 text-text-tertiary border border-border-subtle">
           {compactUsd(totalVolume)} vol
         </span>
         <Link
