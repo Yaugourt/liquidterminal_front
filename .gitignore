@@ -48,3 +48,4 @@ next-env.d.ts
 #Claude
 .claude/
 .gstack/
+.design-audit/

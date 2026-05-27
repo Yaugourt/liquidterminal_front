@@ -116,7 +116,11 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 ### Primitives (always compose from here — import via `@/components/common` barrel)
 
 - **Cards**: `<Card>` + V4 card-head (brand icon + 13px title + tag pill + `ml-auto` action). CVA variants: `padding` (`none|sm|md|lg`), `interactive`, and `density` on `CardHeader/Content/Footer`.
-- **Page tables**: `<TypedDataTable>` only — raw `<Table>` outside `common/` blocked by ESLint. Columns carry semantic `type`: `text | numeric | fees | change | address | custom`. Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
+- **Page tables**: `<TypedDataTable>` only — raw `<Table>` outside `common/` blocked by ESLint. Two valid column patterns:
+  - **Simple** : `accessor: 'fieldName'` + `type: "numeric" | "fees" | "change" | "address" | "text"` → auto-styled (mono, alignment, gold for fees, signed green/red for change, truncated addresses).
+  - **Custom** : `accessor: (row) => <CustomCell />` returning fully-styled JSX. `type` omitted (defaults to `custom`). Use this for badges, mixed values, interactive cells, anything beyond a single value.
+  Don't mix : a function accessor with `type: "fees"` means the function should return a primitive value (number/string), the table styles it. If you return JSX, leave `type` off.
+  Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
 - **Leaderboard cards (top N, any page)**: `OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset` (see DESIGN_SYSTEM §5.b / §7.a). Lives in `common/` — usable from any domain.
 - **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
 - **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
