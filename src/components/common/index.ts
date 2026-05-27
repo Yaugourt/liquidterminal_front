@@ -8,6 +8,7 @@
 // Atomic UI helpers
 export { AssetLogo } from './AssetLogo';
 export { TokenIcon } from './TokenIcon';
+export { TokenAvatar } from './TokenAvatar';
 export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChange';
 export { Pagination } from './pagination';
 export type { PaginationProps } from './pagination';
@@ -27,6 +28,15 @@ export { ThemeToggle } from './ThemeToggle';
 export { DataTable, TypedDataTable } from './DataTable';
 export type { Column, ColumnType } from './DataTable';
 export { ScrollableTable } from './ScrollableTable';
+export {
+  OverviewModule,
+  ModuleTable,
+  ModuleTableRow,
+  ModuleAsset,
+  ModuleRow,
+  ModuleSubhead,
+} from './OverviewModule';
+export type { ModuleColumn, ModuleRowStat } from './OverviewModule';
 
 // Numeric display
 export { Num } from './Num';
@@ -36,6 +46,8 @@ export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';
 export { PageSection } from './PageSection';
 export { TimeframeTabs } from './TimeframeTabs';
+export { LegalFooter } from './LegalFooter';
+export { LegalPage } from './LegalPage';
 
 // Re-exports from subpackages
 export * from './animations';

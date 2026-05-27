@@ -1,18 +1,15 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { Gavel, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useAuctionTiming,
   usePerpAuctionTiming,
-  useAuctions,
 } from "@/services/market/auction";
-import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber, compactUsd } from "@/lib/formatters/numberFormatting";
-import type { AuctionState, AuctionInfo } from "@/services/market/auction";
-import type { PastAuctionPerp } from "@/services/market/perpDex/types";
+import type { AuctionState } from "@/services/market/auction";
 
 interface AuctionLiveBlockProps {
   name: string;
@@ -27,37 +24,6 @@ const price2 = {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 } as const;
-
-/** Montant de gas compact : "12.4K" / "1.20M" / "9.10". */
-function compactGas(n: number): string {
-  if (!Number.isFinite(n)) return "—";
-  const abs = Math.abs(n);
-  if (abs >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (abs >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  return n >= 1 ? n.toFixed(0) : n.toFixed(2);
-}
-
-/** Âge compact relatif : "12s" / "4m" / "2h" / "1d". */
-function timeAgo(ms: number): string {
-  const diff = Math.max(0, Date.now() - ms);
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
-
-/** Coût d'un déploiement spot — gas dans la devise de l'auction (HYPE / USDC). */
-function formatSpotCost(a: AuctionInfo): string {
-  return `${compactGas(parseFloat(a.deployGasAbs))} ${a.currency}`;
-}
-
-/** Coût d'un déploiement perp — gas d'auction en HYPE. */
-function formatPerpCost(a: PastAuctionPerp): string {
-  return a.maxGas != null ? `${compactGas(a.maxGas)} HYPE` : "—";
-}
 
 /**
  * AuctionLiveBlock — bloc "auction-live" de la maquette : fond dégradé léger,
@@ -76,7 +42,7 @@ function AuctionLiveBlock({
     <div className="px-3 py-3 bg-gradient-to-b from-brand/5 to-transparent">
       {/* auc-top */}
       <div className="flex items-center gap-2.5 mb-2.5">
-        <span className="w-8 h-8 rounded-md bg-brand/10 border border-brand/20 grid place-items-center shrink-0 text-[10px] font-bold text-brand">
+        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-[9px] font-semibold text-brand">
           {initials}
         </span>
         <div className="min-w-0">
@@ -129,6 +95,76 @@ function AuctionLiveBlock({
           %
         </span>
       </div>
+
+      {/* stats — Dutch curve anchors + recent settlement context */}
+      <div className="mt-2.5 grid grid-cols-3 gap-x-2 gap-y-6 pt-2.5 border-t border-border-subtle">
+        <AuctionStat label="Start" value={formatNumber(auctionState.startPrice, format, { maximumFractionDigits: 0 })} unit={priceUnit} />
+        <AuctionStat label="Floor" value={formatNumber(auctionState.floorPrice, format, { maximumFractionDigits: 0 })} unit={priceUnit} />
+        <AuctionStat
+          label="Last sold"
+          value={formatNumber(auctionState.lastAuctionPrice, format, { maximumFractionDigits: 0 })}
+          unit={priceUnit}
+          hint={auctionState.lastAuctionName !== "N/A" ? auctionState.lastAuctionName : undefined}
+        />
+        <AuctionStat
+          label="7d avg"
+          value={
+            auctionState.avg7dPrice > 0
+              ? formatNumber(auctionState.avg7dPrice, format, { maximumFractionDigits: 0 })
+              : "—"
+          }
+          unit={auctionState.avg7dPrice > 0 ? priceUnit : ""}
+        />
+        <AuctionStat
+          label="Deploys 7d"
+          value={auctionState.deploys7d > 0 ? String(auctionState.deploys7d) : "—"}
+          unit=""
+        />
+        <AuctionStat
+          label="ETA → last"
+          value={auctionState.etaToLastSold}
+          unit=""
+          accent={auctionState.etaToLastSold === "Now"}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Mini stat cell rendered in the auction live block (label · value · unit). */
+function AuctionStat({
+  label,
+  value,
+  unit,
+  hint,
+  accent,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  hint?: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-baseline gap-1 text-[9px] uppercase tracking-[0.06em] text-text-tertiary">
+        <span className="truncate">{label}</span>
+        {hint && (
+          <span className="mono normal-case tracking-normal text-text-secondary truncate">
+            {hint}
+          </span>
+        )}
+      </div>
+      <div
+        className={`mono text-[12px] font-semibold leading-tight truncate ${
+          accent ? "text-success" : "text-text-primary"
+        }`}
+      >
+        {value}
+        {unit && (
+          <span className="text-[9px] text-text-tertiary font-normal ml-1">{unit}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -149,8 +185,8 @@ function AuctionNextRow({ name, tag, auctionState, priceUnit }: AuctionNextRowPr
 
   return (
     <div className="flex items-center gap-2.5 px-3 py-3">
-      <span className="w-[30px] h-[30px] rounded-md bg-surface-2 border border-border-default grid place-items-center shrink-0">
-        <Clock size={15} className="text-brand" />
+      <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+        <Clock size={13} className="text-brand" />
       </span>
       <div className="flex-1 min-w-0">
         <div className="text-[12px] font-semibold text-text-primary">
@@ -203,20 +239,12 @@ function AuctionRow({ entry }: { entry: AuctionEntry }) {
   );
 }
 
-/** Élément normalisé du flux "Last deploys" (spot ou perp). */
-interface DeployItem {
-  key: string;
-  label: string;
-  cost: string;
-  dateMs: number;
-}
-
 type AuctionMarket = "spot" | "perp";
 
 /**
- * AuctionsPanel — carte d'auction d'UN marché (spot ou perp), conçue pour
- * se placer à droite de la table Trending correspondante. Sous le bloc
- * d'auction, les 2 derniers déploiements du marché.
+ * AuctionsPanel — carte d'auction d'UN marché (spot ou perp). Affiche le
+ * bloc auction-live (timer + prix + barre de progression). Les past deploys
+ * sont rendus séparément par `PastAuctionsCard` / `Hip3PastAuctionsCard`.
  */
 export const AuctionsPanel = memo(function AuctionsPanel({
   market,
@@ -225,8 +253,6 @@ export const AuctionsPanel = memo(function AuctionsPanel({
 }) {
   const { auctionState: spotState } = useAuctionTiming();
   const { auctionState: perpState } = usePerpAuctionTiming();
-  const { auctions: spotDeploys } = useAuctions({ currency: "ALL", limit: 6 });
-  const { auctions: perpDeploys } = usePastAuctionsPerp();
 
   const entry: AuctionEntry =
     market === "spot"
@@ -241,30 +267,9 @@ export const AuctionsPanel = memo(function AuctionsPanel({
           name: "Perp Deploy",
           tag: "HIP-3",
           auctionState: perpState,
-          priceUnit: "USDC",
+          priceUnit: "HYPE",
           initials: "P3",
         };
-
-  /** Les 2 derniers déploiements du marché de la carte. */
-  const deploys = useMemo<DeployItem[]>(() => {
-    if (market === "spot") {
-      return spotDeploys.slice(0, 2).map((a) => ({
-        key: `${a.tokenId}-${a.index}`,
-        label: a.name,
-        cost: formatSpotCost(a),
-        dateMs: a.time * 1000,
-      }));
-    }
-    return [...perpDeploys]
-      .sort((a, b) => b.time.getTime() - a.time.getTime())
-      .slice(0, 2)
-      .map((a) => ({
-        key: a.hash,
-        label: a.symbol,
-        cost: formatPerpCost(a),
-        dateMs: a.time.getTime(),
-      }));
-  }, [market, spotDeploys, perpDeploys]);
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -285,31 +290,6 @@ export const AuctionsPanel = memo(function AuctionsPanel({
       </div>
 
       <AuctionRow entry={entry} />
-
-      {/* Last deploys — 2 derniers déploiements, en pied de carte */}
-      <div className="mt-auto border-t border-border-subtle px-3 py-2.5">
-        <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1.5">
-          Last deploys
-        </div>
-        {deploys.length === 0 ? (
-          <div className="text-[10px] text-text-tertiary py-1">No recent deploys</div>
-        ) : (
-          deploys.map((d) => (
-            <div key={d.key} className="flex items-center gap-2 py-1 text-[11px]">
-              <span className="w-5 h-5 rounded bg-surface-2 grid place-items-center text-[8px] font-bold text-text-secondary shrink-0">
-                {d.label.slice(0, 2).toUpperCase()}
-              </span>
-              <span className="font-medium text-text-primary truncate">{d.label}</span>
-              <span className="mono text-text-secondary ml-auto whitespace-nowrap">
-                {d.cost}
-              </span>
-              <span className="mono text-[9px] text-text-tertiary whitespace-nowrap">
-                {timeAgo(d.dateMs)}
-              </span>
-            </div>
-          ))
-        )}
-      </div>
     </Card>
   );
 });

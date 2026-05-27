@@ -37,6 +37,8 @@ export const chartPalette = {
   gold: chartColors.gold,          // brand-gold
   up: chartColors.emerald,         // candlestick green / positive
   down: chartColors.rose,          // candlestick red / negative
+  success: "#1FB58E",              // V4 --success — match Tailwind `text-success`
+  danger: "#E53E3E",               // V4 --danger  — match Tailwind `text-danger`
   violet: "#a78bfa",
   cyanVariant: "#6bd4f0",          // slightly desaturated cyan (chart-specific)
   emeraldLight: "#4ade80",         // emerald-400 (also covers #34d399 close enough)
@@ -138,3 +140,56 @@ export const lwcDefaults: DeepPartial<ChartOptions> = {
     vertTouchDrag: false,
   },
 };
+
+/**
+ * createLwcChartOptions — single entry point for any `lightweight-charts`
+ * consumer. Returns `lwcDefaults` deep-merged with the caller's overrides so
+ * font, grid, crosshair and scale conventions stay consistent across every
+ * chart in the app.
+ *
+ * Usage:
+ * ```ts
+ * const chart = createChart(container, createLwcChartOptions({
+ *   width: container.clientWidth,
+ *   height: 480,
+ *   rightPriceScale: { scaleMargins: { top: 0.08, bottom: 0.26 } },
+ * }));
+ * ```
+ *
+ * The override object is shallow-merged at the top level, then per top-level
+ * key. We keep the merge intentionally shallow-but-keyed: most LWC options
+ * are flat (booleans, colors, scaleMargins, etc.) and the few nested ones
+ * are themselves stable objects.
+ */
+export function createLwcChartOptions(
+  overrides?: DeepPartial<ChartOptions>,
+): DeepPartial<ChartOptions> {
+  if (!overrides) return { ...lwcDefaults };
+
+  const merged: DeepPartial<ChartOptions> = { ...lwcDefaults };
+  const defaultsRecord = lwcDefaults as unknown as Record<string, unknown>;
+  const overridesRecord = overrides as unknown as Record<string, unknown>;
+  const mergedRecord = merged as unknown as Record<string, unknown>;
+
+  for (const key of Object.keys(overridesRecord)) {
+    const overrideValue = overridesRecord[key];
+    const defaultValue = defaultsRecord[key];
+    if (
+      overrideValue &&
+      typeof overrideValue === "object" &&
+      !Array.isArray(overrideValue) &&
+      defaultValue &&
+      typeof defaultValue === "object" &&
+      !Array.isArray(defaultValue)
+    ) {
+      mergedRecord[key] = {
+        ...(defaultValue as Record<string, unknown>),
+        ...(overrideValue as Record<string, unknown>),
+      };
+    } else {
+      mergedRecord[key] = overrideValue;
+    }
+  }
+
+  return merged;
+}

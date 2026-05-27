@@ -89,7 +89,7 @@ export default function PublicGoodsPage() {
             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand to-surface">
               Public Goods
             </h1>
-            <p className="text-zinc-400 max-w-2xl">
+            <p className="text-text-secondary max-w-2xl">
               Discover and support projects building on HyperEVM. Direct funding, transparent tracking, and community-driven development.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function PublicGoodsPage() {
             </Button>
             <Button
               variant="outline"
-              className="border-white/10 text-zinc-300 hover:bg-white/5"
+              className="border-white/10 text-text-secondary hover:bg-white/5"
             // onClick={() => router.push('/ecosystem/publicgoods/my-submissions')} // router is not defined in this context
             >
               My Submissions

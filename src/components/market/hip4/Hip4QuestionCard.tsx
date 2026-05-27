@@ -1,74 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { CheckCircle2, Radio, Clock } from "lucide-react";
+import { CheckCircle2, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
-import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
+import { formatExpiryCountdown, isBinaryQuestion } from "@/lib/hip4/market-formatter";
 
 interface Hip4QuestionCardProps {
   question: Hip4QuestionWithOutcomesRow;
-  index?: number;
 }
 
 function categoryBadge(cls: string | null, underlying: string | null): string {
   const c = (cls ?? "").toLowerCase();
   if (!c || c === "custom") return "Custom";
-  if (c === "pricebinary") return underlying ? `${underlying} · Price` : "Price Binary";
+  if (c === "pricebinary") return underlying ? `${underlying} · Binary` : "Binary";
+  if (c === "pricebucket") return underlying ? `${underlying} · Bucket` : "Bucket";
   return cls ?? "Custom";
 }
 
 interface ProbRowProps {
   label: string;
-  pct: number;
-  color: "emerald" | "rose" | "brand";
+  pct: number | null;
+  variant: "success" | "danger" | "brand";
   volume?: number | null;
 }
 
-function ProbRow({ label, pct, color, volume }: ProbRowProps) {
-  const barColor = color === "emerald" ? "bg-emerald-500" : color === "rose" ? "bg-rose-500" : "bg-brand";
-  const textColor = color === "emerald" ? "text-emerald-400" : color === "rose" ? "text-rose-400" : "text-brand";
-  const dotColor = color === "emerald" ? "bg-emerald-400" : color === "rose" ? "bg-rose-400" : "bg-brand";
-  const safePct = Math.max(0, Math.min(100, Number.isFinite(pct) ? pct : 0));
+function ProbRow({ label, pct, variant, volume }: ProbRowProps) {
+  const barColor = variant === "success" ? "bg-success" : variant === "danger" ? "bg-danger" : "bg-brand";
+  const textColor = variant === "success" ? "text-success" : variant === "danger" ? "text-danger" : "text-brand";
+  const dotColor = variant === "success" ? "bg-success" : variant === "danger" ? "bg-danger" : "bg-brand";
+  const hasPrice = pct != null && Number.isFinite(pct);
+  const safePct = hasPrice ? Math.max(0, Math.min(100, pct as number)) : 0;
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <span className={`h-2 w-2 rounded-full ${dotColor}`} />
-          <span className="text-xs font-semibold text-text-primary">{label}</span>
+          <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
+          <span className="text-[12px] font-semibold text-text-primary">{label}</span>
         </div>
         <div className="flex items-center gap-2">
-          {volume != null && (
-            <span className="text-[10px] text-text-tertiary tabular-nums">{compactUsd(volume)}</span>
+          {volume != null && volume > 0 && (
+            <span className="mono text-[10px] text-text-tertiary">{compactUsd(volume)}</span>
           )}
-          <span className={`text-sm font-bold tabular-nums ${textColor}`}>{safePct.toFixed(1)}%</span>
+          <span className={`mono text-[12.5px] font-semibold ${hasPrice ? textColor : "text-text-tertiary"}`}>
+            {hasPrice ? `${safePct.toFixed(1)}%` : "—"}
+          </span>
         </div>
       </div>
-      <div className="relative h-1.5 w-full rounded-full bg-white/[0.06] overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${safePct}%` }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className={`absolute inset-y-0 left-0 rounded-full ${barColor} opacity-70`}
+      <div className="relative h-1 w-full rounded-full bg-surface-2 overflow-hidden">
+        <div
+          className={`absolute inset-y-0 left-0 rounded-full ${barColor} opacity-70 transition-[width] duration-500 ease-out`}
+          style={{ width: `${safePct}%` }}
         />
       </div>
     </div>
   );
 }
 
-function isBinaryMarket(question: Hip4QuestionWithOutcomesRow): boolean {
-  if (question.outcomes.length !== 2) return false;
-  const names = question.outcomes.map((o) => o.display_name);
-  return names.includes("Yes") || names.includes("No");
-}
-
-export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps) {
+export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
   const settled = question.status === "settled";
+  const expiredUnresolved = question.status === "expired_unresolved";
   const title = question.title || "Untitled market";
   const badge = categoryBadge(question.class, question.underlying);
-  const binary = isBinaryMarket(question);
+  const binary = isBinaryQuestion(question);
 
   const primaryOutcome = question.outcomes[0];
   const primaryCoin = primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null;
@@ -77,94 +73,83 @@ export function Hip4QuestionCard({ question, index = 0 }: Hip4QuestionCardProps)
   const countdown = !settled ? formatExpiryCountdown(question.expiry ?? null) : null;
 
   const inner = (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: Math.min(index * 0.03, 0.3), duration: 0.25 }}
-      className="bg-surface border border-border-subtle rounded-lg relative flex h-full flex-col gap-3 p-4 overflow-hidden hover:border-border-default transition-colors cursor-pointer"
-    >
-      {/* Header */}
+    <Card className="h-full flex flex-col p-3.5 gap-3 hover:border-border-default transition-colors cursor-pointer">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-text-primary leading-snug line-clamp-2">
-            {title}
-          </h3>
-        </div>
+        <h3 className="text-[13px] font-semibold text-text-primary leading-snug line-clamp-2 flex-1">
+          {title}
+        </h3>
         {settled ? (
-          <span className="shrink-0 inline-flex items-center gap-1 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-emerald-300">
-            <CheckCircle2 className="h-3 w-3" />
+          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-surface-2 border border-border-subtle px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
+            <CheckCircle2 size={10} />
             Settled
           </span>
+        ) : expiredUnresolved ? (
+          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-gold/10 border border-gold/25 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+            <Clock size={10} />
+            Awaiting resolution
+          </span>
         ) : (
-          <span className="shrink-0 inline-flex items-center gap-1 rounded-md border border-brand/25 bg-brand/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-brand">
-            <Radio className="h-3 w-3 animate-pulse" />
+          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-success/10 border border-success/25 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">
+            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
             Live
           </span>
         )}
       </div>
 
-      {/* Category badge */}
-      <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-wider">
-        <span className="rounded-md border border-border-subtle bg-white/[0.03] px-1.5 py-0.5 text-text-secondary">
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {badge}
         </span>
         {!binary && question.outcome_count > 1 && (
-          <span className="rounded-md border border-border-subtle bg-white/[0.03] px-1.5 py-0.5 text-text-secondary">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
             {question.outcome_count} outcomes
           </span>
         )}
       </div>
 
-      {/* Outcomes */}
-      <div className="flex flex-col gap-2.5 mt-1">
+      <div className="flex flex-col gap-2.5 mt-1 flex-1">
         {binary ? (
           question.outcomes.map((o) => {
             const isYes = o.display_name === "Yes";
             const isNo = o.display_name === "No";
             const pct = o.mid_price != null && Number.isFinite(o.mid_price)
               ? o.mid_price * 100
-              : 0;
-            const color: "emerald" | "rose" | "brand" = isYes ? "emerald" : isNo ? "rose" : "brand";
+              : null;
+            const variant: "success" | "danger" | "brand" = isYes ? "success" : isNo ? "danger" : "brand";
             return (
               <ProbRow
                 key={o.outcome_id}
                 label={o.display_name}
                 pct={pct}
-                color={color}
+                variant={variant}
                 volume={o.total_volume}
               />
             );
           })
         ) : (
           question.outcomes.map((o, i) => (
-            <Hip4OutcomeBar
-              key={o.outcome_id}
-              outcome={o}
-              colorIndex={i}
-              delay={Math.min(i * 0.05, 0.25)}
-            />
+            <Hip4OutcomeBar key={o.outcome_id} outcome={o} colorIndex={i} />
           ))
         )}
       </div>
 
-      {/* Footer */}
-      <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-text-tertiary border-t border-border-subtle">
-        <span className="tabular-nums">{compactUsd(question.total_volume)} vol</span>
+      <div className="mt-auto pt-2 flex items-center justify-between text-[10.5px] text-text-tertiary border-t border-border-subtle">
+        <span className="mono">{compactUsd(question.total_volume)} vol</span>
         <div className="flex items-center gap-2">
           {countdown && !settled && (
-            <span className="flex items-center gap-1 text-text-tertiary/70">
-              <Clock className="h-3 w-3" />
+            <span className="flex items-center gap-1">
+              <Clock size={10} />
               {countdown}
             </span>
           )}
           {question.resolved_at && settled && (
-            <span className="tabular-nums">
+            <span className="mono">
               {new Date(question.resolved_at).toLocaleDateString()}
             </span>
           )}
         </div>
       </div>
-    </motion.div>
+    </Card>
   );
 
   if (href) {

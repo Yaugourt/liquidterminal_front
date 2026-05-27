@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Explorer · Variant D — Living Explorer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#0A0B0F",
+          surface: "#0F1421",
+          "surface-2": "#141B2A",
+          "surface-3": "#1C2436",
+          "surface-4": "#1E2535",
+          "border-subtle": "#1E2535",
+          "border-default": "#2C354A",
+          "text-primary": "#E8EAED",
+          "text-secondary": "#9CA3AF",
+          "text-tertiary": "#6B7280",
+          brand: "#83E9FF",
+          "brand-deep": "#1692AD",
+          gold: "#F9E370",
+          success: "#1FA85B",
+          danger: "#E53E3E",
+          violet: "#A78BFA",
+          pink: "#F472B6",
+          emerald: "#34D399",
+          orange: "#FB923C",
+          blue: "#60A5FA",
+        },
+        fontFamily: {
+          inter: ["Inter", "ui-sans-serif", "system-ui"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { background:#0A0B0F; color:#E8EAED; font-family:Inter, ui-sans-serif, system-ui; }
+  .mono { font-feature-settings:"tnum"; font-variant-numeric:tabular-nums; }
+
+  /* Card primitives */
+  .card { background:#0F1421; border:1px solid #1E2535; border-radius:8px; overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:.625rem; padding:.625rem .875rem; border-bottom:1px solid #1E2535; }
+  .icon-wrap { width:1.5rem; height:1.5rem; border-radius:6px; background:rgba(131,233,255,0.10); display:grid; place-items:center; flex-shrink:0; }
+  .icon-wrap svg { color:#83E9FF; }
+
+  /* Pills */
+  .tag { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:#141B2A; color:#6B7280; border:1px solid #1E2535; }
+  .tag-brand { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .tag-gold { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(249,227,112,0.10); color:#F9E370; border:1px solid rgba(249,227,112,0.25); }
+  .tag-live { font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; background:rgba(31,168,91,0.10); color:#1FA85B; border:1px solid rgba(31,168,91,0.25); display:inline-flex; align-items:center; gap:5px; }
+  .tag-live::before { content:""; width:6px; height:6px; border-radius:50%; background:#1FA85B; animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+
+  /* Section head */
+  .section-head { display:flex; align-items:baseline; gap:.75rem; margin-bottom:.625rem; }
+  .section-head h2 { font-size:14px; font-weight:600; color:#E8EAED; }
+  .section-head .sub { font-size:11px; color:#6B7280; }
+
+  /* View-all link */
+  .view-all { font-size:11px; font-weight:500; color:#83E9FF; display:inline-flex; align-items:center; gap:4px; }
+  .view-all:hover { color:#A8F0FF; }
+
+  /* Hero search */
+  .hero-search { background:#0F1421; border:1px solid #2C354A; border-radius:10px; display:flex; align-items:center; gap:.875rem; padding:1rem 1.125rem; transition:border-color .15s; }
+  .hero-search:focus-within { border-color:#83E9FF; }
+  .hero-search input { background:transparent; border:none; outline:none; color:#E8EAED; flex:1; font-size:15px; letter-spacing:-.005em; }
+  .hero-search input::placeholder { color:#6B7280; }
+  .hero-search .kbd { font-size:10px; color:#6B7280; border:1px solid #1E2535; padding:2px 6px; border-radius:4px; background:#141B2A; }
+
+  /* KPI ribbon 6 cells */
+  .ribbon { display:grid; grid-template-columns:repeat(8,1fr); gap:1px; background:#1E2535; border:1px solid #2C354A; border-radius:8px; overflow:hidden; }
+  .ribbon .cell { background:#0F1421; padding:14px 16px; transition:background .15s; }
+  .ribbon .cell:hover { background:#141B2A; }
+  .ribbon .lb { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; }
+  .ribbon .v { font-size:21px; font-weight:600; letter-spacing:-.02em; margin-top:6px; line-height:1; color:#E8EAED; }
+  .ribbon .sub { font-size:10.5px; color:#6B7280; margin-top:6px; }
+  .ribbon .sub.up { color:#1FA85B; }
+  .ribbon .sub.dn { color:#E53E3E; }
+  .ribbon .cell .live-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#1FA85B; margin-right:6px; animation:pulse 1.5s infinite; vertical-align:middle; }
+
+  /* Avatars — rounded-md bg-brand/10 (NO circle, NO gradient) */
+  .av { width:24px; height:24px; border-radius:6px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; font-size:9.5px; font-weight:700; letter-spacing:.02em; flex-shrink:0; overflow:hidden; }
+  .av-sm { width:20px; height:20px; border-radius:5px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; font-size:8.5px; font-weight:700; flex-shrink:0; }
+  .av-gold { background:rgba(249,227,112,0.10); color:#F9E370; }
+  .av-violet { background:rgba(167,139,250,0.10); color:#A78BFA; }
+  .av-emerald { background:rgba(31,168,91,0.10); color:#1FA85B; }
+  .av-pink { background:rgba(244,114,182,0.10); color:#F472B6; }
+  .av-orange { background:rgba(251,146,60,0.10); color:#FB923C; }
+  .av-blue { background:rgba(96,165,250,0.10); color:#60A5FA; }
+
+  /* Feed tables */
+  .feed-h { display:grid; padding:8px 14px; font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:#6B7280; font-weight:600; background:#141B2A; border-bottom:1px solid #1E2535; }
+  .feed-row { display:grid; padding:8px 14px; font-size:11.5px; align-items:center; border-bottom:1px solid rgba(30,37,53,.6); transition:background .12s; }
+  .feed-row:hover { background:#141B2A; }
+  .feed-row:last-child { border-bottom:none; }
+
+  /* Grid templates */
+  .grid-blocks { grid-template-columns: 70px 48px 50px 1fr 110px; }
+  .grid-tx { grid-template-columns: 50px 1fr 80px 56px; }
+  .grid-bridge { grid-template-columns: 60px 1fr 1fr 100px 78px; }
+  .grid-deploys { grid-template-columns: 64px 1fr 130px 80px 80px 72px; }
+
+  .addr { font-size:11px; color:#9CA3AF; }
+  .addr-link { color:#83E9FF; }
+  .addr-link:hover { text-decoration:underline; }
+
+  /* Status pills */
+  .pill-ok { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(31,168,91,0.12); color:#1FA85B; }
+  .pill-fail { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(229,62,62,0.12); color:#E53E3E; }
+  .pill-spot { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(131,233,255,0.12); color:#83E9FF; }
+  .pill-perp { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(167,139,250,0.12); color:#A78BFA; }
+  .pill-hip3 { font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:3px; background:rgba(244,114,182,0.12); color:#F472B6; }
+
+  /* Gas bar */
+  .gasbar { display:inline-block; vertical-align:middle; height:4px; width:64px; background:#141B2A; border-radius:2px; overflow:hidden; }
+  .gasbar i { display:block; height:100%; background:#83E9FF; border-radius:2px; }
+
+  /* Donut legend */
+  .leg-row { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid #1E2535; cursor:pointer; transition:background .15s; }
+  .leg-row:last-child { border-bottom:none; }
+  .leg-row:hover { background:rgba(20,27,42,0.5); }
+  .leg-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+
+  /* Mini leaderboard row */
+  .mini-row { display:grid; grid-template-columns: 18px 24px 1fr auto; align-items:center; gap:10px; padding:7px 14px; border-bottom:1px solid rgba(30,37,53,.6); transition:background .12s; }
+  .mini-row:hover { background:#141B2A; }
+  .mini-row:last-child { border-bottom:none; }
+
+  /* Halo */
+  .halo { position:fixed; inset:0 0 auto 0; height:340px; background:linear-gradient(to bottom, rgba(15,20,33,0.6), transparent); pointer-events:none; z-index:0; }
+
+  /* Sidebar */
+  .side-link { display:flex; align-items:center; gap:.625rem; padding:.5rem .625rem; border-radius:6px; font-size:13px; color:#9CA3AF; }
+  .side-link:hover { background:#141B2A; color:#E8EAED; }
+  .side-link.active { background:rgba(131,233,255,0.10); color:#E8EAED; position:relative; }
+  .side-link.active::before { content:""; position:absolute; left:-2px; top:50%; transform:translateY(-50%); width:2px; height:16px; background:#83E9FF; border-radius:2px; }
+  .side-link.active .side-ic { color:#83E9FF; }
+  .side-ic { width:16px; color:#6B7280; }
+
+  /* Page header */
+  .page-title { font-size:22px; font-weight:700; letter-spacing:-.02em; color:#E8EAED; }
+  .page-sub { font-size:12.5px; color:#9CA3AF; margin-top:4px; }
+</style>
+</head>
+<body class="font-inter text-text-primary">
+<div class="halo"></div>
+
+<div class="relative z-10 flex min-h-screen">
+  <!-- sidebar V4 -->
+  <aside class="w-[232px] shrink-0 border-r border-border-subtle bg-surface p-3 space-y-0.5">
+    <div class="px-2 py-3 mb-2">
+      <div class="text-[15px] font-bold tracking-tight">Liquid Terminal</div>
+      <div class="text-[9.5px] uppercase tracking-[0.12em] text-text-tertiary font-semibold mt-0.5">Hyperliquid Data</div>
+    </div>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-2 pb-1.5">Overview</div>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>Market</a>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-3 pb-1.5">Chain</div>
+    <a class="side-link active"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Explorer</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Bridge</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v5c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>Validators</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Vaults</a>
+    <div class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold px-2 pt-3 pb-1.5">Extensions</div>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>HIP-3 / HIP-4</a>
+    <a class="side-link"><svg class="side-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94L6.21 19.79a2.12 2.12 0 0 1-3-3l8.32-8.32a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Builders</a>
+  </aside>
+
+  <!-- main -->
+  <main class="flex-1 min-w-0">
+    <!-- sticky header -->
+    <header class="sticky top-0 z-30 bg-base/80 backdrop-blur-xl">
+      <div class="flex items-center gap-3 px-6 py-3">
+        <div class="flex-1 max-w-md">
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input class="w-full h-9 pl-9 pr-3 bg-surface border border-border-default rounded-lg text-[13px] text-text-primary placeholder:text-text-tertiary focus:border-brand outline-none transition-colors" placeholder="Search asset, address, tx…" />
+          </div>
+        </div>
+        <button class="text-[12px] font-medium text-text-secondary hover:text-text-primary px-2.5">Docs</button>
+        <button class="text-[12px] font-semibold px-3 h-9 rounded-lg bg-brand text-base">Connect</button>
+      </div>
+    </header>
+
+    <div class="px-6 py-8">
+    <div class="mx-auto" style="max-width:1280px">
+
+      <!-- Variant label -->
+      <div class="text-[10px] mono uppercase tracking-[0.15em] text-text-tertiary mb-3">EXPLORER · VARIANT D — Living Explorer</div>
+
+      <!-- Page header -->
+      <div class="mb-6">
+        <h1 class="page-title">Explorer</h1>
+        <p class="page-sub">The chain in motion — blocks, transactions, bridge events and the capital allocators that move it.</p>
+      </div>
+
+      <div class="space-y-8">
+
+        <!-- ====== Hero search ====== -->
+        <section>
+          <div class="hero-search">
+            <span class="text-text-tertiary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input placeholder="Search address / tx hash / block #" />
+            <span class="kbd mono">⌘ K</span>
+          </div>
+          <div class="flex items-center gap-3 mt-2 text-[10.5px] text-text-tertiary">
+            <span class="uppercase tracking-[0.06em] font-semibold">Try</span>
+            <span class="mono">0xa1f2…34ce</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">block 8,142,901</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">HYPE</span>
+            <span class="text-text-tertiary/60">·</span>
+            <span class="mono">@PEPEHL</span>
+          </div>
+        </section>
+
+        <!-- ====== Network Pulse — 8 cell ribbon (network + capital mix) ====== -->
+        <!-- Fed by: node info (block height) · /indexer/evm/stats + /indexer/overview/active-traders-24h · /indexer/vaults/vaultSummaries + /staking/validators · DefiLlama hyperliquid-bridge · /indexer/vaults/vaultSummaries · /builders/stats?timeframe=24h -->
+        <section>
+          <div class="section-head">
+            <h2>Network Pulse</h2>
+            <span class="sub">— network heartbeat × capital footprint, side by side</span>
+            <span class="ml-auto tag-live">LIVE</span>
+          </div>
+          <div class="ribbon">
+            <div class="cell">
+              <div class="lb">Block height</div>
+              <div class="v mono">8,142,901</div>
+              <div class="sub mono"><span class="live-dot"></span>+1 every ~0.21s</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Tx / sec · 24h</div>
+              <div class="v mono">214.6</div>
+              <div class="sub mono">18.5M tx · 24h</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Active addr · 24h</div>
+              <div class="v mono">74,182</div>
+              <div class="sub mono">unique signers</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Total TVL</div>
+              <div class="v mono">$3.85B</div>
+              <div class="sub mono">Vaults + Stake + Bridge</div>
+            </div>
+            <div class="cell">
+              <div class="lb">HYPE staked</div>
+              <div class="v mono" style="color:#F9E370">241.8M</div>
+              <div class="sub mono">21 validators · ≈$1.74B</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Vaults TVL</div>
+              <div class="v mono">$2.41B</div>
+              <div class="sub mono">142 active vaults</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Builder fees · 24h</div>
+              <div class="v mono" style="color:#F9E370">$487K</div>
+              <div class="sub mono">38 active builders</div>
+            </div>
+            <div class="cell">
+              <div class="lb">Bridge net · 24h</div>
+              <div class="v mono" style="color:#1FA85B">+$18.2M</div>
+              <div class="sub mono">in $62.1M · out $43.9M</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Live Activity — Blocks + Tx ====== -->
+        <!-- Fed by: WS blocks feed (left) · WS tx feed (right) -->
+        <section>
+          <div class="section-head">
+            <h2>Live Activity</h2>
+            <span class="sub">— blocks and transactions streamed straight from the canonical chain</span>
+          </div>
+          <div class="grid gap-4" style="grid-template-columns:1.2fr 1fr;">
+
+            <!-- Live Blocks -->
+            <div class="card">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Latest blocks</h3>
+                <span class="tag">12 newest</span>
+                <span class="tag-live">LIVE</span>
+                <a class="view-all ml-auto">View all
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div class="feed-h grid-blocks">
+                <span>Block</span><span>Age</span><span>Txs</span><span>Builder</span><span class="text-right">Gas used</span>
+              </div>
+              <div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142901</span>
+                  <span class="mono text-text-tertiary">2s</span>
+                  <span class="mono">312</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:42%"></i></span><span class="mono text-[10.5px] text-text-secondary">42%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142900</span>
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="mono">284</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-gold">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:38%"></i></span><span class="mono text-[10.5px] text-text-secondary">38%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142899</span>
+                  <span class="mono text-text-tertiary">4s</span>
+                  <span class="mono">421</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:54%"></i></span><span class="mono text-[10.5px] text-text-secondary">54%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142898</span>
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="mono">198</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-violet">VS</span><span class="addr mono truncate">Vest</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:26%"></i></span><span class="mono text-[10.5px] text-text-secondary">26%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142897</span>
+                  <span class="mono text-text-tertiary">6s</span>
+                  <span class="mono">356</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-pink">PR</span><span class="addr mono truncate">Prime</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:48%"></i></span><span class="mono text-[10.5px] text-text-secondary">48%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142896</span>
+                  <span class="mono text-text-tertiary">7s</span>
+                  <span class="mono">240</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-gold">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:32%"></i></span><span class="mono text-[10.5px] text-text-secondary">32%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142895</span>
+                  <span class="mono text-text-tertiary">8s</span>
+                  <span class="mono">298</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:41%"></i></span><span class="mono text-[10.5px] text-text-secondary">41%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142894</span>
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="mono">344</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-emerald">HL</span><span class="addr mono truncate">Hyperliquid</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:46%"></i></span><span class="mono text-[10.5px] text-text-secondary">46%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142893</span>
+                  <span class="mono text-text-tertiary">10s</span>
+                  <span class="mono">210</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-violet">VS</span><span class="addr mono truncate">Vest</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:29%"></i></span><span class="mono text-[10.5px] text-text-secondary">29%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142892</span>
+                  <span class="mono text-text-tertiary">11s</span>
+                  <span class="mono">412</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm">PV</span><span class="addr mono truncate">PvP.trade</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:58%"></i></span><span class="mono text-[10.5px] text-text-secondary">58%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142891</span>
+                  <span class="mono text-text-tertiary">12s</span>
+                  <span class="mono">286</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-gold">DX</span><span class="addr mono truncate">Dexari</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:39%"></i></span><span class="mono text-[10.5px] text-text-secondary">39%</span></span>
+                </div>
+                <div class="feed-row grid-blocks">
+                  <span class="mono font-semibold text-brand">8142890</span>
+                  <span class="mono text-text-tertiary">13s</span>
+                  <span class="mono">221</span>
+                  <span class="flex items-center gap-2 min-w-0"><span class="av-sm av-pink">PR</span><span class="addr mono truncate">Prime</span></span>
+                  <span class="flex items-center justify-end gap-2"><span class="gasbar"><i style="width:31%"></i></span><span class="mono text-[10.5px] text-text-secondary">31%</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Tx -->
+            <div class="card">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Latest transactions</h3>
+                <span class="tag">15 newest</span>
+                <span class="tag-live">LIVE</span>
+                <a class="view-all ml-auto">View all
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+              <div class="feed-h grid-tx">
+                <span>Age</span><span>From → To</span><span class="text-right">Value</span><span class="text-right">Status</span>
+              </div>
+              <div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">1s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xa1f2…34ce</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x88aa…77b2</span></span>
+                  <span class="mono text-right font-semibold">$184K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">2s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x44de…91ac</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xcc12…4421</span></span>
+                  <span class="mono text-right font-semibold">$92K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x71ab…2017</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xb2e4…ff09</span></span>
+                  <span class="mono text-right font-semibold" style="color:#F9E370">$640K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">3s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x9b1c…44d2</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x3fe8…7a01</span></span>
+                  <span class="mono text-right font-semibold">$48K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">4s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x05a2…61ef</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x77c1…0b10</span></span>
+                  <span class="mono text-right font-semibold">$21K</span>
+                  <span class="text-right"><span class="pill-fail">FAIL</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x18b4…0021</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xfa54…2e91</span></span>
+                  <span class="mono text-right font-semibold">$310K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">5s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xee10…14d2</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x6629…8801</span></span>
+                  <span class="mono text-right font-semibold">$58K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">6s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xa011…00b1</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x1198…0042</span></span>
+                  <span class="mono text-right font-semibold">$128K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">7s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xd2e1…6612</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xb904…5fff</span></span>
+                  <span class="mono text-right font-semibold">$72K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">8s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x70aa…cc31</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x42e0…1190</span></span>
+                  <span class="mono text-right font-semibold" style="color:#F9E370">$1.42M</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x9c44…d014</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xff20…4480</span></span>
+                  <span class="mono text-right font-semibold">$33K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">9s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x33b8…0010</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xc488…91ee</span></span>
+                  <span class="mono text-right font-semibold">$210K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">10s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0xae66…0e20</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x5512…aaa0</span></span>
+                  <span class="mono text-right font-semibold">$15K</span>
+                  <span class="text-right"><span class="pill-fail">FAIL</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">11s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x6611…d901</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0x8e02…1240</span></span>
+                  <span class="mono text-right font-semibold">$84K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+                <div class="feed-row grid-tx">
+                  <span class="mono text-text-tertiary">12s</span>
+                  <span class="flex items-center gap-1.5 mono text-[11px] min-w-0"><span class="addr-link truncate">0x1abc…22ff</span><span class="text-text-tertiary">→</span><span class="addr-link truncate">0xdd44…6100</span></span>
+                  <span class="mono text-right font-semibold">$46K</span>
+                  <span class="text-right"><span class="pill-ok">OK</span></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====== Bridge Flow · 24h — full width ====== -->
+        <!-- Fed by: /indexer/evm/bridge/events?limit=20 (recent rows) + DefiLlama hyperliquid-bridge (24h area shape) -->
+        <section>
+          <div class="section-head">
+            <h2>Bridge Flow · 24h</h2>
+            <span class="sub">— inflows vs outflows across the canonical EVM bridge</span>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 6l-4 4M21 18l-4-4"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Bridge events · 24h</h3>
+              <span class="tag-brand mono">+$18.2M net</span>
+              <span class="tag">1,284 events</span>
+              <a class="view-all ml-auto">View all events
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <!-- top: chart, full width -->
+            <div class="px-4 pt-4 pb-2 border-b border-border-subtle">
+              <div class="flex items-baseline gap-6 mb-3">
+                <div>
+                  <div class="text-[9.5px] uppercase tracking-[.06em] text-text-tertiary font-semibold">Inflow · 24h</div>
+                  <div class="mono text-[20px] font-semibold text-success mt-1">$62.1M</div>
+                </div>
+                <div>
+                  <div class="text-[9.5px] uppercase tracking-[.06em] text-text-tertiary font-semibold">Outflow · 24h</div>
+                  <div class="mono text-[20px] font-semibold text-danger mt-1">$43.9M</div>
+                </div>
+                <div>
+                  <div class="text-[9.5px] uppercase tracking-[.06em] text-text-tertiary font-semibold">Net · 24h</div>
+                  <div class="mono text-[20px] font-semibold mt-1" style="color:#83E9FF">+$18.2M</div>
+                </div>
+                <div>
+                  <div class="text-[9.5px] uppercase tracking-[.06em] text-text-tertiary font-semibold">Bridge TVL</div>
+                  <div class="mono text-[20px] font-semibold mt-1">$2.41B</div>
+                </div>
+                <div class="ml-auto flex gap-4 text-[10.5px]">
+                  <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm bg-success"></span><span class="text-text-secondary">In</span></span>
+                  <span class="flex items-center gap-1.5"><span class="inline-block w-2.5 h-1 rounded-sm bg-danger"></span><span class="text-text-secondary">Out</span></span>
+                </div>
+              </div>
+              <!-- split area chart: in (positive), out (negative mirrored) — full width -->
+              <svg viewBox="0 0 1200 200" class="w-full" style="height:180px" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="grIn" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1FA85B" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="grOut" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#E53E3E" stop-opacity="0"/>
+                    <stop offset="100%" stop-color="#E53E3E" stop-opacity="0.45"/>
+                  </linearGradient>
+                </defs>
+                <!-- gridlines -->
+                <line x1="0" y1="40" x2="1200" y2="40" stroke="#1E2535" stroke-dasharray="3 4"/>
+                <line x1="0" y1="100" x2="1200" y2="100" stroke="#2C354A"/>
+                <line x1="0" y1="160" x2="1200" y2="160" stroke="#1E2535" stroke-dasharray="3 4"/>
+                <!-- IN: positive area above axis -->
+                <path d="M0,82 L50,78 L100,68 L150,72 L200,58 L250,62 L300,50 L350,54 L400,42 L450,48 L500,36 L550,42 L600,30 L650,36 L700,28 L750,32 L800,24 L850,28 L900,20 L950,24 L1000,18 L1050,22 L1100,14 L1150,18 L1200,12 L1200,100 L0,100 Z" fill="url(#grIn)"/>
+                <path d="M0,82 L50,78 L100,68 L150,72 L200,58 L250,62 L300,50 L350,54 L400,42 L450,48 L500,36 L550,42 L600,30 L650,36 L700,28 L750,32 L800,24 L850,28 L900,20 L950,24 L1000,18 L1050,22 L1100,14 L1150,18 L1200,12" stroke="#1FA85B" fill="none" stroke-width="1.5"/>
+                <!-- OUT: mirrored under axis -->
+                <path d="M0,118 L50,124 L100,128 L150,120 L200,134 L250,138 L300,130 L350,142 L400,148 L450,136 L500,154 L550,148 L600,158 L650,150 L700,164 L750,158 L800,168 L850,162 L900,170 L950,164 L1000,172 L1050,168 L1100,176 L1150,170 L1200,178 L1200,100 L0,100 Z" fill="url(#grOut)"/>
+                <path d="M0,118 L50,124 L100,128 L150,120 L200,134 L250,138 L300,130 L350,142 L400,148 L450,136 L500,154 L550,148 L600,158 L650,150 L700,164 L750,158 L800,168 L850,162 L900,170 L950,164 L1000,172 L1050,168 L1100,176 L1150,170 L1200,178" stroke="#E53E3E" fill="none" stroke-width="1.5"/>
+              </svg>
+              <div class="flex justify-between text-[9.5px] mono text-text-tertiary mt-1 px-1">
+                <span>00:00</span><span>03:00</span><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>now</span>
+              </div>
+            </div>
+
+            <!-- bottom: 4 latest rows -->
+            <div>
+              <div class="feed-h grid-bridge">
+                <span>Age</span><span>From</span><span>To</span><span class="text-right">Amount</span><span class="text-right">Asset</span>
+              </div>
+              <div>
+                <div class="feed-row grid-bridge">
+                  <span class="mono text-text-tertiary">12s</span>
+                  <span class="mono addr truncate">0xa1f2…34ce</span>
+                  <span class="mono addr-link truncate">L1 bridge</span>
+                  <span class="mono text-right font-semibold text-success">+$420K</span>
+                  <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-violet">UC</span><span class="text-[11px] font-semibold">USDC</span></span>
+                </div>
+                <div class="feed-row grid-bridge">
+                  <span class="mono text-text-tertiary">48s</span>
+                  <span class="mono addr-link truncate">L1 bridge</span>
+                  <span class="mono addr truncate">0x88aa…77b2</span>
+                  <span class="mono text-right font-semibold text-danger">−$210K</span>
+                  <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-violet">UC</span><span class="text-[11px] font-semibold">USDC</span></span>
+                </div>
+                <div class="feed-row grid-bridge">
+                  <span class="mono text-text-tertiary">2m</span>
+                  <span class="mono addr truncate">0x44de…91ac</span>
+                  <span class="mono addr-link truncate">L1 bridge</span>
+                  <span class="mono text-right font-semibold text-success">+$1.42M</span>
+                  <span class="flex items-center justify-end gap-1.5"><span class="av-sm">HY</span><span class="text-[11px] font-semibold">HYPE</span></span>
+                </div>
+                <div class="feed-row grid-bridge">
+                  <span class="mono text-text-tertiary">4m</span>
+                  <span class="mono addr-link truncate">L1 bridge</span>
+                  <span class="mono addr truncate">0xcc12…4421</span>
+                  <span class="mono text-right font-semibold text-danger">−$94K</span>
+                  <span class="flex items-center justify-end gap-1.5"><span class="av-sm av-emerald">UT</span><span class="text-[11px] font-semibold">USDT0</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Capital Evolution · 30d ====== -->
+        <!-- Fed by: /indexer/vaults/dailySnapshots (TVL line) · /staking/validators/history (HYPE staked line) · /indexer/vaults/vaultSummaries (donut concentration) -->
+        <section>
+          <div class="section-head">
+            <h2>Capital Evolution · 30d</h2>
+            <span class="sub">— how the capital base grew over the last month</span>
+          </div>
+          <div class="grid gap-4" style="grid-template-columns:1fr 2fr;">
+
+            <!-- Donut concentration -->
+            <div class="card">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3 a9 9 0 0 1 9 9"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Vault concentration</h3>
+                <span class="tag">Top 5 vs rest</span>
+              </div>
+              <div class="p-4 flex flex-col items-center">
+                <!-- SVG donut, 144x144, top-5 = 64% (brand cyan), rest = 36% (surface-3) -->
+                <svg viewBox="0 0 80 80" width="144" height="144" style="transform:rotate(-90deg);">
+                  <circle cx="40" cy="40" r="30" fill="none" stroke="#1C2436" stroke-width="14"/>
+                  <circle cx="40" cy="40" r="30" fill="none" stroke="#83E9FF" stroke-width="14"
+                          stroke-dasharray="120.6 188.5" />
+                </svg>
+                <div class="text-center mt-2">
+                  <div class="mono text-[20px] font-semibold" style="letter-spacing:-.02em;">$2.41B</div>
+                  <div class="text-[10.5px] text-text-tertiary">Total vault TVL</div>
+                </div>
+              </div>
+              <div class="px-4 pb-3">
+                <div class="leg-row"><span class="leg-dot" style="background:#83E9FF"></span>
+                  <span class="text-[12px] text-text-primary flex-1">Top 5 vaults</span>
+                  <span class="mono text-[12px] text-text-primary font-semibold">64%</span>
+                  <span class="mono text-[10px] text-text-tertiary ml-2">$1.54B</span>
+                </div>
+                <div class="leg-row"><span class="leg-dot" style="background:#1C2436;border:1px solid #2C354A"></span>
+                  <span class="text-[12px] text-text-primary flex-1">Other 137 vaults</span>
+                  <span class="mono text-[12px] text-text-primary font-semibold">36%</span>
+                  <span class="mono text-[10px] text-text-tertiary ml-2">$867M</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dual-axis area chart 30d -->
+            <div class="card">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">TVL × HYPE staked · 30d</h3>
+                <span class="ml-auto flex items-center gap-3 text-[10.5px]">
+                  <span class="flex items-center gap-1.5"><span style="display:inline-block;width:10px;height:2px;background:#83E9FF;border-radius:1px"></span><span class="text-text-secondary">Vault TVL</span></span>
+                  <span class="flex items-center gap-1.5"><span style="display:inline-block;width:10px;height:2px;background:#F9E370;border-radius:1px"></span><span class="text-text-secondary">HYPE staked</span></span>
+                </span>
+              </div>
+              <div class="p-4">
+                <svg viewBox="0 0 600 220" preserveAspectRatio="none" style="width:100%;height:220px;display:block;">
+                  <defs>
+                    <linearGradient id="gradTvl" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#83E9FF" stop-opacity=".22"/>
+                      <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="gradStake" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#F9E370" stop-opacity=".18"/>
+                      <stop offset="100%" stop-color="#F9E370" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- gridlines -->
+                  <line x1="0" y1="40" x2="600" y2="40" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="100" x2="600" y2="100" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="160" x2="600" y2="160" stroke="#1E2535" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="218" x2="600" y2="218" stroke="#1E2535"/>
+
+                  <!-- TVL area + line (rising trajectory) -->
+                  <path d="M 0 168 L 30 162 L 60 156 L 90 148 L 120 138 L 150 124 L 180 116 L 210 110 L 240 96 L 270 82 L 300 78 L 330 70 L 360 62 L 390 56 L 420 50 L 450 44 L 480 42 L 510 38 L 540 34 L 570 30 L 600 28 L 600 218 L 0 218 Z" fill="url(#gradTvl)"/>
+                  <path d="M 0 168 L 30 162 L 60 156 L 90 148 L 120 138 L 150 124 L 180 116 L 210 110 L 240 96 L 270 82 L 300 78 L 330 70 L 360 62 L 390 56 L 420 50 L 450 44 L 480 42 L 510 38 L 540 34 L 570 30 L 600 28" fill="none" stroke="#83E9FF" stroke-width="2"/>
+
+                  <!-- Stake area + line (slower rising) -->
+                  <path d="M 0 188 L 30 186 L 60 182 L 90 178 L 120 174 L 150 168 L 180 164 L 210 158 L 240 152 L 270 146 L 300 142 L 330 138 L 360 132 L 390 126 L 420 122 L 450 118 L 480 114 L 510 110 L 540 106 L 570 102 L 600 98 L 600 218 L 0 218 Z" fill="url(#gradStake)"/>
+                  <path d="M 0 188 L 30 186 L 60 182 L 90 178 L 120 174 L 150 168 L 180 164 L 210 158 L 240 152 L 270 146 L 300 142 L 330 138 L 360 132 L 390 126 L 420 122 L 450 118 L 480 114 L 510 110 L 540 106 L 570 102 L 600 98" fill="none" stroke="#F9E370" stroke-width="2"/>
+                </svg>
+                <div class="flex justify-between mt-1.5 text-[9px] text-text-tertiary mono">
+                  <span>-30d</span><span>-15d</span><span>today</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====== Capital Snapshot — donut + 3 mini-leaderboards ====== -->
+        <section>
+          <div class="section-head">
+            <h2>Capital Snapshot</h2>
+            <span class="sub">— who controls the capital · vaults concentration and top players in each pillar</span>
+          </div>
+          <div class="grid gap-4" style="grid-template-columns:1fr 2fr;">
+
+            <!-- Donut concentration top-5 vaults vs rest -->
+            <!-- Fed by: /indexer/vaults/vaultSummaries (full list, top 5 vs rest aggregation) -->
+            <div class="card flex flex-col">
+              <div class="card-head">
+                <span class="icon-wrap">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 6"/></svg>
+                </span>
+                <h3 class="text-[13px] font-semibold">Vault concentration</h3>
+                <span class="tag">Top 5 vs Rest</span>
+                <span class="ml-auto text-[10px] text-text-tertiary mono">$612M TVL</span>
+              </div>
+              <div class="flex items-center gap-4 px-4 py-5">
+                <!-- Donut SVG -->
+                <div class="relative shrink-0" style="width:148px; height:148px;">
+                  <svg viewBox="0 0 42 42" width="148" height="148">
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#141B2A" stroke-width="6"/>
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#83E9FF" stroke-width="6"
+                            stroke-dasharray="30.1 69.9" stroke-dashoffset="25" transform="rotate(-90 21 21)" />
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#F9E370" stroke-width="6"
+                            stroke-dasharray="16 84" stroke-dashoffset="-5.1" transform="rotate(-90 21 21)" />
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#A78BFA" stroke-width="6"
+                            stroke-dasharray="8.8 91.2" stroke-dashoffset="-21.1" transform="rotate(-90 21 21)" />
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#F472B6" stroke-width="6"
+                            stroke-dasharray="6.9 93.1" stroke-dashoffset="-29.9" transform="rotate(-90 21 21)" />
+                    <circle cx="21" cy="21" r="15.915" fill="none" stroke="#34D399" stroke-width="6"
+                            stroke-dasharray="5.2 94.8" stroke-dashoffset="-36.8" transform="rotate(-90 21 21)" />
+                  </svg>
+                  <div class="absolute inset-0 grid place-items-center text-center">
+                    <div>
+                      <div class="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Top 5</div>
+                      <div class="mono text-[20px] font-bold mt-0.5" style="letter-spacing:-.02em;">67.0%</div>
+                      <div class="text-[10px] text-brand mono mt-0.5">$410M / $612M</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Legend -->
+                <div class="flex-1 min-w-0">
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#83E9FF;"></span>
+                    <span class="text-[11.5px] flex-1 truncate">Hyperliquidity</span>
+                    <span class="mono text-[11px] text-text-secondary">$184M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">30.1%</span>
+                  </div>
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#F9E370;"></span>
+                    <span class="text-[11.5px] flex-1 truncate">Selini Capital</span>
+                    <span class="mono text-[11px] text-text-secondary">$98M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">16.0%</span>
+                  </div>
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#A78BFA;"></span>
+                    <span class="text-[11.5px] flex-1 truncate">Bonding Vault</span>
+                    <span class="mono text-[11px] text-text-secondary">$54M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">8.8%</span>
+                  </div>
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#F472B6;"></span>
+                    <span class="text-[11.5px] flex-1 truncate">Astera Quant</span>
+                    <span class="mono text-[11px] text-text-secondary">$42M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">6.9%</span>
+                  </div>
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#34D399;"></span>
+                    <span class="text-[11.5px] flex-1 truncate">HLP Native</span>
+                    <span class="mono text-[11px] text-text-secondary">$32M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">5.2%</span>
+                  </div>
+                  <div class="leg-row">
+                    <span class="leg-dot" style="background:#1E2535;"></span>
+                    <span class="text-[11.5px] flex-1 truncate text-text-tertiary">Rest · 307 vaults</span>
+                    <span class="mono text-[11px] text-text-tertiary">$202M</span>
+                    <span class="mono text-[10px] text-text-tertiary w-10 text-right">33.0%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t border-border-subtle px-4 py-2.5 mt-auto">
+                <div class="flex items-center justify-between text-[10.5px]">
+                  <span class="text-text-tertiary">HHI · Herfindahl index</span>
+                  <span class="mono text-text-secondary">1,284 — <span class="text-gold">moderately concentrated</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right column: 3 stacked mini-leaderboards -->
+            <div class="flex flex-col gap-4">
+
+              <!-- Top 3 Vaults -->
+              <!-- Fed by: /indexer/vaults/vaultSummaries?limit=3 -->
+              <div class="card">
+                <div class="card-head">
+                  <span class="icon-wrap">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><path d="M2 7l10-4 10 4"/><circle cx="12" cy="12" r="2"/></svg>
+                  </span>
+                  <h3 class="text-[13px] font-semibold">Top Vaults</h3>
+                  <span class="tag">$612M TVL</span>
+                  <a class="view-all ml-auto">View all
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </a>
+                </div>
+                <div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">1</span>
+                    <span class="av">HL</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Hyperliquidity</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x42a8…f1c3 · APR 28.4%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">$184M</span>
+                      <span class="mono text-[10.5px] text-brand w-12 text-right">30.1%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">2</span>
+                    <span class="av av-gold">SE</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Selini Capital</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x9ac4…2b8e · APR 22.1%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">$98M</span>
+                      <span class="mono text-[10.5px] text-brand w-12 text-right">16.0%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">3</span>
+                    <span class="av av-violet">BV</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Bonding Vault</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x71f2…a3d4 · APR 18.9%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">$54M</span>
+                      <span class="mono text-[10.5px] text-brand w-12 text-right">8.8%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top 3 Validators -->
+              <!-- Fed by: /staking/validators (sorted by stake, top 3) -->
+              <div class="card">
+                <div class="card-head">
+                  <span class="icon-wrap">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 7v5c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/></svg>
+                  </span>
+                  <h3 class="text-[13px] font-semibold">Top Validators</h3>
+                  <span class="tag mono">241.8M HYPE staked</span>
+                  <a class="view-all ml-auto">View all
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </a>
+                </div>
+                <div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">1</span>
+                    <span class="av">NA</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Nansen</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x9f2a…0b14 · comm 4.0% · uptime 99.8%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">98.4M</span>
+                      <span class="mono text-[10.5px] text-gold w-12 text-right">40.7%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">2</span>
+                    <span class="av av-gold">BH</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">B.Harvest</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x8d4e…cc91 · comm 5.0% · uptime 99.6%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">82.1M</span>
+                      <span class="mono text-[10.5px] text-gold w-12 text-right">34.0%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">3</span>
+                    <span class="av av-violet">HY</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Hypio Node</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x2c10…ff04 · comm 3.5% · uptime 99.9%</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold">71.2M</span>
+                      <span class="mono text-[10.5px] text-gold w-12 text-right">29.4%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top 3 Builders -->
+              <!-- Fed by: /builders/top?timeframe=24h&limit=3 -->
+              <div class="card">
+                <div class="card-head">
+                  <span class="icon-wrap">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l4-2 2 4-2 2-4-4z"/><path d="M16 8L4 20l-2-2L14 6"/></svg>
+                  </span>
+                  <h3 class="text-[13px] font-semibold">Top Builders · 24h</h3>
+                  <span class="tag-gold mono">$184K fees</span>
+                  <a class="view-all ml-auto">View all
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </a>
+                </div>
+                <div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">1</span>
+                    <span class="av">PV</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">PvP.trade</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x9c4f…2ab8 · vol $48M · 1,420 users</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold text-gold">$92.4K</span>
+                      <span class="mono text-[10.5px] text-text-secondary w-12 text-right">50.2%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">2</span>
+                    <span class="av av-gold">DX</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Dexari</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x73a1…b46c · vol $21M · 683 users</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold text-gold">$42.1K</span>
+                      <span class="mono text-[10.5px] text-text-secondary w-12 text-right">22.9%</span>
+                    </div>
+                  </div>
+                  <div class="mini-row">
+                    <span class="mono text-[10px] text-text-tertiary">3</span>
+                    <span class="av av-violet">VL</span>
+                    <div class="min-w-0">
+                      <div class="text-[12.5px] font-semibold truncate">Vest Labs</div>
+                      <div class="text-[10px] text-text-tertiary mono truncate">0x1d68…cf94 · vol $14M · 421 users</div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="mono text-[12px] font-semibold text-gold">$28.6K</span>
+                      <span class="mono text-[10.5px] text-text-secondary w-12 text-right">15.5%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Token Deploys · Last 24h ====== -->
+        <!-- Fed by: Hypurrscan /deploys -->
+        <section>
+          <div class="section-head">
+            <h2>Token Deploys · Last 24h</h2>
+            <span class="sub">— newest spot tokens and perp markets shipped on Hyperliquid</span>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <span class="icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+              </span>
+              <h3 class="text-[13px] font-semibold">Recent deploys</h3>
+              <span class="tag">6 newest</span>
+              <span class="tag-brand">24h</span>
+              <a class="view-all ml-auto">All deploys
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+            <div class="feed-h grid-deploys">
+              <span>Age</span><span>Token</span><span>Deployer</span><span class="text-right">Supply</span><span class="text-right">Auction</span><span class="text-right">Type</span>
+            </div>
+            <div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">42m</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av">PE</span><span class="text-[12.5px] font-semibold truncate">@PEPEHL</span></span>
+                <span class="mono addr truncate">0xa1f2…34ce</span>
+                <span class="mono text-right">1.0B</span>
+                <span class="mono text-right text-gold">$48.4K</span>
+                <span class="text-right"><span class="pill-spot">SPOT</span></span>
+              </div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">1h</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av av-gold">SP</span><span class="text-[12.5px] font-semibold truncate">@SPRINT</span></span>
+                <span class="mono addr truncate">0x44de…91ac</span>
+                <span class="mono text-right">500M</span>
+                <span class="mono text-right text-gold">$32.1K</span>
+                <span class="text-right"><span class="pill-spot">SPOT</span></span>
+              </div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">3h</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av av-violet">MI</span><span class="text-[12.5px] font-semibold truncate">@MIST</span></span>
+                <span class="mono addr truncate">0x71ab…2017</span>
+                <span class="mono text-right">10M</span>
+                <span class="mono text-right text-gold">$28.6K</span>
+                <span class="text-right"><span class="pill-spot">SPOT</span></span>
+              </div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">5h</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av av-pink">XY</span><span class="text-[12.5px] font-semibold truncate">xyz:BRENTOIL</span></span>
+                <span class="mono addr truncate">0xb2e4…ff09</span>
+                <span class="mono text-right text-text-tertiary">—</span>
+                <span class="mono text-right text-gold">$1.4M</span>
+                <span class="text-right"><span class="pill-hip3">HIP-3</span></span>
+              </div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">8h</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av av-emerald">JE</span><span class="text-[12.5px] font-semibold truncate">@JEFF</span></span>
+                <span class="mono addr truncate">0x18b4…0021</span>
+                <span class="mono text-right">2.5B</span>
+                <span class="mono text-right text-gold">$18.2K</span>
+                <span class="text-right"><span class="pill-spot">SPOT</span></span>
+              </div>
+              <div class="feed-row grid-deploys">
+                <span class="mono text-text-tertiary">12h</span>
+                <span class="flex items-center gap-2 min-w-0"><span class="av av-orange">XY</span><span class="text-[12.5px] font-semibold truncate">xyz:GOLD</span></span>
+                <span class="mono addr truncate">0xee10…14d2</span>
+                <span class="mono text-right text-text-tertiary">—</span>
+                <span class="mono text-right text-gold">$2.1M</span>
+                <span class="text-right"><span class="pill-hip3">HIP-3</span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== Footer ====== -->
+        <footer class="pt-2 pb-1 flex items-center gap-3 text-[10.5px] text-text-tertiary border-t border-border-subtle">
+          <span class="uppercase tracking-[0.08em] font-semibold">Sources</span>
+          <span>Hypurrscan</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span>HypeDexer</span>
+          <span class="text-text-tertiary/60">·</span>
+          <span>DefiLlama</span>
+          <span class="ml-auto mono">Updated 6s ago · auto-refresh 10s</span>
+        </footer>
+
+      </div>
+    </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

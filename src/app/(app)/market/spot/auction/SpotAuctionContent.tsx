@@ -15,7 +15,7 @@ export function SpotAuctionContent() {
       </div>
 
       <div>
-        <h2 className="text-xs text-zinc-400 font-semibold uppercase tracking-wider mb-4">
+        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
           Past Auctions
         </h2>
         <AuctionTable marketType="spot" />

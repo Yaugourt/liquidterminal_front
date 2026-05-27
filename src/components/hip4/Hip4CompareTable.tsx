@@ -1,13 +1,20 @@
 import type { ReactNode } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { TypedDataTable, type Column } from "@/components/common";
 import { cn } from "@/lib/utils";
+
+/**
+ * Hip4CompareTable — static comparison table used in HIP-4 educational
+ * chapters. Renders a `headers × cells` matrix where each cell is an
+ * arbitrary `ReactNode` (badges, code snippets, prose).
+ *
+ * Built on top of the design-system primitive `TypedDataTable` to stay V4
+ * compliant — column definitions are synthesised from the `headers` array
+ * and each cell is rendered as-is via a custom accessor.
+ */
+interface CompareRow {
+  idx: number;
+  cells: ReactNode[];
+}
 
 export function Hip4CompareTable({
   headers,
@@ -18,38 +25,24 @@ export function Hip4CompareTable({
   rows: ReactNode[][];
   className?: string;
 }) {
+  const data: CompareRow[] = rows.map((cells, idx) => ({ idx, cells }));
+
+  const columns: Column<CompareRow>[] = headers.map((header, columnIdx) => ({
+    key: `col-${columnIdx}`,
+    header,
+    accessor: (row) => row.cells[columnIdx],
+    className: "align-top whitespace-normal min-w-[100px]",
+  }));
+
   return (
-    <div
-      className={cn(
-        "rounded-lg border border-border-subtle bg-surface/30 overflow-x-auto scrollbar-brand",
-        className
-      )}
-    >
-      <Table>
-        <TableHeader>
-          <TableRow className="border-border-subtle hover:bg-transparent">
-            {headers.map((h) => (
-              <TableHead
-                key={h}
-                className="text-table-header whitespace-nowrap min-w-[100px]"
-              >
-                {h}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((cells, ri) => (
-            <TableRow key={ri} className="border-border-subtle">
-              {cells.map((cell, ci) => (
-                <TableCell key={ci} className="align-top text-table-cell">
-                  {cell}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <TypedDataTable
+      data={data}
+      columns={columns}
+      density="compact"
+      getRowKey={(row) => row.idx}
+      className={cn("scrollbar-brand", className)}
+      emptyMessage="—"
+      emptyDescription=""
+    />
   );
 }

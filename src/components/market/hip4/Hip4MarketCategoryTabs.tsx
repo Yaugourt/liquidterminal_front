@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
@@ -17,31 +16,26 @@ export function Hip4MarketCategoryTabs({ value, onChange, counts }: Hip4MarketCa
   const visible = CATEGORY_ORDER.filter((c) => c === "all" || (counts[c] ?? 0) > 0);
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-1.5">
       {visible.map((c) => {
         const isActive = value === c;
         const count = c === "all" ? counts.all ?? 0 : counts[c] ?? 0;
         return (
-          <motion.button
+          <button
             key={c}
             type="button"
             onClick={() => onChange(c)}
-            whileTap={{ scale: 0.97 }}
-            className={`group relative flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+            className={`group flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
               isActive
                 ? "border-brand/40 bg-brand/10 text-brand"
                 : "border-border-subtle bg-transparent text-text-secondary hover:border-border-default hover:text-text-primary"
             }`}
           >
             <span>{CATEGORY_LABELS[c]}</span>
-            <span
-              className={`tabular-nums text-[10px] font-bold ${
-                isActive ? "text-brand" : "text-text-tertiary"
-              }`}
-            >
+            <span className={`mono text-[10px] font-semibold ${isActive ? "text-brand" : "text-text-tertiary"}`}>
               {count}
             </span>
-          </motion.button>
+          </button>
         );
       })}
     </div>

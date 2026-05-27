@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import {
   usePriorityFeesRecentFills,
   extractFillPriorityGas,
@@ -58,9 +58,15 @@ function buildColumns(): Column<PriorityFeesFillRow>[] {
     {
       key: "coin",
       header: "Coin",
-      accessor: (row) => (
-        <span className="text-sm text-text-primary tabular-nums">{row.coin ?? "—"}</span>
-      ),
+      accessor: (row) =>
+        row.coin ? (
+          <span className="inline-flex items-center gap-1.5">
+            <TokenAvatar assetName={row.coin} size="sm" />
+            <span className="text-sm text-text-primary tabular-nums">{row.coin}</span>
+          </span>
+        ) : (
+          <span className="text-sm text-text-secondary">—</span>
+        ),
     },
     {
       key: "side",

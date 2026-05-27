@@ -3,7 +3,7 @@
 import { Liquidation } from "@/services/explorer/liquidation";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -39,7 +39,10 @@ export function LiquidationsSection() {
       key: "coin",
       header: "Coin",
       accessor: (liq) => (
-        <span className="text-brand font-medium">{liq.coin}</span>
+        <span className="inline-flex items-center gap-2">
+          <TokenAvatar assetName={liq.coin} size="md" />
+          <span className="text-brand font-medium">{liq.coin}</span>
+        </span>
       ),
     },
     {

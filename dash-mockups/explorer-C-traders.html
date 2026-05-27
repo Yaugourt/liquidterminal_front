@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Explorer · Variant C — Trader Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-base:#0A0B0F;
+  --bg-surface:#0F1421;
+  --bg-surface-2:#141B2A;
+  --bg-surface-3:#1C2436;
+  --bd-subtle:#1E2535;
+  --bd-default:#2C354A;
+  --t1:#E8EAED;
+  --t2:#9CA3AF;
+  --t3:#6B7280;
+  --brand:#83E9FF;
+  --brand-deep:#1692AD;
+  --gold:#F9E370;
+  --success:#1FA85B;
+  --danger:#E53E3E;
+  --violet:#A78BFA;
+}
+body{background:var(--bg-base);color:var(--t1);font-family:Inter,sans-serif;min-height:100vh;line-height:1.45;
+  background-image:radial-gradient(ellipse 1200px 320px at 50% -80px, rgba(131,233,255,.045), transparent 60%);}
+.mono{font-feature-settings:"tnum"}
+.page{max-width:1280px;margin:0 auto;padding:32px 24px 64px}
+
+/* Page header */
+.page-head{margin-bottom:28px;display:flex;align-items:flex-end;gap:16px}
+.page-head .left{flex:1}
+.page-head h1{font-size:24px;font-weight:600;letter-spacing:-.025em}
+.page-head .sub{font-size:12.5px;color:var(--t2);margin-top:4px}
+.page-head .crumb{font-size:10.5px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.page-head .crumb .accent{color:var(--brand)}
+.page-head .right{display:flex;gap:8px;align-items:center}
+.live-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;padding:5px 10px;border-radius:6px;
+  background:rgba(31,168,91,.10);color:var(--success);border:1px solid rgba(31,168,91,.28)}
+.live-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* Section head */
+.section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;padding:0 2px}
+.section-head h2{font-size:14px;font-weight:600}
+.section-head .ss{font-size:11px;color:var(--t3)}
+.section-head .link{margin-left:auto;font-size:11px;color:var(--brand);font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+
+/* Group separator */
+.section{margin-bottom:32px}
+
+/* ---------- HERO KPI RIBBON — "duel scoreboard" ---------- */
+.duel{display:grid;grid-template-columns:1.25fr 1.25fr 1fr 1fr 1fr;gap:1px;background:var(--bd-subtle);border:1px solid var(--bd-default);border-radius:10px;overflow:hidden}
+.duel .cell{background:var(--bg-surface);padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;min-height:104px;position:relative}
+.duel .cell:hover{background:var(--bg-surface-2)}
+.duel .cell .lb{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px}
+.duel .cell .lb .crown{font-size:11px}
+.duel .cell .val{font-size:23px;font-weight:600;letter-spacing:-.025em;line-height:1;margin-top:8px}
+.duel .cell .sub{font-size:10.5px;color:var(--t3);margin-top:6px;display:flex;align-items:center;gap:6px}
+.duel .cell .addr{font-size:11px;color:var(--brand);font-weight:500}
+.duel .cell.winner{background:linear-gradient(180deg,rgba(31,168,91,.06) 0%,var(--bg-surface) 70%)}
+.duel .cell.winner::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--success)}
+.duel .cell.winner .val{color:var(--success)}
+.duel .cell.loser{background:linear-gradient(180deg,rgba(229,62,62,.06) 0%,var(--bg-surface) 70%)}
+.duel .cell.loser::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--danger)}
+.duel .cell.loser .val{color:var(--danger)}
+.duel .cell .mini-avatar{display:inline-flex;align-items:center;gap:6px}
+.duel .cell .mini-avatar .av{width:16px;height:16px;border-radius:4px;font-size:9px;font-weight:700;display:grid;place-items:center;color:#0A0B0F}
+.duel .cell .neutral .val{color:var(--t1)}
+.duel .cell.spark .spark-wrap{margin-top:6px;height:18px}
+.duel .cell.spark .spark-wrap svg{width:100%;height:100%}
+
+/* ---------- CARD core ---------- */
+.card{background:var(--bg-surface);border:1px solid var(--bd-subtle);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bd-subtle)}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.10);display:grid;place-items:center;flex-shrink:0}
+.head .ic svg{color:var(--brand)}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--bg-surface-2);color:var(--t3);border:1px solid var(--bd-subtle)}
+.head .tag.live{background:rgba(31,168,91,.10);color:var(--success);border-color:rgba(31,168,91,.28);display:inline-flex;align-items:center;gap:5px}
+.head .tag.live .dot{width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 1.6s infinite}
+.head .tag.live.danger{background:rgba(229,62,62,.10);color:var(--danger);border-color:rgba(229,62,62,.28)}
+.head .tag.live.danger .dot{background:var(--danger)}
+.head .view-all{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--brand);font-weight:500;text-decoration:none}
+
+/* tabs inside head */
+.head .tabs{display:flex;gap:2px;margin-left:auto;background:var(--bg-surface-2);border-radius:6px;padding:2px;border:1px solid var(--bd-subtle)}
+.head .tabs button{font-family:inherit;background:none;border:none;font-size:10.5px;font-weight:600;color:var(--t3);padding:3px 8px;border-radius:4px;cursor:pointer;letter-spacing:.02em}
+.head .tabs button.act{background:var(--bg-surface);color:var(--t1);box-shadow:0 0 0 1px var(--bd-default)}
+.head .tabs button:not(.act):hover{color:var(--t2)}
+
+/* ---------- TWO-COL GRID ---------- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3-7{display:grid;grid-template-columns:1fr 2fr;gap:16px}
+
+/* ---------- Traders leaderboard ---------- */
+.tlb-table{width:100%}
+.tlb-table .hdr{display:grid;grid-template-columns:30px 1fr 100px 90px 70px;align-items:center;gap:10px;padding:8px 14px;background:rgba(20,27,42,.5);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);font-weight:600;border-bottom:1px solid var(--bd-subtle)}
+.tlb-table .hdr .right{text-align:right}
+.tlb-row{display:grid;grid-template-columns:30px 1fr 100px 90px 70px;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(30,37,53,.5);cursor:pointer;transition:background .12s}
+.tlb-row:last-child{border-bottom:none}
+.tlb-row:hover{background:var(--bg-surface-2)}
+.tlb-row .rk{font-size:11px;font-weight:700;color:var(--t3);font-feature-settings:"tnum"}
+.tlb-row .rk.top{color:var(--gold)}
+.tlb-row .trader{display:flex;align-items:center;gap:8px;min-width:0}
+.tlb-row .trader .av{width:22px;height:22px;border-radius:5px;font-size:9px;font-weight:700;display:grid;place-items:center;flex-shrink:0;color:#0A0B0F}
+.tlb-row .trader .meta{min-width:0}
+.tlb-row .trader .addr{font-size:11.5px;color:var(--t1);font-weight:500;font-feature-settings:"tnum"}
+.tlb-row .trader .kol{font-size:9.5px;color:var(--brand);background:rgba(131,233,255,.10);border:1px solid rgba(131,233,255,.25);padding:1px 5px;border-radius:3px;margin-left:6px;font-weight:600}
+.tlb-row .trader .sub{font-size:9.5px;color:var(--t3);margin-top:1px}
+.tlb-row .num{font-size:12px;font-weight:600;text-align:right;font-feature-settings:"tnum"}
+.tlb-row .pnl-pos{color:var(--success)}
+.tlb-row .pnl-neg{color:var(--danger)}
+.tlb-row .wr-bar{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.tlb-row .wr-bar .v{font-size:11px;font-weight:600;font-feature-settings:"tnum"}
+.tlb-row .wr-bar .bar{width:48px;height:3px;background:var(--bg-surface-3);border-radius:2px;overflow:hidden}
+.tlb-row .wr-bar .bar i{display:block;height:100%;background:var(--success);border-radius:2px}
+
+/* ---------- Whale rekt ---------- */
+.rekt-strip{display:flex;border-bottom:1px solid var(--bd-subtle)}
+.rekt-strip .c{flex:1;padding:9px 12px;border-right:1px solid var(--bd-subtle)}
+.rekt-strip .c:last-child{border-right:none}
+.rekt-strip .c .lb{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.rekt-strip .c .v{font-size:13.5px;font-weight:600;margin-top:2px;letter-spacing:-.01em;font-feature-settings:"tnum"}
+.rekt-strip .c.gold .v{color:var(--gold)}
+.rekt-hero{padding:12px 14px;border-bottom:1px solid var(--bd-subtle);background:linear-gradient(180deg,rgba(249,227,112,.04) 0%,transparent 100%)}
+.rekt-hero .top-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rekt-hero .badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(249,227,112,.14);color:var(--gold);border:1px solid rgba(249,227,112,.32);text-transform:uppercase;letter-spacing:.06em}
+.rekt-hero .meta{font-size:10px;color:var(--t3);font-feature-settings:"tnum"}
+.rekt-hero .body{display:flex;align-items:center;gap:12px}
+.rekt-hero .icon{width:36px;height:36px;border-radius:8px;background:rgba(229,62,62,.12);color:var(--danger);display:grid;place-items:center;font-weight:700;font-size:11px;flex-shrink:0;border:1px solid rgba(229,62,62,.25)}
+.rekt-hero .desc{flex:1;min-width:0}
+.rekt-hero .desc .addr{font-size:11px;color:var(--brand);font-feature-settings:"tnum"}
+.rekt-hero .desc .summary{font-size:11px;color:var(--t2);margin-top:3px}
+.rekt-hero .desc .summary b{color:var(--t1);font-weight:600}
+.rekt-hero .size{font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--gold);font-feature-settings:"tnum";text-align:right;line-height:1}
+.rekt-hero .size .pill-side{display:inline-block;margin-left:6px;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;vertical-align:middle}
+.rekt-hero .size .pill-side.long{background:rgba(31,168,91,.14);color:var(--success)}
+.rekt-hero .size .pill-side.short{background:rgba(229,62,62,.14);color:var(--danger)}
+.rekt-list{flex:1;display:flex;flex-direction:column}
+.rekt-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid rgba(30,37,53,.5);cursor:pointer}
+.rekt-row:hover{background:var(--bg-surface-2)}
+.rekt-row .ix{width:16px;font-size:10px;color:var(--t3);font-weight:700;font-feature-settings:"tnum";text-align:right}
+.rekt-row .ic{width:22px;height:22px;border-radius:5px;background:rgba(131,233,255,.10);color:var(--brand);display:grid;place-items:center;font-size:8.5px;font-weight:700;flex-shrink:0}
+.rekt-row .info{flex:1;min-width:0}
+.rekt-row .info .a{font-size:11px;color:var(--brand);font-feature-settings:"tnum"}
+.rekt-row .info .b{font-size:10px;color:var(--t3);margin-top:1px;font-feature-settings:"tnum"}
+.rekt-row .info .b .coin{color:var(--t1);font-weight:500}
+.rekt-row .pill{font-size:9px;font-weight:700;padding:1.5px 5px;border-radius:3px}
+.rekt-row .long{background:rgba(31,168,91,.12);color:var(--success)}
+.rekt-row .short{background:rgba(229,62,62,.12);color:var(--danger)}
+.rekt-row .v{font-size:11.5px;font-weight:600;font-feature-settings:"tnum";text-align:right;min-width:58px;color:var(--t1)}
+.rekt-row .t{font-size:9.5px;color:var(--t3);min-width:32px;text-align:right;font-feature-settings:"tnum"}
+
+/* ---------- Funding strip ---------- */
+.funding{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--bd-subtle);border:1px solid var(--bd-subtle);border-radius:8px;overflow:hidden}
+.funding .fc{background:var(--bg-surface);padding:12px 14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:background .12s;position:relative}
+.funding .fc:hover{background:var(--bg-surface-2)}
+.funding .fc .top{display:flex;align-items:center;gap:8px}
+.funding .fc .tk{width:20px;height:20px;border-radius:5px;background:rgba(131,233,255,.10);color:var(--brand);display:grid;place-items:center;font-size:8.5px;font-weight:700;flex-shrink:0}
+.funding .fc .ticker{font-size:11.5px;font-weight:600;color:var(--t1)}
+.funding .fc .arr{margin-left:auto;font-size:10px}
+.funding .fc .arr.up{color:var(--success)}
+.funding .fc .arr.dn{color:var(--danger)}
+.funding .fc .rate{font-size:16px;font-weight:600;letter-spacing:-.02em;font-feature-settings:"tnum"}
+.funding .fc .rate.pos{color:var(--success)}
+.funding .fc .rate.neg{color:var(--danger)}
+.funding .fc .rate .unit{font-size:10px;color:var(--t3);font-weight:500;margin-left:2px}
+.funding .fc .spark{height:22px;margin-top:auto}
+.funding .fc .spark svg{width:100%;height:100%;display:block}
+
+/* ---------- Builder podium ---------- */
+.podium{padding:14px;display:flex;flex-direction:column;gap:10px}
+.podium .p-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:1px solid var(--bd-subtle);background:var(--bg-surface);position:relative;overflow:hidden}
+.podium .p-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.podium .p-row.gold::before{background:linear-gradient(180deg,#F9E370,#C8A93D)}
+.podium .p-row.silver::before{background:linear-gradient(180deg,#C9D1D9,#7A8290)}
+.podium .p-row.bronze::before{background:linear-gradient(180deg,#CD8B4A,#8B5A2B)}
+.podium .p-row.gold{background:linear-gradient(180deg,rgba(249,227,112,.04),var(--bg-surface) 80%)}
+.podium .p-row .rk{font-size:22px;font-weight:700;font-feature-settings:"tnum";letter-spacing:-.02em;width:24px;text-align:center}
+.podium .p-row.gold .rk{color:#F9E370}
+.podium .p-row.silver .rk{color:#C9D1D9}
+.podium .p-row.bronze .rk{color:#CD8B4A}
+.podium .p-row .av{width:30px;height:30px;border-radius:7px;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0;color:#0A0B0F}
+.podium .p-row .info{flex:1;min-width:0}
+.podium .p-row .nm{font-size:12.5px;color:var(--t1);font-weight:600}
+.podium .p-row .sub{font-size:10px;color:var(--t3);margin-top:2px;font-feature-settings:"tnum"}
+.podium .p-row .num{text-align:right}
+.podium .p-row .num .v{font-size:14px;color:var(--gold);font-weight:600;font-feature-settings:"tnum"}
+.podium .p-row .num .pct{font-size:10px;color:var(--t3);margin-top:2px;font-feature-settings:"tnum"}
+
+/* ---------- Fills feed ---------- */
+.fills-table .hdr{display:grid;grid-template-columns:50px 56px 1fr 100px 90px 1fr 90px;align-items:center;gap:8px;padding:8px 14px;background:rgba(20,27,42,.5);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);font-weight:600;border-bottom:1px solid var(--bd-subtle)}
+.fills-table .hdr .right{text-align:right}
+.fills-row{display:grid;grid-template-columns:50px 56px 1fr 100px 90px 1fr 90px;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid rgba(30,37,53,.5);font-size:11.5px;cursor:pointer;transition:background .12s}
+.fills-row:last-child{border-bottom:none}
+.fills-row:hover{background:var(--bg-surface-2)}
+.fills-row .t{font-size:10px;color:var(--t3);font-feature-settings:"tnum"}
+.fills-row .side{font-size:9.5px;font-weight:700;padding:2px 5px;border-radius:3px;text-align:center}
+.fills-row .side.buy{background:rgba(31,168,91,.12);color:var(--success)}
+.fills-row .side.sell{background:rgba(229,62,62,.12);color:var(--danger)}
+.fills-row .coin{display:flex;align-items:center;gap:7px;min-width:0}
+.fills-row .coin .tk{width:20px;height:20px;border-radius:5px;background:rgba(131,233,255,.10);color:var(--brand);display:grid;place-items:center;font-size:8.5px;font-weight:700;flex-shrink:0}
+.fills-row .coin .nm{color:var(--t1);font-weight:500}
+.fills-row .num{font-feature-settings:"tnum";text-align:right;color:var(--t1)}
+.fills-row .num.gold{color:var(--gold);font-weight:600}
+.fills-row .user{display:flex;align-items:center;gap:6px;min-width:0}
+.fills-row .user .av{width:18px;height:18px;border-radius:4px;font-size:8.5px;font-weight:700;display:grid;place-items:center;flex-shrink:0;color:#0A0B0F}
+.fills-row .user .addr{font-size:11px;color:var(--brand);font-feature-settings:"tnum"}
+
+/* ---------- 24h summary strip ---------- */
+.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd-subtle);border:1px solid var(--bd-default);border-radius:10px;overflow:hidden}
+.summary-strip .ss-cell{background:var(--bg-surface);padding:14px 18px;display:flex;align-items:center;gap:12px}
+.summary-strip .ss-cell:hover{background:var(--bg-surface-2)}
+.summary-strip .ss-cell .tk{width:32px;height:32px;border-radius:7px;background:rgba(131,233,255,.10);color:var(--brand);display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0}
+.summary-strip .ss-cell .body{flex:1;min-width:0}
+.summary-strip .ss-cell .lb{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.summary-strip .ss-cell .v{font-size:17px;font-weight:600;letter-spacing:-.02em;margin-top:3px;font-feature-settings:"tnum"}
+.summary-strip .ss-cell .v.pos{color:var(--success)}
+.summary-strip .ss-cell .v.neg{color:var(--danger)}
+.summary-strip .ss-cell .coin{font-size:11.5px;color:var(--t1);font-weight:600;margin-top:1px}
+.summary-strip .ss-cell .right{margin-left:auto;text-align:right}
+.summary-strip .ss-cell .right .nm{font-size:13px;color:var(--t1);font-weight:600}
+.summary-strip .ss-cell .right .sb{font-size:10px;color:var(--t3);margin-top:2px;font-feature-settings:"tnum"}
+
+/* ---------- Footer ---------- */
+.foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd-subtle);display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3)}
+.foot a{color:var(--brand);text-decoration:none}
+
+</style></head><body>
+<div class="page">
+
+  <!-- Page header -->
+  <div class="page-head">
+    <div class="left">
+      <div class="crumb"><span>Explorer</span> · <span class="accent">Traders</span></div>
+      <h1>Trader Leaderboard</h1>
+      <p class="sub">Who's winning, who's getting rekt — real-time PnL, liquidations, fills and fees from the Hyperliquid trader pool.</p>
+    </div>
+    <div class="right">
+      <span class="live-chip"><span class="dot"></span>Live · 24h window</span>
+    </div>
+  </div>
+
+  <!-- ============== SECTION 1 — TRADER PULSE ============== -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Trader Pulse</h2>
+      <span class="ss">Winners vs losers, last 24h</span>
+    </div>
+
+    <!-- KPI ribbon "duel scoreboard" — winner left (green top rail), loser right (red top rail) -->
+    <div class="duel">
+      <div class="cell winner">
+        <div>
+          <div class="lb"><span class="crown">▲</span> Top trader 24h</div>
+          <div class="val mono">+$2.84M</div>
+        </div>
+        <div class="sub">
+          <span class="mini-avatar"><span class="av" style="background:#83E9FF">7c</span><span class="addr mono">0x7c2a…f1Ee</span></span>
+        </div>
+      </div>
+      <div class="cell loser">
+        <div>
+          <div class="lb"><span class="crown">▼</span> Worst trader 24h</div>
+          <div class="val mono">−$1.62M</div>
+        </div>
+        <div class="sub">
+          <span class="mini-avatar"><span class="av" style="background:#F9E370">91</span><span class="addr mono">0x91Ce…a8F2</span></span>
+        </div>
+      </div>
+      <div class="cell neutral">
+        <div>
+          <div class="lb">Active traders 24h</div>
+          <div class="val mono">42,318</div>
+        </div>
+        <div class="sub mono">+8.4% vs prev 24h</div>
+      </div>
+      <div class="cell neutral">
+        <div>
+          <div class="lb">Liquidated 24h</div>
+          <div class="val mono" style="color:var(--danger)">$11.5M</div>
+        </div>
+        <div class="sub mono">847 events · 73% L · 27% S</div>
+      </div>
+      <div class="cell neutral spark">
+        <div>
+          <div class="lb">Largest liq 24h</div>
+          <div class="val mono" style="color:var(--gold)">$420K</div>
+        </div>
+        <div class="spark-wrap">
+          <svg viewBox="0 0 100 18" preserveAspectRatio="none">
+            <path d="M0 12 L10 13 L20 11 L30 9 L40 14 L50 8 L60 6 L70 9 L80 4 L90 3 L100 2" fill="none" stroke="#E53E3E" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== SECTION 2 — WHO'S WINNING / CARNAGE ============== -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Who's winning · Carnage</h2>
+      <span class="ss">Top traders and biggest blow-ups of the last 24h</span>
+    </div>
+
+    <div class="grid-2">
+
+      <!-- Top Traders Leaderboard -->
+      <div class="card">
+        <div class="head">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
+          <h3>Top Traders</h3>
+          <div class="tabs">
+            <button class="act">PNL ▲</button>
+            <button>PNL ▼</button>
+            <button>Volume</button>
+            <button>Trades</button>
+          </div>
+        </div>
+
+        <div class="tlb-table">
+          <div class="hdr">
+            <span></span>
+            <span>Trader</span>
+            <span class="right">PnL 24h</span>
+            <span class="right">Volume</span>
+            <span class="right">Win rate</span>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk top">01</span>
+            <div class="trader">
+              <span class="av" style="background:#83E9FF">7c</span>
+              <div class="meta">
+                <span class="addr mono">0x7c2a…f1Ee</span><span class="kol">KOL</span>
+                <div class="sub mono">142 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$2.84M</span>
+            <span class="num">$48.2M</span>
+            <div class="wr-bar"><span class="v">71%</span><span class="bar"><i style="width:71%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk top">02</span>
+            <div class="trader">
+              <span class="av" style="background:#A78BFA">8f</span>
+              <div class="meta">
+                <span class="addr mono">0x8f44…D9c1</span>
+                <div class="sub mono">98 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$1.92M</span>
+            <span class="num">$31.7M</span>
+            <div class="wr-bar"><span class="v">64%</span><span class="bar"><i style="width:64%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk top">03</span>
+            <div class="trader">
+              <span class="av" style="background:#F9E370">ab</span>
+              <div class="meta">
+                <span class="addr mono">0xab21…3E7a</span><span class="kol">KOL</span>
+                <div class="sub mono">211 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$1.41M</span>
+            <span class="num">$62.0M</span>
+            <div class="wr-bar"><span class="v">58%</span><span class="bar"><i style="width:58%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">04</span>
+            <div class="trader">
+              <span class="av" style="background:#1FA85B">d2</span>
+              <div class="meta">
+                <span class="addr mono">0xd255…91Aa</span>
+                <div class="sub mono">76 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$1.08M</span>
+            <span class="num">$22.3M</span>
+            <div class="wr-bar"><span class="v">68%</span><span class="bar"><i style="width:68%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">05</span>
+            <div class="trader">
+              <span class="av" style="background:#E53E3E">3a</span>
+              <div class="meta">
+                <span class="addr mono">0x3afE…0bC2</span>
+                <div class="sub mono">187 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$842K</span>
+            <span class="num">$28.9M</span>
+            <div class="wr-bar"><span class="v">52%</span><span class="bar"><i style="width:52%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">06</span>
+            <div class="trader">
+              <span class="av" style="background:#83E9FF">b8</span>
+              <div class="meta">
+                <span class="addr mono">0xb812…44dC</span>
+                <div class="sub mono">53 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$724K</span>
+            <span class="num">$14.8M</span>
+            <div class="wr-bar"><span class="v">79%</span><span class="bar"><i style="width:79%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">07</span>
+            <div class="trader">
+              <span class="av" style="background:#A78BFA">5e</span>
+              <div class="meta">
+                <span class="addr mono">0x5eF1…9c30</span>
+                <div class="sub mono">122 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$612K</span>
+            <span class="num">$19.4M</span>
+            <div class="wr-bar"><span class="v">61%</span><span class="bar"><i style="width:61%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">08</span>
+            <div class="trader">
+              <span class="av" style="background:#F9E370">cc</span>
+              <div class="meta">
+                <span class="addr mono">0xcc73…2E81</span>
+                <div class="sub mono">88 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$498K</span>
+            <span class="num">$11.2M</span>
+            <div class="wr-bar"><span class="v">55%</span><span class="bar"><i style="width:55%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">09</span>
+            <div class="trader">
+              <span class="av" style="background:#1FA85B">1a</span>
+              <div class="meta">
+                <span class="addr mono">0x1a44…b9C7</span>
+                <div class="sub mono">64 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$421K</span>
+            <span class="num">$9.8M</span>
+            <div class="wr-bar"><span class="v">66%</span><span class="bar"><i style="width:66%"></i></span></div>
+          </div>
+
+          <div class="tlb-row">
+            <span class="rk">10</span>
+            <div class="trader">
+              <span class="av" style="background:#E53E3E">02</span>
+              <div class="meta">
+                <span class="addr mono">0x02bE…F123</span>
+                <div class="sub mono">204 trades</div>
+              </div>
+            </div>
+            <span class="num pnl-pos">+$382K</span>
+            <span class="num">$17.6M</span>
+            <div class="wr-bar"><span class="v">49%</span><span class="bar"><i style="width:49%"></i></span></div>
+          </div>
+        </div>
+
+        <div style="padding:8px 14px;border-top:1px solid var(--bd-subtle);font-size:10.5px;color:var(--t3);display:flex;align-items:center">
+          <span>Last 24h · 42,318 total active</span>
+          <a href="#" style="margin-left:auto;color:var(--brand);text-decoration:none;font-weight:500">View all → /traders</a>
+        </div>
+      </div>
+
+      <!-- Whale Rekt Feed -->
+      <div class="card">
+        <div class="head">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+          <h3>Whale Rekt Feed</h3>
+          <span class="tag live danger"><span class="dot"></span>LIVE</span>
+          <a class="view-all" href="#">View all →</a>
+        </div>
+
+        <div class="rekt-strip">
+          <div class="c"><div class="lb">Total 24h</div><div class="v">$11.5M</div></div>
+          <div class="c"><div class="lb">Events</div><div class="v">847</div></div>
+          <div class="c gold"><div class="lb">Whales (≥ $100K)</div><div class="v">18</div></div>
+          <div class="c"><div class="lb">L / S</div><div class="v"><span style="color:var(--success)">73%</span> · <span style="color:var(--danger)">27%</span></div></div>
+        </div>
+
+        <div class="rekt-hero">
+          <div class="top-row">
+            <span class="badge">★ Biggest 24h</span>
+            <span class="meta">3h 52m ago · block #18,824,193</span>
+          </div>
+          <div class="body">
+            <div class="icon">HY</div>
+            <div class="desc">
+              <div class="addr mono">0x7c2a…f1Ee</div>
+              <div class="summary"><b>HYPE long</b> · entry $42.10 → liquidated at <span class="mono">$38.41</span></div>
+            </div>
+            <div class="size mono">$420K<span class="pill-side long">LONG</span></div>
+          </div>
+        </div>
+
+        <div class="rekt-list">
+          <div class="rekt-row">
+            <span class="ix">02</span>
+            <span class="ic">BT</span>
+            <div class="info">
+              <div class="a mono">0x91Ce…a8F2</div>
+              <div class="b"><span class="coin">BTC</span> short · entry $96,420 → $98,212</div>
+            </div>
+            <span class="pill short">SHORT</span>
+            <span class="v mono">$182K</span>
+            <span class="t">28m</span>
+          </div>
+          <div class="rekt-row">
+            <span class="ix">03</span>
+            <span class="ic">SO</span>
+            <div class="info">
+              <div class="a mono">0x44d1…b007</div>
+              <div class="b"><span class="coin">SOL</span> long · entry $221 → $214.30</div>
+            </div>
+            <span class="pill long">LONG</span>
+            <span class="v mono">$154K</span>
+            <span class="t">42m</span>
+          </div>
+          <div class="rekt-row">
+            <span class="ix">04</span>
+            <span class="ic">HY</span>
+            <div class="info">
+              <div class="a mono">0xab33…E2c5</div>
+              <div class="b"><span class="coin">HYPE</span> long · entry $40.20 → $38.42</div>
+            </div>
+            <span class="pill long">LONG</span>
+            <span class="v mono">$131K</span>
+            <span class="t">1h</span>
+          </div>
+          <div class="rekt-row">
+            <span class="ix">05</span>
+            <span class="ic">ET</span>
+            <div class="info">
+              <div class="a mono">0xfe71…D9A0</div>
+              <div class="b"><span class="coin">ETH</span> long · entry $3,820 → $3,612</div>
+            </div>
+            <span class="pill long">LONG</span>
+            <span class="v mono">$108K</span>
+            <span class="t">2h</span>
+          </div>
+          <div class="rekt-row">
+            <span class="ix">06</span>
+            <span class="ic">FA</span>
+            <div class="info">
+              <div class="a mono">0x1d09…40Bb</div>
+              <div class="b"><span class="coin">FARTCOIN</span> short · entry $1.05 → $1.183</div>
+            </div>
+            <span class="pill short">SHORT</span>
+            <span class="v mono">$102K</span>
+            <span class="t">2h</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============== SECTION 3 — MARKET FORCES (FUNDING) ============== -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Market Forces</h2>
+      <span class="ss">Funding rates · 6 majors · 24h drift</span>
+      <a href="#" class="link">All markets →</a>
+    </div>
+
+    <div class="funding">
+      <!-- BTC -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">BT</span>
+          <span class="ticker">BTC</span>
+          <span class="arr up">+</span>
+        </div>
+        <div class="rate pos mono">+0.0124<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gBTC" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FA85B" stop-opacity=".30"/><stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 18 L10 16 L20 17 L30 14 L40 13 L50 11 L60 9 L70 10 L80 7 L90 6 L100 5 L100 22 L0 22 Z" fill="url(#gBTC)"/>
+            <path d="M0 18 L10 16 L20 17 L30 14 L40 13 L50 11 L60 9 L70 10 L80 7 L90 6 L100 5" fill="none" stroke="#1FA85B" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- ETH -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">ET</span>
+          <span class="ticker">ETH</span>
+          <span class="arr up">+</span>
+        </div>
+        <div class="rate pos mono">+0.0098<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gETH" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FA85B" stop-opacity=".30"/><stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 14 L10 16 L20 14 L30 12 L40 13 L50 10 L60 11 L70 8 L80 9 L90 7 L100 6 L100 22 L0 22 Z" fill="url(#gETH)"/>
+            <path d="M0 14 L10 16 L20 14 L30 12 L40 13 L50 10 L60 11 L70 8 L80 9 L90 7 L100 6" fill="none" stroke="#1FA85B" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- SOL -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">SO</span>
+          <span class="ticker">SOL</span>
+          <span class="arr dn">−</span>
+        </div>
+        <div class="rate neg mono">−0.0042<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gSOL" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E53E3E" stop-opacity=".30"/><stop offset="100%" stop-color="#E53E3E" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 8 L10 9 L20 11 L30 10 L40 13 L50 12 L60 15 L70 14 L80 16 L90 17 L100 18 L100 22 L0 22 Z" fill="url(#gSOL)"/>
+            <path d="M0 8 L10 9 L20 11 L30 10 L40 13 L50 12 L60 15 L70 14 L80 16 L90 17 L100 18" fill="none" stroke="#E53E3E" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- HYPE -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">HY</span>
+          <span class="ticker">HYPE</span>
+          <span class="arr up">+</span>
+        </div>
+        <div class="rate pos mono">+0.0182<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gHYPE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FA85B" stop-opacity=".30"/><stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 16 L10 14 L20 15 L30 11 L40 10 L50 8 L60 7 L70 5 L80 4 L90 3 L100 2 L100 22 L0 22 Z" fill="url(#gHYPE)"/>
+            <path d="M0 16 L10 14 L20 15 L30 11 L40 10 L50 8 L60 7 L70 5 L80 4 L90 3 L100 2" fill="none" stroke="#1FA85B" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- FARTCOIN -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">FA</span>
+          <span class="ticker">FARTCOIN</span>
+          <span class="arr dn">−</span>
+        </div>
+        <div class="rate neg mono">−0.0211<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gFART" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E53E3E" stop-opacity=".30"/><stop offset="100%" stop-color="#E53E3E" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 6 L10 8 L20 7 L30 10 L40 9 L50 12 L60 14 L70 13 L80 16 L90 18 L100 19 L100 22 L0 22 Z" fill="url(#gFART)"/>
+            <path d="M0 6 L10 8 L20 7 L30 10 L40 9 L50 12 L60 14 L70 13 L80 16 L90 18 L100 19" fill="none" stroke="#E53E3E" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+      <!-- PURR -->
+      <div class="fc">
+        <div class="top">
+          <span class="tk">PU</span>
+          <span class="ticker">PURR</span>
+          <span class="arr up">+</span>
+        </div>
+        <div class="rate pos mono">+0.0067<span class="unit">%</span></div>
+        <div class="spark">
+          <svg viewBox="0 0 100 22" preserveAspectRatio="none">
+            <defs><linearGradient id="gPURR" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FA85B" stop-opacity=".30"/><stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 12 L10 14 L20 11 L30 13 L40 10 L50 11 L60 9 L70 10 L80 8 L90 9 L100 7 L100 22 L0 22 Z" fill="url(#gPURR)"/>
+            <path d="M0 12 L10 14 L20 11 L30 13 L40 10 L50 11 L60 9 L70 10 L80 8 L90 9 L100 7" fill="none" stroke="#1FA85B" stroke-width="1.2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== SECTION 4 — FEE ECONOMY ============== -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Fee Economy · Largest Fills</h2>
+      <span class="ss">Builders earning, whales trading</span>
+    </div>
+
+    <div class="grid-3-7">
+
+      <!-- Builder Podium -->
+      <div class="card">
+        <div class="head">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+          <h3>Builder Podium</h3>
+          <span class="tag">24h · $342K</span>
+        </div>
+        <div class="podium">
+          <div class="p-row gold">
+            <span class="rk mono">1</span>
+            <span class="av" style="background:#F9E370">ph</span>
+            <div class="info">
+              <div class="nm">PvP Trade</div>
+              <div class="sub">0x4f1e…22Bb</div>
+            </div>
+            <div class="num">
+              <div class="v mono">$148K</div>
+              <div class="pct">43.2% share</div>
+            </div>
+          </div>
+
+          <div class="p-row silver">
+            <span class="rk mono">2</span>
+            <span class="av" style="background:#C9D1D9">ax</span>
+            <div class="info">
+              <div class="nm">Axiom</div>
+              <div class="sub">0x812a…4cF7</div>
+            </div>
+            <div class="num">
+              <div class="v mono">$92K</div>
+              <div class="pct">26.9% share</div>
+            </div>
+          </div>
+
+          <div class="p-row bronze">
+            <span class="rk mono">3</span>
+            <span class="av" style="background:#CD8B4A">np</span>
+            <div class="info">
+              <div class="nm">NodeOps</div>
+              <div class="sub">0x9c44…11Ee</div>
+            </div>
+            <div class="num">
+              <div class="v mono">$58K</div>
+              <div class="pct">17.0% share</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:8px 14px;border-top:1px solid var(--bd-subtle);font-size:10.5px;color:var(--t3);display:flex;align-items:center">
+          <span>Top 3 = 87% of fees</span>
+          <a href="#" style="margin-left:auto;color:var(--brand);text-decoration:none;font-weight:500">All builders →</a>
+        </div>
+      </div>
+
+      <!-- Largest Fills -->
+      <div class="card">
+        <div class="head">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/></svg></span>
+          <h3>Largest Fills</h3>
+          <span class="tag live"><span class="dot"></span>LIVE</span>
+          <span class="tag">≥ $50K</span>
+          <a class="view-all" href="#">View all →</a>
+        </div>
+
+        <div class="fills-table">
+          <div class="hdr">
+            <span>Age</span>
+            <span>Side</span>
+            <span>Coin</span>
+            <span class="right">Size</span>
+            <span class="right">Price</span>
+            <span>User</span>
+            <span class="right">Value</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">12s</span>
+            <span class="side buy">BUY</span>
+            <div class="coin"><span class="tk">HY</span><span class="nm">HYPE</span></div>
+            <span class="num">5,820</span>
+            <span class="num">$38.42</span>
+            <div class="user"><span class="av" style="background:#83E9FF">7c</span><span class="addr mono">0x7c2a…f1Ee</span></div>
+            <span class="num gold">$223K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">38s</span>
+            <span class="side sell">SELL</span>
+            <div class="coin"><span class="tk">BT</span><span class="nm">BTC</span></div>
+            <span class="num">2.14</span>
+            <span class="num">$98,212</span>
+            <div class="user"><span class="av" style="background:#A78BFA">8f</span><span class="addr mono">0x8f44…D9c1</span></div>
+            <span class="num gold">$210K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">1m</span>
+            <span class="side buy">BUY</span>
+            <div class="coin"><span class="tk">ET</span><span class="nm">ETH</span></div>
+            <span class="num">52.3</span>
+            <span class="num">$3,612</span>
+            <div class="user"><span class="av" style="background:#F9E370">ab</span><span class="addr mono">0xab21…3E7a</span></div>
+            <span class="num gold">$189K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">2m</span>
+            <span class="side buy">BUY</span>
+            <div class="coin"><span class="tk">SO</span><span class="nm">SOL</span></div>
+            <span class="num">812</span>
+            <span class="num">$214.30</span>
+            <div class="user"><span class="av" style="background:#1FA85B">d2</span><span class="addr mono">0xd255…91Aa</span></div>
+            <span class="num gold">$174K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">3m</span>
+            <span class="side sell">SELL</span>
+            <div class="coin"><span class="tk">HY</span><span class="nm">HYPE</span></div>
+            <span class="num">3,940</span>
+            <span class="num">$38.41</span>
+            <div class="user"><span class="av" style="background:#E53E3E">3a</span><span class="addr mono">0x3afE…0bC2</span></div>
+            <span class="num gold">$151K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">5m</span>
+            <span class="side buy">BUY</span>
+            <div class="coin"><span class="tk">FA</span><span class="nm">FARTCOIN</span></div>
+            <span class="num">125,400</span>
+            <span class="num">$1.05</span>
+            <div class="user"><span class="av" style="background:#83E9FF">b8</span><span class="addr mono">0xb812…44dC</span></div>
+            <span class="num gold">$132K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">7m</span>
+            <span class="side buy">BUY</span>
+            <div class="coin"><span class="tk">BT</span><span class="nm">BTC</span></div>
+            <span class="num">1.18</span>
+            <span class="num">$98,180</span>
+            <div class="user"><span class="av" style="background:#A78BFA">5e</span><span class="addr mono">0x5eF1…9c30</span></div>
+            <span class="num gold">$115K</span>
+          </div>
+          <div class="fills-row">
+            <span class="t">11m</span>
+            <span class="side sell">SELL</span>
+            <div class="coin"><span class="tk">PU</span><span class="nm">PURR</span></div>
+            <span class="num">820,000</span>
+            <span class="num">$0.142</span>
+            <div class="user"><span class="av" style="background:#F9E370">cc</span><span class="addr mono">0xcc73…2E81</span></div>
+            <span class="num gold">$98K</span>
+          </div>
+        </div>
+
+        <div style="padding:8px 14px;border-top:1px solid var(--bd-subtle);font-size:10px;color:var(--t3);display:flex;align-items:center;gap:8px">
+          <span style="opacity:.7">Endpoint /fills/recent — graceful degradation if unstable</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============== SECTION 5 — 24H AT A GLANCE ============== -->
+  <div class="section">
+    <div class="section-head">
+      <h2>24h at a glance</h2>
+      <span class="ss">Most profitable · most traded · most liquidated</span>
+    </div>
+
+    <div class="summary-strip">
+      <div class="ss-cell">
+        <span class="tk">HY</span>
+        <div class="body">
+          <div class="lb">Most profitable</div>
+          <div class="v pos mono">+$8.2M</div>
+        </div>
+        <div class="right">
+          <div class="nm">HYPE</div>
+          <div class="sb">aggregate trader PnL</div>
+        </div>
+      </div>
+      <div class="ss-cell">
+        <span class="tk">BT</span>
+        <div class="body">
+          <div class="lb">Most traded</div>
+          <div class="v mono" style="color:var(--brand)">$1.84B</div>
+        </div>
+        <div class="right">
+          <div class="nm">BTC</div>
+          <div class="sb">24h notional volume</div>
+        </div>
+      </div>
+      <div class="ss-cell">
+        <span class="tk">HY</span>
+        <div class="body">
+          <div class="lb">Most liquidated</div>
+          <div class="v neg mono">$4.7M</div>
+        </div>
+        <div class="right">
+          <div class="nm">HYPE</div>
+          <div class="sb">total wiped out</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="foot">
+    <span>Explorer · Variant C — Trader Leaderboard mockup · 1280px</span>
+    <span>Data sources: <a href="#">/overview</a> · <a href="#">/liquidations</a> · <a href="#">/funding</a> · <a href="#">/builders</a> · <a href="#">/fills</a></span>
+  </div>
+
+</div>
+</body></html>

@@ -13,11 +13,19 @@ interface Hip4MarketDetailHeaderProps {
 export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) {
   const title = formatMarketTitle(market);
   const countdown = formatExpiryCountdown(market.expiry ?? null);
+  // Yes/No probability is only meaningful for binary markets. Multi-outcome
+  // priceBucket questions reuse mid_price as the implied probability of THIS
+  // outcome, not a Yes/No coinflip — labelling it Yes/No would be misleading.
+  const isBinary = market.class_normalized === "binary";
   const yesProb =
-    market.mid_price != null && Number.isFinite(market.mid_price)
+    isBinary && market.mid_price != null && Number.isFinite(market.mid_price)
       ? (market.mid_price * 100).toFixed(1)
       : null;
   const noProb = yesProb != null ? (100 - parseFloat(yesProb)).toFixed(1) : null;
+  const outcomeProb =
+    !isBinary && market.mid_price != null && Number.isFinite(market.mid_price)
+      ? (market.mid_price * 100).toFixed(1)
+      : null;
 
   return (
     <div className="space-y-3">
@@ -31,7 +39,9 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
 
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-xl font-semibold text-text-primary leading-snug">{title}</h1>
+          <h1 className="text-[22px] font-semibold text-text-primary tracking-[-0.02em] leading-snug">
+            {title}
+          </h1>
           <div className="flex flex-wrap items-center gap-3 text-[11px] text-text-secondary">
             {countdown && (
               <span className="inline-flex items-center gap-1">
@@ -40,7 +50,7 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
               </span>
             )}
             {market.underlying && (
-              <span className="bg-white/[0.04] border border-border-subtle rounded px-1.5 py-0.5 font-medium">
+              <span className="bg-surface-2 border border-border-subtle rounded px-1.5 py-0.5 font-medium">
                 {market.underlying}
               </span>
             )}
@@ -54,34 +64,41 @@ export function Hip4MarketDetailHeader({ market }: Hip4MarketDetailHeaderProps) 
           {yesProb && (
             <div className="flex items-center gap-2">
               <div className="text-center">
-                <div className="text-xs text-text-tertiary mb-0.5">Yes</div>
-                <div className="text-lg font-bold text-emerald-400 tabular-nums">{yesProb}%</div>
+                <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-0.5">Yes</div>
+                <div className="mono text-[18px] font-semibold text-success">{yesProb}%</div>
               </div>
               <div className="h-8 w-px bg-border-subtle" />
               <div className="text-center">
-                <div className="text-xs text-text-tertiary mb-0.5">No</div>
-                <div className="text-lg font-bold text-rose-400 tabular-nums">{noProb}%</div>
+                <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-0.5">No</div>
+                <div className="mono text-[18px] font-semibold text-danger">{noProb}%</div>
               </div>
             </div>
           )}
 
-          <div className="flex flex-col gap-1 pl-3 border-l border-border-subtle">
-            <div className="flex items-center gap-1.5 text-[10px] text-text-tertiary">
+          {outcomeProb && (
+            <div className="text-center">
+              <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-0.5">Implied</div>
+              <div className="mono text-[18px] font-semibold text-brand">{outcomeProb}%</div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-0.5 pl-3 border-l border-border-subtle">
+            <div className="flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
               <TrendingUp className="h-3 w-3" />
               <span>Volume</span>
             </div>
-            <div className="text-sm font-semibold text-text-primary tabular-nums">
+            <div className="mono text-[14px] font-semibold text-text-primary">
               {compactUsd(market.total_volume)}
             </div>
           </div>
 
           {market.is_settled ? (
-            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+            <span className="inline-flex items-center gap-1 rounded bg-surface-2 border border-border-subtle px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
               Settled
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-md border border-brand/25 bg-brand/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+            <span className="inline-flex items-center gap-1 rounded bg-success/10 border border-success/25 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-success">
+              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
               Live
             </span>
           )}

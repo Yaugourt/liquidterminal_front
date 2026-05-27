@@ -28,13 +28,13 @@ export default function PublicListsPage() {
 
       {/* Search bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
         <Input
           type="text"
           placeholder="Search public lists by name or description..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 rounded-lg text-white placeholder:text-zinc-500"
+          className="pl-10 rounded-lg text-white placeholder:text-text-tertiary"
         />
       </div>
 

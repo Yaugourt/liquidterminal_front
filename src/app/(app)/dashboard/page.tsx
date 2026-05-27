@@ -4,30 +4,34 @@ import { PageHeader } from "@/components/common";
 import { PulseBar } from "@/components/dashboard/PulseBar";
 import { MoversCard } from "@/components/dashboard/MoversCard";
 import { AuctionsPanel } from "@/components/dashboard/AuctionsPanel";
+import { Hip4DeployersComingSoon } from "@/components/dashboard/Hip4DeployersComingSoon";
 import { LiquidationsPanel } from "@/components/dashboard/LiquidationsPanel";
 import { TwapPanel } from "@/components/dashboard/TwapPanel";
 import { VaultsModule } from "@/components/dashboard/modules/VaultsModule";
 import { ValidatorsModule } from "@/components/dashboard/modules/ValidatorsModule";
-import { BuildersModule } from "@/components/dashboard/modules/BuildersModule";
 import { BuildersConcentrationCard } from "@/components/dashboard/BuildersConcentrationCard";
 import { Hip3MarketsPanel } from "@/components/dashboard/Hip3MarketsPanel";
+import {
+  Hip3PastAuctionsCard,
+  Hip3TopDeployersCard,
+} from "@/components/dashboard/Hip3AuctionRow";
 import { Hip4OutcomesCard } from "@/components/dashboard/Hip4OutcomesCard";
-import { ChartSection } from "@/components/dashboard/chart/ChartSection";
+import { FeesRevenuePanel } from "@/components/dashboard/FeesRevenuePanel";
 import { StablecoinsCard } from "@/components/dashboard/StablecoinsCard";
 import { SectionHead } from "@/components/dashboard/SectionHead";
-import { Card } from "@/components/ui/card";
 
 /**
- * Dashboard — vue d'ensemble de Liquid Terminal (V4 — Variant A "thematic").
+ * Dashboard — Liquid Terminal ecosystem overview (V4 — thematic).
  *
- * 6 groupes thématiques, séparés par un `SectionHead` + `gap-8` :
- *  1. Network Pulse — état temps-réel de l'écosystème (PulseBar).
- *  2. Capital Flow — chart multi-séries + stablecoins.
- *  3. Markets — trending spot · auction spot · trending perp.
- *  4. Live Activity — liquidations + TWAPs (2 colonnes, respirent).
- *  5. Hyperliquid Extensions — HIP-3 perp DEXs + HIP-4 outcome markets.
- *  6. Capital Allocators — vaults + validators.
- *  7. Builder Ecosystem — top 5 builders + fees concentration donut.
+ * Section flow (top → bottom):
+ *  1. Network Pulse        — real-time ecosystem metrics ribbon.
+ *  2. Protocol Revenue     — 5-source stacked fees breakdown (perp · spot · HIP-1 · HIP-3 · HIP-4).
+ *  3. Spot Markets         — spot movers · spot listing auction · stablecoin supply.
+ *  4. Perpetuals & HIP-3   — perp movers · HIP-3 dex markets.
+ *  5. HIP-4 Outcomes       — prediction markets (full width, pending mainnet).
+ *  6. Live Activity        — liquidations · TWAP orders.
+ *  7. Capital Allocators   — vaults · validators.
+ *  8. Builder Ecosystem    — top builders · fee concentration donut.
  */
 export default function Home() {
   return (
@@ -46,34 +50,51 @@ export default function Home() {
         <PulseBar />
       </section>
 
-      {/* 2 — Capital Flow : chart + stablecoins */}
+      {/* 2 — Protocol Revenue + Stablecoins side by side (50/50) */}
       <section className="space-y-2.5">
         <SectionHead
-          title="Capital Flow"
-          subtitle="TVL, fees & stablecoin supply over time"
+          title="Protocol Revenue &amp; Capital"
+          subtitle="Daily fees decomposition · stablecoin supply on spot"
         />
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-4">
-          <Card className="flex flex-col min-h-[360px]">
-            <ChartSection />
-          </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <FeesRevenuePanel />
           <StablecoinsCard />
         </div>
       </section>
 
-      {/* 3 — Markets : spot table + spot auction + perp table */}
+      {/* 3 — Perpetuals & HIP-3 : 2 rows
+          Row 1: trending perp + HIP-3 markets panel
+          Row 2: HIP-3 live auction · past auctions · top deployers */}
+      <section className="space-y-4">
+        <SectionHead
+          title="Perpetuals & HIP-3"
+          subtitle="Trending perpetuals · HIP-3 markets · auctions & deployers"
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <MoversCard market="perp" />
+          <Hip3MarketsPanel />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,0.85fr)_minmax(0,1.3fr)] gap-4">
+          <AuctionsPanel market="perp" />
+          <Hip3PastAuctionsCard />
+          <Hip3TopDeployersCard />
+        </div>
+      </section>
+
+      {/* 4 — Spot Markets : movers + listing auction (current) + builders code */}
       <section className="space-y-2.5">
         <SectionHead
-          title="Markets"
-          subtitle="Live trading activity across spot and perpetuals"
+          title="Spot Markets"
+          subtitle="Trending spot · live listing auction · builder fees concentration"
         />
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_264px_minmax(0,1fr)] gap-4">
           <MoversCard market="spot" />
           <AuctionsPanel market="spot" />
-          <MoversCard market="perp" />
+          <BuildersConcentrationCard />
         </div>
       </section>
 
-      {/* 4 — Live Activity : liquidations + TWAPs (2 cols) */}
+      {/* 5 — Live Activity : liquidations + TWAPs (2 cols) */}
       <section className="space-y-2.5">
         <SectionHead
           title="Live Activity"
@@ -85,19 +106,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5 — Hyperliquid Extensions : HIP-3 + HIP-4 */}
+      {/* 6 — HIP-4 Outcomes + HIP-4 Deployers placeholder (50/50) */}
       <section className="space-y-2.5">
         <SectionHead
-          title="Hyperliquid Extensions"
-          subtitle="HIP-3 perp DEXs · HIP-4 outcome markets"
+          title="HIP-4 Outcomes"
+          subtitle="Prediction-market positions · upcoming deployer leaderboard"
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <Hip3MarketsPanel />
           <Hip4OutcomesCard />
+          <Hip4DeployersComingSoon />
         </div>
       </section>
 
-      {/* 6 — Capital Allocators : vaults + validators */}
+      {/* 7 — Capital Allocators : vaults + validators */}
       <section className="space-y-2.5">
         <SectionHead
           title="Capital Allocators"
@@ -106,18 +127,6 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <VaultsModule />
           <ValidatorsModule />
-        </div>
-      </section>
-
-      {/* 7 — Builder Ecosystem : top 5 + fees concentration */}
-      <section className="space-y-2.5">
-        <SectionHead
-          title="Builder Ecosystem"
-          subtitle="Builder code apps · who earns the fees and how concentrated the market is"
-        />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <BuildersModule />
-          <BuildersConcentrationCard />
         </div>
       </section>
     </div>

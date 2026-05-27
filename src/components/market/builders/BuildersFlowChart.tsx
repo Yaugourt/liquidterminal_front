@@ -1,9 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { BarChart3, DollarSign } from "lucide-react";
-import { ChartLoading, ChartEmpty, ChartWatermark } from "@/components/common";
+import {
+  ChartLoading,
+  ChartEmpty,
+  ChartWatermark,
+  FlowGrid,
+  FlowBar,
+  chartPalette,
+} from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayNameOrAddress } from "./formatBuilderDisplayName";
@@ -31,12 +37,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
   }, [top]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.15, duration: 0.35 }}
-      className="bg-surface border border-border-subtle rounded-lg overflow-hidden"
-    >
+    <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
       {/* CARD HEADER (V4 ref: px-3.5 py-3 border-b, title-row + small tabs) */}
       <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -76,80 +77,86 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
               </div>
             </div>
 
-            {/* Column labels */}
-            <div className="grid grid-cols-[20px_80px_1fr_70px_60px] gap-2.5 items-center pb-1.5 text-[10px] font-medium uppercase tracking-wider text-text-tertiary">
-              <span>#</span>
-              <span>Builder</span>
-              <span>Volume</span>
-              <span className="text-right">Fees</span>
-              <span className="text-right">Efficiency</span>
-            </div>
-
-            {/* Rows */}
-            <div className="flex flex-col gap-1.5" onMouseLeave={() => setHoverIdx(null)}>
-              {top.map((row, i) => {
-                const vol = row.totalVolume ?? 0;
-                const fees = row.totalBuilderFees ?? 0;
-                const volRatio = vol / maxVol;
-                const name = formatBuilderDisplayNameOrAddress(row.builderName, row.builder);
-                const bps = vol > 0 ? (fees / vol) * 10000 : 0;
-                const isAnonymous = name.startsWith("0x");
-                const isHovered = hoverIdx === i;
-                const bpsClass =
-                  bps >= 10 ? "text-gold" : bps >= 3 ? "text-text-secondary" : "text-text-tertiary";
-
-                return (
-                  <motion.div
-                    key={row.builder}
-                    initial={{ opacity: 0, x: -4 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.03, duration: 0.25 }}
-                    onMouseEnter={() => setHoverIdx(i)}
-                    className={`grid grid-cols-[20px_80px_1fr_70px_60px] gap-2.5 items-center text-[11px] cursor-default transition-colors ${
-                      isHovered ? "bg-surface-2 -mx-1 px-1 rounded" : ""
-                    }`}
-                  >
-                    {/* Rank */}
-                    <span className="mono text-[10px] text-text-tertiary text-right">
-                      {i + 1}
-                    </span>
-
-                    {/* Name */}
-                    <span
-                      className={`text-[11px] truncate ${
-                        isAnonymous ? "mono text-text-secondary" : "font-medium text-text-primary"
-                      }`}
-                    >
-                      {name}
-                    </span>
-
-                    {/* Volume bar — solid brand fill with value inside (V4 ref) */}
-                    <div className="h-[18px] bg-surface-2 rounded-[3px] relative overflow-hidden">
-                      <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: `${Math.max(volRatio * 100, 6)}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.03 }}
-                        className="h-full bg-brand rounded-[3px] flex items-center px-1.5"
+            <FlowGrid
+              rows={top}
+              rowKey={(r) => r.builder}
+              onHoverChange={setHoverIdx}
+              columns={[
+                {
+                  header: "#",
+                  width: 20,
+                  align: "right",
+                  render: (_, i) => (
+                    <span className="mono text-[10px] text-text-tertiary">{i + 1}</span>
+                  ),
+                },
+                {
+                  header: "Builder",
+                  width: 80,
+                  render: (row) => {
+                    const name = formatBuilderDisplayNameOrAddress(
+                      row.builderName,
+                      row.builder,
+                    );
+                    const isAnonymous = name.startsWith("0x");
+                    return (
+                      <span
+                        className={`text-[11px] truncate ${
+                          isAnonymous ? "mono text-text-secondary" : "font-medium text-text-primary"
+                        }`}
                       >
-                        <span className="mono text-[10px] font-medium text-brand-text-on whitespace-nowrap">
-                          {compactUsd(vol)}
-                        </span>
-                      </motion.div>
-                    </div>
-
-                    {/* Fees value */}
-                    <span className="mono text-[11px] text-text-secondary text-right">
-                      {compactUsd(fees)}
+                        {name}
+                      </span>
+                    );
+                  },
+                },
+                {
+                  header: "Volume",
+                  width: "1fr",
+                  render: (row, i) => (
+                    <FlowBar
+                      ratio={(row.totalVolume ?? 0) / maxVol}
+                      delay={i * 0.03}
+                      variant="solid"
+                      color={chartPalette.accent}
+                      minVisiblePct={6}
+                      label={compactUsd(row.totalVolume ?? 0)}
+                    />
+                  ),
+                },
+                {
+                  header: "Fees",
+                  width: 70,
+                  align: "right",
+                  render: (row) => (
+                    <span className="mono text-[11px] text-text-secondary">
+                      {compactUsd(row.totalBuilderFees ?? 0)}
                     </span>
-
-                    {/* Efficiency bps */}
-                    <span className={`mono text-[10px] text-right ${bpsClass}`}>
-                      {vol > 0 ? `${bps.toFixed(2)} bps` : "—"}
-                    </span>
-                  </motion.div>
-                );
-              })}
-            </div>
+                  ),
+                },
+                {
+                  header: "Efficiency",
+                  width: 60,
+                  align: "right",
+                  render: (row) => {
+                    const vol = row.totalVolume ?? 0;
+                    const fees = row.totalBuilderFees ?? 0;
+                    const bps = vol > 0 ? (fees / vol) * 10000 : 0;
+                    const bpsClass =
+                      bps >= 10
+                        ? "text-gold"
+                        : bps >= 3
+                        ? "text-text-secondary"
+                        : "text-text-tertiary";
+                    return (
+                      <span className={`mono text-[10px] ${bpsClass}`}>
+                        {vol > 0 ? `${bps.toFixed(2)} bps` : "—"}
+                      </span>
+                    );
+                  },
+                },
+              ]}
+            />
           </div>
         )}
       </div>
@@ -179,6 +186,6 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
           )}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

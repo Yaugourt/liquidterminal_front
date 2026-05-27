@@ -15,6 +15,7 @@ import {
   Hip4MarketGrid,
   Hip4RecentFills,
   Hip4SettlementsTable,
+  Hip4StalenessChip,
 } from "@/components/market/hip4";
 import { PageHeader } from "@/components/common";
 
@@ -30,10 +31,16 @@ export default function MarketHip4Page() {
     setTitle("HIP-4 - Market");
   }, [setTitle]);
 
-  const marketNameIndex = useMemo(() => {
-    const idx: Record<string, string> = {};
+  const marketIndex = useMemo(() => {
+    const idx: Record<string, { name: string; sideName: string | null; isBinary: boolean }> = {};
     for (const m of enriched.markets) {
-      if (m.coin) idx[m.coin] = m.short_name || m.display_name;
+      if (!m.coin) continue;
+      const isBinary = (m.parsed_sides?.length ?? 0) === 2;
+      idx[m.coin] = {
+        name: m.short_name || m.display_name,
+        sideName: m.side_name ?? (isBinary && m.side != null ? m.parsed_sides?.[m.side]?.name ?? null : null),
+        isBinary,
+      };
     }
     return idx;
   }, [enriched.markets]);
@@ -49,10 +56,13 @@ export default function MarketHip4Page() {
         title="HIP-4 Prediction Markets"
         description="Live prediction markets on HyperLiquid — outcome probabilities grouped by question, volume, open interest, and settlements."
         actions={
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand bg-brand/10 border border-brand/20 px-2.5 py-1 rounded-lg">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-            Mainnet
-          </span>
+          <div className="flex items-center gap-2">
+            <Hip4StalenessChip updatedAt={questions.dataUpdatedAt} />
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand bg-brand/10 border border-brand/20 px-2.5 py-1 rounded-lg">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+              Mainnet
+            </span>
+          </div>
         }
       />
 
@@ -73,7 +83,7 @@ export default function MarketHip4Page() {
         <Hip4RecentFills
           fills={fills.fills}
           isLoading={fills.isLoading}
-          marketNameIndex={marketNameIndex}
+          marketIndex={marketIndex}
         />
         <Hip4SettlementsTable
           settlements={settlements.settlements}

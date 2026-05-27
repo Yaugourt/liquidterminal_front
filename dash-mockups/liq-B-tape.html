@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant B — Live Tape</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .live{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:rgba(31,168,91,.1);color:#1FA85B;border:1px solid rgba(31,168,91,.25);display:flex;align-items:center;gap:5px}
+.head .live::before{content:"";width:6px;height:6px;border-radius:50%;background:#1FA85B;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.head .top{margin-left:auto;font-size:10px;color:#6B7280}
+
+/* compact stats inline (single row) */
+.stats{display:flex;align-items:stretch;border-bottom:1px solid #1E2535}
+.stats .c{flex:1;padding:8px 12px;border-right:1px solid #1E2535}
+.stats .c:last-child{border-right:none}
+.stats .c .lb{font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.stats .c .v{font-size:13px;font-weight:600;margin-top:2px;letter-spacing:-.01em}
+.stats .ls-mini{display:flex;flex-direction:column;justify-content:center;padding:8px 12px;min-width:120px}
+.stats .ls-mini .bar{display:flex;height:5px;border-radius:3px;overflow:hidden;background:#141B2A;border:1px solid #1E2535}
+.stats .ls-mini .bar .g{background:#1FA85B}
+.stats .ls-mini .bar .r{background:#E53E3E}
+.stats .ls-mini .lbl{display:flex;justify-content:space-between;margin-top:4px;font-size:9.5px}
+.stats .ls-mini .lbl .l{color:#1FA85B;font-weight:600}
+.stats .ls-mini .lbl .r{color:#E53E3E;font-weight:600}
+
+/* tape header */
+.tape-h{display:flex;align-items:center;padding:8px 14px 6px;font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.tape-h .col-time{width:46px}
+.tape-h .col-coin{width:62px}
+.tape-h .col-side{width:48px}
+.tape-h .col-size{flex:1;text-align:right}
+.tape-h .col-px{width:64px;text-align:right}
+
+/* tape rows */
+.tape{flex:1}
+.row{display:flex;align-items:center;padding:5px 14px;font-size:11.5px;border-top:1px solid rgba(30,37,53,.5)}
+.row:hover{background:#141B2A}
+.row .col-time{width:46px;color:#6B7280;font-size:10px}
+.row .col-coin{width:62px;display:flex;align-items:center;gap:6px}
+.row .col-coin .ic{width:18px;height:18px;border-radius:4px;background:rgba(131,233,255,.1);color:#83E9FF;display:grid;place-items:center;font-size:8.5px;font-weight:700}
+.row .col-coin .nm{font-weight:600;font-size:11px}
+.row .col-side{width:48px}
+.row .col-side .pill{font-size:9.5px;font-weight:700;padding:1.5px 5px;border-radius:3px}
+.row .col-side .long{background:rgba(31,168,91,.12);color:#1FA85B}
+.row .col-side .short{background:rgba(229,62,62,.12);color:#E53E3E}
+.row .col-size{flex:1;text-align:right;font-weight:600}
+.row .col-size.lg{color:#F9E370}
+.row .col-px{width:64px;text-align:right;color:#9CA3AF;font-size:10.5px}
+
+/* footer — compact sparkline of volume per 30m */
+.foot{border-top:1px solid #1E2535;padding:8px 14px 10px;display:flex;align-items:center;gap:12px}
+.foot .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600;white-space:nowrap}
+.foot .spark{flex:1;display:flex;align-items:flex-end;gap:1px;height:24px}
+.foot .spark span{flex:1;background:rgba(229,62,62,.45);border-radius:1px 1px 0 0;min-height:2px}
+.foot .last{font-size:10.5px;font-weight:600;white-space:nowrap}
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT B · live tape — exchange feel, focus on flux real time</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <span class="live">LIVE</span>
+    <span class="top mono">Top · HYPE</span>
+  </div>
+
+  <!-- Compact stats inline -->
+  <div class="stats">
+    <div class="c"><div class="lb">Total</div><div class="v mono">$11.5M</div></div>
+    <div class="c"><div class="lb">Events</div><div class="v mono">847</div></div>
+    <div class="c"><div class="lb">Avg</div><div class="v mono">$13.6K</div></div>
+    <div class="ls-mini">
+      <div class="bar"><span class="g" style="width:73%"></span><span class="r" style="width:27%"></span></div>
+      <div class="lbl"><span class="l mono">L 73%</span><span class="r mono">27% S</span></div>
+    </div>
+  </div>
+
+  <!-- Tape header -->
+  <div class="tape-h">
+    <span class="col-time">Time</span>
+    <span class="col-coin">Asset</span>
+    <span class="col-side">Side</span>
+    <span class="col-size">Size</span>
+    <span class="col-px">Price</span>
+  </div>
+
+  <!-- Tape rows — 9 fills -->
+  <div class="tape">
+    <div class="row"><span class="col-time mono">12s</span><span class="col-coin"><span class="ic">HY</span><span class="nm">HYPE</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono lg">$420K</span><span class="col-px mono">$38.41</span></div>
+    <div class="row"><span class="col-time mono">28s</span><span class="col-coin"><span class="ic">BT</span><span class="nm">BTC</span></span><span class="col-side"><span class="pill short">SHORT</span></span><span class="col-size mono">$82K</span><span class="col-px mono">$98,212</span></div>
+    <div class="row"><span class="col-time mono">42s</span><span class="col-coin"><span class="ic">SO</span><span class="nm">SOL</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono">$54K</span><span class="col-px mono">$214.30</span></div>
+    <div class="row"><span class="col-time mono">1m</span><span class="col-coin"><span class="ic">ET</span><span class="nm">ETH</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono">$31K</span><span class="col-px mono">$3,612</span></div>
+    <div class="row"><span class="col-time mono">1m</span><span class="col-coin"><span class="ic">HY</span><span class="nm">HYPE</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono">$22K</span><span class="col-px mono">$38.42</span></div>
+    <div class="row"><span class="col-time mono">2m</span><span class="col-coin"><span class="ic">FA</span><span class="nm">FARTCOIN</span></span><span class="col-side"><span class="pill short">SHORT</span></span><span class="col-size mono">$18K</span><span class="col-px mono">$1.183</span></div>
+    <div class="row"><span class="col-time mono">2m</span><span class="col-coin"><span class="ic">HY</span><span class="nm">HYPE</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono">$11K</span><span class="col-px mono">$38.44</span></div>
+    <div class="row"><span class="col-time mono">3m</span><span class="col-coin"><span class="ic">PE</span><span class="nm">PEPE</span></span><span class="col-side"><span class="pill long">LONG</span></span><span class="col-size mono">$9K</span><span class="col-px mono">$0.0000182</span></div>
+    <div class="row"><span class="col-time mono">3m</span><span class="col-coin"><span class="ic">BT</span><span class="nm">BTC</span></span><span class="col-side"><span class="pill short">SHORT</span></span><span class="col-size mono">$8K</span><span class="col-px mono">$98,184</span></div>
+  </div>
+
+  <!-- Footer — sparkline of volume per 30m -->
+  <div class="foot">
+    <span class="lb">Vol 24h</span>
+    <span class="spark">
+      <span style="height:14%"></span><span style="height:22%"></span><span style="height:36%"></span><span style="height:52%"></span><span style="height:74%"></span><span style="height:92%"></span><span style="height:68%"></span><span style="height:48%"></span><span style="height:32%"></span><span style="height:42%"></span><span style="height:58%"></span><span style="height:78%"></span><span style="height:96%"></span><span style="height:72%"></span><span style="height:50%"></span><span style="height:38%"></span><span style="height:28%"></span><span style="height:22%"></span><span style="height:18%"></span><span style="height:14%"></span><span style="height:24%"></span><span style="height:34%"></span><span style="height:42%"></span><span style="height:30%"></span>
+    </span>
+    <span class="last mono">$1.04M <span style="color:#6B7280;font-weight:400;font-size:9.5px;text-transform:uppercase;letter-spacing:.06em">last 30m</span></span>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> capter le <i>flux temps réel</i> — feeling d'un orderbook d'exchange. Stats compactes en 4 colonnes (incluant mini L/S bar), puis tape verticale des 9 derniers fills avec asset/side/size/price (la plus grosse liquidation en or). Pulse "LIVE" en pill verte sur le header. Footer compact : sparkline 24h + volume des 30 dernières min.
+</p>
+</div>
+</body></html>

@@ -57,7 +57,7 @@ export default function MyWallets() {
           <div className="bg-surface/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
               <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
-              <p className="text-zinc-400 text-sm">You need to login to access your wallet data</p>
+              <p className="text-text-secondary text-sm">You need to login to access your wallet data</p>
             </div>
             <Button
               onClick={() => login()}

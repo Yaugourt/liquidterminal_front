@@ -1,6 +1,6 @@
 "use client";
 
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -35,9 +35,7 @@ function buildColumns(
       getSortValue: (row) => row.symbol.toLowerCase(),
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-sm font-bold text-brand">
-            {row.symbol.charAt(0)}
-          </div>
+          <TokenAvatar assetName={`xyz:${row.symbol}`} size="lg" />
           <div className="flex flex-col">
             <span className="text-text-primary text-sm font-medium">{row.symbol}</span>
             <span className="text-brand text-xs">{row.coin}</span>

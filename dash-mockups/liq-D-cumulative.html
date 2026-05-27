@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant D — Cumulative Curve</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .top{margin-left:auto;font-size:10px;color:#6B7280}
+
+/* hero — big total + L vs S side-by-side */
+.hero{display:flex;gap:1px;background:#1E2535;border-bottom:1px solid #1E2535}
+.hero .col{flex:1;background:#0F1421;padding:14px 16px}
+.hero .col.total{flex:1.2}
+.hero .col .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.hero .col .v{font-size:24px;font-weight:600;letter-spacing:-.02em;margin-top:4px;line-height:1}
+.hero .col.long .v{color:#1FA85B}
+.hero .col.short .v{color:#E53E3E}
+.hero .col .sub{font-size:10px;color:#9CA3AF;margin-top:5px}
+.hero .col .sub.mono{font-feature-settings:"tnum"}
+
+/* cumulative chart */
+.chart-wrap{padding:14px 14px 8px;flex:1}
+.chart-wrap .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.chart-wrap .label-row .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.chart-wrap .legend{display:flex;gap:14px;font-size:10px}
+.chart-wrap .legend .it{display:flex;align-items:center;gap:5px}
+.chart-wrap .legend .it .dot{width:9px;height:2px;border-radius:1px}
+.chart-wrap .legend .it .l{background:#1FA85B}
+.chart-wrap .legend .it .s{background:#E53E3E}
+.chart-wrap .legend .it .lbl{color:#9CA3AF;font-weight:500}
+
+.chart{position:relative;height:170px}
+.chart svg{width:100%;height:100%;display:block}
+
+/* time axis */
+.tx{display:flex;justify-content:space-between;font-size:9px;color:#6B7280;font-family:Inter;font-feature-settings:"tnum";margin-top:6px;padding:0 4px}
+
+/* footer — highlights */
+.foot{border-top:1px solid #1E2535;padding:10px 14px}
+.foot .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px}
+.foot .events{display:flex;flex-direction:column;gap:6px}
+.foot .ev{display:flex;align-items:center;gap:8px;font-size:11px;padding:4px 0}
+.foot .ev .t{width:36px;color:#6B7280;font-size:10px}
+.foot .ev .pill{font-size:9px;font-weight:700;padding:1.5px 5px;border-radius:3px}
+.foot .ev .long{background:rgba(31,168,91,.12);color:#1FA85B}
+.foot .ev .short{background:rgba(229,62,62,.12);color:#E53E3E}
+.foot .ev .desc{flex:1;color:#9CA3AF}
+.foot .ev .v{font-weight:600;color:#F9E370}
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT D · cumulative curve — show bursts as slope changes over time</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <span class="top mono">Top · HYPE</span>
+  </div>
+
+  <!-- Hero — total + L / S split big -->
+  <div class="hero">
+    <div class="col total">
+      <div class="lb">Total liquidated 24h</div>
+      <div class="v mono">$11.5M</div>
+      <div class="sub mono">847 events · avg $13.6K</div>
+    </div>
+    <div class="col long">
+      <div class="lb">Long ↗</div>
+      <div class="v mono">$8.42M</div>
+      <div class="sub mono">73% · 619 events</div>
+    </div>
+    <div class="col short">
+      <div class="lb">Short ↘</div>
+      <div class="v mono">$3.11M</div>
+      <div class="sub mono">27% · 228 events</div>
+    </div>
+  </div>
+
+  <!-- Cumulative chart -->
+  <div class="chart-wrap">
+    <div class="label-row">
+      <span class="lb">Cumulative volume liquidated</span>
+      <div class="legend">
+        <div class="it"><span class="dot l"></span><span class="lbl">Long</span></div>
+        <div class="it"><span class="dot s"></span><span class="lbl">Short</span></div>
+      </div>
+    </div>
+
+    <div class="chart">
+      <svg viewBox="0 0 540 170" preserveAspectRatio="none">
+        <!-- grid lines -->
+        <line x1="0" y1="0" x2="540" y2="0" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="0" y1="42" x2="540" y2="42" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="0" y1="84" x2="540" y2="84" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="0" y1="126" x2="540" y2="126" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="0" y1="168" x2="540" y2="168" stroke="#1E2535"/>
+
+        <!-- Long cumulative — green area + line (steeper from 25-40% then plateau then surge) -->
+        <defs>
+          <linearGradient id="gLong" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1FA85B" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="gShort" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E53E3E" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#E53E3E" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Long area fill -->
+        <path d="M 0 168 L 0 160 L 30 154 L 60 144 L 90 130 L 120 108 L 150 76 L 180 58 L 210 50 L 240 46 L 270 44 L 300 38 L 330 28 L 360 22 L 390 18 L 420 14 L 450 10 L 480 6 L 510 4 L 540 2 L 540 168 Z" fill="url(#gLong)"/>
+        <!-- Long line -->
+        <path d="M 0 160 L 30 154 L 60 144 L 90 130 L 120 108 L 150 76 L 180 58 L 210 50 L 240 46 L 270 44 L 300 38 L 330 28 L 360 22 L 390 18 L 420 14 L 450 10 L 480 6 L 510 4 L 540 2" fill="none" stroke="#1FA85B" stroke-width="2"/>
+
+        <!-- Short area fill (smaller) -->
+        <path d="M 0 168 L 0 166 L 30 165 L 60 162 L 90 158 L 120 152 L 150 144 L 180 138 L 210 132 L 240 126 L 270 124 L 300 122 L 330 118 L 360 112 L 390 106 L 420 102 L 450 100 L 480 99 L 510 98 L 540 97 L 540 168 Z" fill="url(#gShort)"/>
+        <!-- Short line -->
+        <path d="M 0 166 L 30 165 L 60 162 L 90 158 L 120 152 L 150 144 L 180 138 L 210 132 L 240 126 L 270 124 L 300 122 L 330 118 L 360 112 L 390 106 L 420 102 L 450 100 L 480 99 L 510 98 L 540 97" fill="none" stroke="#E53E3E" stroke-width="2"/>
+
+        <!-- Burst marker — vertical dashed line at 4h ago + label -->
+        <line x1="455" y1="0" x2="455" y2="168" stroke="#83E9FF" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+        <circle cx="455" cy="9" r="3.5" fill="#83E9FF"/>
+        <text x="448" y="0" font-family="Inter" font-size="9" fill="#83E9FF" font-weight="600" text-anchor="end" dy="-2">burst</text>
+      </svg>
+    </div>
+
+    <div class="tx">
+      <span>-24h</span><span>-18h</span><span>-12h</span><span>-6h</span><span>now</span>
+    </div>
+  </div>
+
+  <!-- Footer — burst events highlights -->
+  <div class="foot">
+    <div class="lb">Notable bursts</div>
+    <div class="events">
+      <div class="ev">
+        <span class="t mono">4h ago</span>
+        <span class="pill long">LONG</span>
+        <span class="desc">HYPE — cascade sur 8 min · 142 events</span>
+        <span class="v mono">$2.18M</span>
+      </div>
+      <div class="ev">
+        <span class="t mono">11h ago</span>
+        <span class="pill long">LONG</span>
+        <span class="desc">BTC + ETH — flash crash 2.4%</span>
+        <span class="v mono">$1.41M</span>
+      </div>
+      <div class="ev">
+        <span class="t mono">19h ago</span>
+        <span class="pill short">SHORT</span>
+        <span class="desc">HYPE squeeze · 4 min</span>
+        <span class="v mono">$612K</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> les <i>rafales de liquidation</i> ressortent comme des <b>cassures de pente</b>. Hero = total + Long/Short side-by-side. Chart cumulatif sur 24h avec 2 courbes (verte = longs cumulés, rouge = shorts cumulés) ; chaque rafale = une zone où la courbe monte verticalement. Marqueur cyan sur la plus grosse cassure. Footer liste les 3 rafales notables avec heure + volume.
+</p>
+</div>
+</body></html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant A — Pressure Gauge</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .top{margin-left:auto;font-size:10px;color:#6B7280}
+
+/* hero — half-donut gauge */
+.hero{padding:18px 14px 14px;border-bottom:1px solid #1E2535;text-align:center}
+.gauge{position:relative;width:240px;height:130px;margin:0 auto}
+.gauge svg{width:100%;height:100%}
+.gauge .lbl{position:absolute;bottom:0;left:0;right:0;text-align:center}
+.gauge .lbl .pct{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.gauge .lbl .pct.up{color:#1FA85B}
+.gauge .lbl .pct.dn{color:#E53E3E}
+.gauge .lbl .sub{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-top:4px}
+.gauge-legend{display:flex;justify-content:center;gap:18px;margin-top:12px;font-size:11px}
+.gauge-legend .it{display:flex;align-items:center;gap:6px}
+.gauge-legend .dot{width:8px;height:8px;border-radius:2px}
+.gauge-legend .dot.long{background:#1FA85B}
+.gauge-legend .dot.short{background:#E53E3E}
+.gauge-legend .v{font-weight:600;color:#E8EAED}
+.gauge-legend .v.gn{color:#1FA85B}
+.gauge-legend .v.rd{color:#E53E3E}
+.gauge-legend .lb{color:#6B7280;text-transform:uppercase;font-size:9px;letter-spacing:.06em;font-weight:600;margin-left:4px}
+
+/* stats strip — 4 mini cells */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1E2535;border-bottom:1px solid #1E2535}
+.strip .c{background:#0F1421;padding:10px 12px}
+.strip .c .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.strip .c .v{font-size:14px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+
+/* bipolar histogram */
+.bipolar{padding:12px 14px 14px;flex:1}
+.bipolar .label{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px}
+.bipolar .bars{display:flex;align-items:center;gap:1px;height:120px;position:relative}
+.bipolar .bars::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px dashed #1E2535}
+.bipolar .col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:center;position:relative;cursor:crosshair}
+.bipolar .col .up,.bipolar .col .dn{width:100%}
+.bipolar .col .up{background:rgba(31,168,91,.7);align-self:flex-end;border-radius:1px 1px 0 0;margin-bottom:1px}
+.bipolar .col .dn{background:rgba(229,62,62,.7);align-self:flex-start;border-radius:0 0 1px 1px;margin-top:1px}
+.bipolar .col:hover .up{background:#1FA85B}
+.bipolar .col:hover .dn{background:#E53E3E}
+.axis{display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:#6B7280}
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT A · pressure gauge — focus on directional bias</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <span class="top mono">Top · HYPE</span>
+  </div>
+
+  <!-- Hero — half-donut gauge -->
+  <div class="hero">
+    <div class="gauge">
+      <svg viewBox="0 0 200 110" preserveAspectRatio="xMidYMid meet">
+        <!-- background arc -->
+        <path d="M 14 100 A 86 86 0 0 1 186 100" stroke="#1E2535" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <!-- short arc (red, left side, 27%) -->
+        <path d="M 14 100 A 86 86 0 0 1 56 30" stroke="#E53E3E" stroke-width="14" fill="none" stroke-linecap="round" opacity=".9"/>
+        <!-- long arc (green, right side, 73%) -->
+        <path d="M 56 30 A 86 86 0 0 1 186 100" stroke="#1FA85B" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <!-- needle -->
+        <line x1="100" y1="100" x2="146" y2="36" stroke="#E8EAED" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="4" fill="#E8EAED"/>
+      </svg>
+      <div class="lbl">
+        <div class="pct up mono">73%</div>
+        <div class="sub">Long-side dominant</div>
+      </div>
+    </div>
+    <div class="gauge-legend">
+      <div class="it"><span class="dot long"></span><span class="v gn mono">$8.42M</span><span class="lb">long</span></div>
+      <div class="it"><span class="dot short"></span><span class="v rd mono">$3.11M</span><span class="lb">short</span></div>
+    </div>
+  </div>
+
+  <!-- Stats strip — 4 mini cells -->
+  <div class="strip">
+    <div class="c"><div class="lb">Total</div><div class="v mono">$11.5M</div></div>
+    <div class="c"><div class="lb">Events</div><div class="v mono">847</div></div>
+    <div class="c"><div class="lb">Avg size</div><div class="v mono">$13.6K</div></div>
+    <div class="c"><div class="lb">Largest</div><div class="v mono">$420K</div></div>
+  </div>
+
+  <!-- Bipolar histogram -->
+  <div class="bipolar">
+    <div class="label">
+      <span>Liquidated volume · split by side</span>
+      <span style="text-transform:none;letter-spacing:0;font-weight:400">last 18h · 30m buckets</span>
+    </div>
+    <div class="bars">
+      <!-- 36 columns w/ up+dn -->
+      <div class="col"><span class="up" style="height:18%"></span><span class="dn" style="height:8%"></span></div>
+      <div class="col"><span class="up" style="height:12%"></span><span class="dn" style="height:14%"></span></div>
+      <div class="col"><span class="up" style="height:24%"></span><span class="dn" style="height:6%"></span></div>
+      <div class="col"><span class="up" style="height:30%"></span><span class="dn" style="height:10%"></span></div>
+      <div class="col"><span class="up" style="height:42%"></span><span class="dn" style="height:14%"></span></div>
+      <div class="col"><span class="up" style="height:56%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:78%"></span><span class="dn" style="height:22%"></span></div>
+      <div class="col"><span class="up" style="height:60%"></span><span class="dn" style="height:32%"></span></div>
+      <div class="col"><span class="up" style="height:44%"></span><span class="dn" style="height:48%"></span></div>
+      <div class="col"><span class="up" style="height:36%"></span><span class="dn" style="height:64%"></span></div>
+      <div class="col"><span class="up" style="height:30%"></span><span class="dn" style="height:52%"></span></div>
+      <div class="col"><span class="up" style="height:24%"></span><span class="dn" style="height:38%"></span></div>
+      <div class="col"><span class="up" style="height:18%"></span><span class="dn" style="height:24%"></span></div>
+      <div class="col"><span class="up" style="height:14%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:22%"></span><span class="dn" style="height:14%"></span></div>
+      <div class="col"><span class="up" style="height:36%"></span><span class="dn" style="height:10%"></span></div>
+      <div class="col"><span class="up" style="height:48%"></span><span class="dn" style="height:8%"></span></div>
+      <div class="col"><span class="up" style="height:62%"></span><span class="dn" style="height:12%"></span></div>
+      <div class="col"><span class="up" style="height:80%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:92%"></span><span class="dn" style="height:24%"></span></div>
+      <div class="col"><span class="up" style="height:74%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:58%"></span><span class="dn" style="height:14%"></span></div>
+      <div class="col"><span class="up" style="height:42%"></span><span class="dn" style="height:10%"></span></div>
+      <div class="col"><span class="up" style="height:30%"></span><span class="dn" style="height:8%"></span></div>
+      <div class="col"><span class="up" style="height:24%"></span><span class="dn" style="height:6%"></span></div>
+      <div class="col"><span class="up" style="height:18%"></span><span class="dn" style="height:4%"></span></div>
+      <div class="col"><span class="up" style="height:14%"></span><span class="dn" style="height:6%"></span></div>
+      <div class="col"><span class="up" style="height:12%"></span><span class="dn" style="height:8%"></span></div>
+      <div class="col"><span class="up" style="height:8%"></span><span class="dn" style="height:12%"></span></div>
+      <div class="col"><span class="up" style="height:14%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:20%"></span><span class="dn" style="height:24%"></span></div>
+      <div class="col"><span class="up" style="height:28%"></span><span class="dn" style="height:18%"></span></div>
+      <div class="col"><span class="up" style="height:38%"></span><span class="dn" style="height:14%"></span></div>
+      <div class="col"><span class="up" style="height:30%"></span><span class="dn" style="height:10%"></span></div>
+      <div class="col"><span class="up" style="height:24%"></span><span class="dn" style="height:8%"></span></div>
+      <div class="col"><span class="up" style="height:20%"></span><span class="dn" style="height:6%"></span></div>
+    </div>
+    <div class="axis mono">
+      <span>-18h</span><span>-9h</span><span>now</span>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> faire ressortir <i>qui domine</i> (longs ou shorts) en un coup d'œil. Gauge demi-cercle hero (73% long), needle pointée sur le biais, légende compacte. Stats 4-strip, puis histogramme bipolaire (longs au-dessus, shorts en-dessous d'un axe zéro pointillé) pour voir la composition par bucket de 30 min.
+</p>
+</div>
+</body></html>

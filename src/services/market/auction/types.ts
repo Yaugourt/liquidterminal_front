@@ -36,9 +36,19 @@ export interface AuctionState {
   currentPrice: number;
   currentPriceUSD: number;
   progressPercentage: number;
+  /** Initial Dutch auction price (top of the curve). */
+  startPrice: number;
+  /** Floor of the Dutch auction (bottom — usually 500 HYPE). */
+  floorPrice: number;
   lastAuctionPrice: number;
   lastAuctionName: string;
   nextAuctionStart: string;
+  /** Average winning bid over the last 7d (HYPE). 0 when no data. */
+  avg7dPrice: number;
+  /** Number of deploys settled in the last 7d. */
+  deploys7d: number;
+  /** Formatted ETA until `currentPrice` decays to `lastAuctionPrice` ("2h 15m"). */
+  etaToLastSold: string;
 }
 
 // Type pour la réponse API des auctions

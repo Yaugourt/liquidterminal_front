@@ -113,7 +113,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
         <Button
           variant="ghost"
           onClick={() => router.back()}
-          className="text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg"
+          className="text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to projects

@@ -16,7 +16,7 @@ export {
   ModuleSubhead,
   type ModuleColumn,
   type ModuleRowStat,
-} from "./OverviewModule";
+} from "@/components/common";
 
 // Cartes V4
 export { PulseBar } from "./PulseBar";

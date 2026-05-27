@@ -307,8 +307,15 @@ export function SectionsEditorialPremium() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.6} className="mt-10 sm:mt-14 md:mt-16 pt-8 border-t border-white/[0.06] text-center space-y-1">
+        <FadeIn delay={0.6} className="mt-10 sm:mt-14 md:mt-16 pt-8 border-t border-white/[0.06] text-center space-y-3">
           <p className="text-text-tertiary text-sm">Liquid Terminal v1.0.0</p>
+          <nav className="flex items-center justify-center gap-1 text-xs">
+            <Link href="/legal/terms" className="px-2.5 py-1 rounded-md text-text-tertiary hover:text-brand transition-colors">Terms</Link>
+            <span className="text-text-tertiary/40">·</span>
+            <Link href="/legal/privacy" className="px-2.5 py-1 rounded-md text-text-tertiary hover:text-brand transition-colors">Privacy</Link>
+            <span className="text-text-tertiary/40">·</span>
+            <Link href="/legal/disclaimer" className="px-2.5 py-1 rounded-md text-text-tertiary hover:text-brand transition-colors">Disclaimer</Link>
+          </nav>
           <p className="text-text-tertiary text-xs">© {new Date().getFullYear()} Liquid Terminal. All rights reserved.</p>
         </FadeIn>
       </section>

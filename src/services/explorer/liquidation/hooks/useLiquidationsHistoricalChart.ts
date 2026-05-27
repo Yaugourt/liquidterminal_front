@@ -27,13 +27,16 @@ export function useLiquidationsHistoricalChart(
       refreshInterval,
     });
 
-  const chartData = useMemo<HistoricalChartPoint[]>(() => {
-    const buckets = data?.data?.buckets ?? [];
-    return buckets.map((b) => ({
-      time: new Date(b.timestamp).getTime(),
-      value: b.totalVolume_USD,
-    }));
-  }, [data]);
+  const buckets = useMemo(() => data?.data?.buckets ?? [], [data]);
 
-  return { data: chartData, isLoading, error, refetch };
+  const chartData = useMemo<HistoricalChartPoint[]>(
+    () =>
+      buckets.map((b) => ({
+        time: new Date(b.timestamp).getTime(),
+        value: b.totalVolume_USD,
+      })),
+    [buckets]
+  );
+
+  return { data: chartData, buckets, isLoading, error, refetch };
 }

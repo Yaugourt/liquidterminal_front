@@ -1,12 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import { Vault } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
-} from "../OverviewModule";
+} from "@/components/common";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import {
   compactUsd,
@@ -25,6 +26,7 @@ export const VaultsModule = memo(function VaultsModule() {
   return (
     <OverviewModule
       title="Top Vaults"
+      icon={<Vault size={13} className="text-brand" />}
       tag={`${compactUsd(totalTvl)} TVL`}
       viewAllLabel="All vaults"
       href="/explorer/vaults"

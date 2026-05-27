@@ -9,89 +9,84 @@ import {
 } from "@/services/explorer/liquidation";
 import type { Liquidation } from "@/services/explorer/liquidation";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { chartPalette, TokenAvatar } from "@/components/common";
 
 /**
- * LiquidationsPanel — carte "Liquidations" du Dashboard, en 3 niveaux :
- *  1. Stats 24h (volume, events, ratio long/short) — endpoint `/liquidations/data`.
- *  2. Recent — flux des dernières liquidations via REST `fetchRecentLiquidations`,
- *     même appel que la page Liquidations.
- *  3. Chart — histogramme du volume liquidé par bucket de 30 min sur 24h.
+ * LiquidationsPanel — Dashboard liquidations card (V4 · variant D "cumulative").
  *
- * Aucune donnée inventée — uniquement des champs réels de l'API.
+ * Layout:
+ *  1. 3-col hero strip — total / long / short, each with $ volume + count + %.
+ *  2. Cumulative chart — two area+line series (long $ cumulative green,
+ *     short $ cumulative red) over the last 24h. Each burst reads as a slope
+ *     change. Pure SVG, hover crosshair + floating tooltip.
+ *  3. Footer — top 3 individual liquidations ≥ $100K (the day's standouts).
+ *
+ * Real data only; the cumulative arrays + the standouts are derived client-side
+ * from `/liquidations/recent`. Note `time_ms` corruption — we always parse the
+ * ISO `time` field (see `getLiqTimeMs`).
  */
 
-/** Configuration de l'histogramme : 48 buckets de 30 min couvrant 24 h. */
+/** Histogram config: 48 buckets × 30 min covering 24h. */
 const HIST_BUCKET_MS = 30 * 60 * 1000;
 const HIST_BUCKET_COUNT = 48;
 const HIST_WINDOW_HOURS = 24;
 const HIST_FETCH_LIMIT = 1000;
 
-/** Bucket reconstruit côté client à partir du flux /recent. */
-interface HistBucket {
-  timestamp: string;
+/** USD threshold below which individual liquidations are filtered out of the standouts list. */
+const STANDOUT_THRESHOLD_USD = 100_000;
+const STANDOUT_LIMIT = 3;
+
+interface CumulativeBucket {
   timestampMs: number;
-  totalVolume: number;
-  longVolume: number;
-  shortVolume: number;
-  longCount: number;
-  shortCount: number;
-  liquidationsCount: number;
+  longCum: number;
+  shortCum: number;
+  /** Per-bucket increments — used by the hover tooltip. */
+  longInc: number;
+  shortInc: number;
 }
 
 /**
- * Regroupe les liquidations en 48 buckets de 30 min alignés sur l'instant
- * courant — le dernier bucket finit à `now`, le premier commence à `now-24h`.
+ * Build 48 cumulative buckets aligned on `now`: the last bucket ends at `now`,
+ * the first starts at `now - 24h`. Each bucket carries the cumulative long /
+ * short $ liquidated up to and including its window.
  */
-function bucketizeRecent(liquidations: Liquidation[]): HistBucket[] {
+function buildCumulative(liquidations: Liquidation[]): CumulativeBucket[] {
   const now = Date.now();
   const startMs = now - HIST_BUCKET_COUNT * HIST_BUCKET_MS;
-  const buckets: HistBucket[] = Array.from({ length: HIST_BUCKET_COUNT }, (_, i) => {
-    const tMs = startMs + i * HIST_BUCKET_MS;
-    return {
-      timestamp: new Date(tMs).toISOString(),
-      timestampMs: tMs,
-      totalVolume: 0,
-      longVolume: 0,
-      shortVolume: 0,
-      longCount: 0,
-      shortCount: 0,
-      liquidationsCount: 0,
-    };
-  });
+
+  const longInc = new Array<number>(HIST_BUCKET_COUNT).fill(0);
+  const shortInc = new Array<number>(HIST_BUCKET_COUNT).fill(0);
 
   for (const liq of liquidations) {
     const ms = getLiqTimeMs(liq);
     const idx = Math.floor((ms - startMs) / HIST_BUCKET_MS);
     if (idx < 0 || idx >= HIST_BUCKET_COUNT) continue;
-    const b = buckets[idx];
-    b.totalVolume += liq.notional_total;
-    b.liquidationsCount += 1;
-    if (liq.liq_dir === "Long") {
-      b.longVolume += liq.notional_total;
-      b.longCount += 1;
-    } else {
-      b.shortVolume += liq.notional_total;
-      b.shortCount += 1;
-    }
+    if (liq.liq_dir === "Long") longInc[idx] += liq.notional_total;
+    else shortInc[idx] += liq.notional_total;
   }
 
-  return buckets;
+  const out: CumulativeBucket[] = [];
+  let lc = 0;
+  let sc = 0;
+  for (let i = 0; i < HIST_BUCKET_COUNT; i++) {
+    lc += longInc[i];
+    sc += shortInc[i];
+    out.push({
+      timestampMs: startMs + i * HIST_BUCKET_MS,
+      longCum: lc,
+      shortCum: sc,
+      longInc: longInc[i],
+      shortInc: shortInc[i],
+    });
+  }
+  return out;
 }
 
-/** Heure courte "HH:mm" d'un bucket. */
-function bucketHour(timestamp: string): string {
-  const d = new Date(timestamp);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-}
-
-/**
- * Renvoie un timestamp ms fiable pour une liquidation.
+/** Return a reliable ms timestamp for a liquidation row.
  *
- * L'API `/liquidations/recent` retourne des `time_ms` corrompus pour environ
- * 20 % des rows (valeurs ~3.5e12 = année 2082) tandis que l'ISO `time` reste
- * correct. On parse l'ISO en UTC ; on retombe sur `time_ms` uniquement si
- * l'ISO est inparsable.
+ *  The `/liquidations/recent` endpoint returns corrupted `time_ms` for ~20% of
+ *  rows (values ~3.5e12 → year 2082) while the ISO `time` field stays correct.
+ *  Always parse the ISO field; fall back to `time_ms` only if ISO is unparseable.
  */
 function getLiqTimeMs(liq: Liquidation): number {
   const iso = liq.time.endsWith("Z") ? liq.time : `${liq.time}Z`;
@@ -99,126 +94,195 @@ function getLiqTimeMs(liq: Liquidation): number {
   return Number.isFinite(ms) ? ms : liq.time_ms;
 }
 
-/**
- * LiquidationsHistogram — barres long/short stackées par bucket, interactives.
- *
- * Hover sur une barre → crosshair vertical, barres voisines en `opacity-40` et
- * tooltip flottant centré au-dessus du bucket survolé qui affiche Long / Short
- * (volumes + counts) et le total du bucket.
- */
-function LiquidationsHistogram({
-  buckets,
-  maxVolume,
-}: {
-  buckets: HistBucket[];
-  maxVolume: number;
-}) {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const hovered = hoveredIdx != null ? buckets[hoveredIdx] : null;
+/** Short "HH:mm" label for a bucket timestamp. */
+function bucketHour(ms: number): string {
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
 
-  const leftPct = useMemo(() => {
-    if (hoveredIdx == null || buckets.length === 0) return 50;
-    return ((hoveredIdx + 0.5) / buckets.length) * 100;
-  }, [hoveredIdx, buckets.length]);
+/** Compact relative age: "12s" / "4m" / "2h" / "1d". */
+function timeAgo(ms: number): string {
+  const diff = Math.max(0, Date.now() - ms);
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  return `${Math.floor(h / 24)}d`;
+}
+
+/** Truncate a 0x address to `0xABCD…1234`. */
+function truncateAddr(addr: string): string {
+  if (!addr || addr.length < 10) return addr ?? "";
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+/** SVG cumulative curve — two area+line series, hover crosshair + tooltip. */
+function CumulativeChart({ buckets }: { buckets: CumulativeBucket[] }) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const last = buckets[buckets.length - 1];
+  const maxY = Math.max(last?.longCum ?? 0, last?.shortCum ?? 0, 1);
+
+  // SVG geometry — viewBox 540×170, leave 2px padding so lines don't clip.
+  const W = 540;
+  const H = 170;
+  const PAD_T = 4;
+  const PAD_B = 2;
+  const usableH = H - PAD_T - PAD_B;
+
+  const xOf = (i: number) => (i / Math.max(1, buckets.length - 1)) * W;
+  const yOf = (v: number) => PAD_T + (1 - v / maxY) * usableH;
+
+  const longPath = useMemo(() => {
+    return buckets
+      .map((b, i) => `${i === 0 ? "M" : "L"} ${xOf(i).toFixed(1)} ${yOf(b.longCum).toFixed(1)}`)
+      .join(" ");
+  }, [buckets, maxY]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const shortPath = useMemo(() => {
+    return buckets
+      .map((b, i) => `${i === 0 ? "M" : "L"} ${xOf(i).toFixed(1)} ${yOf(b.shortCum).toFixed(1)}`)
+      .join(" ");
+  }, [buckets, maxY]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const longArea = useMemo(() => `${longPath} L ${W} ${H} L 0 ${H} Z`, [longPath]);
+  const shortArea = useMemo(() => `${shortPath} L ${W} ${H} L 0 ${H} Z`, [shortPath]);
+
+  const hovered = hoveredIdx != null ? buckets[hoveredIdx] : null;
+  const tooltipLeftPct = hovered ? (hoveredIdx! / Math.max(1, buckets.length - 1)) * 100 : 50;
 
   return (
-    <div className="relative flex-1 flex flex-col">
-      {/* Tooltip flottant */}
+    <div
+      className="relative w-full"
+      onMouseLeave={() => setHoveredIdx(null)}
+    >
+      {/* Floating tooltip */}
       <div
-        className={`pointer-events-none absolute -top-1 z-20 transition-all duration-150 ease-out ${
-          hovered ? "opacity-100" : "opacity-0 translate-y-1"
+        className={`pointer-events-none absolute -top-1 z-20 transition-opacity duration-150 ${
+          hovered ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          left: `${leftPct}%`,
+          left: `${tooltipLeftPct}%`,
           transform: "translateX(-50%) translateY(-100%)",
         }}
       >
         {hovered && (
-          <div className="bg-surface-2 border border-border-default rounded px-2.5 py-1.5 min-w-[148px] shadow-xl">
+          <div className="bg-surface-2 border border-border-default rounded px-2.5 py-1.5 min-w-[160px] shadow-xl">
             <div className="mono text-[9px] text-text-tertiary">
-              {bucketHour(hovered.timestamp)}
+              {bucketHour(hovered.timestampMs)}
             </div>
             <div className="flex items-center gap-1.5 mt-1 text-[10px]">
               <span className="w-1.5 h-1.5 rounded-full bg-success" />
               <span className="text-success mono font-semibold">Long</span>
               <span className="ml-auto mono text-text-primary">
-                {compactUsd(hovered.longVolume)}
+                {compactUsd(hovered.longCum)}
               </span>
               <span className="mono text-text-tertiary text-[9px]">
-                · {hovered.longCount}
+                {hovered.longInc > 0 ? `· +${compactUsd(hovered.longInc)}` : ""}
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-0.5 text-[10px]">
               <span className="w-1.5 h-1.5 rounded-full bg-danger" />
               <span className="text-danger mono font-semibold">Short</span>
               <span className="ml-auto mono text-text-primary">
-                {compactUsd(hovered.shortVolume)}
+                {compactUsd(hovered.shortCum)}
               </span>
               <span className="mono text-text-tertiary text-[9px]">
-                · {hovered.shortCount}
-              </span>
-            </div>
-            <div className="border-t border-border-subtle mt-1 pt-1 text-[9px] mono text-text-tertiary flex justify-between">
-              <span>Total</span>
-              <span className="text-text-primary">
-                {compactUsd(hovered.totalVolume)}
+                {hovered.shortInc > 0 ? `· +${compactUsd(hovered.shortInc)}` : ""}
               </span>
             </div>
           </div>
         )}
       </div>
 
-      <div
-        onMouseLeave={() => setHoveredIdx(null)}
-        className="flex items-end gap-px flex-1 min-h-[96px] cursor-crosshair"
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        className="w-full h-[170px] block cursor-crosshair"
       >
-        {buckets.map((b, i) => {
-          const isHovered = i === hoveredIdx;
-          const dim = hoveredIdx != null && !isHovered;
-          const longPct = (b.longVolume / maxVolume) * 100;
-          const shortPct = (b.shortVolume / maxVolume) * 100;
-          // Bars proportionnels — mais on garantit 2px minimum sur tout volume
-          // non-nul pour rester visible quand la dynamique est énorme
-          // (un bucket à 10 M$ vs un autre à 200 $).
-          const shortH =
-            b.shortVolume > 0 ? `max(2px, ${shortPct}%)` : "0";
-          const longH =
-            b.longVolume > 0 ? `max(2px, ${longPct}%)` : "0";
+        <defs>
+          <linearGradient id="liqGradLong" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={chartPalette.success} stopOpacity="0.22" />
+            <stop offset="100%" stopColor={chartPalette.success} stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="liqGradShort" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={chartPalette.danger} stopOpacity="0.18" />
+            <stop offset="100%" stopColor={chartPalette.danger} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {/* Horizontal grid */}
+        {[0, 0.25, 0.5, 0.75].map((p) => (
+          <line
+            key={p}
+            x1="0"
+            x2={W}
+            y1={PAD_T + p * usableH}
+            y2={PAD_T + p * usableH}
+            stroke="rgb(var(--border-subtle))"
+            strokeDasharray="3 4"
+          />
+        ))}
+        <line
+          x1="0"
+          x2={W}
+          y1={H - PAD_B}
+          y2={H - PAD_B}
+          stroke="rgb(var(--border-subtle))"
+        />
+
+        {/* Long area + line */}
+        <path d={longArea} fill="url(#liqGradLong)" />
+        <path d={longPath} fill="none" stroke={chartPalette.success} strokeWidth="2" />
+
+        {/* Short area + line */}
+        <path d={shortArea} fill="url(#liqGradShort)" />
+        <path d={shortPath} fill="none" stroke={chartPalette.danger} strokeWidth="2" />
+
+        {/* Hover crosshair */}
+        {hovered && (
+          <line
+            x1={xOf(hoveredIdx!)}
+            x2={xOf(hoveredIdx!)}
+            y1="0"
+            y2={H}
+            stroke={chartPalette.accent}
+            strokeWidth="1"
+            strokeDasharray="2 3"
+            opacity="0.6"
+          />
+        )}
+
+        {/* Mouse capture — invisible per-column rects */}
+        {buckets.map((_, i) => {
+          const w = W / buckets.length;
           return (
-            <div
-              key={b.timestampMs}
+            <rect
+              key={i}
+              x={i * w}
+              y={0}
+              width={w}
+              height={H}
+              fill="transparent"
               onMouseEnter={() => setHoveredIdx(i)}
-              className={`flex-1 h-full flex flex-col justify-end gap-px transition-opacity duration-150 ease-out ${
-                dim ? "opacity-35" : "opacity-100"
-              }`}
-            >
-              <span
-                className={`block rounded-sm transition-colors duration-150 ease-out ${
-                  isHovered ? "bg-danger" : "bg-danger/75"
-                }`}
-                style={{ height: shortH }}
-              />
-              <span
-                className={`block rounded-sm transition-colors duration-150 ease-out ${
-                  isHovered ? "bg-success" : "bg-success/75"
-                }`}
-                style={{ height: longH }}
-              />
-            </div>
+            />
           );
         })}
-      </div>
+      </svg>
     </div>
   );
 }
 
 export const LiquidationsPanel = memo(function LiquidationsPanel() {
-  // Stats 24h (totaux, ratio long/short, top coin) — endpoint agrégé.
+  // 24h aggregated stats (totals, long/short split, top coin).
   const { stats } = useLiquidationsData("24h", 30000);
-  // /recent — alimente l'histogramme. Limit max 1000 pour reconstituer les
-  // buckets côté client sur 24 h.
+
+  // Recent feed — used for both the cumulative chart and the standouts list.
   const {
-    liquidations: restLiquidations,
+    liquidations: feed,
     isLoading: feedLoading,
   } = useRecentLiquidations({
     limit: HIST_FETCH_LIMIT,
@@ -226,65 +290,65 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
     refreshInterval: 30000,
   });
 
-  const longPct = useMemo(() => {
-    const total = stats.longCount + stats.shortCount;
-    return total > 0 ? (stats.longCount / total) * 100 : 50;
-  }, [stats.longCount, stats.shortCount]);
-
+  const longTotal = stats.longVolume ?? 0;
+  const shortTotal = stats.shortVolume ?? 0;
+  const longPct = stats.totalVolume > 0 ? (longTotal / stats.totalVolume) * 100 : 0;
   const shortPct = 100 - longPct;
 
-  /** Buckets bruts (48 × 30 min sur 24 h) reconstruits depuis le flux /recent. */
-  const rawBuckets = useMemo(
-    () => bucketizeRecent(restLiquidations),
-    [restLiquidations]
-  );
+  /** Raw 48 × 30min cumulative buckets covering 24h. */
+  const rawCumulative = useMemo(() => buildCumulative(feed), [feed]);
 
   /**
-   * Buckets visibles — on rogne les buckets vides en tête : avec un flux
-   * `/recent` plafonné à 1000 rows, la fenêtre réelle couverte est souvent
-   * de 4-8 h, le reste à gauche serait juste des espaces vides → on remplit
-   * la largeur de la card avec la data dispo.
+   * Trim leading empty buckets — with `/recent` capped at 1000 rows the real
+   * coverage is often only 4-8h. Leading empty buckets would render flat lines
+   * over wasted space; trimming fills the card width with actual data.
    */
-  const histBuckets = useMemo(() => {
+  const cumBuckets = useMemo(() => {
     let start = 0;
-    while (start < rawBuckets.length && rawBuckets[start].totalVolume === 0) {
+    while (
+      start < rawCumulative.length &&
+      rawCumulative[start].longCum === 0 &&
+      rawCumulative[start].shortCum === 0
+    ) {
       start++;
     }
-    if (start >= rawBuckets.length) return rawBuckets;
-    return rawBuckets.slice(start);
-  }, [rawBuckets]);
+    if (start >= rawCumulative.length) return rawCumulative;
+    return rawCumulative.slice(start);
+  }, [rawCumulative]);
 
-  /** Volume max d'un bucket — sert d'échelle à l'histogramme. */
-  const maxBucketVolume = useMemo(
-    () => histBuckets.reduce((m, b) => Math.max(m, b.totalVolume), 0),
-    [histBuckets]
-  );
-
-  /** Bornes de temps de l'histogramme (premier / milieu / dernier bucket). */
-  const timeAxis = useMemo(() => {
-    if (histBuckets.length === 0) return null;
-    return {
-      start: bucketHour(histBuckets[0].timestamp),
-      mid: bucketHour(histBuckets[Math.floor(histBuckets.length / 2)].timestamp),
-      end: bucketHour(histBuckets[histBuckets.length - 1].timestamp),
-    };
-  }, [histBuckets]);
-
-  /** Heures de couverture réelles affichées par la chart. */
+  /** Hours actually covered by the trimmed chart. */
   const visibleHours = useMemo(() => {
-    if (histBuckets.length === 0) return 0;
+    if (cumBuckets.length === 0) return 0;
     const spanMs =
-      histBuckets[histBuckets.length - 1].timestampMs -
-      histBuckets[0].timestampMs +
+      cumBuckets[cumBuckets.length - 1].timestampMs -
+      cumBuckets[0].timestampMs +
       HIST_BUCKET_MS;
     return Math.max(1, Math.round(spanMs / (60 * 60 * 1000)));
-  }, [histBuckets]);
+  }, [cumBuckets]);
 
-  const hasChart = maxBucketVolume > 0;
+  /** Time axis labels (start / mid / end of the trimmed window). */
+  const timeAxis = useMemo(() => {
+    if (cumBuckets.length === 0) return null;
+    return {
+      start: bucketHour(cumBuckets[0].timestampMs),
+      mid: bucketHour(cumBuckets[Math.floor(cumBuckets.length / 2)].timestampMs),
+      end: bucketHour(cumBuckets[cumBuckets.length - 1].timestampMs),
+    };
+  }, [cumBuckets]);
+
+  const hasChart = cumBuckets.length > 0 && (cumBuckets[cumBuckets.length - 1].longCum > 0 || cumBuckets[cumBuckets.length - 1].shortCum > 0);
+
+  /** Top N standouts: liquidations ≥ $100K, sorted by notional desc. */
+  const standouts = useMemo(() => {
+    return [...feed]
+      .filter((l) => l.notional_total >= STANDOUT_THRESHOLD_USD)
+      .sort((a, b) => b.notional_total - a.notional_total)
+      .slice(0, STANDOUT_LIMIT);
+  }, [feed]);
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* Card-head V4 : icône + titre + tag période + top coin */}
+      {/* V4 card-head */}
       <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Flame size={13} className="text-brand" />
@@ -293,66 +357,75 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           24h
         </span>
-        <span className="ml-auto text-[10px] text-text-tertiary mono">
-          Top · {stats.topCoin || "-"}
+        <span className="ml-auto flex items-center gap-1.5 text-[10px] text-text-tertiary mono">
+          Top ·
+          {stats.topCoin ? (
+            <>
+              <TokenAvatar assetName={stats.topCoin} size="sm" />
+              <span className="text-text-secondary font-semibold">
+                {stats.topCoin}
+              </span>
+            </>
+          ) : (
+            <span>—</span>
+          )}
         </span>
       </div>
 
-      {/* Niveau 1 — liq-summary : grille 2×2 de stats 24h */}
-      <div className="grid grid-cols-2 gap-px bg-border-subtle">
-        <div className="bg-surface px-3.5 py-3">
-          <div className="text-[10px] uppercase tracking-wide text-text-tertiary">
-            Total liquidated
+      {/* Hero — 3-col strip (Total / Long / Short) */}
+      <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-px bg-border-subtle border-b border-border-subtle">
+        <div className="bg-surface px-4 py-3">
+          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+            Total liquidated 24h
           </div>
-          <div className="mono text-[17px] font-semibold text-text-primary mt-1">
+          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary mt-1 leading-none">
             {compactUsd(stats.totalVolume)}
           </div>
-        </div>
-        <div className="bg-surface px-3.5 py-3">
-          <div className="text-[10px] uppercase tracking-wide text-text-tertiary">Events</div>
-          <div className="mono text-[17px] font-semibold text-text-primary mt-1">
-            {stats.liquidationsCount.toLocaleString()}
-          </div>
-        </div>
-        <div className="bg-surface px-3.5 py-3">
-          <div className="text-[10px] uppercase tracking-wide text-text-tertiary">Avg size</div>
-          <div className="mono text-[17px] font-semibold text-text-primary mt-1">
+          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
+            {stats.liquidationsCount.toLocaleString()} events · avg{" "}
             {compactUsd(stats.avgSize)}
           </div>
         </div>
-        <div className="bg-surface px-3.5 py-3">
-          <div className="text-[10px] uppercase tracking-wide text-text-tertiary">
-            Largest liq.
+        <div className="bg-surface px-4 py-3">
+          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+            Long ↗
           </div>
-          <div className="mono text-[17px] font-semibold text-text-primary mt-1">
-            {compactUsd(stats.maxLiq)}
+          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-success mt-1 leading-none">
+            {compactUsd(longTotal)}
+          </div>
+          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
+            {Math.round(longPct)}% · {stats.longCount.toLocaleString()} events
+          </div>
+        </div>
+        <div className="bg-surface px-4 py-3">
+          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+            Short ↘
+          </div>
+          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-danger mt-1 leading-none">
+            {compactUsd(shortTotal)}
+          </div>
+          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
+            {Math.round(shortPct)}% · {stats.shortCount.toLocaleString()} events
           </div>
         </div>
       </div>
 
-      {/* ls-bar : ratio Long / Short */}
-      <div className="flex h-2 rounded overflow-hidden mx-3.5 mt-3 mb-1.5 border border-border-default">
-        <span className="bg-success" style={{ width: `${longPct}%` }} />
-        <span className="bg-danger" style={{ width: `${shortPct}%` }} />
-      </div>
-      <div className="flex items-center justify-between px-3.5 pb-3 text-[10.5px]">
-        <span className="text-success font-semibold">
-          Long {Math.round(longPct)}% · {stats.longCount.toLocaleString()}
-        </span>
-        <span className="text-danger font-semibold">
-          {stats.shortCount.toLocaleString()} · {Math.round(shortPct)}% Short
-        </span>
-      </div>
-
-      {/* Niveau 2 — Chart : volume liquidé par bucket de 30 min */}
-      <div className="flex-1 flex flex-col border-t border-border-subtle px-3.5 pt-2.5 pb-3">
+      {/* Cumulative chart */}
+      <div className="flex-1 flex flex-col px-3.5 pt-2.5 pb-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-            Liquidated volume
+            Cumulative volume liquidated
           </span>
-          <span className="text-[10px] text-text-tertiary">
-            {visibleHours > 0 ? `last ${visibleHours}h · 30m buckets` : "30m buckets"}
-          </span>
+          <div className="flex items-center gap-3 text-[10px]">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-[2px] rounded bg-success" />
+              <span className="text-text-secondary">Long</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-[2px] rounded bg-danger" />
+              <span className="text-text-secondary">Short</span>
+            </span>
+          </div>
         </div>
 
         {!hasChart ? (
@@ -361,10 +434,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
           </div>
         ) : (
           <>
-            <LiquidationsHistogram
-              buckets={histBuckets}
-              maxVolume={maxBucketVolume}
-            />
+            <CumulativeChart buckets={cumBuckets} />
             {timeAxis && (
               <div className="flex justify-between mt-1.5 text-[9px] text-text-tertiary mono">
                 <span>{timeAxis.start}</span>
@@ -372,7 +442,59 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
                 <span>{timeAxis.end}</span>
               </div>
             )}
+            <div className="mt-1 text-[9.5px] text-text-tertiary text-right">
+              {visibleHours > 0 ? `last ${visibleHours}h · 30m buckets` : ""}
+            </div>
           </>
+        )}
+      </div>
+
+      {/* Footer — top 3 standouts (≥ $100K) */}
+      <div className="border-t border-border-subtle px-3.5 py-2.5">
+        <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1.5">
+          Notable liquidations · ≥ $100K
+        </div>
+        {standouts.length === 0 ? (
+          <div className="text-[11px] text-text-tertiary py-1">
+            {feedLoading
+              ? "Loading…"
+              : "No liquidation ≥ $100K in the last 24h"}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1">
+            {standouts.map((l) => {
+              const isLong = l.liq_dir === "Long";
+              return (
+                <div
+                  key={l.tid}
+                  className="flex items-center gap-2.5 text-[11px] py-1"
+                >
+                  <span className="mono w-9 shrink-0 text-text-tertiary text-[10px]">
+                    {timeAgo(getLiqTimeMs(l))}
+                  </span>
+                  <span
+                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                      isLong
+                        ? "bg-success/10 text-success"
+                        : "bg-danger/10 text-danger"
+                    }`}
+                  >
+                    {isLong ? "LONG" : "SHORT"}
+                  </span>
+                  <TokenAvatar assetName={l.coin} size="sm" />
+                  <span className="font-semibold text-text-primary truncate">
+                    {l.coin}
+                  </span>
+                  <span className="mono text-text-tertiary text-[10px] truncate">
+                    {truncateAddr(l.liquidated_user)}
+                  </span>
+                  <span className="mono font-semibold text-gold ml-auto whitespace-nowrap">
+                    {compactUsd(l.notional_total)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </Card>

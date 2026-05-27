@@ -76,14 +76,14 @@ export async function fetchHip4Settlements(
   }, "fetching HIP-4 settlements");
 }
 
-/** Time-bucketed analytics — volume, fills, fees, unique traders. */
+/** Time-bucketed analytics — volume, fills, fees, unique traders.
+ * LT backend unwraps HypeDexer's `{ status, count, data: [...] }` envelope
+ * server-side, so `data` is already a flat bucket array. */
 export async function fetchHip4Analytics(
   params?: Hip4AnalyticsQuery
 ): Promise<Hip4AnalyticsBucket[]> {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(`${HIP4}/analytics`, toQuery(params ?? {}));
-    // LT backend wraps the HypeDexer response as { success, data: { status, count, data: [...] } }
-    const envelope = assertLtData<{ status: string; count: number; data: Hip4AnalyticsBucket[] }>(raw);
-    return Array.isArray(envelope) ? envelope : (envelope.data ?? []);
+    return assertLtData<Hip4AnalyticsBucket[]>(raw);
   }, "fetching HIP-4 analytics");
 }

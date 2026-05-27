@@ -1,66 +1,66 @@
 # Liquid Terminal — Design System V4
 
-> Référence unique du design system. Tout nouvel écran ou composant compose à partir d'ici ; aucune valeur de style ne se ré-invente.
+> Single source of truth for the design system. Every new screen or component composes from here; no style value is re-invented.
 
-## 1. Philosophie
+## 1. Philosophy
 
-- **Analytics-first** — viser le niveau DefiLlama / Token Terminal : densité d'info, hiérarchie scannable, sobriété.
-- **Données réelles uniquement** — pas de sparkline / delta / point inventé. Si la source n'expose pas l'historique, on ne l'affiche pas.
-- **Fond plat avec profondeur subtile** — `bg-base` + un halo discret en haut de page. Pas de dégradé criard.
-- **Une primitive, plusieurs domaines** — les tables passent toutes par `TypedDataTable`, les charts par `chartPalette`, les cartes par `<Card>` + card-head. Les pages composent, elles ne re-stylent pas.
+- **Analytics-first** — aim for DefiLlama / Token Terminal level: info density, scannable hierarchy, restraint.
+- **Real data only** — no fake sparkline / delta / point. If the source doesn't expose history, don't display it.
+- **Flat background with subtle depth** — `bg-base` plus a discreet halo at the top of the page. No loud gradients.
+- **One primitive, many domains** — all tables go through `TypedDataTable`, charts through `chartPalette`, cards through `<Card>` + card-head. Pages compose, they don't re-style.
 
 ## 2. Tokens
 
-### Couleurs
+### Colors
 
-| Token Tailwind | Hex | Usage |
+| Tailwind token | Hex | Usage |
 |---|---|---|
-| `bg-base` | `#0A0B0F` | Fond de l'app |
-| `bg-surface` | `#0F1421` | Fond des cartes, sidebar |
-| `bg-surface-2` | `#141B2A` | En-tête de table, hover, pills |
-| `bg-surface-3` | `#1C2436` | Hover plus profond, items de dropdown |
-| `border-subtle` | `#1E2535` | Bordures internes, séparateurs |
-| `border-default` | `#2C354A` | Bordures de carte, inputs |
-| `text-primary` | `#E8EAED` | Texte principal |
-| `text-secondary` | `#9CA3AF` | Labels, sous-titres |
-| `text-tertiary` | `#6B7280` | Texte atténué, captions |
-| `brand` | `#83E9FF` | Cyan accent, liens, focus, actifs |
-| `brand-deep` | `#1692AD` | Variante brand foncée (gradients) |
-| `gold` | `#F9E370` | Fees, accent secondaire |
-| `success` | `#1FA85B` | Positif, long, buy |
-| `danger` | `#E53E3E` | Négatif, short, sell |
+| `bg-base` | `#0A0B0F` | App background |
+| `bg-surface` | `#0F1421` | Card / sidebar background |
+| `bg-surface-2` | `#141B2A` | Table header, hover, pills |
+| `bg-surface-3` | `#1C2436` | Deeper hover, dropdown items |
+| `border-subtle` | `#1E2535` | Internal borders, separators |
+| `border-default` | `#2C354A` | Card borders, inputs |
+| `text-primary` | `#E8EAED` | Primary text |
+| `text-secondary` | `#9CA3AF` | Labels, subtitles |
+| `text-tertiary` | `#6B7280` | Muted text, captions |
+| `brand` | `#83E9FF` | Cyan accent — links, focus, active state |
+| `brand-deep` | `#1692AD` | Darker brand variant (gradients) |
+| `gold` | `#F9E370` | Fees, secondary accent |
+| `success` | `#1FA85B` | Positive, long, buy |
+| `danger` | `#E53E3E` | Negative, short, sell |
 
-**Charts** — palette dédiée dans `@/components/common` (`chartPalette`) : `accent`, `gold`, `violet` (`#A78BFA`), `down` (rose), `roseLight`, `roseSoft`.
+**Charts** — dedicated palette in `@/components/common` (`chartPalette`): `accent`, `gold`, `violet` (`#A78BFA`), `down` (rose), `roseLight`, `roseSoft`.
 
-### Typographie
+### Typography
 
-- Stack unique **Inter** — `font-sans`, `font-mono` résolvent tous deux vers Inter.
-- Classe `.mono` pour les nombres tabulaires (`font-feature-settings: "tnum"`). Préférer `.mono` à `tabular-nums`.
-- Tailles courantes :
-  - Hero d'une carte : `text-[20px]` à `text-[23px]`, `font-semibold`, `tracking-[-0.02em]`.
-  - Titre de carte (card-head) : `text-[13px] font-semibold`.
-  - Label de stat : `text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold`.
-  - Header de colonne de table : `text-[9px]–[10px] uppercase tracking-wide text-text-tertiary`.
-  - Ligne de tableau : `text-[11.5px]`–`text-[12.5px]`.
+- Single stack **Inter** — `font-sans` and `font-mono` both resolve to Inter.
+- `.mono` class for tabular numbers (`font-feature-settings: "tnum"`). Prefer `.mono` over `tabular-nums`.
+- Common sizes:
+  - Card hero: `text-[20px]` to `text-[23px]`, `font-semibold`, `tracking-[-0.02em]`.
+  - Card title (card-head): `text-[13px] font-semibold`.
+  - Stat label: `text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold`.
+  - Table column header: `text-[9px]–[10px] uppercase tracking-wide text-text-tertiary`.
+  - Table row: `text-[11.5px]`–`text-[12.5px]`.
 
-### Rayons
+### Radii
 
-- `rounded-md` (6px) — pills, boutons, petites cellules.
-- `rounded-lg` (8px) — cartes, inputs.
+- `rounded-md` (6px) — pills, buttons, small cells.
+- `rounded-lg` (8px) — cards, inputs.
 
-### Espacements
+### Spacing
 
-- Gap principal : `gap-4` (16px).
-- Card-head : `px-3.5 py-2.5`.
-- Corps de carte : `px-3.5 py-3` ou `px-3` selon la densité.
+- Main gap: `gap-4` (16px).
+- Card-head: `px-3.5 py-2.5`.
+- Card body: `px-3.5 py-3` or `px-3` depending on density.
 
 ## 3. Layout shell
 
-### Fond de page
+### Page background
 
 ```tsx
 <div className="min-h-screen bg-base text-text-primary font-inter">
-  {/* Halo subtil — donne de la profondeur au fond plat */}
+  {/* Subtle halo — gives depth to the flat background */}
   <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[340px]
                   bg-gradient-to-b from-surface/60 to-transparent" />
   <Sidebar … />
@@ -73,33 +73,33 @@
 </div>
 ```
 
-**Règle z-index** : le halo est `z-0`, le contenu **doit** être `relative z-10`. Sans ça le halo se peint par-dessus et délave le texte.
+**z-index rule**: the halo is `z-0`, the content **must** be `relative z-10`. Otherwise the halo paints over and washes out the text.
 
 ### Sidebar
 
-- Largeur **`232px`** à `lg+`, `208px` en mobile.
+- Width **`232px`** at `lg+`, `208px` on mobile.
 - `bg-surface` + `border-r border-border-subtle`.
-- Bloc de marque (logo + "Liquid Terminal" + sous-titre `HYPERLIQUID DATA`).
-- Labels de groupe : `text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold`.
-- Item actif : `bg-brand/10 text-text-primary` + icône cyan + filet latéral `w-[2px] h-4 bg-brand`.
+- Brand block (logo + "Liquid Terminal" + subtitle `HYPERLIQUID DATA`).
+- Group labels: `text-[10px] uppercase tracking-[0.1em] text-text-tertiary font-semibold`.
+- Active item: `bg-brand/10 text-text-primary` + cyan icon + side rail `w-[2px] h-4 bg-brand`.
 
 ### Header
 
-- **Sticky** : `sticky top-0 z-30 bg-base/80 backdrop-blur-xl`.
-- **Pas de filet bas** (`border-b` retiré pour une transition propre).
-- Barre de recherche : `bg-surface border border-border-default rounded-lg`, icône loupe à gauche en `text-text-tertiary`, focus `border-brand`. Dropdown des suggestions en `bg-surface-2 border-border-default`.
+- **Sticky**: `sticky top-0 z-30 bg-base/80 backdrop-blur-xl`.
+- **No bottom border** (`border-b` removed for a clean transition).
+- Search bar: `bg-surface border border-border-default rounded-lg`, magnifier icon left in `text-text-tertiary`, focus `border-brand`. Suggestions dropdown in `bg-surface-2 border-border-default`.
 
-## 4. Carte (pattern central)
+## 4. Card (central pattern)
 
-### Conteneur
+### Container
 
 ```tsx
 <Card className="overflow-hidden flex flex-col">…</Card>
 ```
-- `<Card>` de `@/components/ui/card` — encode `bg-surface` + `border border-border-subtle` + `rounded-lg`.
-- Padding par défaut : **none**. Le contenu gère ses paddings.
+- `<Card>` from `@/components/ui/card` — encodes `bg-surface` + `border border-border-subtle` + `rounded-lg`.
+- Default padding: **none**. The content manages its own padding.
 
-### Card-head V4 (référence à appliquer partout)
+### V4 card-head (apply everywhere)
 
 ```tsx
 <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
@@ -118,26 +118,26 @@
 </div>
 ```
 
-### Pills `tag`
+### `tag` pills
 
-- Sobre : `text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle`.
-- Variante **LIVE / FEED** : `bg-success/10 text-success border-success/25` + point pulsant `<span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />`.
+- Sober: `text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle`.
+- **LIVE / FEED** variant: `bg-success/10 text-success border-success/25` + pulsing dot `<span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />`.
 
-### Section sub-head (au-dessus des grilles)
+### Section sub-head (above grids)
 
 ```tsx
 <SectionHead title="Network Pulse" subtitle="Real-time ecosystem metrics" href="/…" />
 ```
 - `flex items-baseline gap-3 mb-1`.
-- h2 `text-[14px] font-semibold text-text-primary`, sous-titre `text-[11px] text-text-tertiary`, lien optionnel `ml-auto`.
+- h2 `text-[14px] font-semibold text-text-primary`, subtitle `text-[11px] text-text-tertiary`, optional link `ml-auto`.
 
 ## 5. Tables
 
-**Règle absolue** : `<Table>` brut de `@/components/ui/table` **interdit hors de `src/components/common/`** (ESLint). Deux pattern selon le contexte :
+**Hard rule**: raw `<Table>` from `@/components/ui/table` is **forbidden outside `src/components/common/`** (ESLint). Two patterns depending on context:
 
-### 5.a — Tables de page (market, explorer, …)
+### 5.a — Page tables (market, explorer, …)
 
-Pour une table autonome dans une page, utiliser `<TypedDataTable<Row>>` de `@/components/common` :
+For a standalone table inside a page, use `<TypedDataTable<Row>>` from `@/components/common`:
 
 ```tsx
 <TypedDataTable<Row>
@@ -158,17 +158,61 @@ Pour une table autonome dans une page, utiliser `<TypedDataTable<Row>>` de `@/co
 />
 ```
 
-`Column.type` applique automatiquement `.mono` + alignement droit + couleur signée selon le type.
+`Column.type` automatically applies `.mono` + right alignment + signed color depending on the type.
 
-### 5.b — Tables de carte Dashboard (leaderboard top N)
+### 5.b — Compact table cards (`ModuleTable`)
 
-**Toutes** les cartes leaderboard du dashboard (Top Vaults, Top Validators, Top Builders, Trending Spot, Trending Perpetuals, Top HIP-3 Markets, etc.) **doivent** utiliser le triplet `OverviewModule` + `ModuleTable` + `ModuleTableRow` + `ModuleAsset` de `@/components/dashboard/OverviewModule`.
+**`ModuleTable` is THE primitive for any compact table rendered inside a card.** Use cases all share the same visual contract: card-head + dense rows + per-column alignment + hover. It covers, but is not limited to:
 
-C'est le **seul moyen** de garantir un avatar, un espacement, un card-head et un comportement de row identiques sur toutes les cartes du dashboard. Pas de `TypedDataTable` direct dans une carte de dashboard.
+| Use case | Density | Example |
+|---|---|---|
+| Leaderboard (top N) | `comfortable` | Top Vaults / Top Validators / Top Builders |
+| Live feed (streaming) | `compact` | Latest blocks, latest transactions, live fills |
+| Recent activity | `compact` | Token deploys, bridge events, recent liquidations |
+
+Source: `src/components/common/OverviewModule.tsx`. App-wide primitive — consumed by `dashboard/`, `explorer/`, and any future leaderboard surface.
+
+#### Hard rules
+
+- **Never** write `<div className="grid grid-cols-[Npx_…]">` to build a table inside a card. Blocked by ESLint (`no-restricted-syntax`, regex on `grid-cols-[…_…_…]` with a `px` track).
+- **Never** put `TypedDataTable` inside a card — `TypedDataTable` is reserved for **standalone** page tables (§5.a).
+- Column widths live **once** on `columns[].width`. Header and rows stay aligned automatically through `<colgroup>` — no chance of header/row mismatch.
+
+#### API
+
+```tsx
+<ModuleTable
+  density="compact"            // optional, default "comfortable"
+  columns={[
+    { header: "Block",    align: "left",  width: 90 },   // fixed px
+    { header: "Age",      align: "left",  width: 60 },
+    { header: "Txs",      align: "left",  width: 56 },
+    { header: "Proposer", align: "left"               },  // omit width → flex
+  ]}
+>
+  {rows.map((b) => (
+    <ModuleTableRow
+      key={b.height}
+      href={`/explorer/block/${b.height}`}   // optional, makes the row clickable
+      cells={[
+        <span key="block"    className="mono font-semibold text-brand">{b.height}</span>,
+        <span key="age"      className="mono text-text-tertiary">{timeAgo(b.blockTime)}</span>,
+        <span key="txs"      className="mono text-text-primary">{b.numTxs}</span>,
+        <span key="proposer" className="mono text-text-secondary">{truncateAddr(b.proposer)}</span>,
+      ]}
+    />
+  ))}
+</ModuleTable>
+```
+
+#### Leaderboard example (`OverviewModule` wrapper)
+
+When the card-head is the standard "icon + title + tag + View all" with a single `href`, wrap `ModuleTable` in `<OverviewModule>` to factor it out:
 
 ```tsx
 <OverviewModule
   title="Top Vaults"
+  icon={<Vault size={13} className="text-brand" />}
   tag={`${compactUsd(totalTvl)} TVL`}
   viewAllLabel="All vaults"
   href="/explorer/vaults"
@@ -186,7 +230,7 @@ C'est le **seul moyen** de garantir un avatar, un espacement, un card-head et un
         key={v.address}
         href={`/explorer/vaults/${v.address}`}
         cells={[
-          <ModuleAsset key="vault" logo={v.name.slice(0, 2).toUpperCase()} name={v.name} />,
+          <ModuleAsset key="vault" assetName={`xyz:${v.symbol}`} name={v.name} />,
           <span key="apr"    className="mono text-success">{v.apr.toFixed(1)}%</span>,
           <span key="tvl"    className="mono text-text-primary">{compactUsd(v.tvl)}</span>,
           <span key="leader" className="mono text-text-secondary">{truncateAddress(v.leader)}</span>,
@@ -197,174 +241,339 @@ C'est le **seul moyen** de garantir un avatar, un espacement, un card-head et un
 </OverviewModule>
 ```
 
-### 5.c — `ModuleAsset` (avatar unifié)
+#### Live feed example (custom card-head)
 
-C'est **l'unique cellule "nom + avatar"** sur le dashboard.
+When the card-head needs more than one pill, a `LIVE` indicator, or a custom layout, render `<Card>` + the V4 card-head markup inline (§4) and put `ModuleTable` inside:
 
 ```tsx
-<ModuleAsset
-  logo={'AB'}                              // 2 initiales (string) — fallback
-  // OU
-  logo={<Image src={url} … />}             // image réelle quand un logo existe
-  name={displayName}
-  sub={optionalSubtitle}
-/>
+<Card className="overflow-hidden flex flex-col">
+  <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+    <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+      <Boxes size={13} className="text-brand" />
+    </span>
+    <h3 className="text-[13px] font-semibold text-text-primary">Latest blocks</h3>
+    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+      10 newest
+    </span>
+    <LivePill connected={isConnected} />
+    <Link href="/explorer" className="ml-auto …">View all <ArrowRight size={12} /></Link>
+  </div>
+  <ModuleTable density="compact" columns={…}>{…}</ModuleTable>
+</Card>
 ```
 
-Le wrapper rend un carré `w-6 h-6 rounded-md bg-brand/10 text-brand overflow-hidden`. Quand on passe une `<Image>`, elle remplit le wrapper (object-cover) — le bg cyan reste visible uniquement sur les zones transparentes. Le label `name` est `text-[12.5px] font-semibold`, `sub` `text-[10px] text-text-tertiary`.
+### 5.c — Token avatars (HL CDN)
 
-**Ne jamais** :
-- ré-implémenter un avatar custom (carré, cercle, ou autre) sur une carte du dashboard ;
-- utiliser `<TokenIcon>` (cercle cyan-on-navy, design legacy) à l'intérieur d'une carte du dashboard.
+Two primitives, one source of truth (`getTokenIconUrl`).
+
+#### `<TokenAvatar>` — inline coin badge (use everywhere)
+
+The standalone "small coin badge" for tables, feeds, modal headers, anywhere outside the leaderboard cell pattern.
+
+```tsx
+<TokenAvatar assetName="BTC"          size="md" />   /* perp     */
+<TokenAvatar assetName="HYPE_spot"    size="lg" />   /* spot     */
+<TokenAvatar assetName="xyz:BRENTOIL" size="sm" />   /* HIP-3    */
+<TokenAvatar assetName="USDC" kind="spot" />          /* force spot lookup */
+```
+
+Sizes: `xs` (16px), `sm` (18px), `md` (20px, default), `lg` (24px). Always `rounded-md bg-brand/10 text-brand`. On load failure, falls back to 2 uppercase initials via `getTokenInitials`.
+
+**Never** roll your own `<Image src=… onError=…>` inline — go through `<TokenAvatar>` so HL CDN naming and the fallback look stay consistent.
+
+#### `<ModuleAsset>` — leaderboard cell (`avatar + name + sub`)
+
+The **single "name + avatar" cell** used in leaderboard cards.
+
+**Preferred** — let `ModuleAsset` fetch the Hyperliquid CDN icon for you:
+
+```tsx
+<ModuleAsset assetName="BTC"            name="BTC"          />   /* perp     */
+<ModuleAsset assetName="HYPE_spot"      name="HYPE"         />   /* spot     */
+<ModuleAsset assetName="xyz:BRENTOIL"   name="BRENTOIL"     />   /* HIP-3    */
+```
+
+`assetName` is resolved against `https://app.hyperliquid.xyz/coins/{assetName}.svg` via the canonical helper `getTokenIconUrl` (`src/lib/tokenIconUrl.ts`). On 404 or network error the avatar falls back to 2 uppercase initials. The `xyz:` prefix is preserved verbatim; `_spot` / `_USDC` suffixes pass through.
+
+**Escape hatch** — pass arbitrary content via `logo`:
+
+```tsx
+<ModuleAsset logo={'AB'}              name={displayName} />   /* 2-initials   */
+<ModuleAsset logo={<Image src={…} />} name={displayName} />   /* custom image */
+```
+
+Wrapper geometry: `w-6 h-6 rounded-md bg-brand/10 text-brand overflow-hidden`. When an image is rendered, it fills the wrapper (`object-cover`). The `name` label is `text-[12.5px] font-semibold`, `sub` is `text-[10px] text-text-tertiary`.
+
+**Never**:
+- re-implement a custom avatar (square, circle, anything else) inside a leaderboard card — use `<ModuleAsset>` or `<TokenAvatar>`;
+- use `<TokenIcon>` (legacy cyan-on-navy circle) inside a leaderboard card;
+- hand-build the HL CDN URL inline — always go through `getTokenIconUrl` so spot/HIP-3 conventions stay consistent.
 
 ## 6. Charts
 
-### Composants
+The V4 chart system is split between **5 generic primitives** (`common/charts/`), **2 domain-specific custom SVGs**, and **one LWC factory** for TradingView candlesticks. Pick by use case from the decision table below — don't invent a chart layout from scratch.
 
-| Composant | Quand l'utiliser |
-|---|---|
-| `<AuroraAreaChart data lineColor formatValue height onCrosshairMove />` | Mono-série, axe unique. Couvre 90 % des cas. |
-| `<MultiSeriesAreaChart series height onCrosshairMove />` | Multi-séries avec axes gauche/droit (cas où des échelles différentes doivent coexister). |
-| `<Sparkline data color height />` | Mini-courbe inline (SVG), dans une cellule de stat ou de carte compacte. |
+### 6.1 Pick the right primitive
 
-### Couleurs
+| Use case | Primitive | Tech |
+|---|---|---|
+| Mono-series time series (single line + area) | `<AuroraAreaChart>` | Recharts |
+| Multi-series time series, dual-axis | `<MultiSeriesAreaChart>` | Recharts |
+| Histogram per time bucket (per-bar colors) | `<AuroraHistogramChart>` | Recharts |
+| Inline micro-curve in a stat cell | `<Sparkline>` | Inline SVG |
+| **Top-N + Rest donut** (concentration) | **`<DonutTopN>`** | Recharts |
+| **Top-N ranking with animated bars** | **`<FlowGrid>` + `<FlowBar>`** | CSS + Framer Motion |
+| Candle / OHLC + volume (trading) | `createLwcChartOptions()` + `createChart` | `lightweight-charts` |
+| Cumulative dual-line (Long/Short cumul) | Domain SVG — see `LiquidationsPanel` | Inline SVG |
+| Bipolar mirror bar (in/out 24h) | Domain SVG — see `BridgeFlow` | Inline SVG |
+| Probability bar Yes/No (HIP-4 outcome) | `Hip4OutcomeBar` (domain primitive) | CSS |
 
-- **Toujours** depuis `chartPalette` (importé de `@/components/common`). Hex hardcodés bloqués par ESLint.
-- Conventions adoptées dans le dashboard :
-  - Bridge TVL → `chartPalette.accent` (cyan).
-  - Stablecoins → `chartPalette.violet`.
-  - Fees → `chartPalette.gold`.
-  - Liquidations → `chartPalette.down` (rose).
+Anything else (heatmap, scatter, bubble, radar, …) doesn't exist yet — don't add it speculatively. **Rule**: a new primitive lands when ≥ 2 callers will use it.
 
-### Sparkline — exemple
+### 6.2 Color conventions (semantic)
+
+Always source from `chartPalette` (`@/components/common`). Hardcoded hex blocked by ESLint, with `chartTheme.ts` as the only authorized SSOT.
+
+| Token | Semantic | Examples |
+|---|---|---|
+| `chartPalette.accent` (cyan `#83E9FF`) | Primary volume, neutral positive signal, deposits | Bridge TVL, builder volume |
+| `chartPalette.gold` (`#F9E370`) | Fees, premium accent | Builder fees, dashboard fees |
+| `chartPalette.violet` (`#A78BFA`) | **Open Interest**, secondary metric on a dual-bar chart | `Hip4MarketsFlowChart` OI column |
+| `chartPalette.success` (`#1FA85B`) | Long, buy, deposit, win | TWAP Buy, liquidations Long, bridge in |
+| `chartPalette.danger` (`#E53E3E`) | Short, sell, withdraw, loss | TWAP Sell, liquidations Short, bridge out |
+| `chartPalette.multiSeries[0..7]` | Categorical (donut slices, stacked bars) | `DonutTopN`, `Hip4MarketShareChart` |
+
+`chartPalette.success` / `chartPalette.danger` match the V4 Tailwind tokens `text-success` / `text-danger` exactly — use them inside any SVG that sits next to a UI element so the directional color is identical.
+
+### 6.3 Animation reference — Builders style
+
+Two animations are reused everywhere through `FlowGrid` and `DonutTopN`:
+
+- **Container entrance**: `opacity 0 → 1`, `y 8 → 0`, `delay 0.15s`, `duration 0.35s`.
+- **Row stagger**: `opacity 0 → 1`, `x -4 → 0`, **`delay = index * 0.03s`**, `duration 0.25s`.
+- **Bar fill**: `width 0% → ratio·100%`, `duration 0.6s`, `ease "easeOut"`, **`delay = index * 0.03s`** (synced with row).
+- **Donut hover**: ActiveArc Sector `+8px` + halo ring `+10/+13` opacity `0.45`. Drop-shadow filter `0 0 14px {color}aa` on the active slice, `transition: filter 0.25s ease`.
+
+When in doubt, copy `BuildersFlowChart` / `BuildersOverviewChart` as the reference render.
+
+### 6.4 `<DonutTopN>` — Top-N + Rest donut
+
+```tsx
+<DonutTopN
+  data={slices}                  // { key, name, value, color }[]
+  size={220}                     // px, square
+  innerRadius={0.62}             // ratio
+  outerRadius={0.88}             // ratio
+  paddingAngle={2}
+  variant="active-arc"           // "active-arc" (default, Builders ref) | "dim-others"
+  useGradient                    // radial gradient fill (default true)
+  activeGlow                     // drop-shadow on hover (default true)
+  activeIdx={activeIdx}          // controlled hover index
+  onActiveChange={setActiveIdx}  // controlled hover setter
+  center={<CenterLabel … />}     // absolute content over the donut
+/>
+```
+
+The donut owns the Recharts plumbing (gradients, ActiveArc, drop-shadow). The card-head + center label + legend are rendered by the consumer (kept outside so each card stays free to layout around the donut).
+
+**Migrations done**: `BuildersConcentrationCard` (`variant="dim-others"`, no gradient), `BuildersOverviewChart` (`active-arc`, gradient + glow), `Hip4MarketShareChart` (`active-arc`, gradient + glow).
+
+### 6.5 `<FlowGrid>` + `<FlowBar>` — Top-N ranking with animated bars
+
+```tsx
+<FlowGrid
+  rows={top}
+  rowKey={(r) => r.builder}
+  onHoverChange={setHoverIdx}
+  columns={[
+    { header: "#",      width: 20,    align: "right", render: (_, i) => <Rank i={i} /> },
+    { header: "Builder", width: 80,                    render: (r) => <Name … /> },
+    { header: "Volume",  width: "1fr",                  render: (r, i) => (
+      <FlowBar
+        ratio={(r.totalVolume ?? 0) / maxVol}
+        delay={i * 0.03}            // synced with FlowGrid row stagger
+        variant="solid"             // Builders reference
+        color={chartPalette.accent}
+        minVisiblePct={6}           // always visible even when ratio = 0
+        label={compactUsd(r.totalVolume ?? 0)}
+      />
+    )},
+    …
+  ]}
+/>
+```
+
+`<FlowBar>` has two visual variants:
+
+- **`solid`** (Builders reference) — solid `chartPalette.accent` fill, label inside the bar.
+- **`gradient`** (Hip-4 reference) — `linear-gradient(90deg, rgba(color, αlow), rgba(color, αhigh))`, alpha varies with `ratio`. Use it when a second metric (e.g. Open Interest) sits next to a primary volume bar.
+
+`direction="rtl"` mirrors the bar (used by `Hip4MarketsFlowChart` to right-align the volume bar so it visually feeds into the OI bar to its right).
+
+**Migrations done**: `BuildersFlowChart` (solid brand fill), `Hip4MarketsFlowChart` (gradient cyan vol + gradient violet OI). ESLint now blocks reintroducing inline `grid-cols-[Npx_…_…]` flow tables — go through `FlowGrid`.
+
+### 6.6 LWC (`lightweight-charts`) — `createLwcChartOptions()`
+
+Single entry point for any production LWC chart. The factory deep-merges your overrides into `lwcDefaults` so layout / grid / crosshair / scale defaults stay consistent.
+
+```ts
+const chart = createChart(container, createLwcChartOptions({
+  layout: { background: { type: ColorType.Solid, color: "transparent" } },
+  rightPriceScale: { scaleMargins: { top: 0.08, bottom: 0.26 } },
+  timeScale: { rightOffset: 8, barSpacing: 8 },
+}));
+```
+
+**Never** call `createChart()` with a raw inline config in production. The only LWC chart in production today (`TradingViewChart`) consumes the factory. The lab demo (`QuantumCandleChart` in `labs/`) is intentionally exempt.
+
+### 6.7 Anti-mix rule
+
+Don't stack more than 3 series of **different natures** (flow vs stock) on the same chart. When you have 4 disparate metrics (Liquidations, Fees, Bridge TVL, Stablecoins), prefer a **tab selector** over a 4-series overlay — readability collapses otherwise.
+
+### 6.8 Sparkline — quick reference
 
 ```tsx
 <Sparkline data={feeTrend} color={chartPalette.gold} height={20} className="mt-auto pt-2" />
 ```
 
-### Règle anti-mélange
+Used inside `StablecoinsCard`, `PulseBar`, `Hip4GlobalStatsStrip`. No axis, no tooltip — meant to be a glanceable micro-trend, never the primary chart.
 
-Ne pas superposer plus de 3 séries de **natures différentes** (flow vs stock) sur un même chart. Quand on a 4 métriques disparates (Liquidations, Fees, Bridge TVL, Stablecoins), préférer un **sélecteur d'onglet** plutôt qu'un overlay 4-séries — la lisibilité s'effondre sinon.
+## 7. Composition patterns
 
-## 7. Patterns Dashboard
+Generic composition patterns, **applicable everywhere** in the app (dashboard, market, explorer, …). The DS encodes composition; domains consume it.
 
-### PulseBar (ruban de stats)
+### 7.a — Compact table card (leaderboard / feed / activity)
 
-- `grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-N gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden`.
-- Chaque cellule : `bg-surface hover:bg-surface-2 px-4 py-3 flex flex-col` avec label uppercase + valeur `.mono text-[20px] font-semibold`.
-- Sparkline optionnelle en bas de cellule via `mt-auto`.
+**The** pattern for any compact table inside a card — regardless of domain. Source: `src/components/common/OverviewModule.tsx`. Full API and examples in §5.b.
 
-### OverviewModule (THE primitive carte dashboard)
+Building blocks:
 
-Source : `src/components/dashboard/OverviewModule.tsx`. C'est **l'unique** primitive pour composer une carte de leaderboard / top N sur le dashboard.
+- `<OverviewModule title icon tag href viewAllLabel>` — wrapper with the standard V4 card-head (icon + title + tag + `View all` link). Use it whenever the card-head fits the standard shape. Always pass an icon. For non-standard heads (multiple pills, `LIVE` indicator, no link), use `<Card>` + the inline card-head markup from §4.
+- `<ModuleTable columns density?><ModuleTableRow cells href? /></ModuleTable>` — the table itself. **One single source of truth for column widths** (`columns[].width`), header and rows stay pixel-aligned through `<colgroup>`. Two densities: `comfortable` (default, leaderboards) and `compact` (feeds, recent activity).
+- `<ModuleAsset assetName name sub />` — standard asset cell (see §5.c).
+- `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — alternative "leaderboard list" layout (no table, explicit ranks). Use when a header-less layout makes more sense.
+- `<ModuleSubhead>HIP-3 Perp DEXs</ModuleSubhead>` — body subtitle inside a module.
 
-- `<OverviewModule title tag href viewAllLabel>` — wrapper avec **card-head V4 standardisé** (titre + pill `tag` + lien "View all → ml-auto").
-- `<ModuleTable columns><ModuleTableRow cells href? /></ModuleTable>` — table à la `.tbl` de la maquette. Header `bg-surface-2 uppercase tracking-[0.05em]`, lignes `hover:bg-surface-2`, 1re cellule à gauche, autres à droite, padding `px-4 py-2.5`, hauteur de row constante.
-- `<ModuleAsset logo name sub />` — cellule asset standard (voir §5.c).
-- `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — variante "leaderboard list" (non-table, rangs explicites). À utiliser si un layout sans header n'a aucun sens.
-- `<ModuleSubhead>HIP-3 Perp DEXs</ModuleSubhead>` — sous-titre dans le corps.
+**Uniformity guarantee**: every compact table card shares pixel-perfect card-head, avatar, row height, hover color, column edges and `View all` link. ESLint blocks reintroducing hand-rolled `grid-cols-[Npx_…_…]` table layouts (§5.b hard rules).
 
-**Garantie d'uniformité** : si toutes les cartes leaderboard utilisent cette primitive, elles partagent au pixel près le card-head, l'avatar, la hauteur de row, la couleur de hover, le `View all`.
+### 7.b — KPI ribbon
 
-### Grilles de cartes pairs (g-2, g-3)
+Horizontal strip of stat cells (used by `PulseBar`, but reusable for any KPI ribbon).
 
-- **Pas de `items-start`** sur les rangées de cartes pairs → les cartes s'étirent à hauteur égale (grid default stretch). Les composants conçus pour stretcher (`flex-1` sur la section principale, `mt-auto` sur les pieds) remplissent correctement.
-- `items-start` est réservé aux layouts main+aside asymétriques (ex : g-main chart + colonne droite).
+- Container: `grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-N gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden`.
+- Cell: `bg-surface hover:bg-surface-2 px-4 py-3 flex flex-col` — uppercase label `text-[10.5px]` + value `.mono text-[20px] font-semibold`.
+- Optional sparkline at the bottom of the cell via `mt-auto pt-2` (only if the API exposes a real series).
 
-## 8. Services — architecture 4 couches
+### 7.c — Card grids (equal height)
+
+- **No `items-start`** on rows of paired cards (`grid-cols-2`, `grid-cols-3`) → cards stretch to equal height (default `stretch`). Components designed to stretch (`flex-1` on the main section, `mt-auto` on footers) fill in correctly.
+- `items-start` is reserved for asymmetric main+aside layouts (e.g. main chart + shorter right column).
+
+## 8. Services — 4-layer architecture
 
 ```
 src/services/<domain>/
 ├── api.ts            (Layer 1 — HTTP via withErrorHandling + get/post/del/...)
-├── types.ts          (Layer 2 — interfaces TS)
+├── types.ts          (Layer 2 — TS interfaces)
 ├── hooks/
 │   └── useX.ts       (Layer 3 — useDataFetching)
 └── index.ts          (barrel)
 ```
 
-### Règles
+### Rules
 
-1. **`withErrorHandling`** wrappe tout appel HTTP (contexte descriptif obligatoire).
-2. **Helpers centralisés** `get / post / put / del / patch` depuis `@/services/api/axios-config`. Pour les APIs externes (Hypurrscan, DefiLlama) utiliser `getExternal / postExternal`.
-3. **`useDataFetching<T>`** est la base de tous les hooks de fetch — gère cache, retries, refresh interval.
-4. Aucun `any`. Tout est typé.
+1. **`withErrorHandling`** wraps every HTTP call (descriptive context required).
+2. **Centralized helpers** `get / post / put / del / patch` from `@/services/api/axios-config`. For external APIs (Hypurrscan, DefiLlama) use `getExternal / postExternal`.
+3. **`useDataFetching<T>`** is the base for every fetch hook — handles cache, retries, refresh interval.
+4. No `any`. Everything is typed.
 
-### Intervalles de rafraîchissement
+### Refresh intervals
 
-| Type de donnée | refreshInterval |
+| Data type | refreshInterval |
 |---|---|
-| Temps réel (orderbook, fills) | `10000` (10 s) |
-| Normal (stats, marché) | `30000` (30 s) |
-| Statique / historique | `60000`–`300000` |
+| Real-time (orderbook, fills) | `10000` (10 s) |
+| Normal (stats, market) | `30000` (30 s) |
+| Static / historical | `60000`–`300000` |
 
-## 9. Formatters
+## 9. Formatters & helpers
 
-Tout vit dans `@/lib/formatters/numberFormatting.ts` et `dateFormatting.ts`.
+Everything lives in `@/lib/formatters/numberFormatting.ts` and `dateFormatting.ts`.
 
-- `compactUsd(n)` — `$1.2M / $3.4B / $42 / —` (gère `null/NaN`).
+- `compactUsd(n)` — `$1.2M / $3.4B / $42 / —` (handles `null/NaN`).
 - `formatNumber(value, format, opts)` — locale-aware.
-- `formatLargeNumber(value, { prefix, decimals })` — axe Y de chart.
+- `formatLargeNumber(value, { prefix, decimals })` — chart Y axis.
 
-Ne **jamais** ré-implémenter ces fonctions localement — l'imposer via review.
+Token-icon helpers in `@/lib/tokenIconUrl.ts`:
 
-## 10. Garde-fous ESLint
+- `getTokenIconUrl(assetName, kind?)` — single source of truth for the HL CDN URL. Handles `xyz:` (HIP-3), `_spot` / `_USDC` (spot), and bare tickers (perp). When the backend already returns a `logo: string` field on a row (perp / spot via `/market/...`), use that — only build the URL yourself when the source doesn't expose one (HIP-3 indexer, liquidation feed, …).
+- `getTokenInitials(assetName)` — 2-letter fallback used by `ModuleAsset` and inline coin icons on icon load error.
 
-- `no-restricted-syntax` — **interdit le hex hardcodé** dans `text-*` / `bg-*` / `border-*` ; utiliser un token Tailwind ou `chartPalette.*`.
-- `no-restricted-imports` — **interdit `@/components/ui/table` hors de `common/`**. Force le passage par `TypedDataTable`.
+**Never** re-implement these locally — enforce via review.
 
-## 11. Contraintes honnêtes (apprises pendant la refonte)
+## 10. ESLint guardrails
 
-Documenter ces limites pour éviter de re-buter dessus :
+- `no-restricted-syntax` — **forbids hardcoded hex** in `text-*` / `bg-*` / `border-*`; use a Tailwind token or `chartPalette.*`.
+- `no-restricted-syntax` — **forbids hand-rolled table grid layouts** (`className="… grid-cols-[Npx_…_…_…]"` with 3+ tracks and a `px` width). Use `<ModuleTable>` (§5.b) — its `columns` prop owns widths once and propagates them to both header and rows via `<colgroup>`. 2-col page-shell layouts (`grid-cols-[1fr_2fr]`, `grid-cols-[280px_1fr]`) stay allowed.
+- `no-restricted-imports` — **forbids `@/components/ui/table` outside `common/`**. Forces `TypedDataTable`.
 
-- **Pas d'historique par KPI** côté API pour la majorité des métriques (volume global, OI, users, market cap…). Donc pas de sparkline / delta sur la PulseBar — **valeur seule, homogène**. Les seules exceptions sont les données qui ONT une vraie série temporelle (fees, stablecoins, bridge TVL, liquidations).
-- **Hypedexer instable** — l'API `api.hypedexer.com` peut tomber en **402 Payment Required** sur l'ensemble de ses endpoints (`/indexer/*`, `/liquidations/recent`, `/liquidations/analytics/stats`). Tout composant en dépendant doit dégrader proprement.
-- **`/liquidations/recent` retourne ~20 % de `time_ms` corrompus** (valeurs ~3.5e12 = année 2082) alors que le champ ISO `time` reste fiable. Toujours reparser via `Date.parse(time + "Z")` avec fallback `time_ms` ; ne jamais trier ou bucketiser sur `time_ms` directement (voir `LiquidationsPanel.getLiqTimeMs`).
-- **Sources de séries temporelles robustes** (ne dépendent pas de hypedexer) :
-  - `/liquidations/historical/chart` — DB locale, jusqu'à **90 jours**, granularité adaptative.
-  - `/market/fees/raw` — Hypurrscan, historique complet de fees.
-  - `/market/stablecoins/history` — DefiLlama, supply de stablecoins.
-  - Hypurrscan `/spotUSDC` — série de supply on-spot par stablecoin (USDC, USDH, USDT0, USDE) + holders.
-  - DefiLlama `hyperliquid-bridge` — Bridge TVL historique.
-  - Hyperliquid `info` `candleSnapshot` — OHLCV par token.
-- **Charts à éviter** : tout ce qui dépend uniquement de hypedexer (HIP-3 OHLCV, funding history, vault snapshots, etc.) tant que l'abonnement n'est pas stabilisé.
+## 11. Honest constraints (learned during the refactor)
 
-## 12. Index des primitives & composants V4
+Documenting these limits to avoid running into them again:
+
+- **No per-KPI history** in the API for most metrics (global volume, OI, users, market cap…). So no sparkline / delta on the PulseBar — **value only, homogeneous**. The only exceptions are metrics that DO have a real time series (fees, stablecoins, bridge TVL, liquidations).
+- **Hypedexer is unstable** — the `api.hypedexer.com` API can return **402 Payment Required** on all its endpoints (`/indexer/*`, `/liquidations/recent`, `/liquidations/analytics/stats`). Any component that depends on it must degrade gracefully.
+- **`/liquidations/recent` returns ~20% corrupted `time_ms`** (values around 3.5e12 = year 2082) while the ISO `time` field stays reliable. Always reparse via `Date.parse(time + "Z")` with a `time_ms` fallback; never sort or bucketize on `time_ms` directly (see `LiquidationsPanel.getLiqTimeMs`).
+- **Robust time-series sources** (don't depend on hypedexer):
+  - `/liquidations/historical/chart` — local DB, up to **90 days**, adaptive granularity.
+  - `/market/fees/raw` — Hypurrscan, full fee history.
+  - `/market/stablecoins/history` — DefiLlama, stablecoin supply.
+  - Hypurrscan `/spotUSDC` — on-spot supply series per stablecoin (USDC, USDH, USDT0, USDE) + holders.
+  - DefiLlama `hyperliquid-bridge` — historical Bridge TVL.
+  - Hyperliquid `info` `candleSnapshot` — OHLCV per token.
+- **Charts to avoid**: anything that only depends on hypedexer (HIP-3 OHLCV, funding history, vault snapshots, etc.) until the subscription is stabilized.
+
+## 12. Index of V4 primitives & components
 
 ### Primitives (`src/components/common/`)
-- `TypedDataTable`, `Column<T>` — tables (pages standalone, voir §5.a).
-- `AuroraAreaChart` — chart mono-série standard.
-- `MultiSeriesAreaChart` — chart dual-axis multi-séries (vendu par `@/components/dashboard/chart`, mais utilisable hors dashboard).
-- `chartPalette` — palette charts (cyan, gold, violet, down, multiSeries[0–7]).
-- `PeriodSelector`, `useChartPeriod` — sélecteur de période.
-- `PageHeader`, `PageSection` — en-tête de page.
+- `TypedDataTable`, `Column<T>` — tables (standalone pages, see §5.a).
+- `TokenAvatar` — inline HL-CDN token badge (see §5.c). Single source for any "small coin icon" outside leaderboard cells.
+- `AuroraAreaChart`, `AuroraHistogramChart` — Recharts wrappers, mono-series / histogram (see §6.1).
+- `DonutTopN` — Recharts donut "Top N + Rest" with hover ActiveArc (see §6.4).
+- `FlowGrid` + `FlowBar` — Top-N ranking with animated bars, Builders-style stagger (see §6.5).
+- `chartTheme.ts` — SSOT for chart colors + `createLwcChartOptions()` LWC factory (see §6.6).
+- `AuroraAreaChart` — standard single-series chart.
+- `MultiSeriesAreaChart` — dual-axis multi-series chart (lives in `@/components/dashboard/chart`, but usable outside the dashboard).
+- `chartPalette` — chart palette (cyan, gold, violet, down, multiSeries[0–7]).
+- `PeriodSelector`, `useChartPeriod` — period selector.
+- `PageHeader`, `PageSection` — page header.
 - `TimeframeTabs`, `PillTabs` — tabs.
 - `LoadingState`, `ErrorState`, `EmptyState`, `ChartLoading`, `ChartEmpty`, `ChartError`.
 - `StatsCard`, `StatsPanel`.
-- `Num` — primitif d'affichage numérique tabulaire.
-- `TokenIcon` — **legacy** (cercle cyan-on-navy). Conservé pour pages legacy. **À ne pas utiliser sur le dashboard** — toujours passer par `<ModuleAsset>`.
+- `Num` — tabular numeric display primitive.
+- `TokenIcon` — **legacy** (cyan-on-navy circle). Kept for legacy pages. **Do not use inside a leaderboard card** — always go through `<ModuleAsset>`.
 
 ### Dashboard (`src/components/dashboard/`)
-- `SectionHead` — titre de section (`title` + `subtitle` + lien optionnel).
-- `Sparkline` — mini-courbe SVG inline (cellule de stat ou de hero).
-- `PulseBar` — ruban de KPI 6 cells.
-- `OverviewModule` (+ `ModuleTable`, `ModuleTableRow`, `ModuleAsset`, `ModuleRow`, `ModuleSubhead`) — **THE** primitive carte dashboard (voir §7).
-- Cartes V4 dashboard :
-  - `MoversCard` (spot/perp) — top tokens d'un marché.
-  - `AuctionsPanel` (spot/perp) — auction de déploiement.
-  - `LiquidationsPanel` — stats 24h + feed + histogramme interactif (bucket hover, tooltip Long/Short).
-  - `TwapPanel` — HYPE buy pressure + liste paginée des TWAP actifs.
-  - `Hip3MarketsPanel` — top markets HIP-3 + perp auction mini + top perp DEXs.
-  - `Hip4OutcomesCard` — top markets de prédiction HIP-4 actifs (Yes/No mid_price + countdown).
+- `SectionHead` — section title (`title` + `subtitle` + optional link).
+- `Sparkline` — inline SVG mini-curve (stat or hero cell).
+- `PulseBar` — 6-cell KPI ribbon.
+- `OverviewModule` (+ `ModuleTable`, `ModuleTableRow`, `ModuleAsset`, `ModuleRow`, `ModuleSubhead`) — **THE** leaderboard card primitive (see §7.a).
+- V4 dashboard cards:
+  - `MoversCard` (spot/perp) — top tokens of a market.
+  - `AuctionsPanel` (spot/perp) — deploy auction.
+  - `LiquidationsPanel` — 24h stats + interactive histogram (bucket hover, Long/Short tooltip).
+  - `TwapPanel` — HYPE buy pressure + paginated list of active TWAPs.
+  - `Hip3MarketsPanel` — top HIP-3 markets + mini perp auction + top perp DEXs.
+  - `Hip4OutcomesCard` — top active HIP-4 prediction markets (Yes/No mid_price + countdown).
   - `StablecoinsCard` — hero supply + sparkline + 4 stablecoins.
-  - `BuildersConcentrationCard` — donut "Top 5 vs Rest" sur builder fees 24h, hover synchronisé donut ↔ légende.
-- `chart/ChartSection` — chart multi-séries 4 metrics (Bridge TVL · Stablecoins · Liquidations · Fees) avec sélecteur de période.
-- `chart/MultiSeriesAreaChart` — primitive lightweight-charts dual-axis (réutilisable).
-- `modules/VaultsModule`, `modules/ValidatorsModule`, `modules/BuildersModule` — leaderboards top 5 (tous via `OverviewModule + ModuleTable + ModuleAsset`).
+  - `BuildersConcentrationCard` — "Top 5 vs Rest" donut on 24h builder fees, donut ↔ legend hover sync.
+- `chart/ChartSection` — 4-metric multi-series chart (Bridge TVL · Stablecoins · Liquidations · Fees) with period selector.
+- `chart/MultiSeriesAreaChart` — dual-axis lightweight-charts primitive (reusable).
+- `modules/VaultsModule`, `modules/ValidatorsModule`, `modules/BuildersModule` — top-5 leaderboards (all via `OverviewModule + ModuleTable + ModuleAsset`).
 
-### Hooks utiles (en plus des hooks de service)
-- `useHip4ActiveMarkets(limit)` — questions HIP-4 ouvertes (`status==="live"`) triées par volume, avec total volume et active count.
-- `useLiquidationsData("24h")` — stats agrégées 24h depuis `/liquidations/data` (endpoint robuste, voir §11).
-- `useRecentLiquidations({ limit: 1000, hours: 24 })` — flux brut pour bucket-side client (voir §11 sur le `time_ms` corrompu).
+### Useful hooks (besides service hooks)
+- `useHip4ActiveMarkets(limit)` — open HIP-4 questions (`status==="live"`) sorted by volume, with total volume and active count.
+- `useLiquidationsData("24h")` — aggregated 24h stats from `/liquidations/data` (robust endpoint, see §11).
+- `useRecentLiquidations({ limit: 1000, hours: 24 })` — raw stream for client-side bucketing (see §11 on corrupted `time_ms`).
 
 ### Shell (`src/components/`)
 - `Sidebar`, `Header`, `ExplorerSearchBar`.

@@ -77,7 +77,7 @@ export default function PublicReadListsPage() {
               <BookOpen className="w-8 h-8 text-rose-400" />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Failed to load</h2>
-            <p className="text-zinc-400 mb-6 text-sm">{error}</p>
+            <p className="text-text-secondary mb-6 text-sm">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg transition-colors text-sm"
@@ -223,7 +223,7 @@ export default function PublicReadListsPage() {
                   <h3 className="text-lg font-semibold text-white mb-2">
                     {params.search ? "No results found" : "No public lists yet"}
                   </h3>
-                  <p className="text-zinc-400 text-sm">
+                  <p className="text-text-secondary text-sm">
                     {params.search
                       ? `No lists match "${params.search}"`
                       : "Be the first to create a public read list!"

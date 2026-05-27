@@ -81,6 +81,11 @@ export async function fetchEvmTransactions(params?: {
 
 export async function fetchEvmBridgeEvents(params?: {
   limit?: number;
+  /** Unix seconds (NOT ms). HypeDexer's `/indexer/evm/bridge/events`
+   *  upstream requires both `start_time` AND `end_time` to return anything
+   *  beyond the current few minutes — without them it answers `[]`. */
+  start_time?: number;
+  end_time?: number;
 }): Promise<EvmBridgeEvent[]> {
   return withErrorHandling(async () => {
     const raw = await get<unknown>(

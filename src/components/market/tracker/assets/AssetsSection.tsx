@@ -9,7 +9,7 @@ import { useWalletData } from './hooks/useWalletData';
 import { useHoldingsConverter } from './hooks/useHoldingsConverter';
 import { useSortableData } from '@/hooks/useSortableData';
 import { SortableHolding } from "@/components/types/wallet.types";
-import { SortKey } from "./TableHeader";
+import { SortKey } from "./AssetsTable";
 import { Card } from "@/components/ui/card";
 
 interface AssetsSectionProps {

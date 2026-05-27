@@ -1,4 +1,4 @@
-import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
+import type { Hip4MarketEnrichedRow, Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -36,6 +36,28 @@ export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
     return `${underlying} above ${price} on ${formatExpiryDate(expiry)}?`;
   }
   return market.display_name || market.coin || "Unknown market";
+}
+
+/** A binary HIP-4 question has exactly two outcomes whose display names are
+ * "Yes" and "No" (set by enrichment). Anything else (priceBucket, multi-outcome
+ * custom) must be rendered with neutral labels and colors — Yes/No semantics
+ * don't apply. */
+export function isBinaryQuestion(question: Hip4QuestionWithOutcomesRow): boolean {
+  if (question.outcomes.length !== 2) return false;
+  const names = question.outcomes.map((o) => o.display_name);
+  return names.includes("Yes") && names.includes("No");
+}
+
+/** Variant + Tailwind class for an outcome label. Binary Yes/No keep
+ * green/red; everything else uses the brand cyan or a palette index. */
+export function getOutcomeVariant(
+  displayName: string,
+  index: number,
+  isBinary: boolean
+): { variant: "success" | "danger" | "brand"; label: string } {
+  if (isBinary && displayName === "Yes") return { variant: "success", label: "Yes" };
+  if (isBinary && displayName === "No") return { variant: "danger", label: "No" };
+  return { variant: "brand", label: displayName || `Outcome ${index + 1}` };
 }
 
 export function formatExpiryCountdown(expiry: string | null): string | null {

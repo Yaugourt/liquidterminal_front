@@ -144,7 +144,7 @@ export function TopTradersTable() {
                     ${formatLargeNumber(trader.totalVolume)}
                   </TableCell>
                   <TableCell className="py-3 px-3 text-sm text-right">
-                    <span className={trader.winRate >= 0.5 ? 'text-emerald-400' : 'text-zinc-400'}>
+                    <span className={trader.winRate >= 0.5 ? 'text-emerald-400' : 'text-text-secondary'}>
                       {(trader.winRate * 100).toFixed(1)}%
                     </span>
                   </TableCell>

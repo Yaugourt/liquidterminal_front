@@ -11,8 +11,8 @@ import {
   useTokenWebSocket,
   marketIndexToCoinId,
 } from "@/services/market/token";
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import { TokenAvatar } from "@/components/common";
 import { motion } from "framer-motion";
 import { TokenDetailsPanel } from "./TokenDetailsPanel";
 
@@ -80,33 +80,11 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
       )}>
         {/* Token Info */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
-            {token.logo ? (
-              <Image
-                src={token.logo}
-                alt={token.symbol}
-                width={24}
-                height={24}
-                className="w-full h-full object-cover"
-                onError={() => {
-                  // Fallback to gradient avatar if image fails to load
-                  const imgElement = document.querySelector(`img[src="${token.logo}"]`) as HTMLImageElement;
-                  if (imgElement) {
-                    imgElement.style.display = 'none';
-                    imgElement.nextElementSibling?.classList.remove('hidden');
-                  }
-                }}
-              />
-            ) : null}
-            <div className={cn(
-              "w-full h-full bg-gradient-to-br from-brand to-emerald-400 flex items-center justify-center",
-              token.logo ? "hidden" : ""
-            )}>
-              <span className="text-brand-text-on text-xs font-bold">
-                {token.symbol.split('/')[0].charAt(0)}
-              </span>
-            </div>
-          </div>
+          <TokenAvatar
+            assetName={token.symbol.split("/")[0]}
+            kind={token.type === "spot" ? "spot" : "auto"}
+            size="lg"
+          />
           <div className="flex items-center gap-2">
             <span className="text-text-primary text-sm font-medium">{token.symbol}</span>
             <span className={cn(

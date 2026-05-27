@@ -18,6 +18,17 @@ export const HIP4_CONFIG = {
     },
   },
   sameOwner: "0xe21c78037329d06fe0d6fefc4221aaa67cb0d135",
+  /** Date the snapshot stats below were last manually verified. Surface this in
+   * the UI so readers don't mistake the values for live data. */
+  snapshotDate: "2026-03-15",
+  /** Manually verified V1/V2 EVM contract state — kept here so the docs page
+   * doesn't pretend these are live. Refresh via the RPC scan tool on the V1/V2
+   * contracts page for current values. */
+  snapshot: {
+    balance: "94.37 HYPE",
+    activeContests: "4",
+    activeContestIds: "IDs: 595, 596, 604, 608",
+  },
 } as const;
 
 export type Hip4DeploymentKey = keyof typeof HIP4_CONFIG.contracts;

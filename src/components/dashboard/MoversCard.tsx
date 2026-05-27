@@ -1,13 +1,13 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import Image from "next/image";
+import { TrendingUp } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
-} from "./OverviewModule";
+} from "@/components/common";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import type { SpotToken } from "@/services/market/spot/types";
@@ -52,24 +52,6 @@ function fmtPrice(price: number, format: NumberFormatType): string {
   });
 }
 
-/** Logo réel (Image) si dispo, sinon 2 initiales — destiné au prop `logo`
- *  de `ModuleAsset`. Image opaque qui remplit le wrapper rounded-md. */
-function TokenLogo({ src, name }: { src: string | null; name: string }) {
-  if (src) {
-    return (
-      <Image
-        src={src}
-        alt={name}
-        width={24}
-        height={24}
-        className="w-full h-full object-cover"
-        unoptimized
-      />
-    );
-  }
-  return <>{name.slice(0, 2).toUpperCase()}</>;
-}
-
 function SignedPct({ value, decimals = 2 }: { value: number; decimals?: number }) {
   const positive = value >= 0;
   return (
@@ -94,6 +76,7 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
   return (
     <OverviewModule
       title={isSpot ? "Trending Spot" : "Trending Perpetuals"}
+      icon={<TrendingUp size={13} className="text-brand" />}
       tag={`${rows.length} markets`}
       viewAllLabel={isSpot ? "All spot" : "All perp"}
       href={`/market/${market}`}
@@ -113,20 +96,20 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
             </td>
           </tr>
         )}
-        {rows.map((row) => {
+        {rows.map((row, idx) => {
           const r = row as SpotToken | PerpMarketData;
-          const logo =
-            "logo" in r && r.logo
-              ? (r as { logo: string | null }).logo
-              : null;
+          // Composite key: the upstream perp feed occasionally returns two
+          // entries sharing the same `name` (HYPE perp + a namespaced
+          // variant); `name + idx` keeps React keys unique either way.
           return (
             <ModuleTableRow
-              key={r.name}
+              key={`${market}-${r.name}-${idx}`}
               href={`/market/${market}/${encodeURIComponent(r.name)}`}
               cells={[
                 <ModuleAsset
                   key="token"
-                  logo={<TokenLogo src={logo} name={r.name} />}
+                  assetName={r.name}
+                  kind={isSpot ? "spot" : "auto"}
                   name={r.name}
                 />,
                 <span key="price" className="mono text-text-primary">

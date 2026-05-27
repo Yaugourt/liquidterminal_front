@@ -40,12 +40,23 @@ export interface StablecoinSupplyPoint {
   value: number; // supply totale en USD
 }
 
+/** Per-stablecoin time-series point — fed into stacked bar charts. */
+export interface StablecoinSupplyByCoinPoint {
+  time: number;
+  USDC: number;
+  USDH: number;
+  USDT0: number;
+  USDE: number;
+}
+
 export interface UseSpotStablecoinsResult {
   stablecoins: Stablecoin[];
   /** Supply totale (somme des stablecoins) par point de la série — pour sparkline. */
   supplyHistory: number[];
   /** Série temporelle complète (time ms + supply totale) — pour chart. */
   supplyChart: StablecoinSupplyPoint[];
+  /** Série temporelle séparée par stablecoin — pour stacked bar charts. */
+  supplyByCoinChart: StablecoinSupplyByCoinPoint[];
   /** Horodatage (s) de la dernière mise à jour Hypurrscan. */
   lastUpdate: number | null;
   isLoading: boolean;

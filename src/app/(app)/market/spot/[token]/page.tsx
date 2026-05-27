@@ -98,7 +98,7 @@ export default function TokenPage() {
             <div className="flex justify-center items-center min-h-[50vh]">
                 <div className="flex flex-col items-center">
                     <div className="h-6 w-6 border-2 border-brand border-t-transparent rounded-full animate-spin mb-2" />
-                    <span className="text-zinc-500 text-sm">Loading...</span>
+                    <span className="text-text-tertiary text-sm">Loading...</span>
                 </div>
             </div>
         );
@@ -109,7 +109,7 @@ export default function TokenPage() {
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
                     <div className="text-xl font-bold text-white mb-4">Token not found</div>
-                    <div className="text-zinc-400 mb-6 text-center">{error}</div>
+                    <div className="text-text-secondary mb-6 text-center">{error}</div>
                     <Button
                         onClick={handleBackToList}
                         className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold"

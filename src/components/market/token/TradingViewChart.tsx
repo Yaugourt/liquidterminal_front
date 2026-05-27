@@ -25,7 +25,7 @@ import {
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
 import { ChartLoading, ChartEmpty, ChartError } from "@/components/common";
-import { chartColors } from "@/components/common";
+import { chartColors, createLwcChartOptions } from "@/components/common";
 import {
   TIMEFRAMES,
   QUICK_TIMEFRAMES,
@@ -168,65 +168,65 @@ export function TradingViewChart({
     if (!containerRef.current) return;
     if (chartRef.current) return;
 
-    const chart = createChart(containerRef.current, {
-      layout: {
-        background: { type: ColorType.Solid, color: "transparent" },
-        textColor: chartColors.textMuted,
-        fontFamily: "var(--font-inter), Inter, sans-serif",
-        fontSize: 10,
-        attributionLogo: false,
-      },
-      grid: {
-        vertLines: { visible: false },
-        horzLines: {
-          visible: true,
-          color: "rgba(255,255,255,0.035)",
-          style: LineStyle.Dashed,
+    // Build options through the shared `createLwcChartOptions` factory so
+    // we inherit every theme / crosshair / scale convention from
+    // `chartTheme.lwcDefaults`. The overrides below are the trading-specific
+    // ones (transparent background to let the card show through, denser bar
+    // spacing, two-axis pan/zoom, etc.).
+    const chart = createChart(
+      containerRef.current,
+      createLwcChartOptions({
+        layout: {
+          background: { type: ColorType.Solid, color: "transparent" },
+          textColor: chartColors.textMuted,
+          fontFamily: "var(--font-inter), Inter, sans-serif",
+          fontSize: 10,
+          attributionLogo: false,
         },
-      },
-      crosshair: {
-        mode: CrosshairMode.Magnet,
-        vertLine: {
-          color: "rgba(131,233,255,0.35)",
-          width: 1,
-          style: LineStyle.Solid,
-          labelVisible: false,
+        crosshair: {
+          mode: CrosshairMode.Magnet,
+          vertLine: {
+            color: "rgba(131,233,255,0.35)",
+            width: 1,
+            style: LineStyle.Solid,
+            labelVisible: false,
+          },
+          horzLine: {
+            color: "rgba(131,233,255,0.35)",
+            width: 1,
+            style: LineStyle.Dashed,
+            labelBackgroundColor: chartColors.labelBg,
+          },
         },
-        horzLine: {
-          color: "rgba(131,233,255,0.35)",
-          width: 1,
-          style: LineStyle.Dashed,
-          labelBackgroundColor: chartColors.labelBg,
+        rightPriceScale: {
+          borderVisible: false,
+          scaleMargins: { top: 0.08, bottom: 0.26 },
+          mode: toPriceScaleMode(priceScaleMode),
         },
-      },
-      rightPriceScale: {
-        borderVisible: false,
-        scaleMargins: { top: 0.08, bottom: 0.26 },
-        mode: toPriceScaleMode(priceScaleMode),
-      },
-      timeScale: {
-        borderVisible: false,
-        timeVisible: true,
-        secondsVisible: false,
-        rightOffset: 8,
-        barSpacing: 8,
-        minBarSpacing: 1,
-        rightBarStaysOnScroll: true,
-        lockVisibleTimeRangeOnResize: true,
-      },
-      handleScale: {
-        axisPressedMouseMove: { time: true, price: true },
-        axisDoubleClickReset: { time: true, price: true },
-        mouseWheel: true,
-        pinch: true,
-      },
-      handleScroll: {
-        mouseWheel: true,
-        pressedMouseMove: true,
-        horzTouchDrag: true,
-        vertTouchDrag: true,
-      },
-    });
+        timeScale: {
+          borderVisible: false,
+          timeVisible: true,
+          secondsVisible: false,
+          rightOffset: 8,
+          barSpacing: 8,
+          minBarSpacing: 1,
+          rightBarStaysOnScroll: true,
+          lockVisibleTimeRangeOnResize: true,
+        },
+        handleScale: {
+          axisPressedMouseMove: { time: true, price: true },
+          axisDoubleClickReset: { time: true, price: true },
+          mouseWheel: true,
+          pinch: true,
+        },
+        handleScroll: {
+          mouseWheel: true,
+          pressedMouseMove: true,
+          horzTouchDrag: true,
+          vertTouchDrag: true,
+        },
+      }),
+    );
 
     const candle = chart.addSeries(CandlestickSeries, {
       upColor: chartColors.emerald,

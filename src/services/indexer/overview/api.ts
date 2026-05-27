@@ -1,6 +1,6 @@
 import { get } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
-import type { DailyVolumeEntry } from "./types";
+import type { DailyVolumeEntry, OverviewStat24h } from "./types";
 
 const OVERVIEW = "/indexer/overview";
 
@@ -29,4 +29,26 @@ export async function fetchDailyVolume10d(): Promise<DailyVolumeEntry[]> {
     );
     return assertLtData<DailyVolumeEntry[]>(raw);
   }, "fetching overview daily volume 10d");
+}
+
+export async function fetchActiveTraders24h(): Promise<OverviewStat24h> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(
+      `${OVERVIEW}/active-traders-24h`,
+      undefined,
+      OVERVIEW_GET_OPTIONS
+    );
+    return assertLtData<OverviewStat24h>(raw);
+  }, "fetching active traders 24h");
+}
+
+export async function fetchTotalFills24h(): Promise<OverviewStat24h> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(
+      `${OVERVIEW}/total-fills-24h`,
+      undefined,
+      OVERVIEW_GET_OPTIONS
+    );
+    return assertLtData<OverviewStat24h>(raw);
+  }, "fetching total fills 24h");
 }

@@ -4,7 +4,7 @@
 
 /* Dark mode only - app is 100% dark themed */
 :root {
-    --background: 228 20% 5%; /* #0A0B0F — realigned on V4 --bg-base */
+    --background: 213 53% 7%; /* #08101A — realigned on V4 --bg-base */
     --foreground: 0 0% 93%; /* #ededed */
 
     /*
@@ -30,7 +30,7 @@
      */
 
     /* Surfaces (V4 whisper navy signature) */
-    --bg-base: 10 11 15;          /* #0A0B0F */
+    --bg-base: 8 16 26;           /* #08101A — blue-navy depth, matches brand cyan */
     --bg-surface: 15 20 33;       /* #0F1421 — the whisper navy V4 signature */
     --bg-surface-2: 20 27 42;     /* #141B2A */
     --bg-surface-3: 28 36 54;     /* #1C2436 */
@@ -59,7 +59,7 @@
     --gold: 249 227 112;          /* #F9E370 */
 
     /* Semantic */
-    --success: 31 168 91;         /* #1FA85B */
+    --success: 31 181 142;        /* #1FB58E — teal-leaning, harmonized with brand cyan */
     --danger: 229 62 62;          /* #E53E3E */
     --warning: 245 158 11;        /* #F59E0B */
 
@@ -68,14 +68,14 @@
      * "R G B" triplets. Consumed directly via arbitrary values, e.g.
      * `bg-[--brand-bg]`, `shadow-[--shadow-md]`. Light mode swap is out of scope.
      */
-    --bg-overlay: rgba(10, 11, 15, 0.80);   /* modal/dialog scrim */
+    --bg-overlay: rgba(8, 16, 26, 0.80);    /* modal/dialog scrim */
     --text-disabled: #4B5563;
 
     --brand-bg: rgba(131, 233, 255, 0.10);
     --brand-bg-strong: rgba(131, 233, 255, 0.20);
     --brand-border: rgba(131, 233, 255, 0.30);
 
-    --success-bg: rgba(31, 168, 91, 0.12);
+    --success-bg: rgba(31, 181, 142, 0.12);
     --danger-bg: rgba(229, 62, 62, 0.12);
     --warning-bg: rgba(245, 158, 11, 0.12);
 
@@ -111,12 +111,6 @@
            the html root, not body, so layout spacing is unaffected. */
         font-size: 13px;
         line-height: 1.5;
-        /* V4 ambient cyan gradient at top of page (subtle brand marker, 3.5%). */
-        background-image: radial-gradient(
-            ellipse 100% 50% at 50% -10%,
-            rgb(var(--brand) / 0.035),
-            transparent 70%
-        );
     }
 
     /* UA defaults use monospace for code blocks; align with site typography. */

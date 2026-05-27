@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant E — Magnitude Scatter</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .top{margin-left:auto;font-size:10px;color:#6B7280}
+
+/* compact strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1E2535;border-bottom:1px solid #1E2535}
+.strip .c{background:#0F1421;padding:10px 12px}
+.strip .c .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.strip .c .v{font-size:14px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+
+/* scatter */
+.scatter-wrap{padding:14px 14px 8px;flex:1}
+.scatter-wrap .label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.scatter-wrap .label-row .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.scatter-wrap .legend{display:flex;gap:14px;font-size:10px;color:#9CA3AF;align-items:center}
+.scatter-wrap .legend .it{display:flex;align-items:center;gap:5px}
+.scatter-wrap .legend .it .b{border-radius:50%}
+.scatter-wrap .legend .it .gn{background:rgba(31,168,91,.55);border:1px solid #1FA85B}
+.scatter-wrap .legend .it .rd{background:rgba(229,62,62,.55);border:1px solid #E53E3E}
+.scatter-wrap .legend .sz{display:flex;align-items:center;gap:4px;color:#6B7280;font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.scatter-wrap .legend .sz .b1{width:4px;height:4px;background:#6B7280;border-radius:50%}
+.scatter-wrap .legend .sz .b2{width:7px;height:7px;background:#6B7280;border-radius:50%}
+.scatter-wrap .legend .sz .b3{width:11px;height:11px;background:#6B7280;border-radius:50%}
+
+.scatter{position:relative;height:180px}
+.scatter svg{width:100%;height:100%;display:block}
+
+.scatter .y-lb{position:absolute;left:-2px;font-size:8.5px;color:#6B7280;font-family:Inter;font-feature-settings:"tnum";text-align:right;width:32px}
+.scatter .y-lb.t0{top:0}
+.scatter .y-lb.t1{top:33%}
+.scatter .y-lb.t2{top:66%}
+.scatter .y-lb.t3{bottom:14px}
+
+.tx{display:flex;justify-content:space-between;font-size:9px;color:#6B7280;font-family:Inter;font-feature-settings:"tnum";margin-top:6px;padding:0 4px}
+
+/* hover hint (decorative) */
+.tooltip{position:absolute;background:#141B2A;border:1px solid #2C354A;border-radius:6px;padding:6px 9px;font-size:10px;line-height:1.5;pointer-events:none}
+.tooltip .head-tt{font-weight:600;color:#E8EAED;font-size:11px;margin-bottom:3px}
+.tooltip .row-tt{display:flex;gap:8px}
+.tooltip .row-tt .lb{color:#6B7280;text-transform:uppercase;font-size:8.5px;letter-spacing:.06em;font-weight:600;min-width:36px}
+.tooltip .row-tt .v{color:#E8EAED;font-feature-settings:"tnum"}
+.tooltip .row-tt .v.gn{color:#1FA85B}
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT E · magnitude scatter — big rekt events stand out visually</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <span class="top mono">847 events</span>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="strip">
+    <div class="c"><div class="lb">Total</div><div class="v mono">$11.5M</div></div>
+    <div class="c"><div class="lb">Largest</div><div class="v mono" style="color:#F9E370">$420K</div></div>
+    <div class="c"><div class="lb">>$100K</div><div class="v mono">14</div></div>
+    <div class="c"><div class="lb">Whales hit</div><div class="v mono">8</div></div>
+  </div>
+
+  <!-- Scatter -->
+  <div class="scatter-wrap">
+    <div class="label-row">
+      <span class="lb">Size × time · each event</span>
+      <div class="legend">
+        <div class="it"><span class="b gn" style="width:9px;height:9px"></span><span>Long</span></div>
+        <div class="it"><span class="b rd" style="width:9px;height:9px"></span><span>Short</span></div>
+        <div class="sz"><span class="b1"></span><span class="b2"></span><span class="b3"></span>size</div>
+      </div>
+    </div>
+
+    <div class="scatter">
+      <svg viewBox="0 0 540 180" preserveAspectRatio="none">
+        <!-- y grid -->
+        <line x1="38" y1="0" x2="540" y2="0" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="38" y1="60" x2="540" y2="60" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="38" y1="120" x2="540" y2="120" stroke="#1E2535" stroke-dasharray="3 4"/>
+        <line x1="38" y1="178" x2="540" y2="178" stroke="#1E2535"/>
+
+        <!-- y labels -->
+        <text x="32" y="6" text-anchor="end" font-family="Inter" font-size="9" fill="#6B7280" font-feature-settings='"tnum"'>$500K</text>
+        <text x="32" y="63" text-anchor="end" font-family="Inter" font-size="9" fill="#6B7280" font-feature-settings='"tnum"'>$100K</text>
+        <text x="32" y="123" text-anchor="end" font-family="Inter" font-size="9" fill="#6B7280" font-feature-settings='"tnum"'>$20K</text>
+        <text x="32" y="173" text-anchor="end" font-family="Inter" font-size="9" fill="#6B7280" font-feature-settings='"tnum"'>$1K</text>
+
+        <!-- Bubbles — green (long) and red (short) of various sizes -->
+        <!-- Small noise -->
+        <circle cx="55" cy="170" r="2" fill="#1FA85B" opacity=".5"/>
+        <circle cx="62" cy="168" r="2.5" fill="#E53E3E" opacity=".5"/>
+        <circle cx="75" cy="165" r="2" fill="#1FA85B" opacity=".5"/>
+        <circle cx="85" cy="160" r="3" fill="#1FA85B" opacity=".55"/>
+        <circle cx="92" cy="166" r="2" fill="#1FA85B" opacity=".5"/>
+        <circle cx="105" cy="163" r="3" fill="#E53E3E" opacity=".55"/>
+        <circle cx="118" cy="155" r="3.5" fill="#1FA85B" opacity=".6"/>
+        <circle cx="128" cy="158" r="2.5" fill="#1FA85B" opacity=".55"/>
+        <circle cx="140" cy="150" r="3" fill="#1FA85B" opacity=".55"/>
+        <circle cx="152" cy="148" r="4" fill="#1FA85B" opacity=".6"/>
+        <circle cx="165" cy="142" r="3.5" fill="#1FA85B" opacity=".6"/>
+        <circle cx="178" cy="155" r="2.5" fill="#E53E3E" opacity=".55"/>
+        <circle cx="192" cy="140" r="4" fill="#1FA85B" opacity=".65"/>
+        <circle cx="208" cy="130" r="5" fill="#1FA85B" opacity=".7"/>
+
+        <!-- Big spike (cluster) ~4h ago -->
+        <circle cx="225" cy="95" r="8" fill="#1FA85B" opacity=".75"/>
+        <circle cx="240" cy="65" r="10" fill="#1FA85B" opacity=".8"/>
+        <circle cx="252" cy="48" r="12" fill="#1FA85B" opacity=".85"/>
+        <circle cx="265" cy="32" r="14" fill="#1FA85B" opacity=".9"/>
+        <circle cx="278" cy="22" r="11" fill="#1FA85B" opacity=".85"/>
+        <circle cx="290" cy="55" r="9" fill="#1FA85B" opacity=".8"/>
+        <circle cx="302" cy="78" r="7" fill="#1FA85B" opacity=".75"/>
+        <circle cx="315" cy="110" r="6" fill="#1FA85B" opacity=".7"/>
+
+        <!-- Mid -->
+        <circle cx="330" cy="128" r="4" fill="#1FA85B" opacity=".6"/>
+        <circle cx="342" cy="135" r="3.5" fill="#E53E3E" opacity=".55"/>
+        <circle cx="358" cy="140" r="3" fill="#1FA85B" opacity=".55"/>
+        <circle cx="372" cy="148" r="4.5" fill="#1FA85B" opacity=".6"/>
+        <circle cx="385" cy="130" r="5" fill="#E53E3E" opacity=".65"/>
+        <circle cx="398" cy="118" r="6" fill="#E53E3E" opacity=".7"/>
+        <circle cx="412" cy="105" r="7" fill="#E53E3E" opacity=".7"/>
+
+        <!-- Late surge -->
+        <circle cx="425" cy="138" r="4" fill="#1FA85B" opacity=".6"/>
+        <circle cx="438" cy="125" r="5" fill="#1FA85B" opacity=".65"/>
+        <circle cx="452" cy="100" r="7" fill="#1FA85B" opacity=".75"/>
+        <circle cx="465" cy="78" r="9" fill="#1FA85B" opacity=".8"/>
+        <circle cx="478" cy="60" r="11" fill="#1FA85B" opacity=".85"/>
+        <circle cx="491" cy="92" r="6" fill="#1FA85B" opacity=".7"/>
+        <circle cx="503" cy="115" r="5" fill="#E53E3E" opacity=".65"/>
+        <circle cx="515" cy="138" r="4" fill="#1FA85B" opacity=".6"/>
+        <circle cx="528" cy="155" r="3" fill="#1FA85B" opacity=".55"/>
+
+        <!-- The largest event — gold outline -->
+        <circle cx="265" cy="32" r="15" fill="none" stroke="#F9E370" stroke-width="2" stroke-dasharray="2 2"/>
+        <text x="265" y="14" text-anchor="middle" font-family="Inter" font-size="9" fill="#F9E370" font-weight="700">$420K HYPE</text>
+      </svg>
+
+      <div class="tooltip" style="top:8px;right:8px">
+        <div class="head-tt">$420K · HYPE</div>
+        <div class="row-tt"><span class="lb">Side</span><span class="v gn">Long</span></div>
+        <div class="row-tt"><span class="lb">Time</span><span class="v">-3h 52m</span></div>
+        <div class="row-tt"><span class="lb">Price</span><span class="v">$38.41</span></div>
+      </div>
+    </div>
+
+    <div class="tx">
+      <span>-24h</span><span>-18h</span><span>-12h</span><span>-6h</span><span>now</span>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> chaque liquidation = une bulle. Axe X = temps (24h), Axe Y = taille de la liquidation (log scale $1K → $500K). Vert = long liquidé, rouge = short liquidé. Le clustering visuel montre où les gros événements se concentrent (ici cascade HYPE long à -4h). La plus grosse de la journée est cerclée en or — auto-tooltip détaillé. Stats strip en haut focus sur les outliers ("> $100K", "Whales hit").
+</p>
+</div>
+</body></html>

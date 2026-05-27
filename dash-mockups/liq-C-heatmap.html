@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liquidations · Variant C — Asset Heatmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0B0F;color:#E8EAED;font-family:Inter,sans-serif;padding:32px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh}
+.mono{font-family:Inter,sans-serif;font-feature-settings:"tnum"}
+.wrap{width:580px}
+h1{font-size:13px;font-weight:600;color:#9CA3AF;margin-bottom:14px;letter-spacing:.02em}
+.card{background:#0F1421;border:1px solid #1E2535;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+
+/* card-head */
+.head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1E2535}
+.head .ic{width:24px;height:24px;border-radius:6px;background:rgba(131,233,255,.1);display:grid;place-items:center}
+.head .ic svg{color:#83E9FF}
+.head h3{font-size:13px;font-weight:600}
+.head .tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:#141B2A;color:#6B7280;border:1px solid #1E2535}
+.head .top{margin-left:auto;font-size:10px;color:#6B7280}
+
+/* compact strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1E2535;border-bottom:1px solid #1E2535}
+.strip .c{background:#0F1421;padding:9px 12px}
+.strip .c .lb{font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.strip .c .v{font-size:13.5px;font-weight:600;margin-top:2px;letter-spacing:-.01em}
+.strip .c.l .v{color:#1FA85B}
+.strip .c.s .v{color:#E53E3E}
+
+/* heatmap section */
+.heat{padding:12px 14px 14px;flex:1}
+.heat .head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.heat .head-row .lb{font-size:9.5px;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.heat .head-row .legend{display:flex;align-items:center;gap:6px;font-size:9px;color:#6B7280}
+.heat .head-row .legend .scale{display:flex;height:8px;width:80px;border-radius:2px;overflow:hidden;border:1px solid #1E2535}
+.heat .head-row .legend .scale span{flex:1}
+
+/* grid: asset col + 24 time cells per row */
+.grid{display:grid;grid-template-columns:62px 1fr;gap:2px;align-items:center}
+.grid .name{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:2px 0}
+.grid .name .ic{width:18px;height:18px;border-radius:4px;background:rgba(131,233,255,.1);color:#83E9FF;display:grid;place-items:center;font-size:8.5px;font-weight:700;flex-shrink:0}
+.grid .cells{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;height:18px}
+.grid .cells .x{background:#141B2A;border-radius:2px;cursor:crosshair;transition:transform .12s}
+.grid .cells .x:hover{transform:scale(1.4);outline:1px solid #83E9FF;z-index:2;position:relative}
+/* shades — long-dominant = green tint, short-dominant = red tint */
+.g1{background:rgba(31,168,91,.18)}
+.g2{background:rgba(31,168,91,.34)}
+.g3{background:rgba(31,168,91,.55)}
+.g4{background:rgba(31,168,91,.78)}
+.r1{background:rgba(229,62,62,.18)}
+.r2{background:rgba(229,62,62,.34)}
+.r3{background:rgba(229,62,62,.55)}
+.r4{background:rgba(229,62,62,.78)}
+/* mixed (purple-ish neutral) for ~50/50 mix */
+.m2{background:rgba(167,139,250,.28)}
+.m3{background:rgba(167,139,250,.5)}
+
+/* time axis */
+.tx{display:grid;grid-template-columns:62px 1fr;margin-top:6px}
+.tx .filler{}
+.tx .ticks{display:flex;justify-content:space-between;font-size:9px;color:#6B7280;font-family:Inter}
+
+/* sub: total bar per asset on the right? — keep simple, just totals on cells */
+
+</style></head><body>
+<div class="wrap">
+<h1>VARIANT C · heatmap — focus on which coin, when, and which side</h1>
+<div class="card">
+
+  <div class="head">
+    <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+    <h3>Liquidations</h3>
+    <span class="tag">24h</span>
+    <span class="top mono">847 events</span>
+  </div>
+
+  <!-- Stats strip — 4 cells (total + L vs S amount + count) -->
+  <div class="strip">
+    <div class="c"><div class="lb">Total</div><div class="v mono">$11.5M</div></div>
+    <div class="c l"><div class="lb">Long</div><div class="v mono">$8.42M</div></div>
+    <div class="c s"><div class="lb">Short</div><div class="v mono">$3.11M</div></div>
+    <div class="c"><div class="lb">Largest</div><div class="v mono">$420K</div></div>
+  </div>
+
+  <!-- Heatmap -->
+  <div class="heat">
+    <div class="head-row">
+      <span class="lb">Top assets · 30m intensity</span>
+      <div class="legend">
+        <span>Short</span>
+        <div class="scale">
+          <span class="r4"></span><span class="r3"></span><span class="r2"></span><span class="r1"></span>
+          <span style="background:#141B2A"></span>
+          <span class="g1"></span><span class="g2"></span><span class="g3"></span><span class="g4"></span>
+        </div>
+        <span>Long</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- HYPE — long-dominant, big bursts -->
+      <div class="name"><span class="ic">HY</span>HYPE</div>
+      <div class="cells">
+        <span class="x g1"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x g2"></span><span class="x g3"></span><span class="x g4"></span><span class="x g4"></span><span class="x g3"></span><span class="x g2"></span><span class="x g2"></span><span class="x g3"></span><span class="x g4"></span><span class="x g4"></span><span class="x g3"></span><span class="x g2"></span><span class="x g1"></span><span class="x g2"></span><span class="x g3"></span><span class="x g4"></span><span class="x g4"></span><span class="x g3"></span><span class="x g2"></span><span class="x g1"></span>
+      </div>
+
+      <!-- BTC — mixed -->
+      <div class="name"><span class="ic">BT</span>BTC</div>
+      <div class="cells">
+        <span class="x r1"></span><span class="x r2"></span><span class="x r2"></span><span class="x r3"></span><span class="x r2"></span><span class="x r1"></span><span class="x m2"></span><span class="x m3"></span><span class="x g2"></span><span class="x g1"></span><span class="x r1"></span><span class="x r2"></span><span class="x r2"></span><span class="x m2"></span><span class="x g1"></span><span class="x g2"></span><span class="x g1"></span><span class="x r1"></span><span class="x r2"></span><span class="x m2"></span><span class="x m3"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span>
+      </div>
+
+      <!-- ETH — short-dominant -->
+      <div class="name"><span class="ic">ET</span>ETH</div>
+      <div class="cells">
+        <span class="x"></span><span class="x r1"></span><span class="x r2"></span><span class="x r3"></span><span class="x r3"></span><span class="x r2"></span><span class="x r2"></span><span class="x r1"></span><span class="x m2"></span><span class="x r1"></span><span class="x r2"></span><span class="x r3"></span><span class="x r4"></span><span class="x r3"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span><span class="x r1"></span><span class="x r2"></span><span class="x r2"></span><span class="x r3"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span>
+      </div>
+
+      <!-- SOL — long-dominant -->
+      <div class="name"><span class="ic">SO</span>SOL</div>
+      <div class="cells">
+        <span class="x"></span><span class="x g1"></span><span class="x g1"></span><span class="x"></span><span class="x g2"></span><span class="x g3"></span><span class="x g2"></span><span class="x g1"></span><span class="x g2"></span><span class="x g3"></span><span class="x g4"></span><span class="x g3"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x g1"></span><span class="x g2"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x g1"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span>
+      </div>
+
+      <!-- FARTCOIN — bursty -->
+      <div class="name"><span class="ic">FA</span>FART…</div>
+      <div class="cells">
+        <span class="x"></span><span class="x"></span><span class="x r1"></span><span class="x r3"></span><span class="x r4"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span><span class="x"></span><span class="x m2"></span><span class="x g2"></span><span class="x g3"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x r1"></span><span class="x r2"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span><span class="x"></span><span class="x g1"></span><span class="x g2"></span><span class="x g1"></span>
+      </div>
+
+      <!-- PEPE — neutral mix -->
+      <div class="name"><span class="ic">PE</span>PEPE</div>
+      <div class="cells">
+        <span class="x m2"></span><span class="x m3"></span><span class="x m2"></span><span class="x g1"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x"></span><span class="x r1"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span><span class="x m2"></span><span class="x g1"></span><span class="x g2"></span><span class="x g2"></span><span class="x g1"></span><span class="x"></span><span class="x m2"></span><span class="x r1"></span><span class="x r2"></span><span class="x r1"></span><span class="x"></span><span class="x"></span>
+      </div>
+    </div>
+
+    <!-- time axis -->
+    <div class="tx">
+      <span class="filler"></span>
+      <span class="ticks mono"><span>-24h</span><span>-18h</span><span>-12h</span><span>-6h</span><span>now</span></span>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top:20px;color:#6B7280;font-size:11px;line-height:1.55">
+<b style="color:#83E9FF">Idée maîtresse :</b> répondre à <i>quel coin et quand</i> en un coup d'œil. Grid 6 assets × 24 buckets (1h ici pour la maquette ; en prod ce serait 48 × 30 min). Teinte verte = dominé par les longs liquidés, rouge = par les shorts, violet = mix ~50/50. Intensité = volume relatif. Légende en gradient bipolaire. Stats strip en haut donne le L/S split absolu.
+</p>
+</div>
+</body></html>

@@ -31,7 +31,7 @@ export default function UserPage() {
             <ShieldX className="h-8 w-8 text-rose-400" />
           </div>
           <h1 className="text-xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-zinc-400 text-sm mb-6">
+          <p className="text-text-secondary text-sm mb-6">
             This page is restricted to administrators only.
           </p>
           <Button

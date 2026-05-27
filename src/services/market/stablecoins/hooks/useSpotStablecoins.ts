@@ -4,6 +4,7 @@ import { fetchSpotStablecoins } from '../api';
 import {
   SpotUsdcResponse,
   Stablecoin,
+  StablecoinSupplyByCoinPoint,
   StablecoinSupplyPoint,
   UseSpotStablecoinsResult,
 } from '../types';
@@ -40,6 +41,17 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
     [supplyChart]
   );
 
+  const supplyByCoinChart = useMemo<StablecoinSupplyByCoinPoint[]>(() => {
+    if (!data) return [];
+    return data.map((e) => ({
+      time: e.lastUpdate * 1000,
+      USDC: e.totalSpotUSDC ?? 0,
+      USDH: e.totalSpotUSDH ?? 0,
+      USDT0: e.totalSpotUSDT0 ?? 0,
+      USDE: e.totalSpotUSDE ?? 0,
+    }));
+  }, [data]);
+
   const stablecoins = useMemo<Stablecoin[]>(() => {
     if (!latest) return [];
     return [
@@ -56,6 +68,7 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
     stablecoins,
     supplyHistory,
     supplyChart,
+    supplyByCoinChart,
     lastUpdate: latest?.lastUpdate ?? null,
     isLoading,
     error,

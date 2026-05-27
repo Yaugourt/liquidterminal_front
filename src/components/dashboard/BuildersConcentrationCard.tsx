@@ -2,22 +2,25 @@
 
 import { memo, useMemo, useState } from "react";
 import { PieChart as PieIcon } from "lucide-react";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { Card } from "@/components/ui/card";
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
 import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { chartPalette } from "@/components/common";
+import { chartPalette, DonutTopN } from "@/components/common";
+import type { DonutSlice } from "@/components/common";
 
 /**
- * BuildersConcentrationCard — donut "Top 5 vs Rest" sur les builder fees 24h.
+ * BuildersConcentrationCard — "Top 5 vs Rest" donut over 24h builder fees.
  *
- * Layout reflowé : donut hero à gauche (164px), légende détaillée à droite
- * (1 ligne par segment alignée à la hauteur des rows du tableau builders),
- * footer "Top 5 share" en bas. Hover synchronisé donut ↔ légende ; au repos
- * le centre du donut affiche le total fees 24h, au hover il bascule sur le
- * segment (%, $).
+ * Powered by the shared `<DonutTopN>` primitive — this component only owns:
+ *   - the card-head (icon + title + tags),
+ *   - the data shaping (Top 5 + Rest segment),
+ *   - the center content + the right-side legend.
+ *
+ * Visual variant: `dim-others` (no active-arc Sector) — kept to match the
+ * original dashboard render. To get the Builders ActiveArc style, switch to
+ * `variant="active-arc"`.
  */
 
 const TOP_N = 5;
@@ -32,10 +35,14 @@ const SEGMENT_COLORS = [
 
 const REST_COLOR = "rgba(255,255,255,0.10)";
 
-interface Segment {
-  name: string;
-  value: number;
-  color: string;
+function compactCount(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return "—";
+  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
+  return String(Math.round(n));
+}
+
+interface Segment extends DonutSlice {
   isRest: boolean;
 }
 
@@ -62,6 +69,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
     const restValue = Math.max(0, totalFees - top5SumLocal);
 
     const segs: Segment[] = topBuilders.map((b, i) => ({
+      key: b.builder ?? `top-${i}`,
       name: formatBuilderDisplayNameOrAddress(b.builderName, b.builder),
       value: b.totalBuilderFees ?? 0,
       color: SEGMENT_COLORS[i] ?? chartPalette.accent,
@@ -70,6 +78,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
 
     if (restValue > 0 && totalFees > 0) {
       segs.push({
+        key: "rest",
         name: "Rest of builders",
         value: restValue,
         color: REST_COLOR,
@@ -91,20 +100,36 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head V4 */}
+      {/* card-head V4 — title + 24h pill + Volume / Users live stats */}
       <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <PieIcon size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">
-          Fees Concentration
+          Builders Code
         </h3>
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           24h
         </span>
-        <span className="ml-auto text-[10px] text-text-tertiary mono">
-          Top 5 + rest
-        </span>
+        <div className="ml-auto flex items-center gap-2.5 text-[10px] mono">
+          <span className="text-text-tertiary">
+            Vol{" "}
+            <span className="text-text-primary font-semibold">
+              {stats?.current?.totalVolume
+                ? compactUsd(stats.current.totalVolume)
+                : "—"}
+            </span>
+          </span>
+          <span className="text-text-tertiary/40">·</span>
+          <span className="text-text-tertiary">
+            Users{" "}
+            <span className="text-text-primary font-semibold">
+              {stats?.current?.uniqueUsers
+                ? compactCount(stats.current.uniqueUsers)
+                : "—"}
+            </span>
+          </span>
+        </div>
       </div>
 
       {!hasData ? (
@@ -113,58 +138,38 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
         </div>
       ) : (
         <>
-          {/* Body — donut hero (gauche) + légende détaillée (droite) */}
+          {/* Body — donut hero (left) + legend (right) */}
           <div className="flex-1 flex items-stretch gap-3 px-4 py-4">
-            {/* Donut hero */}
-            <div className="relative w-[164px] h-[164px] shrink-0 self-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={segments}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius="62%"
-                    outerRadius="100%"
-                    startAngle={90}
-                    endAngle={-270}
-                    stroke="none"
-                    paddingAngle={1.5}
-                    onMouseEnter={(_, idx) => setHoveredIdx(idx)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                  >
-                    {segments.map((s, i) => (
-                      <Cell
-                        key={s.name}
-                        fill={s.color}
-                        opacity={hoveredIdx == null || hoveredIdx === i ? 1 : 0.3}
-                        style={{
-                          transition: "opacity 150ms ease-out",
-                          cursor: "pointer",
-                          outline: "none",
-                        }}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 grid place-items-center pointer-events-none">
-                <div className="text-center px-2">
-                  <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-                    {hovered ? (hovered.isRest ? "Rest" : "Share") : "Total"}
+            <div className="self-center shrink-0">
+              <DonutTopN
+                data={segments}
+                size={164}
+                outerRadius={1}
+                paddingAngle={1.5}
+                variant="dim-others"
+                useGradient={false}
+                activeGlow={false}
+                activeIdx={hoveredIdx}
+                onActiveChange={setHoveredIdx}
+                center={
+                  <div className="text-center px-2">
+                    <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+                      {hovered ? (hovered.isRest ? "Rest" : "Share") : "Total"}
+                    </div>
+                    <div className="mono text-[17px] font-semibold text-text-primary leading-tight mt-0.5">
+                      {hovered
+                        ? `${hoveredPct.toFixed(1)}%`
+                        : compactUsd(total)}
+                    </div>
+                    <div className="text-[9.5px] mono text-text-tertiary leading-tight mt-0.5">
+                      {hovered ? compactUsd(hovered.value) : "fees 24h"}
+                    </div>
                   </div>
-                  <div className="mono text-[17px] font-semibold text-text-primary leading-tight mt-0.5">
-                    {hovered
-                      ? `${hoveredPct.toFixed(1)}%`
-                      : compactUsd(total)}
-                  </div>
-                  <div className="text-[9.5px] mono text-text-tertiary leading-tight mt-0.5">
-                    {hovered ? compactUsd(hovered.value) : "fees 24h"}
-                  </div>
-                </div>
-              </div>
+                }
+              />
             </div>
 
-            {/* Légende — 1 row par segment, alignée verticalement */}
+            {/* Legend — one row per segment, vertically aligned */}
             <div className="flex-1 min-w-0 flex flex-col justify-center gap-px">
               {segments.map((s, i) => {
                 const pct = total > 0 ? (s.value / total) * 100 : 0;
@@ -173,7 +178,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
                 return (
                   <button
                     type="button"
-                    key={s.name}
+                    key={s.key}
                     onMouseEnter={() => setHoveredIdx(i)}
                     onMouseLeave={() => setHoveredIdx(null)}
                     className={`group flex items-center gap-2.5 py-1.5 px-2 rounded text-left transition-all duration-150 ${
