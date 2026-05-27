@@ -499,8 +499,11 @@ src/services/<domain>/
 
 Everything lives in `@/lib/formatters/numberFormatting.ts` and `dateFormatting.ts`.
 
-- `compactUsd(n)` — `$1.2M / $3.4B / $42 / —` (handles `null/NaN`).
-- `formatNumber(value, format, opts)` — locale-aware.
+- `compactUsd(n, opts?)` — `$1.2M / $3.4B / $42 / —` (handles `null/NaN`, negative-aware).
+- `compactHype(n, opts?)` — same shape as `compactUsd` without the `$` (caller appends ` HYPE`).
+- `formatNumber(value, format, opts)` — locale-aware (`'US' | 'EU' | 'FR' | 'PLAIN'`).
+- `formatPrice(value, format)` — adaptive decimals based on magnitude (sub-cent → 6, $1+ → 2, $1000+ → 0).
+- `formatMetricValue(value, opts)` — display formatter for KPI ribbons.
 - `formatLargeNumber(value, { prefix, decimals })` — chart Y axis.
 
 Token-icon helpers in `@/lib/tokenIconUrl.ts`:
