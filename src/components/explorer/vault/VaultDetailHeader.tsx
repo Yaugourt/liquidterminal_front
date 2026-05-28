@@ -1,17 +1,30 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Copy, CheckCircle2, Vault } from "lucide-react";
-import { useState } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { IndexerVaultDetailsData, IndexerVaultSummaryItem } from "@/services/explorer/vault/types";
+import { formatDate } from "@/lib/formatters/dateFormatting";
+import { useDateFormat } from "@/store/date-format.store";
+import type {
+  IndexerVaultDetailsData,
+  IndexerVaultSummaryItem,
+} from "@/services/explorer/vault/types";
 
 interface VaultDetailHeaderProps {
   vaultAddress: string;
   details: IndexerVaultDetailsData | null;
   summaryFallback?: IndexerVaultSummaryItem | null;
   isLoading: boolean;
+}
+
+function formatLockup(seconds: number | undefined): string {
+  if (!seconds || seconds <= 0) return "Instant";
+  const days = Math.round(seconds / 86400);
+  if (days >= 1) return `${days}d`;
+  const hours = Math.round(seconds / 3600);
+  return `${hours}h`;
 }
 
 export function VaultDetailHeader({
@@ -21,11 +34,17 @@ export function VaultDetailHeader({
   isLoading,
 }: VaultDetailHeaderProps) {
   const [copied, setCopied] = useState(false);
+  const { format: dateFormat } = useDateFormat();
 
   const name = details?.name ?? summaryFallback?.name ?? "Vault";
   const leader = details?.leader ?? summaryFallback?.leader ?? "";
   const isClosed = details?.isClosed ?? summaryFallback?.isClosed ?? false;
   const leaderCommission = details?.leaderCommission ?? summaryFallback?.leaderCommission;
+  const lockupSeconds = details?.lockupDurationSeconds;
+  const allowDeposits = details?.allowDeposits;
+  const createTime = details?.createTime ?? summaryFallback?.createTime;
+
+  const lockupLabel = useMemo(() => formatLockup(lockupSeconds), [lockupSeconds]);
 
   const copy = () => {
     navigator.clipboard.writeText(vaultAddress).then(() => {
@@ -39,76 +58,89 @@ export function VaultDetailHeader({
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="bg-surface border border-border-subtle rounded-lg p-5"
+      className="bg-surface border border-border-subtle rounded-lg p-4"
     >
-      <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-        {/* Icon */}
-        <div className="w-12 h-12 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center flex-shrink-0">
-          <Vault className="w-6 h-6 text-brand" />
-        </div>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center flex-shrink-0">
+            <Vault className="w-5 h-5 text-brand" />
+          </div>
 
-        {/* Info */}
-        <div className="flex-1 min-w-0">
           {isLoading ? (
-            <div className="space-y-2">
-              <div className="h-6 w-48 bg-white/5 animate-pulse rounded" />
-              <div className="h-4 w-72 bg-white/5 animate-pulse rounded" />
+            <div className="space-y-2 flex-1">
+              <div className="h-5 w-48 bg-white/5 animate-pulse rounded" />
+              <div className="h-3 w-72 bg-white/5 animate-pulse rounded" />
             </div>
           ) : (
-            <>
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl font-inter font-bold text-text-primary">{name}</h1>
-                <StatusBadge variant={isClosed ? "error" : "success"}>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h1 className="text-lg font-bold text-text-primary truncate">{name}</h1>
+                <StatusBadge variant={isClosed ? "inactive" : "success"}>
                   {isClosed ? "Closed" : "Open"}
                 </StatusBadge>
-                {leaderCommission !== undefined && (
-                  <span className="text-[11px] bg-gold/10 text-gold px-2 py-0.5 rounded-full font-medium">
-                    {(leaderCommission * 100).toFixed(0)}% commission
-                  </span>
+                {allowDeposits === false && !isClosed && (
+                  <StatusBadge variant="warning">Deposits paused</StatusBadge>
                 )}
               </div>
-
-              <div className="flex flex-wrap gap-4 text-sm">
-                {/* Vault address */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-text-tertiary text-xs">Vault</span>
-                  <code className="font-mono text-xs text-brand">
-                    {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-6)}
-                  </code>
-                  <button
-                    onClick={copy}
-                    className="text-text-tertiary hover:text-brand transition-colors"
-                    title="Copy address"
-                  >
-                    {copied ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
-                  <a
-                    href={`https://app.hyperliquid.xyz/vaults/${vaultAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-text-tertiary hover:text-brand transition-colors"
-                    title="Open on HyperLiquid"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-
-                {/* Leader */}
-                {leader && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-text-tertiary text-xs">Leader</span>
-                    <AddressDisplay address={leader} />
-                  </div>
-                )}
+              <div className="flex items-center gap-1.5 mono text-xs text-text-tertiary">
+                <span>{vaultAddress.slice(0, 8)}…{vaultAddress.slice(-6)}</span>
+                <button
+                  onClick={copy}
+                  className="hover:text-brand transition-colors"
+                  title="Copy address"
+                >
+                  {copied ? (
+                    <CheckCircle2 className="w-3 h-3 text-success" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                </button>
+                <a
+                  href={`https://app.hyperliquid.xyz/vaults/${vaultAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-brand transition-colors"
+                  title="Open on HyperLiquid"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
-            </>
+            </div>
           )}
         </div>
+
+        {!isLoading && (
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+            {leader && (
+              <Meta label="Leader">
+                <AddressDisplay address={leader} />
+              </Meta>
+            )}
+            {leaderCommission !== undefined && (
+              <Meta label="Commission">
+                <span className="mono text-gold">{(leaderCommission * 100).toFixed(0)}%</span>
+              </Meta>
+            )}
+            <Meta label="Lockup">
+              <span className="mono text-text-primary">{lockupLabel}</span>
+            </Meta>
+            {createTime && (
+              <Meta label="Created">
+                <span className="text-text-primary">{formatDate(createTime, dateFormat)}</span>
+              </Meta>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
+  );
+}
+
+function Meta({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] uppercase tracking-wider text-text-tertiary">{label}</span>
+      {children}
+    </div>
   );
 }

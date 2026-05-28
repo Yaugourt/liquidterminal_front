@@ -19,5 +19,4 @@ export * from './transaction';
 export { TransfersDeployTable } from './TransfersDeployTable';
 export { StatsCard } from '@/components/common';
 export { StatsGrid } from './StatsGrid';
-export { ValidatorsTable } from './vaultValidatorSum/ValidatorsVaults';
-export { RecentDataTable } from './recentBlockTx/RecentDataTable'; 
+export { RecentDataTable } from './recentBlockTx/RecentDataTable';
