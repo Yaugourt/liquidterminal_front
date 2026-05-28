@@ -14,4 +14,5 @@ export { useVaultSummaries } from './hooks/useVaultSummaries';
 export { useVaultDailySnapshots } from './hooks/useVaultDailySnapshots';
 export { useVaultEquitySnapshots } from './hooks/useVaultEquitySnapshots';
 export { useVaultLedger } from './hooks/useVaultLedger';
-export { useVaultIndexerDetails } from './hooks/useVaultIndexerDetails'; 
+export { useVaultIndexerDetails } from './hooks/useVaultIndexerDetails';
+export { useVaultsLeaderboards } from './hooks/useVaultsLeaderboards'; 
