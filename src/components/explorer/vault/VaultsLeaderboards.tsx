@@ -2,12 +2,7 @@
 
 import { useMemo } from "react";
 import { TrendingUp, Users, ArrowDownToLine } from "lucide-react";
-import {
-  OverviewModule,
-  ModuleTable,
-  ModuleTableRow,
-  ModuleAsset,
-} from "@/components/common";
+import { OverviewModule, ModuleRow } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultsLeaderboards } from "@/services/explorer/vault/hooks/useVaultsLeaderboards";
 import type { UseVaultsDirectoryResult } from "@/services/explorer/vault/hooks/useVaultsDirectory";
@@ -18,18 +13,16 @@ interface VaultsLeaderboardsProps {
   directory: UseVaultsDirectoryResult;
 }
 
+const initials = (name: string) => name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
+const vaultHref = (addr: string) => `/explorer/vaults/${encodeURIComponent(addr)}`;
+
 /**
- * Three leaderboard cards above the directory table.
- *
- * These cards are ~240px wide at `lg` (three side by side, minus the sidebar),
- * so the metric columns get explicit widths — that flips ModuleTable into
- * `table-fixed`, which makes the (width-less) Vault column the flexible one and
- * lets its name truncate instead of widening the table past the card and
- * clipping (caught by `pnpm run visual-check /explorer/vaults`). `compact`
- * density keeps the numbers readable in the remaining space.
+ * Right-rail leaderboards for /explorer/vaults (mockup B side modules).
+ * Three stacked cards of dense ModuleRow lists: Top APR, Followers gained,
+ * Largest outflows. Lives in a 280px sticky column next to the directory.
  */
 export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
-  const { rows, totalTvl } = directory;
+  const { rows } = directory;
 
   const topApr = useMemo(
     () =>
@@ -61,123 +54,70 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     [outflows]
   );
 
-  const totalFollowersDelta = useMemo(
-    () => followersRows.reduce((sum, r) => sum + r.delta, 0),
-    [followersRows]
-  );
-  const totalOutflowsAmount = useMemo(
-    () => outflowsRows.reduce((sum, r) => sum + r.amountUsd, 0),
-    [outflowsRows]
-  );
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+    <div className="space-y-4">
       <OverviewModule
-        title="Top APR · current"
+        title="Top APR · 24h"
         icon={<TrendingUp size={13} className="text-brand" />}
-        tag={`${compactUsd(totalTvl)} TVL`}
+        tag={topApr.length > 0 ? String(topApr.length) : undefined}
       >
-        <ModuleTable
-          density="compact"
-          columns={[
-            { header: "Vault" },
-            { header: "APR", width: 88 },
-            { header: "TVL", width: 84 },
-          ]}
-        >
-          {topApr.map((v) => (
-            <ModuleTableRow
-              key={v.summary.vaultAddress}
-              href={`/explorer/vaults/${encodeURIComponent(v.summary.vaultAddress)}`}
-              cells={[
-                <ModuleAsset
-                  key="vault"
-                  logo={v.summary.name.slice(0, 2).toUpperCase()}
-                  name={v.summary.name}
-                />,
-                <span
-                  key="apr"
-                  className={`mono font-semibold ${v.apr >= 0 ? "text-success" : "text-danger"}`}
-                >
-                  {`${v.apr >= 0 ? "+" : ""}${v.apr.toFixed(1)}%`}
-                </span>,
-                <span key="tvl" className="mono text-text-primary">
-                  {compactUsd(parseFloat(v.summary.tvl))}
-                </span>,
-              ]}
-            />
-          ))}
-        </ModuleTable>
+        {topApr.map((v, i) => (
+          <ModuleRow
+            key={v.summary.vaultAddress}
+            rank={i + 1}
+            logo={initials(v.summary.name)}
+            name={v.summary.name}
+            sub={`${compactUsd(parseFloat(v.summary.tvl))} TVL`}
+            href={vaultHref(v.summary.vaultAddress)}
+            stats={[
+              {
+                value: `${v.apr >= 0 ? "+" : ""}${v.apr.toFixed(0)}%`,
+                valueClassName: v.apr >= 0 ? "text-success" : "text-danger",
+              },
+            ]}
+          />
+        ))}
       </OverviewModule>
 
       <OverviewModule
         title="Followers gained · 24h"
         icon={<Users size={13} className="text-brand" />}
-        tag={totalFollowersDelta > 0 ? `+${compactCount(totalFollowersDelta)} new` : undefined}
+        tag={followersRows.length > 0 ? String(followersRows.length) : undefined}
       >
-        <ModuleTable
-          density="compact"
-          columns={[
-            { header: "Vault" },
-            { header: "Δ 24h", width: 72 },
-            { header: "TVL", width: 84 },
-          ]}
-        >
-          {followersRows.map((v) => (
-            <ModuleTableRow
-              key={v.vaultAddress}
-              href={`/explorer/vaults/${encodeURIComponent(v.vaultAddress)}`}
-              cells={[
-                <ModuleAsset
-                  key="vault"
-                  logo={v.name.slice(0, 2).toUpperCase()}
-                  name={v.name}
-                />,
-                <span key="delta" className="mono font-semibold text-success">
-                  {`+${compactCount(v.delta)}`}
-                </span>,
-                <span key="tvl" className="mono text-text-primary">
-                  {compactUsd(v.tvl)}
-                </span>,
-              ]}
-            />
-          ))}
-        </ModuleTable>
+        {followersRows.map((v, i) => (
+          <ModuleRow
+            key={v.vaultAddress}
+            rank={i + 1}
+            logo={initials(v.name)}
+            name={v.name}
+            sub={`${compactCount(v.total)} total`}
+            href={vaultHref(v.vaultAddress)}
+            stats={[{ value: `+${compactCount(v.delta)}`, valueClassName: "text-success" }]}
+          />
+        ))}
       </OverviewModule>
 
       <OverviewModule
         title="Largest outflows · 24h"
         icon={<ArrowDownToLine size={13} className="text-brand" />}
-        tag={totalOutflowsAmount < 0 ? `${compactUsd(totalOutflowsAmount)} out` : undefined}
+        tag={outflowsRows.length > 0 ? String(outflowsRows.length) : undefined}
       >
-        <ModuleTable
-          density="compact"
-          columns={[
-            { header: "Vault" },
-            { header: "Out", width: 88 },
-            { header: "% TVL", width: 76 },
-          ]}
-        >
-          {outflowsRows.map((v) => (
-            <ModuleTableRow
-              key={v.vaultAddress}
-              href={`/explorer/vaults/${encodeURIComponent(v.vaultAddress)}`}
-              cells={[
-                <ModuleAsset
-                  key="vault"
-                  logo={v.name.slice(0, 2).toUpperCase()}
-                  name={v.name}
-                />,
-                <span key="out" className="mono font-semibold text-danger">
-                  {compactUsd(v.amountUsd)}
-                </span>,
-                <span key="pct" className="mono text-danger">
-                  {`${(v.percentOfTvl * 100).toFixed(1)}%`}
-                </span>,
-              ]}
-            />
-          ))}
-        </ModuleTable>
+        {outflowsRows.map((v, i) => (
+          <ModuleRow
+            key={v.vaultAddress}
+            rank={i + 1}
+            logo={initials(v.name)}
+            name={v.name}
+            sub={compactUsd(v.amountUsd)}
+            href={vaultHref(v.vaultAddress)}
+            stats={[
+              {
+                value: `${(v.percentOfTvl * 100).toFixed(1)}%`,
+                valueClassName: "text-danger",
+              },
+            ]}
+          />
+        ))}
       </OverviewModule>
     </div>
   );

@@ -92,7 +92,8 @@ export const OverviewModule = memo(function OverviewModule({
 
 /** Une statistique value-au-dessus-du-label dans le bloc `b-stats`. */
 export interface ModuleRowStat {
-  label: string;
+  /** Caption under the value. Omit for a value-only stat (dense sidebar rows). */
+  label?: string;
   value: ReactNode;
   /** Couleur de la valeur — défaut `text-text-primary`. */
   valueClassName?: string;
@@ -138,9 +139,9 @@ export function ModuleRow({
         )}
       </div>
       <div className="ml-auto flex shrink-0 gap-5">
-        {stats.map((s) => (
+        {stats.map((s, i) => (
           <div
-            key={s.label}
+            key={i}
             className="text-right"
             style={s.width ? { width: s.width } : undefined}
           >
@@ -151,9 +152,11 @@ export function ModuleRow({
             >
               {s.value}
             </div>
-            <div className="text-[9px] uppercase tracking-[0.04em] text-text-tertiary">
-              {s.label}
-            </div>
+            {s.label && (
+              <div className="text-[9px] uppercase tracking-[0.04em] text-text-tertiary">
+                {s.label}
+              </div>
+            )}
           </div>
         ))}
       </div>

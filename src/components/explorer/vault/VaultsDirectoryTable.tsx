@@ -6,7 +6,6 @@ import { ExternalLink, Search } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, type Column } from "@/components/common";
-import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,6 @@ import { formatDate } from "@/lib/formatters/dateFormatting";
 import type {
   UseVaultsDirectoryResult,
   VaultRow,
-  StatusFilter,
 } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 import type { NumberFormatType } from "@/store/number-format.store";
 import type { DateFormatType } from "@/store/date-format.store";
@@ -148,18 +146,7 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
 
-  const {
-    filtered,
-    openCount,
-    closedCount,
-    totalCount,
-    isLoading,
-    error,
-    search,
-    setSearch,
-    statusFilter,
-    setStatusFilter,
-  } = directory;
+  const { filtered, isLoading, error, search, setSearch } = directory;
 
   const handleRowClick = useCallback(
     (vault: VaultRow) => {
@@ -169,16 +156,7 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
   );
 
   const toolbar = (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-      <PillTabs
-        activeTab={statusFilter}
-        onTabChange={(v) => setStatusFilter(v as StatusFilter)}
-        tabs={[
-          { value: "all", label: `All ${totalCount ? `· ${totalCount}` : ""}` },
-          { value: "open", label: `Open ${openCount ? `· ${openCount}` : ""}` },
-          { value: "closed", label: `Closed ${closedCount ? `· ${closedCount}` : ""}` },
-        ]}
-      />
+    <div className="flex items-center gap-3">
       <div className="relative flex-1 max-w-xs">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
         <Input
@@ -195,7 +173,7 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
   );
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg">
+    <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
       <TypedDataTable<VaultRow>
         data={filtered}
         columns={buildColumns(format, dateFormat)}

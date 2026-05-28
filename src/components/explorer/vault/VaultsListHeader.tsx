@@ -72,7 +72,7 @@ function downloadCsv(rows: VaultRow[]) {
 }
 
 export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
-  const { totalCount, totalTvl, totalFollowers, dataUpdatedAt, filtered } = directory;
+  const { totalCount, totalTvl, dataUpdatedAt, filtered } = directory;
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -82,41 +82,28 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
 
   const updatedLabel = dataUpdatedAt ? formatRelative(now - dataUpdatedAt) : "…";
 
+  // Stat line only (mockup B). No prose, no global "depositors" — HyperLiquid
+  // exposes no global depositor count, so we don't fake one.
   const description = (
-    <span className="flex flex-col gap-1.5">
+    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-tertiary">
+      {totalCount > 0 && (
+        <>
+          <span>
+            <span className="mono text-text-secondary">{compactCount(totalCount)}</span> vaults
+          </span>
+          <span className="text-text-tertiary/60">·</span>
+        </>
+      )}
+      {totalTvl > 0 && (
+        <>
+          <span>
+            <span className="mono text-text-secondary">{compactUsd(totalTvl)}</span> total TVL
+          </span>
+          <span className="text-text-tertiary/60">·</span>
+        </>
+      )}
       <span>
-        The full HyperLiquid vault directory — ranked by TVL, with leader,
-        commission, follower count and performance.
-      </span>
-      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-tertiary">
-        {totalCount > 0 && (
-          <>
-            <span>
-              <span className="mono text-text-secondary">{compactCount(totalCount)}</span> vaults
-            </span>
-            <span className="text-text-tertiary/60">·</span>
-          </>
-        )}
-        {totalTvl > 0 && (
-          <>
-            <span>
-              <span className="mono text-text-secondary">{compactUsd(totalTvl)}</span> total TVL
-            </span>
-            <span className="text-text-tertiary/60">·</span>
-          </>
-        )}
-        {totalFollowers > 0 && (
-          <>
-            <span>
-              <span className="mono text-text-secondary">{compactCount(totalFollowers)}</span>{" "}
-              depositors
-            </span>
-            <span className="text-text-tertiary/60">·</span>
-          </>
-        )}
-        <span>
-          updated <span className="mono text-text-secondary">{updatedLabel}</span>
-        </span>
+        updated <span className="mono text-text-secondary">{updatedLabel}</span>
       </span>
     </span>
   );
