@@ -14,6 +14,8 @@ import {
   VaultSecondaryCharts,
   VaultLedgerTable,
   VaultConcentrationBar,
+  VaultMetadataCard,
+  VaultCommissionHistory,
   VaultSubVaults,
 } from "@/components/explorer/vault";
 
@@ -88,6 +90,16 @@ export default function VaultDetailPage() {
       <VaultSecondaryCharts vaultAddress={vaultAddress} />
 
       <VaultConcentrationBar vaultAddress={vaultAddress} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <VaultMetadataCard
+          vaultAddress={vaultAddress}
+          details={details}
+          summaryFallback={summaryFallback}
+          childAddresses={childAddresses}
+        />
+        <VaultCommissionHistory portfolio={details?.portfolio} />
+      </div>
 
       {childAddresses.length > 0 && <VaultSubVaults childAddresses={childAddresses} />}
 
