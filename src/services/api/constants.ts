@@ -87,6 +87,8 @@ export const ENDPOINTS = {
   INDEXER_VAULT_EQUITY_SNAPSHOTS: '/indexer/vaults/equitySnapshots',
   INDEXER_USER_VAULT_EQUITIES: '/indexer/vaults/userVaultEquities',
   INDEXER_VAULT_LEDGER: '/indexer/vaults/vaultLedger',
+  INDEXER_VAULT_LEADERBOARD_FOLLOWERS: '/indexer/vaults/leaderboards/followers-gained',
+  INDEXER_VAULT_LEADERBOARD_OUTFLOWS: '/indexer/vaults/leaderboards/outflows',
 
   /** Analytics — priority gas stats (window + optional coin) */
   INDEXER_ANALYTICS_PRIORITY_FEES_STATS: '/indexer/analytics/priority-fees/stats',
