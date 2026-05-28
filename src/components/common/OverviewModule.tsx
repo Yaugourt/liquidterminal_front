@@ -35,8 +35,9 @@ interface OverviewModuleProps {
   tag?: ReactNode;
   /** Label of the "View all →" link (e.g. "All vaults"). */
   viewAllLabel?: string;
-  /** Link to the full page. */
-  href: string;
+  /** Link to the full page. Omit to hide the "View all" link — e.g. when the
+   * module is already rendered on that destination page. */
+  href?: string;
   /** Card body: a table or a leaderboard list. */
   children?: ReactNode;
   className?: string;
@@ -68,13 +69,15 @@ export const OverviewModule = memo(function OverviewModule({
             {tag}
           </span>
         )}
-        <Link
-          href={href}
-          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          {viewAllLabel ?? "View all"}
-          <ArrowRight size={12} />
-        </Link>
+        {href && (
+          <Link
+            href={href}
+            className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+          >
+            {viewAllLabel ?? "View all"}
+            <ArrowRight size={12} />
+          </Link>
+        )}
       </div>
 
       {/* Body */}
