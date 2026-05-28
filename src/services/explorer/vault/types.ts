@@ -317,4 +317,47 @@ export interface UseVaultIndexerDetailsResult {
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
-} 
+}
+
+// ==================== VAULT LEADERBOARDS ====================
+
+export type VaultLeaderboardWindow = '24h' | '7d';
+
+export interface FollowersGainedItem {
+  vaultAddress: string;
+  name: string;
+  leader: string;
+  tvl: number;
+  delta: number;
+  total: number;
+}
+
+export interface OutflowItem {
+  vaultAddress: string;
+  name: string;
+  leader: string;
+  tvl: number;
+  amountUsd: number;
+  percentOfTvl: number;
+}
+
+export interface VaultLeaderboardMeta {
+  window: VaultLeaderboardWindow;
+  computedAt: number;
+  sampleSize: number;
+}
+
+export interface VaultLeaderboardResponse<T> {
+  success: boolean;
+  data: T[];
+  meta: VaultLeaderboardMeta;
+}
+
+export interface UseVaultsLeaderboardsResult {
+  followersGained: FollowersGainedItem[];
+  outflows: OutflowItem[];
+  meta: VaultLeaderboardMeta | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}

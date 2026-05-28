@@ -15,6 +15,10 @@ import {
   VaultEquitySnapshot,
   VaultLedgerEntry,
   IndexerVaultDetailsData,
+  VaultLeaderboardWindow,
+  VaultLeaderboardResponse,
+  FollowersGainedItem,
+  OutflowItem,
 } from './types';
 
 /**
@@ -174,4 +178,36 @@ export const fetchVaultLedger = async (params: {
     );
     return response.data;
   }, 'fetching vault ledger');
+};
+
+/**
+ * Fetches the followers-gained leaderboard from the back. Top vaults by net
+ * follower delta over the given window.
+ */
+export const fetchFollowersGainedLeaderboard = async (params: {
+  window?: VaultLeaderboardWindow;
+  limit?: number;
+}): Promise<VaultLeaderboardResponse<FollowersGainedItem>> => {
+  return withErrorHandling(async () => {
+    return await get<VaultLeaderboardResponse<FollowersGainedItem>>(
+      ENDPOINTS.INDEXER_VAULT_LEADERBOARD_FOLLOWERS,
+      params as Record<string, unknown>
+    );
+  }, 'fetching followers-gained leaderboard');
+};
+
+/**
+ * Fetches the largest-outflows leaderboard from the back. Vaults sorted by
+ * most negative net flow over the window; empty when nothing qualifies.
+ */
+export const fetchOutflowsLeaderboard = async (params: {
+  window?: VaultLeaderboardWindow;
+  limit?: number;
+}): Promise<VaultLeaderboardResponse<OutflowItem>> => {
+  return withErrorHandling(async () => {
+    return await get<VaultLeaderboardResponse<OutflowItem>>(
+      ENDPOINTS.INDEXER_VAULT_LEADERBOARD_OUTFLOWS,
+      params as Record<string, unknown>
+    );
+  }, 'fetching outflows leaderboard');
 }; 
