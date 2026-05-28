@@ -64,8 +64,12 @@ export default function VaultDetailPage() {
           Vaults
         </Link>
         <ChevronRight className="w-3 h-3" />
-        <span className="text-text-secondary mono">
-          {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-4)}
+        <span className="text-text-secondary truncate max-w-[480px]">
+          {details?.name ?? summaryFallback?.name ?? (
+            <span className="mono">
+              {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-4)}
+            </span>
+          )}
         </span>
       </nav>
 

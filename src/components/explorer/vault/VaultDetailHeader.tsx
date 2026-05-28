@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Copy, CheckCircle2, Vault } from "lucide-react";
+import { ExternalLink, Copy, CheckCircle2, Vault, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import type {
@@ -129,6 +130,45 @@ export function VaultDetailHeader({
                 <span className="text-text-primary">{formatDate(createTime, dateFormat)}</span>
               </Meta>
             )}
+          </div>
+        )}
+
+        {!isLoading && (
+          <div className="flex items-center gap-2 lg:ml-auto shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 text-xs font-medium"
+              onClick={() =>
+                window.open(
+                  `https://app.hyperliquid.xyz/vaults/${vaultAddress}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+              title="Withdraw on HyperLiquid"
+            >
+              <ArrowUpFromLine className="h-3 w-3" />
+              Withdraw
+              <ExternalLink className="h-3 w-3 opacity-70" />
+            </Button>
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-text-on"
+              disabled={isClosed}
+              onClick={() =>
+                window.open(
+                  `https://app.hyperliquid.xyz/vaults/${vaultAddress}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+              title={isClosed ? "Vault is closed" : "Deposit on HyperLiquid"}
+            >
+              <ArrowDownToLine className="h-3 w-3" />
+              Deposit
+              <ExternalLink className="h-3 w-3 opacity-70" />
+            </Button>
           </div>
         )}
       </div>
