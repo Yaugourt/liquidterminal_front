@@ -19,10 +19,14 @@ interface VaultsLeaderboardsProps {
 }
 
 /**
- * Three leaderboard cards above the directory table. Each card mirrors the
- * dashboard VaultsModule (OverviewModule + ModuleTable, default density,
- * no width overrides). Three columns only — anything more overflows when
- * the row is split into three side-by-side modules.
+ * Three leaderboard cards above the directory table.
+ *
+ * These cards are ~240px wide at `lg` (three side by side, minus the sidebar),
+ * so the metric columns get explicit widths — that flips ModuleTable into
+ * `table-fixed`, which makes the (width-less) Vault column the flexible one and
+ * lets its name truncate instead of widening the table past the card and
+ * clipping (caught by `pnpm run visual-check /explorer/vaults`). `compact`
+ * density keeps the numbers readable in the remaining space.
  */
 export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   const { rows, totalTvl } = directory;
@@ -74,7 +78,12 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={`${compactUsd(totalTvl)} TVL`}
       >
         <ModuleTable
-          columns={[{ header: "Vault" }, { header: "APR" }, { header: "TVL" }]}
+          density="compact"
+          columns={[
+            { header: "Vault" },
+            { header: "APR", width: 88 },
+            { header: "TVL", width: 84 },
+          ]}
         >
           {topApr.map((v) => (
             <ModuleTableRow
@@ -107,7 +116,12 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={totalFollowersDelta > 0 ? `+${compactCount(totalFollowersDelta)} new` : undefined}
       >
         <ModuleTable
-          columns={[{ header: "Vault" }, { header: "Δ 24h" }, { header: "TVL" }]}
+          density="compact"
+          columns={[
+            { header: "Vault" },
+            { header: "Δ 24h", width: 72 },
+            { header: "TVL", width: 84 },
+          ]}
         >
           {followersRows.map((v) => (
             <ModuleTableRow
@@ -137,7 +151,12 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={totalOutflowsAmount < 0 ? `${compactUsd(totalOutflowsAmount)} out` : undefined}
       >
         <ModuleTable
-          columns={[{ header: "Vault" }, { header: "Out" }, { header: "% TVL" }]}
+          density="compact"
+          columns={[
+            { header: "Vault" },
+            { header: "Out", width: 88 },
+            { header: "% TVL", width: 76 },
+          ]}
         >
           {outflowsRows.map((v) => (
             <ModuleTableRow
