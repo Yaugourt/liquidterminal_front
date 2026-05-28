@@ -5,6 +5,7 @@ import {
   VaultsKpiStrip,
   VaultsDirectoryTable,
   VaultsListHeader,
+  VaultsLeaderboards,
 } from "@/components/explorer/vault";
 import { useVaultsDirectory } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
@@ -21,6 +22,7 @@ export default function VaultsPage() {
       <VaultsListHeader directory={directory} />
       <VaultsKpiStrip />
       <VaultsDirectoryTable directory={directory} />
+      <VaultsLeaderboards directory={directory} />
     </motion.div>
   );
 }

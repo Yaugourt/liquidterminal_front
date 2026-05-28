@@ -2,6 +2,7 @@
 export { VaultsListHeader } from './VaultsListHeader';
 export { VaultsKpiStrip } from './VaultsKpiStrip';
 export { VaultsDirectoryTable } from './VaultsDirectoryTable';
+export { VaultsLeaderboards } from './VaultsLeaderboards';
 
 // Detail page
 export { VaultDetailHeader } from './VaultDetailHeader';
