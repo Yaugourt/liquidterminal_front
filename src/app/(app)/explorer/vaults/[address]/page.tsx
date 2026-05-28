@@ -85,25 +85,24 @@ export default function VaultDetailPage() {
 
       <VaultDetailKpiRow vaultAddress={vaultAddress} isLoading={isLoading} />
 
-      <VaultDetailCharts vaultAddress={vaultAddress} />
-
-      <VaultSecondaryCharts vaultAddress={vaultAddress} />
-
-      <VaultConcentrationBar vaultAddress={vaultAddress} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <VaultMetadataCard
-          vaultAddress={vaultAddress}
-          details={details}
-          summaryFallback={summaryFallback}
-          childAddresses={childAddresses}
-        />
-        <VaultCommissionHistory portfolio={details?.portfolio} />
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-3 items-start">
+        <div className="flex flex-col gap-3 min-w-0">
+          <VaultDetailCharts vaultAddress={vaultAddress} />
+          <VaultSecondaryCharts vaultAddress={vaultAddress} />
+          <VaultLedgerTable vaultAddress={vaultAddress} />
+        </div>
+        <aside className="flex flex-col gap-3">
+          <VaultMetadataCard
+            vaultAddress={vaultAddress}
+            details={details}
+            summaryFallback={summaryFallback}
+            childAddresses={childAddresses}
+          />
+          <VaultCommissionHistory portfolio={details?.portfolio} />
+          {childAddresses.length > 0 && <VaultSubVaults childAddresses={childAddresses} />}
+          <VaultConcentrationBar vaultAddress={vaultAddress} />
+        </aside>
       </div>
-
-      {childAddresses.length > 0 && <VaultSubVaults childAddresses={childAddresses} />}
-
-      <VaultLedgerTable vaultAddress={vaultAddress} />
     </div>
   );
 }
