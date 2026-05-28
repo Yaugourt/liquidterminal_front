@@ -122,6 +122,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
   Don't mix : a function accessor with `type: "fees"` means the function should return a primitive value (number/string), the table styles it. If you return JSX, leave `type` off.
   Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
 - **Leaderboard cards (top N, any page)**: `OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset` (see DESIGN_SYSTEM §5.b / §7.a). Lives in `common/` — usable from any domain.
+- **KPI ribbon (§7.b)**: `<KpiRibbon cells={[{label, value, sub?, tone?, sparkline?}]} />` — the **single** source for the horizontal stat strip (PulseBar, vaults, HIP-4, NetworkPulse all consume it). Never hand-roll the `gap-px bg-border-subtle` strip. Group ribbons by stacking `<KpiRibbon header={{label, helper}}>` in a `space-y-*` wrapper.
 - **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
 - **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
 - **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).
@@ -154,13 +155,20 @@ See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patter
 ## Commands
 
 ```bash
-npm run dev      # Development server (Turbo mode)
-npm run build    # Production build (TypeScript + Next; does not replace ESLint)
-npm run lint     # ESLint on app source (`src/`, config, etc.) — run before PR/ship
-npm run start    # Production server
+pnpm run dev            # Development server (Turbo mode, 127.0.0.1:3000)
+pnpm run build          # Production build (TypeScript + Next; does not replace ESLint)
+pnpm run lint           # ESLint on app source (`src/`, config, etc.) — run before PR/ship
+pnpm run start          # Production server
+pnpm run visual-check <route>   # Render gate: screenshots a route at 375/1024/1440 and
+                                # FAILS on content clipping / horizontal page overflow.
+                                # Needs `pnpm run dev` running. See scripts/visual-check.mjs.
 ```
 
-**Build vs lint:** `npm run build` can succeed while `npm run lint` fails. Always run both before merging. Vendored paths under `.agents/` and `.cursor/` are ignored by ESLint (third-party gstack tooling, not Liquid Terminal source).
+**Use pnpm, not npm** (the repo is pinned via `pnpm-lock.yaml`).
+
+**Build vs lint:** `pnpm run build` can succeed while `pnpm run lint` fails. Always run both before merging.
+
+**Render gate (Definition of Done for a page):** a page migration isn't "done" on `tsc`+`lint` alone — those validate markup, never pixels or data. Before handing a page back, run `pnpm run visual-check <route>` (no clipping / no sideways scroll at the three breakpoints) and, for any new data endpoint, `curl` it and confirm it's non-empty with sane ranges. tsc green + lint green + visual-check green is the floor. Vendored paths under `.agents/` and `.cursor/` are ignored by ESLint (third-party gstack tooling, not Liquid Terminal source).
 
 ## Important Conventions
 

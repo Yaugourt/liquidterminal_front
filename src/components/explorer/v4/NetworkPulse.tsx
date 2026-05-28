@@ -1,6 +1,7 @@
 "use client";
 
-import { memo, useMemo, type ReactNode } from "react";
+import { memo, useMemo } from "react";
+import { KpiRibbon, type KpiCell } from "@/components/common";
 import { useExplorerStore } from "@/services/explorer";
 import {
   useActiveTraders24h,
@@ -66,55 +67,6 @@ function computeBridgeNet24h(
   return touched ? { net, latest } : null;
 }
 
-function SubRibbonLabel({
-  label,
-  helper,
-}: {
-  label: ReactNode;
-  helper?: ReactNode;
-}) {
-  return (
-    <div className="flex items-baseline gap-2 px-3.5 py-2 bg-surface-2 border-b border-border-subtle">
-      <span className="text-[9.5px] uppercase tracking-[0.1em] text-text-secondary font-semibold">
-        {label}
-      </span>
-      {helper && (
-        <span className="text-[10px] text-text-tertiary">{helper}</span>
-      )}
-    </div>
-  );
-}
-
-function Cell({
-  label,
-  value,
-  sub,
-  valueClass,
-}: {
-  label: ReactNode;
-  value: ReactNode;
-  sub?: ReactNode;
-  valueClass?: string;
-}) {
-  return (
-    <div className="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
-      <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-        {label}
-      </div>
-      <div
-        className={`mono text-[20px] font-semibold tracking-[-0.02em] mt-1 leading-none ${
-          valueClass ?? "text-text-primary"
-        }`}
-      >
-        {value}
-      </div>
-      {sub && (
-        <div className="mono text-[10px] text-text-tertiary mt-1.5">{sub}</div>
-      )}
-    </div>
-  );
-}
-
 export const NetworkPulse = memo(function NetworkPulse() {
   const { format } = useNumberFormat();
 
@@ -149,108 +101,88 @@ export const NetworkPulse = memo(function NetworkPulse() {
   const uniqueBuilders = builderStats?.current?.uniqueBuilders ?? null;
   const bridgeNetPositive = bridge ? bridge.net >= 0 : true;
 
+  // HyperCore (L1) — canonical chain metrics, never EVM data.
+  const coreCells: KpiCell[] = [
+    {
+      label: "Block height",
+      value: currentBlockHeight > 0 ? currentBlockHeight.toLocaleString() : PLACEHOLDER,
+      sub: (
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+          live
+        </span>
+      ),
+    },
+    {
+      label: "Trades / sec · 24h",
+      value: txPerSec != null ? txPerSec.toFixed(1) : PLACEHOLDER,
+      sub: fills?.value ? `${compactHype(fills.value)} fills · 24h` : "—",
+    },
+    {
+      label: "Active addr · 24h",
+      value: traders?.value != null ? formatCount(traders.value, format) : PLACEHOLDER,
+      sub:
+        traders?.variationPct != null ? (
+          <span className={traders.variationPct >= 0 ? "text-success" : "text-danger"}>
+            {traders.variationPct >= 0 ? "+" : ""}
+            {traders.variationPct.toFixed(1)}% vs prior 24h
+          </span>
+        ) : (
+          "unique signers"
+        ),
+    },
+    {
+      label: "HYPE staked",
+      value: compactHype(validatorStats?.totalHypeStaked),
+      sub: validatorStats?.active ? `${validatorStats.active} validators` : "—",
+      tone: "gold",
+    },
+    {
+      label: "Vaults TVL",
+      value: compactUsd(vaultsTvl),
+      sub: activeVaults > 0 ? `${activeVaults} active vaults` : "—",
+    },
+    {
+      label: "Builder fees · 24h",
+      value: compactUsd(builderFees24h),
+      sub: uniqueBuilders != null ? `${uniqueBuilders} active builders` : "—",
+      tone: "gold",
+    },
+  ];
+
+  // Cross-Chain Capital — USDC bridge (DefiLlama), kept separate from L1.
+  const bridgeCells: KpiCell[] = [
+    {
+      label: "Total USDC bridged",
+      value: compactUsd(bridge?.latest ?? null),
+      sub: "Arbitrum + L1 chainTvls",
+    },
+    {
+      label: "Bridge net · 24h",
+      value: bridge ? `${bridgeNetPositive ? "+" : ""}${compactUsd(bridge.net)}` : PLACEHOLDER,
+      sub: bridge ? `total ${compactUsd(bridge.latest)}` : "—",
+      tone: bridgeNetPositive ? "success" : "danger",
+    },
+  ];
+
   return (
     <div className="space-y-3">
-      {/* === HyperCore (L1) sub-ribbon === */}
-      <div className="border border-border-default rounded-lg overflow-hidden">
-        <SubRibbonLabel
-          label="HyperCore · L1"
-          helper="Canonical orderbook chain — trades, validators, vaults, builders"
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px bg-border-subtle">
-          <Cell
-            label="Block height"
-            value={
-              currentBlockHeight > 0
-                ? currentBlockHeight.toLocaleString()
-                : PLACEHOLDER
-            }
-            sub={
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                live
-              </span>
-            }
-          />
-          <Cell
-            label="Trades / sec · 24h"
-            value={txPerSec != null ? txPerSec.toFixed(1) : PLACEHOLDER}
-            sub={fills?.value ? `${compactHype(fills.value)} fills · 24h` : "—"}
-          />
-          <Cell
-            label="Active addr · 24h"
-            value={
-              traders?.value != null
-                ? formatCount(traders.value, format)
-                : PLACEHOLDER
-            }
-            sub={
-              traders?.variationPct != null ? (
-                <span
-                  className={
-                    traders.variationPct >= 0 ? "text-success" : "text-danger"
-                  }
-                >
-                  {traders.variationPct >= 0 ? "+" : ""}
-                  {traders.variationPct.toFixed(1)}% vs prior 24h
-                </span>
-              ) : (
-                "unique signers"
-              )
-            }
-          />
-          <Cell
-            label="HYPE staked"
-            value={compactHype(validatorStats?.totalHypeStaked)}
-            sub={
-              validatorStats?.active
-                ? `${validatorStats.active} validators`
-                : "—"
-            }
-            valueClass="text-gold"
-          />
-          <Cell
-            label="Vaults TVL"
-            value={compactUsd(vaultsTvl)}
-            sub={activeVaults > 0 ? `${activeVaults} active vaults` : "—"}
-          />
-          <Cell
-            label="Builder fees · 24h"
-            value={compactUsd(builderFees24h)}
-            sub={
-              uniqueBuilders != null
-                ? `${uniqueBuilders} active builders`
-                : "—"
-            }
-            valueClass="text-gold"
-          />
-        </div>
-      </div>
-
-      {/* === Cross-Chain Capital sub-ribbon === */}
-      <div className="border border-border-default rounded-lg overflow-hidden">
-        <SubRibbonLabel
-          label="Cross-Chain Capital"
-          helper="USDC bridge (Arbitrum ↔ Hyperliquid L1) — DefiLlama feed"
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border-subtle">
-          <Cell
-            label="Total USDC bridged"
-            value={compactUsd(bridge?.latest ?? null)}
-            sub="Arbitrum + L1 chainTvls"
-          />
-          <Cell
-            label="Bridge net · 24h"
-            value={
-              bridge
-                ? `${bridgeNetPositive ? "+" : ""}${compactUsd(bridge.net)}`
-                : PLACEHOLDER
-            }
-            sub={bridge ? `total ${compactUsd(bridge.latest)}` : "—"}
-            valueClass={bridgeNetPositive ? "text-success" : "text-danger"}
-          />
-        </div>
-      </div>
+      <KpiRibbon
+        header={{
+          label: "HyperCore · L1",
+          helper: "Canonical orderbook chain — trades, validators, vaults, builders",
+        }}
+        columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6"
+        cells={coreCells}
+      />
+      <KpiRibbon
+        header={{
+          label: "Cross-Chain Capital",
+          helper: "USDC bridge (Arbitrum ↔ Hyperliquid L1) — DefiLlama feed",
+        }}
+        columns="grid-cols-1 sm:grid-cols-2"
+        cells={bridgeCells}
+      />
     </div>
   );
 });

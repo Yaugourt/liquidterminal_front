@@ -42,6 +42,10 @@ export type { ModuleColumn, ModuleRowStat } from './OverviewModule';
 // Numeric display
 export { Num } from './Num';
 
+// KPI ribbon (§7.b)
+export { KpiRibbon } from './KpiRibbon';
+export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
+
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';
