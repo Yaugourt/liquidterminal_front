@@ -44,7 +44,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   );
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
       <OverviewModule
         title="Top APR · current"
         icon={<TrendingUp size={13} className="text-brand" />}
