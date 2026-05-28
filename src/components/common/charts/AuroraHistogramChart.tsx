@@ -115,6 +115,14 @@ const AuroraHistogramChartComponent = ({
     [data]
   );
 
+  // Signed series (PnL, net flows) need the axis to extend below 0 so loss
+  // bars render under the baseline. Purely-positive series (volume…) keep the
+  // 0-anchored floor so bars grow from the bottom.
+  const hasNegative = useMemo(() => sorted.some((d) => d.value < 0), [sorted]);
+  const yDomain: [number | string, number | string] = hasNegative
+    ? ["auto", "auto"]
+    : [0, "auto"];
+
   const formatTimeFn = formatTime ?? defaultFormatTime;
 
   const handleMouseMove = useCallback(
@@ -180,7 +188,7 @@ const AuroraHistogramChartComponent = ({
             axisLine={false}
             tickLine={false}
             width={yAxisWidth}
-            domain={[0, "auto"]}
+            domain={yDomain}
           />
           <Tooltip
             cursor={{ fill: "rgba(255,255,255,0.04)" }}
@@ -196,6 +204,7 @@ const AuroraHistogramChartComponent = ({
             dataKey="value"
             radius={[barRadius, barRadius, 0, 0]}
             isAnimationActive={false}
+            maxBarSize={28}
           >
             {sorted.map((entry, index) => {
               const fill = entry.color ?? defaultColor;
