@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { cn } from "@/lib/utils";
