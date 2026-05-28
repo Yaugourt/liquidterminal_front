@@ -8,11 +8,7 @@ import {
   ModuleTableRow,
   ModuleAsset,
 } from "@/components/common";
-import {
-  compactUsd,
-  compactCount,
-  truncateAddress,
-} from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultsLeaderboards } from "@/services/explorer/vault/hooks/useVaultsLeaderboards";
 import type { UseVaultsDirectoryResult } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
@@ -23,9 +19,10 @@ interface VaultsLeaderboardsProps {
 }
 
 /**
- * Three side-by-side leaderboard cards mirroring the dashboard VaultsModule
- * shape: brand icon, title, meaningful tag pill, no redundant "All vaults"
- * link (we already are on /explorer/vaults), default ModuleTable density.
+ * Three leaderboard cards above the directory table. Each card mirrors the
+ * dashboard VaultsModule (OverviewModule + ModuleTable, default density,
+ * no width overrides). Three columns only — anything more overflows when
+ * the row is split into three side-by-side modules.
  */
 export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   const { rows, totalTvl } = directory;
@@ -77,12 +74,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={`${compactUsd(totalTvl)} TVL`}
       >
         <ModuleTable
-          columns={[
-            { header: "Vault" },
-            { header: "APR" },
-            { header: "TVL" },
-            { header: "Leader" },
-          ]}
+          columns={[{ header: "Vault" }, { header: "APR" }, { header: "TVL" }]}
         >
           {topApr.map((v) => (
             <ModuleTableRow
@@ -103,9 +95,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
                 <span key="tvl" className="mono text-text-primary">
                   {compactUsd(parseFloat(v.summary.tvl))}
                 </span>,
-                <span key="leader" className="mono text-text-secondary">
-                  {truncateAddress(v.summary.leader)}
-                </span>,
               ]}
             />
           ))}
@@ -118,12 +107,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={totalFollowersDelta > 0 ? `+${compactCount(totalFollowersDelta)} new` : undefined}
       >
         <ModuleTable
-          columns={[
-            { header: "Vault" },
-            { header: "Δ 24h" },
-            { header: "TVL" },
-            { header: "Leader" },
-          ]}
+          columns={[{ header: "Vault" }, { header: "Δ 24h" }, { header: "TVL" }]}
         >
           {followersRows.map((v) => (
             <ModuleTableRow
@@ -141,9 +125,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
                 <span key="tvl" className="mono text-text-primary">
                   {compactUsd(v.tvl)}
                 </span>,
-                <span key="leader" className="mono text-text-secondary">
-                  {truncateAddress(v.leader)}
-                </span>,
               ]}
             />
           ))}
@@ -156,12 +137,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         tag={totalOutflowsAmount < 0 ? `${compactUsd(totalOutflowsAmount)} out` : undefined}
       >
         <ModuleTable
-          columns={[
-            { header: "Vault" },
-            { header: "Out" },
-            { header: "% TVL" },
-            { header: "Leader" },
-          ]}
+          columns={[{ header: "Vault" }, { header: "Out" }, { header: "% TVL" }]}
         >
           {outflowsRows.map((v) => (
             <ModuleTableRow
@@ -178,9 +154,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
                 </span>,
                 <span key="pct" className="mono text-danger">
                   {`${(v.percentOfTvl * 100).toFixed(1)}%`}
-                </span>,
-                <span key="leader" className="mono text-text-secondary">
-                  {truncateAddress(v.leader)}
                 </span>,
               ]}
             />
