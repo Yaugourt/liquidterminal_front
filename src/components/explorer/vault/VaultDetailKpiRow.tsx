@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { DollarSign, TrendingUp, BarChart2, Percent, Users, Activity, Calendar, Sigma } from "lucide-react";
-import { StatsCard } from "@/components/common";
+import { KpiRibbon, type KpiCell, type KpiTone } from "@/components/common";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 import { useVaultIndexerDetails } from "@/services/explorer/vault/hooks/useVaultIndexerDetails";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
@@ -107,96 +106,40 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     return { tvl, allTimePnl, apr, followers, delta24h, delta7d, sharpe, commission };
   }, [snapshots, vaults, vaultAddress, details]);
 
-  const signedClass = (v: number | null) =>
-    v === null
-      ? undefined
-      : v >= 0
-        ? "text-success font-bold tabular-nums"
-        : "text-danger font-bold tabular-nums";
+  const ph = isLoading ? "…" : "—";
+  const signedTone = (v: number | null | undefined): KpiTone =>
+    v === null || v === undefined ? "default" : v >= 0 ? "success" : "danger";
+  const signedPct = (v: number | null) =>
+    v === null ? ph : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 
-  const cards: Array<{
-    title: string;
-    value: string;
-    valueClassName?: string;
-    icon: React.ReactNode;
-    iconClassName?: string;
-    titleAttr?: string;
-  }> = [
+  // Dense KPI ribbon (mockup B §detail). No icons, value + optional sub.
+  // Commission is intentionally omitted — it already lives in the header meta
+  // and the Vault metadata card (no duplicate stats).
+  const cells: KpiCell[] = [
+    { label: "TVL", value: isLoading && !kpis.tvl ? ph : compactUsd(kpis.tvl) },
     {
-      title: "TVL",
-      value: compactUsd(kpis.tvl),
-      icon: <DollarSign className="w-4 h-4 text-brand" />,
+      label: "APR",
+      value: kpis.apr !== null ? `${kpis.apr >= 0 ? "+" : ""}${kpis.apr.toFixed(2)}%` : ph,
+      tone: signedTone(kpis.apr),
+      sub: "annualized",
     },
+    { label: "24h Δ", value: signedPct(kpis.delta24h), tone: signedTone(kpis.delta24h) },
+    { label: "7d Δ", value: signedPct(kpis.delta7d), tone: signedTone(kpis.delta7d) },
     {
-      title: "24h Δ",
-      value:
-        kpis.delta24h !== null
-          ? `${kpis.delta24h >= 0 ? "+" : ""}${kpis.delta24h.toFixed(2)}%`
-          : "—",
-      valueClassName: signedClass(kpis.delta24h),
-      icon: <Activity className="w-4 h-4 text-brand" />,
-    },
-    {
-      title: "7d Δ",
-      value:
-        kpis.delta7d !== null
-          ? `${kpis.delta7d >= 0 ? "+" : ""}${kpis.delta7d.toFixed(2)}%`
-          : "—",
-      valueClassName: signedClass(kpis.delta7d),
-      icon: <Calendar className="w-4 h-4 text-brand" />,
-    },
-    {
-      title: "APR",
-      value: kpis.apr !== null ? `${kpis.apr.toFixed(2)}%` : "—",
-      valueClassName: signedClass(kpis.apr),
-      icon: <Percent className="w-4 h-4 text-gold" />,
-      iconClassName: "bg-gold/10",
-    },
-    {
-      title: "All-Time PnL",
+      label: "All-Time PnL",
       value: kpis.allTimePnl
         ? `${kpis.allTimePnl >= 0 ? "+" : "-"}${compactUsd(Math.abs(kpis.allTimePnl))}`
-        : "—",
-      valueClassName: signedClass(kpis.allTimePnl ? kpis.allTimePnl : null),
-      icon: <TrendingUp className="w-4 h-4 text-success" />,
-      iconClassName: "bg-success/10",
+        : ph,
+      tone: signedTone(kpis.allTimePnl || null),
+      sub: "cumulative",
     },
+    { label: "Followers", value: kpis.followers ? kpis.followers.toLocaleString() : ph },
     {
-      title: "Followers",
-      value: kpis.followers ? kpis.followers.toLocaleString() : "—",
-      icon: <Users className="w-4 h-4 text-brand" />,
-    },
-    {
-      title: "Sharpe (90d)",
-      value: kpis.sharpe ? kpis.sharpe.value.toFixed(2) : "—",
-      titleAttr: kpis.sharpe
-        ? `Annualised · vol ${kpis.sharpe.vol.toFixed(1)}% · ${kpis.sharpe.pointsUsed} daily returns`
-        : `Insufficient history (need ≥${SHARPE_MIN_POINTS} days)`,
-      icon: <Sigma className="w-4 h-4 text-brand" />,
-    },
-    {
-      title: "Commission",
-      value: kpis.commission !== undefined ? `${(kpis.commission * 100).toFixed(0)}%` : "—",
-      icon: <BarChart2 className="w-4 h-4 text-gold" />,
-      iconClassName: "bg-gold/10",
+      label: "Sharpe · 90d",
+      value: kpis.sharpe ? kpis.sharpe.value.toFixed(2) : ph,
+      sub: kpis.sharpe ? `vol ${kpis.sharpe.vol.toFixed(1)}%` : undefined,
     },
   ];
 
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 2xl:grid-cols-8 gap-2">
-      {cards.map((card) => (
-        <div key={card.title} title={card.titleAttr}>
-          <StatsCard
-            title={card.title}
-            value={card.value}
-            icon={card.icon}
-            iconClassName={card.iconClassName}
-            valueClassName={card.valueClassName}
-            isLoading={isLoading}
-            density="compact"
-          />
-        </div>
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={cells} />;
 }
