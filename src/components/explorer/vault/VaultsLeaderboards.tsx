@@ -8,7 +8,11 @@ import {
   ModuleTableRow,
   ModuleAsset,
 } from "@/components/common";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
+import {
+  compactUsd,
+  compactCount,
+  truncateAddress,
+} from "@/lib/formatters/numberFormatting";
 import { useVaultsLeaderboards } from "@/services/explorer/vault/hooks/useVaultsLeaderboards";
 import type { UseVaultsDirectoryResult } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
@@ -19,13 +23,12 @@ interface VaultsLeaderboardsProps {
 }
 
 /**
- * Three side-by-side cards under the directory table:
- * - Top APR · current — derived client-side from the directory rows.
- * - Followers gained · 24h — back-aggregated via /indexer/vaults/leaderboards/followers-gained.
- * - Largest outflows · 24h — back-aggregated via /indexer/vaults/leaderboards/outflows.
+ * Three side-by-side leaderboard cards mirroring the dashboard VaultsModule
+ * shape: brand icon, title, meaningful tag pill, no redundant "All vaults"
+ * link (we already are on /explorer/vaults), default ModuleTable density.
  */
 export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
-  const { rows } = directory;
+  const { rows, totalTvl } = directory;
 
   const topApr = useMemo(
     () =>
@@ -57,54 +60,51 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     [outflows]
   );
 
+  const totalFollowersDelta = useMemo(
+    () => followersRows.reduce((sum, r) => sum + r.delta, 0),
+    [followersRows]
+  );
+  const totalOutflowsAmount = useMemo(
+    () => outflowsRows.reduce((sum, r) => sum + r.amountUsd, 0),
+    [outflowsRows]
+  );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
       <OverviewModule
         title="Top APR · current"
         icon={<TrendingUp size={13} className="text-brand" />}
-        tag={topApr.length}
-        href="/explorer/vaults"
-        viewAllLabel="All vaults"
+        tag={`${compactUsd(totalTvl)} TVL`}
       >
         <ModuleTable
-          density="compact"
           columns={[
-            { header: "#", width: 28, align: "left" },
-            { header: "Vault", align: "left" },
-            { header: "TVL", align: "right", width: 90 },
-            { header: "APR", align: "right", width: 80 },
+            { header: "Vault" },
+            { header: "APR" },
+            { header: "TVL" },
+            { header: "Leader" },
           ]}
         >
-          {topApr.map((v, i) => (
+          {topApr.map((v) => (
             <ModuleTableRow
               key={v.summary.vaultAddress}
-              href={`/explorer/vaults/${v.summary.vaultAddress}`}
+              href={`/explorer/vaults/${encodeURIComponent(v.summary.vaultAddress)}`}
               cells={[
-                <span key="r" className="mono text-text-tertiary">
-                  {i + 1}
-                </span>,
                 <ModuleAsset
-                  key="a"
-                  name={
-                    <span className="truncate block max-w-[180px]">
-                      {v.summary.name}
-                    </span>
-                  }
-                  sub={
-                    <span className="mono text-text-tertiary text-[10px]">
-                      {v.summary.vaultAddress.slice(0, 6)}…{v.summary.vaultAddress.slice(-4)}
-                    </span>
-                  }
+                  key="vault"
+                  logo={v.summary.name.slice(0, 2).toUpperCase()}
+                  name={v.summary.name}
                 />,
-                <span key="t" className="mono text-text-secondary">
-                  {compactUsd(parseFloat(v.summary.tvl))}
-                </span>,
                 <span
                   key="apr"
                   className={`mono font-semibold ${v.apr >= 0 ? "text-success" : "text-danger"}`}
                 >
-                  {v.apr >= 0 ? "+" : ""}
-                  {v.apr.toFixed(2)}%
+                  {`${v.apr >= 0 ? "+" : ""}${v.apr.toFixed(1)}%`}
+                </span>,
+                <span key="tvl" className="mono text-text-primary">
+                  {compactUsd(parseFloat(v.summary.tvl))}
+                </span>,
+                <span key="leader" className="mono text-text-secondary">
+                  {truncateAddress(v.summary.leader)}
                 </span>,
               ]}
             />
@@ -115,43 +115,34 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       <OverviewModule
         title="Followers gained · 24h"
         icon={<Users size={13} className="text-brand" />}
-        tag={followersRows.length}
-        href="/explorer/vaults"
-        viewAllLabel="All vaults"
+        tag={totalFollowersDelta > 0 ? `+${compactCount(totalFollowersDelta)} new` : undefined}
       >
         <ModuleTable
-          density="compact"
           columns={[
-            { header: "#", width: 28, align: "left" },
-            { header: "Vault", align: "left" },
-            { header: "TVL", align: "right", width: 90 },
-            { header: "Δ 24h", align: "right", width: 70 },
+            { header: "Vault" },
+            { header: "Δ 24h" },
+            { header: "TVL" },
+            { header: "Leader" },
           ]}
         >
-          {followersRows.map((v, i) => (
+          {followersRows.map((v) => (
             <ModuleTableRow
               key={v.vaultAddress}
-              href={`/explorer/vaults/${v.vaultAddress}`}
+              href={`/explorer/vaults/${encodeURIComponent(v.vaultAddress)}`}
               cells={[
-                <span key="r" className="mono text-text-tertiary">
-                  {i + 1}
-                </span>,
                 <ModuleAsset
-                  key="a"
-                  name={
-                    <span className="truncate block max-w-[180px]">{v.name}</span>
-                  }
-                  sub={
-                    <span className="mono text-text-tertiary text-[10px]">
-                      {v.vaultAddress.slice(0, 6)}…{v.vaultAddress.slice(-4)}
-                    </span>
-                  }
+                  key="vault"
+                  logo={v.name.slice(0, 2).toUpperCase()}
+                  name={v.name}
                 />,
-                <span key="t" className="mono text-text-secondary">
+                <span key="delta" className="mono font-semibold text-success">
+                  {`+${compactCount(v.delta)}`}
+                </span>,
+                <span key="tvl" className="mono text-text-primary">
                   {compactUsd(v.tvl)}
                 </span>,
-                <span key="d" className="mono font-semibold text-success">
-                  +{compactCount(v.delta)}
+                <span key="leader" className="mono text-text-secondary">
+                  {truncateAddress(v.leader)}
                 </span>,
               ]}
             />
@@ -162,43 +153,34 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       <OverviewModule
         title="Largest outflows · 24h"
         icon={<ArrowDownToLine size={13} className="text-brand" />}
-        tag={outflowsRows.length}
-        href="/explorer/vaults"
-        viewAllLabel="All vaults"
+        tag={totalOutflowsAmount < 0 ? `${compactUsd(totalOutflowsAmount)} out` : undefined}
       >
         <ModuleTable
-          density="compact"
           columns={[
-            { header: "#", width: 28, align: "left" },
-            { header: "Vault", align: "left" },
-            { header: "Out", align: "right", width: 90 },
-            { header: "% TVL", align: "right", width: 70 },
+            { header: "Vault" },
+            { header: "Out" },
+            { header: "% TVL" },
+            { header: "Leader" },
           ]}
         >
-          {outflowsRows.map((v, i) => (
+          {outflowsRows.map((v) => (
             <ModuleTableRow
               key={v.vaultAddress}
-              href={`/explorer/vaults/${v.vaultAddress}`}
+              href={`/explorer/vaults/${encodeURIComponent(v.vaultAddress)}`}
               cells={[
-                <span key="r" className="mono text-text-tertiary">
-                  {i + 1}
-                </span>,
                 <ModuleAsset
-                  key="a"
-                  name={
-                    <span className="truncate block max-w-[180px]">{v.name}</span>
-                  }
-                  sub={
-                    <span className="mono text-text-tertiary text-[10px]">
-                      {v.vaultAddress.slice(0, 6)}…{v.vaultAddress.slice(-4)}
-                    </span>
-                  }
+                  key="vault"
+                  logo={v.name.slice(0, 2).toUpperCase()}
+                  name={v.name}
                 />,
-                <span key="o" className="mono font-semibold text-danger">
+                <span key="out" className="mono font-semibold text-danger">
                   {compactUsd(v.amountUsd)}
                 </span>,
-                <span key="p" className="mono text-danger">
-                  {(v.percentOfTvl * 100).toFixed(1)}%
+                <span key="pct" className="mono text-danger">
+                  {`${(v.percentOfTvl * 100).toFixed(1)}%`}
+                </span>,
+                <span key="leader" className="mono text-text-secondary">
+                  {truncateAddress(v.leader)}
                 </span>,
               ]}
             />
