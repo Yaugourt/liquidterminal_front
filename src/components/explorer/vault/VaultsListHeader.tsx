@@ -82,35 +82,41 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
 
   const updatedLabel = dataUpdatedAt ? formatRelative(now - dataUpdatedAt) : "…";
 
-  const meta = (
-    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-secondary">
-      {totalCount > 0 && (
-        <>
-          <span>
-            <span className="mono text-text-primary">{compactCount(totalCount)}</span> vaults
-          </span>
-          <span className="text-text-tertiary">·</span>
-        </>
-      )}
-      {totalTvl > 0 && (
-        <>
-          <span>
-            <span className="mono text-text-primary">{compactUsd(totalTvl)}</span> total TVL
-          </span>
-          <span className="text-text-tertiary">·</span>
-        </>
-      )}
-      {totalFollowers > 0 && (
-        <>
-          <span>
-            <span className="mono text-text-primary">{compactCount(totalFollowers)}</span>{" "}
-            depositors
-          </span>
-          <span className="text-text-tertiary">·</span>
-        </>
-      )}
+  const description = (
+    <span className="flex flex-col gap-1.5">
       <span>
-        updated <span className="mono text-text-primary">{updatedLabel}</span>
+        The full HyperLiquid vault directory — ranked by TVL, with leader,
+        commission, follower count and performance.
+      </span>
+      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-tertiary">
+        {totalCount > 0 && (
+          <>
+            <span>
+              <span className="mono text-text-secondary">{compactCount(totalCount)}</span> vaults
+            </span>
+            <span className="text-text-tertiary/60">·</span>
+          </>
+        )}
+        {totalTvl > 0 && (
+          <>
+            <span>
+              <span className="mono text-text-secondary">{compactUsd(totalTvl)}</span> total TVL
+            </span>
+            <span className="text-text-tertiary/60">·</span>
+          </>
+        )}
+        {totalFollowers > 0 && (
+          <>
+            <span>
+              <span className="mono text-text-secondary">{compactCount(totalFollowers)}</span>{" "}
+              depositors
+            </span>
+            <span className="text-text-tertiary/60">·</span>
+          </>
+        )}
+        <span>
+          updated <span className="mono text-text-secondary">{updatedLabel}</span>
+        </span>
       </span>
     </span>
   );
@@ -118,7 +124,7 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
   return (
     <PageHeader
       title="Vaults"
-      description={meta}
+      description={description}
       actions={
         <>
           <Button

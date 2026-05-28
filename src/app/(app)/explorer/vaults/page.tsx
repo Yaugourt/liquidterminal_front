@@ -21,8 +21,10 @@ export default function VaultsPage() {
     >
       <VaultsListHeader directory={directory} />
       <VaultsKpiStrip />
-      <VaultsDirectoryTable directory={directory} />
-      <VaultsLeaderboards directory={directory} />
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-3 items-start">
+        <VaultsDirectoryTable directory={directory} />
+        <VaultsLeaderboards directory={directory} />
+      </div>
     </motion.div>
   );
 }
