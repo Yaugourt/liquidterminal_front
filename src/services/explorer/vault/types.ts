@@ -105,6 +105,8 @@ export interface UseVaultsResult {
   error: Error | null;
   refetch: () => Promise<void>;
   updateParams: (params: Partial<VaultsParams>) => void;
+  /** Epoch ms of the most recent successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
 }
 
 /**
