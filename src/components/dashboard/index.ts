@@ -6,7 +6,7 @@
 
 // Primitives
 export { SectionHead } from "./SectionHead";
-export { Sparkline } from "./Sparkline";
+export { Sparkline } from "@/components/common";
 export {
   OverviewModule,
   ModuleTable,

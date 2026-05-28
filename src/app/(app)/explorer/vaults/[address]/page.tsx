@@ -1,58 +1,54 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useCallback, useMemo } from "react";
+import { useMemo } from "react";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { useVaultIndexerDetails } from "@/services/explorer/vault/hooks/useVaultIndexerDetails";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
+import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import {
   VaultDetailHeader,
   VaultDetailKpiRow,
   VaultDetailCharts,
   VaultLedgerTable,
+  VaultConcentrationBar,
+  VaultSubVaults,
 } from "@/components/explorer/vault";
-
-const TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "ledger", label: "Ledger" },
-] as const;
-
-type TabId = (typeof TABS)[number]["id"];
 
 export default function VaultDetailPage() {
   const params = useParams();
   const vaultAddress = params.address as string;
 
-  const [activeTab, setActiveTab] = useState<TabId>("overview");
-  const [visitedTabs, setVisitedTabs] = useState<Set<TabId>>(new Set<TabId>(["overview"]));
-
-  const { details, isLoading: detailsLoading, error: detailsError } =
-    useVaultIndexerDetails({ vaultAddress });
+  const { details, isLoading: detailsLoading, error: detailsError } = useVaultIndexerDetails({
+    vaultAddress,
+  });
 
   const { summaries, isLoading: summariesLoading } = useVaultSummaries({
     includeClosed: true,
-    limit: 500,
+    limit: 5000,
   });
 
+  const { vaults } = useVaults({ limit: 1000 });
+
   const summaryFallback = useMemo(
-    () => summaries.find((s) => s.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()) ?? null,
+    () =>
+      summaries.find((s) => s.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()) ?? null,
     [summaries, vaultAddress]
   );
 
-  const handleTabChange = useCallback((tabId: TabId) => {
-    setActiveTab(tabId);
-    setVisitedTabs((prev) => {
-      if (prev.has(tabId)) return prev;
-      const next = new Set(prev);
-      next.add(tabId);
-      return next;
-    });
-  }, []);
+  const childAddresses = useMemo(() => {
+    const match = vaults.find(
+      (v) => v.summary.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
+    );
+    return match?.summary.relationship?.data?.childAddresses ?? [];
+  }, [vaults, vaultAddress]);
 
   const isLoading = detailsLoading || summariesLoading;
 
   if (detailsError && !summaryFallback && !isLoading) {
     return (
-      <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-6 text-center text-rose-400 text-sm">
+      <div className="bg-danger/5 border border-danger/20 rounded-lg p-6 text-center text-danger text-sm">
         Failed to load vault data: {detailsError.message}
       </div>
     );
@@ -60,7 +56,19 @@ export default function VaultDetailPage() {
 
   return (
     <div className="space-y-4">
-      {/* Vault header */}
+      <nav
+        className="flex items-center gap-1 text-xs text-text-tertiary"
+        aria-label="Breadcrumb"
+      >
+        <Link href="/explorer/vaults" className="hover:text-brand transition-colors">
+          Vaults
+        </Link>
+        <ChevronRight className="w-3 h-3" />
+        <span className="text-text-secondary mono">
+          {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-4)}
+        </span>
+      </nav>
+
       <VaultDetailHeader
         vaultAddress={vaultAddress}
         details={details}
@@ -68,42 +76,15 @@ export default function VaultDetailPage() {
         isLoading={isLoading}
       />
 
-      {/* KPI row */}
-      <VaultDetailKpiRow
-        vaultAddress={vaultAddress}
-        isLoading={isLoading}
-      />
+      <VaultDetailKpiRow vaultAddress={vaultAddress} isLoading={isLoading} />
 
-      {/* Tab navigation */}
-      <div className="flex gap-1 border-b border-border-subtle pb-0">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
-            className={`text-sm font-medium px-4 py-2 border-b-2 transition-all -mb-px ${
-              activeTab === tab.id
-                ? "border-brand text-brand"
-                : "border-transparent text-text-tertiary hover:text-text-secondary"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <VaultDetailCharts vaultAddress={vaultAddress} />
 
-      {/* Tab content — lazy mount + keep alive pattern */}
+      <VaultConcentrationBar vaultAddress={vaultAddress} />
 
-      {visitedTabs.has("overview") && (
-        <div className={activeTab === "overview" ? "space-y-4" : "hidden"}>
-          <VaultDetailCharts vaultAddress={vaultAddress} />
-        </div>
-      )}
+      {childAddresses.length > 0 && <VaultSubVaults childAddresses={childAddresses} />}
 
-      {visitedTabs.has("ledger") && (
-        <div className={activeTab === "ledger" ? "" : "hidden"}>
-          <VaultLedgerTable vaultAddress={vaultAddress} />
-        </div>
-      )}
+      <VaultLedgerTable vaultAddress={vaultAddress} />
     </div>
   );
 }

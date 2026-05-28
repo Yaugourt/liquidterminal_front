@@ -1,135 +1,177 @@
 "use client";
 
-import { useState, useMemo, useId } from "react";
-import { LoadingState } from "@/components/ui/loading-state";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { AuroraAreaChart, chartPalette } from "@/components/common";
-import { useVaultDailySnapshots } from "@/services/explorer/vault/hooks/useVaultDailySnapshots";
+import { LoadingState } from "@/components/ui/loading-state";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import {
+  AuroraAreaChart,
+  AuroraHistogramChart,
+  chartPalette,
+  type HistogramDataPoint,
+} from "@/components/common";
+import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
+import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 
-const TABS = ["Account Value", "TVL History"] as const;
-type Tab = (typeof TABS)[number];
+const TABS = [
+  { value: "equity", label: "Equity" },
+  { value: "pnl", label: "PnL" },
+  { value: "flow", label: "Net Flow" },
+  { value: "followers", label: "Followers" },
+] as const;
+type TabId = (typeof TABS)[number]["value"];
 
-const formatTvl = (v: number) =>
-  v >= 1e6
-    ? `$${(v / 1e6).toFixed(2)}M`
-    : v >= 1e3
-    ? `$${(v / 1e3).toFixed(1)}K`
-    : `$${v.toFixed(2)}`;
+const DAY_MS = 86_400_000;
 
 interface VaultDetailChartsProps {
   vaultAddress: string;
 }
 
 export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("Account Value");
-  const layoutId = useId().replace(/:/g, "");
+  const [activeTab, setActiveTab] = useState<TabId>("equity");
 
-  const { snapshots: equitySnaps, isLoading: equityLoading, error: equityError } =
-    useVaultEquitySnapshots({ vaultAddress, limit: 500 });
+  const { snapshots, isLoading: snapsLoading, error: snapsError } = useVaultEquitySnapshots({
+    vaultAddress,
+    limit: 500,
+  });
 
-  const { snapshots: dailySnaps, isLoading: dailyLoading, error: dailyError } =
-    useVaultDailySnapshots({ vaultAddress, limit: 500 });
+  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError } = useVaultLedger({
+    vaultAddress,
+    limit: 2000,
+  });
 
-  // equitySnaps sorted newest-first → reverse for chronological chart display
-  const accountValueData = useMemo(
-    () =>
-      [...equitySnaps].reverse().map((s) => ({
-        time: s.time,
-        value: s.accountValue,
-      })),
-    [equitySnaps]
+  // Snapshots come newest-first; reverse for chronological charting.
+  const equityData = useMemo(
+    () => [...snapshots].reverse().map((s) => ({ time: s.time, value: s.accountValue })),
+    [snapshots]
   );
 
-  // dailySnaps also newest-first → reverse for chart
-  const tvlData = useMemo(
-    () =>
-      [...dailySnaps].reverse().map((s) => ({
-        time: s.time,
-        value: s.accountValue,
-      })),
-    [dailySnaps]
+  const pnlData = useMemo(
+    () => [...snapshots].reverse().map((s) => ({ time: s.time, value: s.totalRawPnl })),
+    [snapshots]
   );
 
-  const isLoading = activeTab === "Account Value" ? equityLoading : dailyLoading;
-  const error = activeTab === "Account Value" ? equityError : dailyError;
-  const chartData = activeTab === "Account Value" ? accountValueData : tvlData;
-  const lineColor = activeTab === "Account Value" ? chartPalette.accent : chartPalette.gold;
-  const glowColor =
-    activeTab === "Account Value" ? "bg-brand/10" : "bg-gold/10";
+  const followersData = useMemo(
+    () => [...snapshots].reverse().map((s) => ({ time: s.time, value: s.followerCount })),
+    [snapshots]
+  );
+
+  // Daily net flow: bucket ledger by day, sign +deposit / -withdraw.
+  const flowData = useMemo<HistogramDataPoint[]>(() => {
+    if (!ledger.length) return [];
+    const vaultLower = vaultAddress.toLowerCase();
+    const buckets = new Map<number, number>();
+    for (const e of ledger) {
+      const day = Math.floor(e.time / DAY_MS) * DAY_MS;
+      const signed = e.userTo.toLowerCase() === vaultLower ? e.amount : -e.amount;
+      buckets.set(day, (buckets.get(day) ?? 0) + signed);
+    }
+    return Array.from(buckets.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([time, value]) => ({
+        time,
+        value,
+        color: value >= 0 ? chartPalette.success : chartPalette.danger,
+      }));
+  }, [ledger, vaultAddress]);
+
+  const isLoading =
+    activeTab === "flow" ? ledgerLoading : snapsLoading;
+  const error = activeTab === "flow" ? ledgerError : snapsError;
+
+  const renderChart = () => {
+    if (isLoading) {
+      return <LoadingState message="Loading chart…" size="sm" withCard={false} />;
+    }
+    if (error) {
+      return (
+        <div className="bg-danger/5 border border-danger/20 rounded-lg p-4 text-center text-danger text-sm h-full flex items-center justify-center">
+          Failed to load chart data.
+        </div>
+      );
+    }
+    switch (activeTab) {
+      case "equity":
+        return equityData.length ? (
+          <AuroraAreaChart
+            data={equityData}
+            height={240}
+            lineColor={chartPalette.accent}
+            formatValue={(v) => compactUsd(v)}
+          />
+        ) : (
+          <EmptyState />
+        );
+      case "pnl":
+        return pnlData.length ? (
+          <AuroraAreaChart
+            data={pnlData}
+            height={240}
+            lineColor={
+              pnlData[pnlData.length - 1].value >= 0
+                ? chartPalette.success
+                : chartPalette.danger
+            }
+            formatValue={(v) => compactUsd(v)}
+          />
+        ) : (
+          <EmptyState />
+        );
+      case "flow":
+        return flowData.length ? (
+          <AuroraHistogramChart
+            data={flowData}
+            defaultColor={chartPalette.accent}
+            formatValue={(v) => compactUsd(v)}
+          />
+        ) : (
+          <EmptyState />
+        );
+      case "followers":
+        return followersData.length ? (
+          <AuroraAreaChart
+            data={followersData}
+            height={240}
+            lineColor={chartPalette.gold}
+            formatValue={(v) => compactCount(v)}
+          />
+        ) : (
+          <EmptyState />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.35 }}
-      className="bg-surface border border-border-subtle rounded-lg relative overflow-hidden p-4"
+      className="bg-surface border border-border-subtle rounded-lg p-4"
     >
-      {/* Ambient color glow tied to active tab */}
-      <div
-        className={`pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full ${glowColor} blur-3xl transition-colors`}
-      />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-white/[0.03] blur-3xl" />
-
-      {/* Header */}
-      <div className="relative z-10 flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
-          <span
-            className="h-1 w-1 rounded-full"
-            style={{ background: lineColor }}
-          />
-          Charts
+          <span className="h-1 w-1 rounded-full bg-brand" />
+          Performance
         </div>
-        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className="relative rounded-lg px-3 py-1 text-[11px] font-semibold whitespace-nowrap"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId={`vault-detail-tab-${layoutId}`}
-                    className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 ${
-                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {tab}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <PillTabs
+          activeTab={activeTab}
+          onTabChange={(v) => setActiveTab(v as TabId)}
+          tabs={TABS.map((t) => ({ value: t.value, label: t.label }))}
+        />
       </div>
 
-      {/* Chart */}
-      <div className="relative z-10 h-56">
-        {isLoading ? (
-          <LoadingState message="Loading chart…" size="sm" withCard={false} />
-        ) : error ? (
-          <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center text-rose-400 text-sm h-full flex items-center justify-center">
-            Failed to load chart data.
-          </div>
-        ) : chartData.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-text-tertiary text-sm">No data available for this period.</p>
-          </div>
-        ) : (
-          <AuroraAreaChart
-            data={chartData}
-            height={224}
-            lineColor={lineColor}
-            formatValue={formatTvl}
-          />
-        )}
-      </div>
+      <div className="h-60">{renderChart()}</div>
     </motion.div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <p className="text-text-tertiary text-sm">No data available for this period.</p>
+    </div>
   );
 }

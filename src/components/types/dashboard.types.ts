@@ -135,19 +135,6 @@ export interface TabButtonsProps {
 }
 
 /**
- * Props pour le composant ValidatorsTable
- */
-export interface ValidatorsTableProps {
-  validators: Array<{
-    name: string;
-    apr: number;
-    stake: number;
-  }>;
-  isLoading: boolean;
-  error: Error | null;
-}
-
-/**
  * Props pour le composant AuctionsTable
  */
 export interface AuctionsTableProps {

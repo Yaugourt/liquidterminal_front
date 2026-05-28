@@ -11,8 +11,8 @@ import {
   chartPalette,
   TokenAvatar,
   type FlowGridColumn,
+  Sparkline,
 } from "@/components/common";
-import { Sparkline } from "@/components/dashboard/Sparkline";
 
 /**
  * Labs page — 3 visual mockups for the "Fees + Stables 50/50" dashboard row.
