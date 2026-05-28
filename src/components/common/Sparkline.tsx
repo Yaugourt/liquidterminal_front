@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useId } from "react";
-import { chartPalette } from "@/components/common";
+import { chartPalette } from "./charts/chartTheme";
 
 interface SparklineProps {
   /** Série de valeurs (ordre chronologique). */

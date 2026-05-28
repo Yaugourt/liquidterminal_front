@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Coins, TrendingUp, ArrowRight, Wallet } from "lucide-react";
-import { Sparkline } from "@/components/dashboard/Sparkline";
+import { Sparkline } from "@/components/common";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {

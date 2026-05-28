@@ -125,7 +125,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 - **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
 - **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
 - **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).
-- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
+- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
 - **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
 
 ### Hard rules

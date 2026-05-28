@@ -14,6 +14,7 @@ export { Pagination } from './pagination';
 export type { PaginationProps } from './pagination';
 export { SearchBar } from './SearchBar';
 export { ProtectedAction } from './ProtectedAction';
+export { Sparkline } from './Sparkline';
 
 // Cards / containers
 export { StatsCard, StatsCardSkeleton } from './StatsCard';

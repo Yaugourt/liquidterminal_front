@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { VaultKpiBar, VaultEcosystemChart, VaultEnhancedTable } from "@/components/explorer/vault";
+import { VaultsKpiStrip, VaultsDirectoryTable } from "@/components/explorer/vault";
 import { PageHeader } from "@/components/common";
 
 export default function VaultsPage() {
@@ -14,17 +14,10 @@ export default function VaultsPage() {
     >
       <PageHeader
         title="Vaults"
-        description="HyperLiquid vaults — ecosystem KPIs, TVL distribution, and the full vault directory with performance metrics."
+        description="The full HyperLiquid vault directory — ranked by TVL, with leader, commission, follower count and performance."
       />
-
-      {/* KPI strip */}
-      <VaultKpiBar />
-
-      {/* Ecosystem chart */}
-      <VaultEcosystemChart />
-
-      {/* Enhanced vaults table */}
-      <VaultEnhancedTable />
+      <VaultsKpiStrip />
+      <VaultsDirectoryTable />
     </motion.div>
   );
 }
