@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink, Search } from "lucide-react";
-import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
-import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, type Column } from "@/components/common";
@@ -15,16 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
-import type { VaultSummary, IndexerVaultSummaryItem } from "@/services/explorer/vault/types";
+import type {
+  UseVaultsDirectoryResult,
+  VaultRow,
+  StatusFilter,
+} from "@/services/explorer/vault/hooks/useVaultsDirectory";
 import type { NumberFormatType } from "@/store/number-format.store";
 import type { DateFormatType } from "@/store/date-format.store";
-
-interface VaultRow extends VaultSummary {
-  followerCount: number | null;
-  leaderCommission: number | null;
-}
-
-type StatusFilter = "all" | "open" | "closed";
 
 function buildColumns(
   format: NumberFormatType,
@@ -67,7 +62,8 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (v) => parseFloat(v.summary.tvl),
-      accessor: (v) => `$${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 0 })}`,
+      accessor: (v) =>
+        `$${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 0 })}`,
     },
     {
       key: "apr",
@@ -75,7 +71,7 @@ function buildColumns(
       type: "change",
       sortable: true,
       getSortValue: (v) => v.apr,
-      accessor: (v) => `${(v.apr * 100).toFixed(2)}%`,
+      accessor: (v) => `${v.apr.toFixed(2)}%`,
     },
     {
       key: "followers",
@@ -143,46 +139,27 @@ function buildColumns(
   ];
 }
 
-export function VaultsDirectoryTable() {
-  const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+interface VaultsDirectoryTableProps {
+  directory: UseVaultsDirectoryResult;
+}
 
-  const { vaults, isLoading: vaultsLoading, error } = useVaults({ limit: 1000, sortBy: "tvl" });
-  const { summaries } = useVaultSummaries({ includeClosed: true, limit: 5000 });
+export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
+  const router = useRouter();
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
 
-  const summariesByAddress = useMemo(() => {
-    const map = new Map<string, IndexerVaultSummaryItem>();
-    for (const s of summaries) map.set(s.vaultAddress.toLowerCase(), s);
-    return map;
-  }, [summaries]);
-
-  const rows = useMemo<VaultRow[]>(() => {
-    return vaults.map((v) => {
-      const meta = summariesByAddress.get(v.summary.vaultAddress.toLowerCase()) ?? null;
-      return {
-        ...v,
-        followerCount: meta?.followerCount ?? null,
-        leaderCommission: meta?.leaderCommission ?? null,
-      };
-    });
-  }, [vaults, summariesByAddress]);
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return rows.filter((v) => {
-      if (statusFilter === "open" && v.summary.isClosed) return false;
-      if (statusFilter === "closed" && !v.summary.isClosed) return false;
-      if (!q) return true;
-      return (
-        v.summary.name.toLowerCase().includes(q) ||
-        v.summary.vaultAddress.toLowerCase().includes(q) ||
-        v.summary.leader.toLowerCase().includes(q)
-      );
-    });
-  }, [rows, search, statusFilter]);
+  const {
+    filtered,
+    openCount,
+    closedCount,
+    totalCount,
+    isLoading,
+    error,
+    search,
+    setSearch,
+    statusFilter,
+    setStatusFilter,
+  } = directory;
 
   const handleRowClick = useCallback(
     (vault: VaultRow) => {
@@ -191,16 +168,13 @@ export function VaultsDirectoryTable() {
     [router]
   );
 
-  const openCount = vaults.filter((v) => !v.summary.isClosed).length;
-  const closedCount = vaults.filter((v) => v.summary.isClosed).length;
-
   const toolbar = (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
       <PillTabs
         activeTab={statusFilter}
         onTabChange={(v) => setStatusFilter(v as StatusFilter)}
         tabs={[
-          { value: "all", label: `All ${vaults.length ? `· ${vaults.length}` : ""}` },
+          { value: "all", label: `All ${totalCount ? `· ${totalCount}` : ""}` },
           { value: "open", label: `Open ${openCount ? `· ${openCount}` : ""}` },
           { value: "closed", label: `Closed ${closedCount ? `· ${closedCount}` : ""}` },
         ]}
@@ -226,7 +200,7 @@ export function VaultsDirectoryTable() {
         data={filtered}
         columns={buildColumns(format, dateFormat)}
         getRowKey={(v) => v.summary.vaultAddress}
-        isLoading={vaultsLoading}
+        isLoading={isLoading}
         error={error}
         errorTitle="Failed to load vaults"
         emptyMessage="No vaults found"

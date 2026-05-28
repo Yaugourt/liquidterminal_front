@@ -11,8 +11,11 @@ import {
   VaultDetailHeader,
   VaultDetailKpiRow,
   VaultDetailCharts,
+  VaultSecondaryCharts,
   VaultLedgerTable,
   VaultConcentrationBar,
+  VaultMetadataCard,
+  VaultCommissionHistory,
   VaultSubVaults,
 } from "@/components/explorer/vault";
 
@@ -64,8 +67,12 @@ export default function VaultDetailPage() {
           Vaults
         </Link>
         <ChevronRight className="w-3 h-3" />
-        <span className="text-text-secondary mono">
-          {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-4)}
+        <span className="text-text-secondary truncate max-w-[480px]">
+          {details?.name ?? summaryFallback?.name ?? (
+            <span className="mono">
+              {vaultAddress.slice(0, 8)}…{vaultAddress.slice(-4)}
+            </span>
+          )}
         </span>
       </nav>
 
@@ -80,7 +87,19 @@ export default function VaultDetailPage() {
 
       <VaultDetailCharts vaultAddress={vaultAddress} />
 
+      <VaultSecondaryCharts vaultAddress={vaultAddress} />
+
       <VaultConcentrationBar vaultAddress={vaultAddress} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <VaultMetadataCard
+          vaultAddress={vaultAddress}
+          details={details}
+          summaryFallback={summaryFallback}
+          childAddresses={childAddresses}
+        />
+        <VaultCommissionHistory portfolio={details?.portfolio} />
+      </div>
 
       {childAddresses.length > 0 && <VaultSubVaults childAddresses={childAddresses} />}
 
