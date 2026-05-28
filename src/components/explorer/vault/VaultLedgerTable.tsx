@@ -8,15 +8,15 @@ import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
+import { Input } from "@/components/ui/input";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { VaultLedgerEntry } from "@/services/explorer/vault/types";
+import type { VaultLedgerEntry } from "@/services/explorer/vault/types";
 
 interface VaultLedgerTableProps {
   vaultAddress: string;
 }
 
-/** Determine if an entry is a deposit or withdrawal based on direction */
 function getLedgerType(entry: VaultLedgerEntry, vaultAddress: string): "deposit" | "withdraw" {
   return entry.userTo.toLowerCase() === vaultAddress.toLowerCase() ? "deposit" : "withdraw";
 }
@@ -48,7 +48,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
       key: "time",
       header: "Time",
       accessor: (e) => (
-        <span className="text-text-secondary text-sm">
+        <span className="text-text-secondary text-xs whitespace-nowrap">
           {formatDateTime(e.time, dateFormat)}
         </span>
       ),
@@ -60,7 +60,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         const type = getLedgerType(e, vaultAddress);
         return (
           <StatusBadge variant={type === "deposit" ? "success" : "error"}>
-            {type}
+            {type === "deposit" ? "Deposit" : "Withdraw"}
           </StatusBadge>
         );
       },
@@ -77,13 +77,16 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     {
       key: "amount",
       header: "Amount",
-      type: "numeric",
+      align: "right",
+      headerAlign: "right",
       accessor: (e) => {
         const type = getLedgerType(e, vaultAddress);
+        const sign = type === "deposit" ? "+" : "-";
         return (
-          <span className={`font-medium ${type === "deposit" ? "text-emerald-400" : "text-rose-400"}`}>
-            {type === "deposit" ? "+" : "-"}$
-            {formatNumber(e.amount, format, { maximumFractionDigits: 2 })}{" "}
+          <span
+            className={`mono font-medium ${type === "deposit" ? "text-success" : "text-danger"}`}
+          >
+            {sign}${formatNumber(e.amount, format, { maximumFractionDigits: 2 })}{" "}
             <span className="text-text-tertiary text-[10px]">{e.token}</span>
           </span>
         );
@@ -91,28 +94,23 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     },
     {
       key: "txHash",
-      header: "Tx Hash",
-      accessor: (e) => (
-        <AddressDisplay address={e.txHash} showExternalLink showCopy />
-      ),
+      header: "Tx",
+      accessor: (e) => <AddressDisplay address={e.txHash} showExternalLink showCopy />,
     },
   ];
 
-  const handleFilterChange = useCallback(
-    (val: string) => {
-      setFilterQuery(val);
-    },
-    []
-  );
+  const handleFilterChange = useCallback((val: string) => {
+    setFilterQuery(val);
+  }, []);
 
   const toolbar = (
-    <div className="flex items-center justify-between">
-      <h3 className="text-sm font-semibold text-text-primary">Ledger</h3>
-      <input
+    <div className="flex items-center justify-between gap-3">
+      <h3 className="text-sm font-semibold text-text-primary">Activity</h3>
+      <Input
         placeholder="Filter by address or hash…"
         value={filterQuery}
         onChange={(e) => handleFilterChange(e.target.value)}
-        className="h-7 px-3 text-xs bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand/50 w-52"
+        className="h-7 px-3 text-xs bg-white/5 border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50 max-w-xs"
       />
     </div>
   );
@@ -134,8 +132,8 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         emptyMessage="No ledger entries found"
         emptyDescription={filterQuery ? `No results for "${filterQuery}"` : "Check back soon"}
         paginate
-        itemsPerPage={15}
-        rowsPerPageOptions={[10, 15, 25, 50]}
+        itemsPerPage={20}
+        rowsPerPageOptions={[20, 50, 100]}
         paginationVariant="full"
         toolbar={toolbar}
       />
