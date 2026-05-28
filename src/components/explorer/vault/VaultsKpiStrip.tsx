@@ -4,11 +4,7 @@ import { useMemo } from "react";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
-
-interface KpiCell {
-  label: string;
-  value: string;
-}
+import { KpiRibbon, type KpiCell } from "@/components/common";
 
 /**
  * KPI ribbon for the Vaults page — canonical V4 strip (§7.b of DESIGN_SYSTEM):
@@ -59,21 +55,5 @@ export function VaultsKpiStrip() {
     },
   ];
 
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden">
-      {kpis.map((kpi) => (
-        <div
-          key={kpi.label}
-          className="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col"
-        >
-          <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
-            {kpi.label}
-          </div>
-          <div className="mono text-[20px] font-semibold tracking-[-0.02em] leading-none text-text-primary mt-1.5">
-            {kpi.value}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5" />;
 }

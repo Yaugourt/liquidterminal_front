@@ -458,10 +458,21 @@ Building blocks:
 
 ### 7.b — KPI ribbon
 
-Horizontal strip of stat cells (used by `PulseBar`, but reusable for any KPI ribbon).
+Horizontal strip of stat cells. **Consume the `<KpiRibbon>` primitive** (`@/components/common`) — do not hand-roll the strip. `PulseBar`, `VaultsKpiStrip`, `Hip4GlobalStatsStrip` and `NetworkPulse` all go through it.
+
+```tsx
+<KpiRibbon
+  columns="grid-cols-2 sm:grid-cols-4"        // optional; defaults by cell count
+  cells={[{ label, value, sub?, tone?, sparkline? }]}
+/>
+// Grouped ribbons (e.g. NetworkPulse): stack <KpiRibbon header={{label, helper}}> in space-y-*.
+```
+
+The primitive locks the look (the recipe below); callers pass data only.
 
 - Container: `grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-N gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden`.
 - Cell: `bg-surface hover:bg-surface-2 px-4 py-3 flex flex-col` — uppercase label `text-[10.5px]` + value `.mono text-[20px] font-semibold`.
+- `tone`: `default | gold | success | danger` (semantic token, never raw hex).
 - Optional sparkline at the bottom of the cell via `mt-auto pt-2` (only if the API exposes a real series).
 
 ### 7.c — Card grids (equal height)

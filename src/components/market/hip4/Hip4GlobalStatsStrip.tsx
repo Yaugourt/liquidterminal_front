@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { KpiRibbon, type KpiCell } from "@/components/common";
 import type {
   Hip4QuestionWithOutcomesRow,
   Hip4SettlementRow,
@@ -11,11 +12,6 @@ interface Hip4GlobalStatsStripProps {
   questions: Hip4QuestionWithOutcomesRow[];
   settlements: Hip4SettlementRow[];
   isLoading: boolean;
-}
-
-interface KpiCell {
-  label: string;
-  value: string;
 }
 
 /**
@@ -50,21 +46,5 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading }: Hip4
     ];
   }, [questions, settlements, isLoading]);
 
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden">
-      {kpis.map((kpi) => (
-        <div
-          key={kpi.label}
-          className="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col"
-        >
-          <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
-            {kpi.label}
-          </div>
-          <div className="mono text-[20px] font-semibold tracking-[-0.02em] leading-none text-text-primary mt-1.5">
-            {kpi.value}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-4" />;
 }
