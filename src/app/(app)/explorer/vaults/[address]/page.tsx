@@ -11,6 +11,7 @@ import {
   VaultDetailHeader,
   VaultDetailKpiRow,
   VaultDetailCharts,
+  VaultSecondaryCharts,
   VaultLedgerTable,
   VaultConcentrationBar,
   VaultSubVaults,
@@ -83,6 +84,8 @@ export default function VaultDetailPage() {
       <VaultDetailKpiRow vaultAddress={vaultAddress} isLoading={isLoading} />
 
       <VaultDetailCharts vaultAddress={vaultAddress} />
+
+      <VaultSecondaryCharts vaultAddress={vaultAddress} />
 
       <VaultConcentrationBar vaultAddress={vaultAddress} />
 
