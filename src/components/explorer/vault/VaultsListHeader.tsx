@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Download, ExternalLink, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/common";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import type {
   UseVaultsDirectoryResult,
   VaultRow,
@@ -72,7 +71,7 @@ function downloadCsv(rows: VaultRow[]) {
 }
 
 export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
-  const { totalCount, totalTvl, dataUpdatedAt, filtered } = directory;
+  const { dataUpdatedAt, filtered } = directory;
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -82,29 +81,11 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
 
   const updatedLabel = dataUpdatedAt ? formatRelative(now - dataUpdatedAt) : "…";
 
-  // Stat line only (mockup B). No prose, no global "depositors" — HyperLiquid
-  // exposes no global depositor count, so we don't fake one.
+  // Header carries no stats — those live in the KPI cards, never duplicated
+  // outside them. Just the freshness indicator.
   const description = (
-    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-tertiary">
-      {totalCount > 0 && (
-        <>
-          <span>
-            <span className="mono text-text-secondary">{compactCount(totalCount)}</span> vaults
-          </span>
-          <span className="text-text-tertiary/60">·</span>
-        </>
-      )}
-      {totalTvl > 0 && (
-        <>
-          <span>
-            <span className="mono text-text-secondary">{compactUsd(totalTvl)}</span> total TVL
-          </span>
-          <span className="text-text-tertiary/60">·</span>
-        </>
-      )}
-      <span>
-        updated <span className="mono text-text-secondary">{updatedLabel}</span>
-      </span>
+    <span className="text-xs text-text-tertiary">
+      updated <span className="mono text-text-secondary">{updatedLabel}</span>
     </span>
   );
 

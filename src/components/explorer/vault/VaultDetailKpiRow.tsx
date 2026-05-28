@@ -183,7 +183,7 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+    <div className="grid grid-cols-2 sm:grid-cols-4 2xl:grid-cols-8 gap-2">
       {cards.map((card) => (
         <div key={card.title} title={card.titleAttr}>
           <StatsCard
