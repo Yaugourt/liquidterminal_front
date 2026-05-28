@@ -51,7 +51,7 @@ export function VaultsKpiStrip() {
     },
     {
       title: "Avg APR",
-      value: stats ? `${(stats.avgApr * 100).toFixed(2)}%` : "—",
+      value: stats ? `${stats.avgApr.toFixed(2)}%` : "—",
       icon: <Percent className="w-4 h-4 text-gold" />,
       iconClassName: "bg-gold/10",
     },

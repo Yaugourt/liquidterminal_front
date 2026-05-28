@@ -35,7 +35,7 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     const matched = vaults.find(
       (v) => v.summary.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
     );
-    const apr = matched ? matched.apr * 100 : null;
+    const apr = matched ? matched.apr : null;
 
     let delta24h: number | null = null;
     if (snapshots.length > 1 && latest) {

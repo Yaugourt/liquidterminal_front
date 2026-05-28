@@ -1,10 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { VaultsKpiStrip, VaultsDirectoryTable } from "@/components/explorer/vault";
-import { PageHeader } from "@/components/common";
+import {
+  VaultsKpiStrip,
+  VaultsDirectoryTable,
+  VaultsListHeader,
+} from "@/components/explorer/vault";
+import { useVaultsDirectory } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
 export default function VaultsPage() {
+  const directory = useVaultsDirectory();
+
   return (
     <motion.div
       className="space-y-4"
@@ -12,12 +18,9 @@ export default function VaultsPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <PageHeader
-        title="Vaults"
-        description="The full HyperLiquid vault directory — ranked by TVL, with leader, commission, follower count and performance."
-      />
+      <VaultsListHeader directory={directory} />
       <VaultsKpiStrip />
-      <VaultsDirectoryTable />
+      <VaultsDirectoryTable directory={directory} />
     </motion.div>
   );
 }

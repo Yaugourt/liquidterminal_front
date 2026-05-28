@@ -1,4 +1,5 @@
 // List page
+export { VaultsListHeader } from './VaultsListHeader';
 export { VaultsKpiStrip } from './VaultsKpiStrip';
 export { VaultsDirectoryTable } from './VaultsDirectoryTable';
 
