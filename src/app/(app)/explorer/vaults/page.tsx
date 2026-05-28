@@ -20,9 +20,13 @@ export default function VaultsPage() {
       transition={{ duration: 0.3 }}
     >
       <VaultsListHeader directory={directory} />
-      <VaultsKpiStrip />
-      <VaultsLeaderboards directory={directory} />
-      <VaultsDirectoryTable directory={directory} />
+      <VaultsKpiStrip directory={directory} />
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+        <VaultsDirectoryTable directory={directory} />
+        <aside className="xl:sticky xl:top-[60px]">
+          <VaultsLeaderboards directory={directory} />
+        </aside>
+      </div>
     </motion.div>
   );
 }

@@ -7,6 +7,9 @@ import type { VaultSummary, IndexerVaultSummaryItem } from "../types";
 
 export type StatusFilter = "all" | "open" | "closed";
 
+/** HLP is an outlier (huge TVL, ~0% APR) — excluded from the average APR. */
+const HLP_ADDRESS = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303";
+
 export interface VaultRow extends VaultSummary {
   followerCount: number | null;
   leaderCommission: number | null;
@@ -22,6 +25,8 @@ export interface UseVaultsDirectoryResult {
   totalTvl: number;
   openCount: number;
   closedCount: number;
+  /** Median APR across vaults, excluding the HLP outlier (percent). */
+  avgApr: number;
   totalFollowers: number;
   isLoading: boolean;
   error: Error | null;
@@ -42,6 +47,8 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
+  // Load the full directory (HL exposes ~3.2k vaults) so counts, search and
+  // pagination cover every vault — not just the top 1000 by TVL.
   const {
     vaults,
     totalTvl,
@@ -49,7 +56,7 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
     isLoading: vaultsLoading,
     error,
     dataUpdatedAt,
-  } = useVaults({ limit: 1000, sortBy: "tvl" });
+  } = useVaults({ limit: 5000, sortBy: "tvl" });
 
   const { summaries } = useVaultSummaries({ includeClosed: true, limit: 5000 });
 
@@ -88,6 +95,18 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
 
   const openCount = useMemo(() => vaults.filter((v) => !v.summary.isClosed).length, [vaults]);
   const closedCount = useMemo(() => vaults.filter((v) => v.summary.isClosed).length, [vaults]);
+
+  // Median APR (robust to outliers), excluding HLP, over vaults with a finite APR.
+  const avgApr = useMemo(() => {
+    const aprs = rows
+      .filter((v) => v.summary.vaultAddress.toLowerCase() !== HLP_ADDRESS && Number.isFinite(v.apr))
+      .map((v) => v.apr)
+      .sort((a, b) => a - b);
+    if (aprs.length === 0) return 0;
+    const mid = Math.floor(aprs.length / 2);
+    return aprs.length % 2 ? aprs[mid] : (aprs[mid - 1] + aprs[mid]) / 2;
+  }, [rows]);
+
   const totalFollowers = useMemo(
     () => summaries.reduce((acc, s) => acc + (s.followerCount ?? 0), 0),
     [summaries]
@@ -100,6 +119,7 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
     totalTvl,
     openCount,
     closedCount,
+    avgApr,
     totalFollowers,
     isLoading: vaultsLoading,
     error,

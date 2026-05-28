@@ -1,59 +1,44 @@
 "use client";
 
-import { useMemo } from "react";
-import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
-import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { KpiRibbon, type KpiCell } from "@/components/common";
+import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
+import type { UseVaultsDirectoryResult } from "@/services/explorer/vault/hooks/useVaultsDirectory";
+
+interface VaultsKpiStripProps {
+  directory: UseVaultsDirectoryResult;
+}
 
 /**
- * KPI ribbon for the Vaults page — canonical V4 strip (§7.b of DESIGN_SYSTEM):
- * continuous bar of value-only cells separated by hair-line dividers,
- * matching the dashboard PulseBar.
+ * KPI ribbon for the Vaults page (§7.b via <KpiRibbon>).
+ *
+ * Only metrics with a real source are shown. HyperLiquid's vault feed exposes
+ * no closed vaults, no global depositor count and no net-flow history, so those
+ * are deliberately omitted rather than faked (DS "no fake data" rule). Follower
+ * counts come from the HypeDexer top-tracked set — labelled accordingly.
  */
-export function VaultsKpiStrip() {
-  const { vaults, totalTvl, isLoading: vaultsLoading } = useVaults({ limit: 1000 });
-  const { summaries, isLoading: summariesLoading } = useVaultSummaries({
-    includeClosed: true,
-    limit: 5000,
-  });
+export function VaultsKpiStrip({ directory }: VaultsKpiStripProps) {
+  const { totalTvl, totalCount, avgApr, totalFollowers, isLoading } = directory;
+  const ph = isLoading ? "…" : "—";
 
-  const isLoading = vaultsLoading || summariesLoading;
-  const loadingPlaceholder = "…";
-
-  const stats = useMemo(() => {
-    if (!vaults.length && !summaries.length) return null;
-    const openCount = vaults.filter((v) => !v.summary.isClosed).length;
-    const closedCount = vaults.filter((v) => v.summary.isClosed).length;
-    const aprs = vaults.map((v) => v.apr).filter((n) => Number.isFinite(n));
-    const avgApr = aprs.length ? aprs.reduce((a, b) => a + b, 0) / aprs.length : 0;
-    const totalFollowers = summaries.reduce((acc, s) => acc + (s.followerCount ?? 0), 0);
-    return { totalTvl, openCount, closedCount, avgApr, totalFollowers };
-  }, [vaults, summaries, totalTvl]);
-
-  const kpis: KpiCell[] = [
+  const cells: KpiCell[] = [
     {
       label: "Total TVL",
-      value: isLoading && !stats ? loadingPlaceholder : compactUsd(stats?.totalTvl),
+      value: isLoading && !totalTvl ? ph : compactUsd(totalTvl),
     },
     {
-      label: "Active",
-      value: isLoading && !stats ? loadingPlaceholder : compactCount(stats?.openCount),
+      label: "Vaults",
+      value: isLoading && !totalCount ? ph : compactCount(totalCount),
     },
     {
-      label: "Closed",
-      value: isLoading && !stats ? loadingPlaceholder : compactCount(stats?.closedCount),
+      label: "Avg APR · median",
+      value: isLoading && !avgApr ? ph : `${avgApr >= 0 ? "+" : ""}${avgApr.toFixed(1)}%`,
+      tone: avgApr >= 0 ? "success" : "danger",
     },
     {
-      label: "Avg APR",
-      value: isLoading && !stats ? loadingPlaceholder : stats ? `${stats.avgApr.toFixed(1)}%` : "—",
-    },
-    {
-      label: "Followers",
-      value:
-        isLoading && !stats ? loadingPlaceholder : compactCount(stats?.totalFollowers),
+      label: "Followers · tracked",
+      value: isLoading && !totalFollowers ? ph : compactCount(totalFollowers),
     },
   ];
 
-  return <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5" />;
+  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" />;
 }
