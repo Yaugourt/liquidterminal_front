@@ -501,6 +501,7 @@ Everything lives in `@/lib/formatters/numberFormatting.ts` and `dateFormatting.t
 
 - `compactUsd(n, opts?)` — `$1.2M / $3.4B / $42 / —` (handles `null/NaN`, negative-aware).
 - `compactHype(n, opts?)` — same shape as `compactUsd` without the `$` (caller appends ` HYPE`).
+- `compactCount(n, opts?)` — integer counts (followers/holders/depositors): `1.2M / 4.5K / 123 / —`.
 - `formatNumber(value, format, opts)` — locale-aware (`'US' | 'EU' | 'FR' | 'PLAIN'`).
 - `formatPrice(value, format)` — adaptive decimals based on magnitude (sub-cent → 6, $1+ → 2, $1000+ → 0).
 - `formatMetricValue(value, opts)` — display formatter for KPI ribbons.

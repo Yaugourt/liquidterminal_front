@@ -10,6 +10,7 @@ import {
   chartPalette,
   type HistogramDataPoint,
 } from "@/components/common";
+import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 
@@ -22,21 +23,6 @@ const TABS = [
 type TabId = (typeof TABS)[number]["value"];
 
 const DAY_MS = 86_400_000;
-
-function formatUsd(v: number): string {
-  const abs = Math.abs(v);
-  const sign = v < 0 ? "-" : "";
-  if (abs >= 1e9) return `${sign}$${(abs / 1e9).toFixed(2)}B`;
-  if (abs >= 1e6) return `${sign}$${(abs / 1e6).toFixed(2)}M`;
-  if (abs >= 1e3) return `${sign}$${(abs / 1e3).toFixed(1)}K`;
-  return `${sign}$${abs.toFixed(2)}`;
-}
-
-function formatCount(v: number): string {
-  if (v >= 1e6) return `${(v / 1e6).toFixed(2)}M`;
-  if (v >= 1e3) return `${(v / 1e3).toFixed(1)}K`;
-  return v.toFixed(0);
-}
 
 interface VaultDetailChartsProps {
   vaultAddress: string;
@@ -112,7 +98,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
             data={equityData}
             height={240}
             lineColor={chartPalette.accent}
-            formatValue={formatUsd}
+            formatValue={(v) => compactUsd(v)}
           />
         ) : (
           <EmptyState />
@@ -127,7 +113,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
                 ? chartPalette.success
                 : chartPalette.danger
             }
-            formatValue={formatUsd}
+            formatValue={(v) => compactUsd(v)}
           />
         ) : (
           <EmptyState />
@@ -137,7 +123,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
           <AuroraHistogramChart
             data={flowData}
             defaultColor={chartPalette.accent}
-            formatValue={formatUsd}
+            formatValue={(v) => compactUsd(v)}
           />
         ) : (
           <EmptyState />
@@ -148,7 +134,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
             data={followersData}
             height={240}
             lineColor={chartPalette.gold}
-            formatValue={formatCount}
+            formatValue={(v) => compactCount(v)}
           />
         ) : (
           <EmptyState />

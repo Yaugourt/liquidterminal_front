@@ -500,3 +500,23 @@ export function compactHype(
   if (abs >= 100) return `${sign}${abs.toFixed(0)}`;
   return `${sign}${abs.toFixed(decimals ?? 2)}`;
 }
+
+/**
+ * Compact integer count — `1.2M` / `4.5K` / `123`.
+ *
+ * For follower/holder/depositor counts: integers, no prefix, no decimals
+ * below 1K. Distinct from `compactHype` (which keeps 2 decimals for small
+ * fractional amounts) since counts are integers by nature.
+ */
+export function compactCount(
+  n: number | null | undefined,
+  opts: { fallback?: string } = {}
+): string {
+  const { fallback = '—' } = opts;
+  if (n == null || !Number.isFinite(n)) return fallback;
+  const abs = Math.abs(n);
+  const sign = n < 0 ? '-' : '';
+  if (abs >= 1e6) return `${sign}${(abs / 1e6).toFixed(2)}M`;
+  if (abs >= 1e3) return `${sign}${(abs / 1e3).toFixed(1)}K`;
+  return `${sign}${Math.round(abs)}`;
+}
