@@ -129,6 +129,15 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 - **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
 - **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
 
+### Mockups → code (the design kit)
+
+`dash-mockups/kit.html` is the **canonical design palette**: each block mirrors a React primitive 1:1 — same Tailwind classes, same tokens (copied from `globals.css`), labelled with its `<Primitive>` + JSX. This collapses the mockup ↔ DS ↔ app gap into one vocabulary.
+
+- **Design a page** → compose blocks copied from `kit.html` (load its Tailwind config header). Don't invent one-off classes.
+- **Ship a page** → replace each block's wrapper with its `<Primitive>` (it emits the same classes) and wire data. Near-zero translation.
+- **A block is missing** → that means a **primitive is missing**: build it in `common/`, add its block to `kit.html`, document it in `DESIGN_SYSTEM.md`, all in the same PR.
+- AI design tools (gstack design-shotgun, etc.) must be pointed at `kit.html` tokens/blocks so their output is already 1:1 with the app.
+
 ### Hard rules
 
 - No hardcoded hex in styles — always a token (charts go through `chartPalette`).

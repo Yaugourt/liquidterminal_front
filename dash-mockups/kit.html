@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal — Design Kit (primitive mirror)</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  LIQUID TERMINAL DESIGN KIT — the single design vocabulary.
+
+  Every block below maps 1:1 to a React primitive (labelled "React: <X>").
+  Each block uses the EXACT Tailwind classes the primitive emits, on the EXACT
+  app tokens (copied from globals.css). So:
+
+    • To DESIGN a page  → copy blocks from this kit into a new mockup file
+      (load the same Tailwind config header). Compose, don't invent classes.
+    • To SHIP a page     → replace each block's wrapper with its <Primitive>
+      (it emits the same classes) and wire real data. Near-zero translation.
+    • Missing a block?   → that means a PRIMITIVE is missing. Build the
+      primitive in src/components/common/, then add its block here. Never
+      hand-roll a one-off class in a page.
+
+  Rule: a mockup may only use blocks that exist here. New pattern = new
+  primitive + new kit block, in the same PR.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  /* kit chrome only — not part of the DS */
+  .kit-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; }
+  .kit-jsx { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #83E9FF; white-space: pre-wrap; }
+  .kit-sec { border-top: 1px dashed #2C354A; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="max-w-[1280px] mx-auto px-6 py-10 space-y-10">
+
+  <header class="space-y-2">
+    <h1 class="font-inter text-3xl font-semibold tracking-tight">Liquid Terminal — Design Kit</h1>
+    <p class="text-sm text-text-secondary max-w-2xl">
+      Each block = one React primitive, same classes, same tokens. Design by
+      composing these blocks; ship by swapping each block for its
+      <span class="mono text-brand">&lt;Primitive&gt;</span>. Don't invent classes —
+      a missing block means a missing primitive.
+    </p>
+  </header>
+
+  <!-- ───────────────────────── PageHeader ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">PageHeader</div>
+    <div class="kit-jsx">React: &lt;PageHeader title="Vaults" description={…} actions={…} /&gt;  ·  @/components/common
+Rule: header carries NO stats (they live in the cards) — only a description and/or "updated Xs".</div>
+    <div class="w-full space-y-3 mt-2">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Vaults</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">updated <span class="mono text-text-secondary">12s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Export CSV</button>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Create Vault</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── KpiRibbon ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">KpiRibbon  (DESIGN_SYSTEM §7.b)</div>
+    <div class="kit-jsx">React: &lt;KpiRibbon cells={[{label, value, sub?, tone?: "default"|"gold"|"success"|"danger", sparkline?}]} columns? /&gt;
+Grouped: stack &lt;KpiRibbon header={{label, helper}} /&gt; in a space-y-* wrapper. NEVER hand-roll the gap-px strip.</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden mt-2">
+      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Total TVL</div>
+        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">$439.98M</div>
+      </div>
+      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Vaults</div>
+        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">3.2K</div>
+      </div>
+      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Avg APR · median</div>
+        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-success">+12.4%</div>
+        <div class="mono text-[10px] text-text-tertiary mt-1.5">annualized</div>
+      </div>
+      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">All-Time PnL</div>
+        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-danger">-$125.0M</div>
+        <div class="mono text-[10px] text-text-tertiary mt-1.5">cumulative</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────── OverviewModule + ModuleTable + ModuleAsset ───────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset</div>
+    <div class="kit-jsx">React: &lt;OverviewModule title icon tag? href?&gt;&lt;ModuleTable columns&gt;&lt;ModuleTableRow cells=[&lt;ModuleAsset/&gt;, …] /&gt;…&lt;/&gt;&lt;/&gt;
+Give metric columns a width → ModuleTable goes table-fixed and the name column truncates (no overflow in narrow cards).</div>
+    <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-2 max-w-md">
+      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+        <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[13px]">▲</span>
+        <h3 class="text-[13px] font-semibold text-text-primary truncate">Top Vaults</h3>
+        <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">$1.9B TVL</span>
+        <a class="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand">All vaults →</a>
+      </div>
+      <table class="w-full border-collapse table-fixed">
+        <colgroup><col><col style="width:88px"><col style="width:84px"></colgroup>
+        <thead><tr>
+          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Vault</th>
+          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">APR</th>
+          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">TVL</th>
+        </tr></thead>
+        <tbody>
+          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-left">
+              <div class="flex items-center gap-2.5">
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">HG</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">HyperGrowth</div></div>
+              </div>
+            </td>
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono font-semibold text-success">+214%</span></td>
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-primary">$13.3M</span></td>
+          </tr>
+          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-left">
+              <div class="flex items-center gap-2.5">
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">GH</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Growi HF</div></div>
+              </div>
+            </td>
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono font-semibold text-gold">+5.6%</span></td>
+            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-primary">$8.5M</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── ModuleRow (leaderboard) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">ModuleRow  (dense leaderboard row, sidebar)</div>
+    <div class="kit-jsx">React: &lt;OverviewModule title tag?&gt;&lt;ModuleRow rank logo name sub? stats=[{value, valueClassName}] href? /&gt;…&lt;/&gt;
+stat.label is optional — omit it for a value-only dense row.</div>
+    <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-2 max-w-[280px]">
+      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+        <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[12px]">↗</span>
+        <h3 class="text-[13px] font-semibold text-text-primary truncate">Top APR · 24h</h3>
+        <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">5</span>
+      </div>
+      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+        <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">01</span>
+        <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[10px] font-semibold bg-brand/10 text-brand overflow-hidden">SQ</div>
+        <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Squeeze Hunter</div><div class="text-[10px] text-text-tertiary truncate">$4.12M TVL</div></div>
+        <div class="ml-auto flex shrink-0 gap-5"><div class="text-right"><div class="mono text-[12.5px] font-semibold text-success">+312%</div></div></div>
+      </div>
+      <div class="flex items-center gap-2.5 px-3.5 py-2.5 last:border-b-0 hover:bg-surface-2 transition-colors">
+        <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">02</span>
+        <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[10px] font-semibold bg-brand/10 text-brand overflow-hidden">HG</div>
+        <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">HyperGrowth</div><div class="text-[10px] text-text-tertiary truncate">$13.3M TVL</div></div>
+        <div class="ml-auto flex shrink-0 gap-5"><div class="text-right"><div class="mono text-[12.5px] font-semibold text-success">+214%</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── TypedDataTable (page table) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">TypedDataTable  (full-width page table) + toolbar</div>
+    <div class="kit-jsx">React: &lt;TypedDataTable data columns getRowKey paginate itemsPerPage toolbar={…} /&gt;  ·  @/components/common
+Column.type: "numeric"|"fees"|"change"|"address"|"text" auto-styles cells. Wrap in a min-w-0 cell when placed beside a sidebar.</div>
+    <div class="min-w-0 bg-surface border border-border-subtle rounded-lg mt-2 overflow-hidden">
+      <div class="flex items-center gap-3 px-3 py-2.5 border-b border-border-subtle">
+        <div class="relative flex-1 max-w-xs">
+          <input placeholder="Search name, address, leader…" class="w-full pl-3 h-8 text-sm bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+        </div>
+        <span class="text-text-tertiary text-xs ml-auto shrink-0">3,241 vaults</span>
+      </div>
+      <table class="w-full border-collapse">
+        <thead><tr>
+          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">#</th>
+          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Vault</th>
+          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Leader</th>
+          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">TVL</th>
+          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">APR</th>
+        </tr></thead>
+        <tbody>
+          <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors">
+            <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">1</span></td>
+            <td class="px-4 py-2.5"><div class="text-sm font-medium text-text-primary truncate max-w-[240px]">HLP — Hyperliquidity Provider</div><div class="mono text-[11px] text-text-tertiary">0xdfc24b…1d99</div></td>
+            <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x010461…29b2</span></td>
+            <td class="px-4 py-2.5 text-right mono text-text-primary">$356.9M</td>
+            <td class="px-4 py-2.5 text-right"><span class="mono text-success font-semibold">+1.28%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── StatusBadge / pills ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">StatusBadge / pills</div>
+    <div class="kit-jsx">React: &lt;StatusBadge variant="success"|"inactive"|"warning"&gt;Open&lt;/StatusBadge&gt;  ·  @/components/ui/status-badge</div>
+    <div class="flex items-center gap-3 mt-2">
+      <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Open</span>
+      <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Closed</span>
+      <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium">Whitelisted</span>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Page layout (table + sticky rail) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">Page layout — table + 280px sticky right rail</div>
+    <div class="kit-jsx">JSX: &lt;div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start"&gt;
+  &lt;TableCard /&gt;  &lt;aside className="xl:sticky xl:top-[60px]"&gt;&lt;Leaderboards /&gt;&lt;/aside&gt;
+&lt;/div&gt;
+minmax(0,1fr) is REQUIRED so a wide table scrolls inside its column instead of blowing out the page.</div>
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start mt-2">
+      <div class="min-w-0 h-24 bg-surface border border-border-subtle rounded-lg grid place-items-center text-xs text-text-tertiary">Directory table (1fr, min-w-0)</div>
+      <aside class="h-24 bg-surface border border-border-subtle rounded-lg grid place-items-center text-xs text-text-tertiary">Sticky rail (280px)</aside>
+    </div>
+  </section>
+
+  <footer class="kit-sec pt-8 text-xs text-text-tertiary">
+    Tokens mirror <span class="mono">src/app/globals.css</span>. Primitives live in
+    <span class="mono">src/components/common/</span>. Keep this kit in sync when a primitive changes.
+  </footer>
+
+</div>
+</body>
+</html>
