@@ -6,6 +6,7 @@ import { ExternalLink, Search } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, type Column } from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Button } from "@/components/ui/button";
@@ -146,7 +147,18 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
 
-  const { filtered, isLoading, error, search, setSearch } = directory;
+  const {
+    filtered,
+    isLoading,
+    error,
+    search,
+    setSearch,
+    statusFilter,
+    setStatusFilter,
+    totalCount,
+    openCount,
+    closedCount,
+  } = directory;
 
   const handleRowClick = useCallback(
     (vault: VaultRow) => {
@@ -155,9 +167,21 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
     [router]
   );
 
+  const fmt = (n: number) => n.toLocaleString("en-US");
+  const statusTabs = [
+    { value: "all", label: `All ${fmt(totalCount)}` },
+    { value: "open", label: `Open ${fmt(openCount)}` },
+    { value: "closed", label: `Closed ${fmt(closedCount)}` },
+  ];
+
   const toolbar = (
-    <div className="flex items-center gap-3">
-      <div className="relative flex-1 max-w-xs">
+    <div className="flex flex-wrap items-center gap-3">
+      <PillTabs
+        tabs={statusTabs}
+        activeTab={statusFilter}
+        onTabChange={(v) => setStatusFilter(v as typeof statusFilter)}
+      />
+      <div className="relative flex-1 min-w-[160px] max-w-xs">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
         <Input
           placeholder="Search name, address, leader…"

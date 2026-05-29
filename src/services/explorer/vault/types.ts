@@ -82,6 +82,10 @@ export interface VaultsParams {
   page?: number;
   limit?: number;
   sortBy?: 'apr' | 'tvl';
+  /** Opt-in: include closed vaults in the result (default: open only). */
+  includeClosed?: boolean;
+  /** Filter by status: true = closed only, false = open only. */
+  isClosed?: boolean;
   [key: string]: unknown;
 }
 
@@ -92,6 +96,8 @@ export interface UseVaultsOptions {
   page?: number;
   limit?: number;
   sortBy?: 'apr' | 'tvl';
+  /** Opt-in: include closed vaults in the result (default: open only). */
+  includeClosed?: boolean;
 }
 
 /**
