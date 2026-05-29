@@ -16,9 +16,10 @@ export const useVaults = ({
   page = 1,
   limit = 1000,
   sortBy = 'tvl',
+  includeClosed,
   initialData
 }: UseVaultsOptions & { initialData?: VaultSummary[] } = {}): UseVaultsResult => {
-  const [params, setParams] = useState({ page, limit, sortBy });
+  const [params, setParams] = useState({ page, limit, sortBy, includeClosed });
 
   const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<VaultsResponse>({
     fetchFn: () => fetchVaults(params),

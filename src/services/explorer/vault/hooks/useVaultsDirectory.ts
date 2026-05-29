@@ -47,8 +47,9 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
-  // Load the full directory (HL exposes ~3.2k vaults) so counts, search and
-  // pagination cover every vault — not just the top 1000 by TVL.
+  // Load the full directory INCLUDING closed vaults so counts, search,
+  // pagination and the Open/Closed filter cover every vault. The backend
+  // serves closed only when includeClosed=true (open-only otherwise).
   const {
     vaults,
     totalTvl,
@@ -56,7 +57,7 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
     isLoading: vaultsLoading,
     error,
     dataUpdatedAt,
-  } = useVaults({ limit: 5000, sortBy: "tvl" });
+  } = useVaults({ limit: 10000, sortBy: "tvl", includeClosed: true });
 
   const { summaries } = useVaultSummaries({ includeClosed: true, limit: 5000 });
 
