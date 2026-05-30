@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vaults · Variant B — Dense List</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    --base:#0A0B0F; --surface:#0F1421; --surface-2:#141B2A;
+    --border-subtle:#1F2937; --border-default:#2A3445;
+    --text-primary:#E5E7EB; --text-secondary:#9CA3AF; --text-tertiary:#6B7280;
+    --brand:#83E9FF; --gold:#F9E370; --success:#1FA85B; --danger:#E53E3E;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; background:var(--base); color:var(--text-primary); font-family:Inter, ui-sans-serif, system-ui; font-size:13px; }
+  a { color:inherit; text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; font-feature-settings:"tnum"; font-variant-numeric:tabular-nums; }
+
+  /* ============ LAYOUT ============ */
+  .app { display:grid; grid-template-columns:232px 1fr; min-height:100vh; }
+  .sidebar { background:var(--surface); border-right:1px solid var(--border-subtle); padding:16px 12px; position:sticky; top:0; height:100vh; }
+  .brand-logo { display:flex; align-items:center; gap:8px; padding:6px 8px 18px; }
+  .brand-logo .dot { width:18px; height:18px; border-radius:5px; background:linear-gradient(135deg, var(--brand), #4FB8D1); }
+  .brand-logo .name { font-size:13px; font-weight:700; letter-spacing:-.01em; }
+  .nav-section { font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-tertiary); padding:14px 8px 6px; font-weight:600; }
+  .nav-item { display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:6px; font-size:12.5px; color:var(--text-secondary); cursor:pointer; }
+  .nav-item:hover { background:var(--surface-2); color:var(--text-primary); }
+  .nav-item.active { background:rgba(131,233,255,.08); color:var(--brand); }
+  .nav-item .ico { width:14px; height:14px; opacity:.8; }
+
+  .main { display:flex; flex-direction:column; min-width:0; }
+  .header { position:sticky; top:0; z-index:20; background:rgba(10,11,15,.8); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); padding:10px 24px; display:flex; align-items:center; gap:14px; }
+  .crumb { font-size:11.5px; color:var(--text-tertiary); }
+  .crumb b { color:var(--text-secondary); font-weight:500; }
+  .search { margin-left:auto; display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; padding:5px 10px; font-size:11.5px; color:var(--text-tertiary); min-width:200px; }
+  .pill-acct { display:flex; align-items:center; gap:8px; padding:5px 10px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; font-size:11.5px; }
+  .pill-acct .dot { width:6px; height:6px; border-radius:50%; background:var(--success); }
+
+  .content { padding:20px 24px 60px; max-width:1440px; width:100%; }
+
+  /* halo */
+  .halo { position:absolute; inset:0; height:280px; background:radial-gradient(ellipse 60% 80% at 30% 0%, rgba(131,233,255,.05), transparent 60%); pointer-events:none; z-index:0; }
+
+  /* ============ PAGE HEADER ============ */
+  .page-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:16px; }
+  .page-title { font-size:22px; font-weight:700; letter-spacing:-.02em; }
+  .page-meta { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+  .page-meta .sep { color:var(--border-default); margin:0 6px; }
+  .page-actions { display:flex; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:500; border:1px solid var(--border-subtle); background:var(--surface-2); color:var(--text-secondary); cursor:pointer; }
+  .btn:hover { background:var(--surface); border-color:var(--border-default); color:var(--text-primary); }
+  .btn-brand { background:rgba(131,233,255,.10); border-color:rgba(131,233,255,.30); color:var(--brand); }
+
+  /* ============ KPI STRIP ============ */
+  .kpi-strip { display:grid; grid-template-columns: repeat(4, 1fr) 220px; gap:1px; background:var(--border-subtle); border:1px solid var(--border-subtle); border-radius:10px; overflow:hidden; margin-bottom:14px; }
+  .kpi { background:var(--surface); padding:10px 14px; }
+  .kpi .lbl { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); }
+  .kpi .val { font-size:18px; font-weight:600; letter-spacing:-.01em; margin-top:4px; line-height:1.1; }
+  .kpi .sub { font-size:10.5px; margin-top:3px; color:var(--text-secondary); }
+  .pos { color:var(--success); }
+  .neg { color:var(--danger); }
+  .gold-txt { color:var(--gold); }
+
+  .kpi-spark { background:var(--surface); padding:8px 12px; display:flex; flex-direction:column; gap:2px; }
+  .kpi-spark .lbl { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); }
+  .kpi-spark .top-row { display:flex; align-items:baseline; justify-content:space-between; }
+  .kpi-spark .top-row .v { font-size:13px; font-weight:600; }
+
+  /* ============ FILTERS ============ */
+  .filters { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .input { background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; padding:6px 10px; font-size:12px; color:var(--text-primary); width:240px; }
+  .input::placeholder { color:var(--text-tertiary); }
+  .chip { padding:5px 10px; border-radius:6px; font-size:11.5px; font-weight:500; background:var(--surface-2); border:1px solid var(--border-subtle); color:var(--text-secondary); cursor:pointer; }
+  .chip:hover { color:var(--text-primary); border-color:var(--border-default); }
+  .chip.active { background:rgba(131,233,255,.10); border-color:rgba(131,233,255,.30); color:var(--brand); }
+  .chip .count { color:var(--text-tertiary); margin-left:4px; font-size:10.5px; }
+  .chip.active .count { color:rgba(131,233,255,.7); }
+  .select { display:flex; align-items:center; gap:5px; padding:5px 10px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; font-size:11.5px; color:var(--text-secondary); cursor:pointer; }
+  .select b { color:var(--text-primary); font-weight:500; }
+
+  /* ============ MAIN GRID (table + side) ============ */
+  .main-grid { display:grid; grid-template-columns: 1fr 280px; gap:14px; align-items:flex-start; }
+
+  /* ============ TABLE ============ */
+  .card { background:var(--surface); border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border-subtle); }
+  .card-head .ic { width:22px; height:22px; border-radius:6px; background:rgba(131,233,255,.10); display:grid; place-items:center; color:var(--brand); }
+  .card-head h3 { margin:0; font-size:13px; font-weight:600; }
+  .card-head .tag { font-size:10px; padding:2px 6px; border-radius:4px; background:var(--surface-2); color:var(--text-tertiary); border:1px solid var(--border-subtle); }
+  .card-head .right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+
+  table.dense { width:100%; border-collapse:collapse; }
+  table.dense thead th { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; text-align:left; padding:8px 10px; background:rgba(20,27,42,.55); border-bottom:1px solid var(--border-subtle); white-space:nowrap; position:sticky; top:0; }
+  table.dense thead th.r { text-align:right; }
+  table.dense tbody td { padding:8px 10px; border-bottom:1px solid var(--border-subtle); font-size:12px; white-space:nowrap; }
+  table.dense tbody tr:last-child td { border-bottom:none; }
+  table.dense tbody tr:hover { background:var(--surface-2); cursor:pointer; }
+  table.dense td.r { text-align:right; }
+  table.dense td.rank { font-family:'JetBrains Mono', monospace; color:var(--text-tertiary); font-size:11px; width:32px; }
+
+  .vault-cell { display:flex; align-items:center; gap:10px; min-width:0; }
+  .av { width:26px; height:26px; border-radius:7px; background:rgba(131,233,255,.10); color:var(--brand); display:grid; place-items:center; font-size:10px; font-weight:700; flex-shrink:0; }
+  .av-gold { background:rgba(249,227,112,.10); color:var(--gold); }
+  .av-suc { background:rgba(31,168,91,.10); color:var(--success); }
+  .av-dan { background:rgba(229,62,62,.10); color:var(--danger); }
+  .vault-meta { min-width:0; line-height:1.2; }
+  .vault-name { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .vault-addr { font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-tertiary); margin-top:2px; }
+
+  .addr { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary); }
+
+  .apr-pos { color:var(--success); font-weight:600; font-family:'JetBrains Mono', monospace; }
+  .apr-neg { color:var(--danger); font-weight:600; font-family:'JetBrains Mono', monospace; }
+  .apr-low { color:var(--gold); font-weight:600; font-family:'JetBrains Mono', monospace; }
+
+  .delta-pos { color:var(--success); font-family:'JetBrains Mono', monospace; }
+  .delta-neg { color:var(--danger); font-family:'JetBrains Mono', monospace; }
+  .delta-zero { color:var(--text-tertiary); font-family:'JetBrains Mono', monospace; }
+
+  .micro { font-size:10px; color:var(--text-tertiary); font-family:'JetBrains Mono', monospace; }
+
+  .pill { display:inline-block; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:600; background:var(--surface-2); color:var(--text-secondary); border:1px solid var(--border-subtle); }
+  .pill-instant { background:rgba(131,233,255,.08); color:var(--brand); border-color:rgba(131,233,255,.20); }
+  .pill-lock { background:var(--surface-2); color:var(--text-secondary); border-color:var(--border-subtle); }
+
+  .status { display:inline-flex; align-items:center; gap:5px; font-size:11px; }
+  .status .d { width:6px; height:6px; border-radius:50%; }
+  .status.open .d { background:var(--success); box-shadow:0 0 0 2px rgba(31,168,91,.15); }
+  .status.closed .d { background:var(--text-tertiary); }
+  .status.whitelisted .d { background:var(--gold); box-shadow:0 0 0 2px rgba(249,227,112,.15); }
+
+  .action-link { color:var(--text-tertiary); font-size:14px; }
+  table.dense tr:hover .action-link { color:var(--brand); }
+
+  /* ============ PAGINATION ============ */
+  .pager { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-top:1px solid var(--border-subtle); font-size:11.5px; color:var(--text-secondary); }
+  .pager-btns { display:flex; gap:4px; }
+  .pg-btn { width:26px; height:26px; display:grid; place-items:center; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:5px; cursor:pointer; font-size:11px; color:var(--text-secondary); }
+  .pg-btn:hover { color:var(--text-primary); }
+  .pg-btn.active { background:rgba(131,233,255,.10); border-color:rgba(131,233,255,.30); color:var(--brand); }
+
+  /* ============ SIDE MODULES ============ */
+  .side { display:flex; flex-direction:column; gap:14px; position:sticky; top:60px; }
+  .mod-list { padding:4px 0; }
+  .mod-row { display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--border-subtle); font-size:11.5px; cursor:pointer; }
+  .mod-row:last-child { border-bottom:none; }
+  .mod-row:hover { background:var(--surface-2); }
+  .mod-row .rank { width:14px; font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--text-tertiary); }
+  .mod-row .av-s { width:22px; height:22px; border-radius:6px; background:rgba(131,233,255,.10); color:var(--brand); display:grid; place-items:center; font-size:9px; font-weight:700; flex-shrink:0; }
+  .mod-row .nm { min-width:0; flex:1; }
+  .mod-row .nm .n { font-size:11.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mod-row .nm .s { font-size:9.5px; color:var(--text-tertiary); font-family:'JetBrains Mono', monospace; }
+  .mod-row .v { font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:600; text-align:right; }
+
+  /* spark svg color helpers */
+  .spk-pos { stroke:var(--success); }
+  .spk-neg { stroke:var(--danger); }
+  .spk-brand { stroke:var(--brand); }
+  .spk-gold { stroke:var(--gold); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand-logo">
+      <div class="dot"></div>
+      <div class="name">Liquid Terminal</div>
+    </div>
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg> Dashboard</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 7 L9 10 L14 4"/><circle cx="14" cy="4" r="1.2"/></svg> Market</div>
+    <div class="nav-item active"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5 L8 2 L13 5 L13 11 L8 14 L3 11 Z"/><path d="M3 5 L8 8 L13 5 M8 8 L8 14"/></svg> Vaults</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6 L14 6 M5 9 L11 9 M5 11 L9 11"/></svg> Explorer</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3 L13 3 L13 13 L3 13 Z"/><path d="M5 6 L11 6 M5 8.5 L11 8.5 M5 11 L9 11"/></svg> Wiki</div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="2.5"/><path d="M3 13 C3 10.5 5 9 8 9 C11 9 13 10.5 13 13"/></svg> Profile</div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="header">
+      <div class="crumb"><b>Explorer</b> <span style="margin:0 5px;color:var(--border-default)">/</span> <span style="color:var(--text-primary)">Vaults</span></div>
+      <div class="search">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 L13.5 13.5"/></svg>
+        Search address, vault, leader…
+      </div>
+      <div class="pill-acct"><div class="dot"></div><span class="mono">0x4f2a…91bC</span></div>
+    </header>
+
+    <div class="content" style="position:relative;">
+      <div class="halo"></div>
+
+      <!-- Page header -->
+      <div class="page-head" style="position:relative;z-index:1;">
+        <div>
+          <div class="page-title">Vaults</div>
+          <div class="page-meta">
+            <span class="mono">3,245</span> vaults
+            <span class="sep">·</span>
+            <span class="mono">$439.3M</span> total TVL
+            <span class="sep">·</span>
+            <span class="mono">112,847</span> unique depositors
+            <span class="sep">·</span>
+            updated <span class="mono">12s</span> ago
+          </div>
+        </div>
+        <div class="page-actions">
+          <button class="btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8 L8 13 L13 8 M8 2 L8 13"/></svg>Export CSV</button>
+          <button class="btn-brand btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3 L8 13 M3 8 L13 8"/></svg>Create Vault</button>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi">
+          <div class="lbl">Total TVL</div>
+          <div class="val mono">$439.3M</div>
+          <div class="sub"><span class="pos mono">+2.14%</span> · 24h</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Avg APR (median)</div>
+          <div class="val mono pos">+12.4%</div>
+          <div class="sub">excl. HLP · 30d</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Active vaults</div>
+          <div class="val mono">2,871</div>
+          <div class="sub"><span class="pos mono">+18</span> this week</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Net flow 24h</div>
+          <div class="val mono pos">+$4.82M</div>
+          <div class="sub"><span class="mono">1,204</span> deposits · <span class="mono">389</span> withdrawals</div>
+        </div>
+        <div class="kpi-spark">
+          <div class="lbl">TVL · 30d</div>
+          <div class="top-row"><span class="v mono">$439.3M</span><span class="pos mono" style="font-size:10.5px">+11.2%</span></div>
+          <svg width="100%" height="36" viewBox="0 0 200 36" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,28 L10,27 L20,26 L30,24 L40,25 L50,22 L60,20 L70,21 L80,18 L90,16 L100,17 L110,14 L120,15 L130,12 L140,10 L150,11 L160,9 L170,8 L180,6 L190,7 L200,4 L200,36 L0,36 Z" fill="url(#sparkFill)"/>
+            <path d="M0,28 L10,27 L20,26 L30,24 L40,25 L50,22 L60,20 L70,21 L80,18 L90,16 L100,17 L110,14 L120,15 L130,12 L140,10 L150,11 L160,9 L170,8 L180,6 L190,7 L200,4" fill="none" class="spk-brand" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <input class="input" placeholder="Search by name, address, or leader…" value="" />
+        <div class="chip active">All <span class="count">3,245</span></div>
+        <div class="chip">Open <span class="count">2,871</span></div>
+        <div class="chip">Closed <span class="count">374</span></div>
+        <div class="chip">Whitelisted <span class="count">42</span></div>
+        <div class="chip">Followed <span class="count">12</span></div>
+        <div style="flex:1"></div>
+        <div class="select">Density: <b>Compact</b> <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 3 L4 5.5 L6.5 3"/></svg></div>
+        <div class="select">Sort: <b>TVL desc</b> <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 3 L4 5.5 L6.5 3"/></svg></div>
+      </div>
+
+      <!-- Main grid: table + side -->
+      <div class="main-grid">
+        <!-- Vault table -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ic"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 5 L8 2 L13 5 L13 11 L8 14 L3 11 Z"/></svg></div>
+            <h3>Vault Leaderboard</h3>
+            <span class="tag">Top 20 by TVL</span>
+            <div class="right">
+              <span class="micro">Showing 1–20 of 3,245</span>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+          <table class="dense" style="min-width:1280px;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Vault</th>
+                <th>Leader</th>
+                <th class="r">TVL</th>
+                <th class="r">24h Δ</th>
+                <th class="r">7d Δ</th>
+                <th class="r">APR</th>
+                <th class="r">Followers</th>
+                <th>Lockup</th>
+                <th class="r">Comm.</th>
+                <th>Age</th>
+                <th>Status</th>
+                <th>7d equity</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- HLP -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">1</td>
+                <td>
+                  <div class="vault-cell">
+                    <div class="av av-gold">HL</div>
+                    <div class="vault-meta"><div class="vault-name">HLP — Hyperliquidity Provider</div><div class="vault-addr">0xdfc2…1d99</div></div>
+                  </div>
+                </td>
+                <td><span class="addr">0x010461…29b2</span></td>
+                <td class="r mono" style="font-weight:600;">$356.9M</td>
+                <td class="r delta-pos">+0.42%</td>
+                <td class="r delta-pos">+1.18%</td>
+                <td class="r"><span class="apr-low">+1.28%</span></td>
+                <td class="r mono">91,204 <span class="micro">+182</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">0%</td>
+                <td class="micro">2y 1m</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td>
+                  <svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,16 L6,15 L12,16 L18,14 L24,15 L30,13 L36,12 L42,13 L48,11 L54,12 L60,10" class="spk-pos" stroke-width="1.5"/></svg>
+                </td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <!-- HyperGrowth -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">2</td>
+                <td><div class="vault-cell"><div class="av">HG</div><div class="vault-meta"><div class="vault-name">HyperGrowth</div><div class="vault-addr">0x7a4f…b9c2</div></div></div></td>
+                <td><span class="addr">0x9b21…4f7e</span></td>
+                <td class="r mono" style="font-weight:600;">$13.3M</td>
+                <td class="r delta-pos">+1.84%</td>
+                <td class="r delta-pos">+8.74%</td>
+                <td class="r"><span class="apr-pos">+214%</span></td>
+                <td class="r mono">4,178 <span class="micro">+92</span></td>
+                <td><span class="pill pill-lock">7d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">1m 12d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,20 L6,19 L12,16 L18,14 L24,11 L30,12 L36,8 L42,9 L48,6 L54,4 L60,3" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <!-- Growi HF -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">3</td>
+                <td><div class="vault-cell"><div class="av av-suc">GH</div><div class="vault-meta"><div class="vault-name">Growi HF</div><div class="vault-addr">0x4d12…0e8a</div></div></div></td>
+                <td><span class="addr">0xa4c8…71d2</span></td>
+                <td class="r mono" style="font-weight:600;">$8.54M</td>
+                <td class="r delta-pos">+0.31%</td>
+                <td class="r delta-pos">+2.04%</td>
+                <td class="r"><span class="apr-low">+5.6%</span></td>
+                <td class="r mono">3,786 <span class="micro">+14</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">1y 9m</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,14 L6,13 L12,14 L18,12 L24,13 L30,11 L36,12 L42,10 L48,11 L54,9 L60,10" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <!-- L/S Grids -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">4</td>
+                <td><div class="vault-cell"><div class="av">LG</div><div class="vault-meta"><div class="vault-name">L/S Grids</div><div class="vault-addr">0x8e3a…3c41</div></div></div></td>
+                <td><span class="addr">0xc1f9…b08d</span></td>
+                <td class="r mono" style="font-weight:600;">$7.20M</td>
+                <td class="r delta-pos">+0.92%</td>
+                <td class="r delta-pos">+4.31%</td>
+                <td class="r"><span class="apr-pos">+87%</span></td>
+                <td class="r mono">2,688 <span class="micro">+47</span></td>
+                <td><span class="pill pill-lock">2d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">6m 3d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,18 L6,16 L12,18 L18,14 L24,16 L30,12 L36,14 L42,10 L48,11 L54,7 L60,8" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <!-- Long HYPE & BTC -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">5</td>
+                <td><div class="vault-cell"><div class="av av-gold">HB</div><div class="vault-meta"><div class="vault-name">Long HYPE &amp; BTC</div><div class="vault-addr">0x12c4…7f6e</div></div></div></td>
+                <td><span class="addr">0x3e7a…dd14</span></td>
+                <td class="r mono" style="font-weight:600;">$5.80M</td>
+                <td class="r delta-pos">+1.24%</td>
+                <td class="r delta-pos">+6.91%</td>
+                <td class="r"><span class="apr-pos">+142%</span></td>
+                <td class="r mono">2,274 <span class="micro">+38</span></td>
+                <td><span class="pill pill-lock">5d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">4m 22d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,17 L6,16 L12,14 L18,15 L24,11 L30,13 L36,9 L42,8 L48,5 L54,7 L60,4" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <!-- Generated rows -->
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">6</td>
+                <td><div class="vault-cell"><div class="av">DM</div><div class="vault-meta"><div class="vault-name">Delta Neutral Max</div><div class="vault-addr">0x9f2c…ab33</div></div></div></td>
+                <td><span class="addr">0x88a1…d4c7</span></td>
+                <td class="r mono" style="font-weight:600;">$4.91M</td>
+                <td class="r delta-pos">+0.18%</td>
+                <td class="r delta-pos">+1.42%</td>
+                <td class="r"><span class="apr-pos">+24.8%</span></td>
+                <td class="r mono">1,842 <span class="micro">+11</span></td>
+                <td><span class="pill pill-lock">3d</span></td>
+                <td class="r mono">12%</td>
+                <td class="micro">10m 4d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,15 L6,14 L12,15 L18,13 L24,14 L30,12 L36,13 L42,11 L48,12 L54,10 L60,11" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">7</td>
+                <td><div class="vault-cell"><div class="av av-dan">SQ</div><div class="vault-meta"><div class="vault-name">Squeeze Hunter</div><div class="vault-addr">0x6e8b…112f</div></div></div></td>
+                <td><span class="addr">0xb47e…6a02</span></td>
+                <td class="r mono" style="font-weight:600;">$4.12M</td>
+                <td class="r delta-neg">−2.31%</td>
+                <td class="r delta-neg">−4.18%</td>
+                <td class="r"><span class="apr-pos">+312%</span></td>
+                <td class="r mono">1,694 <span class="micro">+28</span></td>
+                <td><span class="pill pill-lock">7d</span></td>
+                <td class="r mono">15%</td>
+                <td class="micro">3m 18d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,8 L6,6 L12,9 L18,5 L24,11 L30,7 L36,13 L42,9 L48,15 L54,11 L60,17" class="spk-neg" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">8</td>
+                <td><div class="vault-cell"><div class="av av-suc">SV</div><div class="vault-meta"><div class="vault-name">Stable Yield Vault</div><div class="vault-addr">0x3a91…77e4</div></div></div></td>
+                <td><span class="addr">0xf12c…99a1</span></td>
+                <td class="r mono" style="font-weight:600;">$3.84M</td>
+                <td class="r delta-pos">+0.08%</td>
+                <td class="r delta-pos">+0.61%</td>
+                <td class="r"><span class="apr-low">+4.2%</span></td>
+                <td class="r mono">1,521 <span class="micro">+4</span></td>
+                <td><span class="pill pill-instant">Instant</span></td>
+                <td class="r mono">5%</td>
+                <td class="micro">1y 3m</td>
+                <td><span class="status whitelisted"><span class="d"></span>Whitelisted</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,14 L6,14 L12,13 L18,13 L24,12 L30,12 L36,11 L42,11 L48,10 L54,10 L60,9" class="spk-gold" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">9</td>
+                <td><div class="vault-cell"><div class="av">MR</div><div class="vault-meta"><div class="vault-name">Momentum Rider</div><div class="vault-addr">0xd47e…2a18</div></div></div></td>
+                <td><span class="addr">0x214a…f3c8</span></td>
+                <td class="r mono" style="font-weight:600;">$3.42M</td>
+                <td class="r delta-pos">+2.41%</td>
+                <td class="r delta-pos">+12.84%</td>
+                <td class="r"><span class="apr-pos">+98%</span></td>
+                <td class="r mono">1,388 <span class="micro">+62</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">7m 1d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,18 L6,17 L12,15 L18,13 L24,14 L30,10 L36,11 L42,8 L48,6 L54,7 L60,3" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">10</td>
+                <td><div class="vault-cell"><div class="av av-dan">CB</div><div class="vault-meta"><div class="vault-name">Contrarian Bets</div><div class="vault-addr">0x5c12…b71a</div></div></div></td>
+                <td><span class="addr">0xa9f8…2e17</span></td>
+                <td class="r mono" style="font-weight:600;">$3.08M</td>
+                <td class="r delta-neg">−1.04%</td>
+                <td class="r delta-pos">+3.27%</td>
+                <td class="r"><span class="apr-pos">+62%</span></td>
+                <td class="r mono">1,184 <span class="micro">−3</span></td>
+                <td><span class="pill pill-lock">5d</span></td>
+                <td class="r mono">12%</td>
+                <td class="micro">9m 14d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,12 L6,14 L12,11 L18,15 L24,10 L30,13 L36,8 L42,11 L48,7 L54,10 L60,6" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">11</td>
+                <td><div class="vault-cell"><div class="av">AB</div><div class="vault-meta"><div class="vault-name">Arb Basis Pro</div><div class="vault-addr">0x71fa…d802</div></div></div></td>
+                <td><span class="addr">0x4ce9…81bb</span></td>
+                <td class="r mono" style="font-weight:600;">$2.71M</td>
+                <td class="r delta-pos">+0.12%</td>
+                <td class="r delta-pos">+0.92%</td>
+                <td class="r"><span class="apr-low">+8.4%</span></td>
+                <td class="r mono">974 <span class="micro">+2</span></td>
+                <td><span class="pill pill-lock">3d</span></td>
+                <td class="r mono">8%</td>
+                <td class="micro">1y 1m</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,15 L6,14 L12,15 L18,13 L24,14 L30,13 L36,12 L42,13 L48,11 L54,12 L60,10" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">12</td>
+                <td><div class="vault-cell"><div class="av av-gold">FA</div><div class="vault-meta"><div class="vault-name">Funding Arb</div><div class="vault-addr">0x9c44…3a02</div></div></div></td>
+                <td><span class="addr">0xb1de…cc40</span></td>
+                <td class="r mono" style="font-weight:600;">$2.45M</td>
+                <td class="r delta-pos">+0.34%</td>
+                <td class="r delta-pos">+2.18%</td>
+                <td class="r"><span class="apr-pos">+18.7%</span></td>
+                <td class="r mono">812 <span class="micro">+9</span></td>
+                <td><span class="pill pill-lock">2d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">8m 22d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,16 L6,15 L12,14 L18,14 L24,13 L30,12 L36,12 L42,11 L48,10 L54,10 L60,8" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">13</td>
+                <td><div class="vault-cell"><div class="av av-dan">RZ</div><div class="vault-meta"><div class="vault-name">RektZero</div><div class="vault-addr">0x2188…b9e2</div></div></div></td>
+                <td><span class="addr">0x06fa…1140</span></td>
+                <td class="r mono" style="font-weight:600;">$2.12M</td>
+                <td class="r delta-neg">−5.81%</td>
+                <td class="r delta-neg">−12.40%</td>
+                <td class="r"><span class="apr-neg">−42%</span></td>
+                <td class="r mono">688 <span class="micro">−21</span></td>
+                <td><span class="pill pill-lock">7d</span></td>
+                <td class="r mono">15%</td>
+                <td class="micro">2m 8d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,4 L6,6 L12,5 L18,8 L24,10 L30,12 L36,11 L42,14 L48,16 L54,15 L60,18" class="spk-neg" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">14</td>
+                <td><div class="vault-cell"><div class="av av-suc">SS</div><div class="vault-meta"><div class="vault-name">Slow &amp; Steady</div><div class="vault-addr">0xea18…d7f1</div></div></div></td>
+                <td><span class="addr">0xdde4…7822</span></td>
+                <td class="r mono" style="font-weight:600;">$1.89M</td>
+                <td class="r delta-pos">+0.07%</td>
+                <td class="r delta-pos">+0.48%</td>
+                <td class="r"><span class="apr-low">+3.1%</span></td>
+                <td class="r mono">612 <span class="micro">+1</span></td>
+                <td><span class="pill pill-instant">Instant</span></td>
+                <td class="r mono">3%</td>
+                <td class="micro">1y 7m</td>
+                <td><span class="status whitelisted"><span class="d"></span>Whitelisted</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,14 L6,14 L12,13 L18,13 L24,13 L30,12 L36,12 L42,12 L48,11 L54,11 L60,11" class="spk-gold" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">15</td>
+                <td><div class="vault-cell"><div class="av">TC</div><div class="vault-meta"><div class="vault-name">Trend Cascade</div><div class="vault-addr">0x4422…ee01</div></div></div></td>
+                <td><span class="addr">0xfe18…aab4</span></td>
+                <td class="r mono" style="font-weight:600;">$1.62M</td>
+                <td class="r delta-pos">+1.18%</td>
+                <td class="r delta-pos">+5.21%</td>
+                <td class="r"><span class="apr-pos">+74%</span></td>
+                <td class="r mono">547 <span class="micro">+18</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">5m 11d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,17 L6,16 L12,14 L18,13 L24,15 L30,11 L36,12 L42,8 L48,9 L54,6 L60,5" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">16</td>
+                <td><div class="vault-cell"><div class="av av-gold">PE</div><div class="vault-meta"><div class="vault-name">Perp Edge</div><div class="vault-addr">0x88c1…ba29</div></div></div></td>
+                <td><span class="addr">0x37b8…04a1</span></td>
+                <td class="r mono" style="font-weight:600;">$1.48M</td>
+                <td class="r delta-pos">+0.61%</td>
+                <td class="r delta-neg">−1.04%</td>
+                <td class="r"><span class="apr-pos">+38%</span></td>
+                <td class="r mono">488 <span class="micro">+6</span></td>
+                <td><span class="pill pill-lock">5d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">3m 9d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,12 L6,10 L12,11 L18,9 L24,12 L30,8 L36,11 L42,7 L48,10 L54,8 L60,9" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr style="opacity:.78;" onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">17</td>
+                <td><div class="vault-cell"><div class="av">QV</div><div class="vault-meta"><div class="vault-name">Quiet Vol</div><div class="vault-addr">0x6731…91ab</div></div></div></td>
+                <td><span class="addr">0xc1da…0e08</span></td>
+                <td class="r mono" style="font-weight:600;">$1.21M</td>
+                <td class="r delta-zero">0.00%</td>
+                <td class="r delta-zero">0.00%</td>
+                <td class="r"><span class="apr-low">+0.0%</span></td>
+                <td class="r mono">312 <span class="micro">0</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">8d</td>
+                <td><span class="status closed"><span class="d"></span>Closed</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,12 L60,12" stroke="#6B7280" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">18</td>
+                <td><div class="vault-cell"><div class="av av-suc">VG</div><div class="vault-meta"><div class="vault-name">Volatility Grinder</div><div class="vault-addr">0x9018…dd29</div></div></div></td>
+                <td><span class="addr">0x4071…7fcb</span></td>
+                <td class="r mono" style="font-weight:600;">$1.08M</td>
+                <td class="r delta-pos">+0.81%</td>
+                <td class="r delta-pos">+4.04%</td>
+                <td class="r"><span class="apr-pos">+52%</span></td>
+                <td class="r mono">287 <span class="micro">+11</span></td>
+                <td><span class="pill pill-lock">3d</span></td>
+                <td class="r mono">12%</td>
+                <td class="micro">6m 28d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,16 L6,15 L12,14 L18,12 L24,14 L30,10 L36,12 L42,8 L48,10 L54,7 L60,6" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">19</td>
+                <td><div class="vault-cell"><div class="av av-dan">NS</div><div class="vault-meta"><div class="vault-name">Naked Shorts</div><div class="vault-addr">0xb121…48ee</div></div></div></td>
+                <td><span class="addr">0x6f17…2f08</span></td>
+                <td class="r mono" style="font-weight:600;">$940K</td>
+                <td class="r delta-neg">−3.84%</td>
+                <td class="r delta-neg">−8.21%</td>
+                <td class="r"><span class="apr-pos">+128%</span></td>
+                <td class="r mono">214 <span class="micro">−4</span></td>
+                <td><span class="pill pill-lock">7d</span></td>
+                <td class="r mono">18%</td>
+                <td class="micro">2m 18d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,6 L6,8 L12,5 L18,10 L24,7 L30,12 L36,9 L42,14 L48,11 L54,16 L60,14" class="spk-neg" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-B-dense-detail.html'">
+                <td class="rank">20</td>
+                <td><div class="vault-cell"><div class="av">CY</div><div class="vault-meta"><div class="vault-name">Cycle Trader</div><div class="vault-addr">0x32a1…71cc</div></div></div></td>
+                <td><span class="addr">0xa28b…06d1</span></td>
+                <td class="r mono" style="font-weight:600;">$812K</td>
+                <td class="r delta-pos">+0.44%</td>
+                <td class="r delta-pos">+1.92%</td>
+                <td class="r"><span class="apr-pos">+31%</span></td>
+                <td class="r mono">186 <span class="micro">+3</span></td>
+                <td><span class="pill pill-lock">4d</span></td>
+                <td class="r mono">10%</td>
+                <td class="micro">11m 4d</td>
+                <td><span class="status open"><span class="d"></span>Open</span></td>
+                <td><svg width="60" height="24" viewBox="0 0 60 24" fill="none"><path d="M0,15 L6,13 L12,15 L18,12 L24,14 L30,11 L36,13 L42,10 L48,12 L54,9 L60,10" class="spk-pos" stroke-width="1.5"/></svg></td>
+                <td class="r"><span class="action-link">→</span></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="pager">
+            <div>Showing <span class="mono" style="color:var(--text-primary)">1–20</span> of <span class="mono" style="color:var(--text-primary)">3,245</span></div>
+            <div class="pager-btns">
+              <div class="pg-btn">‹</div>
+              <div class="pg-btn active">1</div>
+              <div class="pg-btn">2</div>
+              <div class="pg-btn">3</div>
+              <div class="pg-btn">4</div>
+              <div class="pg-btn">…</div>
+              <div class="pg-btn">163</div>
+              <div class="pg-btn">›</div>
+            </div>
+            <div>20 / page</div>
+          </div>
+        </div>
+
+        <!-- Side modules -->
+        <div class="side">
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12 L6 7 L9 10 L14 4"/></svg></div>
+              <h3>Top APR · 24h</h3>
+              <span class="tag">5</span>
+            </div>
+            <div class="mod-list">
+              <div class="mod-row"><div class="rank">1</div><div class="av-s av-gold" style="background:rgba(249,227,112,.10);color:var(--gold);">SQ</div><div class="nm"><div class="n">Squeeze Hunter</div><div class="s">$4.12M TVL</div></div><div class="v pos">+312%</div></div>
+              <div class="mod-row"><div class="rank">2</div><div class="av-s">HG</div><div class="nm"><div class="n">HyperGrowth</div><div class="s">$13.3M TVL</div></div><div class="v pos">+214%</div></div>
+              <div class="mod-row"><div class="rank">3</div><div class="av-s" style="background:rgba(229,62,62,.10);color:var(--danger);">NS</div><div class="nm"><div class="n">Naked Shorts</div><div class="s">$940K TVL</div></div><div class="v pos">+128%</div></div>
+              <div class="mod-row"><div class="rank">4</div><div class="av-s" style="background:rgba(249,227,112,.10);color:var(--gold);">HB</div><div class="nm"><div class="n">Long HYPE &amp; BTC</div><div class="s">$5.80M TVL</div></div><div class="v pos">+142%</div></div>
+              <div class="mod-row"><div class="rank">5</div><div class="av-s">MR</div><div class="nm"><div class="n">Momentum Rider</div><div class="s">$3.42M TVL</div></div><div class="v pos">+98%</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="2.5"/><path d="M3 13 C3 10.5 5 9 8 9 C11 9 13 10.5 13 13"/></svg></div>
+              <h3>Followers gained · 24h</h3>
+              <span class="tag">5</span>
+            </div>
+            <div class="mod-list">
+              <div class="mod-row"><div class="rank">1</div><div class="av-s">HL</div><div class="nm"><div class="n">HLP</div><div class="s">91,204 total</div></div><div class="v pos">+182</div></div>
+              <div class="mod-row"><div class="rank">2</div><div class="av-s">HG</div><div class="nm"><div class="n">HyperGrowth</div><div class="s">4,178 total</div></div><div class="v pos">+92</div></div>
+              <div class="mod-row"><div class="rank">3</div><div class="av-s">MR</div><div class="nm"><div class="n">Momentum Rider</div><div class="s">1,388 total</div></div><div class="v pos">+62</div></div>
+              <div class="mod-row"><div class="rank">4</div><div class="av-s">LG</div><div class="nm"><div class="n">L/S Grids</div><div class="s">2,688 total</div></div><div class="v pos">+47</div></div>
+              <div class="mod-row"><div class="rank">5</div><div class="av-s">HB</div><div class="nm"><div class="n">Long HYPE &amp; BTC</div><div class="s">2,274 total</div></div><div class="v pos">+38</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3 L8 13 M4 7 L8 3 L12 7"/></svg></div>
+              <h3>Largest outflows · 24h</h3>
+              <span class="tag">3</span>
+            </div>
+            <div class="mod-list">
+              <div class="mod-row"><div class="rank">1</div><div class="av-s" style="background:rgba(229,62,62,.10);color:var(--danger);">RZ</div><div class="nm"><div class="n">RektZero</div><div class="s">−$284K</div></div><div class="v neg">−12.4%</div></div>
+              <div class="mod-row"><div class="rank">2</div><div class="av-s" style="background:rgba(229,62,62,.10);color:var(--danger);">NS</div><div class="nm"><div class="n">Naked Shorts</div><div class="s">−$78K</div></div><div class="v neg">−8.2%</div></div>
+              <div class="mod-row"><div class="rank">3</div><div class="av-s" style="background:rgba(229,62,62,.10);color:var(--danger);">CB</div><div class="nm"><div class="n">Contrarian Bets</div><div class="s">−$32K</div></div><div class="v neg">−1.0%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>

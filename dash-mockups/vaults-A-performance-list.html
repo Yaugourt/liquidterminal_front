@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Vaults — Variant A · Performance-led</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:#0A0B0F; color:#E5E7EB; font-family:'Inter','ui-sans-serif',system-ui,sans-serif; font-size:13px; line-height:1.4; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  button { font-family:inherit; cursor:pointer; }
+
+  .mono { font-family:'JetBrains Mono','ui-monospace',monospace; font-variant-numeric:tabular-nums; font-feature-settings:"tnum"; }
+
+  /* halo */
+  .halo { position:fixed; inset:0 0 auto 0; height:340px; background:linear-gradient(to bottom, rgba(15,20,33,0.7), transparent); pointer-events:none; z-index:0; }
+
+  .app { position:relative; z-index:10; display:flex; min-height:100vh; max-width:1440px; margin:0 auto; }
+
+  /* sidebar */
+  .sidebar { width:232px; flex-shrink:0; border-right:1px solid #1F2937; background:#0F1421; padding:12px; }
+  .brand-block { padding:12px 8px 16px; }
+  .brand-title { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:#E5E7EB; }
+  .brand-sub { font-size:9.5px; text-transform:uppercase; letter-spacing:0.12em; color:#6B7280; font-weight:600; margin-top:2px; }
+  .nav-group { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:#6B7280; font-weight:600; padding:10px 8px 6px; }
+  .side-link { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:6px; font-size:13px; color:#9CA3AF; margin-bottom:2px; transition:background .12s, color .12s; }
+  .side-link:hover { background:#141B2A; color:#E5E7EB; }
+  .side-link.active { background:rgba(131,233,255,0.10); color:#E5E7EB; position:relative; }
+  .side-link.active::before { content:""; position:absolute; left:-2px; top:50%; transform:translateY(-50%); width:2px; height:16px; background:#83E9FF; border-radius:2px; }
+  .side-link.active .side-ic { color:#83E9FF; }
+  .side-ic { width:16px; height:16px; color:#6B7280; flex-shrink:0; }
+  .side-link.active .side-ic { color:#83E9FF; }
+
+  /* main */
+  .main { flex:1; min-width:0; }
+  .header { position:sticky; top:0; z-index:30; background:rgba(10,11,15,0.8); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+  .header-inner { display:flex; align-items:center; gap:12px; padding:12px 24px; }
+  .search-wrap { flex:1; max-width:440px; position:relative; }
+  .search-wrap svg.s-ic { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#6B7280; }
+  .search-wrap input { width:100%; height:36px; padding:0 12px 0 34px; background:#0F1421; border:1px solid #2A3445; border-radius:8px; color:#E5E7EB; font-size:13px; outline:none; transition:border-color .15s; font-family:inherit; }
+  .search-wrap input::placeholder { color:#6B7280; }
+  .search-wrap input:focus { border-color:#83E9FF; }
+  .btn-ghost { font-size:12px; font-weight:500; color:#9CA3AF; padding:0 10px; background:transparent; border:none; }
+  .btn-ghost:hover { color:#E5E7EB; }
+  .btn-primary { font-size:12px; font-weight:600; padding:0 14px; height:36px; border-radius:8px; background:#83E9FF; color:#0A0B0F; border:none; }
+  .btn-primary:hover { background:#A8F0FF; }
+
+  /* content */
+  .content { padding:20px 24px 48px; }
+
+  /* page header */
+  .page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:20px; }
+  .page-title { font-size:24px; font-weight:700; letter-spacing:-0.02em; color:#E5E7EB; }
+  .page-desc { font-size:13px; color:#9CA3AF; margin-top:4px; max-width:560px; }
+  .page-actions { display:flex; align-items:center; gap:10px; }
+
+  /* pill tabs (timeframe) */
+  .pill-tabs { display:inline-flex; background:#0F1421; border:1px solid #1F2937; border-radius:8px; padding:2px; }
+  .pill-tabs button { font-size:11.5px; font-weight:500; padding:5px 12px; border-radius:6px; background:transparent; color:#9CA3AF; border:none; transition:background .12s, color .12s; }
+  .pill-tabs button:hover { color:#E5E7EB; }
+  .pill-tabs button.active { background:#141B2A; color:#83E9FF; font-weight:600; }
+
+  /* card */
+  .card { background:#0F1421; border:1px solid #1F2937; border-radius:12px; }
+  .card-head { display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #1F2937; }
+  .icon-wrap { width:24px; height:24px; border-radius:6px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; flex-shrink:0; }
+  .card-title { font-size:13px; font-weight:600; color:#E5E7EB; letter-spacing:-0.005em; }
+  .tag { font-size:10px; font-weight:600; padding:2px 7px; border-radius:4px; background:#141B2A; color:#9CA3AF; border:1px solid #1F2937; text-transform:uppercase; letter-spacing:0.04em; }
+  .tag-brand { background:rgba(131,233,255,0.10); color:#83E9FF; border:1px solid rgba(131,233,255,0.25); }
+  .tag-gold { background:rgba(249,227,112,0.10); color:#F9E370; border:1px solid rgba(249,227,112,0.25); }
+  .tag-success { background:rgba(31,168,91,0.12); color:#1FA85B; border:1px solid rgba(31,168,91,0.25); }
+  .tag-danger { background:rgba(229,62,62,0.12); color:#E53E3E; border:1px solid rgba(229,62,62,0.25); }
+  .ml-auto { margin-left:auto; }
+  .view-all { font-size:11px; font-weight:500; color:#83E9FF; display:inline-flex; align-items:center; gap:4px; }
+  .view-all:hover { color:#A8F0FF; }
+
+  /* hero charts row */
+  .hero-row { display:grid; grid-template-columns:1.45fr 1fr; gap:14px; margin-bottom:14px; }
+  .chart-body { padding:14px 16px 16px; }
+  .chart-svg { width:100%; height:auto; display:block; }
+  .chart-legend { display:flex; align-items:center; gap:14px; font-size:11px; color:#9CA3AF; }
+  .chart-legend .dot { width:8px; height:8px; border-radius:2px; display:inline-block; margin-right:5px; vertical-align:middle; }
+  .hero-headline { display:flex; align-items:baseline; gap:10px; padding:8px 16px 0; }
+  .hero-headline .v { font-size:24px; font-weight:600; letter-spacing:-0.02em; color:#E5E7EB; }
+  .hero-headline .d { font-size:12px; font-weight:600; }
+  .hero-headline .d.up { color:#1FA85B; }
+  .hero-headline .d.dn { color:#E53E3E; }
+  .hero-sub { font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; padding:0 16px 6px; font-weight:600; }
+
+  /* KPI ribbon */
+  .ribbon { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:#1F2937; border:1px solid #2A3445; border-radius:10px; overflow:hidden; margin-bottom:14px; }
+  .ribbon .cell { background:#0F1421; padding:14px 16px; transition:background .15s; }
+  .ribbon .cell:hover { background:#141B2A; }
+  .ribbon .lb { font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; font-weight:600; }
+  .ribbon .v { font-size:22px; font-weight:600; letter-spacing:-0.015em; margin-top:6px; color:#E5E7EB; }
+  .ribbon .sub { font-size:10.5px; color:#6B7280; margin-top:4px; }
+  .ribbon .sub.up { color:#1FA85B; }
+  .ribbon .sub.dn { color:#E53E3E; }
+
+  /* leaderboard module */
+  .lb-row { display:grid; grid-template-columns: 32px 1fr 110px 90px 100px 90px; align-items:center; gap:12px; padding:11px 16px; border-bottom:1px solid rgba(31,41,55,0.6); transition:background .12s; }
+  .lb-row:hover { background:#141B2A; }
+  .lb-row:last-child { border-bottom:none; }
+  .rank { font-size:11px; font-weight:700; color:#6B7280; }
+  .rank.top { color:#F9E370; }
+  .av { width:28px; height:28px; border-radius:7px; background:rgba(131,233,255,0.10); color:#83E9FF; display:grid; place-items:center; font-size:10px; font-weight:700; flex-shrink:0; }
+  .lb-name { font-size:13px; font-weight:600; color:#E5E7EB; line-height:1.2; }
+  .lb-addr { font-size:11px; color:#9CA3AF; margin-top:2px; }
+  .lb-flex { display:flex; align-items:center; gap:10px; min-width:0; }
+  .lb-name-block { min-width:0; overflow:hidden; }
+  .lb-name, .lb-addr { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* spark */
+  .spark-cell { width:100%; height:32px; }
+
+  /* table */
+  .tbl-h { display:grid; grid-template-columns: 1fr 140px 120px 100px 100px 90px 90px 32px; padding:9px 16px; font-size:9.5px; text-transform:uppercase; letter-spacing:0.06em; color:#6B7280; font-weight:600; background:#141B2A; border-bottom:1px solid #1F2937; }
+  .tbl-row { display:grid; grid-template-columns: 1fr 140px 120px 100px 100px 90px 90px 32px; padding:11px 16px; font-size:12.5px; align-items:center; border-bottom:1px solid rgba(31,41,55,0.6); transition:background .12s; gap:6px; }
+  .tbl-row:hover { background:#141B2A; }
+  .tbl-row:last-child { border-bottom:none; }
+  .num { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+  .num-r { text-align:right; }
+  .col-r { justify-self:end; text-align:right; }
+  .pos { color:#1FA85B; }
+  .neg { color:#E53E3E; }
+  .fees { color:#F9E370; }
+  .secondary { color:#9CA3AF; }
+  .tertiary { color:#6B7280; }
+  .row-action { color:#6B7280; }
+  .tbl-row:hover .row-action { color:#83E9FF; }
+
+  /* address mono */
+  .addr { font-family:'JetBrains Mono',monospace; font-size:11px; color:#9CA3AF; }
+  .addr-brand { color:#83E9FF; }
+  .addr-brand:hover { text-decoration:underline; }
+
+  /* lockup pill */
+  .pill-sm { font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:4px; background:#141B2A; color:#9CA3AF; border:1px solid #1F2937; font-family:'JetBrains Mono',monospace; }
+
+  /* status dot */
+  .status-open { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:#1FA85B; font-weight:500; }
+  .status-open::before { content:""; width:6px; height:6px; border-radius:50%; background:#1FA85B; box-shadow:0 0 0 2px rgba(31,168,91,0.15); }
+  .status-closed { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:#6B7280; font-weight:500; }
+  .status-closed::before { content:""; width:6px; height:6px; border-radius:50%; background:#6B7280; }
+
+  /* pagination */
+  .pag { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-top:1px solid #1F2937; font-size:11.5px; color:#9CA3AF; }
+  .pag-nav { display:flex; align-items:center; gap:4px; }
+  .pag-btn { width:28px; height:28px; display:grid; place-items:center; border-radius:6px; background:#141B2A; border:1px solid #1F2937; color:#9CA3AF; font-size:12px; font-weight:500; }
+  .pag-btn:hover { color:#E5E7EB; border-color:#2A3445; }
+  .pag-btn.active { background:rgba(131,233,255,0.10); color:#83E9FF; border-color:rgba(131,233,255,0.25); }
+  .pag-btn.disabled { opacity:0.4; cursor:not-allowed; }
+
+  /* tabs simple */
+  .sec-spacer { height:14px; }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  /* section title */
+  .sec-title { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+  .sec-title h2 { font-size:14px; font-weight:600; letter-spacing:-0.01em; color:#E5E7EB; margin:0; }
+  .sec-title p { font-size:11.5px; color:#6B7280; margin:0; }
+
+  /* mini bar legend chip */
+  .chip { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:#9CA3AF; padding:3px 8px; border-radius:5px; background:#141B2A; border:1px solid #1F2937; }
+  .chip i { width:8px; height:8px; border-radius:2px; display:inline-block; }
+
+</style>
+</head>
+<body>
+<div class="halo"></div>
+
+<div class="app">
+  <!-- sidebar -->
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-title">Liquid Terminal</div>
+      <div class="brand-sub">Hyperliquid Data</div>
+    </div>
+    <div class="nav-group">Overview</div>
+    <a class="side-link"><svg class="side-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a class="side-link"><svg class="side-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>Market</a>
+    <div class="nav-group">Chain</div>
+    <a class="side-link active"><svg class="side-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Vaults</a>
+    <a class="side-link"><svg class="side-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Explorer</a>
+    <div class="nav-group">Learn</div>
+    <a class="side-link"><svg class="side-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z"/><path d="M4 16a4 4 0 0 1 4-4h12"/></svg>Wiki</a>
+  </aside>
+
+  <!-- main -->
+  <main class="main">
+    <!-- sticky header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="search-wrap">
+          <svg class="s-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search vault, address, leader..." />
+        </div>
+        <button class="btn-ghost">Docs</button>
+        <button class="btn-primary">Connect</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- page header -->
+      <div class="page-head">
+        <div>
+          <div class="page-title">Vaults</div>
+          <div class="page-desc">Track every Hyperliquid vault — equity curve, real PnL, net flows and follower momentum. Built for traders looking for performance signal.</div>
+        </div>
+        <div class="page-actions">
+          <div class="pill-tabs">
+            <button>1D</button>
+            <button>7D</button>
+            <button class="active">30D</button>
+            <button>All</button>
+          </div>
+          <button class="btn-primary" style="background:#141B2A;color:#E5E7EB;border:1px solid #2A3445;">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- hero charts row -->
+      <div class="hero-row">
+        <!-- ecosystem TVL evolution -->
+        <div class="card">
+          <div class="card-head">
+            <div class="icon-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            </div>
+            <div class="card-title">Ecosystem TVL</div>
+            <span class="tag tag-brand">Live</span>
+            <a class="view-all ml-auto">30D · Last update 12s ago</a>
+          </div>
+          <div class="hero-headline">
+            <span class="v mono">$439.34M</span>
+            <span class="d up mono">+4.82% (30D)</span>
+          </div>
+          <div class="hero-sub">Total value locked across 3,245 vaults</div>
+          <div class="chart-body" style="padding-top:6px;">
+            <svg class="chart-svg" viewBox="0 0 720 220" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="grad-tvl" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- gridlines -->
+              <line x1="0" y1="40" x2="720" y2="40" stroke="#1F2937" stroke-dasharray="3 4"/>
+              <line x1="0" y1="100" x2="720" y2="100" stroke="#1F2937" stroke-dasharray="3 4"/>
+              <line x1="0" y1="160" x2="720" y2="160" stroke="#1F2937" stroke-dasharray="3 4"/>
+              <!-- area -->
+              <path d="M0,170 L40,162 L80,158 L120,148 L160,150 L200,138 L240,132 L280,128 L320,118 L360,108 L400,112 L440,96 L480,92 L520,80 L560,82 L600,70 L640,62 L680,52 L720,46 L720,220 L0,220 Z" fill="url(#grad-tvl)"/>
+              <!-- line -->
+              <path d="M0,170 L40,162 L80,158 L120,148 L160,150 L200,138 L240,132 L280,128 L320,118 L360,108 L400,112 L440,96 L480,92 L520,80 L560,82 L600,70 L640,62 L680,52 L720,46" fill="none" stroke="#83E9FF" stroke-width="2"/>
+              <!-- last point -->
+              <circle cx="720" cy="46" r="3.5" fill="#83E9FF"/>
+              <circle cx="720" cy="46" r="7" fill="#83E9FF" opacity="0.15"/>
+              <!-- axis -->
+              <text x="0"   y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">Apr 27</text>
+              <text x="180" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 4</text>
+              <text x="360" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 11</text>
+              <text x="540" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 18</text>
+              <text x="680" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 27</text>
+              <text x="700" y="44" fill="#83E9FF" font-size="10" font-family="JetBrains Mono" text-anchor="end">$439.3M</text>
+            </svg>
+            <div class="chart-legend" style="margin-top:8px;">
+              <span class="chip"><i style="background:#83E9FF;"></i>TVL (USDC)</span>
+              <span class="chip" style="color:#1FA85B;"><i style="background:#1FA85B;"></i>+$20.1M net inflow</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- net flow -->
+        <div class="card">
+          <div class="card-head">
+            <div class="icon-wrap">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18M7 7l5-4 5 4M7 17l5 4 5-4"/></svg>
+            </div>
+            <div class="card-title">Net Flow</div>
+            <span class="tag">Daily</span>
+            <a class="view-all ml-auto">30D</a>
+          </div>
+          <div class="hero-headline">
+            <span class="v mono pos">+$2.41M</span>
+            <span class="d up mono">24h</span>
+          </div>
+          <div class="hero-sub">Deposits minus withdrawals, ecosystem-wide</div>
+          <div class="chart-body" style="padding-top:6px;">
+            <svg class="chart-svg" viewBox="0 0 460 220" preserveAspectRatio="none">
+              <line x1="0" y1="110" x2="460" y2="110" stroke="#2A3445"/>
+              <!-- positive bars -->
+              <g fill="#1FA85B">
+                <rect x="6"   y="64"  width="11" height="46"/>
+                <rect x="36"  y="78"  width="11" height="32"/>
+                <rect x="66"  y="52"  width="11" height="58"/>
+                <rect x="96"  y="70"  width="11" height="40"/>
+                <rect x="156" y="40"  width="11" height="70"/>
+                <rect x="186" y="58"  width="11" height="52"/>
+                <rect x="246" y="32"  width="11" height="78"/>
+                <rect x="306" y="48"  width="11" height="62"/>
+                <rect x="336" y="20"  width="11" height="90"/>
+                <rect x="366" y="56"  width="11" height="54"/>
+                <rect x="396" y="36"  width="11" height="74"/>
+                <rect x="426" y="50"  width="11" height="60"/>
+              </g>
+              <!-- negative bars -->
+              <g fill="#E53E3E">
+                <rect x="21"  y="110" width="11" height="38"/>
+                <rect x="51"  y="110" width="11" height="26"/>
+                <rect x="81"  y="110" width="11" height="44"/>
+                <rect x="111" y="110" width="11" height="20"/>
+                <rect x="126" y="110" width="11" height="34"/>
+                <rect x="141" y="110" width="11" height="48"/>
+                <rect x="171" y="110" width="11" height="22"/>
+                <rect x="201" y="110" width="11" height="60"/>
+                <rect x="216" y="110" width="11" height="30"/>
+                <rect x="231" y="110" width="11" height="42"/>
+                <rect x="261" y="110" width="11" height="28"/>
+                <rect x="276" y="110" width="11" height="50"/>
+                <rect x="291" y="110" width="11" height="36"/>
+                <rect x="321" y="110" width="11" height="42"/>
+                <rect x="351" y="110" width="11" height="24"/>
+                <rect x="381" y="110" width="11" height="32"/>
+                <rect x="411" y="110" width="11" height="40"/>
+                <rect x="441" y="110" width="11" height="18"/>
+              </g>
+              <text x="0"   y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">Apr 27</text>
+              <text x="220" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 11</text>
+              <text x="408" y="212" fill="#6B7280" font-size="10" font-family="JetBrains Mono">May 27</text>
+              <text x="455" y="106" fill="#9CA3AF" font-size="10" font-family="JetBrains Mono" text-anchor="end">0</text>
+            </svg>
+            <div class="chart-legend" style="margin-top:8px;">
+              <span class="chip"><i style="background:#1FA85B;"></i>Deposits</span>
+              <span class="chip"><i style="background:#E53E3E;"></i>Withdrawals</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI ribbon -->
+      <div class="ribbon">
+        <div class="cell">
+          <div class="lb">Total TVL</div>
+          <div class="v mono">$439.34M</div>
+          <div class="sub up">+4.82% · 30D</div>
+        </div>
+        <div class="cell">
+          <div class="lb">Vaults</div>
+          <div class="v mono">3,245</div>
+          <div class="sub">+42 new this month</div>
+        </div>
+        <div class="cell">
+          <div class="lb">Active depositors</div>
+          <div class="v mono">~150,118</div>
+          <div class="sub up">+1,284 · 7D</div>
+        </div>
+        <div class="cell">
+          <div class="lb">Avg APR</div>
+          <div class="v mono">18.4%</div>
+          <div class="sub">Median 7.2%</div>
+        </div>
+      </div>
+
+      <!-- Leaderboard top performers -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head">
+          <div class="icon-wrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+          </div>
+          <div class="card-title">Top performers</div>
+          <span class="tag tag-gold">30D APR</span>
+          <a class="view-all ml-auto">View all →</a>
+        </div>
+        <div>
+          <!-- row 1 HLP -->
+          <div class="lb-row">
+            <div class="rank top mono">01</div>
+            <div class="lb-flex">
+              <div class="av">HLP</div>
+              <div class="lb-name-block">
+                <div class="lb-name">HLP — Hyperliquidity Provider</div>
+                <div class="lb-addr mono">Leader 0x677d…84e7 · No commission</div>
+              </div>
+            </div>
+            <div class="num col-r" style="font-size:13px; font-weight:600;">$356.90M</div>
+            <div class="col-r"><span class="tag tag-gold mono">+1.28%</span></div>
+            <div class="num col-r secondary">91,557 fol.</div>
+            <div class="col-r">
+              <svg class="spark-cell" viewBox="0 0 90 32" preserveAspectRatio="none">
+                <defs><linearGradient id="sp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#83E9FF" stop-opacity="0.4"/><stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,22 L10,20 L20,18 L30,21 L40,14 L50,12 L60,15 L70,9 L80,11 L90,6 L90,32 L0,32 Z" fill="url(#sp1)"/>
+                <path d="M0,22 L10,20 L20,18 L30,21 L40,14 L50,12 L60,15 L70,9 L80,11 L90,6" stroke="#83E9FF" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- row 2 -->
+          <div class="lb-row">
+            <div class="rank top mono">02</div>
+            <div class="lb-flex">
+              <div class="av" style="background:rgba(167,139,250,0.12); color:#A78BFA;">SS</div>
+              <div class="lb-name-block">
+                <div class="lb-name">[Systemic Strategies] HyperGrowth</div>
+                <div class="lb-addr mono">Leader 0x4b2c…91ae · 10% fee</div>
+              </div>
+            </div>
+            <div class="num col-r" style="font-size:13px; font-weight:600;">$13.31M</div>
+            <div class="col-r"><span class="tag tag-gold mono">+214%</span></div>
+            <div class="num col-r secondary">4,178 fol.</div>
+            <div class="col-r">
+              <svg class="spark-cell" viewBox="0 0 90 32" preserveAspectRatio="none">
+                <defs><linearGradient id="sp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FA85B" stop-opacity="0.45"/><stop offset="100%" stop-color="#1FA85B" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,28 L10,24 L20,26 L30,18 L40,20 L50,12 L60,14 L70,7 L80,9 L90,3 L90,32 L0,32 Z" fill="url(#sp2)"/>
+                <path d="M0,28 L10,24 L20,26 L30,18 L40,20 L50,12 L60,14 L70,7 L80,9 L90,3" stroke="#1FA85B" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- row 3 -->
+          <div class="lb-row">
+            <div class="rank mono">03</div>
+            <div class="lb-flex">
+              <div class="av">GR</div>
+              <div class="lb-name-block">
+                <div class="lb-name">Growi HF</div>
+                <div class="lb-addr mono">Leader 0x83fa…d11c · 10% fee</div>
+              </div>
+            </div>
+            <div class="num col-r" style="font-size:13px; font-weight:600;">$8.54M</div>
+            <div class="col-r"><span class="tag tag-success mono">+5.60%</span></div>
+            <div class="num col-r secondary">3,786 fol.</div>
+            <div class="col-r">
+              <svg class="spark-cell" viewBox="0 0 90 32" preserveAspectRatio="none">
+                <path d="M0,18 L10,20 L20,16 L30,19 L40,15 L50,17 L60,12 L70,14 L80,11 L90,10" stroke="#1FA85B" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- row 4 -->
+          <div class="lb-row">
+            <div class="rank mono">04</div>
+            <div class="lb-flex">
+              <div class="av" style="background:rgba(167,139,250,0.12); color:#A78BFA;">SS</div>
+              <div class="lb-name-block">
+                <div class="lb-name">[Systemic Strategies] L/S Grids</div>
+                <div class="lb-addr mono">Leader 0x4b2c…91ae · 10% fee</div>
+              </div>
+            </div>
+            <div class="num col-r" style="font-size:13px; font-weight:600;">$7.20M</div>
+            <div class="col-r"><span class="tag tag-gold mono">+87%</span></div>
+            <div class="num col-r secondary">2,688 fol.</div>
+            <div class="col-r">
+              <svg class="spark-cell" viewBox="0 0 90 32" preserveAspectRatio="none">
+                <path d="M0,22 L10,18 L20,20 L30,14 L40,16 L50,10 L60,13 L70,8 L80,11 L90,5" stroke="#1FA85B" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- row 5 -->
+          <div class="lb-row">
+            <div class="rank mono">05</div>
+            <div class="lb-flex">
+              <div class="av">LB</div>
+              <div class="lb-name-block">
+                <div class="lb-name">Long HYPE &amp; BTC | Short Garbage</div>
+                <div class="lb-addr mono">Leader 0xa9e2…3b48 · 10% fee</div>
+              </div>
+            </div>
+            <div class="num col-r" style="font-size:13px; font-weight:600;">$5.80M</div>
+            <div class="col-r"><span class="tag tag-gold mono">+142%</span></div>
+            <div class="num col-r secondary">2,274 fol.</div>
+            <div class="col-r">
+              <svg class="spark-cell" viewBox="0 0 90 32" preserveAspectRatio="none">
+                <path d="M0,20 L10,15 L20,19 L30,12 L40,17 L50,9 L60,14 L70,7 L80,12 L90,4" stroke="#1FA85B" stroke-width="1.4" fill="none"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- main table -->
+      <div class="card">
+        <div class="card-head">
+          <div class="icon-wrap">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          </div>
+          <div class="card-title">All vaults</div>
+          <span class="tag mono">3,245 total</span>
+          <div class="ml-auto" style="display:flex; align-items:center; gap:10px;">
+            <div class="search-wrap" style="width:240px;">
+              <svg class="s-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input placeholder="Filter vaults..." style="height:30px;font-size:12px;" />
+            </div>
+            <span class="chip">Open only</span>
+            <span class="chip">APR &gt; 0%</span>
+          </div>
+        </div>
+
+        <div class="tbl-h">
+          <div>Vault</div>
+          <div>Leader</div>
+          <div class="col-r">TVL</div>
+          <div class="col-r">APR (30D)</div>
+          <div class="col-r">Followers</div>
+          <div class="col-r">Lockup</div>
+          <div class="col-r">Status</div>
+          <div></div>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">HLP</div>
+            <div class="lb-name-block">
+              <div class="lb-name">HLP — Hyperliquidity Provider</div>
+              <div class="addr">0x010461…d3a3</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x677d…84e7</a>
+          <div class="num col-r" style="font-weight:600;">$356.90M</div>
+          <div class="num col-r pos">+1.28%</div>
+          <div class="num col-r secondary">91,557</div>
+          <div class="col-r"><span class="pill-sm">4d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av" style="background:rgba(167,139,250,0.12); color:#A78BFA;">SS</div>
+            <div class="lb-name-block">
+              <div class="lb-name">[Systemic Strategies] HyperGrowth</div>
+              <div class="addr">0x9e22…f1ab</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x4b2c…91ae</a>
+          <div class="num col-r" style="font-weight:600;">$13.31M</div>
+          <div class="num col-r pos">+214.00%</div>
+          <div class="num col-r secondary">4,178</div>
+          <div class="col-r"><span class="pill-sm">1d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">GR</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Growi HF</div>
+              <div class="addr">0xc1b8…a204</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x83fa…d11c</a>
+          <div class="num col-r" style="font-weight:600;">$8.54M</div>
+          <div class="num col-r pos">+5.60%</div>
+          <div class="num col-r secondary">3,786</div>
+          <div class="col-r"><span class="pill-sm">1d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av" style="background:rgba(167,139,250,0.12); color:#A78BFA;">SS</div>
+            <div class="lb-name-block">
+              <div class="lb-name">[Systemic Strategies] L/S Grids</div>
+              <div class="addr">0x9e22…d6f2</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x4b2c…91ae</a>
+          <div class="num col-r" style="font-weight:600;">$7.20M</div>
+          <div class="num col-r pos">+87.00%</div>
+          <div class="num col-r secondary">2,688</div>
+          <div class="col-r"><span class="pill-sm">1d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">LB</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Long HYPE &amp; BTC | Short Garbage</div>
+              <div class="addr">0x7d4f…2c0e</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0xa9e2…3b48</a>
+          <div class="num col-r" style="font-weight:600;">$5.80M</div>
+          <div class="num col-r pos">+142.00%</div>
+          <div class="num col-r secondary">2,274</div>
+          <div class="col-r"><span class="pill-sm">2d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av" style="background:rgba(249,227,112,0.12); color:#F9E370;">PV</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Permian Vault — Delta Neutral</div>
+              <div class="addr">0xf102…998b</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x33ee…0a14</a>
+          <div class="num col-r" style="font-weight:600;">$4.92M</div>
+          <div class="num col-r pos">+22.40%</div>
+          <div class="num col-r secondary">1,912</div>
+          <div class="col-r"><span class="pill-sm">1d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">QM</div>
+            <div class="lb-name-block">
+              <div class="lb-name">QuantMM — Cross-asset MM</div>
+              <div class="addr">0x68bb…ff19</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0xb118…7c30</a>
+          <div class="num col-r" style="font-weight:600;">$3.81M</div>
+          <div class="num col-r pos">+34.10%</div>
+          <div class="num col-r secondary">1,420</div>
+          <div class="col-r"><span class="pill-sm">3d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av" style="background:rgba(229,62,62,0.12); color:#E53E3E;">RV</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Rekt Vault — High Leverage Plays</div>
+              <div class="addr">0xee01…22d8</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x9a14…b3c2</a>
+          <div class="num col-r" style="font-weight:600;">$2.14M</div>
+          <div class="num col-r neg">-31.20%</div>
+          <div class="num col-r secondary">988</div>
+          <div class="col-r"><span class="pill-sm">5d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">NV</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Nautilus Vault — Carry on ETH/SOL</div>
+              <div class="addr">0xbb33…550c</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x4cb2…00fe</a>
+          <div class="num col-r" style="font-weight:600;">$1.96M</div>
+          <div class="num col-r pos">+9.80%</div>
+          <div class="num col-r secondary">812</div>
+          <div class="col-r"><span class="pill-sm">2d</span></div>
+          <div class="col-r"><span class="status-closed">Closed</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <div class="tbl-row">
+          <a class="lb-flex" href="vaults-A-performance-detail.html">
+            <div class="av">FV</div>
+            <div class="lb-name-block">
+              <div class="lb-name">Funding Vampire — Perps carry</div>
+              <div class="addr">0xa028…11b9</div>
+            </div>
+          </a>
+          <a class="addr addr-brand">0x71d2…cc4a</a>
+          <div class="num col-r" style="font-weight:600;">$1.42M</div>
+          <div class="num col-r pos">+18.40%</div>
+          <div class="num col-r secondary">604</div>
+          <div class="col-r"><span class="pill-sm">1d</span></div>
+          <div class="col-r"><span class="status-open">Open</span></div>
+          <a class="row-action col-r" href="vaults-A-performance-detail.html">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+
+        <!-- pagination -->
+        <div class="pag">
+          <span>Showing <span class="num" style="color:#E5E7EB;">1–10</span> of <span class="num" style="color:#E5E7EB;">3,245</span> vaults</span>
+          <div class="pag-nav">
+            <button class="pag-btn disabled">‹</button>
+            <button class="pag-btn active">1</button>
+            <button class="pag-btn">2</button>
+            <button class="pag-btn">3</button>
+            <button class="pag-btn">4</button>
+            <button class="pag-btn">…</button>
+            <button class="pag-btn">325</button>
+            <button class="pag-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>

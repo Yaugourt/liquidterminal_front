@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vaults — V4 (kit-composed mockup)</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════════
+  /explorer/vaults — V4 MIGRATION MOCKUP  (revised: -Status -Deposit cols,
+  +SectionHead, height-balanced with rail, rail footers removed)
+  Composed ONLY from dash-mockups/kit.html blocks; aligned to the main dashboard
+  prototype (src/app/(app)/dashboard/page.tsx → PageHeader · SectionHead · KpiRibbon ·
+  OverviewModule/ModuleRow). Every value is grounded in a real :3002 response (GATE 1).
+
+  ── LIVRABLE B · BLOCK → KIT BLOCK → PROD PRIMITIVE → DATA SOURCE ──────────────
+  | Mockup block        | Kit block             | Prod primitive (import)                           | Data source (GATE 1)                                       |
+  | Section labels      | (SectionHead)         | <SectionHead> · @/components/dashboard            | static                                                     |
+  | Page header         | PageHeader            | <PageHeader> · @/components/common                | directory.dataUpdatedAt                                    |
+  | KPI ribbon (4)      | KpiRibbon             | <KpiRibbon> · @/components/common  ⚠ C-1          | pagination.totalTvl · vaultsNumber · median(apr) · Σfollow |
+  | Toolbar search+tabs | TypedDataTable toolbar| <TypedDataTable toolbar>+<PillTabs> ⚠ C-2         | directory.search/statusFilter/open/closedCount             |
+  | Directory table     | TypedDataTable        | <TypedDataTable> · @/components/common             | directory.filtered (/market/vaults ⨝ vaultSummaries)       |
+  | 2-col + 280px rail  | Page layout           | grid grid-cols-[minmax(0,1fr)_280px]              | —                                                          |
+  | Top APR · current   | ModuleRow             | <OverviewModule>+<ModuleRow>                      | directory.rows, current apr (min-TVL $1M)                  |
+  | Followers gained    | ModuleRow             | <OverviewModule>+<ModuleRow>                      | /indexer/vaults/leaderboards/followers-gained?window=24h   |
+  | Largest outflows    | ModuleRow             | <OverviewModule>+<ModuleRow>                      | /indexer/vaults/leaderboards/outflows?window=24h           |
+
+  ── LIVRABLE C · MISSING PRIMITIVES / KIT BLOCKS ──────────────────────────────
+  C-1  KpiRibbon — exists on v4-pages (src/components/common/KpiRibbon.tsx), ABSENT
+       from this v4-vaults worktree. Port/merge before shipping (hand-rolled gap-px strip = DS-forbidden).
+  C-2  PillTabs kit block — primitive exists (ui/pill-tabs.tsx); no mirror block in kit.html → add it.
+  C-3  kit.html copied into this worktree (was missing).
+
+  ── GATE 1 · NOT SERVED → NOT DRAWN (vs vaults-B-dense) ───────────────────────
+  ✗ 24h/7dΔ TVL · per-row sparkline · Lockup · Net-flow KPI · unique depositors
+  ✗ Whitelisted/Followed filters · KPI sparkline + sub-deltas (no history)
+  ✗ Status & Deposit columns removed per review (open-only backend → redundant)
+
+  ⚠ CLOSED-DATA CAVEAT: backend :3002 is on feat/vault-leaderboards (not main).
+    /market/vaults → 3,241 open, 0 closed (includeClosed inert there & front never sends it).
+    Closed exist only via vaultSummaries?includeClosed=true (no tvl/apr). Closed tab empty here;
+    "Vaults 3,241" → ~9,458 on main.
+  ════════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of kit.html / src/app/globals.css :root.
+  tailwind.config = { theme: { extend: {
+    colors: {
+      base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+      "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+      "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+      brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+      gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+    },
+    fontFamily: {
+      sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+      inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+      mono: ["JetBrains Mono","ui-monospace","monospace"],
+    },
+  } } };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar 232px (shell context) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="flex items-center gap-2 px-2 pb-4">
+      <span class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold text-sm">L</span>
+      <span class="font-semibold text-text-primary text-sm">Liquid Terminal</span>
+    </div>
+    <a class="px-2.5 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Dashboard</a>
+    <a class="px-2.5 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Market</a>
+    <a class="px-2.5 py-1.5 rounded-md text-[13px] text-text-primary bg-surface-2 font-medium flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span>Explorer · Vaults</a>
+    <a class="px-2.5 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Wiki</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span>
+      <span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Vaults</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-5 max-w-[1400px] mx-auto space-y-6">
+
+      <!-- PageHeader (kit L72) — no stats, just updated + actions -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Vaults</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">updated <span class="mono text-text-secondary">12s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Export CSV</button>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Create Vault</button>
+        </div>
+      </div>
+
+      <!-- Caveat banner (GATE 1) -->
+      <div class="flex items-start gap-2.5 rounded-lg border border-gold/25 bg-gold/[0.06] px-3.5 py-2.5">
+        <span class="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-gold/20 text-gold grid place-items-center text-[10px] font-bold">!</span>
+        <p class="text-[12px] leading-relaxed text-text-secondary">
+          <span class="text-gold font-semibold">Backend on feat/vault-leaderboards</span> — open vaults only.
+          The <span class="text-text-primary">Closed</span> tab is empty here and closed vaults carry no TVL/APR.
+          <span class="text-text-tertiary">Counts are the open set (Vaults ≈ 9,458 on <span class="mono">main</span>).</span>
+        </p>
+      </div>
+
+      <!-- ═══ Section: Overview (SectionHead + KpiRibbon) ═══ -->
+      <section class="space-y-2.5">
+        
+      <div class="flex items-baseline gap-3 mb-1">
+        <h2 class="text-[14px] font-semibold text-text-primary">Overview</h2>
+        <span class="text-[11px] text-text-tertiary">TVL, APR & followers across tracked vaults</span>
+      </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden">
+          <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+            <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Total TVL</div>
+            <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">$440.2M</div>
+            <div class="mono text-[10px] text-text-tertiary mt-1.5">across open vaults</div>
+          </div>
+          <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+            <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Vaults</div>
+            <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">3,241</div>
+            <div class="mono text-[10px] text-text-tertiary mt-1.5">total tracked</div>
+          </div>
+          <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+            <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Avg APR · median</div>
+            <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-success">+9.61%</div>
+            <div class="mono text-[10px] text-text-tertiary mt-1.5">active · excl HLP · annualized</div>
+          </div>
+          <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
+            <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Followers tracked</div>
+            <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">183,198</div>
+            <div class="mono text-[10px] text-text-tertiary mt-1.5">Σ followerCount</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Section: All vaults (SectionHead + table + 280px rail) ═══ -->
+      <section class="space-y-2.5">
+        
+      <div class="flex items-baseline gap-3 mb-1">
+        <h2 class="text-[14px] font-semibold text-text-primary">All vaults</h2>
+        <span class="text-[11px] text-text-tertiary">Directory · sortable · joins HL TVL/APR with indexer follower data</span>
+      </div>
+        <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+          <!-- TypedDataTable card (kit L189) -->
+          <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+            <div class="flex flex-wrap items-center gap-3 px-3 py-2.5 border-b border-border-subtle">
+              <div class="relative flex-1 min-w-[180px] max-w-xs">
+                <input placeholder="Search name, address, leader…" class="w-full pl-3 h-8 text-sm bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+              </div>
+              <div class="flex items-center gap-1 p-1 bg-surface-2 rounded-lg w-fit">
+                <button class="relative py-1.5 px-2.5 sm:px-4 text-xs font-medium rounded-md whitespace-nowrap bg-brand text-brand-text-on">All <span class="mono opacity-70">3,241</span></button>
+                <button class="relative py-1.5 px-2.5 sm:px-4 text-xs font-medium rounded-md whitespace-nowrap text-text-secondary hover:text-text-primary">Open <span class="mono opacity-70">3,241</span></button>
+                <button class="relative py-1.5 px-2.5 sm:px-4 text-xs font-medium rounded-md whitespace-nowrap text-text-secondary hover:text-text-primary">Closed <span class="mono opacity-70">0</span></button>
+              </div>
+              <span class="text-text-tertiary text-xs ml-auto shrink-0">3,241 vaults</span>
+            </div>
+            <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead><tr>
+                <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">#</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Vault</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Leader</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">TVL</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">APR</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">Followers</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">Comm.</th><th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Age</th>
+              </tr></thead>
+              <tbody>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">1</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-gold/10 text-gold">HP</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Hyperliquidity Provider (HLP)</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xdfc2…f303</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x677d…84e7</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$357.0M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+1.23%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">91,557</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">0%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">3y 0m</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">2</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">SS</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">[ Systemic Strategies ] ♾️ HyperG…</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xd6e5…5b42</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x2b80…6f4b</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$13.9M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+305.81%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">4,178</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">9m 2d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">3</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">GH</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Growi HF</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x1e37…8d5e</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x7789…f60d</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$8.3M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+9.61%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">3,786</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">1y 10m</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">4</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">SS</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">[ Systemic Strategies ] L/S Grids</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x07fd…689d</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x2b80…6f4b</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$6.7M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−3.65%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">2,688</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">1y 4m</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">5</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">DR</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">drkmttr</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xc179…e0c8</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0xf4f7…239f</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$5.2M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+18.75%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">712</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">5m 21d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">6</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">UL</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Ultron</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x45e7…5e73</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x8d3f…c056</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$3.7M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−1.16%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">402</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">5m 27d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">7</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">OV</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Orbit Value Strategies</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x1158…1aa5</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0xf292…9edf</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$3.1M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−0.42%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">374</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">5m 15d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">8</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">LH</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Long HYPE & BTC | Short Garbage</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xac26…a9c7</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0xa380…d939</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$3.1M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+667.26%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">2,274</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">1y 1m</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">9</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">BM</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Bitcoin Moving Average Long/Short</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xb150…4768</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x1fa1…1d08</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$2.6M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−7.81%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">766</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">7m 29d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">10</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">BR</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">BredoStrategy</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x6540…f7b7</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0xf5f5…0336</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$2.5M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+603.16%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">611</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">3m 11d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">11</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">FG</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">FC Genesis - Quantum</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xa6a3…5e40</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x3d32…cfec</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$2.2M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−0.76%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">59</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">8m 18d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">12</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">AI</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">AIQuantPulse</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x8231…1dcb</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0xcbdf…b4b3</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$2.1M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-danger">−10.50%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">317</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">3m 26d</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">13</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">MA</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Martyrbit</div>
+                      <div class="mono text-[11px] text-text-tertiary">0x27d3…02b9</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x97ee…3b2e</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$1.7M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+64.27%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">13</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">1y 4m</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors cursor-pointer">
+                <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">14</span></td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">HY</span>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium text-text-primary truncate max-w-[240px]">Hyperrr</div>
+                      <div class="mono text-[11px] text-text-tertiary">0xca23…e9e0</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x7618…c96e</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary font-semibold">$1.6M</td>
+                <td class="px-4 py-2.5 text-right"><span class="mono font-semibold text-success">+264.49%</span></td>
+                <td class="px-4 py-2.5 text-right mono text-text-primary">120</td>
+                <td class="px-4 py-2.5 text-right mono text-text-secondary">10%</td>
+                <td class="px-4 py-2.5 text-left"><span class="mono text-xs text-text-secondary">1y 5m</span></td>
+              </tr>
+              </tbody>
+            </table>
+            </div>
+            <div class="flex items-center justify-between px-3 py-2.5 border-t border-border-subtle">
+              <span class="text-[11px] text-text-tertiary">Showing <span class="mono">1–14</span> of <span class="mono">3,241</span></span>
+              <div class="flex items-center gap-1">
+                <button class="h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary text-xs">‹</button>
+                <button class="h-7 px-2.5 rounded-md bg-brand text-brand-text-on text-xs font-medium mono">1</button>
+                <button class="h-7 px-2.5 rounded-md border border-border-subtle bg-surface-2 text-text-secondary text-xs mono">2</button>
+                <button class="h-7 px-2.5 rounded-md border border-border-subtle bg-surface-2 text-text-secondary text-xs mono">3</button>
+                <button class="h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-secondary text-xs">›</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 280px sticky rail · 3 × OverviewModule + ModuleRow (kit L163) -->
+          <aside class="xl:sticky xl:top-[60px] space-y-4">
+
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+              <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[12px]">↗</span>
+              <h3 class="text-[13px] font-semibold text-text-primary truncate">Top APR · current</h3>
+              <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">5</span>
+            </div>
+            
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">01</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-gold/10 text-gold">LH</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Long HYPE & BTC</div><div class="text-[10px] text-text-tertiary truncate">$3.1M TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+667%</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">02</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">BR</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">BredoStrategy</div><div class="text-[10px] text-text-tertiary truncate">$2.5M TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+603%</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">03</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">SS</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Systemic HyperGrowth</div><div class="text-[10px] text-text-tertiary truncate">$13.9M TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+306%</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">04</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">HY</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Hyperrr</div><div class="text-[10px] text-text-tertiary truncate">$1.6M TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+264%</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5  hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">05</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">MA</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Martyrbit</div><div class="text-[10px] text-text-tertiary truncate">$1.7M TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+64%</div></div>
+            </div>
+          </div>
+
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+              <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[12px]">◴</span>
+              <h3 class="text-[13px] font-semibold text-text-primary truncate">Followers gained</h3>
+              <div class="ml-auto flex items-center gap-0.5 p-0.5 bg-surface-2 rounded-md">
+                <button class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-brand text-brand-text-on">24h</button>
+                <button class="px-1.5 py-0.5 text-[10px] font-medium rounded text-text-tertiary hover:text-text-primary">7d</button>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">01</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">SS</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Systemic HyperGrowth</div><div class="text-[10px] text-text-tertiary truncate">4,178 total</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+22</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">02</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">BR</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">BredoStrategy</div><div class="text-[10px] text-text-tertiary truncate">611 total</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+10</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">03</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-success/10 text-success">GH</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Growi HF</div><div class="text-[10px] text-text-tertiary truncate">3,786 total</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+5</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5  hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">04</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">CX</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Catrix</div><div class="text-[10px] text-text-tertiary truncate">405 total</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-success">+3</div></div>
+            </div>
+          </div>
+
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+              <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[12px]">↓</span>
+              <h3 class="text-[13px] font-semibold text-text-primary truncate">Largest outflows · 24h</h3>
+              <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">3</span>
+            </div>
+            
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">01</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">GH</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Growi HF</div><div class="text-[10px] text-text-tertiary truncate">−1.7% of TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-danger">−$111K</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">02</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">SS</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Systemic L/S</div><div class="text-[10px] text-text-tertiary truncate">−1.0% of TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-danger">−$48K</div></div>
+            </div>
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5  hover:bg-surface-2 transition-colors">
+              <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">03</span>
+              <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-brand/10 text-brand">AI</span>
+              <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">AIQuantPulse</div><div class="text-[10px] text-text-tertiary truncate">−0.2% of TVL</div></div>
+              <div class="ml-auto shrink-0 text-right"><div class="mono text-[12.5px] font-semibold text-danger">−$5K</div></div>
+            </div>
+          </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Provenance legend (mirrors the head comment) -->
+      <details class="rounded-lg border border-border-subtle bg-surface/60 text-[12px]">
+        <summary class="cursor-pointer px-3.5 py-2.5 text-text-secondary font-medium select-none">Data provenance & kit parity</summary>
+        <div class="px-3.5 pb-3.5 space-y-2 text-text-tertiary leading-relaxed">
+          <p><span class="text-text-secondary font-medium">Kit blocks:</span> SectionHead · PageHeader · KpiRibbon · TypedDataTable+toolbar · PillTabs* · Page-layout(280px rail) · OverviewModule+ModuleRow×3. No bespoke classes, no fixed widths except the 280px rail.</p>
+          <p><span class="text-text-secondary font-medium">Sources (curl :3002):</span> <span class="mono">/market/vaults</span> (tvl, apr, leader, age) ⨝ <span class="mono">vaultSummaries?includeClosed=true</span> (followerCount, leaderCommission) · <span class="mono">leaderboards/{followers-gained,outflows}?window=24h</span> (sampled top 50).</p>
+          <p><span class="text-gold font-medium">Create before ship:</span> KpiRibbon (port from v4-pages) · PillTabs kit block. <span class="text-danger font-medium">Closed tab</span> needs main's /market/vaults closed-set.</p>
+        </div>
+      </details>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HLP — Hyperliquid Core · Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #0A0B0F;
+    --bg-surface: #0F1421;
+    --bg-surface-2: #141B2A;
+    --border-subtle: #1F2937;
+    --border-default: #2A3445;
+    --text-primary: #E5E7EB;
+    --text-secondary: #9CA3AF;
+    --text-tertiary: #6B7280;
+    --brand: #83E9FF;
+    --gold: #F9E370;
+    --success: #1FA85B;
+    --danger: #E53E3E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+  a { color: inherit; text-decoration: none; }
+
+  .halo {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 15% 5%, rgba(131,233,255,0.06), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(249,227,112,0.03), transparent 50%);
+  }
+
+  .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 232px; flex-shrink: 0;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+    padding: 20px 16px;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 4px 8px 24px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #0A0B0F;
+  }
+  .logo-text { font-weight: 600; font-size: 14px; letter-spacing: 0.2px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); padding: 16px 10px 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    color: var(--text-secondary); font-size: 13px; font-weight: 500;
+    cursor: pointer;
+  }
+  .nav-item:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+  .nav-item.active {
+    background: var(--bg-surface-2);
+    color: var(--brand);
+    box-shadow: inset 2px 0 0 var(--brand);
+  }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+
+  .main { flex: 1; min-width: 0; }
+  .header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(10,11,15,0.8); backdrop-filter: blur(16px);
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .crumbs { font-size: 12px; color: var(--text-tertiary); }
+  .crumbs a { color: var(--text-secondary); }
+  .crumbs a:hover { color: var(--brand); }
+  .crumbs span { color: var(--text-primary); }
+  .header-spacer { flex: 1; }
+  .header-btn {
+    padding: 7px 14px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .header-btn.primary { background: var(--brand); color: #0A0B0F; border-color: var(--brand); font-weight: 600; }
+
+  .content { padding: 24px 32px 64px; max-width: 1440px; margin: 0 auto; }
+
+  /* HERO HEADER */
+  .vault-hero {
+    background: linear-gradient(135deg, rgba(131,233,255,0.05), rgba(249,227,112,0.02) 50%, transparent);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .vault-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 95% 5%, rgba(131,233,255,0.08), transparent 50%);
+    pointer-events: none;
+  }
+  .vh-content { position: relative; z-index: 1; }
+  .vh-top { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 22px; }
+  .avatar {
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(131,233,255,0.5), rgba(249,227,112,0.35));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; color: #0A0B0F;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(131,233,255,0.3);
+  }
+  .avatar.xl { width: 72px; height: 72px; font-size: 20px; box-shadow: 0 0 0 1px rgba(131,233,255,0.4), 0 0 32px rgba(131,233,255,0.18); }
+  .avatar.md { width: 40px; height: 40px; font-size: 13px; }
+  .avatar.sm { width: 32px; height: 32px; font-size: 11px; }
+  .avatar.xs { width: 24px; height: 24px; font-size: 9px; }
+  .vh-titles { flex: 1; min-width: 0; }
+  .vh-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 8px; }
+  .vh-name { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .badge-verified {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    background: rgba(131,233,255,0.1);
+    border: 1px solid rgba(131,233,255,0.3);
+    border-radius: 999px;
+    font-size: 11px; font-weight: 600; color: var(--brand);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  /* Leader block */
+  .leader-block {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    background: rgba(15,20,33,0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    max-width: 580px;
+  }
+  .lb-info { flex: 1; min-width: 0; }
+  .lb-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .lb-addr { font-size: 12px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .lb-meta { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+  .lb-cta { font-size: 12px; color: var(--brand); cursor: pointer; }
+
+  .vh-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .vh-btn-primary {
+    padding: 10px 18px;
+    background: var(--brand);
+    color: #0A0B0F;
+    border: 0; border-radius: 10px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+  }
+  .vh-btn-secondary {
+    padding: 9px 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Trust signals */
+  .trust-row {
+    display: flex; gap: 24px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+  }
+  .trust-item { display: flex; align-items: center; gap: 8px; }
+  .trust-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: rgba(131,233,255,0.08);
+    border: 1px solid rgba(131,233,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--brand); font-size: 11px; font-weight: 600;
+  }
+  .trust-icon.gold { background: rgba(249,227,112,0.08); border-color: rgba(249,227,112,0.2); color: var(--gold); }
+  .trust-icon.green { background: rgba(31,168,91,0.08); border-color: rgba(31,168,91,0.2); color: var(--success); }
+  .trust-text { display: flex; flex-direction: column; }
+  .trust-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+  .trust-value { font-size: 13px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+
+  /* Story metrics */
+  .story-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-bottom: 24px;
+  }
+  .story-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .story-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; }
+  .story-eyebrow.cyan { color: var(--brand); }
+  .story-eyebrow.gold { color: var(--gold); }
+  .story-headline { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .story-headline.danger { color: var(--danger); }
+  .story-headline.success { color: var(--success); }
+  .story-tagline { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+  .story-chart { margin-top: auto; height: 64px; }
+  .story-footer { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); margin-top: 12px; }
+
+  /* Performance section */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .perf-card { padding: 0; overflow: hidden; }
+  .perf-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .perf-title { font-size: 14px; font-weight: 600; }
+  .pill-tabs { display: flex; gap: 4px; background: var(--bg-surface-2); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 3px; }
+  .pill {
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .pill.active { background: var(--bg-base); color: var(--text-primary); box-shadow: 0 0 0 1px var(--border-default); }
+  .perf-chart-wrap { padding: 14px 20px 20px; }
+  .perf-meta { display: flex; gap: 28px; padding: 0 20px 16px; }
+  .perf-meta-item { display: flex; flex-direction: column; }
+  .perf-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 4px; }
+  .perf-meta-value { font-size: 16px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  /* Activity ledger */
+  .section { margin-bottom: 28px; }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+
+  .table-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--bg-surface-2);
+    text-align: left;
+    padding: 11px 16px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  thead th.right { text-align: right; }
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.right { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  .story-tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .st-whale { background: rgba(31,168,91,0.12); color: var(--success); border: 1px solid rgba(31,168,91,0.25); }
+  .st-deposit { background: rgba(131,233,255,0.1); color: var(--brand); border: 1px solid rgba(131,233,255,0.25); }
+  .st-withdraw { background: var(--bg-surface-2); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+  .st-exit { background: rgba(229,62,62,0.1); color: var(--danger); border: 1px solid rgba(229,62,62,0.25); }
+  .addr-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+  .pos { color: var(--success); }
+  .neg { color: var(--danger); }
+
+  /* Leader other vaults */
+  .other-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .other-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .other-card:hover { border-color: var(--border-default); }
+  .other-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .other-name { font-size: 13px; font-weight: 600; }
+  .other-sub { font-size: 11px; color: var(--text-tertiary); }
+  .other-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .os-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 3px; }
+  .os-v { font-size: 13px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  /* Footer info */
+  .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .info-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .info-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(131,233,255,0.08);
+    border: 1px solid rgba(131,233,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--brand);
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .info-icon.gold { background: rgba(249,227,112,0.08); border-color: rgba(249,227,112,0.2); color: var(--gold); }
+  .info-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .info-body { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .info-strong { color: var(--text-primary); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+  .footer { padding: 24px 0; text-align: center; font-size: 11px; color: var(--text-tertiary); }
+</style>
+</head>
+<body>
+<div class="halo"></div>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">L</div>
+      <div class="logo-text">Liquid Terminal</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item"><span class="nav-dot"></span>Dashboard</div>
+      <div class="nav-item"><span class="nav-dot"></span>Market</div>
+      <div class="nav-item active"><span class="nav-dot"></span>Vaults</div>
+      <div class="nav-item"><span class="nav-dot"></span>Explorer</div>
+      <div class="nav-item"><span class="nav-dot"></span>Wiki</div>
+      <div class="nav-section">Personal</div>
+      <div class="nav-item"><span class="nav-dot"></span>Portfolio</div>
+      <div class="nav-item"><span class="nav-dot"></span>Watchlist</div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="crumbs">
+        <a href="vaults-C-narrative-list.html">Explorer</a> /
+        <a href="vaults-C-narrative-list.html">Vaults</a> /
+        <span>HLP</span>
+      </div>
+      <div class="header-spacer"></div>
+      <button class="header-btn">Share</button>
+      <button class="header-btn">Watch</button>
+      <button class="header-btn primary">Deposit</button>
+    </header>
+
+    <div class="content">
+
+      <!-- HERO -->
+      <section class="vault-hero">
+        <div class="vh-content">
+          <div class="vh-top">
+            <div class="avatar xl mono">HC</div>
+            <div class="vh-titles">
+              <div class="vh-eyebrow">Hyperliquid Protocol Vault</div>
+              <h1 class="vh-name">HLP <span class="badge-verified">Verified leader</span></h1>
+
+              <!-- Leader block -->
+              <div class="leader-block">
+                <div class="avatar md mono">HC</div>
+                <div class="lb-info">
+                  <div class="lb-name">Hyperliquid Core</div>
+                  <div class="lb-addr">0x677d831aef5328190852e24f13c46cac05f984e7</div>
+                  <div class="lb-meta">Leader since May 4, 2023 · Manages 7 vaults · $362.4M total TVL</div>
+                </div>
+                <a class="lb-cta" href="vaults-C-narrative-list.html">View leader →</a>
+              </div>
+            </div>
+            <div class="vh-actions">
+              <button class="vh-btn-primary">Deposit USDC</button>
+              <button class="vh-btn-secondary">Withdraw</button>
+            </div>
+          </div>
+
+          <!-- Trust signals -->
+          <div class="trust-row">
+            <div class="trust-item">
+              <div class="trust-icon">F</div>
+              <div class="trust-text">
+                <div class="trust-label">Followers</div>
+                <div class="trust-value">91,557</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon gold">L</div>
+              <div class="trust-text">
+                <div class="trust-label">Lockup</div>
+                <div class="trust-value">4 days</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon green">C</div>
+              <div class="trust-text">
+                <div class="trust-label">Commission</div>
+                <div class="trust-value">0%</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">S</div>
+              <div class="trust-text">
+                <div class="trust-label">Sub-vaults</div>
+                <div class="trust-value">7</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon green">O</div>
+              <div class="trust-text">
+                <div class="trust-label">Status</div>
+                <div class="trust-value">Open</div>
+              </div>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon">A</div>
+              <div class="trust-text">
+                <div class="trust-label">Age</div>
+                <div class="trust-value">3y 0m</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Story metrics -->
+      <section class="story-grid">
+
+        <!-- Trust -->
+        <div class="story-card">
+          <div class="story-eyebrow cyan">Trust</div>
+          <div class="story-headline">91,557</div>
+          <div class="story-tagline">followers — grew +12.4% over 90 days, +1.2k this week.</div>
+          <svg class="story-chart" viewBox="0 0 320 64" preserveAspectRatio="none" width="100%">
+            <defs>
+              <linearGradient id="trust-g" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,52 L30,50 L60,48 L90,44 L120,42 L150,38 L180,34 L210,30 L240,26 L270,20 L300,14 L320,10 L320,64 L0,64 Z" fill="url(#trust-g)"/>
+            <path d="M0,52 L30,50 L60,48 L90,44 L120,42 L150,38 L180,34 L210,30 L240,26 L270,20 L300,14 L320,10" fill="none" stroke="#83E9FF" stroke-width="1.75"/>
+          </svg>
+          <div class="story-footer"><span>Jan 2026</span><span>May 2026</span></div>
+        </div>
+
+        <!-- Stability -->
+        <div class="story-card">
+          <div class="story-eyebrow gold">Stability</div>
+          <div class="story-headline">1,118d</div>
+          <div class="story-tagline">commission unchanged at 0% — never increased since launch.</div>
+          <svg class="story-chart" viewBox="0 0 320 64" preserveAspectRatio="none" width="100%">
+            <line x1="0" y1="32" x2="320" y2="32" stroke="#F9E370" stroke-width="1.75"/>
+            <line x1="0" y1="32" x2="320" y2="32" stroke="#F9E370" stroke-width="6" stroke-opacity="0.12"/>
+            <circle cx="8" cy="32" r="3" fill="#F9E370"/>
+            <circle cx="312" cy="32" r="3" fill="#F9E370"/>
+            <text x="160" y="20" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#F9E370" letter-spacing="0.5">FLAT — 0% commission</text>
+          </svg>
+          <div class="story-footer"><span>2023-05-04</span><span>today</span></div>
+        </div>
+
+        <!-- Track record -->
+        <div class="story-card">
+          <div class="story-eyebrow">Track record</div>
+          <div class="story-headline danger">−$125.0M</div>
+          <div class="story-tagline">cumulative PnL across 3 years — drawdown from market making at scale.</div>
+          <svg class="story-chart" viewBox="0 0 320 64" preserveAspectRatio="none" width="100%">
+            <defs>
+              <linearGradient id="rec-g" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#E53E3E" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#E53E3E" stop-opacity="0.35"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,10 L30,14 L60,18 L90,22 L120,28 L150,34 L180,40 L210,42 L240,48 L270,52 L300,56 L320,58 L320,32 L0,32 Z" fill="url(#rec-g)"/>
+            <path d="M0,10 L30,14 L60,18 L90,22 L120,28 L150,34 L180,40 L210,42 L240,48 L270,52 L300,56 L320,58" fill="none" stroke="#E53E3E" stroke-width="1.75"/>
+            <line x1="0" y1="32" x2="320" y2="32" stroke="#2A3445" stroke-width="0.5" stroke-dasharray="2,3"/>
+          </svg>
+          <div class="story-footer"><span>3y operation</span><span>fully transparent</span></div>
+        </div>
+
+      </section>
+
+      <!-- Performance -->
+      <section class="section">
+        <div class="card perf-card">
+          <div class="perf-head">
+            <div class="perf-title">Performance</div>
+            <div class="pill-tabs">
+              <div class="pill active">Equity</div>
+              <div class="pill">PnL</div>
+              <div class="pill">Net flow</div>
+              <div class="pill">APR</div>
+            </div>
+          </div>
+
+          <div class="perf-meta">
+            <div class="perf-meta-item">
+              <div class="perf-meta-label">Equity now</div>
+              <div class="perf-meta-value">$355.12M</div>
+            </div>
+            <div class="perf-meta-item">
+              <div class="perf-meta-label">All-time peak</div>
+              <div class="perf-meta-value">$498.4M</div>
+            </div>
+            <div class="perf-meta-item">
+              <div class="perf-meta-label">Max drawdown</div>
+              <div class="perf-meta-value neg">−28.7%</div>
+            </div>
+            <div class="perf-meta-item">
+              <div class="perf-meta-label">APR 30d</div>
+              <div class="perf-meta-value pos">+9.2%</div>
+            </div>
+            <div class="perf-meta-item">
+              <div class="perf-meta-label">Sharpe est.</div>
+              <div class="perf-meta-value">1.34</div>
+            </div>
+          </div>
+
+          <div class="perf-chart-wrap">
+            <svg viewBox="0 0 1200 320" preserveAspectRatio="none" width="100%" height="320">
+              <defs>
+                <linearGradient id="perf-g" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.4"/>
+                  <stop offset="60%" stop-color="#83E9FF" stop-opacity="0.05"/>
+                  <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Gridlines -->
+              <g stroke="#1F2937" stroke-width="0.75">
+                <line x1="0" y1="60" x2="1200" y2="60"/>
+                <line x1="0" y1="130" x2="1200" y2="130"/>
+                <line x1="0" y1="200" x2="1200" y2="200"/>
+                <line x1="0" y1="270" x2="1200" y2="270"/>
+              </g>
+              <!-- y axis labels -->
+              <g font-size="10" font-family="JetBrains Mono" fill="#6B7280">
+                <text x="8" y="56">$500M</text>
+                <text x="8" y="126">$400M</text>
+                <text x="8" y="196">$300M</text>
+                <text x="8" y="266">$200M</text>
+              </g>
+              <!-- area -->
+              <path d="M0,250 L50,240 L100,220 L150,200 L200,180 L250,160 L300,140 L350,120 L400,100 L450,80 L500,60 L550,75 L600,90 L650,110 L700,130 L750,120 L800,135 L850,150 L900,165 L950,175 L1000,160 L1050,150 L1100,140 L1150,135 L1200,130 L1200,320 L0,320 Z" fill="url(#perf-g)"/>
+              <!-- main line -->
+              <path d="M0,250 L50,240 L100,220 L150,200 L200,180 L250,160 L300,140 L350,120 L400,100 L450,80 L500,60 L550,75 L600,90 L650,110 L700,130 L750,120 L800,135 L850,150 L900,165 L950,175 L1000,160 L1050,150 L1100,140 L1150,135 L1200,130" fill="none" stroke="#83E9FF" stroke-width="2"/>
+              <!-- peak marker -->
+              <circle cx="500" cy="60" r="4" fill="#F9E370" stroke="#0A0B0F" stroke-width="2"/>
+              <text x="510" y="55" font-size="10" font-family="JetBrains Mono" fill="#F9E370">PEAK $498.4M</text>
+              <!-- x axis labels -->
+              <g font-size="10" font-family="JetBrains Mono" fill="#6B7280">
+                <text x="0" y="312">May 23</text>
+                <text x="240" y="312">Nov 23</text>
+                <text x="480" y="312">May 24</text>
+                <text x="720" y="312">Nov 24</text>
+                <text x="960" y="312">May 25</text>
+                <text x="1170" y="312" text-anchor="end">May 26</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity ledger -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Activity ledger</div>
+            <div class="section-sub">Recent flows in and out of HLP — narrative tags help spot patterns</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Story</th>
+                <th>Wallet</th>
+                <th class="right">Amount</th>
+                <th class="right">Equity after</th>
+                <th class="right">Tx</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">2m ago</td>
+                <td><span class="story-tag st-whale">Whale deposit</span></td>
+                <td><span class="addr-mono">0x9b2e…04ac</span></td>
+                <td class="right pos">+$48,200</td>
+                <td class="right">$355,167,820</td>
+                <td class="right"><span class="addr-mono">0xc4…0a1</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">14m ago</td>
+                <td><span class="story-tag st-deposit">Deposit</span></td>
+                <td><span class="addr-mono">0x44ff…8c12</span></td>
+                <td class="right pos">+$1,820</td>
+                <td class="right">$355,119,620</td>
+                <td class="right"><span class="addr-mono">0xa9…7f3</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">31m ago</td>
+                <td><span class="story-tag st-withdraw">Withdrawal</span></td>
+                <td><span class="addr-mono">0x6b03…d2a1</span></td>
+                <td class="right neg">−$3,400</td>
+                <td class="right">$355,117,800</td>
+                <td class="right"><span class="addr-mono">0x71…b89</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">52m ago</td>
+                <td><span class="story-tag st-whale">Whale deposit</span></td>
+                <td><span class="addr-mono">0xc188…7e94</span></td>
+                <td class="right pos">+$120,000</td>
+                <td class="right">$355,121,200</td>
+                <td class="right"><span class="addr-mono">0x3d…2c8</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">1h 8m</td>
+                <td><span class="story-tag st-exit">Whale exit</span></td>
+                <td><span class="addr-mono">0xeed4…1109</span></td>
+                <td class="right neg">−$62,500</td>
+                <td class="right">$355,001,200</td>
+                <td class="right"><span class="addr-mono">0x10…8aa</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">2h 14m</td>
+                <td><span class="story-tag st-deposit">Deposit</span></td>
+                <td><span class="addr-mono">0xa771…66f9</span></td>
+                <td class="right pos">+$540</td>
+                <td class="right">$355,063,700</td>
+                <td class="right"><span class="addr-mono">0xe2…41c</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">3h 02m</td>
+                <td><span class="story-tag st-deposit">Deposit</span></td>
+                <td><span class="addr-mono">0x55d1…3b07</span></td>
+                <td class="right pos">+$8,200</td>
+                <td class="right">$355,063,160</td>
+                <td class="right"><span class="addr-mono">0xab…f7b</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">4h 41m</td>
+                <td><span class="story-tag st-whale">Whale deposit</span></td>
+                <td><span class="addr-mono">0x2c80…f4a2</span></td>
+                <td class="right pos">+$210,000</td>
+                <td class="right">$355,054,960</td>
+                <td class="right"><span class="addr-mono">0x58…3ee</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">6h 18m</td>
+                <td><span class="story-tag st-withdraw">Withdrawal</span></td>
+                <td><span class="addr-mono">0x9001…cc02</span></td>
+                <td class="right neg">−$1,120</td>
+                <td class="right">$354,844,960</td>
+                <td class="right"><span class="addr-mono">0x6c…d04</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color: var(--text-secondary);">8h 55m</td>
+                <td><span class="story-tag st-deposit">Deposit</span></td>
+                <td><span class="addr-mono">0x4424…51bf</span></td>
+                <td class="right pos">+$6,800</td>
+                <td class="right">$354,846,080</td>
+                <td class="right"><span class="addr-mono">0xc1…2af</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Leader's other vaults -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">More from Hyperliquid Core</div>
+            <div class="section-sub">6 other vaults managed by the same leader — same trust, different mandates</div>
+          </div>
+        </div>
+
+        <div class="other-grid">
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HA</div>
+              <div>
+                <div class="other-name">HLP Sub-A</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$4.8M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+11.4%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">820</div></div>
+            </div>
+          </a>
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HB</div>
+              <div>
+                <div class="other-name">HLP Sub-B</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$2.5M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+7.8%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">412</div></div>
+            </div>
+          </a>
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HC</div>
+              <div>
+                <div class="other-name">HLP Sub-C</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$1.2M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+8.2%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">288</div></div>
+            </div>
+          </a>
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HD</div>
+              <div>
+                <div class="other-name">HLP Sub-D</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$0.92M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+6.4%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">196</div></div>
+            </div>
+          </a>
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HE</div>
+              <div>
+                <div class="other-name">HLP Sub-E</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$0.68M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+10.1%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">142</div></div>
+            </div>
+          </a>
+          <a href="vaults-C-narrative-detail.html" class="other-card">
+            <div class="other-top">
+              <div class="avatar sm mono">HF</div>
+              <div>
+                <div class="other-name">HLP Sub-F</div>
+                <div class="other-sub">Same leader · 4d lockup · 0% fee</div>
+              </div>
+            </div>
+            <div class="other-stats">
+              <div><div class="os-l">TVL</div><div class="os-v">$0.42M</div></div>
+              <div><div class="os-l">APR</div><div class="os-v pos">+5.9%</div></div>
+              <div><div class="os-l">Followers</div><div class="os-v">88</div></div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Footer info -->
+      <section class="section">
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-icon">L</div>
+            <div class="info-title">Lockup duration</div>
+            <div class="info-body">
+              Once deposited, your capital is locked for <span class="info-strong">4 days</span> before becoming withdrawable. This protects the vault from short-term flight during volatility and gives the leader stability to execute its strategy.
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-icon gold">C</div>
+            <div class="info-title">Commission policy</div>
+            <div class="info-body">
+              HLP charges <span class="info-strong">0%</span> performance and <span class="info-strong">0%</span> management fee — uniquely among major vaults. It has remained at zero since the vault's launch on 2023-05-04, a public commitment of the protocol team.
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">S</div>
+            <div class="info-title">Sub-vault structure</div>
+            <div class="info-body">
+              HLP operates with <span class="info-strong">7 sub-vaults</span> for risk isolation. Each sub-vault runs a distinct strategy (market making, hedging, liquidation backstop) but is rolled up under the same leader and reported transparently.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">Liquid Terminal · vault page · narrative variant C</div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
