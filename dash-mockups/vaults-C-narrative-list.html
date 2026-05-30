@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vaults — Liquid Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #0A0B0F;
+    --bg-surface: #0F1421;
+    --bg-surface-2: #141B2A;
+    --border-subtle: #1F2937;
+    --border-default: #2A3445;
+    --text-primary: #E5E7EB;
+    --text-secondary: #9CA3AF;
+    --text-tertiary: #6B7280;
+    --brand: #83E9FF;
+    --gold: #F9E370;
+    --success: #1FA85B;
+    --danger: #E53E3E;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Halo */
+  .halo {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 15% 5%, rgba(131,233,255,0.06), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(249,227,112,0.04), transparent 50%);
+  }
+
+  /* Layout */
+  .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 232px; flex-shrink: 0;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+    padding: 20px 16px;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; padding: 4px 8px 24px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #0A0B0F;
+  }
+  .logo-text { font-weight: 600; font-size: 14px; letter-spacing: 0.2px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); padding: 16px 10px 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    color: var(--text-secondary); font-size: 13px; font-weight: 500;
+    cursor: pointer;
+  }
+  .nav-item:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+  .nav-item.active {
+    background: var(--bg-surface-2);
+    color: var(--brand);
+    box-shadow: inset 2px 0 0 var(--brand);
+  }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; }
+  .header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(10,11,15,0.8); backdrop-filter: blur(16px);
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .crumbs { font-size: 12px; color: var(--text-tertiary); }
+  .crumbs span { color: var(--text-secondary); }
+  .search {
+    flex: 1; max-width: 360px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px; color: var(--text-tertiary);
+  }
+  .header-spacer { flex: 1; }
+  .header-btn {
+    padding: 7px 14px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .header-btn.primary { background: var(--brand); color: #0A0B0F; border-color: var(--brand); }
+
+  .content { padding: 28px 32px 64px; max-width: 1440px; margin: 0 auto; }
+
+  /* PageHeader */
+  .page-header { margin-bottom: 32px; }
+  .page-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--brand); margin-bottom: 10px;
+  }
+  .page-title { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .page-sub { font-size: 14px; color: var(--text-secondary); max-width: 640px; }
+
+  /* Editorial hero */
+  .hero {
+    display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;
+    margin-bottom: 40px;
+  }
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .card-icon {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: rgba(131,233,255,0.1);
+    border: 1px solid rgba(131,233,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--brand); font-size: 14px; font-weight: 700;
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .card-pill {
+    padding: 3px 8px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .card-action { margin-left: auto; font-size: 12px; color: var(--text-tertiary); }
+
+  /* Hero left */
+  .hero-leader {
+    padding: 28px;
+    background: linear-gradient(135deg, rgba(131,233,255,0.04), rgba(249,227,112,0.02) 60%, transparent);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    position: relative; overflow: hidden;
+  }
+  .hero-leader::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 90% 10%, rgba(131,233,255,0.08), transparent 50%);
+    pointer-events: none;
+  }
+  .hero-leader-content { position: relative; z-index: 1; }
+  .hero-leader-top { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(131,233,255,0.5), rgba(249,227,112,0.35));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px; font-weight: 600; color: #0A0B0F;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(131,233,255,0.3);
+  }
+  .avatar.lg { width: 64px; height: 64px; font-size: 18px; box-shadow: 0 0 0 1px rgba(131,233,255,0.4), 0 0 24px rgba(131,233,255,0.15); }
+  .avatar.sm { width: 36px; height: 36px; font-size: 11px; }
+  .avatar.xs { width: 28px; height: 28px; font-size: 10px; }
+  .leader-info { flex: 1; min-width: 0; }
+  .leader-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .badge-verified {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    background: rgba(131,233,255,0.1);
+    border: 1px solid rgba(131,233,255,0.3);
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600; color: var(--brand);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .leader-addr { font-size: 12px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
+  .eyebrow-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .hero-leader-quote {
+    font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 460px;
+    margin-bottom: 22px; font-style: italic;
+    border-left: 2px solid var(--brand); padding-left: 14px;
+  }
+  .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 20px; }
+  .hstat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 6px; }
+  .hstat-value { font-size: 18px; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+  .hstat-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+  .hero-sparkline { height: 64px; margin-top: 8px; }
+
+  /* Hero right */
+  .hero-eco { display: flex; flex-direction: column; gap: 12px; padding: 20px; }
+  .hero-eco-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .eco-stat {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .eco-stat:last-child { border-bottom: 0; }
+  .eco-label { font-size: 12px; color: var(--text-secondary); }
+  .eco-value { font-size: 18px; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); }
+  .eco-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; text-align: right; }
+  .eco-value-wrap { text-align: right; }
+
+  /* Section title */
+  .section { margin-bottom: 40px; }
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .section-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+  .section-action { font-size: 12px; color: var(--brand); cursor: pointer; }
+
+  /* Leaders grid */
+  .leaders-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .leader-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .leader-card:hover { border-color: var(--border-default); transform: translateY(-1px); }
+  .leader-card-top { display: flex; align-items: center; gap: 12px; }
+  .leader-card-name { font-size: 14px; font-weight: 600; }
+  .leader-card-meta { font-size: 11px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+  .leader-card-tagline { font-size: 12px; color: var(--text-secondary); }
+  .leader-card-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+  .lstat-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 4px; }
+  .lstat-v { font-size: 14px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .pos { color: var(--success); }
+  .neg { color: var(--danger); }
+  .leader-card-vaults { display: flex; flex-direction: column; gap: 6px; }
+  .lc-vault { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .lc-vault-name { color: var(--text-primary); font-weight: 500; }
+  .lc-vault-tvl { color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+  .lc-cta {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--brand);
+    padding-top: 4px;
+  }
+
+  /* Timeline */
+  .timeline {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 8px 0;
+  }
+  .tl-row {
+    display: grid;
+    grid-template-columns: 88px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .tl-row:last-child { border-bottom: 0; }
+  .tl-date { font-size: 11px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
+  .tl-main { display: flex; align-items: center; gap: 12px; }
+  .tl-content { min-width: 0; }
+  .tl-headline { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .tl-sub { font-size: 11px; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
+  .tl-tag {
+    padding: 3px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .tag-launch { background: rgba(131,233,255,0.1); color: var(--brand); border: 1px solid rgba(131,233,255,0.25); }
+  .tag-trend { background: rgba(249,227,112,0.1); color: var(--gold); border: 1px solid rgba(249,227,112,0.25); }
+  .tag-whale { background: rgba(31,168,91,0.1); color: var(--success); border: 1px solid rgba(31,168,91,0.25); }
+  .tl-meta { display: flex; gap: 12px; align-items: center; font-size: 11px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+
+  /* Table */
+  .table-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--bg-surface-2);
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  thead th.right { text-align: right; }
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--bg-surface-2); cursor: pointer; }
+  td.right { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  .vault-cell { display: flex; align-items: center; gap: 10px; }
+  .vault-name-strong { font-weight: 600; }
+  .leader-cell { display: flex; align-items: center; gap: 8px; }
+  .leader-cell-name { font-size: 12px; color: var(--text-secondary); }
+  .status-pill {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 999px; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .status-open { background: rgba(31,168,91,0.12); color: var(--success); }
+  .status-closed { background: var(--bg-surface-2); color: var(--text-tertiary); }
+
+  /* footer */
+  .footer { padding: 24px 0; text-align: center; font-size: 11px; color: var(--text-tertiary); }
+
+</style>
+</head>
+<body>
+<div class="halo"></div>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">L</div>
+      <div class="logo-text">Liquid Terminal</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item"><span class="nav-dot"></span>Dashboard</div>
+      <div class="nav-item"><span class="nav-dot"></span>Market</div>
+      <div class="nav-item active"><span class="nav-dot"></span>Vaults</div>
+      <div class="nav-item"><span class="nav-dot"></span>Explorer</div>
+      <div class="nav-item"><span class="nav-dot"></span>Wiki</div>
+      <div class="nav-section">Personal</div>
+      <div class="nav-item"><span class="nav-dot"></span>Portfolio</div>
+      <div class="nav-item"><span class="nav-dot"></span>Watchlist</div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="header">
+      <div class="crumbs">Explorer <span>/ Vaults</span></div>
+      <div class="search">Search a leader, vault or address…</div>
+      <div class="header-spacer"></div>
+      <button class="header-btn">Connect</button>
+      <button class="header-btn primary">Become a leader</button>
+    </header>
+
+    <div class="content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-eyebrow">Capital under expert management</div>
+        <h1 class="page-title">Vaults</h1>
+        <p class="page-sub">3,245 active vaults, managed by independent leaders. Choose who you trust with your capital — every leader, every history, every term.</p>
+      </div>
+
+      <!-- Editorial hero -->
+      <section class="hero">
+
+        <!-- LEFT: top trusted leader -->
+        <div class="hero-leader">
+          <div class="hero-leader-content">
+            <div class="eyebrow-tag">Top trusted leader</div>
+            <div class="hero-leader-top">
+              <div class="avatar lg mono">HC</div>
+              <div class="leader-info">
+                <div class="leader-name">Hyperliquid Core <span class="badge-verified">Verified</span></div>
+                <div class="leader-addr">0x677d…84e7 · Leader since May 4, 2023</div>
+              </div>
+            </div>
+
+            <div class="hero-leader-quote">
+              "The protocol's flagship liquidity vault. Three years of continuous operation, zero commission, and quarterly transparency reports — still the largest pool of trust on Hyperliquid."
+            </div>
+
+            <div class="hero-stats">
+              <div>
+                <div class="hstat-label">TVL managed</div>
+                <div class="hstat-value">$362.4M</div>
+                <div class="hstat-sub">across 7 vaults</div>
+              </div>
+              <div>
+                <div class="hstat-label">Followers</div>
+                <div class="hstat-value">91,557</div>
+                <div class="hstat-sub">+1.2k this week</div>
+              </div>
+              <div>
+                <div class="hstat-label">Commission</div>
+                <div class="hstat-value">0%</div>
+                <div class="hstat-sub">unchanged 3y</div>
+              </div>
+              <div>
+                <div class="hstat-label">Lockup</div>
+                <div class="hstat-value">4d</div>
+                <div class="hstat-sub">withdraw window</div>
+              </div>
+            </div>
+
+            <!-- Sparkline (equity ~) -->
+            <svg class="hero-sparkline" viewBox="0 0 600 64" preserveAspectRatio="none" width="100%">
+              <defs>
+                <linearGradient id="hero-spark" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,48 L40,42 L80,44 L120,38 L160,34 L200,30 L240,32 L280,26 L320,28 L360,22 L400,20 L440,24 L480,18 L520,14 L560,16 L600,10 L600,64 L0,64 Z" fill="url(#hero-spark)"/>
+              <path d="M0,48 L40,42 L80,44 L120,38 L160,34 L200,30 L240,32 L280,26 L320,28 L360,22 L400,20 L440,24 L480,18 L520,14 L560,16 L600,10" fill="none" stroke="#83E9FF" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- RIGHT: ecosystem stats -->
+        <div class="card hero-eco">
+          <div class="hero-eco-title">
+            <span class="card-icon">E</span>
+            Ecosystem at a glance
+          </div>
+          <div class="eco-stat">
+            <div>
+              <div class="eco-label">Total TVL</div>
+            </div>
+            <div class="eco-value-wrap">
+              <div class="eco-value">$439.3M</div>
+              <div class="eco-sub pos">+2.1% 7d</div>
+            </div>
+          </div>
+          <div class="eco-stat">
+            <div>
+              <div class="eco-label">Active leaders</div>
+            </div>
+            <div class="eco-value-wrap">
+              <div class="eco-value">~600</div>
+              <div class="eco-sub">across 3,245 vaults</div>
+            </div>
+          </div>
+          <div class="eco-stat">
+            <div>
+              <div class="eco-label">Median lockup</div>
+            </div>
+            <div class="eco-value-wrap">
+              <div class="eco-value">1d</div>
+              <div class="eco-sub">range 1h – 30d</div>
+            </div>
+          </div>
+          <div class="eco-stat">
+            <div>
+              <div class="eco-label">Median followers</div>
+            </div>
+            <div class="eco-value-wrap">
+              <div class="eco-value">38</div>
+              <div class="eco-sub">top 10 hold 78%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaders grid -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Featured leaders</div>
+            <div class="section-sub">Active operators with verified track record and growing follower base</div>
+          </div>
+          <div class="section-action">View all 600 →</div>
+        </div>
+
+        <div class="leaders-grid">
+
+          <!-- Card 1: Hyperliquid Core -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">HC</div>
+              <div>
+                <div class="leader-card-name">Hyperliquid Core <span class="badge-verified" style="margin-left:4px;">V</span></div>
+                <div class="leader-card-meta">0x677d…84e7</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 7 vaults · $362.4M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v">9.2%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">91.5k</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">3y</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">HLP</span><span class="lc-vault-tvl">$355.1M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">HLP Sub-A</span><span class="lc-vault-tvl">$4.8M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">HLP Sub-B</span><span class="lc-vault-tvl">$2.5M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vaults</span><span>→</span></div>
+          </a>
+
+          <!-- Card 2: Systemic Strategies -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">SS</div>
+              <div>
+                <div class="leader-card-name">Systemic Strategies</div>
+                <div class="leader-card-meta">0x2b80…6f4b</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 2 vaults · $18.2M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v pos">150%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">5.1k</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">10mo</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">HyperGrowth</span><span class="lc-vault-tvl">$11.4M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">L/S Grids</span><span class="lc-vault-tvl">$6.8M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vaults</span><span>→</span></div>
+          </a>
+
+          <!-- Card 3: Growi HF -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">GH</div>
+              <div>
+                <div class="leader-card-name">Growi Quant</div>
+                <div class="leader-card-meta">0x7789…f60d</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 1 vault · $8.7M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v">5.6%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">3.8k</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">1y</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">Growi HF</span><span class="lc-vault-tvl">$8.7M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vault</span><span>→</span></div>
+          </a>
+
+          <!-- Card 4: Atlas Capital -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">AC</div>
+              <div>
+                <div class="leader-card-name">Atlas Capital</div>
+                <div class="leader-card-meta">0xa380…d939</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 3 vaults · $6.4M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v pos">142%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">2.2k</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">14mo</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">Long HYPE &amp; BTC</span><span class="lc-vault-tvl">$3.2M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">BTC Carry</span><span class="lc-vault-tvl">$2.1M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">ETH Premium</span><span class="lc-vault-tvl">$1.1M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vaults</span><span>→</span></div>
+          </a>
+
+          <!-- Card 5: Northwind -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">NW</div>
+              <div>
+                <div class="leader-card-name">Northwind Trading</div>
+                <div class="leader-card-meta">0x91c2…2b71</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 2 vaults · $4.9M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v">38%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">1.6k</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">8mo</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">Funding Arb</span><span class="lc-vault-tvl">$3.4M</span></div>
+              <div class="lc-vault"><span class="lc-vault-name">Stable Premium</span><span class="lc-vault-tvl">$1.5M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vaults</span><span>→</span></div>
+          </a>
+
+          <!-- Card 6: Vega Labs -->
+          <a href="vaults-C-narrative-detail.html" class="leader-card">
+            <div class="leader-card-top">
+              <div class="avatar mono">VL</div>
+              <div>
+                <div class="leader-card-name">Vega Labs</div>
+                <div class="leader-card-meta">0x4f1a…aa08</div>
+              </div>
+            </div>
+            <div class="leader-card-tagline">Manages 1 vault · $2.8M TVL</div>
+            <div class="leader-card-stats">
+              <div><div class="lstat-l">Avg APR</div><div class="lstat-v pos">68%</div></div>
+              <div><div class="lstat-l">Followers</div><div class="lstat-v">880</div></div>
+              <div><div class="lstat-l">Age</div><div class="lstat-v">5mo</div></div>
+            </div>
+            <div class="leader-card-vaults">
+              <div class="lc-vault"><span class="lc-vault-name">Vega Delta-Neutral</span><span class="lc-vault-tvl">$2.8M</span></div>
+            </div>
+            <div class="lc-cta"><span>View vault</span><span>→</span></div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Notable activity</div>
+            <div class="section-sub">Recently launched or trending vaults this week</div>
+          </div>
+          <div class="section-action">Full feed →</div>
+        </div>
+
+        <div class="timeline">
+
+          <div class="tl-row">
+            <div class="tl-date">May 25</div>
+            <div class="tl-main">
+              <div class="avatar sm mono">SS</div>
+              <div class="tl-content">
+                <div class="tl-headline"><strong>HyperGrowth</strong> crossed 4,000 followers</div>
+                <div class="tl-sub">by Systemic Strategies · 0x2b80…6f4b · APR 214%</div>
+              </div>
+            </div>
+            <div class="tl-meta"><span class="tl-tag tag-trend">Trending</span></div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-date">May 22</div>
+            <div class="tl-main">
+              <div class="avatar sm mono">AC</div>
+              <div class="tl-content">
+                <div class="tl-headline">Whale deposit into <strong>Long HYPE &amp; BTC</strong> — $480k</div>
+                <div class="tl-sub">by Atlas Capital · 0xa380…d939 · TVL +18%</div>
+              </div>
+            </div>
+            <div class="tl-meta"><span class="tl-tag tag-whale">Whale</span></div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-date">May 20</div>
+            <div class="tl-main">
+              <div class="avatar sm mono">NW</div>
+              <div class="tl-content">
+                <div class="tl-headline"><strong>Funding Arb</strong> reduced commission from 15% to 10%</div>
+                <div class="tl-sub">by Northwind Trading · 0x91c2…2b71</div>
+              </div>
+            </div>
+            <div class="tl-meta"><span class="tl-tag tag-launch">Update</span></div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-date">May 18</div>
+            <div class="tl-main">
+              <div class="avatar sm mono">VL</div>
+              <div class="tl-content">
+                <div class="tl-headline"><strong>Vega Delta-Neutral</strong> just launched</div>
+                <div class="tl-sub">by Vega Labs · 0x4f1a…aa08 · 1d lockup · 10% commission</div>
+              </div>
+            </div>
+            <div class="tl-meta"><span class="tl-tag tag-launch">Just launched</span></div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-date">May 15</div>
+            <div class="tl-main">
+              <div class="avatar sm mono">SS</div>
+              <div class="tl-content">
+                <div class="tl-headline"><strong>L/S Grids</strong> reopened to deposits</div>
+                <div class="tl-sub">by Systemic Strategies · 0x2b80…6f4b · capacity raised to $10M</div>
+              </div>
+            </div>
+            <div class="tl-meta"><span class="tl-tag tag-trend">Reopened</span></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Full table -->
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Top vaults by TVL</div>
+            <div class="section-sub">Browse the full directory · sorted by capital under management</div>
+          </div>
+          <div class="section-action">All 3,245 vaults →</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Vault</th>
+                <th>Leader</th>
+                <th class="right">TVL</th>
+                <th class="right">APR 30d</th>
+                <th class="right">Followers</th>
+                <th class="right">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">HL</div><span class="vault-name-strong">HLP</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">HC</div><span class="leader-cell-name mono">0x677d…84e7</span></div></td>
+                <td class="right">$355.1M</td>
+                <td class="right pos">+9.2%</td>
+                <td class="right">91,557</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">HG</div><span class="vault-name-strong">HyperGrowth</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">SS</div><span class="leader-cell-name mono">0x2b80…6f4b</span></div></td>
+                <td class="right">$11.4M</td>
+                <td class="right pos">+214%</td>
+                <td class="right">4,178</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">GH</div><span class="vault-name-strong">Growi HF</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">GH</div><span class="leader-cell-name mono">0x7789…f60d</span></div></td>
+                <td class="right">$8.7M</td>
+                <td class="right pos">+5.6%</td>
+                <td class="right">3,786</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">LS</div><span class="vault-name-strong">L/S Grids</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">SS</div><span class="leader-cell-name mono">0x2b80…6f4b</span></div></td>
+                <td class="right">$6.8M</td>
+                <td class="right pos">+87%</td>
+                <td class="right">1,912</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">LH</div><span class="vault-name-strong">Long HYPE &amp; BTC</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">AC</div><span class="leader-cell-name mono">0xa380…d939</span></div></td>
+                <td class="right">$3.2M</td>
+                <td class="right pos">+142%</td>
+                <td class="right">1,104</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">FA</div><span class="vault-name-strong">Funding Arb</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">NW</div><span class="leader-cell-name mono">0x91c2…2b71</span></div></td>
+                <td class="right">$3.4M</td>
+                <td class="right pos">+38%</td>
+                <td class="right">988</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">VD</div><span class="vault-name-strong">Vega Delta-Neutral</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">VL</div><span class="leader-cell-name mono">0x4f1a…aa08</span></div></td>
+                <td class="right">$2.8M</td>
+                <td class="right pos">+68%</td>
+                <td class="right">880</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">BC</div><span class="vault-name-strong">BTC Carry</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">AC</div><span class="leader-cell-name mono">0xa380…d939</span></div></td>
+                <td class="right">$2.1M</td>
+                <td class="right pos">+24%</td>
+                <td class="right">612</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">SP</div><span class="vault-name-strong">Stable Premium</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">NW</div><span class="leader-cell-name mono">0x91c2…2b71</span></div></td>
+                <td class="right">$1.5M</td>
+                <td class="right pos">+12%</td>
+                <td class="right">541</td>
+                <td class="right"><span class="status-pill status-closed">Closed</span></td>
+              </tr>
+              <tr onclick="location.href='vaults-C-narrative-detail.html'">
+                <td><div class="vault-cell"><div class="avatar xs mono">EP</div><span class="vault-name-strong">ETH Premium</span></div></td>
+                <td><div class="leader-cell"><div class="avatar xs mono">AC</div><span class="leader-cell-name mono">0xa380…d939</span></div></td>
+                <td class="right">$1.1M</td>
+                <td class="right neg">−4.2%</td>
+                <td class="right">328</td>
+                <td class="right"><span class="status-pill status-open">Open</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer">Liquid Terminal · narrative listing · 3,245 vaults indexed</div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>

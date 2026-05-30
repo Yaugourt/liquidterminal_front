@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vault HLP · Variant B — Dense Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --base:#0A0B0F; --surface:#0F1421; --surface-2:#141B2A;
+    --border-subtle:#1F2937; --border-default:#2A3445;
+    --text-primary:#E5E7EB; --text-secondary:#9CA3AF; --text-tertiary:#6B7280;
+    --brand:#83E9FF; --gold:#F9E370; --success:#1FA85B; --danger:#E53E3E;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; background:var(--base); color:var(--text-primary); font-family:Inter, ui-sans-serif, system-ui; font-size:13px; }
+  a { color:inherit; text-decoration:none; }
+  .mono { font-family:'JetBrains Mono', ui-monospace, monospace; font-feature-settings:"tnum"; font-variant-numeric:tabular-nums; }
+
+  /* Layout */
+  .app { display:grid; grid-template-columns:232px 1fr; min-height:100vh; }
+  .sidebar { background:var(--surface); border-right:1px solid var(--border-subtle); padding:16px 12px; position:sticky; top:0; height:100vh; }
+  .brand-logo { display:flex; align-items:center; gap:8px; padding:6px 8px 18px; }
+  .brand-logo .dot { width:18px; height:18px; border-radius:5px; background:linear-gradient(135deg, var(--brand), #4FB8D1); }
+  .brand-logo .name { font-size:13px; font-weight:700; }
+  .nav-section { font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-tertiary); padding:14px 8px 6px; font-weight:600; }
+  .nav-item { display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:6px; font-size:12.5px; color:var(--text-secondary); cursor:pointer; }
+  .nav-item:hover { background:var(--surface-2); color:var(--text-primary); }
+  .nav-item.active { background:rgba(131,233,255,.08); color:var(--brand); }
+  .nav-item .ico { width:14px; height:14px; opacity:.8; }
+
+  .main { display:flex; flex-direction:column; min-width:0; }
+  .header { position:sticky; top:0; z-index:20; background:rgba(10,11,15,.8); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); padding:10px 24px; display:flex; align-items:center; gap:14px; }
+  .crumb { font-size:11.5px; color:var(--text-tertiary); }
+  .crumb a { color:var(--text-secondary); }
+  .crumb a:hover { color:var(--brand); }
+  .crumb .sep { margin:0 5px; color:var(--border-default); }
+  .search { margin-left:auto; display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; padding:5px 10px; font-size:11.5px; color:var(--text-tertiary); min-width:200px; }
+  .pill-acct { display:flex; align-items:center; gap:8px; padding:5px 10px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; font-size:11.5px; }
+  .pill-acct .dot { width:6px; height:6px; border-radius:50%; background:var(--success); }
+
+  .content { padding:18px 24px 60px; max-width:1440px; width:100%; position:relative; }
+  .halo { position:absolute; inset:0; height:240px; background:radial-gradient(ellipse 60% 80% at 20% 0%, rgba(131,233,255,.05), transparent 60%); pointer-events:none; z-index:0; }
+
+  /* Header bar */
+  .vh { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border-subtle); border-radius:12px; margin-bottom:12px; flex-wrap:wrap; position:relative; z-index:1; }
+  .vh-av { width:42px; height:42px; border-radius:10px; background:rgba(249,227,112,.10); color:var(--gold); display:grid; place-items:center; font-size:14px; font-weight:700; flex-shrink:0; }
+  .vh-title { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .vh-title h1 { margin:0; font-size:18px; font-weight:700; letter-spacing:-.01em; }
+  .vh-title .sub { font-size:11px; color:var(--text-secondary); font-family:'JetBrains Mono', monospace; }
+  .vh-meta { display:flex; align-items:center; gap:14px; padding-left:14px; border-left:1px solid var(--border-subtle); }
+  .vh-meta .mm { display:flex; flex-direction:column; gap:1px; }
+  .vh-meta .mm .l { font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; }
+  .vh-meta .mm .v { font-size:12px; font-weight:500; }
+  .vh-actions { margin-left:auto; display:flex; gap:8px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:6px; font-size:11.5px; font-weight:500; border:1px solid var(--border-subtle); background:var(--surface-2); color:var(--text-secondary); cursor:pointer; }
+  .btn:hover { background:var(--surface); border-color:var(--border-default); color:var(--text-primary); }
+  .btn-brand { background:var(--brand); border-color:var(--brand); color:var(--base); font-weight:600; }
+  .btn-brand:hover { background:#9FF1FF; }
+
+  .status { display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:3px 8px; background:rgba(31,168,91,.10); border:1px solid rgba(31,168,91,.25); border-radius:6px; color:var(--success); font-weight:600; }
+  .status .d { width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 0 2px rgba(31,168,91,.15); }
+
+  /* KPI strip */
+  .kpi-strip { display:grid; grid-template-columns: repeat(7, 1fr); gap:1px; background:var(--border-subtle); border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; margin-bottom:14px; position:relative; z-index:1; }
+  .kpi { background:var(--surface); padding:10px 12px; }
+  .kpi .lbl { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); }
+  .kpi .val { font-size:16px; font-weight:600; letter-spacing:-.01em; margin-top:4px; line-height:1.1; }
+  .kpi .sub { font-size:10.5px; margin-top:3px; color:var(--text-secondary); }
+  .pos { color:var(--success); }
+  .neg { color:var(--danger); }
+
+  /* Two-column body */
+  .body-grid { display:grid; grid-template-columns: 1fr 380px; gap:12px; margin-bottom:12px; position:relative; z-index:1; }
+
+  /* Card */
+  .card { background:var(--surface); border:1px solid var(--border-subtle); border-radius:12px; overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:10px; padding:9px 14px; border-bottom:1px solid var(--border-subtle); }
+  .card-head .ic { width:22px; height:22px; border-radius:6px; background:rgba(131,233,255,.10); display:grid; place-items:center; color:var(--brand); }
+  .card-head h3 { margin:0; font-size:13px; font-weight:600; }
+  .card-head .tag { font-size:10px; padding:2px 6px; border-radius:4px; background:var(--surface-2); color:var(--text-tertiary); border:1px solid var(--border-subtle); }
+  .card-head .right { margin-left:auto; display:flex; align-items:center; gap:6px; }
+
+  /* Pill tabs (chart selector) */
+  .pill-tabs { display:flex; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; padding:2px; gap:1px; }
+  .pill-tabs .pt { padding:4px 10px; font-size:11px; color:var(--text-secondary); border-radius:4px; cursor:pointer; }
+  .pill-tabs .pt:hover { color:var(--text-primary); }
+  .pill-tabs .pt.active { background:rgba(131,233,255,.10); color:var(--brand); }
+
+  .tf-tabs { display:flex; gap:1px; background:var(--surface-2); border:1px solid var(--border-subtle); border-radius:6px; padding:2px; }
+  .tf-tabs .tf { padding:3px 7px; font-size:10.5px; color:var(--text-tertiary); border-radius:4px; cursor:pointer; font-family:'JetBrains Mono', monospace; }
+  .tf-tabs .tf.active { background:rgba(131,233,255,.10); color:var(--brand); }
+
+  /* Chart shell */
+  .chart-wrap { padding:10px 14px 8px; }
+  .chart-meta { display:flex; align-items:baseline; gap:14px; margin-bottom:6px; }
+  .chart-meta .v { font-size:18px; font-weight:600; letter-spacing:-.01em; }
+  .chart-meta .d { font-size:11.5px; }
+  .chart-meta .nb { font-size:10.5px; color:var(--text-tertiary); margin-left:auto; }
+
+  /* Side cards */
+  .meta-list { padding:4px 0; }
+  .meta-row { display:flex; justify-content:space-between; align-items:center; padding:9px 14px; border-bottom:1px solid var(--border-subtle); font-size:12px; }
+  .meta-row:last-child { border-bottom:none; }
+  .meta-row .k { color:var(--text-tertiary); font-size:11px; }
+  .meta-row .v { color:var(--text-primary); font-family:'JetBrains Mono', monospace; }
+  .meta-row .vn { font-family:Inter, ui-sans-serif; color:var(--text-primary); }
+
+  /* Sub vault row */
+  .sv-row { display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--border-subtle); font-size:11.5px; cursor:pointer; }
+  .sv-row:last-child { border-bottom:none; }
+  .sv-row:hover { background:var(--surface-2); }
+  .sv-row .av-s { width:22px; height:22px; border-radius:6px; background:rgba(131,233,255,.10); color:var(--brand); display:grid; place-items:center; font-size:9px; font-weight:700; flex-shrink:0; }
+  .sv-row .nm { min-width:0; flex:1; }
+  .sv-row .nm .n { font-size:11.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sv-row .nm .s { font-size:9.5px; color:var(--text-tertiary); font-family:'JetBrains Mono', monospace; }
+  .sv-row .v { font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; text-align:right; line-height:1.2; }
+  .sv-row .v .pct { font-size:9.5px; color:var(--success); display:block; margin-top:1px; }
+
+  /* Commission timeline */
+  .ct-row { display:flex; align-items:center; gap:10px; padding:7px 14px; font-size:11px; border-bottom:1px solid var(--border-subtle); }
+  .ct-row:last-child { border-bottom:none; }
+  .ct-row .d { font-family:'JetBrains Mono', monospace; color:var(--text-tertiary); font-size:10.5px; width:78px; flex-shrink:0; }
+  .ct-row .arr { color:var(--text-tertiary); font-size:11px; }
+  .ct-row .v { font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--text-primary); }
+  .ct-row .v.old { text-decoration:line-through; color:var(--text-tertiary); font-weight:400; }
+
+  /* Ledger table */
+  table.dense { width:100%; border-collapse:collapse; }
+  table.dense thead th { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; text-align:left; padding:7px 12px; background:rgba(20,27,42,.55); border-bottom:1px solid var(--border-subtle); white-space:nowrap; }
+  table.dense thead th.r { text-align:right; }
+  table.dense tbody td { padding:7px 12px; border-bottom:1px solid var(--border-subtle); font-size:11.5px; white-space:nowrap; }
+  table.dense tbody tr:last-child td { border-bottom:none; }
+  table.dense tbody tr:hover { background:var(--surface-2); }
+  table.dense td.r { text-align:right; }
+
+  .pill { display:inline-block; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:600; background:var(--surface-2); color:var(--text-secondary); border:1px solid var(--border-subtle); }
+  .pill-dep { background:rgba(31,168,91,.10); color:var(--success); border-color:rgba(31,168,91,.25); }
+  .pill-wdr { background:rgba(229,62,62,.10); color:var(--danger); border-color:rgba(229,62,62,.25); }
+  .pill-rwd { background:rgba(249,227,112,.10); color:var(--gold); border-color:rgba(249,227,112,.25); }
+
+  .addr { font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--text-secondary); }
+  .tx { font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--text-tertiary); display:inline-flex; align-items:center; gap:5px; }
+  .tx svg { opacity:.6; }
+  .tx:hover svg { opacity:1; color:var(--brand); }
+
+  .signed-pos { color:var(--success); font-family:'JetBrains Mono', monospace; font-weight:500; }
+  .signed-neg { color:var(--danger); font-family:'JetBrains Mono', monospace; font-weight:500; }
+
+  /* Concentration stacked bar */
+  .conc { padding:14px; }
+  .conc-bar { display:flex; height:24px; border-radius:5px; overflow:hidden; background:var(--surface-2); border:1px solid var(--border-subtle); }
+  .conc-seg { height:100%; position:relative; cursor:pointer; transition:opacity .15s; }
+  .conc-seg:hover { opacity:.82; }
+  .conc-legend { display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin-top:12px; }
+  .lg-row { display:flex; align-items:center; gap:8px; font-size:11px; }
+  .lg-row .dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+  .lg-row .nm { color:var(--text-secondary); font-family:'JetBrains Mono', monospace; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .lg-row .pct { color:var(--text-primary); font-family:'JetBrains Mono', monospace; font-weight:600; }
+
+  .ledger-footer { display:flex; align-items:center; justify-content:space-between; padding:9px 14px; border-top:1px solid var(--border-subtle); font-size:11px; color:var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-logo">
+      <div class="dot"></div>
+      <div class="name">Liquid Terminal</div>
+    </div>
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg> Dashboard</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L6 7 L9 10 L14 4"/><circle cx="14" cy="4" r="1.2"/></svg> Market</div>
+    <div class="nav-item active"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5 L8 2 L13 5 L13 11 L8 14 L3 11 Z"/><path d="M3 5 L8 8 L13 5 M8 8 L8 14"/></svg> Vaults</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6 L14 6 M5 9 L11 9 M5 11 L9 11"/></svg> Explorer</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3 L13 3 L13 13 L3 13 Z"/><path d="M5 6 L11 6 M5 8.5 L11 8.5 M5 11 L9 11"/></svg> Wiki</div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item"><svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="2.5"/><path d="M3 13 C3 10.5 5 9 8 9 C11 9 13 10.5 13 13"/></svg> Profile</div>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="crumb">
+        <a href="vaults-B-dense-list.html">Explorer</a>
+        <span class="sep">/</span>
+        <a href="vaults-B-dense-list.html">Vaults</a>
+        <span class="sep">/</span>
+        <span style="color:var(--text-primary)">HLP</span>
+      </div>
+      <div class="search">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 L13.5 13.5"/></svg>
+        Search address, vault, leader…
+      </div>
+      <div class="pill-acct"><div class="dot"></div><span class="mono">0x4f2a…91bC</span></div>
+    </header>
+
+    <div class="content">
+      <div class="halo"></div>
+
+      <!-- Vault header -->
+      <div class="vh">
+        <div class="vh-av">HL</div>
+        <div class="vh-title">
+          <h1>HLP — Hyperliquidity Provider</h1>
+          <div class="sub">0xdfc24f077749057e6f8cc4ca9b3c87aab9b1d99 <span style="color:var(--text-tertiary);margin-left:5px;cursor:pointer;">⧉</span></div>
+        </div>
+        <div class="vh-meta">
+          <div class="mm"><div class="l">Leader</div><div class="v mono">0x010461…29b2</div></div>
+          <div class="mm"><div class="l">Lockup</div><div class="v">4 days</div></div>
+          <div class="mm"><div class="l">Commission</div><div class="v mono">0%</div></div>
+          <div class="mm"><div class="l">Created</div><div class="v">May 2023</div></div>
+          <div class="mm"><div class="l">Status</div><div class="v"><span class="status"><span class="d"></span>Open</span></div></div>
+        </div>
+        <div class="vh-actions">
+          <button class="btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2 L8 10 M4 6 L8 2 L12 6 M3 13 L13 13"/></svg>Withdraw</button>
+          <button class="btn-brand btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 14 L8 4 M4 8 L8 4 L12 8 M3 2 L13 2"/></svg>Deposit</button>
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi"><div class="lbl">TVL</div><div class="val mono">$356.9M</div><div class="sub"><span class="mono pos">+0.42%</span> 24h</div></div>
+        <div class="kpi"><div class="lbl">APR</div><div class="val mono pos">+1.28%</div><div class="sub">30d annualized</div></div>
+        <div class="kpi"><div class="lbl">24h Δ equity</div><div class="val mono pos">+$1.49M</div><div class="sub"><span class="mono">+0.42%</span></div></div>
+        <div class="kpi"><div class="lbl">7d Δ equity</div><div class="val mono pos">+$4.22M</div><div class="sub"><span class="mono">+1.18%</span></div></div>
+        <div class="kpi"><div class="lbl">All-Time PnL</div><div class="val mono neg">−$125.0M</div><div class="sub">cumulative</div></div>
+        <div class="kpi"><div class="lbl">Followers</div><div class="val mono">91,204</div><div class="sub"><span class="mono pos">+182</span> 24h</div></div>
+        <div class="kpi"><div class="lbl">Sharpe (90d)</div><div class="val mono">0.84</div><div class="sub"><span style="color:var(--text-tertiary)">vol 12.1%</span></div></div>
+      </div>
+
+      <!-- Body grid -->
+      <div class="body-grid">
+        <!-- LEFT: charts column -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+
+          <!-- Chart card with tabs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12 L6 7 L9 10 L14 4"/></svg></div>
+              <h3>Performance</h3>
+              <span class="tag">USD</span>
+              <div class="right">
+                <div class="pill-tabs">
+                  <div class="pt active">Equity</div>
+                  <div class="pt">PnL</div>
+                  <div class="pt">Flows</div>
+                  <div class="pt">Followers</div>
+                </div>
+                <div class="tf-tabs">
+                  <div class="tf">24H</div>
+                  <div class="tf">7D</div>
+                  <div class="tf active">30D</div>
+                  <div class="tf">90D</div>
+                  <div class="tf">ALL</div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-meta">
+                <div class="v mono">$356.9M</div>
+                <div class="d pos mono">+$4.22M (+1.18%) · 30d</div>
+                <div class="nb">Account value · last <span class="mono">12s</span></div>
+              </div>
+              <svg width="100%" height="180" viewBox="0 0 800 180" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gEq" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- gridlines -->
+                <line x1="0" y1="36" x2="800" y2="36" stroke="#1F2937" stroke-width="1" stroke-dasharray="2 4"/>
+                <line x1="0" y1="72" x2="800" y2="72" stroke="#1F2937" stroke-width="1" stroke-dasharray="2 4"/>
+                <line x1="0" y1="108" x2="800" y2="108" stroke="#1F2937" stroke-width="1" stroke-dasharray="2 4"/>
+                <line x1="0" y1="144" x2="800" y2="144" stroke="#1F2937" stroke-width="1" stroke-dasharray="2 4"/>
+                <!-- area -->
+                <path d="M0,140 L40,135 L80,138 L120,128 L160,130 L200,120 L240,116 L280,118 L320,104 L360,98 L400,92 L440,86 L480,82 L520,78 L560,72 L600,68 L640,62 L680,58 L720,52 L760,48 L800,42 L800,180 L0,180 Z" fill="url(#gEq)"/>
+                <path d="M0,140 L40,135 L80,138 L120,128 L160,130 L200,120 L240,116 L280,118 L320,104 L360,98 L400,92 L440,86 L480,82 L520,78 L560,72 L600,68 L640,62 L680,58 L720,52 L760,48 L800,42" fill="none" stroke="#83E9FF" stroke-width="1.5"/>
+                <!-- y axis labels -->
+                <text x="6" y="32" fill="#6B7280" font-size="9" font-family="JetBrains Mono">$360M</text>
+                <text x="6" y="68" fill="#6B7280" font-size="9" font-family="JetBrains Mono">$355M</text>
+                <text x="6" y="104" fill="#6B7280" font-size="9" font-family="JetBrains Mono">$350M</text>
+                <text x="6" y="140" fill="#6B7280" font-size="9" font-family="JetBrains Mono">$345M</text>
+              </svg>
+              <!-- x axis labels -->
+              <div style="display:flex; justify-content:space-between; padding:4px 6px 0; font-size:10px; color:var(--text-tertiary);" class="mono">
+                <span>Apr 27</span><span>May 04</span><span>May 11</span><span>May 18</span><span>May 24</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two compact charts side-by-side -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="card">
+              <div class="card-head">
+                <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8 L6 4 L10 10 L14 6"/></svg></div>
+                <h3>Daily PnL</h3>
+                <span class="tag">30D</span>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-meta">
+                  <div class="v mono neg">−$125.0M</div>
+                  <div class="d" style="color:var(--text-tertiary)">cumulative since inception</div>
+                </div>
+                <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none">
+                  <line x1="0" y1="50" x2="400" y2="50" stroke="#2A3445" stroke-width="1" stroke-dasharray="2 3"/>
+                  <!-- bars -->
+                  <g>
+                    <rect x="6" y="46" width="9" height="4" fill="#1FA85B"/>
+                    <rect x="20" y="38" width="9" height="12" fill="#1FA85B"/>
+                    <rect x="34" y="50" width="9" height="8" fill="#E53E3E"/>
+                    <rect x="48" y="44" width="9" height="6" fill="#1FA85B"/>
+                    <rect x="62" y="50" width="9" height="14" fill="#E53E3E"/>
+                    <rect x="76" y="34" width="9" height="16" fill="#1FA85B"/>
+                    <rect x="90" y="40" width="9" height="10" fill="#1FA85B"/>
+                    <rect x="104" y="50" width="9" height="6" fill="#E53E3E"/>
+                    <rect x="118" y="42" width="9" height="8" fill="#1FA85B"/>
+                    <rect x="132" y="36" width="9" height="14" fill="#1FA85B"/>
+                    <rect x="146" y="50" width="9" height="22" fill="#E53E3E"/>
+                    <rect x="160" y="42" width="9" height="8" fill="#1FA85B"/>
+                    <rect x="174" y="38" width="9" height="12" fill="#1FA85B"/>
+                    <rect x="188" y="50" width="9" height="10" fill="#E53E3E"/>
+                    <rect x="202" y="32" width="9" height="18" fill="#1FA85B"/>
+                    <rect x="216" y="40" width="9" height="10" fill="#1FA85B"/>
+                    <rect x="230" y="50" width="9" height="6" fill="#E53E3E"/>
+                    <rect x="244" y="44" width="9" height="6" fill="#1FA85B"/>
+                    <rect x="258" y="30" width="9" height="20" fill="#1FA85B"/>
+                    <rect x="272" y="36" width="9" height="14" fill="#1FA85B"/>
+                    <rect x="286" y="50" width="9" height="8" fill="#E53E3E"/>
+                    <rect x="300" y="40" width="9" height="10" fill="#1FA85B"/>
+                    <rect x="314" y="28" width="9" height="22" fill="#1FA85B"/>
+                    <rect x="328" y="38" width="9" height="12" fill="#1FA85B"/>
+                    <rect x="342" y="50" width="9" height="6" fill="#E53E3E"/>
+                    <rect x="356" y="32" width="9" height="18" fill="#1FA85B"/>
+                    <rect x="370" y="26" width="9" height="24" fill="#1FA85B"/>
+                    <rect x="384" y="34" width="9" height="16" fill="#1FA85B"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3 L8 13 M4 7 L8 3 L12 7"/></svg></div>
+                <h3>Net flows</h3>
+                <span class="tag">30D</span>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-meta">
+                  <div class="v mono pos">+$8.42M</div>
+                  <div class="d" style="color:var(--text-tertiary)">deposits − withdrawals</div>
+                </div>
+                <svg width="100%" height="100" viewBox="0 0 400 100" preserveAspectRatio="none">
+                  <line x1="0" y1="50" x2="400" y2="50" stroke="#2A3445" stroke-width="1" stroke-dasharray="2 3"/>
+                  <path d="M0,72 L20,66 L40,68 L60,60 L80,62 L100,54 L120,50 L140,52 L160,44 L180,40 L200,46 L220,38 L240,32 L260,34 L280,28 L300,30 L320,24 L340,26 L360,20 L380,22 L400,18" fill="none" stroke="#1FA85B" stroke-width="1.5"/>
+                  <path d="M0,72 L20,66 L40,68 L60,60 L80,62 L100,54 L120,50 L140,52 L160,44 L180,40 L200,46 L220,38 L240,32 L260,34 L280,28 L300,30 L320,24 L340,26 L360,20 L380,22 L400,18 L400,100 L0,100 Z" fill="rgba(31,168,91,0.12)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity ledger -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6 L14 6 M5 9 L11 9 M5 11 L9 11"/></svg></div>
+              <h3>Activity ledger</h3>
+              <span class="tag">USDC</span>
+              <div class="right">
+                <div class="pill-tabs">
+                  <div class="pt active">All</div>
+                  <div class="pt">Deposits</div>
+                  <div class="pt">Withdrawals</div>
+                  <div class="pt">Rewards</div>
+                </div>
+              </div>
+            </div>
+            <table class="dense">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>User</th>
+                  <th class="r">Amount</th>
+                  <th class="r">Equity Δ</th>
+                  <th>Tx</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">12s ago</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0x9b21…4f7e</span></td>
+                  <td class="r"><span class="signed-pos">+$48,200.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.014%</span></td>
+                  <td><a class="tx" href="#">0xa1f2…04b8 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">1m 18s</td>
+                  <td><span class="pill pill-wdr">Withdraw</span></td>
+                  <td><span class="addr">0x4c12…71a8</span></td>
+                  <td class="r"><span class="signed-neg">−$12,840.50</span></td>
+                  <td class="r"><span class="signed-neg">−0.004%</span></td>
+                  <td><a class="tx" href="#">0x77ee…12c4 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">2m 04s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0xa42f…918c</span></td>
+                  <td class="r"><span class="signed-pos">+$120,000.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.034%</span></td>
+                  <td><a class="tx" href="#">0xd418…ee01 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">3m 42s</td>
+                  <td><span class="pill pill-rwd">Reward</span></td>
+                  <td><span class="addr">0xdfc2…1d99</span></td>
+                  <td class="r"><span class="signed-pos">+$2,184.21</span></td>
+                  <td class="r"><span class="signed-pos">+0.001%</span></td>
+                  <td><a class="tx" href="#">0x21bb…7f04 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">5m 12s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0x6e8b…112f</span></td>
+                  <td class="r"><span class="signed-pos">+$18,420.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.005%</span></td>
+                  <td><a class="tx" href="#">0x9f02…b71a <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">6m 48s</td>
+                  <td><span class="pill pill-wdr">Withdraw</span></td>
+                  <td><span class="addr">0x88c1…ba29</span></td>
+                  <td class="r"><span class="signed-neg">−$74,200.00</span></td>
+                  <td class="r"><span class="signed-neg">−0.021%</span></td>
+                  <td><a class="tx" href="#">0x4291…0a18 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">9m 21s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0x214a…f3c8</span></td>
+                  <td class="r"><span class="signed-pos">+$8,200.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.002%</span></td>
+                  <td><a class="tx" href="#">0xbb12…44ee <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">11m 04s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0xea18…d7f1</span></td>
+                  <td class="r"><span class="signed-pos">+$240,000.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.067%</span></td>
+                  <td><a class="tx" href="#">0xc91a…dd02 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">14m 38s</td>
+                  <td><span class="pill pill-wdr">Withdraw</span></td>
+                  <td><span class="addr">0x12c4…7f6e</span></td>
+                  <td class="r"><span class="signed-neg">−$5,100.00</span></td>
+                  <td class="r"><span class="signed-neg">−0.001%</span></td>
+                  <td><a class="tx" href="#">0x7782…e041 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">18m 21s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0x4d12…0e8a</span></td>
+                  <td class="r"><span class="signed-pos">+$62,400.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.017%</span></td>
+                  <td><a class="tx" href="#">0xa402…2b18 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">22m 02s</td>
+                  <td><span class="pill pill-wdr">Withdraw</span></td>
+                  <td><span class="addr">0x9018…dd29</span></td>
+                  <td class="r"><span class="signed-neg">−$148,200.00</span></td>
+                  <td class="r"><span class="signed-neg">−0.041%</span></td>
+                  <td><a class="tx" href="#">0x6122…f04e <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+                <tr>
+                  <td class="mono" style="color:var(--text-secondary)">28m 14s</td>
+                  <td><span class="pill pill-dep">Deposit</span></td>
+                  <td><span class="addr">0x32a1…71cc</span></td>
+                  <td class="r"><span class="signed-pos">+$22,400.00</span></td>
+                  <td class="r"><span class="signed-pos">+0.006%</span></td>
+                  <td><a class="tx" href="#">0xff10…aa92 <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1"/><path d="M3 11 L3 3 L11 3"/></svg></a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="ledger-footer">
+              <div>Last <span class="mono" style="color:var(--text-primary)">12</span> events · <span class="mono" style="color:var(--text-primary)">3,184,621</span> total</div>
+              <div style="display:flex;gap:5px;">
+                <div class="btn" style="padding:3px 8px;">Load more</div>
+                <div class="btn" style="padding:3px 8px;">Export</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT side column -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+
+          <!-- Metadata card -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="5.5"/><path d="M8 5 L8 8 L10.5 9.5"/></svg></div>
+              <h3>Vault metadata</h3>
+            </div>
+            <div class="meta-list">
+              <div class="meta-row"><span class="k">Vault address</span><span class="v">0xdfc2…1d99</span></div>
+              <div class="meta-row"><span class="k">Leader</span><span class="v">0x010461…29b2</span></div>
+              <div class="meta-row"><span class="k">Created</span><span class="vn">May 8, 2023</span></div>
+              <div class="meta-row"><span class="k">Age</span><span class="vn">2y 1m 19d</span></div>
+              <div class="meta-row"><span class="k">Lockup period</span><span class="vn">4 days</span></div>
+              <div class="meta-row"><span class="k">Commission</span><span class="v">0%</span></div>
+              <div class="meta-row"><span class="k">Min deposit</span><span class="v">$0</span></div>
+              <div class="meta-row"><span class="k">Max capacity</span><span class="vn">Unlimited</span></div>
+              <div class="meta-row"><span class="k">Whitelist</span><span class="vn">None</span></div>
+              <div class="meta-row"><span class="k">Sub-vaults</span><span class="v">2</span></div>
+            </div>
+          </div>
+
+          <!-- Commission timeline -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12 L13 12 M3 4 L3 12 M6 9 L6 12 M9 6 L9 12 M12 8 L12 12"/></svg></div>
+              <h3>Commission history</h3>
+              <span class="tag">3</span>
+            </div>
+            <div style="padding:4px 0;">
+              <div class="ct-row"><span class="d">May 08 '23</span><span class="v">0%</span><span style="color:var(--text-tertiary);margin-left:auto;font-size:10px;">at inception</span></div>
+              <div class="ct-row"><span class="d">Nov 12 '23</span><span class="v old">0%</span><span class="arr">→</span><span class="v">0%</span><span style="color:var(--text-tertiary);margin-left:auto;font-size:10px;">no change</span></div>
+              <div class="ct-row"><span class="d">May 27 '26</span><span class="v">0%</span><span style="color:var(--success);margin-left:auto;font-size:10px;font-weight:600;">current</span></div>
+            </div>
+          </div>
+
+          <!-- Sub vaults -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="4" cy="8" r="2"/><circle cx="12" cy="8" r="2"/><path d="M6 8 L10 8"/></svg></div>
+              <h3>Sub-vaults</h3>
+              <span class="tag">2</span>
+            </div>
+            <div style="padding:4px 0;">
+              <div class="sv-row">
+                <div class="av-s">HV</div>
+                <div class="nm"><div class="n">HLP-Vol</div><div class="s">0x8a14…91d2</div></div>
+                <div class="v">$201.4M<span class="pct">56.4%</span></div>
+              </div>
+              <div class="sv-row">
+                <div class="av-s">HM</div>
+                <div class="nm"><div class="n">HLP-Mark</div><div class="s">0xa72f…04b1</div></div>
+                <div class="v">$155.5M<span class="pct">43.6%</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Depositor concentration -->
+          <div class="card">
+            <div class="card-head">
+              <div class="ic"><svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="3" height="6"/><rect x="6.5" y="3" width="3" height="9"/><rect x="11" y="8" width="3" height="4"/></svg></div>
+              <h3>Depositor concentration</h3>
+              <span class="tag">Top 5</span>
+            </div>
+            <div class="conc">
+              <div class="conc-bar">
+                <div class="conc-seg" style="width:14.2%; background:#83E9FF;" title="0x9b21…4f7e · 14.2%"></div>
+                <div class="conc-seg" style="width:8.4%; background:#4FB8D1;" title="0x4c12…71a8 · 8.4%"></div>
+                <div class="conc-seg" style="width:6.1%; background:#F9E370;" title="0xa42f…918c · 6.1%"></div>
+                <div class="conc-seg" style="width:4.8%; background:#1FA85B;" title="0x6e8b…112f · 4.8%"></div>
+                <div class="conc-seg" style="width:3.5%; background:#E53E3E;" title="0x88c1…ba29 · 3.5%"></div>
+                <div class="conc-seg" style="width:63.0%; background:#2A3445;" title="Other 91,199 depositors · 63.0%"></div>
+              </div>
+              <div class="conc-legend">
+                <div class="lg-row"><span class="dot" style="background:#83E9FF;"></span><span class="nm">0x9b21…4f7e</span><span class="pct">14.2%</span></div>
+                <div class="lg-row"><span class="dot" style="background:#4FB8D1;"></span><span class="nm">0x4c12…71a8</span><span class="pct">8.4%</span></div>
+                <div class="lg-row"><span class="dot" style="background:#F9E370;"></span><span class="nm">0xa42f…918c</span><span class="pct">6.1%</span></div>
+                <div class="lg-row"><span class="dot" style="background:#1FA85B;"></span><span class="nm">0x6e8b…112f</span><span class="pct">4.8%</span></div>
+                <div class="lg-row"><span class="dot" style="background:#E53E3E;"></span><span class="nm">0x88c1…ba29</span><span class="pct">3.5%</span></div>
+                <div class="lg-row"><span class="dot" style="background:#2A3445;"></span><span class="nm" style="color:var(--text-tertiary);">Other 91,199</span><span class="pct">63.0%</span></div>
+              </div>
+              <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-tertiary);">
+                <span>Herfindahl–Hirschman index</span>
+                <span class="mono" style="color:var(--text-secondary);font-weight:600;">348 (low)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
