@@ -14,6 +14,8 @@ interface PillTabsProps {
     activeTab: string
     onTabChange: (value: string) => void
     layoutId?: string // Kept for API compatibility, not used
+    /** "pill" (default): boxed track + animated brand indicator. "text": flat text tabs, active in brand (minimal DS). */
+    variant?: "pill" | "text"
     className?: string
 }
 
@@ -21,6 +23,7 @@ export function PillTabs({
     tabs,
     activeTab,
     onTabChange,
+    variant = "pill",
     className
 }: PillTabsProps) {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -52,6 +55,28 @@ export function PillTabs({
         window.addEventListener('resize', updateIndicator)
         return () => window.removeEventListener('resize', updateIndicator)
     }, [updateIndicator])
+
+    if (variant === "text") {
+        return (
+            <div className={cn("flex items-center gap-3", className)}>
+                {tabs.map((tab) => {
+                    const isActive = activeTab === tab.value
+                    return (
+                        <button
+                            key={tab.value}
+                            onClick={() => onTabChange(tab.value)}
+                            className={cn(
+                                "text-xs font-medium transition-colors whitespace-nowrap",
+                                isActive ? "text-brand" : "text-text-tertiary hover:text-text-primary"
+                            )}
+                        >
+                            {tab.label}
+                        </button>
+                    )
+                })}
+            </div>
+        )
+    }
 
     return (
         <div

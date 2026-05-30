@@ -18,6 +18,8 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-white/5 hover:text-white",
+        ghostBrand:
+          "bg-brand/10 border border-brand/25 text-brand hover:bg-brand/15",
         tableHeaderSortable:
           "p-0 h-auto table-column-head hover:text-text-secondary hover:bg-transparent gap-1.5 disabled:hover:text-text-tertiary disabled:cursor-default font-normal",
         link: "text-primary underline-offset-4 hover:underline",

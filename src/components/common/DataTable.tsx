@@ -223,6 +223,8 @@ interface TypedDataTableProps<T> {
      * d'éviter la distribution erratique du `table-layout: auto`.
      */
     fixedLayout?: boolean;
+    /** Fill the header row with `bg-surface-2`. Default true; set false for the minimal/flat look. */
+    headerFill?: boolean;
     /** Extra class on the outer wrapper. */
     className?: string;
 
@@ -333,6 +335,7 @@ export function TypedDataTable<T>({
     textSize,
     stickyHeader = false,
     fixedLayout = false,
+    headerFill = true,
     className,
     // Row
     onRowClick,
@@ -516,7 +519,7 @@ export function TypedDataTable<T>({
             }
         >
             <Table className={cn(fixedLayout && "table-fixed")}>
-                <TableHeader className={cn("bg-surface-2", stickyHeader && "sticky top-0 z-10")}>
+                <TableHeader className={cn(headerFill && "bg-surface-2", stickyHeader && "sticky top-0 z-10")}>
                     <TableRow className="border-b border-border-subtle hover:bg-transparent">
                         {columns.map((column, colIdx) => {
                             const colKey = column.key ?? `col-${colIdx}`;

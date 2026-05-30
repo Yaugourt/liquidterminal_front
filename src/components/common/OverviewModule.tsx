@@ -33,6 +33,8 @@ interface OverviewModuleProps {
   icon?: ReactNode;
   /** `tag` pill from the mockup (e.g. "$1.91B TVL"). */
   tag?: ReactNode;
+  /** Tag style. "pill" (default) or "plain" (minimal: right-aligned muted text, no chip). */
+  tagVariant?: "pill" | "plain";
   /** Label of the "View all →" link (e.g. "All vaults"). */
   viewAllLabel?: string;
   /** Link to the full page. Omit to hide the "View all" link — e.g. when the
@@ -47,6 +49,7 @@ export const OverviewModule = memo(function OverviewModule({
   title,
   icon,
   tag,
+  tagVariant = "pill",
   viewAllLabel,
   href,
   children,
@@ -64,11 +67,14 @@ export const OverviewModule = memo(function OverviewModule({
         <h3 className="text-[13px] font-semibold text-text-primary truncate">
           {title}
         </h3>
-        {tag != null && (
-          <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-            {tag}
-          </span>
-        )}
+        {tag != null &&
+          (tagVariant === "plain" ? (
+            <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">{tag}</span>
+          ) : (
+            <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+              {tag}
+            </span>
+          ))}
         {href && (
           <Link
             href={href}
@@ -348,6 +354,7 @@ export function ModuleAsset({
   logo,
   name,
   sub,
+  tone = "brand",
 }: {
   /** Asset name resolved against the HL CDN (preferred). */
   assetName?: string;
@@ -357,10 +364,13 @@ export function ModuleAsset({
   logo?: ReactNode;
   name: ReactNode;
   sub?: ReactNode;
+  /** Avatar tint. "brand" (default) or "neutral" (minimal DS: surface-2 / secondary). */
+  tone?: "brand" | "neutral";
 }) {
+  const neutral = tone === "neutral";
   return (
     <div className="flex items-center gap-2.5">
-      <div className="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">
+      <div className={`w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold overflow-hidden ${neutral ? "bg-surface-2 text-text-secondary" : "bg-brand/10 text-brand"}`}>
         {assetName ? (
           <AssetAvatarImage assetName={assetName} kind={kind} />
         ) : (
@@ -368,7 +378,7 @@ export function ModuleAsset({
         )}
       </div>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-semibold text-text-primary truncate">
+        <div className={`text-[12.5px] ${neutral ? "font-medium" : "font-semibold"} text-text-primary truncate`}>
           {name}
         </div>
         {sub != null && (
