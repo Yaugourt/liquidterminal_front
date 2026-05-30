@@ -62,6 +62,9 @@ export interface KpiRibbonProps {
   /** Wrap in the bordered/rounded container. Default true. Set false to embed
    *  the bare cell strip inside an outer container. */
   bordered?: boolean;
+  /** Visual treatment. "boxed" (default): gap-px surface strip, 20px/600 value.
+   *  "plain" (minimal DS): hairline dividers, no fill, 22px/medium value, 10px label. */
+  variant?: "boxed" | "plain";
   className?: string;
 }
 
@@ -90,30 +93,38 @@ export function KpiRibbon({
   columns,
   header,
   bordered = true,
+  variant = "boxed",
   className,
 }: KpiRibbonProps) {
   const cols = columns ?? DEFAULT_COLUMNS[cells.length] ?? "grid-cols-2 sm:grid-cols-3";
+  const plain = variant === "plain";
+
+  const gridClass = plain
+    ? `grid ${cols} divide-x divide-y sm:divide-y-0 divide-border-subtle`
+    : `grid ${cols} gap-px bg-border-subtle`;
+  const cellClass = plain
+    ? "px-5 py-4 flex flex-col"
+    : "bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col";
+  const labelClass = plain
+    ? "text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate"
+    : "text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate";
+  const valueBase = plain
+    ? "mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2"
+    : "mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5";
+  const subClass = plain
+    ? "text-[10.5px] text-text-tertiary mt-1.5"
+    : "mono text-[10px] text-text-tertiary mt-1.5";
+  const outerBorder = plain ? "border-border-subtle" : "border-border-default";
 
   const grid = (
-    <div className={`grid ${cols} gap-px bg-border-subtle`}>
+    <div className={gridClass}>
       {cells.map((cell, i) => (
-        <div
-          key={cell.key ?? i}
-          className="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col"
-        >
-          <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
-            {cell.label}
-          </div>
-          <div
-            className={`mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 ${
-              TONE_CLASS[cell.tone ?? "default"]
-            }`}
-          >
+        <div key={cell.key ?? i} className={cellClass}>
+          <div className={labelClass}>{cell.label}</div>
+          <div className={`${valueBase} ${TONE_CLASS[cell.tone ?? "default"]}`}>
             {cell.value}
           </div>
-          {cell.sub != null && (
-            <div className="mono text-[10px] text-text-tertiary mt-1.5">{cell.sub}</div>
-          )}
+          {cell.sub != null && <div className={subClass}>{cell.sub}</div>}
           {cell.sparkline != null && <div className="mt-auto pt-2">{cell.sparkline}</div>}
         </div>
       ))}
@@ -126,7 +137,7 @@ export function KpiRibbon({
 
   return (
     <div
-      className={`border border-border-default rounded-lg overflow-hidden${
+      className={`border ${outerBorder} rounded-lg overflow-hidden${
         className ? ` ${className}` : ""
       }`}
     >
