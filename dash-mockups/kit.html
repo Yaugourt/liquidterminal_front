@@ -88,72 +88,84 @@ Rule: header carries NO stats (they live in the cards) — only a description an
     </div>
   </section>
 
-  <!-- ───────────────────────── KpiRibbon ───────────────────────── -->
+  <!-- ───────────────────────── KpiRibbon (minimal · canonical) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
-    <div class="kit-label">KpiRibbon  (DESIGN_SYSTEM §7.b)</div>
-    <div class="kit-jsx">React: &lt;KpiRibbon cells={[{label, value, sub?, tone?: "default"|"gold"|"success"|"danger", sparkline?}]} columns? /&gt;
-Grouped: stack &lt;KpiRibbon header={{label, helper}} /&gt; in a space-y-* wrapper. NEVER hand-roll the gap-px strip.</div>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden mt-2">
-      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
-        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Total TVL</div>
-        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">$439.98M</div>
+    <div class="kit-label">KpiRibbon  (DESIGN_SYSTEM §7.b · variant="plain")</div>
+    <div class="kit-jsx">React: &lt;KpiRibbon variant="plain" cells={[{label, value, sub?, tone?: "default"|"gold"|"success"|"danger"}]} columns? /&gt;
+Minimal DS: hairline dividers (no gap-px fill / no hover), value 22px·medium, label 10px. "boxed" = legacy variant. NEVER hand-roll the strip.</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden mt-2">
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Total TVL</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$439.98M</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">across open vaults</div>
       </div>
-      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
-        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Vaults</div>
-        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-text-primary">3.2K</div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Vaults</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">3,241</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">total tracked</div>
       </div>
-      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
-        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">Avg APR · median</div>
-        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-success">+12.4%</div>
-        <div class="mono text-[10px] text-text-tertiary mt-1.5">annualized</div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Avg APR · median</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-success">+9.61%</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">active · excl HLP</div>
       </div>
-      <div class="bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col">
-        <div class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">All-Time PnL</div>
-        <div class="mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5 text-danger">-$125.0M</div>
-        <div class="mono text-[10px] text-text-tertiary mt-1.5">cumulative</div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Followers</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">183,198</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">Σ followerCount</div>
       </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Tabs — text (status filter · canonical) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">Tabs — text  (PillTabs variant="text")</div>
+    <div class="kit-jsx">React: &lt;PillTabs variant="text" tabs activeTab onTabChange /&gt;  ·  @/components/ui/pill-tabs
+Minimal DS for filters: no container/indicator, active text-brand, count in mono-tertiary. "pill" = legacy variant.</div>
+    <div class="flex items-center gap-3 mt-2 text-xs">
+      <button class="text-brand font-medium">All <span class="mono text-text-tertiary">3,241</span></button>
+      <button class="text-text-tertiary hover:text-text-primary">Open <span class="mono">3,241</span></button>
+      <button class="text-text-tertiary hover:text-text-primary">Closed <span class="mono">0</span></button>
     </div>
   </section>
 
   <!-- ───────────── OverviewModule + ModuleTable + ModuleAsset ───────────── -->
   <section class="space-y-3 kit-sec pt-8">
-    <div class="kit-label">OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset</div>
-    <div class="kit-jsx">React: &lt;OverviewModule title icon tag? href?&gt;&lt;ModuleTable columns&gt;&lt;ModuleTableRow cells=[&lt;ModuleAsset/&gt;, …] /&gt;…&lt;/&gt;&lt;/&gt;
-Give metric columns a width → ModuleTable goes table-fixed and the name column truncates (no overflow in narrow cards).</div>
+    <div class="kit-label">OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset  (minimal)</div>
+    <div class="kit-jsx">React: &lt;OverviewModule title tagVariant="plain" tag? href?&gt;&lt;ModuleTable headerFill={false}&gt;&lt;ModuleTableRow cells=[&lt;ModuleAsset tone="neutral"/&gt;, …] /&gt;…&lt;/&gt;&lt;/&gt;
+Minimal DS: no brand icon square, tag as plain text, neutral avatars, no header fill, medium weight. icon stays optional.</div>
     <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-2 max-w-md">
-      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
-        <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[13px]">▲</span>
-        <h3 class="text-[13px] font-semibold text-text-primary truncate">Top Vaults</h3>
-        <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">$1.9B TVL</span>
-        <a class="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand">All vaults →</a>
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Top Vaults</h3>
+        <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">$1.9B TVL · All →</a>
       </div>
       <table class="w-full border-collapse table-fixed">
         <colgroup><col><col style="width:88px"><col style="width:84px"></colgroup>
         <thead><tr>
-          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Vault</th>
-          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">APR</th>
-          <th class="bg-surface-2 px-3 py-1.5 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">TVL</th>
+          <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Vault</th>
+          <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">APR</th>
+          <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">TVL</th>
         </tr></thead>
         <tbody>
-          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-left">
+          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors">
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-left">
               <div class="flex items-center gap-2.5">
-                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">HG</div>
-                <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">HyperGrowth</div></div>
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">HG</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperGrowth</div></div>
               </div>
             </td>
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono font-semibold text-success">+214%</span></td>
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-primary">$13.3M</span></td>
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-right"><span class="mono font-medium text-success">+214%</span></td>
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-secondary">$13.3M</span></td>
           </tr>
-          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-left">
+          <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors">
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-left">
               <div class="flex items-center gap-2.5">
-                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-brand/10 text-brand overflow-hidden">GH</div>
-                <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Growi HF</div></div>
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">GH</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Growi HF</div></div>
               </div>
             </td>
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono font-semibold text-gold">+5.6%</span></td>
-            <td class="px-3 py-1.5 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-primary">$8.5M</span></td>
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-right"><span class="mono font-medium text-gold">+5.6%</span></td>
+            <td class="px-3 py-2 text-[12.5px] overflow-hidden text-right"><span class="mono text-text-secondary">$8.5M</span></td>
           </tr>
         </tbody>
       </table>
@@ -166,22 +178,21 @@ Give metric columns a width → ModuleTable goes table-fixed and the name column
     <div class="kit-jsx">React: &lt;OverviewModule title tag?&gt;&lt;ModuleRow rank logo name sub? stats=[{value, valueClassName}] href? /&gt;…&lt;/&gt;
 stat.label is optional — omit it for a value-only dense row.</div>
     <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-2 max-w-[280px]">
-      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
-        <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-brand text-[12px]">↗</span>
-        <h3 class="text-[13px] font-semibold text-text-primary truncate">Top APR · 24h</h3>
-        <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">5</span>
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Top APR · current</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">5</span>
       </div>
-      <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle hover:bg-surface-2 transition-colors">
-        <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">01</span>
-        <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[10px] font-semibold bg-brand/10 text-brand overflow-hidden">SQ</div>
-        <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Squeeze Hunter</div><div class="text-[10px] text-text-tertiary truncate">$4.12M TVL</div></div>
-        <div class="ml-auto flex shrink-0 gap-5"><div class="text-right"><div class="mono text-[12.5px] font-semibold text-success">+312%</div></div></div>
+      <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+        <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">01</span>
+        <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">SQ</div>
+        <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Squeeze Hunter</div><div class="mono text-[10px] text-text-tertiary truncate">$4.12M TVL</div></div>
+        <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+312%</div>
       </div>
-      <div class="flex items-center gap-2.5 px-3.5 py-2.5 last:border-b-0 hover:bg-surface-2 transition-colors">
-        <span class="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">02</span>
-        <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[10px] font-semibold bg-brand/10 text-brand overflow-hidden">HG</div>
-        <div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">HyperGrowth</div><div class="text-[10px] text-text-tertiary truncate">$13.3M TVL</div></div>
-        <div class="ml-auto flex shrink-0 gap-5"><div class="text-right"><div class="mono text-[12.5px] font-semibold text-success">+214%</div></div></div>
+      <div class="flex items-center gap-3 px-4 py-2.5 last:border-b-0 hover:bg-surface-2/60 transition-colors">
+        <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">02</span>
+        <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">HG</div>
+        <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperGrowth</div><div class="mono text-[10px] text-text-tertiary truncate">$13.3M TVL</div></div>
+        <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+214%</div>
       </div>
     </div>
   </section>
@@ -189,30 +200,40 @@ stat.label is optional — omit it for a value-only dense row.</div>
   <!-- ───────────────────────── TypedDataTable (page table) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">TypedDataTable  (full-width page table) + toolbar</div>
-    <div class="kit-jsx">React: &lt;TypedDataTable data columns getRowKey paginate itemsPerPage toolbar={…} /&gt;  ·  @/components/common
-Column.type: "numeric"|"fees"|"change"|"address"|"text" auto-styles cells. Wrap in a min-w-0 cell when placed beside a sidebar.</div>
+    <div class="kit-jsx">React: &lt;TypedDataTable data columns getRowKey paginate headerFill={false} toolbar={…} /&gt;  ·  @/components/common
+Minimal DS: no header fill, rows py-3, neutral avatars, text tabs. Column.type: "numeric"|"fees"|"change"|"address"|"text" auto-styles cells.</div>
     <div class="min-w-0 bg-surface border border-border-subtle rounded-lg mt-2 overflow-hidden">
-      <div class="flex items-center gap-3 px-3 py-2.5 border-b border-border-subtle">
-        <div class="relative flex-1 max-w-xs">
-          <input placeholder="Search name, address, leader…" class="w-full pl-3 h-8 text-sm bg-white/5 border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+      <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+        <div class="relative flex-1 min-w-[180px] max-w-xs">
+          <input placeholder="Search name, address, leader…" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
         </div>
-        <span class="text-text-tertiary text-xs ml-auto shrink-0">3,241 vaults</span>
+        <div class="flex items-center gap-3 text-xs">
+          <button class="text-brand font-medium">All <span class="mono text-text-tertiary">3,241</span></button>
+          <button class="text-text-tertiary hover:text-text-primary">Open <span class="mono">3,241</span></button>
+          <button class="text-text-tertiary hover:text-text-primary">Closed <span class="mono">0</span></button>
+        </div>
+        <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0">3,241 vaults</span>
       </div>
       <table class="w-full border-collapse">
         <thead><tr>
-          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">#</th>
-          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Vault</th>
-          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-left">Leader</th>
-          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">TVL</th>
-          <th class="bg-surface-2 px-4 py-2 text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle text-right">APR</th>
+          <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">#</th>
+          <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Vault</th>
+          <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Leader</th>
+          <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">TVL</th>
+          <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">APR</th>
         </tr></thead>
         <tbody>
-          <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors">
-            <td class="px-4 py-2.5 text-right"><span class="mono text-text-tertiary text-xs">1</span></td>
-            <td class="px-4 py-2.5"><div class="text-sm font-medium text-text-primary truncate max-w-[240px]">HLP — Hyperliquidity Provider</div><div class="mono text-[11px] text-text-tertiary">0xdfc24b…1d99</div></td>
-            <td class="px-4 py-2.5"><span class="mono text-xs text-text-secondary">0x010461…29b2</span></td>
-            <td class="px-4 py-2.5 text-right mono text-text-primary">$356.9M</td>
-            <td class="px-4 py-2.5 text-right"><span class="mono text-success font-semibold">+1.28%</span></td>
+          <tr class="hover:bg-surface-2/60 transition-colors">
+            <td class="px-4 py-3 text-right"><span class="mono text-text-tertiary text-[11px]">1</span></td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-surface-2 text-text-secondary">HP</span>
+                <div class="min-w-0"><div class="text-[13px] font-medium text-text-primary truncate max-w-[240px]">HLP — Hyperliquidity Provider</div><div class="mono text-[11px] text-text-tertiary">0xdfc24b…1d99</div></div>
+              </div>
+            </td>
+            <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">0x010461…29b2</span></td>
+            <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">$356.9M</td>
+            <td class="px-4 py-3 text-right"><span class="mono text-[13px] font-medium text-success">+1.28%</span></td>
           </tr>
         </tbody>
       </table>
