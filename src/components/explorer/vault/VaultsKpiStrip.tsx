@@ -24,21 +24,25 @@ export function VaultsKpiStrip({ directory }: VaultsKpiStripProps) {
     {
       label: "Total TVL",
       value: isLoading && !totalTvl ? ph : compactUsd(totalTvl),
+      sub: "across tracked vaults",
     },
     {
       label: "Vaults",
       value: isLoading && !totalCount ? ph : compactCount(totalCount),
+      sub: "total tracked",
     },
     {
       label: "Avg APR · median",
       value: isLoading && !avgApr ? ph : `${avgApr >= 0 ? "+" : ""}${avgApr.toFixed(1)}%`,
       tone: avgApr >= 0 ? "success" : "danger",
+      sub: "active · excl HLP",
     },
     {
       label: "Followers · tracked",
       value: isLoading && !totalFollowers ? ph : compactCount(totalFollowers),
+      sub: "Σ followerCount",
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" />;
+  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" variant="plain" />;
 }
