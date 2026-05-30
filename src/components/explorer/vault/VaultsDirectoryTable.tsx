@@ -2,14 +2,12 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
@@ -19,6 +17,9 @@ import type {
 } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 import type { NumberFormatType } from "@/store/number-format.store";
 import type { DateFormatType } from "@/store/date-format.store";
+
+const initials = (name: string) =>
+  name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
 
 function buildColumns(
   format: NumberFormatType,
@@ -40,12 +41,17 @@ function buildColumns(
       sortable: true,
       getSortValue: (v) => v.summary.name.toLowerCase(),
       accessor: (v) => (
-        <div className="min-w-0">
-          <div className="text-sm font-medium text-text-primary truncate max-w-[240px]">
-            {v.summary.name}
-          </div>
-          <div className="mono text-[11px] text-text-tertiary">
-            {v.summary.vaultAddress.slice(0, 8)}…{v.summary.vaultAddress.slice(-4)}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">
+            {initials(v.summary.name)}
+          </span>
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-text-primary truncate max-w-[240px]">
+              {v.summary.name}
+            </div>
+            <div className="mono text-[11px] text-text-tertiary">
+              {v.summary.vaultAddress.slice(0, 8)}…{v.summary.vaultAddress.slice(-4)}
+            </div>
           </div>
         </div>
       ),
@@ -101,40 +107,6 @@ function buildColumns(
         </span>
       ),
     },
-    {
-      key: "status",
-      header: "Status",
-      align: "center",
-      headerAlign: "center",
-      accessor: (v) => (
-        <StatusBadge variant={v.summary.isClosed ? "inactive" : "success"}>
-          {v.summary.isClosed ? "Closed" : "Open"}
-        </StatusBadge>
-      ),
-    },
-    {
-      key: "action",
-      header: "",
-      align: "center",
-      headerAlign: "center",
-      accessor: (v) => (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Button
-            onClick={() =>
-              window.open(
-                `https://app.hyperliquid.xyz/vaults/${v.summary.vaultAddress}`,
-                "_blank"
-              )
-            }
-            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold px-2.5 py-1 h-7 text-[11px] flex items-center gap-1 mx-auto"
-            disabled={v.summary.isClosed}
-          >
-            Deposit
-            <ExternalLink className="h-3 w-3" />
-          </Button>
-        </div>
-      ),
-    },
   ];
 }
 
@@ -176,20 +148,21 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
 
   const toolbar = (
     <div className="flex flex-wrap items-center gap-3">
-      <PillTabs
-        tabs={statusTabs}
-        activeTab={statusFilter}
-        onTabChange={(v) => setStatusFilter(v as typeof statusFilter)}
-      />
       <div className="relative flex-1 min-w-[160px] max-w-xs">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
         <Input
           placeholder="Search name, address, leader…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 h-8 text-sm bg-white/5 border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50"
+          className="pl-9 h-8 text-sm bg-transparent border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50"
         />
       </div>
+      <PillTabs
+        variant="text"
+        tabs={statusTabs}
+        activeTab={statusFilter}
+        onTabChange={(v) => setStatusFilter(v as typeof statusFilter)}
+      />
       <span className="text-text-tertiary text-xs ml-auto shrink-0">
         {filtered.length} vault{filtered.length !== 1 ? "s" : ""}
       </span>
@@ -212,6 +185,7 @@ export function VaultsDirectoryTable({ directory }: VaultsDirectoryTableProps) {
         itemsPerPage={20}
         rowsPerPageOptions={[20, 50, 100]}
         paginationVariant="full"
+        headerFill={false}
         onRowClick={handleRowClick}
         toolbar={toolbar}
       />
