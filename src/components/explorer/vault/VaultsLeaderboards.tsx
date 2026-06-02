@@ -23,10 +23,10 @@ const initials = (name: string) =>
 const vaultHref = (addr: string) => `/explorer/vaults/${encodeURIComponent(addr)}`;
 
 /**
- * Leaderboards section for /explorer/vaults (main-dashboard page-type, like
- * "Capital Allocators"): a 3-col grid of OverviewModule + ModuleTable cards —
- * Top APR (current), Followers gained (24h), Largest outflows (24h). Minimal
- * treatment: neutral avatars, plain tags, no card icon.
+ * Leaderboards rail for /explorer/vaults: a vertical stack of OverviewModule +
+ * ModuleTable cards sitting to the right of the directory table — Top APR
+ * (current), Followers gained (24h), Largest outflows (24h). Minimal treatment:
+ * neutral avatars, plain tags, no card icon.
  */
 export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   const { rows } = directory;
@@ -63,7 +63,10 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+    // Full-width 3-col row below xl; a stacked vertical rail at xl (next to the
+    // directory table). Keeps cards roomy at 1024 (no clip) and tucks them to
+    // the right on wide screens.
+    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-1 gap-4">
       <OverviewModule title="Top APR · current" tag="min $1M" tagVariant="plain">
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "TVL", width: 84 }, { header: "APR", width: 72 }]}

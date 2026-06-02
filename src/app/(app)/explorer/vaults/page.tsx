@@ -2,6 +2,7 @@
 
 import {
   VaultsKpiStrip,
+  VaultsEcosystemShape,
   VaultsDirectoryTable,
   VaultsListHeader,
   VaultsLeaderboards,
@@ -29,18 +30,21 @@ export default function VaultsPage() {
 
       <section className="space-y-2.5">
         <SectionHead
-          title="All vaults"
-          subtitle="Directory · sortable · HL TVL/APR joined with indexer follower data"
+          title="Ecosystem shape"
+          subtitle="growth · capital distribution · return spread — current snapshot"
         />
-        <VaultsDirectoryTable directory={directory} />
+        <VaultsEcosystemShape directory={directory} />
       </section>
 
       <section className="space-y-2.5">
         <SectionHead
-          title="Leaderboards"
-          subtitle="by current APR, 24h follower growth & 24h outflows"
+          title="All vaults"
+          subtitle="Directory + leaderboards · current APR, 24h follower growth & outflows"
         />
-        <VaultsLeaderboards directory={directory} />
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-4 items-start">
+          <VaultsDirectoryTable directory={directory} />
+          <VaultsLeaderboards directory={directory} />
+        </div>
       </section>
     </div>
   );

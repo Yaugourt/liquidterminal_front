@@ -44,5 +44,7 @@ export function VaultsKpiStrip({ directory }: VaultsKpiStripProps) {
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" variant="plain" />;
+  // Boxed variant (default) so the Overview cells carry the same bg-surface
+  // fill as the dashboard's Network Pulse ribbon (PulseBar) — visual parity.
+  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" />;
 }
