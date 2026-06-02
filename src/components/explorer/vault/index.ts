@@ -1,6 +1,7 @@
 // List page
 export { VaultsListHeader } from './VaultsListHeader';
 export { VaultsKpiStrip } from './VaultsKpiStrip';
+export { VaultsEcosystemShape } from './VaultsEcosystemShape';
 export { VaultsDirectoryTable } from './VaultsDirectoryTable';
 export { VaultsLeaderboards } from './VaultsLeaderboards';
 

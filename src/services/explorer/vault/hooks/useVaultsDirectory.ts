@@ -10,6 +10,14 @@ export type StatusFilter = "all" | "open" | "closed";
 /** HLP is an outlier (huge TVL, ~0% APR) — excluded from the average APR. */
 const HLP_ADDRESS = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303";
 
+/**
+ * "Active" floor for the headline APR: the directory is dominated by thousands
+ * of dead/dust vaults sitting at ~0% APR, which drags the all-vault median to
+ * zero. Restricting to vaults holding > $10k TVL gives a median that reflects
+ * the live, tradable set (matches the "active · excl HLP" KPI label).
+ */
+const ACTIVE_TVL_FLOOR = 10_000;
+
 export interface VaultRow extends VaultSummary {
   followerCount: number | null;
   leaderCommission: number | null;
@@ -97,10 +105,17 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
   const openCount = useMemo(() => vaults.filter((v) => !v.summary.isClosed).length, [vaults]);
   const closedCount = useMemo(() => vaults.filter((v) => v.summary.isClosed).length, [vaults]);
 
-  // Median APR (robust to outliers), excluding HLP, over vaults with a finite APR.
+  // Median APR (robust to outliers), excluding HLP and dust vaults, over the
+  // active set (TVL above the floor) with a finite APR.
   const avgApr = useMemo(() => {
     const aprs = rows
-      .filter((v) => v.summary.vaultAddress.toLowerCase() !== HLP_ADDRESS && Number.isFinite(v.apr))
+      .filter(
+        (v) =>
+          v.summary.vaultAddress.toLowerCase() !== HLP_ADDRESS &&
+          !v.summary.isClosed &&
+          Number.isFinite(v.apr) &&
+          parseFloat(v.summary.tvl) >= ACTIVE_TVL_FLOOR
+      )
       .map((v) => v.apr)
       .sort((a, b) => a - b);
     if (aprs.length === 0) return 0;
