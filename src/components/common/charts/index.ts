@@ -6,6 +6,8 @@ export { DonutTopN } from './DonutTopN';
 export type { DonutSlice, DonutTopNProps, DonutVariant } from './DonutTopN';
 export { FlowGrid, FlowBar } from './FlowGrid';
 export type { FlowGridProps, FlowGridColumn, FlowBarProps } from './FlowGrid';
+export { StackedShareBar } from './StackedShareBar';
+export type { StackedShareBarProps, ShareSegment } from './StackedShareBar';
 export { ChartSkeleton } from './ChartSkeleton';
 export { ChartWatermark } from './ChartWatermark';
 export { PeriodSelector } from './PeriodSelector';

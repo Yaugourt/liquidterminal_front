@@ -10,6 +10,7 @@ import {
   categorizeQuestion,
   type Hip4Category,
 } from "@/lib/hip4-category";
+import { effectiveStatus, type Hip4EffectiveStatus } from "@/lib/hip4/market-formatter";
 import { Hip4QuestionCard } from "./Hip4QuestionCard";
 import { Hip4MarketCategoryTabs } from "./Hip4MarketCategoryTabs";
 
@@ -33,6 +34,7 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
   const augmented = useMemo(() => {
     return (Array.isArray(questions) ? questions : []).map((q) => ({
       q,
+      eff: effectiveStatus(q),
       category: categorizeQuestion(
         { class: q.class, underlying: q.underlying },
         q.outcomes.length > 1 ? q.outcomes.map((o) => ({ name: o.display_name })) : null
@@ -51,8 +53,8 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
   const statusCounts = useMemo(() => {
     let live = 0, pending = 0, settled = 0;
     for (const a of augmented) {
-      if (a.q.status === "settled") settled++;
-      else if (a.q.status === "expired_unresolved") pending++;
+      if (a.eff === "settled") settled++;
+      else if (a.eff === "expired_unresolved") pending++;
       else live++;
     }
     return { live, pending, settled, all: augmented.length };
@@ -61,12 +63,12 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const byCategory = category === "all" ? augmented : augmented.filter((a) => a.category === category);
-    const statusMatch = (s: typeof statusFilter, qStatus: Hip4QuestionWithOutcomesRow["status"]) => {
+    const statusMatch = (s: typeof statusFilter, eff: Hip4EffectiveStatus) => {
       if (s === "all") return true;
-      if (s === "pending") return qStatus === "expired_unresolved";
-      return qStatus === s;
+      if (s === "pending") return eff === "expired_unresolved";
+      return eff === s;
     };
-    const byStatus = byCategory.filter((a) => statusMatch(statusFilter, a.q.status));
+    const byStatus = byCategory.filter((a) => statusMatch(statusFilter, a.eff));
     const base = byStatus;
     const searched = q
       ? base.filter(({ q: question }) => {

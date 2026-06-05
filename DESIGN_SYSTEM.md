@@ -438,6 +438,22 @@ Don't stack more than 3 series of **different natures** (flow vs stock) on the s
 
 Used inside `StablecoinsCard`, `PulseBar`, `Hip4GlobalStatsStrip`, vault detail commission timeline. No axis, no tooltip — meant to be a glanceable micro-trend, never the primary chart. Lives in `common/` (shared primitive) and is re-exported from `dashboard/` for backwards compatibility.
 
+### 6.9 `<StackedShareBar>` — proportional split bar
+
+A single horizontal track split into proportional colored segments (Buy vs Sell share, N-outcome composition). Distinct from `<FlowBar>` (one fill vs a track) and `<Progress>` (single value, fixed brand gradient): it renders the **relative split** of several parts.
+
+```tsx
+<StackedShareBar
+  height={10}
+  segments={[
+    { value: buy,  colorClass: "bg-success", label: `Bought ${compactUsd(buy)}` },
+    { value: sell, colorClass: "bg-danger",  label: `Sold ${compactUsd(sell)}` },
+  ]}
+/>
+```
+
+Prefer `colorClass` (a `bg-*` token) so the bar stays on-token; `color` (explicit, e.g. a `chartPalette` entry) is available for multi-series. Lives in `common/charts/`. Used by `Hip4PositioningBar` (observed trade-flow split).
+
 ## 7. Composition patterns
 
 Generic composition patterns, **applicable everywhere** in the app (dashboard, market, explorer, …). The DS encodes composition; domains consume it.
@@ -479,6 +495,23 @@ The primitive locks the look (the recipe below); callers pass data only.
 
 - **No `items-start`** on rows of paired cards (`grid-cols-2`, `grid-cols-3`) → cards stretch to equal height (default `stretch`). Components designed to stretch (`flex-1` on the main section, `mt-auto` on footers) fill in correctly.
 - `items-start` is reserved for asymmetric main+aside layouts (e.g. main chart + shorter right column).
+
+### 7.d — Outcome row (prediction markets)
+
+`<OutcomeRow>` (`@/components/common`) — the canonical "labelled probability bar": colored dot + label, optional volume + implied %, and a thin progress bar underneath. Consolidates the two predecessors it replaces (the Hip-4 card `ProbRow` + `Hip4OutcomeBar`).
+
+```tsx
+<OutcomeRow
+  label="Yes" pct={62} variant="success"          // success | danger | brand (token)
+  // …or color={chartPalette.multiSeries[i]}       // explicit color → multi-outcome (overrides variant)
+  volume={vol}
+  selected={coin === activeCoin}                   // optional → selectable button (active ring)
+  onSelect={() => setActiveCoin(coin)}
+/>
+```
+
+- Color: `variant` (semantic token — Yes/No/brand) OR `color` (explicit, multi-series). `color` wins.
+- `onSelect` turns the row into a selectable button. Used by `Hip4OutcomeList` (binary / versus / ladder variants — one template per market type).
 
 ## 8. Services — 4-layer architecture
 
