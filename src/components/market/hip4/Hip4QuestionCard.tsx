@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
-import { formatExpiryCountdown, isBinaryQuestion } from "@/lib/hip4/market-formatter";
+import { effectiveStatus, formatExpiryCountdown, isBinaryQuestion } from "@/lib/hip4/market-formatter";
 
 interface Hip4QuestionCardProps {
   question: Hip4QuestionWithOutcomesRow;
@@ -60,14 +60,18 @@ function ProbRow({ label, pct, variant, volume }: ProbRowProps) {
 }
 
 export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
-  const settled = question.status === "settled";
-  const expiredUnresolved = question.status === "expired_unresolved";
+  const eff = effectiveStatus(question);
+  const settled = eff === "settled";
+  const expiredUnresolved = eff === "expired_unresolved";
   const title = question.title || "Untitled market";
   const badge = categoryBadge(question.class, question.underlying);
   const binary = isBinaryQuestion(question);
 
   const primaryOutcome = question.outcomes[0];
-  const primaryCoin = primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null;
+  // Prefer the merge-computed tradeable coin (encoded `#<10*outcome+side>`);
+  // fall back to the raw outcome coin for legacy callers.
+  const primaryCoin =
+    question.primary_coin ?? (primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null);
   const href = primaryCoin ? `/market/hip4/${encodeURIComponent(primaryCoin)}` : null;
 
   const countdown = !settled ? formatExpiryCountdown(question.expiry ?? null) : null;

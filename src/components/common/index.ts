@@ -42,6 +42,10 @@ export type { ModuleColumn, ModuleRowStat } from './OverviewModule';
 // Numeric display
 export { Num } from './Num';
 
+// Prediction-market outcome row (§7.c)
+export { OutcomeRow } from './OutcomeRow';
+export type { OutcomeRowProps, OutcomeRowVariant } from './OutcomeRow';
+
 // KPI ribbon (§7.b)
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';

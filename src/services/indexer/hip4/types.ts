@@ -44,6 +44,12 @@ export interface Hip4QuestionOutcome {
   open_interest: number | null;
   is_settled: boolean;
   settled_at: string | null;
+  /**
+   * Encoded, *tradeable* coin for this outcome's series (`#<10*outcome+side>`),
+   * resolved against allMids during the merge. Drives the probability-history
+   * chart + deep links; absent on un-merged rows.
+   */
+  coin?: string | null;
 }
 
 export interface Hip4QuestionWithOutcomesRow {
@@ -67,6 +73,14 @@ export interface Hip4QuestionWithOutcomesRow {
   period: string | null;
   target_price: number | null;
   outcomes: Hip4QuestionOutcome[];
+  /**
+   * Encoded, *tradeable* side coin (`#<10*outcome+side>`) the card should link
+   * to. HypeDexer keys grouped questions by raw outcome id (`#103`), which has
+   * no price/fills/orderbook; the detail page needs the encoded coin (`#1030`).
+   * Set by the live-market builder + the page merge. Optional: legacy callers
+   * fall back to `#<outcomes[0].outcome_id>`.
+   */
+  primary_coin?: string | null;
 }
 
 export interface Hip4FillRow {
@@ -81,6 +95,10 @@ export interface Hip4FillRow {
   fee: number;
   hash: string;
   tid?: number;
+  /** Action kind — "Buy"/"Sell" for trades, "Split Outcome"/"Merge …"/etc. for
+   *  protocol operations. Non-trade dirs are excluded from trade-flow stats. */
+  dir?: string;
+  closedPnl?: number;
 }
 
 export interface Hip4SettlementRow {
@@ -110,6 +128,99 @@ export interface Hip4AnalyticsResponse {
   status: "live" | "not_yet_live";
   count: number;
   data: Hip4AnalyticsBucket[];
+}
+
+// ─── Hyperliquid outcomeMeta (canonical live-market source) ──────────────────
+// HypeDexer's `/markets-enriched` + `/questions-with-outcomes` aggregation
+// tables lag and currently OMIT the live markets entirely (Fed/NBA/CPI/recurring
+// BTC). The canonical list of currently-registered outcomes lives in
+// Hyperliquid's `outcomeMeta` info call; live prices in `allMids`. We fetch both
+// directly and synthesize question/market rows so the live markets show up.
+
+export interface Hip4OutcomeMetaSide {
+  name: string;
+}
+
+/** One raw outcome from POST /info { type: "outcomeMeta" }. `outcome` is the
+ * RAW outcome id; each side maps to a spot coin `#<10*outcome + side>`. */
+export interface Hip4OutcomeMetaEntry {
+  outcome: number;
+  name: string;
+  description: string;
+  sideSpecs: Hip4OutcomeMetaSide[];
+  quoteToken?: string;
+}
+
+export interface Hip4OutcomeMetaResponse {
+  outcomes: Hip4OutcomeMetaEntry[];
+}
+
+// ─── Hyperliquid market-data for live outcome coins ──────────────────────────
+// `l2Book` + `candleSnapshot` (POST /info) DO return data for currently-LIVE
+// outcome coins (`#1040` etc.) and `null`/`[]` for expired ones. The shared
+// market WS (used by the spot/perp OrderBook + TradingView) omits `#NNN` coins,
+// so these are fetched over REST instead. `px`/OHLC are 0–1 = implied prob.
+
+export interface Hip4BookLevel {
+  px: string;
+  sz: string;
+  /** Number of orders aggregated at this level. */
+  n: number;
+}
+
+/** POST /info { type:"l2Book", coin:"#NNN" }. `levels` is `[bids, asks]`. */
+export interface Hip4L2Book {
+  coin: string;
+  time: number;
+  levels: [Hip4BookLevel[], Hip4BookLevel[]];
+}
+
+/** One OHLC bar from POST /info { type:"candleSnapshot", req:{coin,interval,…} }.
+ *  o/c/h/l are the implied probability (0–1); v/n are 0 for quote-only buckets. */
+export interface Hip4Candle {
+  t: number;
+  T: number;
+  s: string;
+  i: string;
+  o: string;
+  c: string;
+  h: string;
+  l: string;
+  v: string;
+  n: number;
+}
+
+export type Hip4CandleInterval = "15m" | "1h" | "4h" | "1d";
+
+/** Core assembled live markets (builder output): grid-ready question rows + a
+ * per-coin enriched-row map (keyed by `#<encoding>`) for the detail page and
+ * fills labels, plus the raw `allMids` map so callers can price-enrich
+ * HypeDexer's own questions. */
+export interface Hip4LiveMarketData {
+  questions: Hip4QuestionWithOutcomesRow[];
+  marketsByCoin: Record<string, Hip4MarketEnrichedRow>;
+  /** `#<encoding>` → mid price string (implied probability). */
+  mids: Record<string, string>;
+}
+
+export interface Hip4LiveMarkets extends Hip4LiveMarketData {
+  /** True when the per-outcome volume fetch failed (analytics 402), so volumes
+   * fell back to 0 and any volume total is understated. */
+  volumesUnavailable: boolean;
+}
+
+export interface UseHip4LiveMarketsResult {
+  liveQuestions: Hip4QuestionWithOutcomesRow[];
+  liveMarketsByCoin: Record<string, Hip4MarketEnrichedRow>;
+  /** `#<encoding>` → mid price string, for enriching HypeDexer questions. */
+  mids: Record<string, string>;
+  /** Volume contribution is partial/0 because the analytics fetch failed. */
+  volumesUnavailable: boolean;
+  isLoading: boolean;
+  error: Error | null;
+  /** Epoch ms of the last successful fetch — null until first success. */
+  dataUpdatedAt: number | null;
+  refetch: () => void;
 }
 
 // ─── Query interfaces ────────────────────────────────────────────────────────

@@ -1,5 +1,12 @@
 export { Hip4GlobalStatsStrip } from "./Hip4GlobalStatsStrip";
 export { Hip4MarketDetailHeader } from "./Hip4MarketDetailHeader";
+export { Hip4DetailKpiRibbon } from "./Hip4DetailKpiRibbon";
+export { Hip4OutcomeList } from "./Hip4OutcomeList";
+export { Hip4RulesCard } from "./Hip4RulesCard";
+export { Hip4OrderBook } from "./Hip4OrderBook";
+export { Hip4PositioningBar } from "./Hip4PositioningBar";
+export { Hip4TopTraders } from "./Hip4TopTraders";
+export { Hip4RelatedMarkets } from "./Hip4RelatedMarkets";
 export { Hip4MarketGrid } from "./Hip4MarketGrid";
 export { Hip4MarketCategoryTabs } from "./Hip4MarketCategoryTabs";
 export { Hip4QuestionCard } from "./Hip4QuestionCard";
@@ -7,4 +14,5 @@ export { Hip4OutcomeBar } from "./Hip4OutcomeBar";
 export { Hip4RecentFills } from "./Hip4RecentFills";
 export { Hip4SettlementsTable } from "./Hip4SettlementsTable";
 export { Hip4AnalyticsChart } from "./Hip4AnalyticsChart";
+export { Hip4ProbabilityChart } from "./Hip4ProbabilityChart";
 export { Hip4StalenessChip } from "./Hip4StalenessChip";

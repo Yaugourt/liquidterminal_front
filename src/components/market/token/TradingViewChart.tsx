@@ -393,6 +393,31 @@ export function TradingViewChart({
     }
   }, [overlayCandles, overlayStrikePrice]);
 
+  // ── Strike line on the MAIN price scale ──────────────────────────────
+  // When no overlay perp is configured the main candle series IS the underlying
+  // asset (the HIP-4 detail page passes `coinId={underlying}` directly), so the
+  // strike has to be drawn on the main series. The overlay effect above only
+  // fires when an overlay line exists, which is why HIP-4 binary markets (e.g.
+  // "BTC above 67,297") were silently dropping their strike line.
+  useEffect(() => {
+    if (overlayPerpCoinId) return; // the overlay effect owns the strike line
+    if (!candleRef.current) return;
+    if (lastPriceLineRef.current) {
+      try { candleRef.current.removePriceLine(lastPriceLineRef.current); } catch { /* ignore */ }
+      lastPriceLineRef.current = null;
+    }
+    if (overlayStrikePrice == null) return;
+    if (!candles || candles.length === 0) return;
+    lastPriceLineRef.current = candleRef.current.createPriceLine({
+      price: overlayStrikePrice,
+      color: "rgba(251,191,36,0.85)",
+      lineWidth: 1,
+      lineStyle: LineStyle.Dashed,
+      axisLabelVisible: true,
+      title: "Strike",
+    });
+  }, [overlayStrikePrice, overlayPerpCoinId, candles]);
+
   // ── Real-time updates from websocket ─────────────────────────────────
   useEffect(() => {
     if (!currentPrice || !candleRef.current || !volumeRef.current || !lastCandleRef.current || !coinId) {
