@@ -5,7 +5,20 @@ import {
   fetchHip4OutcomeVolumes,
 } from "../api";
 import { buildLiveMarkets } from "@/lib/hip4/outcome-meta";
-import type { Hip4LiveMarkets, UseHip4LiveMarketsResult } from "../types";
+import type {
+  Hip4LiveMarkets,
+  Hip4MarketEnrichedRow,
+  Hip4QuestionWithOutcomesRow,
+  UseHip4LiveMarketsResult,
+} from "../types";
+
+// Stable empty fallbacks. Returning a fresh `[]`/`{}` while `data` is undefined
+// gives `liveMarketsByCoin` etc. a new identity every render, which cascades
+// through the detail page's `useMemo` chain and retriggers its title effect in
+// an infinite loop ("Maximum update depth exceeded").
+const EMPTY_QUESTIONS: Hip4QuestionWithOutcomesRow[] = [];
+const EMPTY_MARKETS_BY_COIN: Record<string, Hip4MarketEnrichedRow> = {};
+const EMPTY_MIDS: Record<string, string> = {};
 
 /**
  * Fetches the canonical live markets that HypeDexer's aggregation tables omit:
@@ -47,9 +60,9 @@ export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
     });
 
   return {
-    liveQuestions: data?.questions ?? [],
-    liveMarketsByCoin: data?.marketsByCoin ?? {},
-    mids: data?.mids ?? {},
+    liveQuestions: data?.questions ?? EMPTY_QUESTIONS,
+    liveMarketsByCoin: data?.marketsByCoin ?? EMPTY_MARKETS_BY_COIN,
+    mids: data?.mids ?? EMPTY_MIDS,
     volumesUnavailable: data?.volumesUnavailable ?? false,
     isLoading,
     error,
