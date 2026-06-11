@@ -13,16 +13,12 @@ import { useGlobalAliases } from "@/services/explorer";
 import { useWallets } from "@/store/use-wallets";
 import { AddToTrackListButton } from "@/components/market/tracker/AddToTrackListButton";
 import { Card } from "@/components/ui/card";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
 
 interface AddressHeroProps {
   address: string;
   /** External explorer URL (defaults to HyperLiquid address explorer). */
   externalUrl?: string;
-}
-
-function truncateAddress(address: string): string {
-  if (address.length <= 18) return address;
-  return `${address.slice(0, 10)}...${address.slice(-8)}`;
 }
 
 /** Compute a stable gradient from the address bytes (deterministic, no deps). */

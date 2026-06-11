@@ -8,15 +8,10 @@ import {
   ChartError,
   ChartLoading,
 } from "@/components/common";
+import { fullUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
 import { RevenueChart } from "./RevenueChart";
-
-/** Full USD with thousand separators — `$1,200,431,558`. */
-const formatUsdFull = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "—";
-  return `$${Math.round(v).toLocaleString("en-US")}`;
-};
 
 /**
  * FeesRevenuePanel — Protocol revenue card.
@@ -61,7 +56,7 @@ export const FeesRevenuePanel = memo(function FeesRevenuePanel() {
           Protocol Revenue
         </h3>
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          Lifetime {formatUsdFull(lifetimeTotal)}
+          Lifetime {lifetimeTotal > 0 ? fullUsd(lifetimeTotal) : "—"}
         </span>
         <div className="ml-auto flex items-center gap-1 text-[11px] font-semibold">
           {WINDOWS.map((w, i) => (

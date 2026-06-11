@@ -14,6 +14,7 @@ import {
 } from "@/services/market/perpDex/hooks";
 import type { PastAuctionPerp } from "@/services/market/perpDex/types";
 import { compactUsd, compactHype } from "@/lib/formatters/numberFormatting";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 /**
  * Companion cards for the HIP-3 auction row, sourced from the same hook the
@@ -27,17 +28,6 @@ import { compactUsd, compactHype } from "@/lib/formatters/numberFormatting";
 
 const PAST_ROWS = 5;
 const TOP_DEPLOYERS = 5;
-
-function timeAgo(d: Date): string {
-  const diff = Math.max(0, Date.now() - d.getTime());
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hip3PastAuctionsCard — last 5 ticker deploys

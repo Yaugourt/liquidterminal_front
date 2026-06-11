@@ -10,7 +10,8 @@ import {
   isWithdrawalEvent,
   type EvmBridgeEvent,
 } from "@/services/indexer/evm";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { TokenAvatar } from "@/components/common";
 import {
   ModuleTable,
@@ -39,26 +40,6 @@ const EVENT_LABEL: Record<string, string> = {
   withdrawal_sign: "Sign",
   withdrawal_finalized: "Finalized",
 };
-
-function truncateAddr(addr: string | null | undefined, start = 6, end = 4): string {
-  if (!addr) return "—";
-  if (addr.length <= start + end + 2) return addr;
-  return `${addr.slice(0, start)}…${addr.slice(-end)}`;
-}
-
-function timeAgo(iso: string): string {
-  if (!iso) return "—";
-  const ms = Date.parse(iso.endsWith("Z") ? iso : `${iso}Z`);
-  if (!Number.isFinite(ms)) return "—";
-  const diff = Math.max(0, Date.now() - ms);
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
 
 function eventMs(e: EvmBridgeEvent): number {
   const iso = e.time.endsWith("Z") ? e.time : `${e.time}Z`;
@@ -161,14 +142,14 @@ export const BridgeTransfers = memo(function BridgeTransfers() {
                     {label}
                   </span>,
                   <span key="user" className="mono text-brand">
-                    {truncateAddr(e.user_addr)}
+                    {truncateAddress(e.user_addr)}
                   </span>,
                   <span key="amount" className={`mono font-semibold ${signClass}`}>
                     {sign}
                     {compactUsd(e.amount)}
                   </span>,
                   <span key="age" className="mono text-text-tertiary">
-                    {timeAgo(e.time)}
+                    {timeAgo(eventMs(e))}
                   </span>,
                 ]}
               />

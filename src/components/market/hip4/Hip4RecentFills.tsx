@@ -4,12 +4,8 @@ import { Activity } from "lucide-react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import type { Hip4FillRow } from "@/services/indexer/hip4";
-
-function shortAddress(addr: string) {
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
 
 /** Per-coin metadata used to label fills. `sideName` is only set when the
  * market is provably binary (parsed_sides length === 2). Multi-outcome markets
@@ -112,7 +108,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
       key: "user",
       header: "User",
       accessor: (row) => (
-        <span className="mono text-[11px] text-text-tertiary">{shortAddress(row.user)}</span>
+        <span className="mono text-[11px] text-text-tertiary">{truncateAddress(row.user)}</span>
       ),
     },
     {

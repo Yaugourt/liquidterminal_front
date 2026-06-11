@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useState } from "react";
 import { Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { Pagination, type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
 import {
@@ -686,11 +687,6 @@ const NUMERIC_COLUMN_TYPES: ReadonlySet<ColumnType> = new Set([
 /** A `numeric`/`fees`/`change` column — defaults to right-aligned. */
 function isNumericType(type?: ColumnType): boolean {
     return type !== undefined && NUMERIC_COLUMN_TYPES.has(type);
-}
-
-/** `0x1234…abcd` — applied automatically to `type: "address"` columns. */
-function truncateAddress(value: string): string {
-    return value.length > 14 ? `${value.slice(0, 6)}…${value.slice(-4)}` : value;
 }
 
 /** Style classes auto-derived from a column's `type` (mono, fees gold, signed color). */

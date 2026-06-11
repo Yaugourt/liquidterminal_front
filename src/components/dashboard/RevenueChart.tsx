@@ -18,6 +18,7 @@ import {
   chartPalette,
   type FlowGridColumn,
 } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { RevenueDay } from "@/services/market/revenue";
 
 type ChartType = "area" | "bar";
@@ -60,24 +61,13 @@ interface RevenueChartProps {
   height?: number;
 }
 
-const formatUsdCompact = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "—";
-  if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
-  if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
-  if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
-};
+const formatUsdCompact = (v: number): string => (v === 0 ? "—" : compactUsd(v));
 
 /** Tighter compact USD for Y axis labels — `$48M` instead of `$48.00M`.
  * Used only on chart axes where horizontal space is tight; tooltips and KPIs
  * keep `formatUsdCompact` for precision. */
-const formatUsdAxis = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "$0";
-  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
-  if (v >= 1e6) return `$${Math.round(v / 1e6)}M`;
-  if (v >= 1e3) return `$${Math.round(v / 1e3)}K`;
-  return `$${Math.round(v)}`;
-};
+const formatUsdAxis = (v: number): string =>
+  v >= 1e9 ? compactUsd(v, { decimals: 1 }) : compactUsd(v, { decimals: 0, fallback: "$0" });
 
 const formatTickDate = (ts: number) =>
   new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });

@@ -4,6 +4,7 @@ import { ExtendedTransactionDetails } from '@/services/explorer/types';
 import Link from 'next/link';
 import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
+import { truncateAddress } from '@/lib/formatters/numberFormatting';
 
 interface TransactionHeaderProps {
   transaction: ExtendedTransactionDetails;
@@ -20,13 +21,6 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
     } catch {
       // Error handled silently
     }
-  };
-
-  const truncateAddress = (address: string) => {
-    if (address.length > 16) {
-      return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-    }
-    return address;
   };
 
   return (
