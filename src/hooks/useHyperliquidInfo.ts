@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useStaticJson } from './useStaticJson';
 
 interface HyperliquidInfo {
   title: string;
@@ -21,28 +21,10 @@ interface HyperliquidInfo {
 }
 
 export const useHyperliquidInfo = () => {
-  const [info, setInfo] = useState<HyperliquidInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchInfo = async () => {
-      try {
-        const response = await fetch('/hyperliquid-info.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch HyperLiquid info');
-        }
-        const data = await response.json();
-        setInfo(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInfo();
-  }, []);
+  const { data: info, loading, error } = useStaticJson<HyperliquidInfo>(
+    '/hyperliquid-info.json',
+    'Failed to fetch HyperLiquid info'
+  );
 
   return { info, loading, error };
-}; 
+};

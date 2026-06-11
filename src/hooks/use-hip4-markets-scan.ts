@@ -1,37 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useDataFetching } from "@/hooks/useDataFetching";
 import {
   scanFootnote,
   scanHip4Deployment,
   type Hip4ScanDeploymentResult,
 } from "@/services/hip4/markets-scan";
 
+interface Hip4MarketsScanData {
+  v1: Hip4ScanDeploymentResult;
+  v2: Hip4ScanDeploymentResult;
+}
+
 export function useHip4MarketsScan() {
-  const [v1, setV1] = useState<Hip4ScanDeploymentResult | null>(null);
-  const [v2, setV2] = useState<Hip4ScanDeploymentResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error, refetch } = useDataFetching<Hip4MarketsScanData>({
+    fetchFn: async () => {
+      const [v1, v2] = await Promise.all([
+        scanHip4Deployment("v1"),
+        scanHip4Deployment("v2"),
+      ]);
+      return { v1, v2 };
+    },
+    refreshInterval: 0, // one-shot scan — refreshed manually via `refresh`
+    maxRetries: 0, // preserve previous no-retry behavior
+  });
 
-  const run = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    setV1(null);
-    setV2(null);
-    try {
-      const [r1, r2] = await Promise.all([scanHip4Deployment("v1"), scanHip4Deployment("v2")]);
-      setV1(r1);
-      setV2(r2);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    run();
-  }, [run]);
-
-  return { v1, v2, loading, error, footnote: scanFootnote(), refresh: run };
+  return {
+    v1: data?.v1 ?? null,
+    v2: data?.v2 ?? null,
+    loading: isLoading,
+    error: error ? error.message : null,
+    footnote: scanFootnote(),
+    refresh: refetch,
+  };
 }
