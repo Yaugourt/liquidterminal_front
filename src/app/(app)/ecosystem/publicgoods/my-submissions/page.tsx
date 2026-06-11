@@ -7,8 +7,7 @@ import { Plus, ArrowLeft } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
-import { SearchBar } from "@/components/common";
+import { DeleteConfirmDialog, SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
@@ -245,14 +244,24 @@ export default function MySubmissionsPage() {
 
       {/* Delete Confirm Dialog */}
       <DeleteConfirmDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => {
-          setIsDeleteDialogOpen(false);
-          setProjectToDelete(null);
+        open={isDeleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsDeleteDialogOpen(false);
+            setProjectToDelete(null);
+          }
         }}
+        title="Delete Project"
+        description={
+          <>
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">{projectToDelete?.name || ""}</span>? All data
+            associated with this project will be permanently removed.
+          </>
+        }
+        confirmLabel="Delete Project"
+        isLoading={isDeleting}
         onConfirm={confirmDelete}
-        projectName={projectToDelete?.name || ""}
-        isDeleting={isDeleting}
       />
     </ProjectsLayout>
   );

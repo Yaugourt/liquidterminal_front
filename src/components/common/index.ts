@@ -50,6 +50,10 @@ export type { OutcomeRowProps, OutcomeRowVariant } from './OutcomeRow';
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 
+// Dialogs
+export { DeleteConfirmDialog } from './DeleteConfirmDialog';
+export type { DeleteConfirmDialogProps } from './DeleteConfirmDialog';
+
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';
