@@ -1,1 +1,0 @@
-export { useHypePrice } from './useHypePrice';
