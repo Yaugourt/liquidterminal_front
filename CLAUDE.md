@@ -22,6 +22,8 @@
 
 ## Project Structure
 
+> Map of who-feeds-what (route → components → services → upstream, quirks included): [`docs/CODEMAP.md`](./docs/CODEMAP.md). Check it before exploring by hand.
+
 ```
 src/
 ├── app/                    # Next.js App Router pages
@@ -222,6 +224,7 @@ pnpm run visual-check <route>   # Render gate: screenshots a route at 375/1024/1
 
 | File | Content |
 |------|---------|
+| `docs/CODEMAP.md` | **Start here for any task**: route → components → data-source map, infra contracts, fragile spots, refactor backlog |
 | `DESIGN_SYSTEM.md` | Full design system reference |
 | `API_IMPLEMENTATION_GUIDE.md` | Detailed API patterns |
 | `XP_SYSTEM_README.md` | Gamification system |
