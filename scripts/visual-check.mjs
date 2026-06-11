@@ -24,7 +24,19 @@ import path from "node:path";
 const require = createRequire(import.meta.url);
 
 // Playwright + its Chromium ship with the vendored gstack install.
-const GSTACK_NODE_MODULES = path.join(homedir(), ".claude/skills/gstack/node_modules/playwright");
+const GSTACK_NODE_MODULES = process.env.GSTACK_NODE_MODULES
+  ? path.join(process.env.GSTACK_NODE_MODULES, "playwright")
+  : [
+      path.join(homedir(), ".claude/skills/gstack/node_modules/playwright"),
+      path.join(homedir(), "gstack/node_modules/playwright"),
+    ].find((p) => {
+      try {
+        require.resolve(p);
+        return true;
+      } catch {
+        return false;
+      }
+    }) ?? path.join(homedir(), ".claude/skills/gstack/node_modules/playwright");
 
 const BREAKPOINTS = [
   { name: "mobile", width: 375, height: 812 },
