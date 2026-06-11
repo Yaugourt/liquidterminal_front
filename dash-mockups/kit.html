@@ -292,6 +292,27 @@ Minimal DS: no header fill, rows py-3, neutral avatars, text tabs. Column.type: 
     </div>
   </section>
 
+  <!-- ───────────────────────── DeleteConfirmDialog (destructive confirm) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">DeleteConfirmDialog  (DESIGN_SYSTEM §7.e · destructive confirm)</div>
+    <div class="kit-jsx">React: &lt;DeleteConfirmDialog open onOpenChange title description confirmLabel? isLoading? onConfirm /&gt;  ·  @/components/common
+description = ReactNode (bold the target name). Built-in "Deleting..." loading label. Do not hand-roll delete confirms.</div>
+    <div class="max-w-lg mt-2 grid gap-4 p-6 bg-surface/95 backdrop-blur-xl border border-border-default shadow-2xl shadow-black/40 rounded-2xl text-white">
+      <div class="flex flex-col space-y-1.5 text-left">
+        <div class="text-lg font-semibold leading-none tracking-tight">Delete Wallet</div>
+        <div class="text-sm text-text-secondary">This action cannot be undone.</div>
+      </div>
+      <div class="py-4 flex items-center gap-3 text-danger">
+        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p>This action is irreversible. The wallet <span class="font-semibold">&quot;Main&quot;</span> will be permanently deleted.</p>
+      </div>
+      <div class="flex flex-row justify-end space-x-2">
+        <button class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 border border-border-default text-text-primary hover:bg-white/5">Cancel</button>
+        <button class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-danger text-white hover:bg-danger/90">Delete</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ───────────────────────── Page layout (table + sticky rail) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">Page layout — table + 280px sticky right rail</div>

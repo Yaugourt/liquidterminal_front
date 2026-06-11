@@ -513,6 +513,21 @@ The primitive locks the look (the recipe below); callers pass data only.
 - Color: `variant` (semantic token — Yes/No/brand) OR `color` (explicit, multi-series). `color` wins.
 - `onSelect` turns the row into a selectable button. Used by `Hip4OutcomeList` (binary / versus / ladder variants — one template per market type).
 
+### 7.e — Delete confirmation dialog
+
+`<DeleteConfirmDialog>` (`@/components/common`) — the canonical destructive-action confirm: `Dialog` + danger warning row (`AlertCircle`) + Cancel / Delete footer with built-in loading label. Consolidates the three predecessors (wallet, wallet-list, public-goods delete dialogs). Do not hand-roll delete confirms.
+
+```tsx
+<DeleteConfirmDialog
+  open={open} onOpenChange={setOpen}
+  title="Delete Wallet"
+  description={<>The wallet <span className="font-semibold">{name}</span> will be permanently deleted.</>}
+  confirmLabel="Delete"          // optional, default "Delete"
+  isLoading={isDeleting}
+  onConfirm={handleDelete}
+/>
+```
+
 ## 8. Services — 4-layer architecture
 
 ```

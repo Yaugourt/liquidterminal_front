@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { DeleteConfirmDialog } from "@/components/ecosystem/publicgoods/DeleteConfirmDialog";
+import { DeleteConfirmDialog } from "@/components/common";
 import { ProjectHeader } from "@/components/ecosystem/publicgoods/ProjectHeader";
 import { ProjectContent } from "@/components/ecosystem/publicgoods/ProjectContent";
 import { ProjectInfoSidebar } from "@/components/ecosystem/publicgoods/ProjectInfoSidebar";
@@ -162,11 +162,21 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
 
       {/* Delete Confirm Dialog */}
       <DeleteConfirmDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
+        open={isDeleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setIsDeleteDialogOpen(false);
+        }}
+        title="Delete Project"
+        description={
+          <>
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">{project?.name || ""}</span>? All data associated
+            with this project will be permanently removed.
+          </>
+        }
+        confirmLabel="Delete Project"
+        isLoading={isDeleting}
         onConfirm={confirmDelete}
-        projectName={project?.name || ""}
-        isDeleting={isDeleting}
       />
     </>
   );

@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { DeleteConfirmDialog } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 
 import { walletDeleteMessages, handleWalletApiError } from "@/lib/toast-messages";
@@ -48,36 +46,19 @@ export function DeleteWalletDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Wallet</DialogTitle>
-          <DialogDescription className="text-text-primary">
-            Are you sure you want to delete this wallet?
-          </DialogDescription>
-        </DialogHeader>
-        <div className="py-4 flex items-center gap-3 text-rose-400">
-          <AlertCircle className="h-5 w-5" />
-          <p>This action is irreversible. The wallet &quot;{walletToDelete?.name}&quot; will be permanently deleted.</p>
-        </div>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="border-border-default text-text-primary hover:bg-white/5"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            disabled={isLoading}
-            className="bg-rose-400 text-white hover:bg-rose-400/90"
-          >
-            {isLoading ? "Deleting..." : "Delete"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <DeleteConfirmDialog
+      open={isOpen}
+      onOpenChange={onOpenChange}
+      title="Delete Wallet"
+      description={
+        <>
+          This action is irreversible. The wallet{" "}
+          <span className="font-semibold">&quot;{walletToDelete?.name}&quot;</span> will be
+          permanently deleted.
+        </>
+      }
+      isLoading={isLoading}
+      onConfirm={handleConfirmDelete}
+    />
   );
-} 
+}
