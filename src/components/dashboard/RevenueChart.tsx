@@ -15,6 +15,7 @@ import {
   AuroraAreaChart,
   FlowBar,
   FlowGrid,
+  KpiRibbon,
   chartPalette,
   type FlowGridColumn,
 } from "@/components/common";
@@ -526,67 +527,37 @@ const KpiStrip = memo(function KpiStrip({
 }) {
   const deltaPositive = (delta ?? 0) >= 0;
   return (
-    <div className="grid grid-cols-3 gap-px bg-border-subtle border-b border-border-subtle">
-      <MiniKpi label="Last 24h" value={formatUsdCompact(last24h)} />
-      <MiniKpi
-        label="Window"
-        value={formatUsdCompact(windowTotal)}
-        valueTone="gold"
-        delta={
-          delta === null
-            ? undefined
-            : `${deltaPositive ? "+" : "−"}${Math.abs(delta).toFixed(1)}%`
-        }
-        deltaTone={deltaPositive ? "success" : "danger"}
-      />
-      <MiniKpi label="Avg / Day" value={formatUsdCompact(avgDay)} />
-    </div>
+    <KpiRibbon
+      bordered={false}
+      columns="grid-cols-3"
+      className="border-b border-border-subtle"
+      cells={[
+        { label: "Last 24h", value: formatUsdCompact(last24h) },
+        {
+          label: "Window",
+          value: formatUsdCompact(windowTotal),
+          tone: "gold",
+          sub:
+            delta === null ? undefined : (
+              <span
+                className={`font-semibold inline-flex items-center gap-0.5 ${
+                  deltaPositive ? "text-success" : "text-danger"
+                }`}
+              >
+                {deltaPositive ? (
+                  <TrendingUp size={10} />
+                ) : (
+                  <TrendingDown size={10} />
+                )}
+                {`${deltaPositive ? "+" : "−"}${Math.abs(delta).toFixed(1)}%`}
+              </span>
+            ),
+        },
+        { label: "Avg / Day", value: formatUsdCompact(avgDay) },
+      ]}
+    />
   );
 });
-
-function MiniKpi({
-  label,
-  value,
-  delta,
-  valueTone,
-  deltaTone,
-}: {
-  label: string;
-  value: string;
-  delta?: string;
-  valueTone?: "default" | "gold";
-  deltaTone?: "default" | "success" | "danger";
-}) {
-  const valueColor = valueTone === "gold" ? "text-gold" : "text-text-primary";
-  const deltaColor =
-    deltaTone === "success"
-      ? "text-success"
-      : deltaTone === "danger"
-      ? "text-danger"
-      : "text-text-tertiary";
-  return (
-    <div className="bg-surface px-3.5 py-2 flex items-baseline gap-2 min-w-0">
-      <span className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
-        {label}
-      </span>
-      <span className={`mono text-[13px] font-semibold ml-auto ${valueColor}`}>
-        {value}
-      </span>
-      {delta && (
-        <span
-          className={`text-[10px] font-semibold flex items-center gap-0.5 ${deltaColor}`}
-        >
-          {deltaTone === "success" ? (
-            <TrendingUp size={10} />
-          ) : deltaTone === "danger" ? (
-            <TrendingDown size={10} />
-          ) : null}
-          {delta}
-        </span>
-      )}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Source breakdown — full-width FlowGrid + FlowBar gradient
