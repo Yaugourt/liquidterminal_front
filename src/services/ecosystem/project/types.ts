@@ -71,13 +71,6 @@ export interface UseProjectsResult {
   };
 }
 
-export interface UseProjectResult {
-  project: Project | undefined;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
-
 export interface UseCategoriesResult {
   categories: Category[];
   isLoading: boolean;
@@ -173,22 +166,7 @@ export interface UseDeleteProjectResult {
   error: Error | null;
 }
 
-export interface UseBulkDeleteProjectsResult {
-  bulkDeleteProjects: (projectIds: number[]) => Promise<boolean>;
-  isLoading: boolean;
-  error: string | null;
-  clearError: () => void;
-}
-
 // Nouveaux types pour la gestion des catégories de projets
-export interface AssignCategoriesInput {
-  categoryIds: number[];
-}
-
-export interface RemoveCategoriesInput {
-  categoryIds: number[];
-}
-
 export interface UseProjectCategoriesResult {
   categories: Category[];
   isLoading: boolean;
@@ -199,7 +177,7 @@ export interface UseProjectCategoriesResult {
 }
 
 // ==================== TYPES POUR UPLOAD CSV PROJETS ====================
-export interface ProjectCsvUploadError {
+interface ProjectCsvUploadError {
   row: number;
   error: string;
   data: {
@@ -214,7 +192,7 @@ export interface ProjectCsvUploadError {
   };
 }
 
-export interface ProjectCsvUploadResult {
+interface ProjectCsvUploadResult {
   totalRows: number;
   successfulImports: number;
   failedImports: number;
@@ -223,13 +201,13 @@ export interface ProjectCsvUploadResult {
   createdProjects: Project[];
 }
 
-export interface ProjectCsvUploadResponse {
+interface ProjectCsvUploadResponse {
   success: true;
   message: string;
   data: ProjectCsvUploadResult;
 }
 
-export interface ProjectCsvUploadErrorResponse {
+interface ProjectCsvUploadErrorResponse {
   success: false;
   error: string;
   code: string;

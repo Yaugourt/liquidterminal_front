@@ -53,28 +53,6 @@ export const walletDeleteMessages = {
   }
 };
 
-// Messages pour le chargement des wallets
-export const walletLoadMessages = {
-  error: {
-    networkError: () => 
-      toast.error("Unable to load your wallets. Check your connection.", {
-        action: { label: "Retry", onClick: () => window.location.reload() }
-      }),
-    
-    serverError: () => 
-      toast.error("Server error. Unable to load your wallets."),
-    
-    noUsername: () => 
-      toast.error("Username missing. Please reconnect."),
-    
-    noToken: () => 
-      toast.error("Authentication token missing. Please reconnect."),
-    
-    generic: (message?: string) => 
-      toast.error(message || "Error loading wallets.")
-  }
-};
-
 // Messages pour la réorganisation des wallets
 export const walletReorderMessages = {
   success: () => 

@@ -2,7 +2,7 @@
 
 // ─── Data interfaces ────────────────────────────────────────────────────────
 
-export interface Hip4ParsedSide {
+interface Hip4ParsedSide {
   name: string;
 }
 
@@ -124,12 +124,6 @@ export interface Hip4AnalyticsBucket {
   unique_users: number;
 }
 
-export interface Hip4AnalyticsResponse {
-  status: "live" | "not_yet_live";
-  count: number;
-  data: Hip4AnalyticsBucket[];
-}
-
 // ─── Hyperliquid outcomeMeta (canonical live-market source) ──────────────────
 // HypeDexer's `/markets-enriched` + `/questions-with-outcomes` aggregation
 // tables lag and currently OMIT the live markets entirely (Fed/NBA/CPI/recurring
@@ -137,7 +131,7 @@ export interface Hip4AnalyticsResponse {
 // Hyperliquid's `outcomeMeta` info call; live prices in `allMids`. We fetch both
 // directly and synthesize question/market rows so the live markets show up.
 
-export interface Hip4OutcomeMetaSide {
+interface Hip4OutcomeMetaSide {
   name: string;
 }
 

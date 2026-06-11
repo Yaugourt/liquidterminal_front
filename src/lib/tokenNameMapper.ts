@@ -9,7 +9,7 @@ import unitMapping from '../../public/unit.json';
  * @param tokenName - Le nom de token interne (ex: "UBTC")
  * @returns Le nom d'affichage (ex: "BTC") ou le nom original si pas de mapping
  */
-export function mapTokenName(tokenName: string): string {
+function mapTokenName(tokenName: string): string {
   return unitMapping[tokenName as keyof typeof unitMapping] || tokenName;
 }
 
@@ -18,7 +18,7 @@ export function mapTokenName(tokenName: string): string {
  * @param balance - L'objet balance avec potentiellement un nom de token à mapper
  * @returns L'objet balance avec le nom de token mappé
  */
-export function mapTokenBalance<T extends { coin?: string; token?: string | number; name?: string }>(balance: T): T {
+function mapTokenBalance<T extends { coin?: string; token?: string | number; name?: string }>(balance: T): T {
   const mapped = { ...balance };
   
   // Mapper selon les propriétés possibles

@@ -10,7 +10,7 @@ export function formatBuilderDisplayName(
 }
 
 /** Shortened `0x` address for display when no human-readable name exists. */
-export function shortenBuilderAddress(address: string): string {
+function shortenBuilderAddress(address: string): string {
   const a = address.trim();
   if (!a) return "—";
   const hex = a.toLowerCase().replace(/^0x/, "");

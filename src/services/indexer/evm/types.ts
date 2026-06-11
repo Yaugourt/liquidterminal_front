@@ -53,7 +53,7 @@ export interface EvmTransaction {
  *  - `withdrawal_sign`      — validator signs the pending withdrawal
  *  - `withdrawal_finalized` — withdrawal confirmed on Arbitrum
  */
-export type EvmBridgeEventType =
+type EvmBridgeEventType =
   | "deposit_vote"
   | "withdraw3"
   | "withdrawal_sign"

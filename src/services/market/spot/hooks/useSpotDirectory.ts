@@ -8,7 +8,7 @@ export type SpotDirectoryTab = 'all' | 'strict';
 /** Movers below this 24h volume are dust — they distort the gainers/losers boards. */
 const MOVER_VOLUME_FLOOR = 10_000;
 
-export interface SpotConcentration {
+interface SpotConcentration {
   /** Highest-volume token (HYPE in practice) — shown as a summary line. */
   top: SpotToken | null;
   /** `top`'s share of the total 24h volume (%). */

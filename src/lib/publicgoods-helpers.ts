@@ -2,8 +2,6 @@
  * Public Goods - Helpers, Validators & Constants
  */
 
-import { isSafeHref } from "@/lib/safeUrl";
-
 // ==================== CONSTANTS ====================
 
 export const CATEGORIES = [
@@ -78,18 +76,12 @@ export const BUDGET_RANGES = [
   { value: 'RANGE_50K_PLUS', label: '$50k+', description: 'Over $50,000' }
 ] as const;
 
-export const PROJECT_STATUSES = [
-  { value: 'PENDING', label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  { value: 'APPROVED', label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  { value: 'REJECTED', label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30' }
-] as const;
-
 // ==================== VALIDATION HELPERS ====================
 
 /**
  * Validate GitHub URL format
  */
-export const validateGithubUrl = (url: string): boolean => {
+const validateGithubUrl = (url: string): boolean => {
   if (!url || url.trim() === '') return false;
   
   try {
@@ -103,7 +95,7 @@ export const validateGithubUrl = (url: string): boolean => {
 /**
  * Validate email format
  */
-export const validateEmail = (email: string): boolean => {
+const validateEmail = (email: string): boolean => {
   if (!email || email.trim() === '') return false;
   
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -111,33 +103,23 @@ export const validateEmail = (email: string): boolean => {
 };
 
 /**
- * Validate URL format AND scheme. Rejects non-http(s) schemes such as
- * `javascript:` / `data:` (which `new URL()` would otherwise accept), so the
- * result is safe to render into an href. Backed by the shared `safeHref` guard.
- */
-export const validateUrl = (url: string): boolean => {
-  if (!url || url.trim() === '') return false;
-  return isSafeHref(url);
-};
-
-/**
  * Validate array has at least one element
  */
-export const validateArrayNotEmpty = (arr: unknown[]): boolean => {
+const validateArrayNotEmpty = (arr: unknown[]): boolean => {
   return Array.isArray(arr) && arr.length > 0;
 };
 
 /**
  * Validate string meets minimum length
  */
-export const validateMinLength = (text: string, minLength: number): boolean => {
+const validateMinLength = (text: string, minLength: number): boolean => {
   return !!(text && text.trim().length >= minLength);
 };
 
 /**
  * Validate required field
  */
-export const validateRequired = (value: unknown): boolean => {
+const validateRequired = (value: unknown): boolean => {
   if (typeof value === 'string') {
     return value.trim() !== '';
   }
@@ -146,144 +128,7 @@ export const validateRequired = (value: unknown): boolean => {
 
 // ==================== FORMATTERS ====================
 
-/**
- * Format budget range enum to display string
- */
-export const formatBudgetRange = (range: string): string => {
-  const found = BUDGET_RANGES.find(b => b.value === range);
-  return found ? found.label : range;
-};
-
-/**
- * Format team size enum to display string
- */
-export const formatTeamSize = (size: string): string => {
-  const found = TEAM_SIZES.find(s => s.value === size);
-  return found ? found.label : size;
-};
-
-/**
- * Format experience level enum to display string
- */
-export const formatExperienceLevel = (level: string): string => {
-  const found = EXPERIENCE_LEVELS.find(e => e.value === level);
-  return found ? found.label : level;
-};
-
-/**
- * Format development status enum to display string
- */
-export const formatDevelopmentStatus = (status: string): string => {
-  const found = DEVELOPMENT_STATUSES.find(s => s.value === status);
-  return found ? found.label : status;
-};
-
-/**
- * Get status badge color classes
- */
-export const getStatusColor = (status: string): string => {
-  const found = PROJECT_STATUSES.find(s => s.value === status);
-  return found ? found.color : 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-};
-
-/**
- * Get development status color classes
- */
-export const getDevelopmentStatusColor = (status: string): string => {
-  const found = DEVELOPMENT_STATUSES.find(s => s.value === status);
-  return found ? found.color : 'bg-gray-500/20 text-gray-400';
-};
-
 // ==================== FORM HELPERS ====================
-
-/**
- * Build FormData from form values
- */
-export const buildPublicGoodFormData = (data: {
-  // Section 1: Projet
-  name: string;
-  description: string;
-  githubUrl: string;
-  demoUrl?: string;
-  websiteUrl?: string;
-  category: string;
-  discordContact?: string;
-  telegramContact?: string;
-  
-  // Section 2: Impact
-  problemSolved: string;
-  targetUsers: string[];
-  hlIntegration: string;
-  developmentStatus: string;
-  
-  // Section 3: Team
-  leadDeveloperName: string;
-  leadDeveloperContact: string;
-  teamSize: string;
-  experienceLevel: string;
-  technologies: string[];
-  
-  // Section 4: Support (optional)
-  supportTypes?: string[];
-  contributorTypes?: string[];
-  budgetRange?: string;
-  
-  // Files
-  logo?: File;
-  banner?: File;
-  screenshots?: File[];
-}): FormData => {
-  const formData = new FormData();
-  
-  // Section 1
-  formData.append('name', data.name);
-  formData.append('description', data.description);
-  formData.append('githubUrl', data.githubUrl);
-  if (data.demoUrl) formData.append('demoUrl', data.demoUrl);
-  if (data.websiteUrl) formData.append('websiteUrl', data.websiteUrl);
-  formData.append('category', data.category);
-  if (data.discordContact) formData.append('discordContact', data.discordContact);
-  if (data.telegramContact) formData.append('telegramContact', data.telegramContact);
-  
-  // Section 2
-  formData.append('problemSolved', data.problemSolved);
-  formData.append('targetUsers', JSON.stringify(data.targetUsers));
-  formData.append('hlIntegration', data.hlIntegration);
-  formData.append('developmentStatus', data.developmentStatus);
-  
-  // Section 3
-  formData.append('leadDeveloperName', data.leadDeveloperName);
-  formData.append('leadDeveloperContact', data.leadDeveloperContact);
-  formData.append('teamSize', data.teamSize);
-  formData.append('experienceLevel', data.experienceLevel);
-  formData.append('technologies', JSON.stringify(data.technologies));
-  
-  // Section 4 (optional)
-  if (data.supportTypes && data.supportTypes.length > 0) {
-    formData.append('supportTypes', JSON.stringify(data.supportTypes));
-  }
-  if (data.contributorTypes && data.contributorTypes.length > 0) {
-    formData.append('contributorTypes', JSON.stringify(data.contributorTypes));
-  }
-  if (data.budgetRange) {
-    formData.append('budgetRange', data.budgetRange);
-  }
-  
-  // Files
-  if (data.logo) {
-    formData.append('logo', data.logo);
-  }
-  if (data.banner) {
-    formData.append('banner', data.banner);
-  }
-  if (data.screenshots && data.screenshots.length > 0) {
-    data.screenshots.forEach((file) => {
-      formData.append('screenshots', file);
-    });
-  }
-  
-  return formData;
-};
 
 /**
  * Validate complete form before submission

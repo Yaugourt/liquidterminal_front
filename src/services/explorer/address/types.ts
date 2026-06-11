@@ -5,7 +5,7 @@ export interface UserTransactionsResponse {
 }
 
 // Structure d'une action d'ordre
-export interface OrderAction {
+interface OrderAction {
     type: string;
     orders?: Array<{
         a: number;        // amount
@@ -83,9 +83,6 @@ export interface UserFill {
     [key: string]: unknown; // Add index signature for compatibility with FillData
 }
 
-// Response de l'API pour les fills
-export type UserFillsResponse = UserFill[];
-
 // Transaction formatée pour l'affichage
 export interface FormattedUserTransaction {
     hash: string;
@@ -102,12 +99,6 @@ export interface FormattedUserTransaction {
     isLong?: boolean;
     isClose?: boolean;
     [key: string]: unknown; // Add index signature for compatibility
-}
-
-// Response finale avec les transactions formatées
-export interface TransactionResponse {
-    data: FormattedUserTransaction[];
-    error?: string;
 }
 
 export interface UseTransactionsResult {

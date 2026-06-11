@@ -17,37 +17,6 @@ const CRYPTO_UNDERLYINGS = new Set<string>([
   "WLD", "TIA", "SEI", "INJ", "JUP", "JTO", "BONK", "WIF", "FTM", "XRP",
 ]);
 
-export interface CategorizableMarket {
-  class_normalized: string;
-  underlying: string | null;
-  parsed_sides?: { name: string }[] | null;
-}
-
-/** Derive a single category tag from the enriched market fields. */
-export function categorizeMarket(m: CategorizableMarket): Exclude<Hip4Category, "all"> {
-  const cls = (m.class_normalized ?? "").toLowerCase();
-  const underlying = (m.underlying ?? "").toUpperCase();
-
-  if (cls === "pricebinary") {
-    if (underlying && CRYPTO_UNDERLYINGS.has(underlying)) return "crypto";
-    return "macro";
-  }
-  if (cls === "custom" && m.parsed_sides && m.parsed_sides.length > 0) {
-    return "custom";
-  }
-  return "other";
-}
-
-/**
- * Question-level categorization: pick the category of the first outcome that
- * resolves to anything non-"other", else "other".
- */
-export interface CategorizableQuestion {
-  class: string | null;
-  underlying: string | null;
-  outcomes: Array<{ display_name: string }>;
-}
-
 /** Derive a category from a grouped question + its first outcome's raw class. */
 export function categorizeQuestion(
   q: { class: string | null; underlying: string | null },

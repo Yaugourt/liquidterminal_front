@@ -1,4 +1,4 @@
-export interface HypeTrade {
+interface HypeTrade {
   coin: string;        // "@107" for HYPE
   side: "A" | "B";     // "A" for sell, "B" for buy
   px: string;          // Price as string
@@ -14,7 +14,7 @@ export interface HypeTradeResponse {
   data: HypeTrade[];
 }
 
-export interface HypePriceState {
+interface HypePriceState {
   currentPrice: number;
   lastSide: "A" | "B" | null;
   isConnected: boolean;

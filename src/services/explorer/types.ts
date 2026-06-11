@@ -148,11 +148,6 @@ export interface ExtendedTransactionDetails {
   hash: string;
 }
 
-export interface ExtendedTransactionDetailsResponse {
-  type: "txDetails";
-  tx: ExtendedTransactionDetails;
-}
-
 // Types pour l'affichage formaté
 export interface FormattedTransactionField {
   label: string;
@@ -173,13 +168,6 @@ export interface FormattedTransactionData {
   block: number;
   error: string | null;
   sections: FormattedTransactionSection[];
-}
-
-// Types pour les hooks étendus
-export interface UseExtendedTransactionDetailsResult {
-  transactionDetails: ExtendedTransactionDetails | null;
-  isLoading: boolean;
-  error: Error | null;
 }
 
 

@@ -39,16 +39,4 @@ export const fetchAllValidators = async (): Promise<{ validators: Validator[], s
     return { validators: response.data, stats };
   }, 'fetching all validators');
 };
-
-/**
- * Récupère les validateurs tendance (triés)
- */
-export const fetchTrendingValidators = async (sortBy: 'stake' | 'apr' = 'stake'): Promise<Validator[]> => {
-  return withErrorHandling(async () => {
-    const response = await get<{ data: Validator[] }>(
-      `${ENDPOINTS.STAKING_VALIDATORS_TRENDING}?sortBy=${sortBy}`
-    );
-
-    return response.data;
-  }, 'fetching trending validators');
-}; 
+ 

@@ -11,7 +11,7 @@ export interface AuctionInfo {
 }
 
 // Nouveaux types pour l'auction timing
-export interface CurrentAuction {
+interface CurrentAuction {
   startTime: number;
   endTime: number;
   startGas: string;
@@ -19,7 +19,7 @@ export interface CurrentAuction {
   endGas: string;
 }
 
-export interface NextAuction {
+interface NextAuction {
   startTime: number;
   startGas: string;
 }
@@ -86,15 +86,6 @@ export interface AuctionPaginatedResponse {
   };
 }
 
-// Résultats des hooks
-export interface UseAuctionsResult {
-  auctions: AuctionInfo[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  splitTimestamp?: number;
-}
-
 export interface UseAuctionsOptions {
   limit?: number;
   currency?: "HYPE" | "USDC" | "ALL";
@@ -122,7 +113,7 @@ export interface PerpDeployAuctionStatus {
 }
 
 // Types pour perp auction timing (structure similaire à spot)
-export interface PerpCurrentAuction {
+interface PerpCurrentAuction {
   startTime: number;
   endTime: number;
   startGas: string;
@@ -130,7 +121,7 @@ export interface PerpCurrentAuction {
   endGas: string | null;
 }
 
-export interface PerpNextAuction {
+interface PerpNextAuction {
   startTime: number;
   startGas: string;
 }

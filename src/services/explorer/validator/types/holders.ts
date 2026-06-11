@@ -1,7 +1,7 @@
 /**
  * Interface pour un holder de HYPE staké
  */
-export interface StakedHolder {
+interface StakedHolder {
   address: string;
   amount: number;
 }
@@ -69,7 +69,7 @@ export interface HoldersDistributionRange {
 /**
  * Interface pour les statistiques des top holders
  */
-export interface TopHoldersStats {
+interface TopHoldersStats {
   topCount: number;
   totalStaked: number;
   percentage: number;

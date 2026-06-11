@@ -13,15 +13,6 @@ export function marketIndexToCoinId(marketIndex: number, tokenName?: string): st
 }
 
 /**
- * Convert coin ID back to market index
- * @param coinId - The coin ID string (e.g., "@107") 
- * @returns The market index number
- */
-export function coinIdToMarketIndex(coinId: string): number {
-  return parseInt(coinId.replace('@', ''));
-}
-
-/**
  * Get coin ID for perpetual contracts
  * Perpetuals use the coin name directly (e.g., "BTC", "ETH")
  * @param tokenName - The perpetual token name (e.g., "BTC-PERP", "BTC", "ETH/USD")

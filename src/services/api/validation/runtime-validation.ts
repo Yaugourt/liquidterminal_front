@@ -35,10 +35,6 @@ function unwrap(body: unknown): unknown {
   return env.data;
 }
 
-export function parseLtEnvelope(body: unknown): unknown {
-  return unwrap(body);
-}
-
 export function parseLtData<T>(schema: ZodType<T>, body: unknown): T {
   const data = unwrap(body);
   const result = schema.safeParse(data);
@@ -51,4 +47,3 @@ export function parseLtData<T>(schema: ZodType<T>, body: unknown): T {
   return result.data;
 }
 
-export { LtResponseError };

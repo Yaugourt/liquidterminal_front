@@ -11,7 +11,7 @@ import { AllPerpMetasResponse } from '../perpDex/types';
 /**
  * Récupère tous les ordres TWAP depuis l'API
  */
-export const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
+const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
   return withErrorHandling(async () => {
     // L'API retourne directement un array d'ordres TWAP
     const url = `${API_URLS.HYPURRSCAN_API}/twap/*`;
@@ -22,7 +22,7 @@ export const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
 /**
  * Enrichit les ordres TWAP avec les données de marché
  */
-export const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<EnrichedTwapOrder[]> => {
+const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<EnrichedTwapOrder[]> => {
   return withErrorHandling(async () => {
     // Récupérer spot + perp natifs + raw allPerpMetas en parallèle
     const [spotResponse, perpResponse, allPerpMetasRaw] = await Promise.all([

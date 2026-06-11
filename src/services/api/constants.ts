@@ -23,8 +23,6 @@ export const REFRESH_INTERVALS = {
   DISABLED: 0,
 } as const;
 
-export type RefreshInterval = (typeof REFRESH_INTERVALS)[keyof typeof REFRESH_INTERVALS];
-
 // API Base URLs
 export const API_URLS = {
   // Notre backend
@@ -101,30 +99,14 @@ export const ENDPOINTS = {
 } as const;
 
 // Helper functions pour construire les URLs complètes
-export const buildUrl = (baseUrl: keyof typeof API_URLS, endpoint: string): string => {
+const buildUrl = (baseUrl: keyof typeof API_URLS, endpoint: string): string => {
   return `${API_URLS[baseUrl]}${endpoint}`;
-};
-
-export const buildLocalUrl = (endpoint: keyof typeof ENDPOINTS): string => {
-  return buildUrl('LOCAL_BACKEND', ENDPOINTS[endpoint]);
 };
 
 export const buildHyperliquidUrl = (endpoint: keyof typeof ENDPOINTS): string => {
   return buildUrl('HYPERLIQUID_API', ENDPOINTS[endpoint]);
 };
 
-export const buildHyperliquidRpcUrl = (endpoint: keyof typeof ENDPOINTS): string => {
-  return buildUrl('HYPERLIQUID_RPC', ENDPOINTS[endpoint]);
-};
-
-export const buildHyperliquidUiUrl = (endpoint: keyof typeof ENDPOINTS): string => {
-  return buildUrl('HYPERLIQUID_UI_API', ENDPOINTS[endpoint]);
-};
-
 export const buildHypurrscanUrl = (endpoint: keyof typeof ENDPOINTS): string => {
   return buildUrl('HYPURRSCAN_API', ENDPOINTS[endpoint]);
-};
-
-export const buildLlamaFiUrl = (endpoint: keyof typeof ENDPOINTS): string => {
-  return buildUrl('LLAMA_FI_API', ENDPOINTS[endpoint]);
 }; 

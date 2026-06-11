@@ -105,7 +105,7 @@ export const validateWalletAddress = (address: string): string => {
 /**
  * Parses UserWallet to Wallet format
  */
-export const parseUserWallet = (uw: unknown): unknown | null => {
+const parseUserWallet = (uw: unknown): unknown | null => {
   // Type guard pour vérifier si c'est un objet
   if (!uw || typeof uw !== 'object') return null;
   

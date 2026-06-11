@@ -5,7 +5,7 @@
 /**
  * Generate CSV content from wallets array
  */
-export const generateWalletsCSV = (
+const generateWalletsCSV = (
   wallets: Array<{ address: string; name?: string | null }>
 ): string => {
   // CSV header
@@ -30,7 +30,7 @@ export const generateWalletsCSV = (
 /**
  * Download CSV file
  */
-export const downloadCSV = (content: string, filename: string): void => {
+const downloadCSV = (content: string, filename: string): void => {
   const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

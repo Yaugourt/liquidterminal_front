@@ -28,7 +28,7 @@ export interface PriorityFeesStats {
   time_series?: PriorityFeesStatsBucket[];
 }
 
-export interface PriorityFeesStatsBucket {
+interface PriorityFeesStatsBucket {
   hour?: string;
   time?: string;
   timestamp?: number;

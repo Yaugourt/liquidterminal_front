@@ -1,8 +1,6 @@
 /** Preset window lengths (hours) for stats and leaderboard. */
 export const PRIORITY_FEES_WINDOW_HOURS = [1, 6, 24, 72, 168] as const;
 
-export type PriorityFeesWindowHours = (typeof PRIORITY_FEES_WINDOW_HOURS)[number];
-
 /** UI label: short hours stay "Nh"; 24/72/168 use day wording. */
 export function formatPriorityFeesWindowLabel(hours: number): string {
   switch (hours) {

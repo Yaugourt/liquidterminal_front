@@ -1,11 +1,10 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchTwapOrders, fetchLatestTwapOrders, fetchUserTwapOrders } from '../api';
-import { 
-  TwapOrderParams, 
-  TwapOrderPaginatedResponse, 
+import { fetchTwapOrders } from '../api';
+import {
+  TwapOrderParams,
+  TwapOrderPaginatedResponse,
   UseTwapOrdersOptions,
-  EnrichedTwapOrder,
   UseTwapOrdersResult
 } from '../types';
 
@@ -74,74 +73,3 @@ export function useTwapOrders({
 
   return results;
 }
-
-/**
- * Hook spécialisé pour récupérer les derniers ordres TWAP
- */
-export function useLatestTwapOrders(
-  limit: number = 50,
-  status: "active" | "canceled" | "error" | "completed" | "all" = "all",
-  initialData?: EnrichedTwapOrder[]
-) {
-  const { data, isLoading, error, refetch } = useDataFetching<TwapOrderPaginatedResponse>({
-    fetchFn: () => fetchLatestTwapOrders(limit, status),
-    initialData: initialData ? {
-      data: initialData,
-      pagination: {
-        total: initialData.length,
-        page: 1,
-        limit: initialData.length,
-        totalPages: 1,
-        totalVolume: initialData.reduce((sum, order) => {
-          return sum + order.totalValueUSD;
-        }, 0)
-      }
-    } : undefined,
-    refreshInterval: 30000
-  });
-
-  return {
-    orders: data?.data || [],
-    isLoading,
-    error,
-    refetch,
-    totalVolume: data?.pagination.totalVolume || 0,
-    metadata: data?.metadata
-  };
-}
-
-/**
- * Hook spécialisé pour récupérer les ordres TWAP d'un utilisateur spécifique
- */
-export function useUserTwapOrders(
-  userAddress: string,
-  limit: number = 50,
-  initialData?: EnrichedTwapOrder[]
-) {
-  const { data, isLoading, error, refetch } = useDataFetching<TwapOrderPaginatedResponse>({
-    fetchFn: () => fetchUserTwapOrders(userAddress, limit),
-    initialData: initialData ? {
-      data: initialData,
-      pagination: {
-        total: initialData.length,
-        page: 1,
-        limit: initialData.length,
-        totalPages: 1,
-        totalVolume: initialData.reduce((sum, order) => {
-          return sum + order.totalValueUSD;
-        }, 0)
-      }
-    } : undefined,
-    refreshInterval: 30000,
-    dependencies: [userAddress]
-  });
-
-  return {
-    orders: data?.data || [],
-    isLoading,
-    error,
-    refetch,
-    totalVolume: data?.pagination.totalVolume || 0,
-    metadata: data?.metadata
-  };
-} 

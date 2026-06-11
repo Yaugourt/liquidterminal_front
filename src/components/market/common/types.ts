@@ -1,4 +1,4 @@
-export interface BaseToken {
+interface BaseToken {
   name: string;
   logo: string | null;
   price: number;
@@ -16,22 +16,4 @@ export interface PerpToken extends BaseToken {
   funding: number;
 }
 
-export type SortOrder = "asc" | "desc";
-
 export type SpotSortableFields = "volume" | "marketCap" | "change24h" | "price" | "name";
-export type PerpSortableFields = "volume" | "openInterest" | "change24h" | "price";
-
-export interface TableState {
-  sortField: SpotSortableFields | PerpSortableFields;
-  sortOrder: SortOrder;
-  page: number;
-  pageSize: number;
-}
-
-export interface StateComponentProps {
-  message?: string;
-}
-
-export interface BaseTableProps {
-  loading?: boolean;
-} 

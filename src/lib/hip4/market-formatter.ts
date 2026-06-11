@@ -106,18 +106,6 @@ export function isBinaryQuestion(question: Hip4QuestionWithOutcomesRow): boolean
   return isYesNoSides(question.outcomes.map((o) => o.display_name));
 }
 
-/** Variant + Tailwind class for an outcome label. Binary Yes/No keep
- * green/red; everything else uses the brand cyan or a palette index. */
-export function getOutcomeVariant(
-  displayName: string,
-  index: number,
-  isBinary: boolean
-): { variant: "success" | "danger" | "brand"; label: string } {
-  if (isBinary && displayName === "Yes") return { variant: "success", label: "Yes" };
-  if (isBinary && displayName === "No") return { variant: "danger", label: "No" };
-  return { variant: "brand", label: displayName || `Outcome ${index + 1}` };
-}
-
 export function formatExpiryCountdown(expiry: string | null): string | null {
   if (!expiry) return null;
   const expiryDate = parseExpiry(expiry);

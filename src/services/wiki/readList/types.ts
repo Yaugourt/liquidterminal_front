@@ -3,23 +3,7 @@
 // ============================================
 
 // Response types from backend
-export interface ReadListResponse {
-  id: number;
-  name: string;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: number;
-  isPublic: boolean;
-  creator: {
-    id: number;
-    name: string | null;
-    email: string | null;
-  };
-  items: ReadListItemResponse[];
-}
-
-export interface ReadListSummaryResponse {
+interface ReadListSummaryResponse {
   id: number;
   name: string;
   description: string | null;
@@ -35,7 +19,7 @@ export interface ReadListSummaryResponse {
   itemsCount: number;
 }
 
-export interface ReadListItemResponse {
+interface ReadListItemResponse {
   id: number;
   readListId: number;
   resourceId: number;
@@ -81,37 +65,11 @@ export interface ReadListItemUpdateInput {
   isRead?: boolean;
 }
 
-// API Response wrapper
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-  code?: string;
-  pagination?: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-// Query parameters
-export interface ReadListQueryParams {
-  page?: number;
-  limit?: number;
-  sort?: string;
-  order?: 'asc' | 'desc';
-  search?: string;
-  isPublic?: boolean;
-}
-
 // ============================================
 // ALIASES pour compatibilité temporaire
 // ============================================
 export type ReadList = ReadListSummaryResponse;
 export type ReadListItem = ReadListItemResponse;
-export type CreateReadListDto = ReadListCreateInput;
 
 // ============================================
 // TYPES POUR LES READ LISTS PUBLIQUES
@@ -132,7 +90,7 @@ export interface PublicReadList {
   updatedAt: string;
 }
 
-export interface PublicReadListWithItems extends PublicReadList {
+interface PublicReadListWithItems extends PublicReadList {
   items: ReadListItem[];
 }
 
@@ -164,10 +122,3 @@ export interface ReadListCopyResponse {
   data: PublicReadListWithItems;
   message: string;
 }
-export type UpdateReadListDto = ReadListUpdateInput;
-export type AddResourceDto = ReadListItemCreateInput;
-
-// Types à supprimer plus tard
-export interface ReorderItemsDto {
-  itemIds: number[];
-} 

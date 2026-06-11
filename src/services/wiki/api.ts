@@ -14,8 +14,7 @@ import {
   ReportResourceResponse,
   ApproveResourceInput,
   RejectResourceInput,
-  PendingCountResponse,
-  ReportsResponse
+  PendingCountResponse
 } from './types';
 import { apiClient } from '../api/axios-config';
 import { buildQueryParams } from '../common';
@@ -72,20 +71,9 @@ export const deleteEducationalResource = async (id: number): Promise<{ success: 
 };
 
 /**
- * Récupère les ressources éducatives avec filtres
- */
-export const fetchEducationalResources = async (): Promise<ResourcesResponse> => {
-  return withErrorHandling(async () => {
-    // GET simple sans paramètres - le backend accepte tout maintenant
-    const endpoint = `/educational/resources`;
-    return await get<ResourcesResponse>(endpoint);
-  }, 'fetching educational resources');
-};
-
-/**
  * Récupère les ressources d'une catégorie spécifique
  */
-export const fetchResourcesByCategory = async (categoryId: number): Promise<{ success: boolean; data: EducationalResource[] }> => {
+const fetchResourcesByCategory = async (categoryId: number): Promise<{ success: boolean; data: EducationalResource[] }> => {
   return withErrorHandling(async () => {
     return await get<{ success: boolean; data: EducationalResource[] }>(`/educational/resources/category/${categoryId}`);
   }, 'fetching resources by category');
@@ -212,15 +200,4 @@ export const rejectResource = async (resourceId: number, data: RejectResourceInp
   return withErrorHandling(async () => {
     return await patch<ResourceResponse>(`/educational/resources/${resourceId}/reject`, data);
   }, 'rejecting resource');
-};
-
-/**
- * Récupère tous les signalements
- */
-export const fetchResourceReports = async (page = 1, limit = 20, resourceId?: number): Promise<ReportsResponse> => {
-  return withErrorHandling(async () => {
-    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    if (resourceId) params.append('resourceId', String(resourceId));
-    return await get<ReportsResponse>(`/educational/resources/moderation/reports?${params.toString()}`);
-  }, 'fetching resource reports');
 };

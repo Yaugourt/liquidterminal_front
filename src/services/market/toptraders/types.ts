@@ -1,5 +1,5 @@
 // ==================== TYPES DE TRI ====================
-export type TopTradersSortType = 'pnl_pos' | 'pnl_neg' | 'volume' | 'trades';
+type TopTradersSortType = 'pnl_pos' | 'pnl_neg' | 'volume' | 'trades';
 
 // ==================== DONNÉES DE BASE ====================
 export interface TopTrader {

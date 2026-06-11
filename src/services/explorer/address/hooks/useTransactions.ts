@@ -2,18 +2,9 @@ import { FormattedUserTransaction, UseTransactionsResult } from '../types';
 import { getUserTransactions } from '../api';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
-import { formatHip2Display } from '../utils';
 import { NumberFormatType } from '@/store/number-format.store';
 
 export const HIP2_ADDRESS = "0xffffffffffffffffffffffffffffffffffffffff";
-
-// Business logic functions for formatting
-export const formatAddress = (address: string) => {
-  if (!address) return '-';
-  const hip2Display = formatHip2Display(address);
-  if (hip2Display === 'HIP2') return 'HIP2';
-  return address.length > 14 ? `${address.slice(0, 8)}...${address.slice(-6)}` : address;
-};
 
 export const formatHash = (hash: string) => {
   if (!hash) return '-';

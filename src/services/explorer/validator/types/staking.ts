@@ -96,14 +96,6 @@ export interface UnstakingQueueItem {
 }
 
 /**
- * Response de l'API pour la queue d'unstaking
- */
-export interface UnstakingQueueResponse {
-  success: boolean;
-  data: UnstakingQueueItem[];
-}
-
-/**
  * Élément de la queue d'unstaking formaté pour l'affichage
  */
 export interface FormattedUnstakingQueueItem {
@@ -190,7 +182,7 @@ export interface UnstakingTotalStats {
 /**
  * Interface pour les stats d'unstaking à venir (1h, 24h, 7j)
  */
-export interface UpcomingUnstakingPeriod {
+interface UpcomingUnstakingPeriod {
   totalTokens: number;
   transactionCount: number;
   uniqueUsers: number;
@@ -223,7 +215,7 @@ export interface UnstakingStatsResponse {
 /**
  * Interface pour les données formatées pour la chart
  */
-export interface UnstakingChartData {
+interface UnstakingChartData {
   day: string;
   date: string;
   totalTokens: number;

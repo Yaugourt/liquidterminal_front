@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, createContext, useContext, useCallback, ReactNode } from "react";
+import { useEffect, useRef, createContext, useCallback, ReactNode } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useXp } from "@/services/xp";
 import { toast } from "sonner";
@@ -120,12 +120,6 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
   );
 }
 
-// Hook to get refetch function
-export function useXpRefetch() {
-  const context = useContext(XpRefetchContext);
-  return context?.refetch || null;
-}
-
 // Utility function to show XP gain toast from anywhere and refresh stats
 export function showXpGainToast(amount: number, action: string) {
   toast.custom(
@@ -152,83 +146,4 @@ export function showXpGainToast(amount: number, action: string) {
       globalRefetch().catch(console.error);
     }
   }, 500);
-}
-
-// Show daily task completed toast
-export function showDailyTaskToast(xpGranted: number, taskName: string, bonusGranted?: number) {
-  toast.custom(
-    () => (
-      <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-emerald-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <Star className="h-4 w-4 text-emerald-400" />
-        </div>
-        <div>
-          <p className="font-bold text-emerald-400">Daily Task Completed!</p>
-          <p className="text-xs text-text-secondary">{taskName} +{xpGranted} XP</p>
-          {bonusGranted && bonusGranted > 0 && (
-            <p className="text-xs text-gold">All tasks bonus: +{bonusGranted} XP!</p>
-          )}
-        </div>
-      </div>
-    ),
-    {
-      duration: 4000,
-      position: "bottom-right",
-    }
-  );
-
-  setTimeout(() => {
-    if (globalRefetch) {
-      globalRefetch().catch(console.error);
-    }
-  }, 500);
-}
-
-// Show weekly challenge completed toast
-export function showWeeklyChallengeToast(xpReward: number, challengeName: string) {
-  toast.custom(
-    () => (
-      <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-gold/20 border border-gold/30 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-gold/10 flex items-center justify-center">
-          <TrendingUp className="h-4 w-4 text-gold" />
-        </div>
-        <div>
-          <p className="font-bold text-gold">Weekly Challenge Complete!</p>
-          <p className="text-xs text-text-secondary">{challengeName}</p>
-          <p className="text-xs text-gold">+{xpReward} XP</p>
-        </div>
-      </div>
-    ),
-    {
-      duration: 5000,
-      position: "bottom-right",
-    }
-  );
-
-  setTimeout(() => {
-    if (globalRefetch) {
-      globalRefetch().catch(console.error);
-    }
-  }, 500);
-}
-
-// Show daily limit reached warning toast
-export function showDailyLimitToast(actionName: string) {
-  toast.custom(
-    () => (
-      <div className="flex items-center gap-3 bg-surface backdrop-blur-md border border-orange-500/20 rounded-xl p-3 shadow-xl shadow-black/20">
-        <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-          <Flame className="h-4 w-4 text-orange-400" />
-        </div>
-        <div>
-          <p className="font-bold text-orange-400">Daily Limit Reached</p>
-          <p className="text-xs text-text-secondary">{actionName} - No XP until tomorrow</p>
-        </div>
-      </div>
-    ),
-    {
-      duration: 4000,
-      position: "bottom-right",
-    }
-  );
 }

@@ -1,5 +1,5 @@
 // Types pour les ordres TWAP selon la documentation Hyperliquid
-export interface TwapOrderDetails {
+interface TwapOrderDetails {
   a: number;         // Asset (market index)
   b: boolean;        // isBuy (true = Buy, false = Sell)
   s: string;         // Size (amount as string)
@@ -8,7 +8,7 @@ export interface TwapOrderDetails {
   t: boolean;        // randomize flag
 }
 
-export interface TwapAction {
+interface TwapAction {
   type: "twapOrder";
   twap: TwapOrderDetails;
 }
@@ -35,12 +35,6 @@ export interface EnrichedTwapOrder extends TwapOrder {
   estimatedEndTime: number;
   /** Resolved from `action.twap.a` — drives the badge in the UI. */
   marketType: TwapMarketType;
-}
-
-// Type pour la réponse API des ordres TWAP
-export interface TwapOrdersResponse {
-  success: boolean;
-  data: TwapOrder[];
 }
 
 // Paramètres pour la récupération des ordres TWAP

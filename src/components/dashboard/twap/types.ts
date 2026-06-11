@@ -14,12 +14,6 @@ export interface TwapTableData {
   error?: string | null;
 }
 
-export interface TwapTabButtonsProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-  availableTokens: string[];
-}
-
 export interface TwapTableProps {
   twaps: TwapTableData[];
   isLoading: boolean;

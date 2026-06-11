@@ -1,1 +1,2 @@
-export { AssetsHeader } from './AssetsHeader';
+
+export {};

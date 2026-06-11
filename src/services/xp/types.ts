@@ -82,22 +82,6 @@ export type XpActionType =
   | 'SUBMIT_PUBLIC_GOOD'
   | 'PUBLIC_GOOD_APPROVED';
 
-// XP amounts per action (for reference)
-export const XP_AMOUNTS: Record<XpActionType, number> = {
-  REGISTRATION: 100,
-  DAILY_LOGIN: 10,
-  LOGIN_STREAK_7: 50,
-  LOGIN_STREAK_30: 200,
-  REFERRAL_SUCCESS: 200,
-  CREATE_READLIST: 15,
-  MARK_RESOURCE_READ: 5,
-  COPY_PUBLIC_READLIST: 10,
-  CREATE_WALLETLIST: 15,
-  ADD_WALLET_TO_LIST: 10,
-  SUBMIT_PUBLIC_GOOD: 100,
-  PUBLIC_GOOD_APPROVED: 500,
-};
-
 // Action type labels for display
 export const XP_ACTION_LABELS: Record<XpActionType, string> = {
   REGISTRATION: 'Welcome Bonus',
@@ -112,22 +96,6 @@ export const XP_ACTION_LABELS: Record<XpActionType, string> = {
   ADD_WALLET_TO_LIST: 'Added Wallet',
   SUBMIT_PUBLIC_GOOD: 'Submitted Public Good',
   PUBLIC_GOOD_APPROVED: 'Public Good Approved',
-};
-
-// Action type icons (lucide icon names)
-export const XP_ACTION_ICONS: Record<XpActionType, string> = {
-  REGISTRATION: 'gift',
-  DAILY_LOGIN: 'calendar-check',
-  LOGIN_STREAK_7: 'flame',
-  LOGIN_STREAK_30: 'flame',
-  REFERRAL_SUCCESS: 'users',
-  CREATE_READLIST: 'book-plus',
-  MARK_RESOURCE_READ: 'book-open-check',
-  COPY_PUBLIC_READLIST: 'copy',
-  CREATE_WALLETLIST: 'wallet',
-  ADD_WALLET_TO_LIST: 'wallet',
-  SUBMIT_PUBLIC_GOOD: 'send',
-  PUBLIC_GOOD_APPROVED: 'check-circle',
 };
 
 // ============================================
@@ -171,28 +139,6 @@ export interface CompleteDailyTaskResponse {
   };
 }
 
-// Daily task labels for display
-export const DAILY_TASK_LABELS: Record<DailyTaskType, string> = {
-  LOGIN: 'Log in',
-  READ_RESOURCE: 'Read a resource',
-  ADD_WALLET: 'Add a wallet',
-  EXPLORE_LEADERBOARD: 'Explore the leaderboard',
-  SUBMIT_RESOURCE: 'Submit a resource',
-  CREATE_READLIST: 'Create a readlist',
-  CREATE_WALLETLIST: 'Create a wallet list',
-};
-
-// Daily task icons (lucide icon names)
-export const DAILY_TASK_ICONS: Record<DailyTaskType, string> = {
-  LOGIN: 'log-in',
-  READ_RESOURCE: 'book-open',
-  ADD_WALLET: 'wallet',
-  EXPLORE_LEADERBOARD: 'trophy',
-  SUBMIT_RESOURCE: 'send',
-  CREATE_READLIST: 'list-plus',
-  CREATE_WALLETLIST: 'wallet',
-};
-
 // ============================================
 // WEEKLY CHALLENGES TYPES
 // ============================================
@@ -222,22 +168,6 @@ export interface WeeklyChallengesResponse {
     weekEnd: string;
   };
 }
-
-// Weekly challenge labels for display
-export const WEEKLY_CHALLENGE_LABELS: Record<WeeklyChallengeType, string> = {
-  READ_20_RESOURCES: 'Read 20 resources',
-  CREATE_5_READLISTS: 'Create 5 readlists',
-  LOGIN_7_DAYS: 'Log in 7 days in a row',
-  ADD_15_WALLETS: 'Add 15 wallets',
-};
-
-// Weekly challenge icons (lucide icon names)
-export const WEEKLY_CHALLENGE_ICONS: Record<WeeklyChallengeType, string> = {
-  READ_20_RESOURCES: 'book-open',
-  CREATE_5_READLISTS: 'list-plus',
-  LOGIN_7_DAYS: 'calendar-check',
-  ADD_15_WALLETS: 'wallet',
-};
 
 // ============================================
 // DAILY LIMITS TYPES (Anti-Farm)

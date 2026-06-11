@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-export const BuildersTimeframeSchema = z.enum(["1h", "24h", "7d", "30d"]);
+const BuildersTimeframeSchema = z.enum(["1h", "24h", "7d", "30d"]);
 
-export const BuilderListRowSchema = z.object({
+const BuilderListRowSchema = z.object({
   address: z.string(),
   name: z.string(),
   referredBy: z.string().nullable(),
   referrerStage: z.string(),
 });
 
-export const BuilderStatsMetricsSchema = z.object({
+const BuilderStatsMetricsSchema = z.object({
   fillCount: z.number(),
   totalVolume: z.number(),
   totalFees: z.number(),
@@ -19,7 +19,7 @@ export const BuilderStatsMetricsSchema = z.object({
   uniqueCoins: z.number(),
 });
 
-export const BuilderStatsVariationsSchema = z.object({
+const BuilderStatsVariationsSchema = z.object({
   fillCountPct: z.number().nullable().optional(),
   totalVolumePct: z.number().nullable().optional(),
   totalFeesPct: z.number().nullable().optional(),
@@ -48,7 +48,7 @@ export const BuildersAllTimeframesPayloadSchema = z.object({
   "30d": BuildersTimeframeBlock,
 });
 
-export const BuilderTopRowSchema = z.object({
+const BuilderTopRowSchema = z.object({
   builder: z.string(),
   builderName: z.union([z.string(), z.null(), z.record(z.string(), z.unknown())]),
   fillCount: z.number(),
@@ -66,7 +66,7 @@ export const BuildersTopPayloadSchema = z.object({
 });
 
 // Upstream-evolving shape: keep additional keys with catchall.
-export const BuilderCoinBreakdownRowSchema = z
+const BuilderCoinBreakdownRowSchema = z
   .object({
     coin: z.string().optional(),
     fillCount: z.number().optional(),
@@ -87,7 +87,7 @@ export const BuilderDetailStatsPayloadSchema = z.object({
   coinBreakdown: z.array(BuilderCoinBreakdownRowSchema),
 });
 
-export const BuilderUserRowSchema = z
+const BuilderUserRowSchema = z
   .object({
     user: z.string().optional(),
     address: z.string().optional(),

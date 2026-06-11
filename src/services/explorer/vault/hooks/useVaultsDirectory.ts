@@ -5,7 +5,7 @@ import { useVaults } from "./useVaults";
 import { useVaultSummaries } from "./useVaultSummaries";
 import type { VaultSummary, IndexerVaultSummaryItem } from "../types";
 
-export type StatusFilter = "all" | "open" | "closed";
+type StatusFilter = "all" | "open" | "closed";
 
 /** HLP is an outlier (huge TVL, ~0% APR) — excluded from the average APR. */
 const HLP_ADDRESS = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303";

@@ -1,9 +1,6 @@
 /** Timeframes accepted by `/indexer/builders/*` (aligned with backend Zod). */
 export type BuildersTimeframe = "1h" | "24h" | "7d" | "30d";
 
-/** Sort modes documented for `/indexer/builders/top`. */
-export type BuildersTopSort = "volume" | "fees" | "builder_fees" | "fills" | "users" | string;
-
 export interface BuilderListRow {
   address: string;
   name: string;
@@ -11,7 +8,7 @@ export interface BuilderListRow {
   referrerStage: string;
 }
 
-export interface BuilderStatsMetrics {
+interface BuilderStatsMetrics {
   fillCount: number;
   totalVolume: number;
   totalFees: number;
@@ -21,7 +18,7 @@ export interface BuilderStatsMetrics {
   uniqueCoins: number;
 }
 
-export interface BuilderStatsVariations {
+interface BuilderStatsVariations {
   fillCountPct?: number | null;
   totalVolumePct?: number | null;
   totalFeesPct?: number | null;

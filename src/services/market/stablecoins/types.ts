@@ -7,7 +7,7 @@
 
 /** Une entrée brute de la série `/spotUSDC`. Les champs non-USDC peuvent
  * manquer sur les anciennes entrées — on ne lit que la plus récente. */
-export interface SpotUsdcEntry {
+interface SpotUsdcEntry {
   lastUpdate: number;
   totalSpotUSDC: number;
   totalSpotUSDT0?: number;

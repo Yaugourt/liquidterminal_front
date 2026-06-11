@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } f
 import { API_URLS } from '../constants';
 import { RequestOptions, ExtendedAxiosRequestConfig } from '../types';
 import { getPrivyToken, handleLogout } from '../auth/privy.service';
-import { isValidJWT, formatAuthHeader } from '../auth/jwt.service';
+import { formatAuthHeader } from '../auth/jwt.service';
 import { handleTokenRefresh, isTokenRefreshing } from '../auth/token.service';
 import { generateCacheKey, getCache, setCache } from '../cache/cache.service';
 
@@ -29,7 +29,7 @@ export const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-export const externalApiClient = axios.create({
+const externalApiClient = axios.create({
   timeout: TIMEOUT_MS,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -220,23 +220,4 @@ export const postExternal = <T>(url: string, data?: unknown, options?: RequestOp
 
 // Utility exports
 export { clearCache } from '../cache/cache.service';
-
-// Token utilities
-export const checkTokenValidity = async (): Promise<boolean> => {
-  try {
-    const token = await getPrivyToken();
-    return token ? isValidJWT(token) : false;
-  } catch {
-    return false;
-  }
-};
-
-export const forceTokenRefresh = async (): Promise<string | null> => {
-  try {
-    const { clearAuthTokens } = await import('../auth/privy.service');
-    clearAuthTokens();
-    return await getPrivyToken();
-  } catch {
-    return null;
-  }
-}; 
+ 

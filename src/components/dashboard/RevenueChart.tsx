@@ -35,7 +35,7 @@ type ChartType = "area" | "bar";
  * No nested containers. Hairlines (`border-b border-border-subtle`) only.
  */
 
-export const REVENUE_SERIES = [
+const REVENUE_SERIES = [
   { key: "perp", label: "Perp", color: chartPalette.multiSeries[0] },
   { key: "spot", label: "Spot", color: chartPalette.gold },
   { key: "auction", label: "Auctions", color: chartPalette.multiSeries[3] },

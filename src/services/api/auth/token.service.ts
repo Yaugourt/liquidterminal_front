@@ -27,7 +27,7 @@ const processQueue = (error: Error | null, token: string | null = null): void =>
 /**
  * Refresh access token
  */
-export const refreshToken = async (): Promise<string | null> => {
+const refreshToken = async (): Promise<string | null> => {
   try {
     const token = await getPrivyToken();
     return token && isValidJWT(token) ? token : null;

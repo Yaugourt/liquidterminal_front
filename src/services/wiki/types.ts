@@ -72,15 +72,6 @@ export interface ResourceResponse {
 }
 
 // ==================== PARAMÈTRES DE REQUÊTE ====================
-export interface ResourceFilters {
-  categoryIds?: number[];
-  search?: string;
-  page?: number;
-  limit?: number;
-  sort?: 'createdAt' | 'url';
-  order?: 'asc' | 'desc';
-}
-
 export interface CategoryParams {
   limit?: number;
   page?: number;
@@ -115,21 +106,6 @@ export interface ResourcesResponse {
   message?: string;
 }
 
-export interface ResourcesPaginatedResponse {
-  data: EducationalResource[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
-  metadata?: {
-    lastUpdate: number;
-  };
-}
-
 // ==================== RÉSULTATS DE HOOKS ====================
 export interface UseEducationalCategoriesResult {
   categories: EducationalCategory[];
@@ -151,31 +127,14 @@ export interface UseEducationalResourcesResult {
   refetch: () => Promise<void>;
 }
 
-export interface UseEducationalResourcesPaginatedResult extends UseEducationalResourcesResult {
-  total: number;
-  page: number;
-  totalPages: number;
-  updateParams: (params: Partial<ResourceFilters>) => void;
-  metadata?: {
-    lastUpdate: number;
-  };
-}
-
 // ==================== OPTIONS DE HOOKS ====================
-export interface UseEducationalResourcesOptions {
-  limit?: number;
-  defaultParams?: Partial<ResourceFilters>;
-  initialData?: EducationalResource[];
-  refreshInterval?: number;
-}
-
 export interface UseEducationalCategoriesOptions {
   initialData?: EducationalCategory[];
   refreshInterval?: number;
 }
 
 // ==================== TYPES POUR UPLOAD CSV ====================
-export interface CsvUploadError {
+interface CsvUploadError {
   row: number;
   error: string;
   data: {
@@ -184,7 +143,7 @@ export interface CsvUploadError {
   };
 }
 
-export interface CsvUploadResult {
+interface CsvUploadResult {
   totalRows: number;
   successfulImports: number;
   failedImports: number;
@@ -192,13 +151,13 @@ export interface CsvUploadResult {
   createdCategories: string[];
 }
 
-export interface CsvUploadResponse {
+interface CsvUploadResponse {
   success: true;
   message: string;
   data: CsvUploadResult;
 }
 
-export interface CsvUploadErrorResponse {
+interface CsvUploadErrorResponse {
   success: false;
   error: string;
   code: string;
@@ -253,32 +212,3 @@ export interface ReportsResponse {
     totalPages: number;
   };
 }
-
-// ==================== CODES D'ERREURS WIKI ====================
-export type WikiErrorCode =
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'CONTENT_FILTERED'
-  | 'EDUCATIONAL_INVALID_URL'
-  | 'EDUCATIONAL_RESOURCE_ALREADY_EXISTS'
-  | 'DUPLICATE_REPORT'
-  | 'REPORT_REASON_REQUIRED'
-  | 'REPORT_REASON_TOO_LONG'
-  | 'REJECTION_REASON_REQUIRED'
-  | 'RESOURCE_ALREADY_REVIEWED';
-
-export type ContentFilterReason =
-  | 'BLACKLISTED_DOMAIN'
-  | 'BLOCKED_EXTENSION'
-  | 'MALWARE_PATTERN'
-  | 'INJECTION_DETECTED'
-  | 'URL_MANIPULATION'
-  | 'PUNYCODE_DETECTED'
-  | 'HOMOGRAPH_DETECTED'
-  | 'HTTPS_REQUIRED';
-
-export interface WikiApiError {
-  success: false;
-  error: string;
-  code: WikiErrorCode;
-  reason?: ContentFilterReason;
-} 

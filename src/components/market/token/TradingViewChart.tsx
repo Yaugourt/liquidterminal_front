@@ -360,7 +360,6 @@ export function TradingViewChart({
     });
     overlayLineRef.current = line;
   // overlayLineRef is stable; we only need to re-run when the prop changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayPerpCoinId]);
 
   // ── Push overlay data (full history, no clipping) ────────────────────

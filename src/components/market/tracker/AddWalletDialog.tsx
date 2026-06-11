@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -148,15 +147,3 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
     </Dialog>
   );
 }
-
-export function AddWalletButton({ onClick }: { onClick: () => void }) {
-  return (
-    <Button 
-      variant="default" 
-      className="ml-auto bg-gold text-black hover:bg-gold/90"
-      onClick={onClick}
-    >
-      <PlusCircle className="mr-2 h-4 w-4" /> Add a wallet
-    </Button>
-  );
-} 

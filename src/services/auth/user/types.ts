@@ -90,10 +90,4 @@ export interface UseAdminDeleteUserResult {
   isLoading: boolean;
   error: Error | null;
 }
-
-// Types pour les erreurs
-export interface AdminUserError {
-  success: false;
-  message: string;
-  code: 'INVALID_USER_ID' | 'USER_NOT_FOUND' | 'EMAIL_ALREADY_EXISTS' | 'CANNOT_DELETE_SELF' | 'UNAUTHENTICATED' | 'UNAUTHORIZED';
-} 
+ 

@@ -7,7 +7,7 @@
 /**
  * Asset avec son cap de streaming OI
  */
-export interface PerpDexAsset {
+interface PerpDexAsset {
   name: string; // e.g., "xyz:AAPL"
   streamingOiCap: number; // Parsed from string like "25000000.0"
 }
@@ -54,7 +54,7 @@ export interface PerpDexAssetWithMarketData extends PerpDexAsset {
 /**
  * Sub-deployer avec ses permissions
  */
-export interface SubDeployer {
+interface SubDeployer {
   permission: string; // e.g., "setOracle", "registerAsset"
   addresses: string[];
 }
@@ -145,7 +145,7 @@ export interface PerpMetaAsset {
 /**
  * Margin tier definition
  */
-export interface MarginTier {
+interface MarginTier {
   lowerBound: string;
   maxLeverage: number;
 }
@@ -153,7 +153,7 @@ export interface MarginTier {
 /**
  * Margin table definition
  */
-export interface MarginTable {
+interface MarginTable {
   description: string;
   marginTiers: MarginTier[];
 }
@@ -161,7 +161,7 @@ export interface MarginTable {
 /**
  * DEX entry from allPerpMetas response
  */
-export interface PerpMetaDex {
+interface PerpMetaDex {
   universe: PerpMetaAsset[];
   collateralToken?: number;
   marginTables?: [number, MarginTable][];
@@ -195,7 +195,7 @@ export interface AssetMarketCtx {
 /**
  * DEX context from WebSocket - tuple of [dexName, assets[]]
  */
-export type DexAssetCtx = [string, AssetMarketCtx[]];
+type DexAssetCtx = [string, AssetMarketCtx[]];
 
 /**
  * WebSocket message for allDexsAssetCtxs
@@ -262,18 +262,6 @@ export interface PerpDexEnhancedGlobalStats extends PerpDexGlobalStats {
   activeMarkets: number;
 }
 
-/**
- * WebSocket store state
- */
-export interface PerpDexMarketDataStore {
-  marketData: Map<string, DexMarketData>;
-  isConnected: boolean;
-  error: string | null;
-  lastUpdate: Date | null;
-  connect: () => void;
-  disconnect: () => void;
-}
-
 // ============================================
 // Past Auctions Perp API Types (Hypurrscan)
 // ============================================
@@ -281,7 +269,7 @@ export interface PerpDexMarketDataStore {
 /**
  * Asset request in the auction action
  */
-export interface PastAuctionAssetRequest {
+interface PastAuctionAssetRequest {
   coin: string; // e.g., "cash:TSLA", "xyz:SMSN"
   szDecimals: number;
   oraclePx: string;
@@ -292,7 +280,7 @@ export interface PastAuctionAssetRequest {
 /**
  * Schema info for the DEX
  */
-export interface PastAuctionSchema {
+interface PastAuctionSchema {
   fullName: string;
   collateralToken: number;
   oracleUpdater: string | null;
@@ -301,7 +289,7 @@ export interface PastAuctionSchema {
 /**
  * Register asset action in the auction
  */
-export interface PastAuctionRegisterAsset {
+interface PastAuctionRegisterAsset {
   maxGas: number | null;
   assetRequest: PastAuctionAssetRequest;
   dex: string; // e.g., "cash", "xyz"
@@ -311,7 +299,7 @@ export interface PastAuctionRegisterAsset {
 /**
  * Action in the auction entry
  */
-export interface PastAuctionAction {
+interface PastAuctionAction {
   type: 'perpDeploy';
   registerAsset: PastAuctionRegisterAsset;
 }
@@ -332,7 +320,7 @@ export interface PastAuctionPerpRawNew {
 /**
  * Raw entry from the pastAuctionsPerp API (legacy format without action)
  */
-export interface PastAuctionPerpRawLegacy {
+interface PastAuctionPerpRawLegacy {
   time: number;
   deployer: string;
   name: string;

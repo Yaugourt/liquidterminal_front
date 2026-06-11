@@ -2,8 +2,6 @@ import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
 import { ENDPOINTS } from '@/services/api/constants';
 import { 
-  StakingValidationsResponse, 
-  FormattedStakingValidation, 
   StakingValidationsParams, 
   StakingValidationsPaginatedResponse, 
   StakingValidation,
@@ -18,22 +16,6 @@ import {
   formatUnstakingQueueData,
   buildPaginatedResponse 
 } from './utils';
-
-/**
- * Récupère les validations de staking depuis notre backend (version simple - dépréciée)
- * @returns Liste des validations de staking formatées
- */
-export const fetchStakingValidations = async (): Promise<FormattedStakingValidation[]> => {
-  return withErrorHandling(async () => {
-    const result = await get<StakingValidationsResponse>(ENDPOINTS.STAKING_VALIDATIONS);
-    
-    if (!result.success || !result.data) {
-      throw new Error('Invalid response format from staking validations API');
-    }
-
-    return result.data.map(formatValidationData);
-  }, 'fetching staking validations');
-};
 
 /**
  * Récupère les validations de staking avec pagination depuis notre backend

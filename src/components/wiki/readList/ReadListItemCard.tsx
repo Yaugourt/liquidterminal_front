@@ -1,7 +1,6 @@
 "use client";
 
 import { ExternalLink, Trash2, Check, Clock, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";

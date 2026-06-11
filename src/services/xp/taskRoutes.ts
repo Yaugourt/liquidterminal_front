@@ -3,7 +3,7 @@ import { DailyTaskType, WeeklyChallengeType } from './types';
 /**
  * Maps daily task types to their corresponding routes
  */
-export const DAILY_TASK_ROUTES: Record<DailyTaskType, string> = {
+const DAILY_TASK_ROUTES: Record<DailyTaskType, string> = {
   LOGIN: '/dashboard',
   READ_RESOURCE: '/wiki',
   ADD_WALLET: '/market/tracker',
@@ -16,7 +16,7 @@ export const DAILY_TASK_ROUTES: Record<DailyTaskType, string> = {
 /**
  * Maps weekly challenge types to their corresponding routes
  */
-export const WEEKLY_CHALLENGE_ROUTES: Record<WeeklyChallengeType, string> = {
+const WEEKLY_CHALLENGE_ROUTES: Record<WeeklyChallengeType, string> = {
   READ_20_RESOURCES: '/wiki',
   CREATE_5_READLISTS: '/wiki/readlist',
   LOGIN_7_DAYS: '/dashboard',

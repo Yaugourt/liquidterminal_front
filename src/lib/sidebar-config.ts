@@ -16,7 +16,6 @@ import {
   Home,
   CandlestickChart,
   Zap,
-  FileCode,
   Sparkles,
   Users,
   ArrowRightLeft,
@@ -261,7 +260,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
 /**
  * Convert navigation groups to preferences structure
  */
-export const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPreferences => {
+const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPreferences => {
   const groupPreferences: SidebarGroupPreference[] = groups.map((group, groupIndex) => {
     const groupId = getGroupId(group.groupName);
 

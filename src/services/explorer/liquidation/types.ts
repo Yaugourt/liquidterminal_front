@@ -5,7 +5,7 @@
 /**
  * Direction de la liquidation
  */
-export type LiquidationDirection = 'Long' | 'Short';
+type LiquidationDirection = 'Long' | 'Short';
 
 /**
  * Structure d'une liquidation individuelle
@@ -184,11 +184,8 @@ export interface LiquidationsDataResponse {
 // Historical chart (jusqu'à 90 jours)
 // ============================================
 
-/** Période supportée par `/liquidations/historical/chart`. */
-export type HistoricalChartPeriod = "24h" | "7d" | "14d" | "30d" | "90d";
-
 /** Bucket renvoyé par `/liquidations/historical/chart`. */
-export interface HistoricalChartBucket {
+interface HistoricalChartBucket {
   timestamp: string;
   totalVolume_USD: number;
   longVolume_USD: number;
@@ -223,7 +220,7 @@ export interface LiquidationWSFilters {
 /**
  * Types de messages WebSocket
  */
-export type LiquidationWSMessageType = 
+type LiquidationWSMessageType = 
   | 'connected' 
   | 'subscribed' 
   | 'liquidation' 
@@ -238,17 +235,6 @@ export interface LiquidationWSMessage {
   data?: Liquidation | { filters?: LiquidationWSFilters };
   timestamp: string;
   error?: string;
-}
-
-/**
- * Message de subscription envoyé au serveur
- */
-export interface LiquidationWSSubscription {
-  method: 'subscribe';
-  subscription: {
-    type: 'liquidation';
-    filters?: LiquidationWSFilters;
-  };
 }
 
 /**
@@ -277,12 +263,3 @@ export interface LiquidationWSStore {
   setOnLiquidation: (callback: ((liq: Liquidation) => void) | undefined) => void;
 }
 
-/**
- * Options pour le hook useLiquidationsWebSocket
- */
-export interface UseLiquidationsWSOptions {
-  enabled?: boolean;
-  filters?: LiquidationWSFilters;
-  onLiquidation?: (liq: Liquidation) => void;
-  maxRecentItems?: number;
-}
