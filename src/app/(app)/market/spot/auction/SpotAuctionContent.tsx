@@ -1,25 +1,72 @@
 "use client";
 
-import { AuctionCard, AuctionTable, AuctionChartSection } from "@/components/market/auction";
+import { useEffect } from "react";
+import { ExternalLink } from "lucide-react";
+import { usePageTitle } from "@/store/use-page-title";
+import { PageHeader } from "@/components/common";
+import { SectionHead } from "@/components/dashboard/SectionHead";
+import {
+  AuctionKpiStrip,
+  AuctionHistoryShape,
+  AuctionHistoryTable,
+} from "@/components/market/auction";
+import { useAuctionHistory } from "@/services/market/auction/hooks/useAuctionHistory";
 
+/**
+ * /market/spot/auction — V4, composed on the main-dashboard page-type like
+ * /market/spot. One `useAuctionHistory` fetch feeds every section (the API
+ * returns the full record in a single response).
+ */
 export function SpotAuctionContent() {
-  return (
-    <>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="md:w-1/3">
-          <AuctionCard marketType="spot" />
-        </div>
-        <div className="md:w-2/3">
-          <AuctionChartSection marketType="spot" chartHeight={270} />
-        </div>
-      </div>
+  const { setTitle } = usePageTitle();
 
-      <div>
-        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
-          Past Auctions
-        </h2>
-        <AuctionTable marketType="spot" />
-      </div>
-    </>
+  useEffect(() => {
+    setTitle("Deploy Auctions");
+  }, [setTitle]);
+
+  const history = useAuctionHistory();
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Deploy auctions"
+        description="Every spot ticker sold through the HIP-1 dutch auction since genesis — live state, gas history & full record."
+        actions={
+          <a
+            href="https://app.hyperliquid.xyz/deploySpot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
+          >
+            Participate
+            <ExternalLink size={12} />
+          </a>
+        }
+      />
+
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Live"
+          subtitle="dutch curve state · 31h cadence · era aggregates"
+        />
+        <AuctionKpiStrip history={history} />
+      </section>
+
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Gas history"
+          subtitle="winning bids per era · most expensive tickers · monthly cadence"
+        />
+        <AuctionHistoryShape history={history} />
+      </section>
+
+      <section className="space-y-2.5">
+        <SectionHead
+          title="All deploys"
+          subtitle="full auction record · date, deployer, token id & winning bid"
+        />
+        <AuctionHistoryTable history={history} />
+      </section>
+    </div>
   );
 }
