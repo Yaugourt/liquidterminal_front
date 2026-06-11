@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Github, Globe, ExternalLink } from "lucide-react";
 import { PublicGood } from "@/services/ecosystem/publicgood";
+import { safeHref } from "@/lib/safeUrl";
 import { ProjectStatusBadge } from "./ProjectStatusBadge";
 import { useState } from "react";
 
@@ -52,7 +53,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                     <div className="flex items-center gap-4">
                         {project.githubUrl && (
                             <Link
-                                href={project.githubUrl}
+                                href={safeHref(project.githubUrl) || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-brand hover:text-text-primary transition-colors"
@@ -64,7 +65,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         )}
                         {project.websiteUrl && (
                             <Link
-                                href={project.websiteUrl}
+                                href={safeHref(project.websiteUrl) || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-brand hover:text-text-primary transition-colors"
@@ -76,7 +77,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         )}
                         {project.demoUrl && (
                             <Link
-                                href={project.demoUrl}
+                                href={safeHref(project.demoUrl) || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-gold hover:text-text-primary transition-colors"

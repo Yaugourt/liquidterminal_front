@@ -2,6 +2,8 @@
  * Public Goods - Helpers, Validators & Constants
  */
 
+import { isSafeHref } from "@/lib/safeUrl";
+
 // ==================== CONSTANTS ====================
 
 export const CATEGORIES = [
@@ -109,17 +111,13 @@ export const validateEmail = (email: string): boolean => {
 };
 
 /**
- * Validate URL format
+ * Validate URL format AND scheme. Rejects non-http(s) schemes such as
+ * `javascript:` / `data:` (which `new URL()` would otherwise accept), so the
+ * result is safe to render into an href. Backed by the shared `safeHref` guard.
  */
 export const validateUrl = (url: string): boolean => {
   if (!url || url.trim() === '') return false;
-  
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
-  }
+  return isSafeHref(url);
 };
 
 /**

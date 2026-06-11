@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Copy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { safeHref } from "@/lib/safeUrl";
 import { Card } from "@/components/ui/card";
 import {
   CHAPTER_META,
@@ -410,7 +411,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                   {resourceLinks.map((link) => (
                     <a
                       key={link.label}
-                      href={link.url}
+                      href={safeHref(link.url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={link.label}

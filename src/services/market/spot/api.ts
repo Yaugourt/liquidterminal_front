@@ -1,5 +1,5 @@
 import { SpotGlobalStats, SpotToken, TokenHoldersResponse } from './types';
-import { get } from '../../api/axios-config';
+import { get, getExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
 import { buildHypurrscanUrl } from '../../api/constants';
@@ -51,7 +51,9 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
 export const fetchTokenHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
   return withErrorHandling(async () => {
     const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/${tokenName}`;
-    return await get<TokenHoldersResponse>(url);
+    // Hypurrscan is a THIRD-PARTY host — use the external client so the backend
+    // Privy JWT is never attached to (and leaked toward) this request.
+    return await getExternal<TokenHoldersResponse>(url);
   }, 'fetching token holders');
 };
 
@@ -61,6 +63,7 @@ export const fetchTokenHolders = async (tokenName: string): Promise<TokenHolders
 export const fetchStakedHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
   return withErrorHandling(async () => {
     const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/staked${tokenName}`;
-    return await get<TokenHoldersResponse>(url);
+    // Third-party host — external client (no Authorization header). See above.
+    return await getExternal<TokenHoldersResponse>(url);
   }, 'fetching staked holders');
 }; 

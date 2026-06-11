@@ -5,6 +5,7 @@ import { ResourceStatus } from "@/services/wiki/types";
 import { ExternalLink, Clock, CheckCircle, XCircle } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
+import { safeHref } from "@/lib/safeUrl";
 
 const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; color: string }> = {
     PENDING: { icon: Clock, label: "En attente", color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
@@ -23,7 +24,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                         <a
-                            href={resource.url}
+                            href={safeHref(resource.url)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm font-medium text-text-primary hover:text-brand transition-colors truncate"

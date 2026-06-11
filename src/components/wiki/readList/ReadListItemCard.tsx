@@ -9,6 +9,7 @@ import Image from "next/image";
 import type { ReadListItem } from "@/services/wiki";
 import type { LinkPreview } from "@/services/wiki/linkPreview";
 import { formatDistanceToNow } from "date-fns";
+import { safeHref } from "@/lib/safeUrl";
 
 interface ReadListItemCardProps {
   item: ReadListItem;
@@ -36,8 +37,9 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
   };
 
   const handleCardClick = () => {
-    if (item.resource?.url) {
-      window.open(item.resource.url, '_blank');
+    const href = safeHref(item.resource?.url);
+    if (href) {
+      window.open(href, '_blank', 'noopener,noreferrer');
     }
   };
 
