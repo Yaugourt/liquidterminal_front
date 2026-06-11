@@ -38,6 +38,14 @@ const nextConfig = {
                         key: 'Permissions-Policy',
                         value: 'camera=(), microphone=(), geolocation=()',
                     },
+                    {
+                        // Structural CSP only: anti-clickjacking (complements
+                        // X-Frame-Options), no plugins, no <base> hijack. A full
+                        // script-src/connect-src policy needs a staged rollout
+                        // with QA against the Privy/WalletConnect stack (nonces).
+                        key: 'Content-Security-Policy',
+                        value: "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+                    },
                 ],
             },
         ];
@@ -65,11 +73,11 @@ const nextConfig = {
                 hostname: 'pub-097cebbc75d04a3fbd5d0e416820c1a5.r2.dev',
                 pathname: '/**',
             },
-            {
-                protocol: 'http',
-                hostname: 'localhost',
-                pathname: '/**',
-            },
+            // localhost is allowed ONLY in dev — in production it would turn the
+            // image optimizer into a loopback SSRF / port-probe primitive.
+            ...(process.env.NODE_ENV === 'development'
+                ? [{ protocol: 'http', hostname: 'localhost', pathname: '/**' }]
+                : []),
             {
                 protocol: 'https',
                 hostname: 'hyperliquid.gitbook.io',

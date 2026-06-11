@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePendingResources, usePendingCount, useModerationActions } from "@/services/wiki";
 import { EducationalResource } from "@/services/wiki/types";
 import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
+import { safeHref } from "@/lib/safeUrl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -50,7 +51,7 @@ function PendingResourceItem({
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                     <a
-                        href={resource.url}
+                        href={safeHref(resource.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-text-primary hover:text-brand transition-colors flex items-center gap-2"

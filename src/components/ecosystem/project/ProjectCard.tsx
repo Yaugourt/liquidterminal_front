@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Project } from "@/services/ecosystem/project/types";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
+import { safeHref } from "@/lib/safeUrl";
 
 interface ProjectCardProps {
   project: Project;
@@ -130,7 +131,7 @@ export const ProjectCard = memo(function ProjectCard({
               {socialLinks.map((link, index) => (
                 <a
                   key={index}
-                  href={link.url}
+                  href={safeHref(link.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-text-tertiary hover:text-brand transition-colors"

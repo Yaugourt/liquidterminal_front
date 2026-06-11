@@ -11,6 +11,7 @@ import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
+import { safeHref } from "@/lib/safeUrl";
 import { ReportResourceModal } from "./ReportResourceModal";
 import { AddToReadListModal } from "./AddToReadListModal";
 import { resourceStatusConfig } from "./resource-status-config";
@@ -119,7 +120,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
 
       <div className="p-0">
         <a
-          href={resource.url}
+          href={safeHref(resource.url)}
           target="_blank"
           rel="noopener noreferrer"
           className="block"

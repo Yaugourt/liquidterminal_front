@@ -4,6 +4,7 @@ import { FileText, Twitter, Globe, MessageCircle, Send, Github, Layers, Copy, Ch
 import { useState } from "react";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
+import { safeHref } from "@/lib/safeUrl";
 
 interface EducationSidebarProps {
   info: {
@@ -128,7 +129,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
           <div className="grid grid-cols-2 gap-1">
             {info.links.whitepaperLink && (
               <a
-                href={info.links.whitepaperLink}
+                href={safeHref(info.links.whitepaperLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -140,7 +141,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.websiteLink && (
               <a
-                href={info.links.websiteLink}
+                href={safeHref(info.links.websiteLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -152,7 +153,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.appLink && (
               <a
-                href={info.links.appLink}
+                href={safeHref(info.links.appLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -164,7 +165,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.documentationLink && (
               <a
-                href={info.links.documentationLink}
+                href={safeHref(info.links.documentationLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -176,7 +177,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.twitterLink && (
               <a
-                href={info.links.twitterLink}
+                href={safeHref(info.links.twitterLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -188,7 +189,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.twitterFoundationLink && (
               <a
-                href={info.links.twitterFoundationLink}
+                href={safeHref(info.links.twitterFoundationLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -200,7 +201,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.discordLink && (
               <a
-                href={info.links.discordLink}
+                href={safeHref(info.links.discordLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -212,7 +213,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.telegramLink && (
               <a
-                href={info.links.telegramLink}
+                href={safeHref(info.links.telegramLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"
@@ -224,7 +225,7 @@ export function EducationSidebar({ info }: EducationSidebarProps) {
 
             {info.links.githubLink && (
               <a
-                href={info.links.githubLink}
+                href={safeHref(info.links.githubLink)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 p-2 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-colors group"

@@ -34,16 +34,43 @@ export const externalApiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Host of our own backend, derived once from the configured base URL.
+const BACKEND_HOST = (() => {
+  try {
+    return new URL(API_URLS.LOCAL_BACKEND).host;
+  } catch {
+    return null;
+  }
+})();
+
+/**
+ * Defense-in-depth: decide whether the Privy JWT may be attached to a request.
+ * A relative URL resolves against apiClient.baseURL (our backend) → safe. An
+ * absolute URL is only trusted when it points at our backend host, so a request
+ * to a third-party host (even if mistakenly issued through apiClient) never
+ * leaks the user's backend token.
+ */
+const targetsBackend = (url?: string): boolean => {
+  if (!url || !/^https?:\/\//i.test(url)) return true;
+  try {
+    return BACKEND_HOST !== null && new URL(url).host === BACKEND_HOST;
+  } catch {
+    return false;
+  }
+};
+
 // Request interceptor
 apiClient.interceptors.request.use(
   async (config) => {
     try {
-      const token = await getPrivyToken();
-      
-      if (token) {
-        config.headers.Authorization = formatAuthHeader(token);
+      if (targetsBackend(config.url)) {
+        const token = await getPrivyToken();
+
+        if (token) {
+          config.headers.Authorization = formatAuthHeader(token);
+        }
       }
-      
+
       // Remove Content-Type for FormData
       if (config.data instanceof FormData) {
         delete config.headers['Content-Type'];
@@ -51,7 +78,7 @@ apiClient.interceptors.request.use(
     } catch {
       // Token addition failed, continue without it
     }
-    
+
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
