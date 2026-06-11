@@ -10,7 +10,7 @@ import {
 import type { Liquidation } from "@/services/explorer/liquidation";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
-import { chartPalette, TokenAvatar } from "@/components/common";
+import { chartPalette, KpiRibbon, TokenAvatar } from "@/components/common";
 
 /**
  * LiquidationsPanel — Dashboard liquidations card (V4 · variant D "cumulative").
@@ -356,42 +356,35 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
       </div>
 
       {/* Hero — 3-col strip (Total / Long / Short) */}
-      <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-px bg-border-subtle border-b border-border-subtle">
-        <div className="bg-surface px-4 py-3">
-          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-            Total liquidated 24h
-          </div>
-          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary mt-1 leading-none">
-            {compactUsd(stats.totalVolume)}
-          </div>
-          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
-            {stats.liquidationsCount.toLocaleString()} events · avg{" "}
-            {compactUsd(stats.avgSize)}
-          </div>
-        </div>
-        <div className="bg-surface px-4 py-3">
-          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-            Long ↗
-          </div>
-          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-success mt-1 leading-none">
-            {compactUsd(longTotal)}
-          </div>
-          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
-            {Math.round(longPct)}% · {stats.longCount.toLocaleString()} events
-          </div>
-        </div>
-        <div className="bg-surface px-4 py-3">
-          <div className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
-            Short ↘
-          </div>
-          <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-danger mt-1 leading-none">
-            {compactUsd(shortTotal)}
-          </div>
-          <div className="text-[10px] text-text-tertiary mt-1.5 mono">
-            {Math.round(shortPct)}% · {stats.shortCount.toLocaleString()} events
-          </div>
-        </div>
-      </div>
+      <KpiRibbon
+        bordered={false}
+        columns="grid-cols-[1.2fr_1fr_1fr]"
+        className="border-b border-border-subtle"
+        cells={[
+          {
+            label: "Total liquidated 24h",
+            value: compactUsd(stats.totalVolume),
+            sub: (
+              <>
+                {stats.liquidationsCount.toLocaleString()} events · avg{" "}
+                {compactUsd(stats.avgSize)}
+              </>
+            ),
+          },
+          {
+            label: "Long ↗",
+            value: compactUsd(longTotal),
+            tone: "success",
+            sub: `${Math.round(longPct)}% · ${stats.longCount.toLocaleString()} events`,
+          },
+          {
+            label: "Short ↘",
+            value: compactUsd(shortTotal),
+            tone: "danger",
+            sub: `${Math.round(shortPct)}% · ${stats.shortCount.toLocaleString()} events`,
+          },
+        ]}
+      />
 
       {/* Cumulative chart */}
       <div className="flex-1 flex flex-col px-3.5 pt-2.5 pb-3">

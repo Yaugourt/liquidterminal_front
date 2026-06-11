@@ -102,9 +102,11 @@ export function KpiRibbon({
   const gridClass = plain
     ? `grid ${cols} divide-x divide-y sm:divide-y-0 divide-border-subtle`
     : `grid ${cols} gap-px bg-border-subtle`;
+  // min-w-0 : sans lui, le label `truncate` (nowrap) impose sa largeur
+  // min-content à la colonne et le ribbon déborde au lieu de tronquer.
   const cellClass = plain
-    ? "px-5 py-4 flex flex-col"
-    : "bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col";
+    ? "px-5 py-4 flex flex-col min-w-0"
+    : "bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col min-w-0";
   const labelClass = plain
     ? "text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate"
     : "text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate";

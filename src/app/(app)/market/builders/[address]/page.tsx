@@ -18,6 +18,7 @@ import {
   BuilderUsersTable,
   formatBuilderDisplayName,
 } from "@/components/market/builders";
+import { KpiRibbon } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -158,19 +159,19 @@ export default function BuilderDetailPage() {
           <h2 className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider px-1">
             Top coins ({tf})
           </h2>
-          <Card className="rounded-2xl">
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-border-subtle">
-              {stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => (
-                <div key={coin.coin ?? i} className="bg-surface/60 p-3 text-center">
-                  <p className="text-brand font-medium text-sm">{coin.coin ?? "—"}</p>
-                  {coin.totalVolume !== undefined && (
-                    <p className="text-text-tertiary text-xs tabular-nums">
-                      {formatNumber(coin.totalVolume as number, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
+          <Card className="rounded-2xl overflow-hidden">
+            <KpiRibbon
+              bordered={false}
+              columns="grid-cols-3 sm:grid-cols-5"
+              cells={stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => ({
+                key: coin.coin ?? String(i),
+                label: <span className="text-brand">{coin.coin ?? "—"}</span>,
+                value:
+                  coin.totalVolume !== undefined
+                    ? formatNumber(coin.totalVolume as number, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
+                    : "—",
+              }))}
+            />
           </Card>
         </section>
       )}

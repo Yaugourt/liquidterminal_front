@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { useSpotStablecoins } from "@/services/market/stablecoins";
 import {
   AuroraAreaChart,
+  KpiRibbon,
   TokenAvatar,
   chartPalette,
 } from "@/components/common";
@@ -153,26 +154,35 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
       </div>
 
       {/* 2. KPI strip — 3 cells (mirror Fees) */}
-      <div className="grid grid-cols-3 gap-px bg-border-subtle border-b border-border-subtle">
-        <KpiCell
-          label="Total supply"
-          value={hasData ? fmtUsdCompact(totalSupply) : isLoading ? "…" : "—"}
-          tone="gold"
-        />
-        <KpiCell
-          label="Holders"
-          value={hasData ? fmtCount(totalHolders) : "—"}
-        />
-        <KpiCell
-          label={`Δ ${SUPPLY_WINDOW_LABELS[window]}`}
-          value={
-            windowDelta === null
-              ? "—"
-              : `${deltaPositive ? "+" : "−"}${Math.abs(windowDelta).toFixed(2)}%`
-          }
-          deltaTone={deltaPositive ? "success" : "danger"}
-        />
-      </div>
+      <KpiRibbon
+        bordered={false}
+        columns="grid-cols-3"
+        className="border-b border-border-subtle"
+        cells={[
+          {
+            label: "Total supply",
+            value: hasData ? fmtUsdCompact(totalSupply) : isLoading ? "…" : "—",
+            tone: "gold",
+          },
+          {
+            label: "Holders",
+            value: hasData ? fmtCount(totalHolders) : "—",
+          },
+          {
+            label: `Δ ${SUPPLY_WINDOW_LABELS[window]}`,
+            value:
+              windowDelta === null
+                ? "—"
+                : `${deltaPositive ? "+" : "−"}${Math.abs(windowDelta).toFixed(2)}%`,
+            tone:
+              windowDelta === null
+                ? "default"
+                : deltaPositive
+                ? "success"
+                : "danger",
+          },
+        ]}
+      />
 
       {/* 3. Chart strate — sparkline at hero size, matches Fees chart strate height */}
       <div className="px-3.5 pt-3 pb-3 border-b border-border-subtle">
@@ -528,36 +538,5 @@ function ChartTypeButton({
     >
       <Icon size={11} />
     </button>
-  );
-}
-
-function KpiCell({
-  label,
-  value,
-  tone,
-  deltaTone,
-}: {
-  label: string;
-  value: string;
-  tone?: "default" | "gold";
-  deltaTone?: "default" | "success" | "danger";
-}) {
-  const valueColor =
-    tone === "gold"
-      ? "text-gold"
-      : deltaTone === "success"
-      ? "text-success"
-      : deltaTone === "danger"
-      ? "text-danger"
-      : "text-text-primary";
-  return (
-    <div className="bg-surface px-3.5 py-2 flex items-baseline gap-2 min-w-0">
-      <span className="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate">
-        {label}
-      </span>
-      <span className={`mono text-[13px] font-semibold ml-auto ${valueColor}`}>
-        {value}
-      </span>
-    </div>
   );
 }
