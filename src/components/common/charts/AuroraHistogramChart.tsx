@@ -150,7 +150,13 @@ const AuroraHistogramChartComponent = ({
 
   return (
     <div className="w-full h-full" style={{ minHeight: 180 }}>
-      <ResponsiveContainer width="100%" height="100%">
+      {/* Positive initialDimension: recharts logs a width(-1)/height(-1)
+          warning when the first render happens before ResizeObserver fires. */}
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={{ width: 520, height: 180 }}
+      >
         <BarChart
           data={sorted}
           margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
