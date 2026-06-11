@@ -268,6 +268,19 @@ export function compactUsd(
 }
 
 /**
+ * USD plein avec séparateurs de milliers — `$1,234,567`.
+ *
+ * Pour les tooltips et totaux où la valeur exacte compte. Remplace les
+ * `formatUsdFull`/`fmtUsdFull` locaux (FeesRevenuePanel, StablecoinsCard).
+ */
+export function fullUsd(n: number | null | undefined, opts: { fallback?: string } = {}): string {
+  const { fallback = '—' } = opts;
+  if (n == null || !Number.isFinite(n)) return fallback;
+  const sign = n < 0 ? '-' : '';
+  return `${sign}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
+}
+
+/**
  * Compact HYPE amount — `1.23B` / `4.56M` / `7.8K` / `123`.
  *
  * Same shape as `compactUsd` but without the `$` prefix — HYPE is a unit

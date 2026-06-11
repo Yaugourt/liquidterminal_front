@@ -3,6 +3,25 @@ import { DateFormatType } from '@/store/date-format.store';
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+/**
+ * Âge relatif compact — `32s` / `5m` / `3h` / `2d`.
+ *
+ * Source unique de vérité : remplace les réimplémentations locales de
+ * `timeAgo` (LiveActivity, BridgeTransfers, TokenDeploys, Hip3AuctionRow,
+ * LiquidationsPanel). Accepte Date, timestamp ms ou string ISO.
+ */
+export function timeAgo(date: Date | string | number): string {
+  const ms = new Date(date).getTime();
+  if (isNaN(ms)) return '—';
+  const s = Math.floor(Math.max(0, Date.now() - ms) / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  return `${Math.floor(h / 24)}d`;
+}
+
 export function formatDate(date: Date | string | number, format: DateFormatType): string {
   const dateObj = new Date(date);
   

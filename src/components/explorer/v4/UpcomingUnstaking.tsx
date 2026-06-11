@@ -9,7 +9,7 @@ import {
   ModuleTable,
   ModuleTableRow,
 } from "@/components/common";
-import { compactHype, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactHype, formatNumber, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
 /**
@@ -23,12 +23,6 @@ import { useNumberFormat } from "@/store/number-format.store";
 
 const TOP_N = 5; // aligned with ValidatorsModule so both cards share row count + density
 const FETCH_LIMIT = 200; // backend Zod cap; covers the heaviest unstakes
-
-function truncateAddr(addr: string | null | undefined, start = 6, end = 4): string {
-  if (!addr) return "—";
-  if (addr.length <= start + end + 2) return addr;
-  return `${addr.slice(0, start)}…${addr.slice(-end)}`;
-}
 
 /** "in 3d 4h" / "in 2h 14m" / "in 8m" / "released" — relative to `now`. */
 function releaseEta(releaseMs: number): string {
@@ -105,7 +99,7 @@ export const UpcomingUnstaking = memo(function UpcomingUnstaking() {
               key={`${item.user}-${item.timestamp}-${i}`}
               cells={[
                 <span key="addr" className="mono text-brand">
-                  {truncateAddr(item.user)}
+                  {truncateAddress(item.user)}
                 </span>,
                 <span key="amount" className="mono text-gold font-semibold">
                   {compactHype(item.amount)}{" "}

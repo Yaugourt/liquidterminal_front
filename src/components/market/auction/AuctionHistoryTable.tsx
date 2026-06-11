@@ -7,7 +7,7 @@ import { Search, Copy, Check } from "lucide-react";
 import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Input } from "@/components/ui/input";
-import { compactUsd, compactHype } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactHype, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import type { DateFormatType } from "@/store/date-format.store";
@@ -16,8 +16,6 @@ import type {
   UseAuctionHistoryResult,
   AuctionEraTab,
 } from "@/services/market/auction/hooks/useAuctionHistory";
-
-const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 function AddressCell({
   address,
@@ -35,7 +33,7 @@ function AddressCell({
         onClick={(e) => e.stopPropagation()}
         className="mono text-xs text-brand hover:text-text-primary transition-colors"
       >
-        {shortAddr(address)}
+        {truncateAddress(address)}
       </Link>
       <button
         onClick={(e) => {

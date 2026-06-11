@@ -18,6 +18,7 @@ import {
   TokenAvatar,
   chartPalette,
 } from "@/components/common";
+import { compactCount, compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { StablecoinSupplyByCoinPoint } from "@/services/market/stablecoins";
 
 type ChartType = "area" | "bar";
@@ -62,34 +63,15 @@ const SUPPLY_WINDOW_DAYS: Record<Exclude<SupplyWindow, "all">, number> = {
  *   5. footer caveats   — source + refresh cadence
  */
 
-const fmtUsdFull = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "—";
-  return `$${Math.round(v).toLocaleString("en-US")}`;
-};
+const fmtUsdFull = (v: number): string => (v === 0 ? "—" : fullUsd(v));
 
-const fmtUsdCompact = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "—";
-  if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
-  if (v >= 1e6) return `$${(v / 1e6).toFixed(2)}M`;
-  if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
-};
+const fmtUsdCompact = (v: number): string => (v === 0 ? "—" : compactUsd(v));
 
 /** Tighter compact USD for Y axis labels — `$4.2B` / `$420M`. */
-const fmtUsdAxis = (v: number): string => {
-  if (!Number.isFinite(v) || v === 0) return "$0";
-  if (v >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
-  if (v >= 1e6) return `$${Math.round(v / 1e6)}M`;
-  if (v >= 1e3) return `$${Math.round(v / 1e3)}K`;
-  return `$${Math.round(v)}`;
-};
+const fmtUsdAxis = (v: number): string =>
+  v >= 1e9 ? compactUsd(v, { decimals: 1 }) : compactUsd(v, { decimals: 0, fallback: "$0" });
 
-const fmtCount = (n: number): string => {
-  if (!Number.isFinite(n) || n <= 0) return "—";
-  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  return String(Math.round(n));
-};
+const fmtCount = (n: number): string => (n <= 0 ? "—" : compactCount(n));
 
 const fmtTickDate = (ts: number) =>
   new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });

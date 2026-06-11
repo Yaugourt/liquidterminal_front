@@ -16,7 +16,7 @@ import { TrendingUp, TrendingDown, BarChart2, Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { chartPalette, chartColors } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHip4Analytics } from "@/services/indexer/hip4";
 import type { Hip4AnalyticsInterval } from "@/services/indexer/hip4";
 
@@ -37,12 +37,6 @@ const VOL_SERIES = {
 type VolKey = keyof typeof VOL_SERIES;
 
 // ─── Formatters ──────────────────────────────────────────────────────────────
-
-function compactNum(n: number) {
-  if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  return String(n);
-}
 
 function formatBucket(iso: string, interval: Hip4AnalyticsInterval) {
   // Upstream bucket timestamps are UTC but emitted without a trailing Z.
@@ -275,11 +269,11 @@ export function Hip4AnalyticsChart() {
 
         <div className="px-3.5 py-3">
           <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary leading-none">
-            {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.fills, 0))}
+            {isLoading ? "—" : compactCount(data.reduce((s, b) => s + b.fills, 0))}
             <span className="ml-1.5 text-[13px] font-normal text-text-tertiary">fills</span>
           </div>
           <div className="mt-1 mono text-[11px] text-text-secondary">
-            {isLoading ? "—" : compactNum(data.reduce((s, b) => s + b.unique_users, 0))}
+            {isLoading ? "—" : compactCount(data.reduce((s, b) => s + b.unique_users, 0))}
             <span className="ml-1 text-text-tertiary">unique traders</span>
           </div>
         </div>
@@ -312,7 +306,7 @@ export function Hip4AnalyticsChart() {
                   minTickGap={50}
                 />
                 <YAxis
-                  tickFormatter={(v) => compactNum(Number(v))}
+                  tickFormatter={(v) => compactCount(Number(v))}
                   tick={{ fill: chartColors.textMuted, fontSize: 9 }}
                   axisLine={false}
                   tickLine={false}
@@ -390,7 +384,7 @@ function ActivityTooltip({ active, payload, label, interval }: ActivityTooltipPr
           <span className="h-1.5 w-1.5 rounded-full bg-brand" />
           <span className="text-text-secondary">Fills</span>
         </div>
-        <span className="mono font-semibold text-text-primary">{compactNum(fills)}</span>
+        <span className="mono font-semibold text-text-primary">{compactCount(fills)}</span>
       </div>
     </div>
   );

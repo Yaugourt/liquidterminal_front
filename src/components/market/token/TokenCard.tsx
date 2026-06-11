@@ -3,7 +3,7 @@
 import { memo } from "react";
 
 import { TokenCardProps } from "./types";
-import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatPrice, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
@@ -42,11 +42,6 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-  };
-
-  const truncateAddress = (address: string) => {
-    if (!address) return '';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
   return (

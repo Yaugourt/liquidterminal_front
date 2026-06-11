@@ -9,6 +9,8 @@ import {
   ModuleTable,
   ModuleTableRow,
 } from "@/components/common";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 /**
  * TokenDeploys — recent token / spot / perp deployments. Compact V4 table fed
@@ -16,24 +18,6 @@ import {
  */
 
 const ROWS = 8;
-
-function truncateAddr(addr: string | null | undefined, start = 6, end = 4): string {
-  if (!addr) return "—";
-  if (addr.length <= start + end + 2) return addr;
-  return `${addr.slice(0, start)}…${addr.slice(-end)}`;
-}
-
-function timeAgo(ts: number): string {
-  if (!Number.isFinite(ts) || ts <= 0) return "—";
-  const diff = Math.max(0, Date.now() - ts);
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
 
 export const TokenDeploys = memo(function TokenDeploys() {
   const { deploys, isLoading } = useDeploys();
@@ -92,10 +76,10 @@ export const TokenDeploys = memo(function TokenDeploys() {
                   {d.action}
                 </span>,
                 <span key="deployer" className="mono text-text-secondary">
-                  {truncateAddr(d.user)}
+                  {truncateAddress(d.user)}
                 </span>,
                 <span key="hash" className="mono text-brand">
-                  {truncateAddr(d.hash, 8, 6)}
+                  {truncateAddress(d.hash)}
                 </span>,
                 <span
                   key="status"

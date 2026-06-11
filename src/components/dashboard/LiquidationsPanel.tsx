@@ -8,7 +8,8 @@ import {
   useRecentLiquidations,
 } from "@/services/explorer/liquidation";
 import type { Liquidation } from "@/services/explorer/liquidation";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { chartPalette, TokenAvatar } from "@/components/common";
 
 /**
@@ -99,24 +100,6 @@ function bucketHour(ms: number): string {
   const d = new Date(ms);
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-}
-
-/** Compact relative age: "12s" / "4m" / "2h" / "1d". */
-function timeAgo(ms: number): string {
-  const diff = Math.max(0, Date.now() - ms);
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
-
-/** Truncate a 0x address to `0xABCD…1234`. */
-function truncateAddr(addr: string): string {
-  if (!addr || addr.length < 10) return addr ?? "";
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
 /** SVG cumulative curve — two area+line series, hover crosshair + tooltip. */
@@ -486,7 +469,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
                     {l.coin}
                   </span>
                   <span className="mono text-text-tertiary text-[10px] truncate">
-                    {truncateAddr(l.liquidated_user)}
+                    {truncateAddress(l.liquidated_user)}
                   </span>
                   <span className="mono font-semibold text-gold ml-auto whitespace-nowrap">
                     {compactUsd(l.notional_total)}

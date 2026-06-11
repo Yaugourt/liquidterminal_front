@@ -18,6 +18,8 @@ import {
   ModuleTable,
   ModuleTableRow,
 } from "@/components/common";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 /**
  * LiveActivity — paired Latest Blocks + Latest Transactions cards feeding off
@@ -35,23 +37,6 @@ import {
 
 const ROWS_PER_PAGE = 10;
 const MAX_PAGES = 5; // cap pagination so the user can scroll back ~50 events
-
-function truncateAddr(addr: string | null | undefined, start = 5, end = 4): string {
-  if (!addr) return "—";
-  if (addr.length <= start + end + 2) return addr;
-  return `${addr.slice(0, start)}…${addr.slice(-end)}`;
-}
-
-function timeAgo(ms: number): string {
-  const diff = Math.max(0, Date.now() - ms);
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
-  return `${Math.floor(h / 24)}d`;
-}
 
 function LivePill({
   connected,
@@ -226,7 +211,7 @@ function BlocksCard({
                   {b.numTxs}
                 </span>,
                 <span key="proposer" className="mono text-text-secondary">
-                  {truncateAddr(b.proposer)}
+                  {truncateAddress(b.proposer)}
                 </span>,
               ]}
             />
@@ -317,7 +302,7 @@ function TxCard({
                   {timeAgo(t.time)}
                 </span>,
                 <span key="user" className="mono text-brand">
-                  {truncateAddr(t.user)}
+                  {truncateAddress(t.user)}
                 </span>,
                 <span key="action" className="text-text-secondary text-[11px]">
                   {t.action?.type ?? "—"}

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
 import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { chartPalette, DonutTopN } from "@/components/common";
 import type { DonutSlice } from "@/components/common";
 
@@ -34,13 +34,6 @@ const SEGMENT_COLORS = [
 ];
 
 const REST_COLOR = "rgba(255,255,255,0.10)";
-
-function compactCount(n: number): string {
-  if (!Number.isFinite(n) || n <= 0) return "—";
-  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  return String(Math.round(n));
-}
 
 interface Segment extends DonutSlice {
   isRest: boolean;

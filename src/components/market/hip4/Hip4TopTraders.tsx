@@ -2,7 +2,7 @@
 
 import { Trophy } from "lucide-react";
 import { TypedDataTable, type Column } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import type { Hip4TraderFlow } from "@/lib/hip4/trade-flow";
 
 interface Hip4TopTradersProps {
@@ -14,9 +14,6 @@ interface Hip4TopTradersProps {
   isLoading?: boolean;
 }
 
-function shortAddress(addr: string): string {
-  return addr.length > 14 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
-}
 
 /**
  * Top Traders — the honest substitute for the competitor's "Top Holders". With
@@ -43,7 +40,7 @@ export function Hip4TopTraders({
       key: "user",
       header: "Trader",
       accessor: (row) => (
-        <span className="mono text-[11.5px] text-text-primary">{shortAddress(row.user)}</span>
+        <span className="mono text-[11.5px] text-text-primary">{truncateAddress(row.user)}</span>
       ),
     },
     {

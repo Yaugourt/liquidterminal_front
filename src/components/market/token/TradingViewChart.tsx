@@ -34,11 +34,11 @@ import {
   convertToCandlestickData,
   convertToVolumeData,
   getIntervalSeconds,
-  formatCompactUsd,
   formatPrice,
   type TimeframeType,
   type PriceScaleModeKey,
 } from "./tradingViewChart/chart-helpers";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { TimeframePopover } from "./tradingViewChart/TimeframePopover";
 import { ToolbarStat } from "./tradingViewChart/ToolbarStat";
 
@@ -612,7 +612,7 @@ export function TradingViewChart({
                   C <span className="text-text-primary tabular-nums">{formatPrice(hover.c)}</span>
                 </span>
                 <span>
-                  V <span className="text-brand tabular-nums">{formatCompactUsd(hover.v)}</span>
+                  V <span className="text-brand tabular-nums">{compactUsd(hover.v)}</span>
                 </span>
                 {hover.c >= hover.o ? (
                   <span className="text-emerald-400 tabular-nums">

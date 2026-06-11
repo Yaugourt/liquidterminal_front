@@ -11,7 +11,7 @@ import {
   DonutTopN,
 } from "@/components/common";
 import type { DonutSlice } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 
@@ -26,12 +26,6 @@ const METRICS: { key: Metric; label: string }[] = [
 const SLICE_PALETTE = chartPalette.multiSeries;
 const SLICE_FALLBACK = chartColors.textMuted;
 const SLICE_OTHERS_COLOR = "rgb(82 82 91)"; // zinc-600 — neutral, distinct from palette
-
-function compactNum(n: number) {
-  if (n >= 1e6) return `${(n / 1e6).toFixed(2)}M`;
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
-  return n.toFixed(0);
-}
 
 interface Slice extends DonutSlice {
   address: string;
@@ -80,7 +74,7 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
   const displayedValue = displayed ? displayed.value : total;
   const displayedPct = total > 0 ? (displayedValue / total) * 100 : 0;
 
-  const fmtValue = metric === "fillCount" ? compactNum : compactUsd;
+  const fmtValue = metric === "fillCount" ? compactCount : compactUsd;
 
   const topConcentration = useMemo(() => {
     if (!total) return 0;
