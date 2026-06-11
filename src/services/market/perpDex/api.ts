@@ -168,14 +168,6 @@ export const fetchAllPerpMetas = async (): Promise<ParsedPerpMetas> => {
   }, 'fetching all perp metas');
 };
 
-/**
- * Get metadata for a specific DEX
- */
-export const fetchPerpMetasByDex = async (dexName: string): Promise<PerpMetaAsset[]> => {
-  const { dexMetas } = await fetchAllPerpMetas();
-  return dexMetas.get(dexName.toLowerCase()) || [];
-};
-
 // ============================================
 // Past Auctions Perp API (Hypurrscan)
 // ============================================

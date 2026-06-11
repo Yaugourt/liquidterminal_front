@@ -24,7 +24,7 @@ export const fetchAuctionTiming = async (): Promise<AuctionTiming> => {
 /**
  * Récupère toutes les auctions sans limitation
  */
-export const fetchAllAuctions = async (): Promise<AuctionsResponse> => {
+const fetchAllAuctions = async (): Promise<AuctionsResponse> => {
   return withErrorHandling(async () => {
     return await get<AuctionsResponse>('/market/auction');
   }, 'fetching all auctions');
@@ -177,7 +177,7 @@ export const fetchAuctionByTokenId = async (tokenId: string): Promise<AuctionInf
 /**
  * Récupère le statut de l'auction perp directement depuis Hyperliquid
  */
-export const fetchPerpAuctionStatus = async (): Promise<PerpDeployAuctionStatus> => {
+const fetchPerpAuctionStatus = async (): Promise<PerpDeployAuctionStatus> => {
   return withErrorHandling(async () => {
     const response = await postExternal<PerpDeployAuctionStatus>(
       `${API_URLS.HYPERLIQUID_API}/info`,

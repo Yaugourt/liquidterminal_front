@@ -31,23 +31,6 @@ export const createReadList = async (data: ReadListCreateInput): Promise<ReadLis
   }, 'creating read list');
 };
 
-export const getPublicReadLists = async (): Promise<ReadList[]> => {
-  return withErrorHandling(async () => {
-    const response = await get<ReadList[]>('/readlists');
-    return response || [];
-  }, 'fetching public read lists');
-};
-
-// Get a specific read list by ID
-export const getReadList = async (id: number): Promise<ReadList> => {
-  return withErrorHandling(async () => {
-    const response = await get<ReadList>(`/readlists/${id}`);
-    if (!response) throw new Error('Read list not found');
-    return response;
-  }, 'fetching read list');
-};
-
-
 // Update a read list - NOUVEAU: utiliser JWT
 export const updateReadList = async (
   id: number,

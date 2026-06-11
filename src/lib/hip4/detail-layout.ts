@@ -24,10 +24,10 @@ import type {
 } from "@/services/indexer/hip4";
 import { isYesNoSides } from "./market-formatter";
 
-export type Hip4MarketKind = "price-binary" | "binary" | "versus" | "multi";
+type Hip4MarketKind = "price-binary" | "binary" | "versus" | "multi";
 
 /** How the outcomes panel renders. */
-export type Hip4OutcomesVariant = "binary" | "versus" | "ladder";
+type Hip4OutcomesVariant = "binary" | "versus" | "ladder";
 
 /** Which chart is primary in the chart region. */
 export type Hip4ChartMode = "underlying" | "probability";

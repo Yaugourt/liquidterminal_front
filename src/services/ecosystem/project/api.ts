@@ -1,7 +1,6 @@
 import { get, post, put, del, apiClient } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import {
-  Project,
   Category,
   ProjectsResponse,
   CategoriesResponse,
@@ -10,7 +9,6 @@ import {
   CreateProjectWithUploadInput,
   CreateCategoryInput,
   UpdateProjectInput,
-  UpdateCategoryInput,
   ProjectResponse,
   CategoryResponse,
   ProjectCsvUploadApiResponse,
@@ -37,15 +35,6 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
 };
 
 /**
- * Récupère un projet par ID
- */
-export const fetchProject = async (id: number): Promise<{ success: boolean; data: Project }> => {
-  return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: Project }>(`/project/${id}`);
-  }, 'fetching project');
-};
-
-/**
  * Récupère toutes les catégories
  */
 export const fetchCategories = async (): Promise<CategoriesResponse> => {
@@ -53,15 +42,6 @@ export const fetchCategories = async (): Promise<CategoriesResponse> => {
     // Récupérer toutes les catégories sans pagination
     return await get<CategoriesResponse>('/category?limit=100');
   }, 'fetching categories');
-};
-
-/**
- * Récupère une catégorie par ID
- */
-export const fetchCategory = async (id: number): Promise<{ success: boolean; data: Category }> => {
-  return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: Category }>(`/category/${id}`);
-  }, 'fetching category');
 };
 
 
@@ -135,24 +115,6 @@ export const createCategory = async (data: CreateCategoryInput): Promise<Categor
   return withErrorHandling(async () => {
     return await post<CategoryResponse>('/category', data);
   }, 'creating category');
-};
-
-/**
- * Met à jour une catégorie existante
- */
-export const updateCategory = async (id: number, data: UpdateCategoryInput): Promise<CategoryResponse> => {
-  return withErrorHandling(async () => {
-    return await put<CategoryResponse>(`/category/${id}`, data);
-  }, 'updating category');
-};
-
-/**
- * Supprime une catégorie
- */
-export const deleteCategory = async (id: number): Promise<{ success: boolean; message?: string }> => {
-  return withErrorHandling(async () => {
-    return await del<{ success: boolean; message?: string }>(`/category/${id}`);
-  }, 'deleting category');
 };
 
 // ============================================

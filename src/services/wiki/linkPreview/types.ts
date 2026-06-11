@@ -59,13 +59,6 @@ export interface UseLinkPreviewResult {
   refetch: () => Promise<void>;
 }
 
-export interface UseLinkPreviewListResult {
-  data: LinkPreview[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
-
 export interface UseLinkPreviewBatchResult {
   previews: Map<string, LinkPreview>;
   errors: Map<string, string>;

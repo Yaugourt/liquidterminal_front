@@ -25,7 +25,7 @@ export type ValidatorDelegationsResponse = ValidatorDelegation[];
 /**
  * Résultat calculé des délégations
  */
-export interface ValidatorDelegationsCalculatedResult {
+interface ValidatorDelegationsCalculatedResult {
   delegations: ValidatorDelegation[];
   totalStaked: number;
 }

@@ -8,10 +8,3 @@ export * from './api';
 export * from './hooks';
 
 // Re-export commonly used types for convenience
-export type { 
-  AdminUsersQueryParams,
-  AdminUpdateUserInput,
-  AdminUsersResponse,
-  AdminUserResponse,
-  AdminUserDeleteResponse
-} from './types'; 

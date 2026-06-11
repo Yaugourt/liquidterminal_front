@@ -1,10 +1,5 @@
 // Address exports
-export { AddressTransactionList } from './address/AddressTransactionList';
-export { AddressBalance } from './address/AddressBalance';
-export { AddressHeader } from './address/AddressHeader';
 // export { HoldingTabs } from './address/HoldingTabs'; // Removed
-export { TabNavigation, ADDRESS_TABS } from './address/TabNavigation';
-export { StakingTable } from './address/StakingTable';
 // export { OrdersTable } from './address/OrdersTable'; // Removed
 export * from './address/cards';
 
@@ -16,7 +11,3 @@ export { BlockHeader } from './block/BlockHeader';
 export * from './transaction';
 
 // Root exports
-export { TransfersDeployTable } from './TransfersDeployTable';
-export { StatsCard } from '@/components/common';
-export { StatsGrid } from './StatsGrid';
-export { RecentDataTable } from './recentBlockTx/RecentDataTable';

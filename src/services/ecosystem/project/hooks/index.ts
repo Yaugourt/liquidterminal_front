@@ -2,8 +2,4 @@ export { useProjects } from './useProjects';
 export { useCategories } from './useCategories';
 export { useCreateProject } from './useCreateProject';
 export { useCreateCategory } from './useCreateCategory';
-export { useUpdateProject } from './useUpdateProject';
-export { useDeleteProject } from './useDeleteProject';
-export { useBulkDeleteProjects } from './useBulkDeleteProjects';
-export { useProjectCategories } from './useProjectCategories';
 export { useCsvUploadProjects } from './useCsvUploadProjects'; 

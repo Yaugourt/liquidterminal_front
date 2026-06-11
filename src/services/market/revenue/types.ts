@@ -16,7 +16,7 @@ export interface RevenueDay {
   total: number;
 }
 
-export interface RevenueLifetime {
+interface RevenueLifetime {
   perp: number;
   spot: number;
   hip1: number;
@@ -26,9 +26,9 @@ export interface RevenueLifetime {
   total: number;
 }
 
-export type RevenueSourceStatus = "ok" | "stale" | "error" | "not_yet_live";
+type RevenueSourceStatus = "ok" | "stale" | "error" | "not_yet_live";
 
-export interface RevenueMeta {
+interface RevenueMeta {
   spotMultiplier: number;
   hypeUsd: number | null;
   lastUpdate: number;

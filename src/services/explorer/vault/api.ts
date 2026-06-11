@@ -7,8 +7,6 @@ import {
   VaultsParams,
   VaultsResponse,
   VaultResponse,
-  VaultDetailsRequest,
-  VaultDetailsResponse,
   IndexerApiResponse,
   IndexerVaultSummaryItem,
   VaultDailySnapshot,
@@ -69,20 +67,6 @@ export const fetchVaultDeposits = async (
     const url = `${API_URLS.HYPERLIQUID_API}/info`;
     return await postExternal<VaultDepositsResponse>(url, params);
   }, 'fetching vault deposits');
-};
-
-/**
- * Récupère les détails d'un vault spécifique pour la chart
- * @param params Les paramètres de la requête avec l'adresse du vault
- * @returns Les détails du vault avec l'historique des données
- */
-export const fetchVaultDetails = async (
-  params: VaultDetailsRequest
-): Promise<VaultDetailsResponse> => {
-  return withErrorHandling(async () => {
-    const url = `${API_URLS.HYPERLIQUID_API}/info`;
-    return await postExternal<VaultDetailsResponse>(url, params);
-  }, 'fetching vault details');
 };
 
 // ==================== INDEXER VAULT API (HypeDexer proxy) ====================

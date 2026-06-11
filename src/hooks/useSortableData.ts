@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { SortKey } from '@/components/market/tracker/assets';
 import { SortableHolding } from '@/components/types/wallet.types';
 
-export type SortDirection = 'asc' | 'desc';
+type SortDirection = 'asc' | 'desc';
 
 export interface SortConfig {
   key: SortKey | null;

@@ -37,7 +37,6 @@ interface EducationContentProps {
   info?: EducationInfo | null;
 }
 
-export type { EducationInfo };
 
 /* CHAPTER_META block removed — moved to ./education-meta.ts */
 

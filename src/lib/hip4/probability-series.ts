@@ -17,7 +17,7 @@ export interface ProbSeriesDef {
   label: string;
 }
 
-export interface ProbSeriesMeta {
+interface ProbSeriesMeta {
   key: string;
   label: string;
 }

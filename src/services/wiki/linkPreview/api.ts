@@ -1,10 +1,8 @@
 import { get, post } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { 
+import {
   LinkPreviewResponse,
-  LinkPreviewBatchResponse,
-  LinkPreviewListResponse,
-  LinkPreviewParams
+  LinkPreviewBatchResponse
 } from './types';
 
 /**
@@ -20,39 +18,6 @@ export const getLinkPreview = async (url: string): Promise<LinkPreviewResponse> 
     if (!response || !response.data) throw new Error('Failed to fetch link preview');
     return response;
   }, 'fetching link preview');
-};
-
-/**
- * Récupère un preview de lien par ID
- */
-export const getLinkPreviewById = async (id: string): Promise<LinkPreviewResponse> => {
-  return withErrorHandling(async () => {
-    return await get<LinkPreviewResponse>(`/link-preview/${id}`);
-  }, 'fetching link preview by id');
-};
-
-/**
- * Récupère la liste des previews de liens
- */
-export const getLinkPreviewsList = async (params?: LinkPreviewParams): Promise<LinkPreviewListResponse> => {
-  return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
-    
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            value.forEach(v => queryParams.append(key, v.toString()));
-          } else {
-            queryParams.append(key, value.toString());
-          }
-        }
-      });
-    }
-    
-    const endpoint = `/link-preview/list${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await get<LinkPreviewListResponse>(endpoint);
-  }, 'fetching link previews list');
 };
 
 /**

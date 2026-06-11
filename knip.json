@@ -1,5 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignore": [".agents/**", ".cursor/**", "dash-mockups/**", "scripts/**"],
+  "entry": [
+    "src/components/common/**/*.{ts,tsx}!",
+    "src/components/ui/**/*.{ts,tsx}!"
+  ],
   "ignoreDependencies": []
 }

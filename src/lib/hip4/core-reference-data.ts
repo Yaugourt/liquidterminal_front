@@ -2,8 +2,8 @@
  * HyperCore L1 + testnet API reference rows (source: public/hip4/HIP4-research-complete.md).
  */
 
-export const HIP4_INFO_URL = "https://api.hyperliquid.xyz/info";
-export const HIP4_WS_URL = "wss://api.hyperliquid.xyz/ws";
+const HIP4_INFO_URL = "https://api.hyperliquid.xyz/info";
+const HIP4_WS_URL = "wss://api.hyperliquid.xyz/ws";
 /** @deprecated use HIP4_INFO_URL */
 export const HIP4_TESTNET_INFO_URL = HIP4_INFO_URL;
 /** @deprecated use HIP4_WS_URL */

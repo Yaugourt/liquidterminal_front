@@ -10,7 +10,7 @@ const EXPIRATION_BUFFER = 5 * 60; // 5 minutes en secondes
 /**
  * Decode JWT token
  */
-export const decodeJWT = (token: string): JWTPayload | null => {
+const decodeJWT = (token: string): JWTPayload | null => {
   try {
     if (!token || typeof token !== 'string') return null;
     
@@ -33,7 +33,7 @@ export const decodeJWT = (token: string): JWTPayload | null => {
 /**
  * Check if JWT is expired
  */
-export const isJWTExpired = (token: string): boolean => {
+const isJWTExpired = (token: string): boolean => {
   const decoded = decodeJWT(token);
   if (!decoded?.exp) return true;
   

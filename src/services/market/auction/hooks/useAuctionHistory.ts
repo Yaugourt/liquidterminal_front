@@ -6,7 +6,7 @@ export type AuctionEraTab = "all" | "hype" | "usdc";
 
 const DAY_MS = 86_400_000;
 
-export interface AuctionHistoryStats {
+interface AuctionHistoryStats {
   /** All auctions ever (both eras), zero-gas genesis deploys included. */
   totalCount: number;
   hypeCount: number;

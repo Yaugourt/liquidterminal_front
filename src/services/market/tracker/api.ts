@@ -4,13 +4,6 @@ import {
   AddWalletResponse, 
   WalletResponse
 } from './types';
-import { 
-  fetchHyperliquidBalances, 
-  fetchHyperliquidPerpPositions 
-} from './hyperliquid.service';
-
-// Réexporter les fonctions du service Hyperliquid
-export { fetchHyperliquidBalances, fetchHyperliquidPerpPositions };
 
 // Réexporter les fonctions du service WalletList
 export * from './walletlist.service';
@@ -103,18 +96,6 @@ export const getWalletsByUser = async (): Promise<WalletResponse> => {
       data: []
     };
   }, 'fetching wallets');
-};
-
-/**
- * Deletes a wallet from the user's account - NOUVEAU: utiliser JWT
- * @param walletId The ID of the wallet to delete
- * @returns Promise that resolves when the wallet is deleted
- */
-export const deleteWallet = async (walletId: string): Promise<void> => {
-  return withErrorHandling(async () => {
-    // NOUVEAU: utiliser /:id au lieu de /user/:userId/wallet/:walletId
-    await del(`/wallet/${walletId}`);
-  }, 'deleting wallet');
 };
 
 /**

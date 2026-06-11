@@ -4,27 +4,6 @@ import { API_URLS } from '@/services/api/constants';
 import { StakingValidation, FormattedStakingValidation, UnstakingQueueItem, FormattedUnstakingQueueItem } from './types';
 
 /**
- * Gère les erreurs de façon standardisée (legacy - deprecated)
- * @deprecated Use withErrorHandling from error-handler instead
- */
-export const handleApiError = (error: unknown, context: string) => {
-
-  
-  if (error && typeof error === 'object' && 'response' in error && error.response) {
-    const response = error.response as { status: number; data: { message?: string } };
-    throw {
-      message: response.data.message || `Failed to ${context}`,
-      response: {
-        status: response.status,
-        data: response.data
-      }
-    };
-  }
-  
-  throw error;
-};
-
-/**
  * Effectue un appel POST vers l'API Hyperliquid
  */
 export const callHyperliquidApi = async <T>(params: Record<string, unknown>, context: string): Promise<T> => {

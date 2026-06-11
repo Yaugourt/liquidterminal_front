@@ -6,7 +6,7 @@
  * render "—" instead of a misleading value. Name-based heuristic until the
  * backend exposes on-HL circulating supply.
  */
-export const BRIDGED = new Set([
+const BRIDGED = new Set([
   "BTC", "UBTC", "ETH", "UETH", "SOL", "USOL", "XRP", "UXRP", "DOGE", "UDOGE",
   "BNB", "UBNB", "LTC", "ULTC", "XMR1", "UXMR", "ZEC", "UZEC", "ADA", "UADA",
   "SUI", "USUI", "TRX", "UTRX", "XLM", "UXLM", "TON", "UTON", "NEAR", "UNEAR",

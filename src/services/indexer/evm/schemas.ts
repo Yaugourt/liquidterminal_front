@@ -10,13 +10,13 @@ export const EvmStatsSchema = z.object({
   last_block_time: z.string().optional(),
 });
 
-export const EvmDailyStatEntrySchema = z.object({
+const EvmDailyStatEntrySchema = z.object({
   date: z.string(),
   blocks_count: z.number(),
   txs_count: z.number(),
 });
 
-export const EvmBlockSchema = z.object({
+const EvmBlockSchema = z.object({
   block_number: z.number(),
   block_time: z.string(),
   tx_count: z.number(),
@@ -28,7 +28,7 @@ export const EvmBlockSchema = z.object({
   system_tx_count: z.number().optional(),
 });
 
-export const EvmTransactionSchema = z.object({
+const EvmTransactionSchema = z.object({
   tx_hash: z.string(),
   block_number: z.number(),
   from_addr: z.string(),
@@ -41,7 +41,7 @@ export const EvmTransactionSchema = z.object({
   is_system_tx: z.boolean().optional(),
 });
 
-export const EvmBridgeEventSchema = z.object({
+const EvmBridgeEventSchema = z.object({
   event_type: z.string(),
   user_addr: z.string(),
   amount: z.number(),
@@ -52,7 +52,7 @@ export const EvmBridgeEventSchema = z.object({
   nonce: z.number().optional(),
 });
 
-export const EvmLedgerTransferSchema = z.object({
+const EvmLedgerTransferSchema = z.object({
   from: z.string(),
   to: z.string(),
   amount: z.string(),

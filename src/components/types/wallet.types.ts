@@ -1,5 +1,5 @@
 // Types pour les positions spot
-export interface Holding {
+interface Holding {
   coin: string;
   token: string;
   total: string;
@@ -11,7 +11,7 @@ export interface Holding {
 }
 
 // Types pour les positions perp
-export interface PerpHolding {
+interface PerpHolding {
   coin: string;
   type: 'Short' | 'Long';
   marginUsed: string;
@@ -56,16 +56,4 @@ export interface HoldingDisplay extends Omit<Holding, 'pnl' | 'pnlPercentage' | 
 
 // Type commun pour le tri
 export type SortableHolding = HoldingDisplay | PerpHoldingDisplay;
-export type SortableKey = keyof SortableHolding;
-
-export type SortConfig = {
-  key: SortableKey | null;
-  direction: "asc" | "desc";
-};
-
-// Props d'interface
-export interface AssetsTableProps {
-  holdings: Holding[] | PerpHolding[];
-  loading: boolean;
-  type: 'spot' | 'perp';
-} 
+ 

@@ -52,10 +52,4 @@ export interface ReferralValidationResponse {
   data: {
     isValid: boolean;
   };
-}
-
-export interface ReferralLink {
-  username: string;
-  fullUrl: string;
-  shortCode: string;
 } 

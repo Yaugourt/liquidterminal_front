@@ -19,7 +19,7 @@ export interface Hip4ApiBodyFieldRow {
   required?: boolean;
 }
 
-export interface Hip4ApiResponseTab {
+interface Hip4ApiResponseTab {
   id: string;
   label: string;
   body: string;

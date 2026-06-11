@@ -1,11 +1,11 @@
 // Enums
-export type ProjectStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
-export type DevelopmentStatus = 'IDEA' | 'DEVELOPMENT' | 'BETA' | 'PRODUCTION';
-export type TeamSize = 'SOLO' | 'SMALL' | 'LARGE';
-export type ExperienceLevel = 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
-export type SupportType = 'PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTOR';
-export type ContributorType = 'DEVELOPERS' | 'DESIGNERS' | 'MARKETING_COMMUNITY' | 'TECHNICAL_WRITERS' | 'QA_TESTERS';
-export type BudgetRange = 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS';
+type ProjectStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+type DevelopmentStatus = 'IDEA' | 'DEVELOPMENT' | 'BETA' | 'PRODUCTION';
+type TeamSize = 'SOLO' | 'SMALL' | 'LARGE';
+type ExperienceLevel = 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
+type SupportType = 'PROMOTION' | 'SERVICES' | 'FUNDING' | 'CONTRIBUTOR';
+type ContributorType = 'DEVELOPERS' | 'DESIGNERS' | 'MARKETING_COMMUNITY' | 'TECHNICAL_WRITERS' | 'QA_TESTERS';
+type BudgetRange = 'RANGE_0_5K' | 'RANGE_5_15K' | 'RANGE_15_30K' | 'RANGE_30_50K' | 'RANGE_50K_PLUS';
 
 // Main entity
 export interface PublicGood {

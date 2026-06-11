@@ -4,7 +4,7 @@ import { StandardError } from '../types';
 /**
  * Gère les erreurs axios de façon standardisée
  */
-export const handleAxiosError = (error: unknown, context: string): StandardError => {
+const handleAxiosError = (error: unknown, context: string): StandardError => {
 
   
   // Erreur axios

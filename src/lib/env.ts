@@ -50,8 +50,3 @@ const parseEnv = () => {
  */
 export const env = parseEnv();
 
-/**
- * Type-safe environment variables
- */
-export type Env = z.infer<typeof envSchema>;
-

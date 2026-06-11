@@ -4,11 +4,8 @@ import { ENDPOINTS } from '@/services/api/constants';
 import {
   LiquidationResponse,
   LiquidationsParams,
-  LiquidationStatsAllResponse,
-  LiquidationChartDataResponse,
   LiquidationsDataResponse,
-  LiquidationsHistoricalChartResponse,
-  ChartPeriod
+  LiquidationsHistoricalChartResponse
 } from './types';
 
 /**
@@ -59,34 +56,6 @@ export const fetchRecentLiquidations = async (
     );
     return response;
   }, 'fetching recent liquidations');
-};
-
-/**
- * @deprecated Utiliser fetchLiquidationsData à la place
- * Récupère les statistiques de toutes les périodes en un seul appel
- */
-export const fetchAllLiquidationStats = async (): Promise<LiquidationStatsAllResponse> => {
-  return withErrorHandling(async () => {
-    const response = await get<LiquidationStatsAllResponse>(
-      `${ENDPOINTS.LIQUIDATIONS_STATS_ALL}`
-    );
-    return response;
-  }, 'fetching all liquidation stats');
-};
-
-/**
- * @deprecated Utiliser fetchLiquidationsData à la place
- * Récupère les données agrégées pour le chart
- */
-export const fetchLiquidationsChartData = async (
-  period: ChartPeriod = "24h"
-): Promise<LiquidationChartDataResponse> => {
-  return withErrorHandling(async () => {
-    const response = await get<LiquidationChartDataResponse>(
-      `${ENDPOINTS.LIQUIDATIONS_CHART_DATA}?period=${period}`
-    );
-    return response;
-  }, 'fetching liquidations chart data');
 };
 
 /**

@@ -2,7 +2,7 @@ import type { PriorityFeesStats } from "@/services/explorer/priority-fees/types"
 
 const MS_PER_DAY = 86_400_000;
 /** Below this effective span (days), surface an "early window" hint in UI. */
-export const PRIORITY_FEES_RUN_RATE_EARLY_WINDOW_DAYS = 7;
+const PRIORITY_FEES_RUN_RATE_EARLY_WINDOW_DAYS = 7;
 const MIN_EFFECTIVE_DAYS = 1 / 24;
 
 export interface PriorityFeesRunRateResult {

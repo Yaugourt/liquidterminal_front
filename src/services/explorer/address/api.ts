@@ -6,7 +6,7 @@ import {
     PortfolioApiResponse,
     OpenOrdersResponse,
 } from './types';
-import { postExternal, getExternal } from '../../api/axios-config';
+import { postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
 import {
@@ -15,7 +15,7 @@ import {
     processOrphanLedgerUpdates
 } from './processors';
 
-export async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
+async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
     return withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_RPC}/explorer`;
         return await postExternal<UserTransactionsResponse>(url, {
@@ -25,7 +25,7 @@ export async function getUserTransactionsRaw(address: string): Promise<UserTrans
     }, 'fetching raw transactions');
 }
 
-export async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
+async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
     return withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_API}/info`;
         return await postExternal<NonFundingLedgerUpdate[]>(url, {
@@ -94,15 +94,4 @@ export async function getUserOpenOrders(address: string): Promise<OpenOrdersResp
         });
     }, 'fetching open orders');
 }
-
-/**
- * Récupère les TWAP orders d'un utilisateur
- */
-export const getUserTwapOrders = async (address: string): Promise<unknown[]> => {
-    return withErrorHandling(async () => {
-        const url = `https://api.hypurrscan.io/twap/${address}`;
-        const data = await getExternal<unknown[]>(url);
-        return Array.isArray(data) ? data : [];
-    }, 'fetching user TWAP orders');
-};
 

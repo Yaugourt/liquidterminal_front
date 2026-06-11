@@ -9,6 +9,4 @@ export { useHip4ActiveMarkets } from "./hooks/useHip4ActiveMarkets";
 export { useHip4LiveMarkets } from "./hooks/useHip4LiveMarkets";
 export { useHip4ProbabilityHistory } from "./hooks/useHip4ProbabilityHistory";
 export { useHip4OrderBook } from "./hooks/useHip4OrderBook";
-export type { UseHip4OrderBookResult } from "./hooks/useHip4OrderBook";
 export { useHip4OutcomeCandles } from "./hooks/useHip4OutcomeCandles";
-export type { UseHip4OutcomeCandlesResult } from "./hooks/useHip4OutcomeCandles";

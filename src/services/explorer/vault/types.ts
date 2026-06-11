@@ -23,7 +23,7 @@ export type VaultDepositsResponse = VaultDeposit[];
 /**
  * Résultat calculé des dépôts de vault
  */
-export interface VaultDepositsCalculatedResult {
+interface VaultDepositsCalculatedResult {
   deposits: VaultDeposit[];
   totalEquity: number;
 }
@@ -143,7 +143,7 @@ export interface VaultDetailsRequest {
 /**
  * Données d'historique pour un timeframe
  */
-export interface VaultHistoryData {
+interface VaultHistoryData {
   accountValueHistory: [number, string][];
   pnlHistory: [number, string][];
   vlm: string;
@@ -152,7 +152,7 @@ export interface VaultHistoryData {
 /**
  * Données de portfolio par timeframe
  */
-export type VaultPortfolioData = [
+type VaultPortfolioData = [
   ["day", VaultHistoryData],
   ["week", VaultHistoryData], 
   ["month", VaultHistoryData],
@@ -166,32 +166,6 @@ export type VaultPortfolioData = [
 export interface VaultDetailsResponse {
   portfolio: VaultPortfolioData;
   // Autres propriétés si nécessaires
-}
-
-/**
- * Données formatées pour la chart
- */
-export interface VaultChartData {
-  timestamp: number;
-  accountValue: number;
-  pnl: number;
-  date: string;
-}
-
-/**
- * Timeframes disponibles pour la chart
- */
-export type VaultChartTimeframe = 'day' | 'week' | 'month' | 'allTime' | 'perpDay';
-
-/**
- * Résultat du hook pour les détails de vault
- */
-export interface UseVaultDetailsResult {
-  chartData: VaultChartData[];
-  timeframe: VaultChartTimeframe;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
 }
 
 // ==================== INDEXER VAULT TYPES (HypeDexer) ====================
@@ -217,9 +191,6 @@ export interface IndexerVaultSummaryItem {
   createTime: number;
 }
 
-/** The API returns IndexerVaultSummaryItem[] directly at response.data */
-export type IndexerVaultSummariesPayload = IndexerVaultSummaryItem[];
-
 /**
  * Snapshot from GET /indexer/vaults/dailySnapshots or /equitySnapshots.
  * Both return identical shapes; dailySnapshots also includes a `day` string.
@@ -239,12 +210,6 @@ export interface VaultDailySnapshot extends VaultEquitySnapshot {
   day: string;
 }
 
-/** The API returns VaultDailySnapshot[] directly at response.data */
-export type IndexerDailySnapshotsPayload = VaultDailySnapshot[];
-
-/** The API returns VaultEquitySnapshot[] directly at response.data */
-export type IndexerEquitySnapshotsPayload = VaultEquitySnapshot[];
-
 /**
  * Single event from GET /indexer/vaults/vaultLedger.
  * Deposit: userFrom = depositor, userTo = vaultAddress.
@@ -258,9 +223,6 @@ export interface VaultLedgerEntry {
   amount: number;
   token: string;
 }
-
-/** The API returns VaultLedgerEntry[] directly at response.data */
-export type IndexerVaultLedgerPayload = VaultLedgerEntry[];
 
 /** Follower-count history item inside vaultDetails.portfolio */
 export interface IndexerVaultPortfolioEntry {

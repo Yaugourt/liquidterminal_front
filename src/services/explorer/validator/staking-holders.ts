@@ -5,7 +5,6 @@ import {
   StakedHoldersResponse,
   TopHoldersResponse,
   HoldersStatsResponse,
-  HolderResponse,
   HoldersParams,
   TopHoldersParams 
 } from './types/holders';
@@ -54,17 +53,4 @@ export const fetchHoldersStats = async (): Promise<HoldersStatsResponse> => {
     return await get<HoldersStatsResponse>(ENDPOINTS.STAKING_HOLDERS_STATS);
   }, 'fetching holders stats');
 };
-
-/**
- * Récupère un holder spécifique par son adresse
- */
-export const fetchHolderByAddress = async (address: string): Promise<HolderResponse> => {
-  return withErrorHandling(async () => {
-    if (!address) {
-      throw new Error('Address is required');
-    }
-    
-    const endpoint = `${ENDPOINTS.STAKING_HOLDERS}/${address}`;
-    return await get<HolderResponse>(endpoint);
-  }, 'fetching holder by address');
-}; 
+ 

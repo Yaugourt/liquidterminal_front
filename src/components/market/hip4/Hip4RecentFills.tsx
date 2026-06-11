@@ -14,7 +14,7 @@ function shortAddress(addr: string) {
 /** Per-coin metadata used to label fills. `sideName` is only set when the
  * market is provably binary (parsed_sides length === 2). Multi-outcome markets
  * leave it null so we don't fabricate a Yes/No chip. */
-export interface Hip4FillMarketMeta {
+interface Hip4FillMarketMeta {
   name: string;
   sideName?: string | null;
   isBinary?: boolean;

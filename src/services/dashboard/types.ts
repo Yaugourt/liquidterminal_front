@@ -18,24 +18,6 @@ export interface UseDashboardStatsResult {
   refetch: () => Promise<void>;
 }
 
-export interface UseTopPerpTokensResult {
-  tokens: import('../market/perp/types').PerpMarketData[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  updateParams: (params: { sortBy?: string; limit?: number }) => void;
-  totalVolume?: number;
-}
-
-export interface UseTopTokensResult {
-  tokens: import('../market/spot/types').SpotToken[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  updateParams: (params: { sortBy?: string; limit?: number }) => void;
-  totalVolume?: number;
-}
-
 // UseLatestAuctionsResult supprimé - utiliser le module market/auction
 
 
@@ -45,7 +27,7 @@ export interface UseTopTokensResult {
 // `Arbitrum` (legacy USDC bridge, série longue depuis 2023) et `Hyperliquid L1`
 // (bridge natif L1, série plus récente). Les deux coexistent et continuent
 // d'être mis à jour ; un consommateur honnête doit les considérer tous les deux.
-export interface BridgeChainTvl {
+interface BridgeChainTvl {
   tvl: Array<{
     date: number;
     totalLiquidityUSD: number;

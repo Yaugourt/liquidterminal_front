@@ -17,14 +17,3 @@ export const TIMEFRAME_LABEL: Record<Timeframe, string> = {
   '1y': '1Y',
   all: 'All',
 };
-
-/** Durée approximative en millisecondes (`null` pour `all`). */
-export const TIMEFRAME_MS: Record<Timeframe, number | null> = {
-  '1h': 3_600_000,
-  '24h': 86_400_000,
-  '7d': 604_800_000,
-  '30d': 2_592_000_000,
-  '90d': 7_776_000_000,
-  '1y': 31_536_000_000,
-  all: null,
-};

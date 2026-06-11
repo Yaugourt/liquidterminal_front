@@ -1,7 +1,7 @@
 /**
  * Interface pour une action de délégation dans l'historique
  */
-export interface DelegationAction {
+interface DelegationAction {
   validator: string;
   amount: string;
   isUndelegate: boolean;
@@ -10,7 +10,7 @@ export interface DelegationAction {
 /**
  * Interface pour un élément de l'historique des délégations
  */
-export interface DelegatorHistoryItem {
+interface DelegatorHistoryItem {
   time: number; // timestamp en millisecondes
   hash: string;
   delta: {
@@ -58,7 +58,7 @@ export interface UseDelegatorHistoryResult {
 /**
  * Interface pour un élément de récompense de délégation
  */
-export interface DelegatorRewardItem {
+interface DelegatorRewardItem {
   time: number; // timestamp en millisecondes
   source: string; // "delegation" ou "commission"
   totalAmount: string;

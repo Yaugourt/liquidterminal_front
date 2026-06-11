@@ -21,33 +21,6 @@ export interface BlockTransactionListProps {
  */
 export type ActivityTab = "transfers" | "deploy";
 
-export interface Transaction {
-  hash: string;
-  method: string;
-  age: string;
-  from: string;
-  data: string;
-}
-
-export interface ExplorerStatsCardProps {
-  title: string;
-  value: string;
-  type: 'block' | 'blockTime' | 'transactions' | 'users' | 'hypeStaked' | 'vaultsTvl';
-}
-
-export interface ExplorerStat {
-  title: string;
-  value: string;
-  type: ExplorerStatsCardProps['type'];
-}
-
-export interface PaginationProps {
-  currentPage: number;
-  totalItems: number;
-  itemsPerPage: number;
-  onPageChange: (page: number) => void;
-}
-
 /**
  * Types pour les composants Address
  */
@@ -66,7 +39,7 @@ export interface AddressHeaderProps {
   address: string;
 }
 
-export type Tab = {
+type Tab = {
   id: string;
   label: string;
 };
@@ -77,15 +50,10 @@ export interface TabNavigationProps {
   tabs: Tab[];
 }
 
-export interface HoldingTabsProps {
-  address: string;
-  viewType?: "spot" | "perp";
-}
-
 /**
  * Types pour les composants Address Cards
  */
-export interface Balance {
+interface Balance {
     totalBalance: number;
     spotBalance: number;
     vaultBalance: number;

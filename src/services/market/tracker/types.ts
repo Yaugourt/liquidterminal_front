@@ -31,12 +31,6 @@ export interface WalletResponse {
   };
 }
 
-export interface AddWalletRequest {
-  address: string;
-  name?: string;
-  // ❌ PAS de privyUserId !
-}
-
 export interface AddWalletResponse {
   success: boolean;
   userWallet?: UserWallet;
@@ -44,7 +38,7 @@ export interface AddWalletResponse {
   xpGranted?: number; // XP granted for this action (if any)
 }
 
-export interface InitializeParams {
+interface InitializeParams {
   privyUserId: string;
   username: string;
   privyToken: string;
@@ -98,19 +92,9 @@ export interface HyperliquidBalancesRequest {
 }
 
 /**
- * Résultat du hook pour récupérer les balances de tokens
- */
-export interface UseHyperliquidBalancesResult {
-  balances: HyperliquidBalance[] | null;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
-
-/**
  * Types pour les positions perp de Hyperliquid
  */
-export interface HyperliquidPerpPosition {
+interface HyperliquidPerpPosition {
   coin: string;
   cumFunding: {
     allTime: string;
@@ -137,7 +121,7 @@ export interface HyperliquidPerpAssetPosition {
   type: string;
 }
 
-export interface HyperliquidMarginSummary {
+interface HyperliquidMarginSummary {
   accountValue: string;
   totalMarginUsed: string;
   totalNtlPos: string;

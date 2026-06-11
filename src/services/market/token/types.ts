@@ -1,6 +1,6 @@
 // Types for token websocket data
 
-export interface TokenTrade {
+interface TokenTrade {
   coin: string;        // "@107" for token
   side: "A" | "B";     // "A" for sell, "B" for buy  
   px: string;          // Price as string
@@ -16,13 +16,13 @@ export interface TokenTradeResponse {
   data: TokenTrade[];
 }
 
-export interface TokenOrderBookLevel {
+interface TokenOrderBookLevel {
   px: string;          // Price as string
   sz: string;          // Size as string  
   n: number;           // Number of orders
 }
 
-export interface TokenOrderBookData {
+interface TokenOrderBookData {
   coin: string;        // "@107" for token
   time: number;        // Timestamp
   levels: [
@@ -36,7 +36,7 @@ export interface TokenOrderBookResponse {
   data: TokenOrderBookData;
 }
 
-export interface TokenWebSocketState {
+interface TokenWebSocketState {
   currentPrice: number;
   lastSide: "A" | "B" | null;
   orderBook: {
@@ -67,12 +67,7 @@ export interface UseTokenWebSocketResult {
 }
 
 // Types for token details API
-export interface TokenGenesisUserBalance {
-  address: string;
-  balance: string;
-}
-
-export interface TokenGenesis {
+interface TokenGenesis {
   userBalances: [string, string][]; // [address, balance]
   existingTokenBalances: unknown[];
 }

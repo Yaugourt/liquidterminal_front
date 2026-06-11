@@ -30,5 +30,3 @@ export const HIP4_CONFIG = {
     activeContestIds: "IDs: 595, 596, 604, 608",
   },
 } as const;
-
-export type Hip4DeploymentKey = keyof typeof HIP4_CONFIG.contracts;
