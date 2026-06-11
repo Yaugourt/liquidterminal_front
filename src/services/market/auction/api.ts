@@ -149,6 +149,29 @@ export const fetchTokenAuction = async (tokenName: string): Promise<AuctionInfo 
   }, 'fetching token auction info');
 };
 
+/**
+ * Récupère les informations d'auction d'un token par son tokenId — clé exacte,
+ * contrairement au nom (les bridgés Unit s'affichent "BTC" mais sont "UBTC"
+ * dans le registre des auctions).
+ */
+export const fetchAuctionByTokenId = async (tokenId: string): Promise<AuctionInfo | null> => {
+  return withErrorHandling(async () => {
+    const allAuctionsResponse = await fetchAllAuctions();
+
+    if (!allAuctionsResponse.success) {
+      return null;
+    }
+
+    const { usdcAuctions, hypeAuctions } = allAuctionsResponse.data;
+    const target = tokenId.toLowerCase();
+    const match = [...usdcAuctions, ...hypeAuctions].find(
+      (auction) => auction.tokenId && auction.tokenId.toLowerCase() === target
+    );
+
+    return match || null;
+  }, 'fetching auction by token id');
+};
+
 // ==================== PERP AUCTION API ====================
 
 /**

@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchAuctions, fetchLatestAuctions, fetchTokenAuction } from '../api';
+import { fetchAuctions, fetchLatestAuctions, fetchTokenAuction, fetchAuctionByTokenId } from '../api';
 import { 
   AuctionParams, 
   AuctionPaginatedResponse, 
@@ -103,6 +103,28 @@ export function useLatestAuctions(
     refetch,
     splitTimestamp: data?.metadata?.splitTimestamp,
     totalVolume: data?.pagination.totalVolume || 0
+  };
+}
+
+/**
+ * Hook pour récupérer l'auction d'un token par son tokenId (clé exacte —
+ * le nom d'affichage peut diverger du nom d'auction, ex. "BTC" vs "UBTC").
+ */
+export function useTokenAuctionById(tokenId: string | null) {
+  const { data, isLoading, error, refetch } = useDataFetching<AuctionInfo | null>({
+    fetchFn: async () => {
+      if (!tokenId) return null;
+      return await fetchAuctionByTokenId(tokenId);
+    },
+    refreshInterval: 60000,
+    dependencies: [tokenId]
+  });
+
+  return {
+    auctionInfo: data,
+    isLoading,
+    error,
+    refetch
   };
 }
 

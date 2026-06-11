@@ -6,8 +6,10 @@ import { usePageTitle } from "@/store/use-page-title";
 import { useParams, useRouter } from "next/navigation";
 import { SpotToken } from "@/services/market/spot/types";
 import { getToken } from "@/services/market/spot/api";
+import { isBridged } from "@/services/market/spot/bridged";
 import { Button } from "@/components/ui/button";
-import { TokenCard, TokenData, OrderBook } from "@/components/market/token";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { TokenCard, TokenData, OrderBook, TokenDetailsBand } from "@/components/market/token";
 import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
 import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
@@ -21,25 +23,7 @@ const TradingViewChart = dynamic(
     { ssr: false, loading: () => <ChartSkeleton /> }
 );
 
-// Composant HoldersSection
-function HoldersSection({ tokenName, tokenPrice, token }: { tokenName: string; tokenPrice: number; token: SpotToken }) {
-    const { holders, isLoading, error, stakedHolders } = useTokenHolders(tokenName);
-    const { data: tokenDetails } = useTokenDetails(token.tokenId || null);
-
-    return (
-        <div className="w-full">
-            <HoldersTable
-                holders={holders}
-                isLoading={isLoading}
-                error={error}
-                tokenName={tokenName}
-                tokenPrice={tokenPrice}
-                totalSupply={tokenDetails?.totalSupply ? parseFloat(tokenDetails.totalSupply) : undefined}
-                stakedHolders={stakedHolders}
-            />
-        </div>
-    );
-}
+type BottomTab = "twap" | "holders";
 
 export default function TokenPage() {
     const { setTitle } = usePageTitle();
@@ -50,14 +34,18 @@ export default function TokenPage() {
     const [token, setToken] = useState<SpotToken | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'twap' | 'holders'>('twap');
+    const [activeTab, setActiveTab] = useState<BottomTab>('twap');
     // Remember which tabs have been opened so we mount them once and toggle
     // visibility from then on (no refetch on every tab switch).
-    const [visitedTabs, setVisitedTabs] = useState<Set<"twap" | "holders">>(
-        () => new Set<"twap" | "holders">(["twap"])
+    const [visitedTabs, setVisitedTabs] = useState<Set<BottomTab>>(
+        () => new Set<BottomTab>(["twap"])
     );
 
-    const selectTab = (tab: 'twap' | 'holders') => {
+    // Shared data — one fetch each, feeding TokenDetailsBand and HoldersTable.
+    const { data: tokenDetails, isLoading: detailsLoading } = useTokenDetails(token?.tokenId || null);
+    const holdersData = useTokenHolders(tokenName);
+
+    const selectTab = (tab: BottomTab) => {
         setActiveTab(tab);
         setVisitedTabs((prev) => {
             if (prev.has(tab)) return prev;
@@ -135,7 +123,9 @@ export default function TokenPage() {
                         price: token.price,
                         change24h: token.change24h,
                         volume24h: token.volume,
-                        marketCap: token.marketCap,
+                        // Bridged tokens report the full underlying supply, so the
+                        // backend "market cap" is the underlying FDV — hide it.
+                        marketCap: isBridged(token.name) ? undefined : token.marketCap,
                         marketIndex: token.marketIndex,
                         contract: token.tokenId,
                     } as TokenData}
@@ -143,39 +133,12 @@ export default function TokenPage() {
                 />
             }
             chartSlot={
-                <>
-                    <TradingViewChart
-                        symbol={`${token.name}/USDC`}
-                        marketIndex={token.marketIndex}
-                        tokenName={token.name}
-                        className="flex-1 min-h-[450px]"
-                    />
-                    {/* Tabs dans l'espace vide sous le chart */}
-                    <div className="mt-4">
-                        <div className="flex justify-start items-center">
-                            <div className="flex bg-base rounded-lg p-1 border border-white/5">
-                                <button
-                                    onClick={() => selectTab('twap')}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'twap'
-                                        ? 'bg-brand text-brand-text-on shadow-sm font-bold'
-                                        : 'tab-inactive'
-                                        }`}
-                                >
-                                    TWAP
-                                </button>
-                                <button
-                                    onClick={() => selectTab('holders')}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'holders'
-                                        ? 'bg-brand text-brand-text-on shadow-sm font-bold'
-                                        : 'tab-inactive'
-                                        }`}
-                                >
-                                    Holders
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </>
+                <TradingViewChart
+                    symbol={`${token.name}/USDC`}
+                    marketIndex={token.marketIndex}
+                    tokenName={token.name}
+                    className="flex-1 min-h-[450px]"
+                />
             }
             orderBookSlot={
                 <OrderBook
@@ -185,21 +148,47 @@ export default function TokenPage() {
                 />
             }
             bottomSectionSlot={
-                // Both tabs are mounted once they've been visited, then just
-                // toggled with `hidden` so switching tabs no longer refetches
-                // the underlying data.
-                <>
-                    {visitedTabs.has('twap') && (
-                        <div className={activeTab === 'twap' ? '' : 'hidden'}>
-                            <TokenTwapSection tokenName={token.name} />
-                        </div>
-                    )}
-                    {visitedTabs.has('holders') && (
-                        <div className={activeTab === 'holders' ? '' : 'hidden'}>
-                            <HoldersSection tokenName={tokenName} tokenPrice={token.price} token={token} />
-                        </div>
-                    )}
-                </>
+                <div className="mt-4 space-y-4">
+                    <TokenDetailsBand
+                        token={token}
+                        details={tokenDetails}
+                        detailsLoading={detailsLoading}
+                        holdersCount={holdersData.holdersCount}
+                        holdersLoading={holdersData.isLoading}
+                    />
+
+                    <div className="space-y-2.5">
+                        <PillTabs
+                            variant="text"
+                            tabs={[
+                                { value: "twap", label: "TWAP" },
+                                { value: "holders", label: "Holders" },
+                            ]}
+                            activeTab={activeTab}
+                            onTabChange={(v) => selectTab(v as BottomTab)}
+                        />
+                        {/* Both tabs stay mounted once visited, then just toggled
+                            with `hidden` so switching no longer refetches. */}
+                        {visitedTabs.has('twap') && (
+                            <div className={activeTab === 'twap' ? '' : 'hidden'}>
+                                <TokenTwapSection tokenName={token.name} />
+                            </div>
+                        )}
+                        {visitedTabs.has('holders') && (
+                            <div className={activeTab === 'holders' ? '' : 'hidden'}>
+                                <HoldersTable
+                                    holders={holdersData.holders}
+                                    isLoading={holdersData.isLoading}
+                                    error={holdersData.error}
+                                    tokenName={tokenName}
+                                    tokenPrice={token.price}
+                                    totalSupply={tokenDetails?.totalSupply ? parseFloat(tokenDetails.totalSupply) : undefined}
+                                    stakedHolders={holdersData.stakedHolders}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
             }
         />
     );
