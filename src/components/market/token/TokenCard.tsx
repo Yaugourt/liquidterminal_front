@@ -1,20 +1,18 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo } from "react";
 
 import { TokenCardProps } from "./types";
 import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Copy } from "lucide-react";
+import { Copy } from "lucide-react";
 import {
   useTokenWebSocket,
   marketIndexToCoinId,
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
 import { TokenAvatar } from "@/components/common";
-import { motion } from "framer-motion";
-import { TokenDetailsPanel } from "./TokenDetailsPanel";
 
 export const TokenCard = memo(function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
   // Get user's number format preference
@@ -24,21 +22,6 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
   const coinId = perpCoinId || (token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '');
   const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
-
-  // Expandable details panel (replaces the old right-side TokenInfoSidebar).
-  // `hasBeenOpened` ensures we mount TokenDetailsPanel at most once per page
-  // visit — subsequent toggles are pure CSS/motion, so the data hooks don't
-  // refire and we don't spam the backend on every open/close.
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [hasBeenOpened, setHasBeenOpened] = useState(false);
-
-  const toggleDetails = () => {
-    setDetailsOpen((prev) => {
-      const next = !prev;
-      if (next) setHasBeenOpened(true);
-      return next;
-    });
-  };
 
   const formatPriceValue = (value: number) => {
     return formatPrice(value, format);
@@ -67,17 +50,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   };
 
   return (
-    <Card
-      className={cn(
-        "p-4 transition-[width,max-width] duration-300",
-        detailsOpen ? "w-full" : "w-fit",
-        className
-      )}
-    >
-      <div className={cn(
-        "flex flex-wrap items-center gap-6",
-        detailsOpen ? "w-full" : "w-fit"
-      )}>
+    <Card className={cn("p-4 w-fit", className)}>
+      <div className="flex flex-wrap items-center gap-6 w-fit">
         {/* Token Info */}
         <div className="flex items-center gap-2">
           <TokenAvatar
@@ -205,51 +179,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           )}
         </div>
 
-        {/* Details toggle — opens supply / address / deploy info panel */}
-        <button
-          type="button"
-          onClick={toggleDetails}
-          aria-expanded={detailsOpen}
-          aria-controls="token-details-panel"
-          className={cn(
-            "ml-auto inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors whitespace-nowrap",
-            detailsOpen
-              ? "border-brand/40 bg-brand/10 text-brand"
-              : "border-border-subtle bg-white/[0.02] text-text-secondary hover:text-text-primary hover:border-border-default"
-          )}
-        >
-          <span>{detailsOpen ? "Hide details" : "Details"}</span>
-          <ChevronDown
-            className={cn(
-              "h-3.5 w-3.5 transition-transform duration-200",
-              detailsOpen && "rotate-180"
-            )}
-          />
-        </button>
       </div>
-
-      {/* Expandable details panel (supply, addresses, deploy time).
-          Mounted on first open and kept mounted after that — toggling
-          between open/closed is pure height animation so the data hooks
-          inside TokenDetailsPanel don't refire on every click. */}
-      {hasBeenOpened && (
-        <motion.div
-          id="token-details-panel"
-          initial={{ height: 0, opacity: 0 }}
-          animate={detailsOpen
-            ? { height: "auto", opacity: 1 }
-            : { height: 0, opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="overflow-hidden"
-          aria-hidden={!detailsOpen}
-        >
-          <div className="mt-4 pt-4 border-t border-border-subtle">
-            <TokenDetailsPanel token={token} />
-          </div>
-        </motion.div>
-      )}
     </Card>
-
   );
 });
 
