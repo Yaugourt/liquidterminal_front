@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePageTitle } from "@/store/use-page-title";
 import { EducationContent } from "@/components/wiki/EducationContent";
 import { ResourcesSection } from "@/components/wiki/ResourcesSection";
 import { CategoryFilter } from "@/components/wiki/CategoryFilter";
@@ -18,6 +19,11 @@ export default function EducationPage() {
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuthContext();
+  const { setTitle } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Wiki");
+  }, [setTitle]);
 
   const { info: hyperliquidInfo } = useHyperliquidInfo();
   const { education: hyperliquidEducation, loading: educationLoading } = useHyperliquidEducation();

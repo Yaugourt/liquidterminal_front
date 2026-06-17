@@ -3,6 +3,7 @@ import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/common";
 import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,19 +23,19 @@ interface ReadListContentProps {
 }
 
 const ReadListItemSkeleton = () => (
-  <Card className="animate-pulse">
-    <div className="w-full h-40 bg-white/5"></div>
+  <Card>
+    <Skeleton className="w-full h-40 rounded-none" />
     <div className="p-4 space-y-2.5">
       <div className="flex items-center justify-between">
-        <div className="h-5 bg-white/5 rounded w-24"></div>
-        <div className="w-3 h-3 bg-white/5 rounded"></div>
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="w-3 h-3" />
       </div>
-      <div className="h-4 bg-white/5 rounded w-full"></div>
-      <div className="h-3 bg-white/5 rounded w-3/4"></div>
-      <div className="h-3 bg-white/5 rounded w-1/2"></div>
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-3 w-3/4" />
+      <Skeleton className="h-3 w-1/2" />
       <div className="flex items-center justify-between pt-2 border-t border-border-subtle/50">
-        <div className="h-3 bg-white/5 rounded w-20"></div>
-        <div className="h-5 bg-white/5 rounded w-14"></div>
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-5 w-14" />
       </div>
     </div>
   </Card>

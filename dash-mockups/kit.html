@@ -292,6 +292,45 @@ Minimal DS: no header fill, rows py-3, neutral avatars, text tabs. Column.type: 
     </div>
   </section>
 
+  <!-- ───────────────────────── Skeleton (loading placeholders) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">Skeleton / SkeletonCard / SkeletonGrid  (DESIGN_SYSTEM §7.f · loading state)</div>
+    <div class="kit-jsx">React: &lt;SkeletonGrid count gap? columns? /&gt;  ·  &lt;SkeletonCard avatar? lines? /&gt;  ·  &lt;Skeleton className /&gt;  ·  @/components/common
+Token-only shimmer (bg-surface-2). SkeletonCard mirrors the &lt;Card&gt; chrome so loading → loaded doesn't shift. Replaces hand-rolled animate-pulse blocks.</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+      <div class="bg-surface border border-border-subtle rounded-lg p-3.5">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 shrink-0 rounded-lg bg-surface-2 animate-pulse"></div>
+          <div class="flex-1 min-w-0 space-y-2">
+            <div class="h-4 w-1/2 rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-full rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-2/3 rounded-md bg-surface-2 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-surface border border-border-subtle rounded-lg p-3.5">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 shrink-0 rounded-lg bg-surface-2 animate-pulse"></div>
+          <div class="flex-1 min-w-0 space-y-2">
+            <div class="h-4 w-1/2 rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-full rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-2/3 rounded-md bg-surface-2 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-surface border border-border-subtle rounded-lg p-3.5">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 shrink-0 rounded-lg bg-surface-2 animate-pulse"></div>
+          <div class="flex-1 min-w-0 space-y-2">
+            <div class="h-4 w-1/2 rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-full rounded-md bg-surface-2 animate-pulse"></div>
+            <div class="h-3 w-2/3 rounded-md bg-surface-2 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ───────────────────────── DeleteConfirmDialog (destructive confirm) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">DeleteConfirmDialog  (DESIGN_SYSTEM §7.e · destructive confirm)</div>

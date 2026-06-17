@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { SearchBar } from "@/components/common";
+import { PageHeader, SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
 import { hasRole } from "@/lib/roleHelpers";
-import { ProjectsLayout } from "@/layouts/ProjectsLayout";
 
 export default function PendingReviewPage() {
   const { user, login } = useAuthContext();
@@ -54,15 +55,13 @@ export default function PendingReviewPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
-          <div className="text-center space-y-4">
-            <h2 className="text-xl font-bold text-white">Authentication Required</h2>
-            <p className="text-text-secondary">Please login to access this page</p>
-            <Button onClick={() => login()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full">
-              Login
-            </Button>
-          </div>
-        </div>
+        <Card padding="lg" className="max-w-md w-full mx-4 text-center space-y-4">
+          <h2 className="text-xl font-semibold text-text-primary">Authentication Required</h2>
+          <p className="text-text-secondary">Please login to access this page</p>
+          <Button onClick={() => login()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold w-full">
+            Login
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -71,57 +70,50 @@ export default function PendingReviewPage() {
   if (!canReview) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto mb-4 bg-rose-500/10 rounded-2xl flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-rose-400" />
-            </div>
-            <h2 className="text-xl font-bold text-white">Access Denied</h2>
-            <p className="text-text-secondary">You don&apos;t have permission to access this page</p>
-            <p className="text-xs text-text-tertiary">Moderator or Admin role required</p>
-            <Button
-              onClick={() => router.push('/ecosystem/publicgoods')}
-              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg w-full"
-            >
-              Go to Public Goods
-            </Button>
+        <Card padding="lg" className="max-w-md w-full mx-4 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto bg-danger/10 rounded-2xl flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-danger" />
           </div>
-        </div>
+          <h2 className="text-xl font-semibold text-text-primary">Access Denied</h2>
+          <p className="text-text-secondary">You don&apos;t have permission to access this page</p>
+          <p className="text-xs text-text-tertiary">Moderator or Admin role required</p>
+          <Button
+            onClick={() => router.push('/ecosystem/publicgoods')}
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold w-full"
+          >
+            Go to Public Goods
+          </Button>
+        </Card>
       </div>
     );
   }
 
   return (
-    <ProjectsLayout
-      headerTitle="Pending Projects"
-      pageHeader={
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.back()}
-              className="text-text-secondary hover:text-white hover:bg-white/5"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-3xl font-bold text-white">Pending Submissions</h1>
+    <div className="space-y-8">
+      <PageHeader
+        breadcrumb={
+          <Link
+            href="/ecosystem/publicgoods"
+            className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Public Goods
+          </Link>
+        }
+        title="Pending Submissions"
+        description="Review and vote on new project submissions. Community approval is required before projects are listed."
+      >
+        {pendingPublicGoods.length > 0 && (
+          <div className="flex justify-end">
+            <div className="w-full lg:w-72">
+              <SearchBar
+                onSearch={setSearchQuery}
+                placeholder="Search pending projects..."
+              />
+            </div>
           </div>
-          <p className="text-text-secondary max-w-2xl ml-11">
-            Review and vote on new project submissions. Community approval is required before projects are listed.
-          </p>
-        </div>
-      }
-    >
-      {pendingPublicGoods.length > 0 && (
-        <div className="flex justify-end w-full mb-6">
-          <SearchBar
-            onSearch={setSearchQuery}
-            placeholder="Search pending projects..."
-            className="max-w-sm"
-          />
-        </div>
-      )}
+        )}
+      </PageHeader>
 
       <PublicGoodsGrid
         isLoading={isLoading}
@@ -145,10 +137,10 @@ export default function PendingReviewPage() {
         }}
       />
 
-      {/* Info Banner */}
+      {/* Review Guidelines */}
       {pendingPublicGoods.length > 0 && (
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
-          <h3 className="text-white font-semibold mb-3">Review Guidelines</h3>
+        <Card padding="lg">
+          <h3 className="text-text-primary font-semibold mb-3">Review Guidelines</h3>
           <ul className="text-text-secondary text-sm space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>
@@ -171,7 +163,7 @@ export default function PendingReviewPage() {
               Provide constructive feedback in review notes if rejecting
             </li>
           </ul>
-        </div>
+        </Card>
       )}
 
       {/* Review Modal */}
@@ -186,7 +178,6 @@ export default function PendingReviewPage() {
           project={projectToReview}
         />
       )}
-    </ProjectsLayout>
+    </div>
   );
 }
-

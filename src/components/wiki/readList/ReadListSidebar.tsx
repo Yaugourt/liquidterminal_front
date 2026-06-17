@@ -1,6 +1,7 @@
 import { Plus, BookOpen, Trash2, GripVertical, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/common";
 import type { ReadList } from "@/services/wiki";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -34,14 +35,14 @@ interface ReadListSidebarProps {
 }
 
 const ReadListSkeleton = () => (
-  <div className="p-3 rounded-lg animate-pulse">
+  <div className="p-3 rounded-lg">
     <div className="flex items-start gap-3">
-      <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
-      <div className="w-4 h-4 bg-white/5 rounded mt-0.5 flex-shrink-0"></div>
+      <Skeleton className="w-4 h-4 mt-0.5 flex-shrink-0" />
+      <Skeleton className="w-4 h-4 mt-0.5 flex-shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-3.5 bg-white/5 rounded w-3/4"></div>
-        <div className="h-2.5 bg-white/5 rounded w-1/2"></div>
-        <div className="h-1.5 bg-white/5 rounded w-full mt-2"></div>
+        <Skeleton className="h-3.5 w-3/4" />
+        <Skeleton className="h-2.5 w-1/2" />
+        <Skeleton className="h-1.5 w-full mt-2" />
       </div>
     </div>
   </div>

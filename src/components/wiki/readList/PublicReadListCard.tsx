@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PublicReadList } from "@/services/wiki/readList/types";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { motion } from "framer-motion";
 
 interface PublicReadListCardProps {
@@ -44,7 +44,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     }
   };
 
-  const timeAgo = formatDistanceToNow(new Date(readList.updatedAt), { addSuffix: true });
+  const updatedAgo = timeAgo(readList.updatedAt);
   const initial = (readList.creator.name || "?").charAt(0).toUpperCase();
 
   return (
@@ -90,7 +90,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
           </div>
           <span className="text-xs text-text-secondary truncate">{readList.creator.name}</span>
           <span className="text-text-tertiary text-xs">·</span>
-          <span className="text-xs text-text-tertiary">{timeAgo}</span>
+          <span className="text-xs text-text-tertiary">{updatedAgo}</span>
         </div>
 
         {/* Stats row */}

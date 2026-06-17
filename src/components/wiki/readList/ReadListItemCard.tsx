@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import type { ReadListItem } from "@/services/wiki";
 import type { LinkPreview } from "@/services/wiki/linkPreview";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { safeHref } from "@/lib/safeUrl";
 
 interface ReadListItemCardProps {
@@ -42,9 +42,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
     }
   };
 
-  const timeAgo = item.addedAt
-    ? formatDistanceToNow(new Date(item.addedAt), { addSuffix: true })
-    : null;
+  const addedAgo = item.addedAt ? timeAgo(item.addedAt) : null;
 
   const hasImage = item.resource?.url?.startsWith('http') && preview?.image;
 
@@ -159,7 +157,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           </div>
           <div className="flex items-center gap-2 text-xs text-text-tertiary flex-shrink-0">
             <ExternalLink className="w-3 h-3 text-brand" />
-            {timeAgo && <span>{timeAgo}</span>}
+            {addedAgo && <span>{addedAgo}</span>}
           </div>
         </div>
       </div>

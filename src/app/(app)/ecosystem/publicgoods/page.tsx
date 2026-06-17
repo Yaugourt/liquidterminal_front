@@ -2,16 +2,16 @@
 
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { SearchBar } from "@/components/common";
+import { PageHeader, SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
-import { ProjectsLayout } from "@/layouts/ProjectsLayout";
 
 // Lazy load heavy modal - only loaded when user clicks "Submit Project"
 const SubmitProjectModal = dynamic(
@@ -76,55 +76,31 @@ export default function PublicGoodsPage() {
     refetch();
   };
 
-
-
-
-
   return (
-    <ProjectsLayout
-      headerTitle="Public Goods"
-      pageHeader={
-        <>
-          <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand to-surface">
-              Public Goods
-            </h1>
-            <p className="text-text-secondary max-w-2xl">
-              Discover and support projects building on HyperEVM. Direct funding, transparent tracking, and community-driven development.
-            </p>
-          </div>
-
-          <div className="flex gap-3">
+    <div className="space-y-8">
+      <PageHeader
+        title="Public Goods"
+        description="Discover and support projects building on HyperEVM. Direct funding, transparent tracking, and community-driven development."
+        actions={
+          <>
             <Button
               className="bg-brand text-brand-text-on hover:bg-brand/90"
-              onClick={() => setIsSubmitModalOpen(true)} // Changed to isSubmitModalOpen
+              onClick={handleSubmitClick}
             >
               <Plus className="w-4 h-4 mr-2" />
               Submit Project
             </Button>
-            <Button
-              variant="outline"
-              className="border-white/10 text-text-secondary hover:bg-white/5"
-            // onClick={() => router.push('/ecosystem/publicgoods/my-submissions')} // router is not defined in this context
-            >
-              My Submissions
+            <Button asChild variant="outline">
+              <Link href="/ecosystem/publicgoods/my-submissions">My Submissions</Link>
             </Button>
-          </div>
-
-          {/* <ProjectStats /> */} {/* ProjectStats is not defined in this context */}
-        </>
-      }
-      filters={
-        <>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <StatusTabs
-            activeTab={activeTab} // Changed to activeTab
-            onTabChange={handleTabChange} // Changed to handleTabChange
-            counts={{
-              all: counts.all, // Using existing counts
-              approved: counts.approved,
-              pending: counts.pending,
-              rejected: counts.rejected,
-            }}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            counts={counts}
           />
           <div className="w-full lg:w-72">
             <SearchBar
@@ -132,9 +108,9 @@ export default function PublicGoodsPage() {
               onSearch={setSearchQuery}
             />
           </div>
-        </>
-      }
-    >
+        </div>
+      </PageHeader>
+
       <PublicGoodsGrid
         isLoading={isLoading}
         items={filteredProjects}
@@ -161,6 +137,6 @@ export default function PublicGoodsPage() {
         onClose={() => setIsSubmitModalOpen(false)}
         onSuccess={handleSubmitSuccess}
       />
-    </ProjectsLayout>
+    </div>
   );
 }
