@@ -103,7 +103,7 @@ export function ReadListContent({
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-8"
       >
-        <div className="w-20 h-20 mx-auto mb-5 bg-brand/10 rounded-2xl flex items-center justify-center">
+        <div className="w-20 h-20 mx-auto mb-5 bg-brand/10 rounded-lg flex items-center justify-center">
           <BookOpen className="w-10 h-10 text-brand" />
         </div>
         <h3 className="text-text-primary font-semibold text-lg mb-2">No read list selected</h3>
@@ -303,7 +303,7 @@ export function ReadListContent({
               exit={{ opacity: 0 }}
               className="flex flex-col items-center justify-center py-20 text-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-brand" />
               </div>
               <h3 className="text-text-primary text-base font-semibold mb-2">No items found</h3>

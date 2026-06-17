@@ -6,6 +6,7 @@ import { ExternalLink, Copy, CheckCircle2, Vault, ArrowDownToLine, ArrowUpFromLi
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/common";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import type {
@@ -69,8 +70,8 @@ export function VaultDetailHeader({
 
           {isLoading ? (
             <div className="space-y-2 flex-1">
-              <div className="h-5 w-48 bg-white/5 animate-pulse rounded" />
-              <div className="h-3 w-72 bg-white/5 animate-pulse rounded" />
+              <Skeleton className="h-5 w-48 rounded" />
+              <Skeleton className="h-3 w-72 rounded" />
             </div>
           ) : (
             <div className="min-w-0 flex-1">
