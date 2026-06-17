@@ -103,7 +103,7 @@ export function XpHistoryList({
   }, [externalTransactions, hookHistory.length, refetchHistory]);
 
   return (
-    <div className={cn("bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
+    <div className={cn("bg-surface border border-border-subtle rounded-lg overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
         <h3 className="flex items-center gap-2 text-text-primary font-semibold">
           <History className="h-5 w-5 text-gold" />

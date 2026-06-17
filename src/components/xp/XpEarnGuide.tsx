@@ -91,8 +91,8 @@ const MISSIONS: MissionItem[] = [
 export function XpEarnGuide({ className }: { className?: string }) {
     return (
         <div className={cn(
-            "p-6 rounded-2xl",
-            "bg-surface/60",
+            "p-6 rounded-lg",
+            "bg-surface",
             "border border-border-subtle",
             className
         )}>

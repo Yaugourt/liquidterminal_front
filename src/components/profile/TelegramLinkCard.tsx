@@ -146,7 +146,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           <Button
             variant="outline"
             onClick={cancelLinking}
-            className="border-white/10 text-text-secondary hover:text-text-primary hover:bg-white/5"
+            className="border-border-default text-text-secondary hover:text-text-primary hover:bg-white/5"
           >
             <XCircle className="h-4 w-4" />
           </Button>

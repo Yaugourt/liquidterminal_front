@@ -64,7 +64,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
     return (
       <div className={cn(
         "flex items-center gap-2 px-3 py-2 rounded-lg",
-        "bg-surface/60 border border-border-subtle",
+        "bg-surface border border-border-subtle",
         className
       )}>
         <div className="flex items-center gap-1">
@@ -102,8 +102,8 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
   // Full version
   return (
     <div className={cn(
-      "p-5 rounded-2xl",
-      "bg-surface/60",
+      "p-5 rounded-lg",
+      "bg-surface",
       "border border-border-subtle",
       className
     )}>

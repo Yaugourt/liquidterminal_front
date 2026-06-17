@@ -98,7 +98,7 @@ export function XpLeaderboard({
   };
 
   return (
-    <div className={cn("bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden", className)}>
+    <div className={cn("bg-surface border border-border-subtle rounded-lg overflow-hidden", className)}>
       <div className="p-4 border-b border-border-subtle">
         <div className="flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-text-primary font-semibold">
