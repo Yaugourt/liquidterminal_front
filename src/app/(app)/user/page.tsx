@@ -1,17 +1,25 @@
 "use client";
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { ShieldX } from 'lucide-react';
 import { UserManagement } from '@/components/user/UserManagement';
 import { WikiModerationCard } from '@/components/wiki/moderation/WikiModerationCard';
 import { ProtectedAction } from '@/components/common';
 import { LoadingState } from '@/components/ui/loading-state';
 import { useAuthContext } from '@/contexts/auth.context';
+import { usePageTitle } from '@/store/use-page-title';
 
 export default function UserPage() {
   const { user, loading: isLoading } = useAuthContext();
   const router = useRouter();
+  const { setTitle } = usePageTitle();
+
+  useEffect(() => {
+    setTitle('User Management');
+  }, [setTitle]);
 
   // Show loading state while checking auth
   if (isLoading) {
@@ -26,12 +34,12 @@ export default function UserPage() {
   if (!user || user.role !== 'ADMIN') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 text-center shadow-xl shadow-black/20 max-w-md">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto mb-4">
-            <ShieldX className="h-8 w-8 text-rose-400" />
+        <Card padding="lg" className="text-center max-w-md mx-4 space-y-4">
+          <div className="w-16 h-16 rounded-lg bg-danger/10 flex items-center justify-center mx-auto">
+            <ShieldX className="h-8 w-8 text-danger" />
           </div>
-          <h1 className="text-xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-text-secondary text-sm mb-6">
+          <h1 className="text-xl font-semibold text-text-primary">Access Denied</h1>
+          <p className="text-text-secondary text-sm">
             This page is restricted to administrators only.
           </p>
           <Button
@@ -40,7 +48,7 @@ export default function UserPage() {
           >
             Return to Home
           </Button>
-        </div>
+        </Card>
       </div>
     );
   }
