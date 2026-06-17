@@ -195,7 +195,7 @@ export function PublicReadListDetails({
               animate={{ opacity: 1, y: 0 }}
             >
             <Card padding="lg" className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-2xl flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-8 h-8 text-brand" />
               </div>
               <p className="text-text-secondary">No resources in this list yet</p>

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import {
   AuroraHistogramChart,
   chartPalette,
+  Skeleton,
   type HistogramDataPoint,
 } from "@/components/common";
 import { useVaultDailySnapshots } from "@/services/explorer/vault/hooks/useVaultDailySnapshots";
@@ -153,7 +154,7 @@ function SecondaryChartCard({
       </div>
       <div className="px-3 py-3 h-[160px]">
         {isLoading ? (
-          <div className="h-full bg-white/5 animate-pulse rounded" />
+          <Skeleton className="h-full rounded" />
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <p className="text-text-tertiary text-xs">No data for this window.</p>

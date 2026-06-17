@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Layers } from "lucide-react";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { chartPalette } from "@/components/common";
+import { chartPalette, Skeleton } from "@/components/common";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 
 interface VaultConcentrationBarProps {
@@ -96,7 +96,7 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
       </div>
 
       {isLoading ? (
-        <div className="h-10 bg-white/5 animate-pulse rounded" />
+        <Skeleton className="h-10 rounded" />
       ) : top.length === 0 ? (
         <p className="text-text-tertiary text-sm text-center py-6">
           No net depositor data available.

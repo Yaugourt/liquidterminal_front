@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { walletActiveMessages } from "@/lib/toast-messages";
@@ -125,7 +126,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-20 bg-white/5 border border-border-subtle rounded-lg animate-pulse" />
+          <Skeleton key={i} className="h-20 rounded-lg border border-border-subtle" />
         ))}
       </div>
     );

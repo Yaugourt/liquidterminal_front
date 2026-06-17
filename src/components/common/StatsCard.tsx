@@ -1,6 +1,7 @@
 import { ReactNode, memo } from "react";
 import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "./Skeleton";
 import { cn } from "@/lib/utils";
 
 type Density = "compact" | "comfortable";
@@ -129,7 +130,7 @@ export const StatsCard = memo(function StatsCard({
                     {headerAction && <div className="shrink-0">{headerAction}</div>}
                 </div>
                 {isLoading ? (
-                    <div className="h-7 bg-white/5 animate-pulse rounded w-24" />
+                    <Skeleton className="h-7 w-24 rounded" />
                 ) : (
                     <>
                         <div className="flex items-baseline gap-2 flex-wrap">

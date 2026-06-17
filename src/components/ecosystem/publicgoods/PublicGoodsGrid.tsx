@@ -43,7 +43,7 @@ export function PublicGoodsGrid<T>({
         return (
             <Card className="p-8">
                 <div className="text-center py-8">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-2xl flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-brand/10 rounded-lg flex items-center justify-center">
                         {emptyState.icon || <Plus className="w-8 h-8 text-brand" />}
                     </div>
                     <h3 className="text-lg font-semibold text-text-primary mb-2">{emptyState.title}</h3>

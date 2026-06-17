@@ -71,7 +71,7 @@ export default function PendingReviewPage() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Card padding="lg" className="max-w-md w-full mx-4 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-danger/10 rounded-2xl flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto bg-danger/10 rounded-lg flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-danger" />
           </div>
           <h2 className="text-xl font-semibold text-text-primary">Access Denied</h2>
