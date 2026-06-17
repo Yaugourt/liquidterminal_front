@@ -19,6 +19,9 @@ export { Sparkline } from './Sparkline';
 // Cards / containers
 export { StatsCard, StatsCardSkeleton } from './StatsCard';
 export type { StatsCardProps } from './StatsCard';
+
+// Loading skeletons (§7.f)
+export { Skeleton, SkeletonCard, SkeletonGrid } from './Skeleton';
 export { StatsPanel } from './StatsPanel';
 export type { StatsPanelProps } from './StatsPanel';
 export { WelcomePrompt } from './WelcomePrompt';

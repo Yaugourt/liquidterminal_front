@@ -1,5 +1,8 @@
-import { memo } from "react";
-import { cn } from "@/lib/utils";
+"use client";
+
+import { memo, useMemo } from "react";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { Skeleton } from "@/components/common";
 import { Category } from "@/services/ecosystem/project/types";
 
 interface CategoryTabsProps {
@@ -10,19 +13,34 @@ interface CategoryTabsProps {
   error?: Error | null;
 }
 
-export const CategoryTabs = memo(function CategoryTabs({ 
-  categories, 
-  activeTab, 
-  onTabChange, 
-  isLoading = false, 
-  error = null 
+/**
+ * Category filter for /ecosystem/project — built on the V4 `<PillTabs>`
+ * primitive (boxed track + animated brand indicator). "All Projects" + one
+ * tab per backend category.
+ */
+export const CategoryTabs = memo(function CategoryTabs({
+  categories,
+  activeTab,
+  onTabChange,
+  isLoading = false,
+  error = null,
 }: CategoryTabsProps) {
+  const tabs = useMemo(
+    () => [
+      { value: "all", label: "All Projects" },
+      ...categories.map((category) => ({
+        value: category.id.toString(),
+        label: category.name,
+      })),
+    ],
+    [categories]
+  );
 
   if (isLoading) {
     return (
-      <div className="flex bg-base rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
+      <div className="flex items-center gap-2 w-fit max-w-full">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-8 w-20 bg-white/5 rounded-md animate-pulse" />
+          <Skeleton key={i} className="h-9 w-24" />
         ))}
       </div>
     );
@@ -30,46 +48,13 @@ export const CategoryTabs = memo(function CategoryTabs({
 
   if (error) {
     return (
-      <div className="flex items-center w-full">
-        <div className="text-rose-400 text-sm py-2 px-3">
-          Failed to load categories: {error.message}
-        </div>
+      <div className="text-danger text-sm py-2 px-3">
+        Failed to load categories: {error.message}
       </div>
     );
   }
 
   return (
-    <div className="flex bg-base rounded-lg p-1 border border-border-subtle gap-1 w-fit max-w-full overflow-x-auto scrollbar-brand">
-      {/* Tab "All" */}
-      <button
-        onClick={() => onTabChange('all')}
-        className={cn(
-          "flex-shrink-0 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-          "px-2.5 sm:px-4",
-          activeTab === 'all'
-            ? "bg-brand text-brand-text-on shadow-sm font-bold"
-            : "tab-inactive"
-        )}
-      >
-        All Projects
-      </button>
-      
-      {/* Category tabs */}
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => onTabChange(category.id.toString())}
-          className={cn(
-            "flex-shrink-0 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-            "px-2 sm:px-3",
-            activeTab === category.id.toString()
-              ? "bg-brand text-brand-text-on shadow-sm font-bold"
-              : "tab-inactive"
-          )}
-        >
-          {category.name}
-        </button>
-      ))}
-    </div>
+    <PillTabs tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} />
   );
 });

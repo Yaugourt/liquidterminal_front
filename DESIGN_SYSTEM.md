@@ -528,6 +528,20 @@ The primitive locks the look (the recipe below); callers pass data only.
 />
 ```
 
+### 7.f — Loading skeletons
+
+`<Skeleton>` / `<SkeletonCard>` / `<SkeletonGrid>` (`@/components/common`) — the canonical loading placeholders. Token-only shimmer (`bg-surface-2` + `animate-pulse`, never raw hex/`bg-white/x`). Do not hand-roll `animate-pulse` blocks.
+
+- `<Skeleton className />` — base shimmer block, sized via `className` (`h-4 w-1/2`).
+- `<SkeletonCard avatar? lines? />` — card-shaped placeholder mirroring the `<Card>` chrome (`bg-surface border-border-subtle rounded-lg`), so the loading → loaded swap doesn't shift the layout.
+- `<SkeletonGrid count? columns? gap? avatar? lines? />` — a responsive grid of `SkeletonCard`s; replaces the `grid + map` boilerplate every card-grid loading state re-implements. **Match `gap`/`columns` to the real grid** so nothing jumps.
+
+```tsx
+{isLoading
+  ? <SkeletonGrid count={6} gap="gap-6" />
+  : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{cards}</div>}
+```
+
 ## 8. Services — 4-layer architecture
 
 ```

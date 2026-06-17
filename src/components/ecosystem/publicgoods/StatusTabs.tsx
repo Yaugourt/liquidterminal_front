@@ -1,5 +1,7 @@
-import { memo } from "react";
-import { cn } from "@/lib/utils";
+"use client";
+
+import { memo, useMemo } from "react";
+import { PillTabs } from "@/components/ui/pill-tabs";
 
 interface StatusTabsProps {
   activeTab: string;
@@ -12,67 +14,42 @@ interface StatusTabsProps {
   };
 }
 
-export const StatusTabs = memo(function StatusTabs({ 
-  activeTab, 
+/**
+ * Status filter for the public-goods listings — built on the V4 `<PillTabs>`
+ * primitive (boxed track + animated brand indicator), aligned with the
+ * `/ecosystem/project` CategoryTabs. Each tab shows its count in `.mono`.
+ */
+export const StatusTabs = memo(function StatusTabs({
+  activeTab,
   onTabChange,
-  counts = { all: 0, approved: 0, pending: 0, rejected: 0 }
+  counts = { all: 0, approved: 0, pending: 0, rejected: 0 },
 }: StatusTabsProps) {
-  const tabs = [
-    { 
-      id: 'all', 
-      label: 'All Projects',
-      count: counts.all,
-      color: 'text-text-primary'
-    },
-    { 
-      id: 'approved', 
-      label: 'Approved',
-      count: counts.approved,
-      color: 'text-emerald-400'
-    },
-    { 
-      id: 'pending', 
-      label: 'Pending Review',
-      count: counts.pending,
-      color: 'text-amber-400'
-    },
-    { 
-      id: 'rejected', 
-      label: 'Rejected',
-      count: counts.rejected,
-      color: 'text-rose-400'
-    }
-  ];
+  const tabs = useMemo(
+    () =>
+      [
+        { id: "all", label: "All Projects", count: counts.all },
+        { id: "approved", label: "Approved", count: counts.approved },
+        { id: "pending", label: "Pending Review", count: counts.pending },
+        { id: "rejected", label: "Rejected", count: counts.rejected },
+      ].map((tab) => ({
+        value: tab.id,
+        label: (
+          <span className="inline-flex items-center gap-1.5">
+            {tab.label}
+            {tab.count > 0 && (
+              <span className="mono opacity-60">{tab.count}</span>
+            )}
+          </span>
+        ),
+      })),
+    [counts]
+  );
 
   return (
-    <div className="flex bg-base rounded-lg p-1 border border-border-subtle w-fit max-w-full overflow-x-auto scrollbar-brand">
-      {tabs.map(tab => (
-        <button
-          key={tab.id}
-          onClick={() => onTabChange(tab.id)}
-          className={cn(
-            "py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap",
-            "px-2 sm:px-3",
-            activeTab === tab.id
-              ? "bg-brand text-brand-text-on shadow-sm font-bold"
-              : "tab-inactive"
-          )}
-        >
-          <span>
-            {tab.label}
-          </span>
-          {tab.count > 0 && (
-            <span className={cn(
-              "px-1.5 py-0.5 text-label rounded-md",
-              activeTab === tab.id
-                ? "bg-surface/20 text-brand-text-on"
-                : `bg-white/5 ${tab.color}`
-            )}>
-              {tab.count}
-            </span>
-          )}
-        </button>
-      ))}
-    </div>
+    <PillTabs
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={onTabChange}
+    />
   );
 });

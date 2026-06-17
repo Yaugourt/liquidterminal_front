@@ -13,9 +13,9 @@ import {
   Globe,
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { chartPalette } from "@/components/common";
+import { chartPalette, Skeleton } from "@/components/common";
 import { PublicReadList, ReadListItem } from "@/services/wiki/readList/types";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { ResourceCard } from "../ResourceCard";
 import { getReadListItems } from "@/services/wiki/readList/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,12 +27,12 @@ interface PublicReadListDetailsProps {
 }
 
 const ResourceSkeleton = () => (
-  <Card className="animate-pulse">
-    <div className="w-full h-36 bg-white/5"></div>
+  <Card>
+    <Skeleton className="w-full h-36 rounded-none" />
     <div className="p-4 space-y-2.5">
-      <div className="h-4 bg-white/5 rounded w-3/4"></div>
-      <div className="h-3 bg-white/5 rounded w-full"></div>
-      <div className="h-3 bg-white/5 rounded w-1/2"></div>
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-3 w-full" />
+      <Skeleton className="h-3 w-1/2" />
     </div>
   </Card>
 );
@@ -151,7 +151,7 @@ export function PublicReadListDetails({
               <div>
                 <p className="text-xs text-text-tertiary">Updated</p>
                 <p className="text-sm text-text-secondary">
-                  {formatDistanceToNow(new Date(readList.updatedAt), { addSuffix: true })}
+                  {timeAgo(readList.updatedAt)}
                 </p>
               </div>
             </div>

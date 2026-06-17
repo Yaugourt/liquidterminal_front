@@ -2,7 +2,9 @@
 
 import { useState, use } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
@@ -94,31 +96,26 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   if (!project) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 max-w-md w-full mx-4 shadow-xl shadow-black/20">
-          <div className="text-center">
-            <h1 className="text-xl font-bold text-white mb-4">Project not found</h1>
-            <Button onClick={() => router.back()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg">
-              Go back
-            </Button>
-          </div>
-        </div>
+        <Card padding="lg" className="max-w-md w-full mx-4 text-center space-y-4">
+          <h1 className="text-xl font-semibold text-text-primary">Project not found</h1>
+          <Button onClick={() => router.back()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold">
+            Go back
+          </Button>
+        </Card>
       </div>
     );
   }
 
   return (
-    <>
-      {/* Back button */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          onClick={() => router.back()}
-          className="text-text-secondary hover:text-white hover:bg-white/5 rounded-lg"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to projects
-        </Button>
-      </div>
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <Link
+        href="/ecosystem/publicgoods"
+        className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
+      >
+        <ArrowLeft className="w-3.5 h-3.5" />
+        Back to projects
+      </Link>
 
       {/* Project header */}
       <ProjectHeader project={project} />
@@ -178,6 +175,6 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
         isLoading={isDeleting}
         onConfirm={confirmDelete}
       />
-    </>
+    </div>
   );
 }

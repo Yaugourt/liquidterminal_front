@@ -2,17 +2,16 @@
 
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowLeft } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { DeleteConfirmDialog, SearchBar } from "@/components/common";
+import { DeleteConfirmDialog, KpiRibbon, PageHeader, SearchBar } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ProjectsLayout } from "@/layouts/ProjectsLayout";
 
 // Lazy load heavy modals - only loaded when user interacts with them
 const SubmitProjectModal = dynamic(
@@ -34,7 +33,6 @@ export default function MySubmissionsPage() {
   const [projectToEdit, setProjectToEdit] = useState<PublicGood | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<PublicGood | null>(null);
   const { user, login } = useAuthContext();
-  const router = useRouter();
 
   // Fetch user's projects from API
   const { myPublicGoods, isLoading, refetch } = useMyPublicGoods({ limit: 50 });
@@ -127,54 +125,53 @@ export default function MySubmissionsPage() {
   }
 
   return (
-    <ProjectsLayout
-      headerTitle="My Submissions"
-      pageHeader={
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.back()}
-              className="text-text-secondary hover:text-white hover:bg-white/5"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-3xl font-bold text-white">My Submissions</h1>
-          </div>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <p className="text-text-secondary max-w-2xl ml-11">
-              Track the status of your submitted projects and manage your applications.
-            </p>
-            <Button
-              onClick={handleSubmitClick}
-              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Submit New Project
-            </Button>
-          </div>
-        </div>
-      }
-      filters={
-        <>
-          <div className="flex-1">
-            <StatusTabs
-              activeTab={activeTab}
-              onTabChange={handleTabChange}
-              counts={counts}
-            />
-          </div>
-          <div className="flex-shrink-0">
+    <div className="space-y-8">
+      <PageHeader
+        breadcrumb={
+          <Link
+            href="/ecosystem/publicgoods"
+            className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Public Goods
+          </Link>
+        }
+        title="My Submissions"
+        description="Track the status of your submitted projects and manage your applications."
+        actions={
+          <Button
+            onClick={handleSubmitClick}
+            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Submit New Project
+          </Button>
+        }
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <StatusTabs
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            counts={counts}
+          />
+          <div className="w-full lg:w-72">
             <SearchBar
               onSearch={setSearchQuery}
               placeholder="Search my submissions..."
-              className="max-w-sm"
             />
           </div>
-        </>
-      }
-    >
+        </div>
+      </PageHeader>
+
+      <KpiRibbon
+        cells={[
+          { label: "Total Submissions", value: counts.all },
+          { label: "Approved", value: counts.approved, tone: "success" },
+          { label: "Pending", value: counts.pending, tone: "gold" },
+          { label: "Rejected", value: counts.rejected, tone: "danger" },
+        ]}
+      />
+
       {/* Projects Grid */}
       <PublicGoodsGrid
         isLoading={isLoading}
@@ -199,28 +196,6 @@ export default function MySubmissionsPage() {
           onAction: (!searchQuery.trim() && activeTab === 'all') ? handleSubmitClick : undefined
         }}
       />
-
-      {/* Stats footer */}
-      <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 p-6 mt-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-brand">{counts.all}</div>
-            <div className="text-xs text-text-secondary uppercase tracking-wider">Total Submissions</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-emerald-400">{counts.approved}</div>
-            <div className="text-xs text-text-secondary uppercase tracking-wider">Approved</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-amber-400">{counts.pending}</div>
-            <div className="text-xs text-text-secondary uppercase tracking-wider">Pending</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-rose-400">{counts.rejected}</div>
-            <div className="text-xs text-text-secondary uppercase tracking-wider">Rejected</div>
-          </div>
-        </div>
-      </div>
 
       {/* Submit Project Modal */}
       <SubmitProjectModal
@@ -263,7 +238,6 @@ export default function MySubmissionsPage() {
         isLoading={isDeleting}
         onConfirm={confirmDelete}
       />
-    </ProjectsLayout>
+    </div>
   );
 }
-

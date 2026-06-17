@@ -2,6 +2,7 @@
 
 import { ResourceCard } from "./ResourceCard";
 import { Button } from "@/components/ui/button";
+import { SkeletonGrid } from "@/components/common";
 import { useState, useCallback, useEffect } from "react";
 import { useEducationalCategories } from "@/services/wiki";
 import { useEducationalResourcesByCategories } from "@/services/wiki/hooks/useEducationalResourcesByCategories";
@@ -123,16 +124,18 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
   if (categoriesLoading || resourcesLoading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border-subtle bg-base/40 py-16 text-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-brand" />
-        <p className="text-sm text-text-tertiary">Loading resources…</p>
-      </div>
+      <SkeletonGrid
+        count={6}
+        columns="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+        gap="gap-5"
+        lines={2}
+      />
     );
   }
 
   if (categoriesWithResources.length === 0) {
     return (
-      <div className="rounded-2xl border border-border-subtle bg-base/40 py-16 text-center">
+      <div className="rounded-lg border border-border-subtle bg-base/40 py-16 text-center">
         <p className="text-sm text-text-tertiary">
           Select at least one category to see resources.
         </p>

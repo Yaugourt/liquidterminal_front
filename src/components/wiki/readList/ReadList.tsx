@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePrivy } from "@privy-io/react-auth";
 import { useReadLists } from "@/store/use-readlists";
@@ -80,12 +81,10 @@ const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
 const Error = ({ error }: { error: string }) => (
   <div className="flex items-center justify-center h-96">
     <div className="text-center">
-      <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-        <svg className="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
+      <div className="w-12 h-12 bg-danger/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+        <AlertCircle className="w-6 h-6 text-danger" />
       </div>
-      <h3 className="text-rose-400 text-lg font-semibold mb-2">Error</h3>
+      <h3 className="text-danger text-lg font-semibold mb-2">Error</h3>
       <p className="text-text-secondary max-w-md">{error}</p>
     </div>
   </div>

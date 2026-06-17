@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
-import { LoadingState } from "@/components/ui/loading-state";
+import { SkeletonGrid } from "@/components/common";
 
 interface PublicGoodsGridProps<T> {
     isLoading: boolean;
@@ -30,9 +30,12 @@ export function PublicGoodsGrid<T>({
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center py-16">
-                <LoadingState message="Loading projects..." size="sm" withCard={false} />
-            </div>
+            <SkeletonGrid
+                count={6}
+                columns="grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
+                gap="gap-6"
+                lines={3}
+            />
         );
     }
 

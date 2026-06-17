@@ -7,9 +7,7 @@ import { CategoryTabs } from "./CategoryTabs";
 import { useProjects, useCategories } from "@/services/ecosystem/project";
 import { useAuthContext } from "@/contexts/auth.context";
 import { canCreateProject } from "@/lib/roleHelpers";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Pagination } from "@/components/common";
-import { SearchBar } from "@/components/common";
+import { Pagination, SearchBar, SkeletonGrid } from "@/components/common";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -78,14 +76,7 @@ export const ProjectsGrid = memo(function ProjectsGrid({
 
   return (
     <div className="space-y-6">
-      {/* Add Button */}
-      <div className="flex justify-start">
-        {userCanCreateProject && (
-          <ProjectModal onSuccess={handleProjectSuccess} />
-        )}
-      </div>
-
-      {/* Category Tabs and Search Bar */}
+      {/* Category Tabs · Search · Create */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0 overflow-hidden">
         <div className="flex-1 min-w-0 overflow-hidden">
           <CategoryTabs
@@ -96,22 +87,21 @@ export const ProjectsGrid = memo(function ProjectsGrid({
             error={categoriesError}
           />
         </div>
-        <div className="flex-shrink-0 w-full md:w-auto">
+        <div className="flex flex-shrink-0 items-center gap-3 w-full md:w-auto">
           <SearchBar
             onSearch={setSearchQuery}
             placeholder="Search projects..."
             className="w-full md:max-w-sm"
           />
+          {userCanCreateProject && (
+            <ProjectModal onSuccess={handleProjectSuccess} />
+          )}
         </div>
       </div>
 
       {/* Projects Grid */}
       {projectsLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-32 bg-surface/60 border border-border-subtle rounded-2xl" />
-          ))}
-        </div>
+        <SkeletonGrid count={6} gap="gap-6" />
       ) : projectsError ? (
         <ErrorState 
           title="Failed to load projects" 
