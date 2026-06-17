@@ -140,8 +140,8 @@ export function UserManagement() {
   if (error) {
     return (
       <Card className="p-6">
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center">
-          <p className="text-rose-400 mb-3 text-sm">Error loading users</p>
+        <div className="bg-danger/5 border border-danger/20 rounded-lg p-4 text-center">
+          <p className="text-danger mb-3 text-sm">Error loading users</p>
           <Button
             onClick={handleRefresh}
             className="bg-brand text-brand-text-on hover:bg-brand/80 text-sm"
