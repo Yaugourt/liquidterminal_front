@@ -10,8 +10,11 @@ import { authService } from "@/services/auth/api";
 import { ReferralStats } from "@/services/auth/types";
 import { useXp } from "@/services/xp";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { StatsCard } from "@/components/common";
+import { usePageTitle } from "@/store/use-page-title";
 import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard, XpEarnGuide } from "@/components/xp";
-import { Shield, Users, Wallet, BookOpen, Copy, Activity, List, LucideIcon, Flame, Send } from "lucide-react";
+import { Shield, Users, Wallet, BookOpen, Copy, Activity, List, Flame, Send } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingState } from "@/components/ui/loading-state";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
@@ -37,6 +40,11 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
     const { readLists } = useReadLists();
     const { data: walletLists } = useUserWalletLists({ enabled: !!currentUser });
     const { stats: xpStats, isLoading: isLoadingXp } = useXp();
+    const { setTitle } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Profile");
+    }, [setTitle]);
 
     // State pour la sélection de liste (null = "All Wallets")
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
@@ -129,7 +137,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
     return (
         <>
             {/* Header Profile */}
-            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-surface/60 backdrop-blur-md p-6 rounded-2xl border border-white/5 shadow-xl shadow-black/20">
+            <Card padding="lg" interactive={false} className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20 ring-2 ring-gold ring-offset-2 ring-offset-surface">
                         {privyUser?.twitter?.profilePictureUrl ? (
@@ -149,7 +157,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     </Avatar>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-2xl font-bold text-white">{currentUser.name}</h1>
+                            <h1 className="text-2xl font-bold text-text-primary">{currentUser.name}</h1>
                             {currentUser.verified && <Shield className="h-5 w-5 text-gold" />}
                         </div>
                         <p className="text-text-secondary capitalize">{currentUser.role.toLowerCase()} Member</p>
@@ -179,7 +187,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                 <div className="flex flex-col gap-2 w-full md:w-auto">
                     <div className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-1">Your Referral Link</div>
                     <div className="flex gap-2">
-                        <div className="bg-base px-4 py-2.5 rounded-lg text-white text-sm border border-white/5 flex-1 truncate">
+                        <div className="bg-base px-4 py-2.5 rounded-lg text-text-primary text-sm border border-border-subtle flex-1 truncate">
                             liquidterminal.com/ref/{currentUser.name}
                         </div>
                         <Button onClick={copyReferralLink} size="icon" className="bg-brand hover:bg-brand/90 text-brand-text-on">
@@ -187,7 +195,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                         </Button>
                     </div>
                 </div>
-            </div>
+            </Card>
 
             {/* XP Progress Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -197,10 +205,9 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                 <div className="space-y-4">
                     <StatsCard
                         title="Referrals"
-                        value={(referralStats?.referralCount || 0).toString()}
-                        icon={Users}
-                        color="text-brand"
-                        subtext="+200 XP each"
+                        value={referralStats?.referralCount ?? 0}
+                        icon={<Users className="h-5 w-5 text-brand" />}
+                        subValue={<span className="text-brand">+200 XP each</span>}
                     />
                     <TelegramLinkCard
                         initialTelegramUsername={currentUser?.telegramUsername}
@@ -210,39 +217,29 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
             {/* Tabs for different sections */}
             <Tabs defaultValue={initialTab} className="space-y-6">
-                <TabsList className="bg-base border border-white/5 rounded-lg p-1">
-                    <TabsTrigger
-                        value="activity"
-                        className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-                    >
-                        Activity
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="xp-history"
-                        className="text-text-secondary data-[state=active]:bg-gold data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-                    >
-                        XP History
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="leaderboard"
-                        className="text-text-secondary data-[state=active]:bg-purple-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
-                    >
-                        Leaderboard
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="missions"
-                        className="text-text-secondary data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:font-bold rounded-md text-xs transition-all"
-                    >
-                        Missions
-                    </TabsTrigger>
+                <TabsList className="bg-surface-2 border border-border-subtle rounded-lg p-1">
+                    {[
+                        { value: "activity", label: "Activity" },
+                        { value: "xp-history", label: "XP History" },
+                        { value: "leaderboard", label: "Leaderboard" },
+                        { value: "missions", label: "Missions" },
+                    ].map((tab) => (
+                        <TabsTrigger
+                            key={tab.value}
+                            value={tab.value}
+                            className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
+                        >
+                            {tab.label}
+                        </TabsTrigger>
+                    ))}
                 </TabsList>
 
                 <TabsContent value="activity" className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Section Tracker Activity */}
-                        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-                            <div className="p-4 border-b border-white/5">
-                                <h3 className="flex items-center gap-2 text-white font-semibold">
+                        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+                            <div className="p-4 border-b border-border-subtle">
+                                <h3 className="flex items-center gap-2 text-text-primary font-semibold">
                                     <Activity className="h-5 w-5 text-brand" />
                                     Portfolio Tracker Activity
                                 </h3>
@@ -271,19 +268,19 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                         </div>
 
                                         {isLoadingListItems ? (
-                                            <div className="border border-dashed border-white/5 rounded-xl py-12">
+                                            <div className="border border-dashed border-border-subtle rounded-lg py-12">
                                                 <LoadingState size="sm" withCard={false} />
                                             </div>
                                         ) : displayedWallets.length > 0 ? (
                                             <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 scrollbar-brand">
                                                 {displayedWallets.map(wallet => (
-                                                    <div key={`${wallet.id}-${wallet.address}`} className="flex justify-between items-center p-3 bg-base rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                                                    <div key={`${wallet.id}-${wallet.address}`} className="flex justify-between items-center p-3 bg-base rounded-lg border border-border-subtle hover:border-border-default transition-colors">
                                                         <div className="flex items-center gap-3 min-w-0">
                                                             <div className="h-8 w-8 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
                                                                 <Wallet className="h-4 w-4 text-brand" />
                                                             </div>
                                                             <div className="min-w-0">
-                                                                <div className="font-medium text-sm text-white truncate">{wallet.name}</div>
+                                                                <div className="font-medium text-sm text-text-primary truncate">{wallet.name}</div>
                                                                 <div className="text-xs text-text-tertiary truncate">{wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}</div>
                                                             </div>
                                                         </div>
@@ -291,28 +288,28 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="text-center py-12 text-text-tertiary text-sm italic border border-dashed border-white/5 rounded-xl">
+                                            <div className="text-center py-12 text-text-tertiary text-sm italic border border-dashed border-border-subtle rounded-lg">
                                                 No wallets found in this view.
                                             </div>
                                         )}
 
                                         <div className="pt-4 mt-auto">
-                                            <Button variant="outline" className="w-full border-white/5 hover:bg-white/5 text-text-secondary rounded-lg" asChild>
+                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg" asChild>
                                                 <a href="/market/tracker">Manage Tracker & Lists</a>
                                             </Button>
                                         </div>
                                     </div>
 
                                     {/* Right Column: List Selection (Navigation) */}
-                                    <div className="w-full md:w-1/3 space-y-4 border-b md:border-b-0 md:border-l border-white/5 pb-6 md:pb-0 md:pl-6">
+                                    <div className="w-full md:w-1/3 space-y-4 border-b md:border-b-0 md:border-l border-border-subtle pb-6 md:pb-0 md:pl-6">
                                         <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Your Lists</h4>
                                         <div className="space-y-2">
                                             {/* All Wallets Option */}
                                             <div
                                                 onClick={() => setSelectedListId(null)}
-                                                className={`flex justify-between items-center p-3 rounded-xl border cursor-pointer transition-all ${selectedListId === null
+                                                className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedListId === null
                                                     ? 'bg-brand/10 border-brand/30 text-brand'
-                                                    : 'bg-base border-white/5 hover:bg-white/5 hover:border-white/10 text-text-secondary'
+                                                    : 'bg-base border-border-subtle hover:bg-white/5 hover:border-border-default text-text-secondary'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -328,9 +325,9 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                     <div
                                                         key={list.id}
                                                         onClick={() => setSelectedListId(list.id)}
-                                                        className={`flex justify-between items-center p-3 rounded-xl border cursor-pointer transition-all ${selectedListId === list.id
+                                                        className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedListId === list.id
                                                             ? 'bg-brand/10 border-brand/30 text-brand'
-                                                            : 'bg-base border-white/5 hover:bg-white/5 hover:border-white/10 text-text-secondary'
+                                                            : 'bg-base border-border-subtle hover:bg-white/5 hover:border-border-default text-text-secondary'
                                                             }`}
                                                     >
                                                         <div className="flex items-center gap-3 min-w-0">
@@ -352,15 +349,15 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                         </div>
 
                         {/* Section Knowledge Base with Tabs */}
-                        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
-                            <div className="p-4 border-b border-white/5">
-                                <h3 className="flex items-center gap-2 text-white font-semibold">
+                        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+                            <div className="p-4 border-b border-border-subtle">
+                                <h3 className="flex items-center gap-2 text-text-primary font-semibold">
                                     <BookOpen className="h-5 w-5 text-gold" />
                                     Knowledge Base
                                 </h3>
                             </div>
                             <Tabs defaultValue="readlists" className="w-full">
-                                <TabsList className="w-full grid grid-cols-2 bg-base/50 rounded-none border-b border-white/5 p-1">
+                                <TabsList className="w-full grid grid-cols-2 bg-base/50 rounded-none border-b border-border-subtle p-1">
                                     <TabsTrigger
                                         value="readlists"
                                         className="text-text-secondary data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:font-semibold rounded-md text-xs transition-all"
@@ -380,13 +377,13 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                     {readLists.length > 0 ? (
                                         <div className="space-y-4">
                                             {readLists.map(list => (
-                                                <div key={list.id} className="flex justify-between items-center p-3 bg-base rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                                                <div key={list.id} className="flex justify-between items-center p-3 bg-base rounded-lg border border-border-subtle hover:border-border-default transition-colors">
                                                     <div className="flex items-center gap-3">
                                                         <div className="h-8 w-8 rounded-lg bg-gold/10 flex items-center justify-center">
                                                             <BookOpen className="h-4 w-4 text-gold" />
                                                         </div>
                                                         <div>
-                                                            <div className="font-medium text-sm text-white">{list.name}</div>
+                                                            <div className="font-medium text-sm text-text-primary">{list.name}</div>
                                                             <div className="text-xs text-text-tertiary">{list.itemsCount || 0} articles</div>
                                                         </div>
                                                     </div>
@@ -395,7 +392,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                     </div>
                                                 </div>
                                             ))}
-                                            <Button variant="outline" className="w-full border-white/5 hover:bg-white/5 text-text-secondary rounded-lg" asChild>
+                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg" asChild>
                                                 <a href="/wiki">Go to Wiki</a>
                                             </Button>
                                         </div>
@@ -448,27 +445,3 @@ export default function ProfilePage() {
     );
 }
 
-interface StatsCardProps {
-    title: string;
-    value: string;
-    icon: LucideIcon;
-    color: string;
-    subtext?: string;
-}
-
-function StatsCard({ title, value, icon: Icon, color, subtext }: StatsCardProps) {
-    return (
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
-            <div className="flex justify-between items-start">
-                <div>
-                    <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">{title}</p>
-                    <h3 className="text-2xl font-bold text-white mt-2">{value}</h3>
-                    {subtext && <p className={`text-xs mt-1 ${color}`}>{subtext}</p>}
-                </div>
-                <div className={`w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110`}>
-                    <Icon className={`h-5 w-5 ${color}`} />
-                </div>
-            </div>
-        </div>
-    );
-}
