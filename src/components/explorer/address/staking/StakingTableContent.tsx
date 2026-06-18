@@ -233,8 +233,8 @@ export function StakingTableContent({
           <span
             className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
               r.source === "commission"
-                ? "bg-gold text-gold border border-gold"
-                : "bg-emerald-400/12 text-emerald-400 border border-emerald-400/25"
+                ? "bg-gold/12 text-gold border border-gold/25"
+                : "bg-success/12 text-success border border-success/25"
             }`}
           >
             {r.source === "commission" ? "Commission" : "Delegation"}

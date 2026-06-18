@@ -8,9 +8,9 @@ import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { safeHref } from "@/lib/safeUrl";
 
 const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; color: string }> = {
-    PENDING: { icon: Clock, label: "En attente", color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
-    APPROVED: { icon: CheckCircle, label: "Approuvé", color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" },
-    REJECTED: { icon: XCircle, label: "Rejeté", color: "text-rose-400 bg-rose-400/10 border-rose-400/20" },
+    PENDING: { icon: Clock, label: "En attente", color: "text-gold bg-gold/10 border-gold/20" },
+    APPROVED: { icon: CheckCircle, label: "Approuvé", color: "text-success bg-success/10 border-success/20" },
+    REJECTED: { icon: XCircle, label: "Rejeté", color: "text-danger bg-danger/10 border-danger/20" },
 };
 
 function SubmissionItem({ resource }: { resource: { id: number; url: string; status: ResourceStatus; reviewNotes?: string; createdAt: string } }) {
@@ -43,7 +43,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                 </div>
             </div>
             {resource.status === "REJECTED" && resource.reviewNotes && (
-                <div className="mt-2 p-2 bg-rose-500/5 border border-rose-500/10 rounded-lg text-xs text-rose-300">
+                <div className="mt-2 p-2 bg-danger/5 border border-danger/10 rounded-lg text-xs text-danger">
                     <strong>Raison:</strong> {resource.reviewNotes}
                 </div>
             )}
@@ -64,7 +64,7 @@ export function MySubmissionsList() {
 
     if (error) {
         return (
-            <div className="text-center py-8 text-rose-400 text-sm">
+            <div className="text-center py-8 text-danger text-sm">
                 Erreur lors du chargement
             </div>
         );
@@ -86,9 +86,9 @@ export function MySubmissionsList() {
         <div className="space-y-4">
             {/* Stats */}
             <div className="flex gap-4 text-xs">
-                <span className="text-amber-400">{pending.length} en attente</span>
-                <span className="text-emerald-400">{approved.length} approuvé(s)</span>
-                <span className="text-rose-400">{rejected.length} rejeté(s)</span>
+                <span className="text-gold">{pending.length} en attente</span>
+                <span className="text-success">{approved.length} approuvé(s)</span>
+                <span className="text-danger">{rejected.length} rejeté(s)</span>
             </div>
 
             {/* List */}
