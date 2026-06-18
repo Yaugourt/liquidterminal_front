@@ -1,14 +1,12 @@
-import { get, post, put, del, apiClient } from '../../api/axios-config';
+import { get, post, apiClient } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import {
-  Category,
   ProjectsResponse,
   CategoriesResponse,
   ProjectQueryParams,
   CreateProjectInput,
   CreateProjectWithUploadInput,
   CreateCategoryInput,
-  UpdateProjectInput,
   ProjectResponse,
   CategoryResponse,
   ProjectCsvUploadApiResponse,
@@ -91,65 +89,12 @@ export const createProjectWithUpload = async (data: CreateProjectWithUploadInput
 };
 
 /**
- * Met à jour un projet existant
- */
-export const updateProject = async (id: number, data: UpdateProjectInput): Promise<ProjectResponse> => {
-  return withErrorHandling(async () => {
-    return await put<ProjectResponse>(`/project/${id}`, data);
-  }, 'updating project');
-};
-
-/**
- * Supprime un projet
- */
-export const deleteProject = async (id: number): Promise<{ success: boolean; message?: string }> => {
-  return withErrorHandling(async () => {
-    return await del<{ success: boolean; message?: string }>(`/project/${id}`);
-  }, 'deleting project');
-};
-
-/**
  * Crée une nouvelle catégorie
  */
 export const createCategory = async (data: CreateCategoryInput): Promise<CategoryResponse> => {
   return withErrorHandling(async () => {
     return await post<CategoryResponse>('/category', data);
   }, 'creating category');
-};
-
-// ============================================
-// NOUVELLES ROUTES POUR LA GESTION DES CATÉGORIES DE PROJETS
-// ============================================
-
-/**
- * Assigne des catégories à un projet
- */
-export const assignProjectCategories = async (projectId: number, categoryIds: number[]): Promise<ProjectResponse> => {
-  return withErrorHandling(async () => {
-    return await post<ProjectResponse>(`/project/${projectId}/categories`, { categoryIds });
-  }, 'assigning project categories');
-};
-
-/**
- * Retire des catégories d'un projet
- */
-export const removeProjectCategories = async (projectId: number, categoryIds: number[]): Promise<ProjectResponse> => {
-  return withErrorHandling(async () => {
-    // Pour DELETE avec body, utiliser apiClient directement
-    const response = await apiClient.delete<ProjectResponse>(`/project/${projectId}/categories`, {
-      data: { categoryIds }
-    });
-    return response.data;
-  }, 'removing project categories');
-};
-
-/**
- * Récupère les catégories d'un projet
- */
-export const fetchProjectCategories = async (projectId: number): Promise<{ success: boolean; data: Category[] }> => {
-  return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: Category[] }>(`/project/${projectId}/categories`);
-  }, 'fetching project categories');
 };
 
 /**

@@ -1,8 +1,3 @@
-export interface DailyVolumeEntry {
-  date: string;
-  volume: number;
-}
-
 /**
  * Shape returned by all `/indexer/overview/*-24h` snapshot endpoints
  * (`active-traders-24h`, `total-fills-24h`, `total-fees-24h`,

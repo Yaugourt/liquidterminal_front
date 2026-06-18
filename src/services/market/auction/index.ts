@@ -5,4 +5,4 @@ export * from './api';
 export * from './types';
 
 // Hooks
-export { useAuctions, useLatestAuctions,  useAuctionTiming, usePerpAuctionTiming,  } from './hooks';
+export { useAuctions, useAuctionTiming, usePerpAuctionTiming } from './hooks';

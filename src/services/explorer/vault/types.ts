@@ -130,44 +130,6 @@ export interface VaultResponse {
   };
 }
 
-// ==================== VAULT DETAILS CHART ====================
-
-/**
- * Paramètres pour la requête de détails de vault
- */
-export interface VaultDetailsRequest {
-  type: "vaultDetails";
-  vaultAddress: string;
-}
-
-/**
- * Données d'historique pour un timeframe
- */
-interface VaultHistoryData {
-  accountValueHistory: [number, string][];
-  pnlHistory: [number, string][];
-  vlm: string;
-}
-
-/**
- * Données de portfolio par timeframe
- */
-type VaultPortfolioData = [
-  ["day", VaultHistoryData],
-  ["week", VaultHistoryData], 
-  ["month", VaultHistoryData],
-  ["allTime", VaultHistoryData],
-  ["perpDay", VaultHistoryData]
-];
-
-/**
- * Réponse de l'API pour les détails de vault
- */
-export interface VaultDetailsResponse {
-  portfolio: VaultPortfolioData;
-  // Autres propriétés si nécessaires
-}
-
 // ==================== INDEXER VAULT TYPES (HypeDexer) ====================
 
 /** Wrapper returned by all /indexer/* backend routes */

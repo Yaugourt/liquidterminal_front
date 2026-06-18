@@ -104,10 +104,6 @@ export function isHip2Address(address: string): boolean {
     return address === HIP2_ADDRESS;
 }
 
-export function formatHip2Display(address: string): string {
-    return address === HIP2_ADDRESS ? 'HIP2' : address;
-}
-
 export function mergeFillsByHash(fills: UserFill[]): UserFill[] {
     if (!fills || !Array.isArray(fills)) {
         return [];

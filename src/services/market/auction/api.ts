@@ -127,29 +127,6 @@ export const fetchLatestAuctions = async (
 };
 
 /**
- * Récupère les informations d'auction d'un token spécifique par son nom
- */
-export const fetchTokenAuction = async (tokenName: string): Promise<AuctionInfo | null> => {
-  return withErrorHandling(async () => {
-    const allAuctionsResponse = await fetchAllAuctions();
-    
-    if (!allAuctionsResponse.success) {
-      return null;
-    }
-
-    const { usdcAuctions, hypeAuctions } = allAuctionsResponse.data;
-    const allAuctions = [...usdcAuctions, ...hypeAuctions];
-    
-    // Chercher le token par son nom
-    const tokenAuction = allAuctions.find(auction => 
-      auction.name && auction.name.toLowerCase() === tokenName.toLowerCase()
-    );
-    
-    return tokenAuction || null;
-  }, 'fetching token auction info');
-};
-
-/**
  * Récupère les informations d'auction d'un token par son tokenId — clé exacte,
  * contrairement au nom (les bridgés Unit s'affichent "BTC" mais sont "UBTC"
  * dans le registre des auctions).

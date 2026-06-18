@@ -107,22 +107,6 @@ export interface PerpDexGlobalStats {
  */
 export type PerpDexApiResponse = (PerpDexRaw | null)[];
 
-/**
- * Paramètres pour les requêtes
- */
-export interface PerpDexParams {
-  sortBy?: 'name' | 'totalAssets' | 'totalOiCap';
-  sortOrder?: 'asc' | 'desc';
-}
-
-/**
- * Options pour le hook usePerpDexs
- */
-export interface UsePerpDexsOptions {
-  defaultParams?: Partial<PerpDexParams>;
-  refreshInterval?: number;
-}
-
 // ============================================
 // allPerpMetas API Types
 // ============================================

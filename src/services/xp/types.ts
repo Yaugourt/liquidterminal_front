@@ -197,14 +197,3 @@ export interface DailyLimitsResponse {
   };
 }
 
-// Daily limit labels for display
-export const DAILY_LIMIT_LABELS: Record<LimitedActionType, string> = {
-  CREATE_READLIST: 'Create readlist',
-  MARK_RESOURCE_READ: 'Resources read',
-  CREATE_WALLETLIST: 'Create wallet list',
-  ADD_WALLET_TO_LIST: 'Wallets added',
-  COPY_PUBLIC_READLIST: 'Copy readlist',
-  CREATE_EDUCATIONAL_CATEGORY: 'Educational categories',
-  ADD_EDUCATIONAL_RESOURCE: 'Educational resources',
-};
-

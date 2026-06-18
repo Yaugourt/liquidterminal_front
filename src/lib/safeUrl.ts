@@ -43,10 +43,3 @@ export function safeHref(url: string | null | undefined): string | undefined {
     return undefined;
   }
 }
-
-/**
- * Boolean variant for guards (e.g. before `window.open`).
- */
-export function isSafeHref(url: string | null | undefined): boolean {
-  return safeHref(url) !== undefined;
-}

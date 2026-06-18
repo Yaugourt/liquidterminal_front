@@ -204,11 +204,6 @@ export interface CreateWalletListItemInput {
   order?: number;
 }
 
-export interface UpdateWalletListItemInput {
-  notes?: string;
-  order?: number;
-}
-
 export interface WalletListResponse {
   data: WalletList[];
   pagination?: {

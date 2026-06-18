@@ -72,13 +72,6 @@ export interface UseAdminUsersResult {
   };
 }
 
-export interface UseAdminUserResult {
-  user: User | undefined;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-}
-
 export interface UseAdminUpdateUserResult {
   updateUser: (userId: number, data: AdminUpdateUserInput) => Promise<User | null>;
   isLoading: boolean;

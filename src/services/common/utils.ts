@@ -34,33 +34,3 @@ export const getErrorMessage = (err: unknown): string => {
     }
     return "Unknown error";
 };
-
-/**
- * Strip `undefined`/`null`/`""` entries — useful before passing params to `useDataFetching`'s
- * fetchFn and to keep dependency keys stable.
- */
-export const cleanParams = <T extends Record<string, unknown>>(params: T): Partial<T> => {
-    const out: Partial<T> = {};
-    for (const [key, value] of Object.entries(params)) {
-        if (value === undefined || value === null || value === "") continue;
-        (out as Record<string, unknown>)[key] = value;
-    }
-    return out;
-};
-
-/**
- * Deterministic JSON stringify (sorts object keys) — safer dependency key for hooks
- * than raw `JSON.stringify` which depends on insertion order.
- */
-export const stableKey = (value: unknown): string => {
-    return JSON.stringify(value, (_k, v) => {
-        if (v && typeof v === "object" && !Array.isArray(v)) {
-            const sorted: Record<string, unknown> = {};
-            for (const k of Object.keys(v as Record<string, unknown>).sort()) {
-                sorted[k] = (v as Record<string, unknown>)[k];
-            }
-            return sorted;
-        }
-        return v;
-    });
-};

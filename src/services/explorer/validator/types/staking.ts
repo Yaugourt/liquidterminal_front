@@ -11,14 +11,6 @@ export interface StakingValidation {
 }
 
 /**
- * Response de l'API pour les validations de staking
- */
-export interface StakingValidationsResponse {
-  success: boolean;
-  data: StakingValidation[];
-}
-
-/**
  * Validation de staking formatée pour l'affichage
  */
 export interface FormattedStakingValidation {

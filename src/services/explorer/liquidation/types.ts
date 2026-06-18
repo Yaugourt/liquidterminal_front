@@ -96,25 +96,6 @@ export interface LiquidationStats {
 }
 
 /**
- * Réponse de l'API pour /stats/all (toutes les périodes)
- */
-export interface LiquidationStatsAllResponse {
-  success: boolean;
-  stats: {
-    "2h": LiquidationStats | null;
-    "4h": LiquidationStats | null;
-    "8h": LiquidationStats | null;
-    "12h": LiquidationStats | null;
-    "24h": LiquidationStats | null;
-  };
-  errors?: string[];
-  metadata: {
-    executionTimeMs: number;
-    cachedAt: string;
-  };
-}
-
-/**
  * Période disponible pour les données de chart
  */
 export type ChartPeriod = "2h" | "4h" | "8h" | "12h" | "24h";
@@ -131,24 +112,6 @@ export interface ChartDataBucket {
   liquidationsCount: number; // Nombre total de liquidations
   longCount: number;       // Nombre de longs
   shortCount: number;      // Nombre de shorts
-}
-
-/**
- * Réponse de l'API pour /liquidations/chart-data
- */
-export interface LiquidationChartDataResponse {
-  success: boolean;
-  period: ChartPeriod;
-  interval: "5m" | "15m" | "30m";
-  buckets: ChartDataBucket[];
-  metadata: {
-    bucketCount: number;
-    totalLiquidations: number;
-    totalVolume: number;
-    executionTimeMs: number;
-    cachedAt: string;
-    dataSource: "stats-cache" | "historical-fetch";
-  };
 }
 
 /**
@@ -177,30 +140,6 @@ export interface LiquidationsDataResponse {
   metadata: {
     executionTimeMs: number;
     cachedAt: string;
-  };
-}
-
-// ============================================
-// Historical chart (jusqu'à 90 jours)
-// ============================================
-
-/** Bucket renvoyé par `/liquidations/historical/chart`. */
-interface HistoricalChartBucket {
-  timestamp: string;
-  totalVolume_USD: number;
-  longVolume_USD: number;
-  shortVolume_USD: number;
-  count: number;
-  longCount: number;
-  shortCount: number;
-}
-
-export interface LiquidationsHistoricalChartResponse {
-  success: boolean;
-  data: {
-    buckets: HistoricalChartBucket[];
-    period?: string;
-    interval?: string;
   };
 }
 
