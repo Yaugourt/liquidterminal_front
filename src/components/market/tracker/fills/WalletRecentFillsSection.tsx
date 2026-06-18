@@ -61,15 +61,15 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
     const isShort = dir.toLowerCase().includes('short');
     const isLong = dir.toLowerCase().includes('long');
     if (isClose) return <span className="text-gold">{dir}</span>;
-    if (isShort) return <span className="text-rose-400">{dir}</span>;
-    if (isLong) return <span className="text-emerald-400">{dir}</span>;
+    if (isShort) return <span className="text-danger">{dir}</span>;
+    if (isLong) return <span className="text-success">{dir}</span>;
     return <span className="text-text-primary">{dir}</span>;
   };
 
   const formatPnl = (pnl: string) => {
     const pnlValue = parseFloat(pnl);
-    if (pnlValue === 0) return <span className="text-white/50">$0.00</span>;
-    const color = pnlValue > 0 ? 'text-emerald-400' : 'text-rose-400';
+    if (pnlValue === 0) return <span className="text-text-tertiary">$0.00</span>;
+    const color = pnlValue > 0 ? 'text-success' : 'text-danger';
     const sign = pnlValue > 0 ? '+' : '';
     return <span className={color}>{sign}{formatCurrency(Math.abs(pnlValue))}</span>;
   };
@@ -96,7 +96,7 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
             className="group p-1 rounded transition-colors"
           >
             {copiedHash === fill.hash ? (
-              <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+              <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
             ) : (
               <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}

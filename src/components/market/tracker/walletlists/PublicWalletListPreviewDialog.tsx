@@ -136,7 +136,7 @@ export function PublicWalletListPreviewDialog({
             <div className="flex-1 space-y-2">
               <DialogTitle className="text-2xl">{list.name}</DialogTitle>
               <div className="flex items-center gap-3 text-sm">
-                <div className="flex items-center gap-1 text-emerald-400">
+                <div className="flex items-center gap-1 text-success">
                   <Users size={14} />
                   <span>Public</span>
                 </div>
@@ -158,7 +158,7 @@ export function PublicWalletListPreviewDialog({
         {/* Content */}
         <div className="space-y-4">
           {/* Stats */}
-          <div className="flex items-center gap-4 p-3 bg-black/20 border border-border-default rounded-lg">
+          <div className="flex items-center gap-4 p-3 bg-base border border-border-default rounded-lg">
             <div className="flex items-center gap-2">
               <Wallet size={16} className="text-brand" />
               <span className="text-text-primary font-medium">{list.itemsCount || 0}</span>
@@ -184,7 +184,7 @@ export function PublicWalletListPreviewDialog({
                   {fullList.items.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-start gap-3 p-2 bg-zinc-800/30 border border-border-subtle rounded-lg hover:border-brand/50 transition-colors"
+                      className="flex items-start gap-3 p-2 bg-surface-2 border border-border-subtle rounded-lg hover:border-brand/50 transition-colors"
                     >
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-brand/20 text-brand text-xs font-medium shrink-0">
                         {index + 1}
@@ -222,7 +222,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleCopyAddresses}
               disabled={!fullList?.items?.length}
-              className="border-border-default text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-surface-2"
             >
               <ClipboardCopy className="mr-2 h-4 w-4" />
               Copy Addresses
@@ -231,7 +231,7 @@ export function PublicWalletListPreviewDialog({
               variant="outline"
               onClick={handleExportCSV}
               disabled={!fullList?.items?.length}
-              className="border-border-default text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-surface-2"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
@@ -242,7 +242,7 @@ export function PublicWalletListPreviewDialog({
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border-border-default text-text-primary hover:bg-white/5"
+              className="border-border-default text-text-primary hover:bg-surface-2"
             >
               Cancel
             </Button>

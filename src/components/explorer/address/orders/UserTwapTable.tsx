@@ -126,7 +126,7 @@ const ProgressionCellComponent = ({
         </span>
       </div>
       <div className="flex items-center">
-        <div className="w-[120px] bg-white/10 rounded-full h-1.5">
+        <div className="w-[120px] bg-surface-2 rounded-full h-1.5">
           <div
             className={`h-full rounded-full transition-all duration-300 ${getProgressColor(roundedProgression)}`}
             style={{ width: `${roundedProgression}%` }}

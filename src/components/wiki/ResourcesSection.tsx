@@ -187,7 +187,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                   <Button
                     onClick={() => handleShowLess(category.id)}
                     variant="outline"
-                    className="border-border-subtle bg-base/40 text-text-secondary hover:border-border-default hover:bg-white/5 hover:text-text-primary"
+                    className="border-border-subtle bg-base/40 text-text-secondary hover:border-border-default hover:bg-surface-2 hover:text-text-primary"
                   >
                     Show less
                   </Button>

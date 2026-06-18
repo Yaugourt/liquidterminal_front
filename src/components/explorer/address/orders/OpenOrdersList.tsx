@@ -28,8 +28,8 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${
             o.side === "A"
-              ? "bg-emerald-500/10 text-emerald-400"
-              : "bg-rose-500/10 text-rose-400"
+              ? "bg-success/10 text-success"
+              : "bg-danger/10 text-danger"
           }`}
         >
           {o.side === "A" ? "Buy" : "Sell"}

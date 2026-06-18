@@ -74,9 +74,9 @@ function buildColumns(): Column<PriorityFeesFillRow>[] {
       accessor: (row) => {
         const sideLabel = formatFillSideLabel(row.side);
         const sideClass = isFillSideBuy(row.side)
-          ? "text-emerald-400"
+          ? "text-success"
           : isFillSideSell(row.side)
-            ? "text-rose-400"
+            ? "text-danger"
             : "text-text-secondary";
         return <span className={`text-sm ${sideClass}`}>{sideLabel}</span>;
       },
@@ -118,7 +118,7 @@ function RecentFillsSection() {
   return (
     <>
       {error && (
-        <div className="mb-3 rounded-lg border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-wrap items-center gap-3">
+        <div className="mb-3 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-sm text-danger flex flex-wrap items-center gap-3">
           <span>{error.message}</span>
           <button
             type="button"
@@ -152,7 +152,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-surface-2 hover:text-text-primary"
             disabled={!hasPrev || isLoading}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             aria-label="Previous page"
@@ -166,7 +166,7 @@ function RecentFillsSection() {
             type="button"
             variant="outline"
             size="sm"
-            className="border-border-subtle bg-transparent text-text-secondary hover:bg-white/[0.05] hover:text-text-primary"
+            className="border-border-subtle bg-transparent text-text-secondary hover:bg-surface-2 hover:text-text-primary"
             disabled={!hasNext || isLoading}
             onClick={() => setPage((p) => p + 1)}
             aria-label="Next page"

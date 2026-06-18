@@ -65,7 +65,7 @@ export const ProjectCard = memo(function ProjectCard({
               checked={isSelected}
               onCheckedChange={handleSelectionChange}
               disabled={isDeleting}
-              className="bg-base border-white/20 data-[state=checked]:bg-brand data-[state=checked]:border-brand"
+              className="bg-base border-border-default data-[state=checked]:bg-brand data-[state=checked]:border-brand"
             />
           </div>
         </ProtectedAction>
@@ -79,7 +79,7 @@ export const ProjectCard = memo(function ProjectCard({
             size="sm"
             variant="ghost"
             disabled={isDeleting}
-            className="p-1 h-auto text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+            className="p-1 h-auto text-danger hover:text-danger hover:bg-danger/10"
             title="Delete project"
           >
             <Trash2 className="w-3 h-3" />

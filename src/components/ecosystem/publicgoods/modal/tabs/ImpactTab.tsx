@@ -39,7 +39,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           rows={4}
           className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
         />
-        <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
+        <p className={`text-xs mt-1 ${formData.problemSolved.length >= 50 ? 'text-success' : 'text-gold'}`}>
           {formData.problemSolved.length >= 50 
             ? `✓ ${formData.problemSolved.length} characters`
             : `⚠️ Minimum 50 characters required (currently: ${formData.problemSolved.length})`
@@ -76,7 +76,7 @@ export function ImpactTab({ formData, updateField, toggleTargetUser }: ImpactTab
           rows={4}
           className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
         />
-        <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
+        <p className={`text-xs mt-1 ${formData.hlIntegration.length >= 50 ? 'text-success' : 'text-gold'}`}>
           {formData.hlIntegration.length >= 50 
             ? `✓ ${formData.hlIntegration.length} characters`
             : `⚠️ Minimum 50 characters required (currently: ${formData.hlIntegration.length})`

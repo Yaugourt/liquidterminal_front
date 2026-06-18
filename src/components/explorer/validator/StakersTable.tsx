@@ -78,10 +78,10 @@ export const StakersTable = memo(function StakersTable() {
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(holder.address)}
-              className="h-6 w-6 p-0 hover:bg-white/5 text-text-secondary hover:text-gold"
+              className="h-6 w-6 p-0 hover:bg-surface-2 text-text-secondary hover:text-gold"
             >
               {copiedAddress === holder.address ? (
-                <Check className="h-3 w-3 text-emerald-400" />
+                <Check className="h-3 w-3 text-success" />
               ) : (
                 <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}

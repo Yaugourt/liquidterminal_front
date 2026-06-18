@@ -133,7 +133,7 @@ export function ReadListContent({
                   Public
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-label bg-white/5 text-text-tertiary px-2 py-0.5 rounded-md">
+                <span className="flex items-center gap-1 text-label bg-surface-2 text-text-tertiary px-2 py-0.5 rounded-md">
                   <Lock className="w-3 h-3" />
                   Private
                 </span>
@@ -152,7 +152,7 @@ export function ReadListContent({
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
-              <div className="text-emerald-400 font-bold text-lg leading-none">{readItems}</div>
+              <div className="text-success font-bold text-lg leading-none">{readItems}</div>
               <div className="text-text-tertiary text-xs mt-0.5">read</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
@@ -168,14 +168,14 @@ export function ReadListContent({
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs text-text-tertiary">
               <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <CheckCircle2 className="w-3 h-3 text-success" />
                 {Math.round(readProgress)}% complete
               </span>
               <span>{readItems}/{totalItems} read</span>
             </div>
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-emerald-500 to-brand rounded-full"
+                className="h-full bg-gradient-to-r from-success to-brand rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${readProgress}%` }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
@@ -215,7 +215,7 @@ export function ReadListContent({
                 )}
                 <span className="relative z-10">{tab.label}</span>
                 {tab.key === "unread" && unreadItems > 0 && (
-                  <span className={`relative z-10 ml-1.5 text-label px-1.5 py-0.5 rounded-full ${activeTab === tab.key ? "bg-surface/20 text-brand-text-on" : "bg-white/10 text-text-tertiary"}`}>
+                  <span className={`relative z-10 ml-1.5 text-label px-1.5 py-0.5 rounded-full ${activeTab === tab.key ? "bg-surface/20 text-brand-text-on" : "bg-surface-2 text-text-tertiary"}`}>
                     {unreadItems}
                   </span>
                 )}

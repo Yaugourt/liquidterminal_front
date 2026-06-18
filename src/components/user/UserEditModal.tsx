@@ -41,7 +41,7 @@ export function UserEditModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="pb-4 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center">
               <Edit className="w-5 h-5 text-brand" />
             </div>
             <div>
@@ -94,7 +94,7 @@ export function UserEditModal({
           </div>
 
           {/* Verified Toggle */}
-          <div className="flex items-center justify-between p-3 bg-base rounded-xl border border-border-subtle">
+          <div className="flex items-center justify-between p-3 bg-base rounded-lg border border-border-subtle">
             <div>
               <Label htmlFor="verified" className="text-text-primary text-sm font-medium">Verified</Label>
               <p className="text-text-tertiary text-xs mt-0.5">User has verified their account</p>
@@ -103,7 +103,7 @@ export function UserEditModal({
               id="verified"
               checked={editForm.verified || false}
               onCheckedChange={(checked) => onFormChange({ ...editForm, verified: checked })}
-              className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-zinc-700"
+              className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-2"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export function UserEditModal({
           <Button
             variant="ghost"
             onClick={onCancel}
-            className="border border-border-default text-text-secondary hover:text-text-primary hover:bg-white/5 text-sm h-9"
+            className="border border-border-default text-text-secondary hover:text-text-primary hover:bg-surface-2 text-sm h-9"
           >
             Cancel
           </Button>

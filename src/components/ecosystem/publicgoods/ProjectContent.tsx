@@ -110,10 +110,10 @@ export function ProjectContent({ project }: ProjectContentProps) {
                                 <div className="flex flex-wrap gap-2">
                                     {project.supportTypes.map((type: string) => (
                                         <div key={type} className="flex items-center gap-2 bg-base border border-border-subtle px-3 py-1.5 rounded-lg">
-                                            {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-amber-400" />}
+                                            {type === 'FUNDING' && <DollarSign className="w-4 h-4 text-gold" />}
                                             {type === 'PROMOTION' && <Globe className="w-4 h-4 text-brand" />}
-                                            {type === 'SERVICES' && <Code2 className="w-4 h-4 text-purple-400" />}
-                                            {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-emerald-400" />}
+                                            {type === 'SERVICES' && <Code2 className="w-4 h-4 text-brand" />}
+                                            {type === 'CONTRIBUTOR' && <Users className="w-4 h-4 text-success" />}
                                             <span className="text-text-primary text-xs capitalize">{type.toLowerCase()}</span>
                                         </div>
                                     ))}
@@ -127,7 +127,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                                 <div className="flex flex-wrap gap-2">
                                     {project.contributorTypes.map((type: string) => (
                                         <div key={type} className="flex items-center gap-2 bg-base border border-border-subtle px-3 py-1.5 rounded-lg">
-                                            <Users className="w-4 h-4 text-emerald-400" />
+                                            <Users className="w-4 h-4 text-success" />
                                             <span className="text-text-primary text-xs capitalize">{type.toLowerCase().replace(/_/g, ' ')}</span>
                                         </div>
                                     ))}
@@ -139,7 +139,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
                             <div>
                                 <h3 className="text-label text-brand mb-2">Budget Range</h3>
                                 <div className="flex items-center gap-2">
-                                    <DollarSign className="w-4 h-4 text-amber-400" />
+                                    <DollarSign className="w-4 h-4 text-gold" />
                                     <span className="text-text-primary text-sm">{project.budgetRange.replace(/_/g, ' ')}</span>
                                 </div>
                             </div>

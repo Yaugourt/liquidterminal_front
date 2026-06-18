@@ -38,7 +38,7 @@ export function BlockTransactionList({
       key: "action",
       header: "Action",
       accessor: (tx) => (
-        <span className="inline-block px-2 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400">
+        <span className="inline-block px-2 py-1 rounded-md text-xs font-bold bg-surface-2 text-text-secondary">
           {tx.action.type}
         </span>
       ),

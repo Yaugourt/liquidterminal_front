@@ -68,7 +68,7 @@ export default function BuildersIntelligencePage() {
                 className={
                   tf === t
                     ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
-                    : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
+                    : "border border-border-subtle text-text-secondary hover:bg-surface-2 hover:text-text-primary bg-transparent"
                 }
               >
                 {t}

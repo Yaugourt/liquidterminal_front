@@ -59,8 +59,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             <span className={cn(
               "px-2 py-0.5 rounded-md text-xs font-medium",
               token.type === 'spot'
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-rose-500/10 text-rose-400"
+                ? "bg-success/10 text-success"
+                : "bg-danger/10 text-danger"
             )}>
               {token.type === 'spot' ? 'Spot' : 'Perp'}
             </span>
@@ -76,8 +76,8 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             </span>
             <span className={cn(
               "text-text-primary text-sm transition-colors",
-              lastSide === "A" ? "text-red-400" :
-                lastSide === "B" ? "text-green-400" :
+              lastSide === "A" ? "text-danger" :
+                lastSide === "B" ? "text-success" :
                   "text-text-primary"
             )}>
               {formatPriceValue(livePrice || token.mark || token.price || 0)}
@@ -99,7 +99,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             <span className="text-stat-label">24h Change</span>
             <span className={cn(
               "text-sm font-medium px-2 py-0.5 rounded-md w-fit",
-              token.change24h >= 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
+              token.change24h >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
             )}>
               {formatPercentage(token.change24h)}
             </span>
@@ -159,7 +159,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
                 {token.fundingRate && (
                   <span className={cn(
                     "text-sm font-medium",
-                    token.fundingRate >= 0 ? "text-emerald-400" : "text-rose-400"
+                    token.fundingRate >= 0 ? "text-success" : "text-danger"
                   )}>
                     {formatPercentage(token.fundingRate)}
                   </span>

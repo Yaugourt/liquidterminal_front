@@ -117,7 +117,7 @@ export function WalletListSelector({
             {/* All Wallets */}
             <SelectItem
               value="all-wallets"
-              className="focus:bg-white/5 focus:text-text-primary cursor-pointer rounded-lg"
+              className="focus:bg-surface-2 focus:text-text-primary cursor-pointer rounded-lg"
             >
               <div className="flex items-center gap-2">
                 <List className="w-4 h-4 text-brand" />
@@ -126,7 +126,7 @@ export function WalletListSelector({
             </SelectItem>
 
             {/* Separator */}
-            {filteredLists.length > 0 && <SelectSeparator className="bg-white/5" />}
+            {filteredLists.length > 0 && <SelectSeparator className="bg-border-subtle" />}
 
             {/* User lists */}
             {filteredLists.length > 0 ? (
@@ -134,7 +134,7 @@ export function WalletListSelector({
                 <SelectItem
                   key={list.id}
                   value={list.id.toString()}
-                  className="focus:bg-white/5 focus:text-text-primary cursor-pointer rounded-lg"
+                  className="focus:bg-surface-2 focus:text-text-primary cursor-pointer rounded-lg"
                 >
                   <div className="flex flex-col gap-1 w-full py-1">
                     <div className="flex items-center justify-between gap-3">
@@ -176,7 +176,7 @@ export function WalletListSelector({
                   variant="ghost"
                   size="icon"
                   onClick={handleDeleteClick}
-                  className="h-9 w-9 shrink-0 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                  className="h-9 w-9 shrink-0 text-danger hover:text-danger hover:bg-danger/10"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -199,7 +199,7 @@ export function WalletListSelector({
           onClick={() => router.push("/market/tracker/public-lists")}
           variant="outline"
           size="sm"
-          className="flex-1 sm:flex-none border-border-subtle text-text-primary hover:text-text-primary hover:bg-white/5 rounded-lg"
+          className="flex-1 sm:flex-none border-border-subtle text-text-primary hover:text-text-primary hover:bg-surface-2 rounded-lg"
         >
           <Globe className="mr-2 h-4 w-4" />
           <span className="hidden sm:inline">Browse Public</span>

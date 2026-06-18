@@ -82,8 +82,8 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-md bg-emerald-500/20 flex items-center justify-center">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <div className="h-6 w-6 rounded-md bg-success/20 flex items-center justify-center">
+              <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             </div>
             <span className="text-sm font-semibold text-text-primary">Daily Tasks</span>
           </div>
@@ -100,7 +100,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
               <>
                 {/* Status icon */}
                 {task.completed ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                 ) : (
                   <Circle className="h-4 w-4 text-text-tertiary group-hover:text-brand shrink-0 transition-colors" />
                 )}
@@ -110,7 +110,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                   <p className={cn(
                     "text-xs",
                     task.completed
-                      ? "text-emerald-300"
+                      ? "text-success"
                       : "text-text-secondary group-hover:text-text-primary transition-colors"
                   )}>
                     {task.description}
@@ -121,7 +121,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className={cn(
                     "text-[10px] font-medium",
-                    task.completed ? "text-emerald-400" : "text-text-tertiary group-hover:text-brand transition-colors"
+                    task.completed ? "text-success" : "text-text-tertiary group-hover:text-brand transition-colors"
                   )}>
                     +{task.xp}
                   </span>
@@ -138,7 +138,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                   key={task.type}
                   className={cn(
                     "flex items-center gap-2.5 p-2 rounded-lg transition-colors",
-                    "bg-emerald-500/10 cursor-default"
+                    "bg-success/10 cursor-default"
                   )}
                 >
                   {taskContent}
@@ -185,9 +185,9 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span className="text-xs text-emerald-300 font-medium">
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-success/10 border border-success/20">
+              <CheckCircle2 className="h-4 w-4 text-success" />
+              <span className="text-xs text-success font-medium">
                 Bonus claimed! +{dailyBonusXp} XP
               </span>
             </div>

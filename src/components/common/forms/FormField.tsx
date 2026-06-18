@@ -47,7 +47,7 @@ export function FormField({
       </label>
       {children}
       {error ? (
-        <p className="text-xs text-rose-400">{error}</p>
+        <p className="text-xs text-danger">{error}</p>
       ) : helper ? (
         <p className="text-xs text-text-tertiary">{helper}</p>
       ) : null}

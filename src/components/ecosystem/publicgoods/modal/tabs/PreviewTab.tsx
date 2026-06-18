@@ -115,8 +115,8 @@ export function PreviewTab({ formData }: PreviewTabProps) {
         </div>
       </div>
       
-      <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-lg">
-        <p className="text-sm text-yellow-400">
+      <div className="bg-gold/10 border border-gold/30 p-4 rounded-lg">
+        <p className="text-sm text-gold">
           ⚠️ Once submitted, your project will be reviewed by our team. 
           You&apos;ll be able to edit it later if needed.
         </p>

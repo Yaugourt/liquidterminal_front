@@ -201,7 +201,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                     "flex shrink-0 snap-start items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all whitespace-nowrap",
                     isActive
                       ? "border-brand/40 bg-brand/15 text-brand shadow-sm shadow-brand/10"
-                      : "border-transparent text-text-secondary hover:bg-white/5 hover:text-text-primary",
+                      : "border-transparent text-text-secondary hover:bg-surface-2 hover:text-text-primary",
                   )}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -273,7 +273,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                               "flex shrink-0 snap-start items-start gap-2 rounded-lg border px-2.5 py-2 text-left transition-all lg:w-full",
                               isActive
                                 ? "border-brand/40 bg-brand/15 shadow-sm shadow-brand/10"
-                                : "border-transparent hover:border-border-subtle hover:bg-white/5",
+                                : "border-transparent hover:border-border-subtle hover:bg-surface-2",
                             )}
                           >
                             <span
@@ -450,7 +450,7 @@ export function EducationContent({ chapters, info }: EducationContentProps) {
                         )}
                       >
                         {copiedColor === hex ? (
-                          <Check className="h-3 w-3 text-emerald-300" />
+                          <Check className="h-3 w-3 text-success" />
                         ) : (
                           <Copy className="h-3 w-3 text-text-primary" />
                         )}

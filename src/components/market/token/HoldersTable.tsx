@@ -85,10 +85,10 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
             )}
             <button
               onClick={() => copyToClipboard(holder.address)}
-              className="group p-1 rounded transition-colors hover:bg-white/5"
+              className="group p-1 rounded transition-colors hover:bg-surface-2"
             >
               {copiedAddress === holder.address ? (
-                <Check className="h-3.5 w-3.5 text-emerald-400 transition-all duration-200" />
+                <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
               ) : (
                 <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}

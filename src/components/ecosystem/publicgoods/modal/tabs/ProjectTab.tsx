@@ -68,7 +68,7 @@ export function ProjectTab({
           rows={4}
           className="bg-base border-border-subtle text-text-primary rounded-lg placeholder:text-text-tertiary focus:border-brand/50 mt-1"
         />
-        <p className={`text-xs mt-1 ${formData.description.length >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
+        <p className={`text-xs mt-1 ${formData.description.length >= 100 ? 'text-success' : 'text-gold'}`}>
           {formData.description.length >= 100 
             ? `✓ ${formData.description.length} characters`
             : `⚠️ Minimum 100 characters required (currently: ${formData.description.length})`
@@ -171,11 +171,11 @@ export function ProjectTab({
             />
           </label>
           {logoPreview && (
-            <div className="relative w-20 h-20 mt-2 border border-border-default rounded-xl overflow-hidden">
+            <div className="relative w-20 h-20 mt-2 border border-border-default rounded-lg overflow-hidden">
               <Image src={logoPreview} alt="Logo preview" fill className="object-cover" />
               <button
                 onClick={removeLogo}
-                className="absolute top-1 right-1 p-1 bg-rose-500 rounded-full hover:bg-rose-600"
+                className="absolute top-1 right-1 p-1 bg-danger rounded-full hover:bg-danger/90"
               >
                 <X className="h-3 w-3 text-white" />
               </button>
@@ -199,11 +199,11 @@ export function ProjectTab({
             />
           </label>
           {bannerPreview && (
-            <div className="relative w-full h-32 mt-2 border border-border-default rounded-xl overflow-hidden">
+            <div className="relative w-full h-32 mt-2 border border-border-default rounded-lg overflow-hidden">
               <Image src={bannerPreview} alt="Banner preview" fill className="object-cover" />
               <button
                 onClick={removeBanner}
-                className="absolute top-2 right-2 p-1 bg-rose-500 rounded-full hover:bg-rose-600"
+                className="absolute top-2 right-2 p-1 bg-danger rounded-full hover:bg-danger/90"
               >
                 <X className="h-3 w-3 text-white" />
               </button>
@@ -230,11 +230,11 @@ export function ProjectTab({
           {screenshotPreviews.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-2">
               {screenshotPreviews.map((preview, index) => (
-                <div key={index} className="relative h-24 border border-border-default rounded-xl overflow-hidden">
+                <div key={index} className="relative h-24 border border-border-default rounded-lg overflow-hidden">
                   <Image src={preview} alt={`Screenshot ${index + 1}`} fill className="object-cover" />
                   <button
                     onClick={() => removeScreenshot(index)}
-                    className="absolute top-1 right-1 p-1 bg-rose-500 rounded-full hover:bg-rose-600"
+                    className="absolute top-1 right-1 p-1 bg-danger rounded-full hover:bg-danger/90"
                   >
                     <X className="h-3 w-3 text-white" />
                   </button>

@@ -97,7 +97,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   </span>
                 ) : null}
                 {isTracked && (
-                  <span className="flex items-center gap-1 rounded-md border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+                  <span className="flex items-center gap-1 rounded-md border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
                     <Check size={10} />
                     Tracked
                   </span>
@@ -118,13 +118,13 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                       <button
                         type="button"
                         onClick={handleCopy}
-                        className="group rounded-lg p-1.5 transition-all hover:bg-white/5"
+                        className="group rounded-lg p-1.5 transition-all hover:bg-surface-2"
                         aria-label="Copy address"
                       >
                         {copied ? (
                           <Check
                             size={15}
-                            className="text-emerald-400"
+                            className="text-success"
                           />
                         ) : (
                           <Copy
@@ -144,7 +144,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   href={explorerHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group rounded-lg p-1.5 transition-all hover:bg-white/5"
+                  className="group rounded-lg p-1.5 transition-all hover:bg-surface-2"
                   aria-label="Open in explorer"
                 >
                   <ExternalLink

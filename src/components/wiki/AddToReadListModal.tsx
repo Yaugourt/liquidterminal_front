@@ -102,7 +102,7 @@ export function AddToReadListModal({
                 exit={{ opacity: 0, y: -8 }}
                 className="text-center py-8"
               >
-                <div className="w-10 h-10 mx-auto mb-3 bg-brand/10 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 mx-auto mb-3 bg-brand/10 rounded-lg flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-brand" />
                 </div>
                 <p className="text-sm text-text-tertiary">No read lists yet</p>
@@ -131,7 +131,7 @@ export function AddToReadListModal({
                       onAddToList(readList.id);
                     }}
                     disabled={isAdding}
-                    className="w-full text-left px-3.5 py-2.5 text-sm text-text-primary hover:bg-white/5 rounded-xl flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand/30 group/item"
+                    className="w-full text-left px-3.5 py-2.5 text-sm text-text-primary hover:bg-surface-2 rounded-lg flex items-center gap-3 disabled:opacity-50 transition-all border border-border-subtle hover:border-brand/30 group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0 group-hover/item:bg-brand/20 transition-colors">
                       {addingToListId === readList.id ? (

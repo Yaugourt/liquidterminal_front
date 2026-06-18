@@ -135,7 +135,7 @@ export function WalletListContent({ listId, listName, onAddWallet, onBulkDelete,
   if (error) {
     return (
       <div className="text-center py-4">
-        <p className="text-red-400 text-sm mb-2">{error}</p>
+        <p className="text-danger text-sm mb-2">{error}</p>
         <Button onClick={() => setActiveList(listId)} variant="outline" size="sm">
           Retry
         </Button>

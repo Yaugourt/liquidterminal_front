@@ -104,7 +104,7 @@ export function AddressAnalyticsLayout({
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Card className="max-w-md p-8 text-center">
-          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-rose-400" />
+          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-danger" />
           <h2 className="mb-2 text-xl font-semibold text-text-primary">
             Invalid Address
           </h2>
@@ -180,7 +180,7 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
       void _exhaustive;
       const label = ADDRESS_TAB_REGISTRY[tabId as AddressTabId]?.label ?? tabId;
       return (
-        <div className="flex h-[400px] items-center justify-center rounded-2xl border border-border-subtle bg-surface/60">
+        <div className="flex h-[400px] items-center justify-center rounded-lg border border-border-subtle bg-surface/60">
           <p className="text-brand">Coming soon: {label}</p>
         </div>
       );

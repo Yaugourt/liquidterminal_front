@@ -127,7 +127,7 @@ export function CategoryFilter({
           <button
             type="button"
             onClick={handleSelectAll}
-            className="flex w-full items-center justify-between gap-2 border-b border-border-subtle px-4 py-3 text-left text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+            className="flex w-full items-center justify-between gap-2 border-b border-border-subtle px-4 py-3 text-left text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
           >
             <span className="text-xs font-semibold uppercase tracking-wider">
               {allSelected ? "Deselect all" : "Select all"}
@@ -136,7 +136,7 @@ export function CategoryFilter({
               className={cn(
                 "flex h-4 w-4 items-center justify-center rounded border transition-colors",
                 allSelected
-                  ? "border-white/80 bg-white/90"
+                  ? "border-brand bg-brand"
                   : "border-border-default",
               )}
             >
@@ -155,8 +155,8 @@ export function CategoryFilter({
                   onClick={() => handleToggleCategory(category.id)}
                   className={cn(
                     "group flex w-full items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-left transition-colors",
-                    "hover:border-border-subtle hover:bg-white/5",
-                    isActive && "bg-white/[0.03]",
+                    "hover:border-border-subtle hover:bg-surface-2",
+                    isActive && "bg-surface-2",
                   )}
                 >
                   <span className="truncate text-sm font-medium text-text-secondary transition-colors group-hover:text-text-primary">
@@ -166,8 +166,8 @@ export function CategoryFilter({
                     className={cn(
                       "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
                       isActive
-                        ? "border-white/80 bg-white/90"
-                        : "border-border-default group-hover:border-white/40",
+                        ? "border-brand bg-brand"
+                        : "border-border-default group-hover:border-border-default",
                     )}
                   >
                     {isActive && (

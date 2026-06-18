@@ -53,7 +53,7 @@ export const HoldersDistributionChart = memo(function HoldersDistributionChart({
     if (active && payload && payload.length && hoveredIndex !== null) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
+        <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[180px]">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {`Range: ${label} HYPE`}
           </div>

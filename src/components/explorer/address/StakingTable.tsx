@@ -149,7 +149,7 @@ export function StakingTable({ address }: StakingTableProps) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6">
           <div className="flex items-baseline gap-2">
             <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
-            <span className="text-emerald-400 text-sm font-semibold font-inter whitespace-nowrap">
+            <span className="text-success text-sm font-semibold font-inter whitespace-nowrap">
               {formatNumber(stakingBalance, format, { maximumFractionDigits: 2 })} HYPE
               {hypePrice && (
                 <span className="text-text-primary text-xs font-normal ml-1">

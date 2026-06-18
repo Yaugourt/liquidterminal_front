@@ -22,8 +22,8 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-4 border border-red-500/20 rounded-lg bg-red-500/5">
-        <div className="flex items-center gap-2 text-red-400 mb-2">
+      <div className="flex flex-col items-center justify-center h-full p-4 border border-danger/20 rounded-lg bg-danger/5">
+        <div className="flex items-center gap-2 text-danger mb-2">
           <AlertCircle size={18} />
           <span className="text-sm font-medium">Failed to load data</span>
         </div>
@@ -36,14 +36,14 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
       {/* Header */}
       <div className="flex items-center justify-between mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${auctionState.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+          <div className={`p-2 rounded-lg ${auctionState.isActive ? 'bg-success/10 text-success' : 'bg-gold/10 text-gold'}`}>
             <Gavel size={16} />
           </div>
           <div>
             <h3 className="text-xs font-medium text-text-primary tracking-tight">Auction Status</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <div className={`w-1.5 h-1.5 rounded-full ${auctionState.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-              <span className={`text-label ${auctionState.isActive ? 'text-emerald-400' : 'text-amber-400'}`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${auctionState.isActive ? 'bg-success animate-pulse' : 'bg-gold'}`} />
+              <span className={`text-label ${auctionState.isActive ? 'text-success' : 'text-gold'}`}>
                 {auctionState.isActive ? "LIVE NOW" : "UPCOMING"}
               </span>
             </div>
@@ -107,12 +107,12 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 <span>{auctionState.progressPercentage.toFixed(0)}% Complete</span>
                 <span>End</span>
               </div>
-              <div className="h-2 bg-white/10 rounded-full overflow-hidden border border-border-default">
+              <div className="h-2 bg-surface-2 rounded-full overflow-hidden border border-border-default">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ease-out ${
-                    auctionState.progressPercentage < 30 ? 'bg-gradient-to-r from-red-500 to-red-400' :
-                    auctionState.progressPercentage < 70 ? 'bg-gradient-to-r from-amber-500 to-yellow-400' :
-                    'bg-gradient-to-r from-emerald-500 to-green-400'
+                    auctionState.progressPercentage < 30 ? 'bg-danger' :
+                    auctionState.progressPercentage < 70 ? 'bg-gold' :
+                    'bg-success'
                   }`}
                   style={{ width: `${auctionState.progressPercentage}%` }}
                 />

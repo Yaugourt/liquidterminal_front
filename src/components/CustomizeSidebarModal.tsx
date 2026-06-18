@@ -69,7 +69,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-black/20 border border-border-default focus:border-brand/50 outline-none transition-colors rounded-lg p-3 space-y-2"
+      className="bg-base border border-border-default focus:border-brand/50 outline-none transition-colors rounded-lg p-3 space-y-2"
     >
       {/* Group header */}
       <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
           <Switch
             checked={group.visible}
             onCheckedChange={() => onToggleGroup(group.id)}
-            className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-slate-500"
+            className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-2"
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
                 <Switch
                   checked={item.visible}
                   onCheckedChange={() => onToggleItem(group.id, item.id)}
-                  className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-slate-500 scale-75"
+                  className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-2 scale-75"
                 />
               </div>
             );
@@ -211,7 +211,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
             <Button
               variant="outline"
               onClick={handleReset}
-              className="border-border-default text-text-primary hover:bg-white/10 gap-2"
+              className="border-border-default text-text-primary hover:bg-surface-2 gap-2"
             >
               <RotateCcw className="w-4 h-4" />
               Reset to Default

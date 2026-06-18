@@ -60,13 +60,13 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   // Render error state
   if (error) {
     return (
-      <Card className={cn("p-5 border-rose-500/20", className)}>
+      <Card className={cn("p-5 border-danger/20", className)}>
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
-            <AlertCircle className="h-5 w-5 text-rose-400" />
+          <div className="h-10 w-10 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
+            <AlertCircle className="h-5 w-5 text-danger" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-rose-400 mb-1">
+            <h3 className="text-sm font-bold text-danger mb-1">
               Telegram Link Error
             </h3>
             <p className="text-xs text-text-secondary mb-3">
@@ -76,7 +76,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
               variant="outline"
               size="sm"
               onClick={clearError}
-              className="border-rose-500/30 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+              className="border-danger/30 text-danger hover:bg-danger/10 hover:text-danger"
             >
               Try Again
             </Button>
@@ -105,7 +105,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             <Clock className="h-3.5 w-3.5 text-gold" />
             <span className={cn(
               "text-xs font-medium",
-              remainingSeconds < 60 ? "text-rose-400" : "text-gold"
+              remainingSeconds < 60 ? "text-danger" : "text-gold"
             )}>
               {formattedCountdown}
             </span>
@@ -158,18 +158,18 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   // Render linked state
   if (state === 'linked' && telegramUsername) {
     return (
-      <Card className={cn("p-5 border-emerald-500/20", className)}>
+      <Card className={cn("p-5 border-success/20", className)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-              <TelegramIcon className="h-5 w-5 text-emerald-400" />
+            <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center">
+              <TelegramIcon className="h-5 w-5 text-success" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-text-primary">Telegram Linked</h3>
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <CheckCircle2 className="h-4 w-4 text-success" />
               </div>
-              <p className="text-xs text-emerald-400">
+              <p className="text-xs text-success">
                 @{telegramUsername}
               </p>
             </div>
@@ -180,7 +180,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             size="sm"
             onClick={unlinkTelegram}
             disabled={isUnlinking}
-            className="text-text-tertiary hover:text-rose-400 hover:bg-rose-500/10"
+            className="text-text-tertiary hover:text-danger hover:bg-danger/10"
           >
             {isUnlinking ? (
               <InlineSpinner />

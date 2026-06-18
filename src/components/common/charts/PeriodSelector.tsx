@@ -8,7 +8,7 @@ interface PeriodSelectorProps<T extends string> {
   onChange: (value: T) => void;
   options: readonly T[];
   labels?: Partial<Record<T, string>>;
-  variant?: "accent" | "rose" | "aurora";
+  variant?: "accent" | "aurora";
   size?: "sm" | "md";
   className?: string;
 }
@@ -64,11 +64,8 @@ function PeriodSelectorInner<T extends string>({
     );
   }
 
-  // ── Legacy variants (accent / rose) — unchanged ───────────────────────
-  const activeClass =
-    variant === "rose"
-      ? "bg-rose-500/20 text-rose-400 font-bold"
-      : "bg-brand text-brand-text-on shadow-sm font-bold";
+  // ── Legacy variant (accent) ───────────────────────────────────────────
+  const activeClass = "bg-brand text-brand-text-on shadow-sm font-bold";
 
   const pad = size === "md" ? "px-3 py-1.5" : "px-2 py-1";
 

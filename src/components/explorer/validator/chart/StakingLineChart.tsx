@@ -49,7 +49,7 @@ export const StakingLineChart = memo(function StakingLineChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+        <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {formatDate(date, dateFormat)}
           </div>

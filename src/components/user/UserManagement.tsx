@@ -214,8 +214,8 @@ export function UserManagement() {
               valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
-              icon={<Shield size={16} className="text-rose-400" />}
-              iconClassName="bg-rose-500/10"
+              icon={<Shield size={16} className="text-danger" />}
+              iconClassName="bg-danger/10"
               title="Admins"
               value={stats.admins}
               valueClassName="text-xl text-text-primary font-bold tracking-tight"
@@ -228,8 +228,8 @@ export function UserManagement() {
               valueClassName="text-xl text-text-primary font-bold tracking-tight"
             />
             <StatsCard
-              icon={<UserCheck size={16} className="text-emerald-400" />}
-              iconClassName="bg-emerald-500/10"
+              icon={<UserCheck size={16} className="text-success" />}
+              iconClassName="bg-success/10"
               title="Verified"
               value={stats.verified}
               valueClassName="text-xl text-text-primary font-bold tracking-tight"

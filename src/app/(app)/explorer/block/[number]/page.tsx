@@ -40,8 +40,8 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
         return (
             <div className="flex justify-center items-center h-[400px]">
                 <div className="flex flex-col items-center gap-4">
-                    <AlertCircle className="h-8 w-8 text-red-500" />
-                    <p className="text-red-500 text-lg">{error?.message || 'Failed to load block details'}</p>
+                    <AlertCircle className="h-8 w-8 text-danger" />
+                    <p className="text-danger text-lg">{error?.message || 'Failed to load block details'}</p>
                 </div>
             </div>
         );

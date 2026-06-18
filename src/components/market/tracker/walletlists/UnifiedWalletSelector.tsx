@@ -172,7 +172,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                     checked={selectedWalletIds.has(item.id)}
                                                     onCheckedChange={() => toggleWalletSelection(item.id)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="border-white/20 data-[state=checked]:bg-brand data-[state=checked]:border-brand"
+                                                    className="border-border-subtle data-[state=checked]:bg-brand data-[state=checked]:border-brand"
                                                 />
 
                                                 {/* Wallet Item */}
@@ -212,9 +212,9 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                                                                     e.stopPropagation();
                                                                     onDeleteWallet(item.id, item.name);
                                                                 }}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-danger/10 transition-colors opacity-0 group-hover:opacity-100 z-10"
                                                             >
-                                                                <Trash2 className="h-3.5 w-3.5 text-rose-400" />
+                                                                <Trash2 className="h-3.5 w-3.5 text-danger" />
                                                             </button>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
@@ -253,7 +253,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             onClick={handleBulkDeleteClick}
                             size="sm"
                             variant="destructive"
-                            className="w-full sm:w-auto bg-rose-500 hover:bg-rose-600 rounded-lg"
+                            className="w-full sm:w-auto bg-danger hover:bg-danger/90 rounded-lg"
                         >
                             <Trash2 className="mr-2 h-4 w-4" />
                             <span className="hidden sm:inline">Delete Selected ({selectedWalletIds.size})</span>
@@ -267,7 +267,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             onClick={onExportCSV}
                             size="sm"
                             variant="outline"
-                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-white/5 rounded-lg"
+                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-surface-2 rounded-lg"
                         >
                             <Download className="mr-2 h-4 w-4" />
                             <span className="hidden sm:inline">Export CSV</span>
@@ -281,7 +281,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                             onClick={onImportCSV}
                             size="sm"
                             variant="outline"
-                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-white/5 rounded-lg"
+                            className="w-full sm:w-auto border-border-subtle text-text-primary hover:text-text-primary hover:bg-surface-2 rounded-lg"
                         >
                             <FileUp className="mr-2 h-4 w-4" />
                             <span className="hidden sm:inline">Import CSV</span>
@@ -313,12 +313,12 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="border-border-subtle text-text-primary hover:bg-white/5 rounded-lg">
+                        <AlertDialogCancel className="border-border-subtle text-text-primary hover:bg-surface-2 rounded-lg">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleConfirmBulkDelete}
-                            className="bg-rose-500 hover:bg-rose-600 text-white rounded-lg"
+                            className="bg-danger hover:bg-danger/90 text-white rounded-lg"
                         >
                             Delete {selectedWalletIds.size} Wallet{selectedWalletIds.size !== 1 ? "s" : ""}
                         </AlertDialogAction>

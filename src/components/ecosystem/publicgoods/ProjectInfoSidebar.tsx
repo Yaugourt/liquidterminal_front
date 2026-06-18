@@ -33,7 +33,7 @@ export function ProjectInfoSidebar({
                 <div className="space-y-3">
                     {project.discordContact && (
                         <div className="flex items-center gap-2">
-                            <MessageCircle className="w-4 h-4 text-indigo-500" />
+                            <MessageCircle className="w-4 h-4 text-brand" />
                             <span className="text-text-secondary text-sm">{project.discordContact}</span>
                         </div>
                     )}
@@ -105,7 +105,7 @@ export function ProjectInfoSidebar({
                             <Button
                                 onClick={onDelete}
                                 variant="outline"
-                                className="w-full border-rose-500/20 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg"
+                                className="w-full border-danger/20 text-danger hover:bg-danger/10 hover:text-danger rounded-lg"
                             >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Delete Project

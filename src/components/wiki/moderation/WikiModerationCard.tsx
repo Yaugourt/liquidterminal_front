@@ -71,7 +71,7 @@ function PendingResourceItem({
                         size="sm"
                         onClick={() => onApprove(resource.id)}
                         disabled={isApproving || isRejecting}
-                        className="bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20"
+                        className="bg-success/10 text-success hover:bg-success/20 border border-success/20"
                     >
                         {isApproving ? <InlineSpinner className="w-3 h-3" /> : <CheckCircle className="w-3 h-3 mr-1" />}
                         Approuver
@@ -81,7 +81,7 @@ function PendingResourceItem({
                         variant="ghost"
                         onClick={() => setShowRejectForm(true)}
                         disabled={isApproving || isRejecting}
-                        className="text-rose-400 hover:bg-rose-500/10"
+                        className="text-danger hover:bg-danger/10"
                     >
                         <XCircle className="w-3 h-3 mr-1" />
                         Rejeter
@@ -100,7 +100,7 @@ function PendingResourceItem({
                             size="sm"
                             onClick={handleReject}
                             disabled={isRejecting}
-                            className="bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20"
+                            className="bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20"
                         >
                             {isRejecting ? <InlineSpinner className="w-3 h-3" /> : "Confirmer le rejet"}
                         </Button>
@@ -150,8 +150,8 @@ export function WikiModerationCard() {
             {/* Header */}
             <CardHeader density="compact" className="border-b border-border-subtle flex-row items-center justify-between space-y-0">
                 <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-amber-500/10 rounded-lg">
-                        <Shield className="w-4 h-4 text-amber-400" />
+                    <div className="p-1.5 bg-gold/10 rounded-lg">
+                        <Shield className="w-4 h-4 text-gold" />
                     </div>
                     <div>
                         <h3 className="text-text-primary font-semibold text-sm">Wiki Moderation</h3>
@@ -160,7 +160,7 @@ export function WikiModerationCard() {
                 </div>
                 <div className="flex items-center gap-2">
                     {count > 0 && (
-                        <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-xs rounded-md border border-amber-500/20 flex items-center gap-1">
+                        <span className="px-2 py-0.5 bg-gold/10 text-gold text-xs rounded-md border border-gold/20 flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {count}
                         </span>
@@ -185,7 +185,7 @@ export function WikiModerationCard() {
                     </div>
                 ) : resources.length === 0 ? (
                     <div className="text-center py-8 text-text-tertiary text-sm">
-                        <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-400/50" />
+                        <CheckCircle className="w-8 h-8 mx-auto mb-2 text-success/50" />
                         No pending resources
                     </div>
                 ) : (

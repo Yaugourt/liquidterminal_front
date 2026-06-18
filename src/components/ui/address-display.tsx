@@ -64,7 +64,7 @@ export function AddressDisplay({
                     aria-label="Copy address"
                 >
                     {copied ? (
-                        <Check className="h-3 w-3 text-emerald-400" />
+                        <Check className="h-3 w-3 text-success" />
                     ) : (
                         <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100" />
                     )}

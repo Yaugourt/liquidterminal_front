@@ -65,7 +65,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
       const date = new Date(data.date);
 
       return (
-        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
+        <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[170px]">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             {formatDate(date, dateFormat)}
           </div>
@@ -116,8 +116,8 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 text-sm mb-1">Error loading data</p>
-          <p className="text-white/40 text-xs">{error.message}</p>
+          <p className="text-danger text-sm mb-1">Error loading data</p>
+          <p className="text-text-tertiary text-xs">{error.message}</p>
         </div>
       </div>
     );

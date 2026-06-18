@@ -73,7 +73,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
     return (
       <Button
         variant="outline"
-        className={`border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10 ${className}`}
+        className={`border-success/50 text-success hover:bg-success/10 ${className}`}
         disabled
       >
         <Check className="w-4 h-4 mr-2" />
@@ -87,7 +87,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-surface/80 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-6 max-w-md mx-4">
+          <div className="bg-surface/80 backdrop-blur-md border border-border-subtle shadow-xl rounded-2xl p-6 max-w-md mx-4">
             <h2 className="text-lg font-semibold text-text-primary mb-2">
               Login to Track Wallet
             </h2>

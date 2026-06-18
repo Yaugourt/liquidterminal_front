@@ -118,7 +118,7 @@ export function DistributionSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
+        <div className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40 min-w-[150px]">
           <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             <span
               className="h-1.5 w-1.5 rounded-full"
@@ -191,7 +191,7 @@ export function DistributionSection({
                 {distributionData.map((asset) => (
                   <div
                     key={asset.name}
-                    className="flex items-center gap-2 rounded-md p-1.5 hover:bg-white/[0.04] transition-colors"
+                    className="flex items-center gap-2 rounded-md p-1.5 hover:bg-surface-2 transition-colors"
                   >
                     <span
                       className="h-2 w-2 rounded-full flex-shrink-0"

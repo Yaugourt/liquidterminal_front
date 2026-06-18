@@ -146,7 +146,7 @@ export function PortfolioStats({
 
   if (!isMounted) {
     return (
-      <div className="h-full bg-surface/60 border border-border-subtle rounded-2xl p-6">
+      <div className="h-full bg-surface/60 border border-border-subtle rounded-lg p-6">
         <div className="flex items-center justify-center h-full">
           <InlineSpinner className="w-6 h-6 text-brand" />
         </div>
@@ -169,10 +169,10 @@ export function PortfolioStats({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 p-0 text-text-tertiary hover:text-text-primary hover:bg-white/5"
+                    className="h-6 w-6 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-2"
                     onClick={copyToClipboard}
                   >
-                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
+                    {copied ? <Check size={14} className="text-success" /> : <Copy size={14} className="text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -189,7 +189,7 @@ export function PortfolioStats({
           <InlineSpinner className="w-6 h-6 text-brand" />
         </div>
       ) : error ? (
-        <div className="text-rose-400 text-center py-4">
+        <div className="text-danger text-center py-4">
           Error loading portfolio data
         </div>
       ) : (
@@ -221,7 +221,7 @@ export function PortfolioStats({
             </div>
 
             {/* Colonne droite : Long/Short Ratio */}
-            <div className="bg-surface/60 border border-border-subtle rounded-2xl p-4 h-full">
+            <div className="bg-surface/60 border border-border-subtle rounded-lg p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
@@ -261,27 +261,27 @@ export function PortfolioStats({
                 {/* Section 2: Long/Short Ratio */}
                 <div className="space-y-2 pt-3 border-t border-border-subtle mt-auto">
                   <div className="flex justify-between items-center">
-                    <span className="text-emerald-400 text-xs font-medium">
+                    <span className="text-success text-xs font-medium">
                       Long: {formatAbbreviated(longShortData.longValue)}
                     </span>
-                    <span className="text-rose-400 text-xs font-medium">
+                    <span className="text-danger text-xs font-medium">
                       Short: {formatAbbreviated(longShortData.shortValue)}
                     </span>
                   </div>
                   <div className="space-y-1">
-                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden relative">
+                    <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden relative">
                       {longShortData.totalValue > 0 && (
                         <>
                           {/* Long positions bar */}
                           <div
-                            className="h-full bg-emerald-400 transition-all duration-500 absolute left-0"
+                            className="h-full bg-success transition-all duration-500 absolute left-0"
                             style={{
                               width: `${longShortData.longPercentage}%`
                             }}
                           />
                           {/* Short positions bar */}
                           <div
-                            className="h-full bg-rose-400 transition-all duration-500 absolute right-0"
+                            className="h-full bg-danger transition-all duration-500 absolute right-0"
                             style={{
                               width: `${100 - longShortData.longPercentage}%`
                             }}

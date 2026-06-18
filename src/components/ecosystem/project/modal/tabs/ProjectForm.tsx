@@ -73,7 +73,7 @@ export function ProjectForm({
           <label htmlFor="categories" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Categories</label>
           <div className="space-y-2 max-h-32 overflow-y-auto bg-base border border-border-subtle rounded-lg p-2">
             {categories.map((category) => (
-              <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-white/5 p-1 rounded">
+              <label key={category.id} className="flex items-center space-x-2 cursor-pointer hover:bg-surface-2 p-1 rounded">
                 <Checkbox
                   checked={projectForm.categoryIds.includes(category.id)}
                   onCheckedChange={(checked) => {
@@ -135,7 +135,7 @@ export function ProjectForm({
                 variant="outline"
                 size="sm"
                 onClick={handleRemoveFile}
-                className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg"
+                className="border-danger/20 text-danger hover:bg-danger/10 rounded-lg"
               >
                 <X className="h-4 w-4 mr-1" />
                 Remove
@@ -145,7 +145,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {logoPreview && (
-            <div className="relative w-20 h-20 border border-border-default rounded-xl overflow-hidden">
+            <div className="relative w-20 h-20 border border-border-default rounded-lg overflow-hidden">
               <Image
                 src={logoPreview}
                 alt="Logo preview"
@@ -158,9 +158,9 @@ export function ProjectForm({
 
           {/* OR separator */}
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/5"></div>
+            <div className="flex-1 h-px bg-border-subtle"></div>
             <span className="text-text-tertiary text-xs">OR</span>
-            <div className="flex-1 h-px bg-white/5"></div>
+            <div className="flex-1 h-px bg-border-subtle"></div>
           </div>
 
           {/* URL Input */}
@@ -209,7 +209,7 @@ export function ProjectForm({
                 variant="outline"
                 size="sm"
                 onClick={handleRemoveBannerFile}
-                className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg"
+                className="border-danger/20 text-danger hover:bg-danger/10 rounded-lg"
               >
                 <X className="h-4 w-4 mr-1" />
                 Remove
@@ -219,7 +219,7 @@ export function ProjectForm({
 
           {/* Preview */}
           {bannerPreview && (
-            <div className="relative w-full max-w-md h-24 border border-border-default rounded-xl overflow-hidden">
+            <div className="relative w-full max-w-md h-24 border border-border-default rounded-lg overflow-hidden">
               <Image
                 src={bannerPreview}
                 alt="Banner preview"
@@ -232,9 +232,9 @@ export function ProjectForm({
 
           {/* OR separator */}
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/5"></div>
+            <div className="flex-1 h-px bg-border-subtle"></div>
             <span className="text-text-tertiary text-xs">OR</span>
-            <div className="flex-1 h-px bg-white/5"></div>
+            <div className="flex-1 h-px bg-border-subtle"></div>
           </div>
 
           {/* URL Input */}
@@ -328,7 +328,7 @@ export function ProjectForm({
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+          className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
         >
           Cancel
         </Button>

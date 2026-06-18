@@ -28,7 +28,7 @@ export default function PriorityFeesPage() {
       </PageHeader>
 
       {stats.error && (
-        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-400">
+        <div className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
           {stats.error.message}
         </div>
       )}

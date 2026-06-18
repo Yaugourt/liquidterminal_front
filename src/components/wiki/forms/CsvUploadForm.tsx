@@ -54,7 +54,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={loading}
-                        className="w-full bg-base border-border-subtle text-text-primary hover:bg-white/5 border-dashed border-2 py-8 rounded-lg"
+                        className="w-full bg-base border-border-subtle text-text-primary hover:bg-surface-2 border-dashed border-2 py-8 rounded-lg"
                     >
                         <div className="flex flex-col items-center gap-2">
                             <Upload className="w-6 h-6 text-brand" />
@@ -73,15 +73,15 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
             )}
 
             {error && (
-                <div className="flex items-center gap-2 text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-lg">
+                <div className="flex items-center gap-2 text-danger bg-danger/10 border border-danger/20 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4" />
                     <span className="text-sm">Erreur : {error}</span>
                 </div>
             )}
 
             {result?.success && (
-                <div className="space-y-4 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 text-emerald-400">
+                <div className="space-y-4 bg-success/10 border border-success/20 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 text-success">
                         <CheckCircle className="w-5 h-5" />
                         <h3 className="font-medium">Import réussi !</h3>
                     </div>
@@ -93,11 +93,11 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-text-secondary">Succès :</span>
-                            <span className="text-emerald-400">{result.data.successfulImports}</span>
+                            <span className="text-success">{result.data.successfulImports}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-text-secondary">Échecs :</span>
-                            <span className="text-rose-400">{result.data.failedImports}</span>
+                            <span className="text-danger">{result.data.failedImports}</span>
                         </div>
                     </div>
 
@@ -116,10 +116,10 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
 
                     {result.data.errors.length > 0 && (
                         <div className="space-y-2">
-                            <h4 className="text-sm font-medium text-amber-400">Erreurs rencontrées :</h4>
+                            <h4 className="text-sm font-medium text-gold">Erreurs rencontrées :</h4>
                             <div className="max-h-32 overflow-y-auto space-y-1">
                                 {result.data.errors.map((error, index) => (
-                                    <div key={index} className="text-xs text-amber-300 bg-amber-500/10 p-2 rounded-lg">
+                                    <div key={index} className="text-xs text-gold bg-gold/10 p-2 rounded-lg">
                                         <div className="font-medium">Ligne {error.row} :</div>
                                         <div>{error.error}</div>
                                     </div>
@@ -145,7 +145,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
                         type="button"
                         variant="outline"
                         onClick={onCancel}
-                        className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+                        className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
                     >
                         Cancel
                     </Button>

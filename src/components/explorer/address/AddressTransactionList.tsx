@@ -116,7 +116,7 @@ function HashCell({ hash }: { hash: string }) {
       </Link>
       <button
         onClick={copy}
-        className="group text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-white/10"
+        className="group text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-surface-2"
       >
         {copied ? (
           <Check className="h-3 w-3 text-success" />
@@ -250,7 +250,7 @@ export function AddressTransactionList({
         setPage(0);
       }}
       paginationDisabled={isLoading}
-      className="max-h-[600px] bg-surface/60 border border-border-subtle rounded-2xl"
+      className="max-h-[600px] bg-surface/60 border border-border-subtle rounded-lg"
     />
   );
 }

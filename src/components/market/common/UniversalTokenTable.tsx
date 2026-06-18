@@ -154,7 +154,7 @@ export function UniversalTokenTable({
         accessor: (t) => (
             mode === 'compact'
                 ? (
-                    <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                    <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'}`}>
                         {formatPriceChange(t.change24h)}
                     </span>
                 ) : (

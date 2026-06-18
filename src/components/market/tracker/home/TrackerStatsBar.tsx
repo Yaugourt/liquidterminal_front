@@ -88,21 +88,21 @@ export function TrackerStatsBar() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <StatsCard
           icon={<DollarSign className="h-4 w-4 text-gold" />}
-          iconClassName="bg-white/5 rounded-lg"
+          iconClassName="bg-surface-2 rounded-lg"
           title="24h Volume"
           value={`$${formatLargeNumber(totalVolume24h)}`}
           valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
-          icon={<TrendingUp className="h-4 w-4 text-emerald-400" />}
-          iconClassName="bg-white/5 rounded-lg"
+          icon={<TrendingUp className="h-4 w-4 text-success" />}
+          iconClassName="bg-surface-2 rounded-lg"
           title="24h PnL (Top 50)"
           value={`+$${formatLargeNumber(totalPnl24h)}`}
           valueClassName="text-lg font-semibold text-text-primary"
         />
         <StatsCard
-          icon={<Activity className="h-4 w-4 text-purple-400" />}
-          iconClassName="bg-white/5 rounded-lg"
+          icon={<Activity className="h-4 w-4 text-brand" />}
+          iconClassName="bg-surface-2 rounded-lg"
           title="24h Fills"
           value={formatLargeNumber(totalFills24h)}
           valueClassName="text-lg font-semibold text-text-primary"
@@ -119,7 +119,7 @@ export function TrackerStatsBar() {
           borderColor="border-gold/20"
           walletAddress={topPnlTrader?.user ?? null}
           stat={topPnlTrader ? `+$${formatLargeNumber(topPnlTrader.totalPnl)}` : null}
-          statColor="text-emerald-400"
+          statColor="text-success"
         />
         <NotableWalletCard
           label="Top Volume"
@@ -134,22 +134,22 @@ export function TrackerStatsBar() {
         <NotableWalletCard
           label="Most Trades"
           icon={Zap}
-          color="text-purple-400"
-          bgColor="bg-purple-400/10"
-          borderColor="border-purple-400/20"
+          color="text-brand"
+          bgColor="bg-brand/10"
+          borderColor="border-brand/20"
           walletAddress={topTradeCountTrader?.user ?? null}
           stat={topTradeCountTrader ? `${formatLargeNumber(topTradeCountTrader.tradeCount)} trades` : null}
-          statColor="text-purple-400"
+          statColor="text-brand"
         />
         <NotableWalletCard
           label="Most Active"
           icon={Trophy}
-          color="text-cyan-400"
-          bgColor="bg-cyan-400/10"
-          borderColor="border-cyan-400/20"
+          color="text-brand"
+          bgColor="bg-brand/10"
+          borderColor="border-brand/20"
           walletAddress={mostActiveUser?.user ?? null}
           stat={mostActiveUser ? `${formatLargeNumber(mostActiveUser.fill_count)} fills` : null}
-          statColor="text-cyan-400"
+          statColor="text-brand"
         />
       </div>
     </div>

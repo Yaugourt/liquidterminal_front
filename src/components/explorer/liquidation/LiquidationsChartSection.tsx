@@ -90,8 +90,8 @@ export const LiquidationsChartSection = () => {
   return (
     <div className="relative w-full h-full flex flex-col p-4 overflow-hidden">
       {/* Ambient rose/emerald glow — mirrors the long/short bipolar nature of liquidations */}
-      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-rose-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-emerald-500/[0.08] blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-danger/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-success/[0.08] blur-3xl" />
 
       {/* Header */}
       <div className="relative z-10 flex-shrink-0 pb-4">
@@ -99,14 +99,14 @@ export const LiquidationsChartSection = () => {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-tertiary">
-                <span className="h-1 w-1 rounded-full bg-rose-400" />
+                <span className="h-1 w-1 rounded-full bg-danger" />
                 Liquidations
               </div>
               <DataFreshness lastUpdated={lastUpdated} />
             </div>
 
             {/* Volume/Count pill tabs */}
-            <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+            <div className="flex items-center rounded-lg border border-border-subtle bg-surface-2 p-1">
               {chartTabs.map((tab) => {
                 const isActive = selectedChart === tab.key;
                 return (
@@ -118,7 +118,7 @@ export const LiquidationsChartSection = () => {
                     {isActive && (
                       <motion.span
                         layoutId={`liq-chart-tab-${layoutId}`}
-                        className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                        className="absolute inset-0 rounded-lg bg-surface-3 ring-1 ring-border-default"
                         transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                       />
                     )}
@@ -154,7 +154,7 @@ export const LiquidationsChartSection = () => {
           </div>
 
           {/* Period Selector — rose-accented aurora pill */}
-          <div className="flex items-center rounded-lg border border-rose-500/20 bg-black/30 p-1">
+          <div className="flex items-center rounded-lg border border-danger/20 bg-surface-2 p-1">
             {CHART_PERIOD_OPTIONS.map((option) => {
               const isActive = chartPeriod === option.value;
               return (
@@ -166,13 +166,13 @@ export const LiquidationsChartSection = () => {
                   {isActive && (
                     <motion.span
                       layoutId={`liq-period-${layoutId}`}
-                      className="absolute inset-0 rounded-lg bg-rose-500/15 ring-1 ring-rose-400/30"
+                      className="absolute inset-0 rounded-lg bg-danger/15 ring-1 ring-danger/30"
                       transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                     />
                   )}
                   <span
                     className={`relative z-10 ${
-                      isActive ? "text-rose-300" : "text-text-secondary hover:text-text-primary"
+                      isActive ? "text-danger" : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
                     {option.label}

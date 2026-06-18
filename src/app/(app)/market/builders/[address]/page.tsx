@@ -52,7 +52,7 @@ export default function BuilderDetailPage() {
   if (!valid) {
     return (
       <Card className="p-8 text-center max-w-lg mx-auto">
-        <h2 className="text-lg font-medium text-white mb-2">Invalid address</h2>
+        <h2 className="text-lg font-medium text-text-primary mb-2">Invalid address</h2>
         <p className="text-text-secondary text-sm mb-4">Use a checksummed 0x address (40 hex chars).</p>
         <Button variant="ghost" className="text-brand" onClick={() => router.push("/market/builders")}>
           <ArrowLeft className="h-4 w-4 mr-2" />Back to Builders
@@ -70,7 +70,7 @@ export default function BuilderDetailPage() {
         <Button
           variant="ghost" size="sm"
           onClick={() => router.push("/market/builders")}
-          className="text-text-secondary hover:text-white hover:bg-white/5"
+          className="text-text-secondary hover:text-text-primary hover:bg-surface-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />Back
         </Button>
@@ -82,7 +82,7 @@ export default function BuilderDetailPage() {
               className={
                 tf === t
                   ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
-                  : "border border-border-subtle text-text-secondary hover:bg-white/5 hover:text-white bg-transparent"
+                  : "border border-border-subtle text-text-secondary hover:bg-surface-2 hover:text-text-primary bg-transparent"
               }
             >
               {t}
@@ -95,22 +95,22 @@ export default function BuilderDetailPage() {
       {isFirstLoad ? (
         <Card className="p-6 animate-pulse">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-white/5" />
+            <div className="w-16 h-16 rounded-full bg-surface-2" />
             <div className="space-y-2">
-              <div className="h-6 w-32 bg-white/5 rounded" />
-              <div className="h-4 w-48 bg-white/5 rounded" />
+              <div className="h-6 w-32 bg-surface-2 rounded" />
+              <div className="h-4 w-48 bg-surface-2 rounded" />
             </div>
           </div>
         </Card>
       ) : (
         <Card className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-2xl font-bold text-brand shrink-0">
+            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-2xl font-bold text-brand shrink-0">
               {(displayName && displayName !== "—" ? displayName.charAt(0) : address.slice(2, 3)).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-xl font-bold text-white">
+                <h1 className="text-xl font-bold text-text-primary">
                   {displayName && displayName !== "—" ? displayName : "Builder"}
                 </h1>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/20">
@@ -123,7 +123,7 @@ export default function BuilderDetailPage() {
               <div className="flex gap-6 shrink-0">
                 <div className="text-center">
                   <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Volume</p>
-                  <p className="text-white font-bold text-sm tabular-nums">
+                  <p className="text-text-primary font-bold text-sm tabular-nums">
                     {formatNumber(stats.stats.current.totalVolume, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
                   </p>
                 </div>
@@ -135,7 +135,7 @@ export default function BuilderDetailPage() {
                 </div>
                 <div className="text-center">
                   <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Users</p>
-                  <p className="text-white font-bold text-sm tabular-nums">
+                  <p className="text-text-primary font-bold text-sm tabular-nums">
                     {formatNumber(stats.stats.current.uniqueUsers, format, { maximumFractionDigits: 0 })}
                   </p>
                 </div>
@@ -159,7 +159,7 @@ export default function BuilderDetailPage() {
           <h2 className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider px-1">
             Top coins ({tf})
           </h2>
-          <Card className="rounded-2xl overflow-hidden">
+          <Card className="rounded-lg overflow-hidden">
             <KpiRibbon
               bordered={false}
               columns="grid-cols-3 sm:grid-cols-5"

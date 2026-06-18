@@ -31,7 +31,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
     switch (field.type) {
       case 'boolean':
         return (
-          <span className={`${field.value ? 'text-green-400' : 'text-red-400'} font-inter`}>
+          <span className={`${field.value ? 'text-success' : 'text-danger'} font-inter`}>
             {field.value ? 'Yes' : 'No'}
           </span>
         );
@@ -53,7 +53,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               className="p-1 hover:bg-white/4 rounded transition-colors"
             >
               {copiedValue === stringValue ? (
-                <Check className="h-3 w-3 text-green-500" />
+                <Check className="h-3 w-3 text-success" />
               ) : (
                 <Copy className="h-3 w-3 text-gold opacity-60 hover:opacity-100" />
               )}
@@ -75,7 +75,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
               className="p-1 hover:bg-white/5 rounded transition-colors"
             >
               {copiedValue === stringValue ? (
-                <Check className="h-3 w-3 text-green-500" />
+                <Check className="h-3 w-3 text-success" />
               ) : (
                 <Copy className="h-3 w-3 text-gold opacity-60 hover:opacity-100" />
               )}

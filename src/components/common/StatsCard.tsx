@@ -78,8 +78,8 @@ function NumericChangePill({ change }: { change: number }) {
             className={cn(
                 "inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
                 positive
-                    ? "bg-emerald-500/10 text-emerald-400"
-                    : "bg-rose-500/10 text-rose-400"
+                    ? "bg-success/10 text-success"
+                    : "bg-danger/10 text-danger"
             )}
         >
             <Icon className="w-2.5 h-2.5" />
@@ -148,10 +148,10 @@ export const StatsCard = memo(function StatsCard({
                                 <span
                                     className={cn(
                                         "inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
-                                        changeDirection === "up" && "bg-emerald-500/10 text-emerald-400",
-                                        changeDirection === "down" && "bg-rose-500/10 text-rose-400",
+                                        changeDirection === "up" && "bg-success/10 text-success",
+                                        changeDirection === "down" && "bg-danger/10 text-danger",
                                         (changeDirection === "neutral" || !changeDirection) &&
-                                            "bg-white/5 text-text-secondary"
+                                            "bg-surface-2 text-text-secondary"
                                     )}
                                 >
                                     {change}
@@ -184,7 +184,7 @@ export const StatsCard = memo(function StatsCard({
 export function StatsCardSkeleton() {
     return (
         <Card className="p-4 flex items-center justify-center">
-            <Loader2 className="w-4 h-4 text-white/20 animate-spin" />
+            <Loader2 className="w-4 h-4 text-text-tertiary animate-spin" />
         </Card>
     );
 }

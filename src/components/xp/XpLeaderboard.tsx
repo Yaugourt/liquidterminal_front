@@ -70,11 +70,11 @@ export function XpLeaderboard({
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-5 w-5 text-amber-400" />;
+        return <Crown className="h-5 w-5 text-gold" />;
       case 2:
         return <Medal className="h-5 w-5 text-text-secondary" />;
       case 3:
-        return <Medal className="h-5 w-5 text-amber-600" />;
+        return <Medal className="h-5 w-5 text-gold" />;
       default:
         return (
           <span className="w-5 text-center text-sm font-bold text-text-tertiary">
@@ -89,7 +89,7 @@ export function XpLeaderboard({
       case 1:
         return "bg-gradient-to-r from-amber-500/10 to-amber-400/10 border-amber-500/30";
       case 2:
-        return "bg-gradient-to-r from-zinc-400/10 to-zinc-300/10 border-zinc-400/30";
+        return "bg-surface-2 border-border-default";
       case 3:
         return "bg-gradient-to-r from-amber-600/10 to-orange-500/10 border-amber-600/30";
       default:

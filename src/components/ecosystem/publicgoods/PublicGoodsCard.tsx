@@ -50,13 +50,13 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
       case 'production':
         return 'bg-brand/10 text-brand';
       case 'beta':
-        return 'bg-blue-500/10 text-blue-400';
+        return 'bg-brand/10 text-brand';
       case 'development':
-        return 'bg-purple-500/10 text-purple-400';
+        return 'bg-brand/10 text-brand';
       case 'idea':
-        return 'bg-zinc-500/10 text-text-secondary';
+        return 'bg-surface-2 text-text-secondary';
       default:
-        return 'bg-zinc-500/10 text-text-secondary';
+        return 'bg-surface-2 text-text-secondary';
     }
   };
 
@@ -123,7 +123,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-text-tertiary hover:text-text-primary hover:bg-white/5"
+                    className="h-8 w-8 text-text-tertiary hover:text-text-primary hover:bg-surface-2"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -162,7 +162,7 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
                   )}
                   {canDelete && onDelete && (
                     <DropdownMenuItem
-                      className="text-rose-400 focus:text-rose-300 focus:bg-rose-500/10"
+                      className="text-danger focus:text-danger focus:bg-danger/10"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -216,10 +216,10 @@ export const PublicGoodsCard = memo(function PublicGoodsCard({
             <div className="flex flex-wrap gap-2 mb-4">
               {supportTypes.map((type: string) => (
                 <div key={type} className="flex items-center gap-1">
-                  {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-amber-400" />}
+                  {(type === 'funding' || type === 'FUNDING') && <DollarSign className="w-3 h-3 text-gold" />}
                   {(type === 'promotion' || type === 'PROMOTION') && <Globe className="w-3 h-3 text-brand" />}
-                  {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-purple-400" />}
-                  {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-emerald-400" />}
+                  {(type === 'services' || type === 'SERVICES') && <Code2 className="w-3 h-3 text-brand" />}
+                  {(type === 'contributors' || type === 'CONTRIBUTOR') && <Users className="w-3 h-3 text-success" />}
                   <span className="text-xs text-text-tertiary">{type.toLowerCase()}</span>
                 </div>
               ))}

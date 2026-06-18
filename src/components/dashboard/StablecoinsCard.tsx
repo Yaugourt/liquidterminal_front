@@ -482,7 +482,7 @@ function StablesStackedTooltip({ active, payload }: StablesTooltipProps) {
   );
   return (
     <div
-      className="rounded-xl border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40"
+      className="rounded-lg border border-border-default bg-base/95 backdrop-blur-md px-3 py-2.5 shadow-2xl shadow-black/40"
       style={{ minWidth: 200 }}
     >
       <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">

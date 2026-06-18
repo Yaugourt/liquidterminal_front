@@ -66,7 +66,7 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
                 className="p-1 hover:bg-white/4 rounded transition-colors"
               >
                 {copiedValue === transaction.user ? (
-                  <Check className="h-3 w-3 text-green-500" />
+                  <Check className="h-3 w-3 text-success" />
                 ) : (
                   <Copy className="h-3 w-3 text-gold opacity-60 hover:opacity-100" />
                 )}
@@ -77,9 +77,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
       </div>
 
       {transaction.error && (
-        <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
+        <div className="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
           <p className="text-text-primary text-sm mb-1 font-inter">Error:</p>
-          <p className="text-rose-400 text-sm font-inter">{transaction.error}</p>
+          <p className="text-danger text-sm font-inter">{transaction.error}</p>
         </div>
       )}
     </Card>

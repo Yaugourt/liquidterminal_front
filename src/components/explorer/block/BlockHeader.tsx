@@ -40,7 +40,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
             className="group p-1 rounded transition-colors"
           >
             {copiedValues['blockHeight'] ? (
-              <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+              <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
             ) : (
               <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
@@ -74,7 +74,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                   className="group p-1 rounded transition-colors"
                 >
                   {copiedValues["blockHash"] ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                    <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
                   ) : (
                     <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
@@ -100,7 +100,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                   className="group p-1 rounded transition-colors"
                 >
                   {copiedValues["proposer"] ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+                    <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
                   ) : (
                     <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
                   )}
