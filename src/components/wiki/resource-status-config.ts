@@ -12,16 +12,16 @@ export const resourceStatusConfig: Record<
   PENDING: {
     icon: Clock,
     label: "Pending",
-    color: "text-amber-400 bg-amber-400/10 border-amber-400/20",
+    color: "text-gold bg-gold/10 border-gold/20",
   },
   APPROVED: {
     icon: CheckCircle,
     label: "Approved",
-    color: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+    color: "text-success bg-success/10 border-success/20",
   },
   REJECTED: {
     icon: XCircle,
     label: "Rejected",
-    color: "text-rose-400 bg-rose-400/10 border-rose-400/20",
+    color: "text-danger bg-danger/10 border-danger/20",
   },
 };

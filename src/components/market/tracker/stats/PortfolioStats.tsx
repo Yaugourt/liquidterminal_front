@@ -181,7 +181,6 @@ export function PortfolioStats({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <span className="text-brand text-xs">Last tx: 1h ago</span>
         </div>
       )}
 

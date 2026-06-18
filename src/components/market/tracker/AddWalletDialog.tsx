@@ -136,7 +136,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
             {isLoading 
               ? "Adding..." 
               : hasReachedWalletLimit 
-                ? "Limit reached (5/5)" 
+                ? `Limit reached (${wallets.length}/25)`
                 : walletListName 
                   ? "Add to List" 
                   : "Add"

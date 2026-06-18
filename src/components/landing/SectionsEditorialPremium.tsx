@@ -250,7 +250,7 @@ export function SectionsEditorialPremium() {
             >
               <div className="aspect-[4/3] flex flex-col items-center justify-center p-5 sm:p-6 md:p-8">
                 <div className="w-16 h-16 mb-4 rounded-lg bg-white/5 border border-white/[0.08] flex items-center justify-center">
-                  <span className="text-2xl text-brand/60">📊</span>
+                  <shot.icon className="w-7 h-7 text-brand/60" aria-hidden />
                 </div>
                 <p className="text-text-primary font-medium text-sm">{shot.title}</p>
                 <p className="text-text-secondary text-xs mt-1">{shot.subtitle}</p>
