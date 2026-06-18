@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
-import { formatNumber, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { formatNumber, truncateAddress, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { PerpDexMarketsTable } from "@/components/market/perpDex";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -57,12 +57,6 @@ export default function PerpDexDetailPage() {
       return field;
     });
   }, []);
-
-  const formatFunding = (funding: number | undefined) => {
-    if (funding === undefined) return '-';
-    const percentage = funding * 100;
-    return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
-  };
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

@@ -6,7 +6,7 @@ import { WalletList } from "@/services/market/tracker/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, Users, Calendar, Wallet } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 interface PublicWalletListCardProps {
   list: WalletList;
@@ -14,8 +14,7 @@ interface PublicWalletListCardProps {
 }
 
 export const PublicWalletListCard = memo(function PublicWalletListCard({ list, onPreview }: PublicWalletListCardProps) {
-  const createdDate = new Date(list.createdAt);
-  const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
+  const createdAgo = timeAgo(list.createdAt);
 
   return (
     <Card className="rounded-2xl hover:border-border-default transition-all duration-200 group">
@@ -48,7 +47,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
 
           <div className="flex items-center gap-1.5 text-text-secondary">
             <Calendar size={14} className="text-gold" />
-            <span>{timeAgo}</span>
+            <span>{createdAgo}</span>
           </div>
         </div>
 

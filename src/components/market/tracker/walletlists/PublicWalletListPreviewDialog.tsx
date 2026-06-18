@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { getWalletListById } from "@/services/market/tracker/walletlist.service";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { useRouter } from "next/navigation";
-import { formatDistanceToNow } from "date-fns";
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 interface PublicWalletListPreviewDialogProps {
   list: WalletList | null;
@@ -126,8 +126,7 @@ export function PublicWalletListPreviewDialog({
 
   if (!list) return null;
 
-  const createdDate = new Date(list.createdAt);
-  const timeAgo = formatDistanceToNow(createdDate, { addSuffix: true });
+  const createdAgo = timeAgo(list.createdAt);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -143,7 +142,7 @@ export function PublicWalletListPreviewDialog({
                 </div>
                 <div className="flex items-center gap-1 text-text-secondary">
                   <Calendar size={14} />
-                  <span>{timeAgo}</span>
+                  <span>{createdAgo}</span>
                 </div>
               </div>
             </div>

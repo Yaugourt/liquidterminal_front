@@ -13,20 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TypedDataTable, type Column } from "@/components/common";
-
-function formatRelativeTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  const diffDays = Math.floor(diffHours / 24);
-  return `${diffDays}d ago`;
-}
+import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 export function ActiveUsersPreview() {
   const [hours, setHours] = useState(24);
@@ -87,7 +74,7 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
       accessor: (u) => (
-        <span className="text-text-tertiary">{formatRelativeTime(u.last_activity)}</span>
+        <span className="text-text-tertiary">{timeAgo(u.last_activity)}</span>
       ),
     },
   ];
