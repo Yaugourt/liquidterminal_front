@@ -124,7 +124,7 @@ export function TeamTab({
               {tech}
               <button
                 onClick={() => removeTechnology(tech)}
-                className="ml-1 hover:text-rose-400"
+                className="ml-1 hover:text-danger"
               >
                 <X className="h-3 w-3" />
               </button>

@@ -201,7 +201,7 @@ export function ImportWalletsCSVDialog({
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
                 ? "border-brand bg-brand/6"
-                : "border-border-default hover:border-white/20 hover:bg-white/5"
+                : "border-border-default hover:border-border-default hover:bg-surface-2"
                 }`}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -212,11 +212,11 @@ export function ImportWalletsCSVDialog({
             >
               <Upload className="w-12 h-12 mx-auto mb-4 text-brand" />
               <p className="text-text-primary mb-2">Drag & drop your CSV file here</p>
-              <p className="text-gray-400 text-sm mb-4">or</p>
+              <p className="text-text-tertiary text-sm mb-4">or</p>
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="border-border-default text-text-primary hover:bg-white/5"
+                className="border-border-default text-text-primary hover:bg-surface-2"
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Choose File
@@ -235,17 +235,17 @@ export function ImportWalletsCSVDialog({
           {hasWallets && (
             <div className="space-y-3">
               {/* Stats */}
-              <div className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-base rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                     <span className="text-sm text-text-primary">
                       {validCount} valid
                     </span>
                   </div>
                   {invalidCount > 0 && (
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-red-400" />
+                      <AlertCircle className="w-4 h-4 text-danger" />
                       <span className="text-sm text-text-primary">
                         {invalidCount} invalid
                       </span>
@@ -261,7 +261,7 @@ export function ImportWalletsCSVDialog({
                       fileInputRef.current.value = "";
                     }
                   }}
-                  className="text-gray-400 hover:text-text-primary"
+                  className="text-text-tertiary hover:text-text-primary"
                 >
                   <X className="w-4 h-4 mr-1" />
                   Clear
@@ -274,27 +274,27 @@ export function ImportWalletsCSVDialog({
                   <div
                     key={index}
                     className={`p-3 rounded-lg border ${wallet.isValid
-                      ? "bg-zinc-800/50 border-border-default"
-                      : "bg-red-950/20 border-red-900/30"
+                      ? "bg-surface-2 border-border-default"
+                      : "bg-danger/10 border-danger/30"
                       }`}
                   >
                     <div className="flex items-start gap-2">
                       {wallet.isValid ? (
-                        <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
                       ) : (
-                        <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
+                        <AlertCircle className="w-4 h-4 text-danger mt-0.5 shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-text-primary truncate">
                           {wallet.address || "(empty)"}
                         </p>
                         {wallet.name && (
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="text-xs text-text-tertiary mt-0.5">
                             {wallet.name}
                           </p>
                         )}
                         {wallet.error && (
-                          <p className="text-xs text-red-400 mt-0.5">
+                          <p className="text-xs text-danger mt-0.5">
                             {wallet.error}
                           </p>
                         )}
@@ -307,10 +307,10 @@ export function ImportWalletsCSVDialog({
           )}
 
           {/* Help Text */}
-          <div className="flex items-start gap-2 p-3 bg-black/20 rounded-lg">
+          <div className="flex items-start gap-2 p-3 bg-base rounded-lg">
             <AlertCircle className="w-4 h-4 text-brand mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-text-tertiary">
                 CSV must have <span className="text-text-primary font-medium">address</span> column (required) and optional <span className="text-text-primary font-medium">name</span> column.
               </p>
               <Button
@@ -330,7 +330,7 @@ export function ImportWalletsCSVDialog({
           <Button
             variant="outline"
             onClick={() => handleOpenChange(false)}
-            className="border-border-default text-text-primary hover:bg-white/5"
+            className="border-border-default text-text-primary hover:bg-surface-2"
           >
             Cancel
           </Button>

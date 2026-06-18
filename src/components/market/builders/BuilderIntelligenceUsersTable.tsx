@@ -50,7 +50,7 @@ export function BuilderIntelligenceUsersTable({
         const addr = (u.user ?? u.address ?? "—") as string;
         return (
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-[9px] text-text-tertiary shrink-0">
+            <div className="w-5 h-5 rounded-full bg-surface-2 flex items-center justify-center text-[9px] text-text-tertiary shrink-0">
               {addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
             </div>
             <span className="text-xs text-text-secondary font-mono truncate max-w-[100px]">
@@ -96,7 +96,7 @@ export function BuilderIntelligenceUsersTable({
         const share = totalFees > 0 ? (pickFees(u) / totalFees) * 100 : 0;
         return (
           <div className="flex items-center gap-1.5">
-            <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+            <div className="w-12 h-1 bg-surface-2 rounded-full overflow-hidden">
               <div
                 className="h-full bg-brand/50 rounded-full"
                 style={{ width: `${Math.min(share, 100)}%` }}

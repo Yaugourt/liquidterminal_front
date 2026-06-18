@@ -128,7 +128,7 @@ function buildPerpColumns(
       getSortValue: (row) => row.type,
       accessor: (row) => (
         <div className="flex flex-col gap-0.5">
-          <span className={row.type === 'Short' ? 'text-rose-400 font-medium' : 'text-emerald-400 font-medium'}>
+          <span className={row.type === 'Short' ? 'text-danger font-medium' : 'text-success font-medium'}>
             {row.type}
           </span>
           <span className="text-label text-text-tertiary">
@@ -187,7 +187,7 @@ function buildPerpColumns(
       accessor: (row) => {
         const pnlNum = parseFloat(row.unrealizedPnl);
         return (
-          <span className={pnlNum >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+          <span className={pnlNum >= 0 ? 'text-success' : 'text-danger'}>
             {formatCurrency(pnlNum)}
           </span>
         );
@@ -202,7 +202,7 @@ function buildPerpColumns(
       accessor: (row) => {
         const fundingNum = parseFloat(row.funding);
         return (
-          <span className={fundingNum >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+          <span className={fundingNum >= 0 ? 'text-success' : 'text-danger'}>
             {formatCurrency(fundingNum)}
           </span>
         );
@@ -240,7 +240,7 @@ export function AssetsTable({
   const perpColumns = buildPerpColumns(formatCurrency, formatTokenAmount);
 
   return (
-    <div className="bg-surface/60 border border-border-subtle rounded-2xl overflow-hidden">
+    <div className="bg-surface/60 border border-border-subtle rounded-lg overflow-hidden">
       {/* Tab header + stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
@@ -269,18 +269,18 @@ export function AssetsTable({
           </div>
           {walletDisplay && (
             <>
-              <div className="w-px h-4 bg-white/10" />
+              <div className="w-px h-4 bg-border-subtle" />
               <div className="flex items-baseline gap-2">
                 <span className="text-text-secondary text-xs">Wallet:</span>
                 <span className="text-brand text-sm font-medium">({walletDisplay})</span>
               </div>
             </>
           )}
-          <div className="w-px h-4 bg-white/10" />
+          <div className="w-px h-4 bg-border-subtle" />
           <button
             onClick={onRefresh}
             disabled={isRefreshing || isLoading}
-            className={`p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-white/5 ${
+            className={`p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface-2 ${
               isRefreshing ? 'animate-spin' : ''
             }`}
           >

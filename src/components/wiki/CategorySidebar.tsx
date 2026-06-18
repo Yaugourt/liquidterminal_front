@@ -92,7 +92,7 @@ export function CategorySidebar({
           disabled={isLoading || total === 0}
           className={cn(
             "flex w-full items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-left text-text-secondary transition-colors",
-            "hover:border-border-subtle hover:bg-white/5 hover:text-text-primary",
+            "hover:border-border-subtle hover:bg-surface-2 hover:text-text-primary",
             (isLoading || total === 0) && "cursor-not-allowed opacity-50",
           )}
         >
@@ -106,7 +106,7 @@ export function CategorySidebar({
             className={cn(
               "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
               allSelected
-                ? "border-white/80 bg-white/90"
+                ? "border-brand bg-brand"
                 : "border-border-default",
             )}
           >
@@ -138,8 +138,8 @@ export function CategorySidebar({
                     aria-pressed={isActive}
                     className={cn(
                       "group flex w-full items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-left transition-colors",
-                      "hover:border-border-subtle hover:bg-white/5",
-                      isActive && "bg-white/[0.03]",
+                      "hover:border-border-subtle hover:bg-surface-2",
+                      isActive && "bg-surface-2",
                     )}
                   >
                     <span
@@ -152,8 +152,8 @@ export function CategorySidebar({
                       className={cn(
                         "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
                         isActive
-                          ? "border-white/80 bg-white/90"
-                          : "border-border-default group-hover:border-white/40",
+                          ? "border-brand bg-brand"
+                          : "border-border-default group-hover:border-border-default",
                       )}
                     >
                       {isActive && (

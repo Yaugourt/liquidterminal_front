@@ -60,8 +60,8 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
                 <div className={
                     variation.numericValue !== null
                         ? variation.numericValue >= 0
-                            ? "text-emerald-400 text-sm font-medium tabular-nums"
-                            : "text-rose-400 text-sm font-medium tabular-nums"
+                            ? "text-success text-sm font-medium tabular-nums"
+                            : "text-danger text-sm font-medium tabular-nums"
                         : "text-text-primary text-sm font-medium tabular-nums"
                 }>
                     {variation.value !== null ? variation.value : '-'}
@@ -80,7 +80,7 @@ const PnLCardComponent = ({ portfolio, isLoading, format }: PnLCardProps) => {
                 <div
                     role="group"
                     aria-label="PnL unit"
-                    className="mr-4 flex items-center rounded-md border border-border-subtle bg-black/30 p-0.5"
+                    className="mr-4 flex items-center rounded-md border border-border-subtle bg-base p-0.5"
                 >
                     {(['percent', 'dollar'] as const).map((mode) => {
                         const isActive = pnlMode === mode;

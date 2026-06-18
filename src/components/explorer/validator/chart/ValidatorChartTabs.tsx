@@ -24,7 +24,7 @@ export const ValidatorChartTabs = memo(function ValidatorChartTabs({
   ];
 
   return (
-    <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+    <div className="flex items-center rounded-lg border border-border-subtle bg-base p-1">
       {tabs.map(tab => {
         const isActive = activeTab === tab.key;
         return (
@@ -36,7 +36,7 @@ export const ValidatorChartTabs = memo(function ValidatorChartTabs({
             {isActive && (
               <motion.span
                 layoutId={`validator-tab-${uid}`}
-                className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                className="absolute inset-0 rounded-lg bg-surface-2 ring-1 ring-border-default"
                 transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
               />
             )}

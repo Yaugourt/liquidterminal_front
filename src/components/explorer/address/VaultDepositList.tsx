@@ -82,7 +82,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
             className="group p-1 rounded transition-colors"
           >
             {copiedAddress === row.vaultAddress ? (
-              <Check className="h-3.5 w-3.5 text-green-500 transition-all duration-200" />
+              <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
             ) : (
               <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
             )}
@@ -98,7 +98,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
     {
       key: "apr",
       header: "APR",
-      accessor: (row) => <span className="text-emerald-400">{formatAPR(row.apr)}</span>,
+      accessor: (row) => <span className="text-success">{formatAPR(row.apr)}</span>,
     },
     {
       key: "tvl",

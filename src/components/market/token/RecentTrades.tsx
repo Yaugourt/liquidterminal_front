@@ -74,11 +74,11 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                                 return (
                                     <div
                                         key={`${trade.tid}-${index}`}
-                                        className="grid grid-cols-4 gap-4 text-xs hover:bg-white/5 py-1.5 px-1 rounded transition-colors"
+                                        className="grid grid-cols-4 gap-4 text-xs hover:bg-surface-2 py-1.5 px-1 rounded transition-colors"
                                     >
                                         <span className={cn(
                                             "font-medium",
-                                            isBuy ? 'text-emerald-400' : 'text-rose-400'
+                                            isBuy ? 'text-success' : 'text-danger'
                                         )}>
                                             ${formatPrice(tradePrice)}
                                         </span>

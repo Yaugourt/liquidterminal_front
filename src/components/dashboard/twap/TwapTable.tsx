@@ -79,9 +79,9 @@ const ProgressionCellComponent = ({
   const roundedProgression = Math.round(progression * 100) / 100;
 
   const getProgressColor = (p: number) => {
-    if (p < 30) return "bg-emerald-500";
-    if (p < 70) return "bg-emerald-400";
-    return "bg-emerald-300";
+    if (p < 30) return "bg-danger";
+    if (p < 70) return "bg-gold";
+    return "bg-success";
   };
 
   return (
@@ -93,7 +93,7 @@ const ProgressionCellComponent = ({
         </span>
       </div>
       <div className="flex items-center">
-        <div className="w-[120px] bg-white/10 rounded-full h-1">
+        <div className="w-[120px] bg-surface-2 rounded-full h-1">
           <div
             className={`h-full rounded-full transition-all duration-300 ${getProgressColor(roundedProgression)}`}
             style={{ width: `${roundedProgression}%` }}
@@ -130,7 +130,7 @@ const UserCellComponent = ({
       className="group p-1 rounded transition-colors"
     >
       {copiedAddress === twap.user ? (
-        <Check className="h-3 w-3 text-green-500 transition-all duration-200" />
+        <Check className="h-3 w-3 text-success transition-all duration-200" />
       ) : (
         <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
       )}

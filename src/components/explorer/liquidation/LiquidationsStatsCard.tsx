@@ -44,18 +44,18 @@ function LongShortRatioBar({ longPercent, shortPercent, isLoading }: LongShortRa
         Volume Ratio
       </div>
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-2 bg-gradient-to-r from-rose-500 to-rose-400 rounded-full overflow-hidden">
+        <div className="flex-1 h-2 bg-gradient-to-r from-danger to-danger rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-success to-success rounded-full transition-all duration-500"
             style={{ width: `${longPercent}%` }}
           />
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-emerald-400 font-medium">
+          <span className="text-success font-medium">
             {isLoading ? '--' : `${longPercent.toFixed(0)}%`}
           </span>
           <span className="text-text-tertiary">/</span>
-          <span className="text-rose-400 font-medium">
+          <span className="text-danger font-medium">
             {isLoading ? '--' : `${shortPercent.toFixed(0)}%`}
           </span>
         </div>
@@ -81,8 +81,8 @@ export function LiquidationsStatsCard() {
   return (
     <StatsPanel
       title="Liquidation Stats"
-      icon={<Zap size={16} className="text-rose-400" />}
-      iconClassName="bg-rose-500/10"
+      icon={<Zap size={16} className="text-danger" />}
+      iconClassName="bg-danger/10"
     >
       <div className="flex flex-col gap-4 h-full">
         {/* Period Selector */}
@@ -93,7 +93,7 @@ export function LiquidationsStatsCard() {
               onClick={() => setSelectedPeriod(option.value)}
               className={`flex-1 px-2 py-1 rounded-md text-label transition-all ${
                 selectedPeriod === option.value
-                  ? 'bg-rose-500/20 text-rose-400 font-bold'
+                  ? 'bg-danger/20 text-danger font-bold'
                   : 'tab-inactive'
               }`}
             >
@@ -105,13 +105,13 @@ export function LiquidationsStatsCard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4 flex-1 content-center">
           <InlineStat
-            icon={<DollarSign className="h-3.5 w-3.5 text-rose-400" />}
+            icon={<DollarSign className="h-3.5 w-3.5 text-danger" />}
             label="Total Volume"
             value={<>${formatNumber(stats.totalVolume, format, { maximumFractionDigits: 0 })}</>}
             isLoading={statsLoading}
           />
           <InlineStat
-            icon={<Zap className="h-3.5 w-3.5 text-rose-400" />}
+            icon={<Zap className="h-3.5 w-3.5 text-danger" />}
             label="Liquidations"
             value={stats.liquidationsCount}
             isLoading={statsLoading}
@@ -122,15 +122,15 @@ export function LiquidationsStatsCard() {
             </div>
             <div className="flex items-center gap-3 pl-5">
               <div className="flex items-center gap-1">
-                <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-bold text-sm">
+                <TrendingUp className="h-3.5 w-3.5 text-success" />
+                <span className="text-success font-bold text-sm">
                   {statsLoading ? '--' : stats.longCount}
                 </span>
               </div>
               <span className="text-text-tertiary">/</span>
               <div className="flex items-center gap-1">
-                <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
-                <span className="text-rose-400 font-bold text-sm">
+                <TrendingDown className="h-3.5 w-3.5 text-danger" />
+                <span className="text-danger font-bold text-sm">
                   {statsLoading ? '--' : stats.shortCount}
                 </span>
               </div>
@@ -143,14 +143,14 @@ export function LiquidationsStatsCard() {
             isLoading={statsLoading}
           />
           <InlineStat
-            icon={<BarChart3 className="h-3.5 w-3.5 text-amber-400" />}
+            icon={<BarChart3 className="h-3.5 w-3.5 text-gold" />}
             label="Avg Size"
             value={<>${formatNumber(stats.avgSize, format, { maximumFractionDigits: 0 })}</>}
             isLoading={statsLoading}
             className="hidden xl:block"
           />
           <InlineStat
-            icon={<Target className="h-3.5 w-3.5 text-purple-400" />}
+            icon={<Target className="h-3.5 w-3.5 text-text-primary" />}
             label="Max Liq"
             value={<>${formatNumber(stats.maxLiq, format, { maximumFractionDigits: 0 })}</>}
             isLoading={statsLoading}

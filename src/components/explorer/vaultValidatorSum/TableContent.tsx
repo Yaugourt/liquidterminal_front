@@ -127,7 +127,7 @@ export function TableContent({
           header: "APR",
           type: "numeric",
           accessor: (v) => (
-            <span className="text-emerald-400 font-medium">
+            <span className="text-success font-medium">
               {formatNumber(v.apr, format, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -456,7 +456,7 @@ export function TableContent({
       header: "APR",
       type: "numeric",
       accessor: (v) => (
-        <span className={`font-medium ${v.apr >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+        <span className={`font-medium ${v.apr >= 0 ? "text-success" : "text-danger"}`}>
           {formatNumber(v.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
         </span>
       ),

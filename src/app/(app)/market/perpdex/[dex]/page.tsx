@@ -73,10 +73,10 @@ export default function PerpDexDetailPage() {
 
   if (error || !dex) {
     return (
-      <div className="p-8 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl shadow-xl shadow-black/20">
+      <div className="p-8 bg-surface border border-border-subtle rounded-lg shadow-xl shadow-black/20">
         <div className="flex flex-col items-center justify-center text-center">
           <Database className="w-12 h-12 mb-4 text-text-tertiary" />
-          <h2 className="text-xl font-medium text-white mb-2">DEX Not Found</h2>
+          <h2 className="text-xl font-medium text-text-primary mb-2">DEX Not Found</h2>
           <p className="text-text-secondary mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
           <Button onClick={() => router.push('/market/perpdex')} className="bg-brand hover:bg-brand/90 text-brand-text-on">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -96,7 +96,7 @@ export default function PerpDexDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/market/perpdex')}
-            className="text-brand hover:text-white hover:bg-white/5"
+            className="text-brand hover:text-text-primary hover:bg-surface-2"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
@@ -106,21 +106,21 @@ export default function PerpDexDetailPage() {
               {dex.name.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">{dex.fullName}</h1>
+              <h1 className="text-xl font-bold text-text-primary">{dex.fullName}</h1>
               <span className="text-brand text-sm">{dex.name}</span>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {wsConnected ? (
-            <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 rounded-full">
-              <Wifi className="h-3 w-3 text-emerald-400" />
-              <span className="text-emerald-400 text-xs font-medium">LIVE</span>
+            <div className="flex items-center gap-1 px-2 py-1 bg-success/10 rounded-full">
+              <Wifi className="h-3 w-3 text-success" />
+              <span className="text-success text-xs font-medium">LIVE</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1 px-2 py-1 bg-rose-500/10 rounded-full">
-              <WifiOff className="h-3 w-3 text-rose-400" />
-              <span className="text-rose-400 text-xs font-medium">OFFLINE</span>
+            <div className="flex items-center gap-1 px-2 py-1 bg-danger/10 rounded-full">
+              <WifiOff className="h-3 w-3 text-danger" />
+              <span className="text-danger text-xs font-medium">OFFLINE</span>
             </div>
           )}
         </div>
@@ -129,14 +129,14 @@ export default function PerpDexDetailPage() {
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* 24h Volume */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Activity className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">24h Volume</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-text-primary font-bold text-lg">
             {dex.totalVolume24h > 0
               ? formatNumber(dex.totalVolume24h, format, {
                 minimumFractionDigits: 0,
@@ -149,14 +149,14 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Open Interest */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Open Interest</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-text-primary font-bold text-lg">
             {dex.totalOpenInterest > 0
               ? formatNumber(dex.totalOpenInterest, format, {
                 minimumFractionDigits: 0,
@@ -169,27 +169,27 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Avg Funding */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Zap className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Avg Funding</span>
           </div>
-          <span className={`font-bold text-lg ${dex.avgFunding >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <span className={`font-bold text-lg ${dex.avgFunding >= 0 ? 'text-success' : 'text-danger'}`}>
             {formatFunding(dex.avgFunding)}
           </span>
         </div>
 
         {/* Active Markets */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Scale className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Active Markets</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-text-primary font-bold text-lg">
             {dex.activeAssets}
             {dex.activeAssets !== dex.totalAssets && (
               <span className="text-text-tertiary text-sm font-normal ml-1">
@@ -200,14 +200,14 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* OI Cap */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <TrendingUp className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">OI Cap</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-text-primary font-bold text-lg">
             {formatNumber(dex.totalOiCap, format, {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
@@ -218,14 +218,14 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Fee Scale */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand" />
             </div>
             <span className="text-stat-label">Fee Scale</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-text-primary font-bold text-lg">
             {(dex.deployerFeeScale * 100).toFixed(0)}%
           </span>
         </div>
@@ -234,7 +234,7 @@ export default function PerpDexDetailPage() {
       {/* Addresses */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Deployer Card */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Database className="h-3 w-3 text-brand" />
@@ -251,7 +251,7 @@ export default function PerpDexDetailPage() {
         </div>
 
         {/* Fee Recipient Card */}
-        <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20 group">
+        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
               <Wallet className="h-3 w-3 text-brand" />
@@ -276,7 +276,7 @@ export default function PerpDexDetailPage() {
             className="text-text-secondary text-sm"
           />
         ) : dex.subDeployers.length > 0 ? (
-          <div className="p-4 bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl hover:border-white/10 transition-all shadow-xl shadow-black/20">
+          <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center">
                 <Wallet className="h-3 w-3 text-brand" />
@@ -294,7 +294,7 @@ export default function PerpDexDetailPage() {
                         className="cursor-pointer"
                         onClick={() => copyToClipboard(addr, "Sub-deployer address")}
                       >
-                        <span className="text-text-secondary text-label hover:text-brand transition-colors bg-white/5 px-1.5 py-0.5 rounded">
+                        <span className="text-text-secondary text-label hover:text-brand transition-colors bg-surface-2 px-1.5 py-0.5 rounded">
                           {truncateAddress(addr)}
                         </span>
                       </div>

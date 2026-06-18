@@ -30,7 +30,7 @@ export const HIP4_PRICES: Record<string, number> = {
 };
 
 export function sideBadgeClass(name: string) {
-  if (name === "Yes") return "bg-emerald-500/15 text-emerald-300 border-emerald-500/25";
-  if (name === "No") return "bg-red-500/15 text-red-300 border-red-500/25";
+  if (name === "Yes") return "bg-success/15 text-success border-success/25";
+  if (name === "No") return "bg-danger/15 text-danger border-danger/25";
   return "bg-brand/10 text-brand border-brand/20";
 }

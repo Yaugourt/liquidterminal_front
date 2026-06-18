@@ -35,13 +35,13 @@ function renderAssetBadges(asset: PerpDexAssetWithMarketData) {
     <div className="flex items-center gap-2 mt-0.5">
       <span className="text-label text-text-tertiary">{asset.maxLeverage}x</span>
       {asset.growthMode === "enabled" && (
-        <span className="text-emerald-400 text-label flex items-center gap-0.5">
+        <span className="text-success text-label flex items-center gap-0.5">
           <Sprout className="h-2.5 w-2.5" />
           Growth
         </span>
       )}
       {asset.isDelisted && (
-        <span className="text-rose-400 text-label flex items-center gap-0.5">
+        <span className="text-danger text-label flex items-center gap-0.5">
           <AlertCircle className="h-2.5 w-2.5" />
           Delisted
         </span>
@@ -87,7 +87,7 @@ function buildColumns(
       getSortValue: (row) => row.priceChange24h ?? 0,
       accessor: (row) => (
         <span
-          className={`text-sm font-medium ${(row.priceChange24h ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+          className={`text-sm font-medium ${(row.priceChange24h ?? 0) >= 0 ? "text-success" : "text-danger"}`}
         >
           {formatPriceChange(row.priceChange24h)}
         </span>
@@ -130,7 +130,7 @@ function buildColumns(
       header: "Funding",
       accessor: (row) => (
         <span
-          className={`text-sm font-medium ${(row.funding ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}
+          className={`text-sm font-medium ${(row.funding ?? 0) >= 0 ? "text-success" : "text-danger"}`}
         >
           {formatFunding(row.funding)}
         </span>

@@ -116,11 +116,11 @@ export function CreateWalletListDialog({
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-base border border-border-subtle rounded-xl hover:border-border-default transition-all">
+          <div className="flex items-center justify-between p-4 bg-base border border-border-subtle rounded-lg hover:border-border-default transition-all">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${isPublic ? 'bg-emerald-500/10' : 'bg-gold/10'}`}>
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-success/10' : 'bg-gold/10'}`}>
                 {isPublic ? (
-                  <Users size={20} className="text-emerald-400" />
+                  <Users size={20} className="text-success" />
                 ) : (
                   <Lock size={20} className="text-gold" />
                 )}
@@ -140,7 +140,7 @@ export function CreateWalletListDialog({
             <Switch
               checked={isPublic}
               onCheckedChange={setIsPublic}
-              className="data-[state=checked]:bg-emerald-400 data-[state=unchecked]:bg-zinc-600"
+              className="data-[state=checked]:bg-success data-[state=unchecked]:bg-surface-2"
             />
           </div>
         </div>
@@ -149,7 +149,7 @@ export function CreateWalletListDialog({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-border-subtle text-text-primary hover:bg-white/5 rounded-lg"
+            className="border-border-subtle text-text-primary hover:bg-surface-2 rounded-lg"
           >
             Cancel
           </Button>

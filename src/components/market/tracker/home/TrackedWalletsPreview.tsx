@@ -58,7 +58,7 @@ export function TrackedWalletsPreview() {
         {/* Non-authenticated state */}
         {!isAuthenticated && (
           <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-            <div className="p-4 bg-gold/10 rounded-2xl mb-4">
+            <div className="p-4 bg-gold/10 rounded-lg mb-4">
               <Wallet className="h-12 w-12 text-gold" />
             </div>
             <h3 className="text-lg font-semibold text-text-primary mb-2">
@@ -97,7 +97,7 @@ export function TrackedWalletsPreview() {
         {/* Authenticated state - No wallets */}
         {isAuthenticated && wallets.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-            <div className="p-4 bg-gold/10 rounded-2xl mb-4">
+            <div className="p-4 bg-gold/10 rounded-lg mb-4">
               <Wallet className="h-12 w-12 text-gold" />
             </div>
             <h3 className="text-lg font-semibold text-text-primary mb-2">

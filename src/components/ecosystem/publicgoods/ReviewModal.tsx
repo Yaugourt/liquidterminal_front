@@ -61,7 +61,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-surface/60 backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-surface backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
           <DialogTitle className="text-text-primary text-xl font-bold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-text-tertiary">
@@ -75,11 +75,11 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
             <div>
               <Label className="text-text-secondary text-xs font-semibold uppercase tracking-wider mb-3 block">Review Decision *</Label>
               <RadioGroup value={status} onValueChange={(val: string) => setStatus(val as ReviewStatus)} className="space-y-2">
-                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-emerald-500/30 transition-colors bg-black/20">
+                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-lg hover:border-success/30 transition-colors bg-base">
                   <RadioGroupItem value="APPROVED" id="approved" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="approved" className="text-text-primary cursor-pointer flex items-center gap-2 font-medium">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                      <CheckCircle2 className="w-5 h-5 text-success" />
                       Approve Project
                     </label>
                     <p className="text-sm text-text-tertiary mt-1">
@@ -88,11 +88,11 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-xl hover:border-rose-500/30 transition-colors bg-black/20">
+                <div className="flex items-start space-x-3 p-4 border border-border-subtle rounded-lg hover:border-danger/30 transition-colors bg-base">
                   <RadioGroupItem value="REJECTED" id="rejected" className="mt-0.5" />
                   <div className="flex-1">
                     <label htmlFor="rejected" className="text-text-primary cursor-pointer flex items-center gap-2 font-medium">
-                      <XCircle className="w-5 h-5 text-rose-400" />
+                      <XCircle className="w-5 h-5 text-danger" />
                       Reject Project
                     </label>
                     <p className="text-sm text-text-tertiary mt-1">
@@ -111,7 +111,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any comments or feedback for the submitter..."
                 rows={3}
-                className="bg-black/20 border border-border-default focus:border-brand/50 outline-none transition-colors mt-2 rounded-lg placeholder:text-text-tertiary"
+                className="bg-base border border-border-default focus:border-brand/50 outline-none transition-colors mt-2 rounded-lg placeholder:text-text-tertiary"
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+              className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
             >
               Cancel
             </Button>
@@ -130,9 +130,9 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
               onClick={handleSubmit}
               disabled={isSubmitting || !status}
               className={`rounded-lg font-semibold ${status === 'APPROVED'
-                  ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                  ? "bg-success text-white hover:bg-success/90"
                   : status === 'REJECTED'
-                    ? "bg-rose-500 text-white hover:bg-rose-600"
+                    ? "bg-danger text-white hover:bg-danger/90"
                     : "bg-brand text-brand-text-on hover:bg-brand/90"
                 }`}
             >

@@ -160,8 +160,8 @@ export function StakingTableContent({
           <span
             className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
               tx.type === "Undelegate"
-                ? "bg-rose-400/12 text-rose-400 border border-rose-400/25"
-                : "bg-emerald-400/12 text-emerald-400 border border-emerald-400/25"
+                ? "bg-danger/12 text-danger border border-danger/25"
+                : "bg-success/12 text-success border border-success/25"
             }`}
           >
             {tx.type}
@@ -245,7 +245,7 @@ export function StakingTableContent({
         key: "amount",
         header: "Amount",
         accessor: (r) => (
-          <span className="text-emerald-400">
+          <span className="text-success">
             {formatNumber(r.amount, format, { maximumFractionDigits: 6 })} HYPE
           </span>
         ),

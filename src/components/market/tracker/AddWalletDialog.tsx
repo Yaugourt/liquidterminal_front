@@ -124,7 +124,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-border-subtle text-text-primary hover:bg-white/5 rounded-lg"
+            className="border-border-subtle text-text-primary hover:bg-surface-2 rounded-lg"
           >
             Cancel
           </Button>

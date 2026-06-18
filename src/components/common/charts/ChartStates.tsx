@@ -13,7 +13,7 @@ export function ChartLoading({ className = "" }: ChartLoadingProps) {
         {[35, 55, 40, 70, 50, 80, 45, 65, 55, 75, 42, 60].map((h, i) => (
           <div
             key={i}
-            className="flex-1 rounded-t bg-white/[0.04] animate-pulse"
+            className="flex-1 rounded-t bg-surface-2 animate-pulse"
             style={{
               height: `${h}%`,
               animationDelay: `${i * 80}ms`,
@@ -22,7 +22,7 @@ export function ChartLoading({ className = "" }: ChartLoadingProps) {
           />
         ))}
       </div>
-      <div className="h-[1px] w-full max-w-[280px] bg-white/[0.06] mt-1" />
+      <div className="h-[1px] w-full max-w-[280px] bg-border-subtle mt-1" />
       <span className="text-[10px] text-text-tertiary mt-3 tracking-wide">Loading...</span>
     </div>
   );
@@ -41,7 +41,7 @@ export function ChartEmpty({
 }: ChartEmptyProps) {
   return (
     <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-2 ${className}`}>
-      <BarChart3 className="h-8 w-8 text-white/[0.08]" strokeWidth={1.5} />
+      <BarChart3 className="h-8 w-8 text-text-tertiary" strokeWidth={1.5} />
       <p className="text-text-tertiary text-sm">{message}</p>
       {suggestion && (
         <p className="text-text-tertiary/60 text-xs">{suggestion}</p>
@@ -63,12 +63,12 @@ export function ChartError({
 }: ChartErrorProps) {
   return (
     <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-3 ${className}`}>
-      <AlertCircle className="h-6 w-6 text-rose-400" />
-      <p className="text-rose-400 text-sm">{message}</p>
+      <AlertCircle className="h-6 w-6 text-danger" />
+      <p className="text-danger text-sm">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary bg-white/5 hover:bg-white/10 rounded-lg border border-border-subtle transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary bg-surface-2 hover:bg-surface-3 rounded-lg border border-border-subtle transition-colors"
         >
           <RefreshCw className="h-3 w-3" />
           Retry

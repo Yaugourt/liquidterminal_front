@@ -52,7 +52,7 @@ const columns: Column<Hip4Asset>[] = [
     header: "Mid",
     type: "numeric",
     accessor: (a) => {
-      const color = a.mid >= 0.5 ? "text-emerald-400" : "text-red-400";
+      const color = a.mid >= 0.5 ? "text-success" : "text-danger";
       return (
         <span className={cn("font-bold", color)}>
           {(a.mid * 100).toFixed(1)}%

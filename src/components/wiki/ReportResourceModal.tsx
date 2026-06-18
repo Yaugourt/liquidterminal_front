@@ -56,8 +56,8 @@ export function ReportResourceModal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="bg-surface border border-border-default rounded-2xl shadow-xl shadow-black/20 text-text-primary max-w-md">
                 <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-rose-500/10 rounded-lg">
-                        <Flag className="w-5 h-5 text-rose-400" />
+                    <div className="p-2 bg-danger/10 rounded-lg">
+                        <Flag className="w-5 h-5 text-danger" />
                     </div>
                     <div>
                         <DialogTitle className="text-lg font-bold">Report Resource</DialogTitle>
@@ -86,7 +86,7 @@ export function ReportResourceModal({
                         />
                         <div className="flex justify-between text-xs text-text-tertiary">
                             <span>{reason.length < 10 && reason.length > 0 && (
-                                <span className="text-amber-400 flex items-center gap-1">
+                                <span className="text-gold flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" />
                                     Minimum 10 characters
                                 </span>
@@ -100,7 +100,7 @@ export function ReportResourceModal({
                             type="button"
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+                            className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
                             disabled={isLoading}
                         >
                             Cancel
@@ -108,7 +108,7 @@ export function ReportResourceModal({
                         <Button
                             type="submit"
                             disabled={isLoading || reason.length < 10}
-                            className="bg-rose-500 hover:bg-rose-500/90 text-white font-semibold rounded-lg"
+                            className="bg-danger hover:bg-danger/90 text-white font-semibold rounded-lg"
                         >
                             {isLoading ? (
                                 <>

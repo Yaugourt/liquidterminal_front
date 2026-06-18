@@ -71,7 +71,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
       <h2 className="font-inter text-base font-semibold text-text-primary sm:text-lg">{spec.title}</h2>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-border-subtle pb-4">
-        <span className="rounded-md bg-emerald-500/20 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
+        <span className="rounded-md bg-success/20 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-success">
           {spec.method}
         </span>
         <code className="break-all font-mono text-xs text-brand sm:text-sm">{spec.url}</code>
@@ -103,7 +103,7 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
         />
       </div>
 
-      <details className="group mt-4 rounded-lg border border-border-subtle bg-brand-primary/30">
+      <details className="group mt-4 rounded-lg border border-border-subtle bg-surface-2/30">
         <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-xs font-semibold text-text-secondary hover:text-text-primary [&::-webkit-details-marker]:hidden">
           <ChevronDown className="h-4 w-4 shrink-0 text-text-tertiary transition-transform group-open:rotate-180" />
           Example request

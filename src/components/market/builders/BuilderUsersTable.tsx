@@ -49,7 +49,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
           const addr = pickAddress(row);
           return (
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] text-text-tertiary shrink-0">
+              <div className="w-6 h-6 rounded-full bg-surface-2 flex items-center justify-center text-[10px] text-text-tertiary shrink-0">
                 {addr !== "—" && addr.length > 2 ? addr.slice(2, 3).toUpperCase() : "?"}
               </div>
               <span className="text-xs text-text-secondary font-mono truncate max-w-[160px] sm:max-w-none">
@@ -83,7 +83,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
           const sharePct = totalFees > 0 ? (pickFees(row) / totalFees) * 100 : 0;
           return (
             <div className="flex items-center gap-2">
-              <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
+              <div className="w-16 h-1 bg-surface-2 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-brand/50 rounded-full"
                   style={{ width: `${Math.min(sharePct, 100)}%` }}
@@ -120,7 +120,7 @@ export function BuilderUsersTable({ users, isLoading, error }: BuilderUsersTable
   }, [format, totalFees, hasVolume]);
 
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-lg">
       <TypedDataTable<BuilderUserRow>
         data={users}
         columns={columns}

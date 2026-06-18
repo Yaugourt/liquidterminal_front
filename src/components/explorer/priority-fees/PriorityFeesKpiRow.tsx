@@ -74,7 +74,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
       {
         title: "Fills w/ priority",
         value: isLoading ? "—" : String(fillCount),
-        icon: <Hash className="w-4 h-4 text-emerald-400" />,
+        icon: <Hash className="w-4 h-4 text-success" />,
       },
       {
         title: "Avg priority gas",
@@ -84,7 +84,7 @@ export function PriorityFeesKpiRow({ stats, isLoading }: PriorityFeesKpiRowProps
       {
         title: "Max priority gas",
         value: formatPriorityFeeNumber(stats?.max_priority_gas),
-        icon: <Activity className="w-4 h-4 text-rose-400" />,
+        icon: <Activity className="w-4 h-4 text-danger" />,
       },
     ];
   }, [stats, isLoading, fillCount, run]);

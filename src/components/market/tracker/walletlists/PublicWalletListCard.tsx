@@ -17,13 +17,13 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
   const createdAgo = timeAgo(list.createdAt);
 
   return (
-    <Card className="rounded-2xl hover:border-border-default transition-all duration-200 group">
+    <Card className="rounded-lg hover:border-border-default transition-all duration-200 group">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand transition-colors">
             {list.name}
           </CardTitle>
-          <div className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full shrink-0">
+          <div className="flex items-center gap-1 text-xs text-success bg-success/10 px-2 py-1 rounded-full shrink-0">
             <Users size={12} />
             <span>Public</span>
           </div>

@@ -80,8 +80,8 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-base/50 flex items-center justify-center"
             >
-              <div className="bg-emerald-500 rounded-full p-2.5 shadow-lg">
-                <Check className="w-5 h-5 text-white" />
+              <div className="bg-success rounded-full p-2.5 shadow-lg">
+                <Check className="w-5 h-5 text-text-primary" />
               </div>
             </motion.div>
           )}
@@ -94,7 +94,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             onClick={handleToggleRead}
             disabled={isTogglingRead}
             className={`p-1.5 rounded-lg backdrop-blur-sm border transition-all ${item.isRead
-              ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30'
+              ? 'bg-success/20 border-success/30 text-success hover:bg-success/30'
               : 'bg-base/80 border-border-default text-gold hover:bg-gold/10 hover:border-gold/30'
               }`}
             title={item.isRead ? "Mark as unread" : "Mark as read"}
@@ -114,7 +114,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleRemoveItem}
-            className="p-1.5 rounded-lg bg-base/80 border border-border-default text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 backdrop-blur-sm transition-all"
+            className="p-1.5 rounded-lg bg-base/80 border border-border-default text-danger hover:bg-danger/20 hover:border-danger/30 backdrop-blur-sm transition-all"
             title="Remove from list"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -124,7 +124,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
         {/* Status pill */}
         <div className="absolute bottom-2 left-2">
           <span className={`text-label px-2 py-1 rounded-md backdrop-blur-sm border ${item.isRead
-            ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+            ? 'bg-success/20 border-success/30 text-success'
             : 'bg-gold/10 border-gold/20 text-gold'
             }`}>
             {item.isRead ? 'Read' : 'Unread'}

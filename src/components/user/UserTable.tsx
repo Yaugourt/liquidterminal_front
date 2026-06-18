@@ -47,7 +47,7 @@ export function UserTable({
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return <Shield className="w-3 h-3 text-rose-400" />;
+        return <Shield className="w-3 h-3 text-danger" />;
       case 'MODERATOR':
         return <ShieldCheck className="w-3 h-3 text-gold" />;
       default:
@@ -58,7 +58,7 @@ export function UserTable({
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'ADMIN':
-        return 'text-rose-400';
+        return 'text-danger';
       case 'MODERATOR':
         return 'text-gold';
       default:
@@ -98,9 +98,9 @@ export function UserTable({
             checked={user.verified}
             onCheckedChange={(checked) => onVerifiedChange(user.id, checked)}
             disabled={isUpdating}
-            className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-zinc-700 scale-75"
+            className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-2 scale-75"
           />
-          <span className={`text-xs ${user.verified ? 'text-emerald-400' : 'text-text-tertiary'}`}>
+          <span className={`text-xs ${user.verified ? 'text-success' : 'text-text-tertiary'}`}>
             {user.verified ? 'Verified' : 'Unverified'}
           </span>
         </div>
@@ -134,7 +134,7 @@ export function UserTable({
       accessor: (user) =>
         user.referralCode ? (
           <div className="flex items-center gap-1">
-            <code className="text-xs text-text-secondary bg-zinc-800/50 px-1.5 py-0.5 rounded">
+            <code className="text-xs text-text-secondary bg-surface-2 px-1.5 py-0.5 rounded">
               {user.referralCode}
             </code>
             <button
@@ -142,7 +142,7 @@ export function UserTable({
               className="p-1 rounded hover-subtle"
             >
               {copiedCode === user.referralCode ? (
-                <Check className="w-3 h-3 text-emerald-400" />
+                <Check className="w-3 h-3 text-success" />
               ) : (
                 <Copy className="w-3 h-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
               )}
@@ -159,7 +159,7 @@ export function UserTable({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-xs text-text-tertiary cursor-help border-b border-dotted border-zinc-600">
+              <span className="text-xs text-text-tertiary cursor-help border-b border-dotted border-border-default">
                 {formatDate(user.createdAt)}
               </span>
             </TooltipTrigger>
@@ -183,7 +183,7 @@ export function UserTable({
             variant="ghost"
             size="sm"
             onClick={() => onEditUser(user)}
-            className="text-text-tertiary hover:text-text-primary hover:bg-white/5 h-7 w-7 p-0"
+            className="text-text-tertiary hover:text-text-primary hover:bg-surface-2 h-7 w-7 p-0"
           >
             <Edit className="w-3.5 h-3.5" />
           </Button>
@@ -192,7 +192,7 @@ export function UserTable({
             size="sm"
             disabled={user.id === currentUserId}
             onClick={() => onDeleteUser(user.id)}
-            className="text-text-tertiary hover:text-rose-400 hover:bg-rose-500/10 h-7 w-7 p-0 disabled:opacity-30"
+            className="text-text-tertiary hover:text-danger hover:bg-danger/10 h-7 w-7 p-0 disabled:opacity-30"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>

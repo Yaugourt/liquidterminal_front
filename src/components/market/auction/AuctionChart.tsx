@@ -109,14 +109,14 @@ export const AuctionChart = ({
 
             {/* Currency selector - only show for spot */}
             {marketType === "spot" && (
-              <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
+              <div className="flex items-center rounded-lg border border-border-subtle bg-base p-0.5">
                 {(["USDC", "HYPE"] as const).map((c) => (
                   <button
                     key={c}
                     onClick={() => onCurrencyChange(c)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold tabular-nums transition-colors ${
                       selectedCurrency === c
-                        ? "bg-white/[0.06] ring-1 ring-white/10 text-text-primary"
+                        ? "bg-surface-2 ring-1 ring-border-default text-text-primary"
                         : "text-text-secondary hover:text-text-primary"
                     }`}
                   >

@@ -94,7 +94,7 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
       {/* Ambient glow tied to the sign of PnL — subtle emerald up / rose down */}
       <div
         className={`pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full blur-3xl transition-colors duration-500 ${
-          isPositive ? "bg-emerald-500/[0.08]" : "bg-rose-500/[0.08]"
+          isPositive ? "bg-success/[0.08]" : "bg-danger/[0.08]"
         }`}
       />
       <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-brand/[0.06] blur-3xl" />
@@ -105,13 +105,13 @@ export function PerformanceSection({ portfolioData, isLoading = false }: Perform
           <div
             className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold tabular-nums ${
               isPositive
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                : "border-rose-500/30 bg-rose-500/10 text-rose-300"
+                ? "border-success/30 bg-success/10 text-success"
+                : "border-danger/30 bg-danger/10 text-danger"
             }`}
           >
             <span
               className={`h-1 w-1 rounded-full ${
-                isPositive ? "bg-emerald-400" : "bg-rose-400"
+                isPositive ? "bg-success" : "bg-danger"
               }`}
             />
             {isPositive ? '+' : ''}

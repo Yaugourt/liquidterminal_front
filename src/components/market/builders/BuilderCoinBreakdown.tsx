@@ -57,7 +57,7 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
     <Card className="p-5 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-text-primary font-semibold text-sm">{label ?? "Top Coins"}</h2>
-        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-base p-0.5">
           {SORT_OPTIONS.map((opt) => (
             <button
               key={opt.key}
@@ -131,7 +131,7 @@ export function BuilderCoinBreakdown({ coins, isLoading, label }: BuilderCoinBre
                     </div>
                   </div>
                 </div>
-                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="w-full h-1 bg-surface-2 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}

@@ -123,15 +123,15 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                   const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
 
                   return (
-                    <div key={`ask-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded relative transition-colors">
+                    <div key={`ask-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-surface-2 py-1 rounded relative transition-colors">
                       <div
-                        className="absolute inset-0 bg-rose-500/20 rounded"
+                        className="absolute inset-0 bg-danger/20 rounded"
                         style={{
                           width: `${Math.min(depthPercentage * 1.5, 100)}%`,
                           right: 0
                         }}
                       />
-                      <span className="text-rose-400 relative z-10 font-medium">${formatPrice(ask.px)}</span>
+                      <span className="text-danger relative z-10 font-medium">${formatPrice(ask.px)}</span>
                       <span className="text-text-primary text-right relative z-10">{formatSize(ask.sz)}</span>
                       <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
@@ -159,15 +159,15 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                   const depthPercentage = maxCumulative > 0 ? (cumulativeTotal / maxCumulative) * 100 : 0;
 
                   return (
-                    <div key={`bid-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded relative transition-colors">
+                    <div key={`bid-${index}`} className="grid grid-cols-3 gap-2 text-xs hover:bg-surface-2 py-1 rounded relative transition-colors">
                       <div
-                        className="absolute inset-0 bg-emerald-500/20 rounded"
+                        className="absolute inset-0 bg-success/20 rounded"
                         style={{
                           width: `${Math.min(depthPercentage * 1.7, 100)}%`,
                           left: 0
                         }}
                       />
-                      <span className="text-emerald-400 relative z-10 font-medium">${formatPrice(bid.px)}</span>
+                      <span className="text-success relative z-10 font-medium">${formatPrice(bid.px)}</span>
                       <span className="text-text-primary text-right relative z-10">{formatSize(bid.sz)}</span>
                       <span className="text-text-secondary text-right relative z-10">{formatSize(cumulativeTotal)}</span>
                     </div>
@@ -196,10 +196,10 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
                   const tradeTime = new Date(trade.time).toLocaleTimeString();
 
                   return (
-                    <div key={index} className="grid grid-cols-3 gap-2 text-xs hover:bg-white/5 py-1 rounded px-1 transition-colors">
+                    <div key={index} className="grid grid-cols-3 gap-2 text-xs hover:bg-surface-2 py-1 rounded px-1 transition-colors">
                       <span className={cn(
                         "font-medium",
-                        tradeType === 'Buy' ? 'text-emerald-400' : 'text-rose-400'
+                        tradeType === 'Buy' ? 'text-success' : 'text-danger'
                       )}>
                         ${formatPrice(tradePrice)}
                       </span>

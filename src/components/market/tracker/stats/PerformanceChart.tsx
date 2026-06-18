@@ -33,10 +33,10 @@ export function PerformanceChart({
   ];
 
   return (
-    <div className="w-full h-full bg-surface/60 border border-border-subtle rounded-2xl hover:border-border-default transition-all overflow-hidden relative">
+    <div className="w-full h-full bg-surface/60 border border-border-subtle rounded-lg hover:border-border-default transition-all overflow-hidden relative">
       {/* Aurora pill tabs */}
       <div className="absolute top-3 left-4 z-20">
-        <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+        <div className="flex items-center rounded-lg border border-border-subtle bg-base p-1">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -48,7 +48,7 @@ export function PerformanceChart({
                 {isActive && (
                   <motion.span
                     layoutId={`perf-tab-${uid}`}
-                    className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                    className="absolute inset-0 rounded-lg bg-surface-2 ring-1 ring-border-default"
                     transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                   />
                 )}
@@ -73,7 +73,7 @@ export function PerformanceChart({
             className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
               hideSmallBalances
                 ? "border-brand/40 bg-brand/10 text-brand"
-                : "border-border-subtle bg-black/30 text-text-secondary hover:text-text-primary hover:border-border-default"
+                : "border-border-subtle bg-base text-text-secondary hover:text-text-primary hover:border-border-default"
             }`}
             title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
           >

@@ -49,9 +49,9 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
     {
       label: "Avg rev / user",
       value: formatNumber(avgFeesPerUser, format, { maximumFractionDigits: 4, currency: "$", showCurrency: true }),
-      icon: <BarChart3 className="w-4 h-4 text-emerald-400" />,
+      icon: <BarChart3 className="w-4 h-4 text-brand" />,
       pct: null,
-      valueClassName: "text-lg font-bold tabular-nums text-emerald-400",
+      valueClassName: "text-lg font-bold tabular-nums text-brand",
     },
     {
       label: "Avg volume / user",

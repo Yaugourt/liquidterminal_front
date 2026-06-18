@@ -88,7 +88,7 @@ function SortableReadListItem({
       onClick={() => onSelect(list.id)}
       className={`p-3 rounded-lg cursor-pointer transition-colors group ${isActive
         ? "bg-brand/10 border border-brand/25"
-        : "hover:bg-white/[0.03] border border-transparent hover:border-border-subtle"
+        : "hover:bg-surface-2 border border-transparent hover:border-border-subtle"
         } ${isDragging ? 'z-50' : ''}`}
     >
       <div className="flex items-start justify-between">
@@ -96,13 +96,13 @@ function SortableReadListItem({
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-0.5 hover:bg-white/5 rounded mt-0.5 flex-shrink-0"
+            className="cursor-grab active:cursor-grabbing p-0.5 hover:bg-surface-2 rounded mt-0.5 flex-shrink-0"
             onClick={e => e.stopPropagation()}
           >
             <GripVertical className={`w-3.5 h-3.5 ${isActive ? "text-brand/60" : "text-text-tertiary/50"}`} />
           </div>
 
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isActive ? "bg-brand/20" : "bg-white/5 group-hover:bg-brand/10"}`}>
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${isActive ? "bg-brand/20" : "bg-surface-2 group-hover:bg-brand/10"}`}>
             <BookOpen className={`w-3.5 h-3.5 ${isActive ? "text-brand" : "text-text-tertiary"}`} />
           </div>
 
@@ -127,7 +127,7 @@ function SortableReadListItem({
             {/* Progress bar */}
             {total > 0 && (
               <div className="mt-2">
-                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-1 bg-surface-2 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-brand/60 rounded-full"
                     initial={{ width: 0 }}
@@ -147,7 +147,7 @@ function SortableReadListItem({
           }}
           size="sm"
           variant="ghost"
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 rounded-lg ml-1 flex-shrink-0"
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto text-danger hover:text-danger hover:bg-danger/10 rounded-lg ml-1 flex-shrink-0"
         >
           <Trash2 className="w-3 h-3" />
         </Button>

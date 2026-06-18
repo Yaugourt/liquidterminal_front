@@ -103,7 +103,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
         <form onSubmit={handleSubmit} className="space-y-4">
             {/* Rate limit warning */}
             {isRateLimited && (
-                <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-400 text-sm">
+                <div className="flex items-center gap-2 p-3 bg-gold/10 border border-gold/20 rounded-lg text-gold text-sm">
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     <span>Limite quotidienne atteinte (5/jour). Réessayez demain.</span>
                 </div>
@@ -150,7 +150,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                             <SelectItem
                                 key={cat.id}
                                 value={String(cat.id)}
-                                className="text-text-secondary hover:bg-white/5 focus:bg-white/5 rounded-lg"
+                                className="text-text-secondary hover:bg-surface-2 focus:bg-surface-2 rounded-lg"
                             >
                                 {cat.name}
                             </SelectItem>
@@ -165,7 +165,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                         type="button"
                         variant="outline"
                         onClick={onCancel}
-                        className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+                        className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
                         disabled={isLoading}
                     >
                         Annuler

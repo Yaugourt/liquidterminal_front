@@ -478,12 +478,12 @@ export function TradingViewChart({
       />
 
       {/* TOOLBAR — wraps on narrow screens so no info is ever hidden */}
-      <div className="relative z-20 flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 border-b border-border-subtle bg-gradient-to-b from-white/[0.02] to-transparent">
+      <div className="relative z-20 flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 border-b border-border-subtle bg-gradient-to-b from-surface-2 to-transparent">
         {/* LIVE badge — always visible */}
         <span
           className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] ${isConnected
-            ? "bg-emerald-500/10 text-emerald-400"
-            : "bg-white/5 text-text-tertiary"
+            ? "bg-success/10 text-success"
+            : "bg-surface-2 text-text-tertiary"
             }`}
         >
           <Radio
@@ -493,14 +493,14 @@ export function TradingViewChart({
         </span>
 
         {overlayPerpCoinId && (
-          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] bg-amber-400/10 text-amber-400 border border-amber-400/20">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] bg-gold/10 text-gold border border-gold/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-gold" />
             {overlayPerpCoinId}
           </span>
         )}
 
         {/* Timeframe selector (desktop: quick pills + more popover) */}
-        <div className="hidden min-[620px]:flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5">
+        <div className="hidden min-[620px]:flex items-center rounded-lg border border-border-subtle bg-base p-0.5">
           {QUICK_TIMEFRAMES.map((t) => (
             <button
               key={t}
@@ -556,7 +556,7 @@ export function TradingViewChart({
 
         {/* Price scale mode (Linear / Log / Percent) */}
         <div
-          className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-0.5"
+          className="flex items-center rounded-lg border border-border-subtle bg-base p-0.5"
           role="radiogroup"
           aria-label="Price axis scale"
         >
@@ -603,10 +603,10 @@ export function TradingViewChart({
                   O <span className="text-text-primary tabular-nums">{formatPrice(hover.o)}</span>
                 </span>
                 <span>
-                  H <span className="text-emerald-400 tabular-nums">{formatPrice(hover.h)}</span>
+                  H <span className="text-success tabular-nums">{formatPrice(hover.h)}</span>
                 </span>
                 <span>
-                  L <span className="text-rose-400 tabular-nums">{formatPrice(hover.l)}</span>
+                  L <span className="text-danger tabular-nums">{formatPrice(hover.l)}</span>
                 </span>
                 <span>
                   C <span className="text-text-primary tabular-nums">{formatPrice(hover.c)}</span>
@@ -615,11 +615,11 @@ export function TradingViewChart({
                   V <span className="text-brand tabular-nums">{compactUsd(hover.v)}</span>
                 </span>
                 {hover.c >= hover.o ? (
-                  <span className="text-emerald-400 tabular-nums">
+                  <span className="text-success tabular-nums">
                     +{(((hover.c - hover.o) / hover.o) * 100).toFixed(2)}%
                   </span>
                 ) : (
-                  <span className="text-rose-400 tabular-nums">
+                  <span className="text-danger tabular-nums">
                     {(((hover.c - hover.o) / hover.o) * 100).toFixed(2)}%
                   </span>
                 )}

@@ -126,7 +126,7 @@ export function XpHistoryList({
             <div className="space-y-2">
               {displayTransactions.map((tx) => {
                 const Icon = ACTION_ICONS[tx.actionType] || Gift;
-                const colorClass = ACTION_COLORS[tx.actionType] || "text-text-secondary bg-zinc-400/10";
+                const colorClass = ACTION_COLORS[tx.actionType] || "text-text-secondary bg-surface-2";
                 const [textColor, bgColor] = colorClass.split(" ");
 
                 return (

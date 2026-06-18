@@ -41,7 +41,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
 
   // Aurora pill for the Line/Bar chart-type toggle
   const ChartTypeToggle = () => (
-    <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+    <div className="flex items-center rounded-lg border border-border-subtle bg-base p-1">
       {(['line', 'bar'] as const).map((type) => {
         const isActive = chartType === type;
         return (
@@ -53,7 +53,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
             {isActive && (
               <motion.span
                 layoutId={`validator-type-${uid}`}
-                className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                className="absolute inset-0 rounded-lg bg-surface-2 ring-1 ring-border-default"
                 transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
               />
             )}
@@ -75,7 +75,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
   const BarCountSelector = () => {
     const barCounts = [7, 10, 15, 30, 60, 90];
     return (
-      <div className="flex items-center rounded-lg border border-border-subtle bg-black/30 p-1">
+      <div className="flex items-center rounded-lg border border-border-subtle bg-base p-1">
         {barCounts.map((count) => {
           const isActive = barCount === count;
           return (
@@ -87,7 +87,7 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
               {isActive && (
                 <motion.span
                   layoutId={`validator-barcount-${uid}`}
-                  className="absolute inset-0 rounded-lg bg-white/[0.06] ring-1 ring-white/10"
+                  className="absolute inset-0 rounded-lg bg-surface-2 ring-1 ring-border-default"
                   transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}

@@ -52,7 +52,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
         <div className="px-6 pt-6 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
                 <BookOpen className="w-5 h-5 text-brand" />
               </div>
               <div>
@@ -68,7 +68,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
           <div className="px-6 py-5 space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-                Name <span className="text-rose-400">*</span>
+                Name <span className="text-danger">*</span>
               </label>
               <Input
                 name="name"
@@ -101,7 +101,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
 
             {/* Visibility toggle */}
             <div
-              className={`p-4 rounded-xl border cursor-pointer transition-all ${isPublic
+              className={`p-4 rounded-lg border cursor-pointer transition-all ${isPublic
                 ? "bg-brand/5 border-brand/25"
                 : "bg-base border-border-subtle hover:border-border-default"
                 }`}
@@ -109,7 +109,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isPublic ? "bg-brand/20" : "bg-white/5"}`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isPublic ? "bg-brand/20" : "bg-surface-2"}`}>
                     {isPublic ? (
                       <Globe className="w-4 h-4 text-brand" />
                     ) : (
@@ -142,7 +142,7 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
-                  className="text-rose-400 text-sm"
+                  className="text-danger text-sm"
                 >
                   {error}
                 </motion.p>

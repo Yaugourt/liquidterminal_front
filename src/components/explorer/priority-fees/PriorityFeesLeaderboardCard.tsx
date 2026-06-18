@@ -90,7 +90,7 @@ export function PriorityFeesLeaderboardCard({
       </div>
 
       {error && (
-        <div className="mb-3 rounded-lg border border-rose-500/20 bg-rose-500/5 px-3 py-2 text-sm text-rose-400 flex flex-col gap-2">
+        <div className="mb-3 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-sm text-danger flex flex-col gap-2">
           <span>{error.message}</span>
           {onRetry && (
             <button

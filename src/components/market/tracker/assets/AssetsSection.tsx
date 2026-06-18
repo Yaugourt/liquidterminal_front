@@ -70,7 +70,7 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
   if (error) {
     return (
       <Card className="p-6">
-        <div className="flex items-center justify-center text-rose-400 space-x-2">
+        <div className="flex items-center justify-center text-danger space-x-2">
           <AlertCircle className="h-5 w-5" />
           <span className="text-sm">{error.message || "Une erreur est survenue lors du chargement des assets"}</span>
         </div>

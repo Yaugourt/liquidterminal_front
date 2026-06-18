@@ -60,7 +60,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
               return (
                 <button
                   key={b.address}
-                  className={`w-full flex items-center gap-2 px-3 py-2 hover:bg-white/5 transition-colors text-left ${
+                  className={`w-full flex items-center gap-2 px-3 py-2 hover:bg-surface-2 transition-colors text-left ${
                     b.address === selectedAddress ? "bg-brand/10" : ""
                   }`}
                   onClick={() => {

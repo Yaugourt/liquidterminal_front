@@ -19,7 +19,7 @@ export default function PublicListsPage() {
           variant="outline"
           size="sm"
           onClick={() => router.push('/market/tracker')}
-          className="border-brand/30 text-white hover:bg-brand/12"
+          className="border-brand/30 text-text-primary hover:bg-brand/12"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Tracker
@@ -34,7 +34,7 @@ export default function PublicListsPage() {
           placeholder="Search public lists by name or description..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 rounded-lg text-white placeholder:text-text-tertiary"
+          className="pl-10 rounded-lg text-text-primary placeholder:text-text-tertiary"
         />
       </div>
 

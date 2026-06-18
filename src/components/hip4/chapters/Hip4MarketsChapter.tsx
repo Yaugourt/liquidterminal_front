@@ -32,7 +32,7 @@ function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestR
           <span className="font-semibold text-text-primary">{result.label}</span>{" "}
           <span className="font-mono text-[11px] text-brand">{result.address}</span>
           {result.error ? (
-            <span className="ml-2 text-red-400">RPC: {result.error}</span>
+            <span className="ml-2 text-danger">RPC: {result.error}</span>
           ) : null}
         </span>
       ),
@@ -143,7 +143,7 @@ export function Hip4MarketsChapter() {
           )}
           Refresh on-chain scan
         </Button>
-        {error ? <span className="text-xs text-red-400">{error}</span> : null}
+        {error ? <span className="text-xs text-danger">{error}</span> : null}
       </div>
 
       <Hip4GlassPanel>

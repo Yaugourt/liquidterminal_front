@@ -77,17 +77,17 @@ export function CsvUpload({
 
       {/* Error state */}
       {csvError && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+        <div className="bg-danger/10 border border-danger/20 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <AlertCircle className="h-4 w-4 text-red-400" />
-            <h4 className="text-sm font-medium text-red-400">Upload Failed</h4>
+            <AlertCircle className="h-4 w-4 text-danger" />
+            <h4 className="text-sm font-medium text-danger">Upload Failed</h4>
           </div>
-          <p className="text-sm text-red-300">{csvError}</p>
+          <p className="text-sm text-danger">{csvError}</p>
           <Button
             type="button"
             variant="outline"
             onClick={resetCsvInternal}
-            className="mt-3 border-red-500/20 text-red-400 hover:bg-red-500/10"
+            className="mt-3 border-danger/20 text-danger hover:bg-danger/10"
           >
             Try Again
           </Button>
@@ -96,10 +96,10 @@ export function CsvUpload({
 
       {/* Success state */}
       {result?.success && (
-        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+        <div className="bg-success/10 border border-success/20 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <CheckCircle className="h-4 w-4 text-green-400" />
-            <h4 className="text-sm font-medium text-green-400">Upload Successful</h4>
+            <CheckCircle className="h-4 w-4 text-success" />
+            <h4 className="text-sm font-medium text-success">Upload Successful</h4>
           </div>
           
           <div className="text-sm text-text-secondary space-y-1 mb-3">
@@ -113,10 +113,10 @@ export function CsvUpload({
 
           {result.data.errors.length > 0 && (
             <div className="mt-3">
-              <h5 className="text-sm font-medium text-yellow-400 mb-2">Errors:</h5>
+              <h5 className="text-sm font-medium text-gold mb-2">Errors:</h5>
               <div className="max-h-32 overflow-y-auto space-y-1">
                 {result.data.errors.map((error, index) => (
-                  <p key={index} className="text-xs text-yellow-300">
+                  <p key={index} className="text-xs text-gold">
                     Row {error.row}: {error.error}
                   </p>
                 ))}
@@ -145,7 +145,7 @@ export function CsvUpload({
       )}
 
       {/* CSV Format Info */}
-      <div className="bg-surface/50 border border-border-subtle rounded-lg p-4">
+      <div className="bg-surface-2 border border-border-subtle rounded-lg p-4">
         <h4 className="text-sm font-medium text-text-primary mb-2">CSV Format</h4>
         <p className="text-xs text-text-secondary mb-2">
           Your CSV file should contain the following columns:

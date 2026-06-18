@@ -280,7 +280,7 @@ export function WalletTabs() {
       {activeTab === "all-wallets" && (
         <div className="mt-4">
           {/* Separator between list tabs and wallet tabs */}
-          <div className="w-full h-px bg-white/5 mb-4" />
+          <div className="w-full h-px bg-border-subtle mb-4" />
           <UnifiedWalletSelector
             items={wallets.map((w): WalletItem => ({
               id: w.id,
@@ -309,7 +309,7 @@ export function WalletTabs() {
       {activeTab !== "all-wallets" && (
         <div className="mt-4">
           {/* Separator between list tabs and wallet tabs */}
-          <div className="w-full h-px bg-white/5 mb-4" />
+          <div className="w-full h-px bg-border-subtle mb-4" />
           {getActiveListInfo() && (
             <WalletListContent
               key={`list-${getActiveListInfo()!.id}-${listContentKey}`}

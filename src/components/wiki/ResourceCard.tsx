@@ -110,7 +110,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
             size="sm"
             variant="ghost"
             disabled={isDeleting}
-            className="p-1 h-auto text-rose-400 hover:text-rose-300 hover:bg-rose-400/10 rounded-lg"
+            className="p-1 h-auto text-danger hover:text-danger hover:bg-danger/10 rounded-lg"
             title="Delete resource"
           >
             <Trash2 className="w-3 h-3" />
@@ -186,7 +186,7 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                       e.stopPropagation();
                       setShowReportModal(true);
                     }}
-                    className="p-1.5 h-auto rounded-lg text-text-tertiary hover:text-rose-400 hover:bg-rose-400/10"
+                    className="p-1.5 h-auto rounded-lg text-text-tertiary hover:text-danger hover:bg-danger/10"
                     title="Report this resource"
                   >
                     <Flag className="w-3.5 h-3.5" />

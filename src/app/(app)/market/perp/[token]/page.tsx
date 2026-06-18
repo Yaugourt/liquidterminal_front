@@ -82,8 +82,8 @@ export default function PerpTokenPage() {
   if (!token) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface/60 backdrop-blur-md border border-white/5 rounded-2xl p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
-          <div className="text-xl font-bold text-white mb-4">Token not found</div>
+        <div className="bg-surface border border-border-subtle rounded-lg p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+          <div className="text-xl font-bold text-text-primary mb-4">Token not found</div>
           <Button onClick={() => router.back()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold">
             Go Back
           </Button>

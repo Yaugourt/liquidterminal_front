@@ -54,9 +54,9 @@ export default function MyWallets() {
     <>
       {showAuthPopup && (
         <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="bg-surface/80 backdrop-blur-md border border-white/10 shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
+          <div className="bg-surface/80 backdrop-blur-md border border-border-subtle shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold text-white mb-2">Authentication Required</h2>
+              <h2 className="text-lg font-semibold text-text-primary mb-2">Authentication Required</h2>
               <p className="text-text-secondary text-sm">You need to login to access your wallet data</p>
             </div>
             <Button
@@ -78,13 +78,13 @@ export default function MyWallets() {
 
         {/* Telegram Alert Banner - only show if authenticated and not linked */}
         {authenticated && !currentUser?.telegramUsername && (
-          <div className="mb-6 p-4 rounded-xl bg-brand-telegram/10 border border-brand-telegram/20 flex items-center justify-between">
+          <div className="mb-6 p-4 rounded-lg bg-brand-telegram/10 border border-brand-telegram/20 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
                 <TelegramIcon className="h-5 w-5 text-brand-telegram" />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">Get wallet alerts on Telegram</p>
+                <p className="text-sm font-medium text-text-primary">Get wallet alerts on Telegram</p>
                 <p className="text-xs text-text-tertiary">Receive notifications for your tracked wallets</p>
               </div>
             </div>
@@ -132,8 +132,8 @@ export default function MyWallets() {
             <OrdersSection address={activeWallet.address} />
           ) : (
             <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
-              <h3 className="text-white text-lg font-medium mb-2">Orders</h3>
-              <p className="text-white/50 text-sm">No wallet selected</p>
+              <h3 className="text-text-primary text-lg font-medium mb-2">Orders</h3>
+              <p className="text-text-tertiary text-sm">No wallet selected</p>
             </div>
           )
         )}
@@ -143,8 +143,8 @@ export default function MyWallets() {
             <AddressTwapSection address={activeWallet.address} />
           ) : (
             <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
-              <h3 className="text-white text-lg font-medium mb-2">TWAP</h3>
-              <p className="text-white/50 text-sm">No wallet selected</p>
+              <h3 className="text-text-primary text-lg font-medium mb-2">TWAP</h3>
+              <p className="text-text-tertiary text-sm">No wallet selected</p>
             </div>
           )
         )}

@@ -80,7 +80,7 @@ export function ResourceForm({ onSuccess, onCancel }: ResourceFormProps) {
                     type="button"
                     variant="outline"
                     onClick={onCancel}
-                    className="border-border-subtle text-text-secondary hover:bg-white/5 rounded-lg"
+                    className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
                 >
                     Cancel
                 </Button>

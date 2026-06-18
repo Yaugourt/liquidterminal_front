@@ -15,7 +15,7 @@ export function Hip4InfoApiToc({ variant }: { variant: "inline" | "sidebar" }) {
             <Link
               key={item.id}
               href={`#${item.id}`}
-              className="rounded-md border border-border-subtle bg-brand-primary/40 px-2 py-1 text-[11px] text-text-secondary transition-colors hover:border-border-default hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              className="rounded-md border border-border-subtle bg-surface-2/40 px-2 py-1 text-[11px] text-text-secondary transition-colors hover:border-border-default hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             >
               {item.label}
             </Link>
@@ -38,7 +38,7 @@ export function Hip4InfoApiToc({ variant }: { variant: "inline" | "sidebar" }) {
           <li key={item.id}>
             <Link
               href={`#${item.id}`}
-              className="block py-0.5 text-text-secondary transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary"
+              className="block py-0.5 text-text-secondary transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-base"
             >
               {item.label}
             </Link>
