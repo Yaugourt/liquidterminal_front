@@ -4,8 +4,7 @@ import { ENDPOINTS } from '@/services/api/constants';
 import {
   LiquidationResponse,
   LiquidationsParams,
-  LiquidationsDataResponse,
-  LiquidationsHistoricalChartResponse
+  LiquidationsDataResponse
 } from './types';
 
 /**
@@ -25,23 +24,6 @@ const buildQueryParams = (params: LiquidationsParams): string => {
 };
 
 /**
- * Récupère les liquidations historiques avec filtres et pagination keyset
- * @param params Paramètres de filtrage et pagination
- * @returns Réponse paginée avec les liquidations
- */
-export const fetchLiquidations = async (
-  params: LiquidationsParams = {}
-): Promise<LiquidationResponse> => {
-  return withErrorHandling(async () => {
-    const queryString = buildQueryParams(params);
-    const response = await get<LiquidationResponse>(
-      `${ENDPOINTS.LIQUIDATIONS}${queryString}`
-    );
-    return response;
-  }, 'fetching liquidations');
-};
-
-/**
  * Récupère les liquidations récentes (fenêtre de 2h par défaut)
  * @param params Paramètres de filtrage et pagination
  * @returns Réponse paginée avec les liquidations récentes
@@ -56,23 +38,6 @@ export const fetchRecentLiquidations = async (
     );
     return response;
   }, 'fetching recent liquidations');
-};
-
-/**
- * Récupère la chart historique des liquidations (`/liquidations/historical/chart`).
- * Profondeur jusqu'à 90 jours, granularité adaptative côté backend.
- */
-export const fetchLiquidationsHistoricalChart = async (
-  period: string = '30d',
-  coin?: string
-): Promise<LiquidationsHistoricalChartResponse> => {
-  return withErrorHandling(async () => {
-    const params = new URLSearchParams({ period });
-    if (coin) params.append('coin', coin);
-    return await get<LiquidationsHistoricalChartResponse>(
-      `/liquidations/historical/chart?${params.toString()}`
-    );
-  }, 'fetching historical liquidations chart');
 };
 
 /**

@@ -60,38 +60,6 @@ export interface PriorityFeesLeaderboardEntry {
   fill_count?: number;
 }
 
-export interface PriorityFeesGossipHistoryQuery {
-  slot_id?: number | null;
-  start_time?: string | null;
-  end_time?: string | null;
-  offset?: number;
-  limit?: number;
-}
-
-/**
- * Gossip slot (live) or history row — HypeDexer uses camelCase on HIP-3 REST;
- * snake_case kept for older payloads.
- */
-export interface PriorityFeesGossipRecord {
-  slot_id?: number;
-  slotId?: number;
-  status?: string;
-  current_gas?: number | string;
-  currentGas?: number | string;
-  start_gas?: number | string;
-  startGas?: number | string;
-  endGas?: number | string | null;
-  end_time?: string;
-  endTime?: string;
-  startTime?: string;
-  lastUpdate?: string;
-  durationSeconds?: number;
-  snapshotTs?: string;
-  winner?: string;
-  cycle_id?: string;
-  [key: string]: unknown;
-}
-
 export interface PriorityFeesRecentFillsQuery {
   limit?: number;
   offset?: number;
@@ -128,15 +96,6 @@ export interface UsePriorityFeesStatsResult {
 
 export interface UsePriorityFeesLeaderboardResult {
   data: PriorityFeesLeaderboardEntry[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
-
-export interface UsePriorityFeesGossipHistoryResult {
-  data: PriorityFeesGossipRecord[];
-  /** Total matching rows when LiquidTerminal forwards HypeDexer `total_count` */
-  totalCount: number | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;

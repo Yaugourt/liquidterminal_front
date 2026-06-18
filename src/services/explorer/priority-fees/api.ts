@@ -6,8 +6,6 @@ import type {
   PriorityFeesStatsQuery,
   PriorityFeesLeaderboardEntry,
   PriorityFeesLeaderboardQuery,
-  PriorityFeesGossipRecord,
-  PriorityFeesGossipHistoryQuery,
   PriorityFeesRecentFillsQuery,
   PriorityFeesFillRow,
 } from "./types";
@@ -27,18 +25,6 @@ function unwrapIndexerData<T>(body: unknown): T {
 }
 
 
-function looksLikeGossipSlot(o: Record<string, unknown>): boolean {
-  return (
-    "slot_id" in o ||
-    "slotId" in o ||
-    "current_gas" in o ||
-    "currentGas" in o ||
-    "status" in o ||
-    "snapshotTs" in o ||
-    "startGas" in o
-  );
-}
-
 /**
  * HypeDexer canonical field is `priorityGas` (null if none); keep `priority_gas` as alias.
  */
@@ -51,56 +37,6 @@ export function extractFillPriorityGas(row: PriorityFeesFillRow): number {
     return Number.isFinite(n) ? n : NaN;
   }
   return NaN;
-}
-
-/** LT forwards `{ rows, total_count }`; legacy unwrap may still be a bare array. */
-function normalizeGossipHistoryPayload(data: unknown): {
-  rows: PriorityFeesGossipRecord[];
-  totalCount: number | null;
-} {
-  if (data && typeof data === "object" && !Array.isArray(data)) {
-    const o = data as Record<string, unknown>;
-    if (Array.isArray(o.rows)) {
-      const tc = o.total_count;
-      return {
-        rows: o.rows as PriorityFeesGossipRecord[],
-        totalCount: typeof tc === "number" && Number.isFinite(tc) ? tc : null,
-      };
-    }
-  }
-  return {
-    rows: normalizeArrayPayload(data),
-    totalCount: null,
-  };
-}
-
-function normalizeArrayPayload(data: unknown): PriorityFeesGossipRecord[] {
-  if (Array.isArray(data)) return data as PriorityFeesGossipRecord[];
-  if (data && typeof data === "object") {
-    const o = data as Record<string, unknown>;
-    for (const key of [
-      "slots",
-      "items",
-      "rows",
-      "auctions",
-      "history",
-      "results",
-      "records",
-      "entries",
-      "data",
-    ]) {
-      const v = o[key];
-      if (Array.isArray(v)) return v as PriorityFeesGossipRecord[];
-    }
-    const nested = o.data;
-    if (nested && typeof nested === "object" && !Array.isArray(nested)) {
-      const inner = normalizeArrayPayload(nested);
-      if (inner.length > 0) return inner;
-    }
-    if (Array.isArray(nested)) return nested as PriorityFeesGossipRecord[];
-    if (looksLikeGossipSlot(o)) return [o as PriorityFeesGossipRecord];
-  }
-  return [];
 }
 
 function normalizeLeaderboard(data: unknown): PriorityFeesLeaderboardEntry[] {
@@ -170,18 +106,6 @@ function buildLeaderboardQuery(params: PriorityFeesLeaderboardQuery): Record<str
   return q;
 }
 
-function buildGossipHistoryQuery(params: PriorityFeesGossipHistoryQuery): Record<string, string> {
-  const q: Record<string, string> = {};
-  if (params.slot_id !== undefined && params.slot_id !== null) {
-    q.slot_id = String(params.slot_id);
-  }
-  if (params.start_time) q.start_time = params.start_time;
-  if (params.end_time) q.end_time = params.end_time;
-  if (params.offset !== undefined) q.offset = String(params.offset);
-  if (params.limit !== undefined) q.limit = String(params.limit);
-  return q;
-}
-
 function buildFillsQuery(params: PriorityFeesRecentFillsQuery): Record<string, string> {
   const q: Record<string, string> = {};
   if (params.limit !== undefined) q.limit = String(params.limit);
@@ -224,28 +148,6 @@ export const fetchPriorityFeesLeaderboard = async (
     const data = unwrapIndexerData<unknown>(raw);
     return normalizeLeaderboard(data);
   }, "fetching priority fees leaderboard");
-};
-
-/**
- * Historical gossip priority-fee auctions.
- */
-export const fetchPriorityFeesGossipHistory = async (
-  params: PriorityFeesGossipHistoryQuery = {}
-): Promise<{ rows: PriorityFeesGossipRecord[]; totalCount: number | null }> => {
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(
-      ENDPOINTS.INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY,
-      buildGossipHistoryQuery({
-        offset: params.offset ?? 0,
-        limit: params.limit ?? 50,
-        slot_id: params.slot_id,
-        start_time: params.start_time,
-        end_time: params.end_time,
-      })
-    );
-    const data = unwrapIndexerData<unknown>(raw);
-    return normalizeGossipHistoryPayload(data);
-  }, "fetching priority fees gossip history");
 };
 
 /**

@@ -29,15 +29,6 @@ export const _fetchAdminUsers = async (params?: AdminUsersQueryParams): Promise<
 };
 
 /**
- * Récupère un utilisateur par ID (ADMIN uniquement)
- */
-export const _fetchAdminUser = async (userId: number): Promise<AdminUserResponse> => {
-  return withErrorHandling(async () => {
-    return await get<AdminUserResponse>(`/user/admin/users/${userId}`);
-  }, 'fetching admin user');
-};
-
-/**
  * Met à jour un utilisateur (ADMIN uniquement)
  */
 export const updateAdminUser = async (userId: number, data: AdminUpdateUserInput): Promise<AdminUserResponse> => {

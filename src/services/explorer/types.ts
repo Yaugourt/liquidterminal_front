@@ -172,41 +172,6 @@ export interface FormattedTransactionData {
 
 
 
-// Types pour les transferts
-export interface TransferData {
-  time: number;
-  user: string;
-  action: {
-    type: string;
-    signatureChainId: string;
-    hyperliquidChain: string;
-    destination: string;
-    token: string;
-    amount: string;
-    time: number;
-  };
-  block: number;
-  hash: string;
-  error: null | string;
-}
-
-export interface FormattedTransfer {
-  hash: string;
-  time: string;
-  timestamp: number;
-  from: string;
-  to: string;
-  amount: string;
-  token: string;
-  blockNumber: number;
-}
-
-export interface UseTransfersResult {
-  transfers: FormattedTransfer[] | null;
-  isLoading: boolean;
-  error: Error | null;
-}
-
 // Types pour les déploiements
 export interface DeployData {
   time: number;

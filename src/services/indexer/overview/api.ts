@@ -1,6 +1,6 @@
 import { get } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
-import type { DailyVolumeEntry, OverviewStat24h } from "./types";
+import type { OverviewStat24h } from "./types";
 
 const OVERVIEW = "/indexer/overview";
 
@@ -18,17 +18,6 @@ function assertLtData<T>(body: unknown): T {
     throw new Error("Invalid API response");
   }
   return r.data as T;
-}
-
-export async function fetchDailyVolume10d(): Promise<DailyVolumeEntry[]> {
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(
-      `${OVERVIEW}/daily-volume-10d`,
-      undefined,
-      OVERVIEW_GET_OPTIONS
-    );
-    return assertLtData<DailyVolumeEntry[]>(raw);
-  }, "fetching overview daily volume 10d");
 }
 
 export async function fetchActiveTraders24h(): Promise<OverviewStat24h> {

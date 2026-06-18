@@ -201,14 +201,3 @@ export interface PendingCountResponse {
   success: true;
   data: { count: number };
 }
-
-export interface ReportsResponse {
-  success: true;
-  data: ResourceReport[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}

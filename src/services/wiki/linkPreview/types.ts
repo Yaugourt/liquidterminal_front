@@ -11,34 +11,12 @@ export interface LinkPreview {
   updatedAt: string;
 }
 
-// ==================== PARAMÈTRES DE REQUÊTE ====================
-export interface LinkPreviewParams {
-  limit?: number;
-  page?: number;
-  sortBy?: 'createdAt' | 'updatedAt' | 'title';
-  sortOrder?: 'asc' | 'desc';
-  search?: string;
-  url?: string;
-}
-
 // ==================== RÉPONSES API ====================
 export interface LinkPreviewResponse {
   success: boolean;
   data: LinkPreview;
   error?: string;
   code?: string;
-}
-
-export interface LinkPreviewListResponse {
-  success: boolean;
-  data: LinkPreview[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-  message?: string;
 }
 
 export interface LinkPreviewBatchResponse {

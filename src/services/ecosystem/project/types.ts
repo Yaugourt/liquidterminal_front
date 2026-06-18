@@ -111,22 +111,6 @@ export interface CreateCategoryInput {
   description?: string;
 }
 
-export interface UpdateProjectInput {
-  title?: string;
-  desc?: string;
-  logo?: string;
-  twitter?: string;
-  discord?: string;
-  telegram?: string;
-  website?: string;
-  categoryIds?: number[];
-}
-
-export interface UpdateCategoryInput {
-  name?: string;
-  description?: string;
-}
-
 // Types de réponse pour les mutations
 export interface ProjectResponse {
   success: boolean;
@@ -152,28 +136,6 @@ export interface UseCreateCategoryResult {
   createCategory: (data: CreateCategoryInput) => Promise<Category | null>;
   isLoading: boolean;
   error: Error | null;
-}
-
-export interface UseUpdateProjectResult {
-  updateProject: (id: number, data: UpdateProjectInput) => Promise<Project | null>;
-  isLoading: boolean;
-  error: Error | null;
-}
-
-export interface UseDeleteProjectResult {
-  deleteProject: (id: number) => Promise<boolean>;
-  isLoading: boolean;
-  error: Error | null;
-}
-
-// Nouveaux types pour la gestion des catégories de projets
-export interface UseProjectCategoriesResult {
-  categories: Category[];
-  isLoading: boolean;
-  error: Error | null;
-  assignCategories: (categoryIds: number[]) => Promise<void>;
-  removeCategories: (categoryIds: number[]) => Promise<void>;
-  refetch: () => Promise<void>;
 }
 
 // ==================== TYPES POUR UPLOAD CSV PROJETS ====================

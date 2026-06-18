@@ -6,8 +6,7 @@ import {
   WalletListResponse,
   CreateWalletListInput,
   UpdateWalletListInput,
-  CreateWalletListItemInput,
-  UpdateWalletListItemInput
+  CreateWalletListItemInput
 } from './types';
 
 /**
@@ -155,22 +154,6 @@ export const addWalletToList = async (
     }
     return { ...response.data, xpGranted: response.xpGranted };
   }, 'adding wallet to list');
-};
-
-/**
- * Met à jour un item de liste
- */
-export const updateWalletListItem = async (
-  itemId: number, 
-  data: UpdateWalletListItemInput
-): Promise<WalletListItem> => {
-  return withErrorHandling(async () => {
-    const response = await put<{ success: boolean; data: WalletListItem }>(`${BASE_URL}/items/${itemId}`, data);
-    if (!response || !response.data) {
-      throw new Error('Failed to update wallet list item');
-    }
-    return response.data;
-  }, 'updating wallet list item');
 };
 
 /**

@@ -232,35 +232,3 @@ export const fetchTwapOrders = async (params: TwapOrderParams = {}): Promise<Twa
     };
   }, 'fetching TWAP orders');
 };
-
-/**
- * Récupère les derniers ordres TWAP
- */
-export const fetchLatestTwapOrders = async (
-  limit: number = 50,
-  status: "all" | "active" | "completed" | "canceled" | "error" = "all"
-): Promise<TwapOrderPaginatedResponse> => {
-  return fetchTwapOrders({
-    limit,
-    status,
-    sortBy: 'time',
-    sortOrder: 'desc',
-    page: 1
-  });
-};
-
-/**
- * Récupère les ordres TWAP d'un utilisateur spécifique
- */
-export const fetchUserTwapOrders = async (
-  user: string,
-  limit: number = 50
-): Promise<TwapOrderPaginatedResponse> => {
-  return fetchTwapOrders({
-    user,
-    limit,
-    sortBy: 'time',
-    sortOrder: 'desc',
-    page: 1
-  });
-}; 

@@ -17,11 +17,6 @@ export interface BlockTransactionListProps {
 }
 
 /**
- * Types pour les composants Explorer
- */
-export type ActivityTab = "transfers" | "deploy";
-
-/**
  * Types pour les composants Address
  */
 export interface TransactionListProps {
@@ -29,25 +24,6 @@ export interface TransactionListProps {
   isLoading: boolean;
   error: Error | null;
   currentAddress: string;
-}
-
-export interface AddressBalanceProps {
-  address: string;
-}
-
-export interface AddressHeaderProps {
-  address: string;
-}
-
-type Tab = {
-  id: string;
-  label: string;
-};
-
-export interface TabNavigationProps {
-  activeTab: string;
-  onChange: (tabId: string) => void;
-  tabs: Tab[];
 }
 
 /**

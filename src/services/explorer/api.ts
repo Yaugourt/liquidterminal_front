@@ -1,7 +1,6 @@
 import { 
     BlockDetailsResponse,
     TransactionDetailsResponse,
-    TransferData,
     DeployData,
     GlobalAliasesData,
 } from './types';
@@ -33,16 +32,6 @@ export async function fetchTransactionDetails(hash: string): Promise<Transaction
             hash: hash
         });
     }, 'fetching transaction details');
-}
-
-/**
- * Récupère les transferts depuis l'API Hypurrscan
- */
-export async function fetchTransfers(): Promise<TransferData[]> {
-    return withErrorHandling(async () => {
-        const url = `${API_URLS.HYPURRSCAN_API}/transfers`;
-        return await getExternal<TransferData[]>(url);
-    }, 'fetching transfers');
 }
 
 /**

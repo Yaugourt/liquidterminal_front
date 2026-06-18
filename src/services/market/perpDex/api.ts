@@ -5,7 +5,6 @@ import {
   PerpDexApiResponse,
   PerpDex,
   PerpDexRaw,
-  PerpDexGlobalStats,
   AllPerpMetasResponse,
   PerpMetaAsset,
   CollateralToken,
@@ -65,31 +64,6 @@ export const fetchPerpDexs = async (): Promise<PerpDex[]> => {
     const validDexs = response.filter((dex): dex is PerpDexRaw => dex !== null);
     return validDexs.map(transformPerpDex);
   }, 'fetching perp dexs');
-};
-
-/**
- * Calcule les stats globales depuis la liste des PerpDexs
- */
-export const calculateGlobalStats = (dexs: PerpDex[]): PerpDexGlobalStats => {
-  const totalDexs = dexs.length;
-  const totalAssets = dexs.reduce((sum, dex) => sum + dex.totalAssets, 0);
-  const totalOiCap = dexs.reduce((sum, dex) => sum + dex.totalOiCap, 0);
-  const avgAssetsPerDex = totalDexs > 0 ? totalAssets / totalDexs : 0;
-
-  return {
-    totalDexs,
-    totalAssets,
-    totalOiCap,
-    avgAssetsPerDex
-  };
-};
-
-/**
- * Récupère un PerpDex spécifique par son nom
- */
-export const fetchPerpDexByName = async (name: string): Promise<PerpDex | null> => {
-  const dexs = await fetchPerpDexs();
-  return dexs.find(dex => dex.name.toLowerCase() === name.toLowerCase()) || null;
 };
 
 // ============================================

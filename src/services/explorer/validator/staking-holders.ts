@@ -1,12 +1,10 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
 import { ENDPOINTS } from '@/services/api/constants';
-import { 
+import {
   StakedHoldersResponse,
-  TopHoldersResponse,
   HoldersStatsResponse,
-  HoldersParams,
-  TopHoldersParams 
+  HoldersParams
 } from './types/holders';
 
 /**
@@ -27,22 +25,6 @@ export const fetchStakingHolders = async (params?: HoldersParams): Promise<Stake
     const endpoint = `${ENDPOINTS.STAKING_HOLDERS}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     return await get<StakedHoldersResponse>(endpoint);
   }, 'fetching staking holders');
-};
-
-/**
- * Récupère les top holders de HYPE staké
- */
-export const fetchTopHolders = async (params?: TopHoldersParams): Promise<TopHoldersResponse> => {
-  return withErrorHandling(async () => {
-    const queryParams = new URLSearchParams();
-    
-    if (params?.limit) {
-      queryParams.append('limit', params.limit.toString());
-    }
-    
-    const endpoint = `${ENDPOINTS.STAKING_HOLDERS_TOP}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await get<TopHoldersResponse>(endpoint);
-  }, 'fetching top staking holders');
 };
 
 /**

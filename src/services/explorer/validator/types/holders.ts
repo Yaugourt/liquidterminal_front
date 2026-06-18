@@ -15,13 +15,6 @@ export interface HoldersParams {
 }
 
 /**
- * Paramètres pour récupérer les top holders
- */
-export interface TopHoldersParams {
-  limit?: number;
-}
-
-/**
  * Réponse API pour la liste paginée des holders
  */
 export interface StakedHoldersResponse {
@@ -42,16 +35,6 @@ export interface StakedHoldersResponse {
       holdersCount: number;
     };
   };
-  error?: string;
-  code?: string;
-}
-
-/**
- * Réponse API pour les top holders
- */
-export interface TopHoldersResponse {
-  success: boolean;
-  data: StakedHolder[];
   error?: string;
   code?: string;
 }
@@ -93,16 +76,6 @@ export interface HoldersStatsResponse {
 }
 
 /**
- * Réponse API pour un holder spécifique
- */
-export interface HolderResponse {
-  success: boolean;
-  data?: StakedHolder;
-  error?: string;
-  code?: string;
-}
-
-/**
  * Résultat du hook pour les holders paginés
  */
 export interface UseStakingHoldersPaginatedResult {
@@ -119,16 +92,6 @@ export interface UseStakingHoldersPaginatedResult {
     holdersCount: number;
   };
   updateParams: (params: Partial<HoldersParams>) => void;
-}
-
-/**
- * Résultat du hook pour les top holders
- */
-export interface UseTopHoldersResult {
-  topHolders: StakedHolder[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
 }
 
 /**
