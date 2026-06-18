@@ -1,7 +1,7 @@
 "use client";
 
 import { TypedDataTable, type Column } from "@/components/common";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import { AssetLogo } from "@/components/common";
 import type { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
@@ -23,12 +23,6 @@ const SORTABLE_FIELDS = new Set<string>(["dayNtlVlm", "openInterest", "priceChan
 const getTicker = (assetName: string) => {
   const parts = assetName.split(":");
   return parts.length > 1 ? parts[1] : assetName;
-};
-
-const formatFunding = (funding: number | undefined) => {
-  if (funding === undefined) return "-";
-  const percentage = funding * 100;
-  return `${percentage >= 0 ? "+" : ""}${percentage.toFixed(4)}%`;
 };
 
 const formatPriceChange = (change: number | undefined) => {

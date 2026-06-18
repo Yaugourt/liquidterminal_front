@@ -321,3 +321,14 @@ export function compactCount(
   if (abs >= 1e3) return `${sign}${(abs / 1e3).toFixed(1)}K`;
   return `${sign}${Math.round(abs)}`;
 }
+
+/**
+ * Funding-rate display — signed percentage with 4 decimals (`+0.0125%` / `-0.0030%`).
+ * Single source of truth: replaces the identical local copies in
+ * PerpDexTable, PerpDexMarketsTable and the perpdex/[dex] detail page.
+ */
+export function formatFunding(funding: number | null | undefined): string {
+  if (funding == null || !Number.isFinite(funding)) return '-';
+  const percentage = funding * 100;
+  return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
+}

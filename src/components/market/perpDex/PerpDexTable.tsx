@@ -2,16 +2,11 @@
 
 import { useCallback } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import type { PerpDexWithMarketData } from "@/services/market/perpDex/types";
-
-const formatFunding = (funding: number) => {
-  const percentage = funding * 100;
-  return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
-};
 
 function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[] {
   return [
