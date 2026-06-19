@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, CheckCircle, AlertCircle } from "lucide-react";
 import { useCsvUpload } from "@/services/wiki";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 interface CsvUploadFormProps {
     onSuccess: () => void;
@@ -67,7 +68,7 @@ export function CsvUploadForm({ onSuccess, onCancel }: CsvUploadFormProps) {
 
             {loading && (
                 <div className="flex items-center gap-2 text-brand">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand"></div>
+                    <InlineSpinner className="text-brand" />
                     <span className="text-sm">Upload en cours...</span>
                 </div>
             )}

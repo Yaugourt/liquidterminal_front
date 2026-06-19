@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import {
@@ -17,14 +17,13 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
-import { PageHeader } from "@/components/common";
+import { PageHeader, TimeframeTabs } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 
 export default function MarketBuildersPage() {
   const { setTitle } = usePageTitle();
   const [tf, setTf] = useState<BuildersTimeframe>("24h");
-  const tfLayoutId = useId().replace(/:/g, "");
 
   const allTf = useBuildersStatsAllTimeframes();
   const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
@@ -53,27 +52,11 @@ export default function MarketBuildersPage() {
         title="Builders"
         description="Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory."
         actions={
-          <div className="flex items-center bg-surface-2 border border-border-subtle rounded-md p-0.5 w-fit">
-            {TIMEFRAMES.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTf(t)}
-                className="relative rounded text-xs font-medium px-2.5 py-1"
-              >
-                {tf === t && (
-                  <motion.span
-                    layoutId={`builders-tf-${tfLayoutId}`}
-                    className="absolute inset-0 rounded bg-brand"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                )}
-                <span className={`mono relative z-10 ${tf === t ? "text-brand-text-on" : "text-text-tertiary hover:text-text-primary"}`}>
-                  {t}
-                </span>
-              </button>
-            ))}
-          </div>
+          <TimeframeTabs
+            options={TIMEFRAMES}
+            value={tf}
+            onChange={(v) => setTf(v as BuildersTimeframe)}
+          />
         }
       />
 

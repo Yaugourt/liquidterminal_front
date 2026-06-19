@@ -8,6 +8,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatNumber, formatLargeNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface TooltipProps {
   active?: boolean;
@@ -104,10 +105,7 @@ export const UnstakingScheduleChart = memo(function UnstakingScheduleChart({
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-2"></div>
-          <p className="text-text-secondary text-sm">Loading unstaking schedule...</p>
-        </div>
+        <LoadingState withCard={false} message="Loading unstaking schedule..." />
       </div>
     );
   }

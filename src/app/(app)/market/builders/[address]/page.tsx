@@ -18,7 +18,7 @@ import {
   BuilderUsersTable,
   formatBuilderDisplayName,
 } from "@/components/market/builders";
-import { KpiRibbon, Skeleton } from "@/components/common";
+import { KpiRibbon, Skeleton, TimeframeTabs } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -74,21 +74,11 @@ export default function BuilderDetailPage() {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />Back
         </Button>
-        <div className="flex flex-wrap gap-2">
-          {TIMEFRAMES.map((t) => (
-            <Button
-              key={t} type="button" size="sm"
-              onClick={() => setTf(t)}
-              className={
-                tf === t
-                  ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
-                  : "border border-border-subtle text-text-secondary hover:bg-surface-2 hover:text-text-primary bg-transparent"
-              }
-            >
-              {t}
-            </Button>
-          ))}
-        </div>
+        <TimeframeTabs
+          options={TIMEFRAMES}
+          value={tf}
+          onChange={(v) => setTf(v as BuildersTimeframe)}
+        />
       </div>
 
       {/* Builder header */}

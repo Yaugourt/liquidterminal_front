@@ -7,6 +7,7 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { formatNumber } from '@/lib/formatters/numberFormatting';
 import { TypedDataTable, type Column } from '@/components/common';
 import { Card } from "@/components/ui/card";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 
 interface VaultDepositListProps {
   address: string;
@@ -115,7 +116,7 @@ export function VaultDepositList({ address }: VaultDepositListProps) {
   if (isLoading || vaultsLoading) {
     return (
       <Card className="flex items-center justify-center h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+        <InlineSpinner className="h-8 w-8 text-brand" />
       </Card>
     );
   }

@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, CheckCircle, AlertCircle } from "lucide-react";
 import { ProjectCsvUploadApiResponse } from "@/services/ecosystem/project/types";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface CsvUploadProps {
   uploadingCsv: boolean;
@@ -69,10 +70,7 @@ export function CsvUpload({
 
       {/* Loading state */}
       {uploadingCsv && (
-        <div className="text-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-2"></div>
-          <p className="text-sm text-text-secondary">Processing CSV file...</p>
-        </div>
+        <LoadingState withCard={false} message="Processing CSV file..." />
       )}
 
       {/* Error state */}

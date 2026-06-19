@@ -8,6 +8,8 @@ import { SpotToken } from "@/services/market/spot/types";
 import { getToken } from "@/services/market/spot/api";
 import { isBridged } from "@/services/market/spot/bridged";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { TokenCard, TokenData, OrderBook, TokenDetailsBand } from "@/components/market/token";
 import { TokenTwapSection } from "@/components/market/token/TokenTwapSection";
@@ -84,10 +86,7 @@ export default function TokenPage() {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
-                <div className="flex flex-col items-center">
-                    <div className="h-6 w-6 border-2 border-brand border-t-transparent rounded-full animate-spin mb-2" />
-                    <span className="text-text-tertiary text-sm">Loading...</span>
-                </div>
+                <LoadingState size="md" withCard={false} />
             </div>
         );
     }
@@ -95,7 +94,7 @@ export default function TokenPage() {
     if (error || !token) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="bg-surface/60 backdrop-blur-md border border-border-subtle rounded-lg p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+                <Card className="p-6 flex flex-col items-center justify-center">
                     <div className="text-xl font-bold text-text-primary mb-4">Token not found</div>
                     <div className="text-text-secondary mb-6 text-center">{error}</div>
                     <Button
@@ -104,7 +103,7 @@ export default function TokenPage() {
                     >
                         Back to tokens list
                     </Button>
-                </div>
+                </Card>
             </div>
         );
     }

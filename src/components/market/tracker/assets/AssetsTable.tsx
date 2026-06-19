@@ -1,6 +1,7 @@
 "use client";
 
 import { TypedDataTable, type Column, TokenIcon, chartPalette } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
 
 // Sort keys shared by spot & perp holdings tables. Kept here as the canonical
@@ -240,7 +241,7 @@ export function AssetsTable({
   const perpColumns = buildPerpColumns(formatCurrency, formatTokenAmount);
 
   return (
-    <div className="bg-surface/60 border border-border-subtle rounded-lg overflow-hidden">
+    <Card interactive={false}>
       {/* Tab header + stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
@@ -320,6 +321,6 @@ export function AssetsTable({
           sortDirection={sortDirection}
         />
       )}
-    </div>
+    </Card>
   );
 }

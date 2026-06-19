@@ -1,10 +1,14 @@
 "use client"
 
 import { useTransactionDetails } from '@/services/explorer';
-import { useParams } from 'next/navigation';
-import { useRouter } from "next/navigation";
-import { ArrowLeft, AlertCircle, Copy, Check } from "lucide-react";
+import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft, Copy, Check } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/common";
 import { useState } from 'react';
 import {
   TransactionHeader,
@@ -46,26 +50,15 @@ export default function TransactionPage() {
   }
 
   if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <AlertCircle className="h-8 w-8 text-danger" />
-          <span className="text-text-primary font-inter">Error loading transaction</span>
-          <span className="text-text-tertiary text-sm font-inter">{error.message}</span>
-        </div>
-      </div>
-    );
+    return <ErrorState title="Error loading transaction" message={error.message} />;
   }
 
   if (!transactionDetails) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <AlertCircle className="h-8 w-8 text-text-tertiary" />
-          <span className="text-text-primary font-inter">Transaction not found</span>
-          <span className="text-text-tertiary text-sm font-inter">The transaction hash may be invalid or not yet indexed</span>
-        </div>
-      </div>
+      <EmptyState
+        title="Transaction not found"
+        description="The transaction hash may be invalid or not yet indexed."
+      />
     );
   }
 
@@ -74,22 +67,25 @@ export default function TransactionPage() {
 
   return (
     <>
-      {/* Back Button */}
-      <button
-        onClick={() => router.push('/explorer')}
-        className="flex items-center gap-2 text-brand hover:text-brand/80 transition-colors font-inter"
-      >
-        <ArrowLeft size={20} />
-        Back
-      </button>
-
-      {/* Page Title */}
-      <h1 className="text-2xl text-text-primary font-medium font-inter">Transaction Details</h1>
+      <PageHeader
+        title="Transaction Details"
+        breadcrumb={
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/explorer')}
+            className="-ml-2 text-brand hover:text-text-primary hover:bg-surface-2"
+          >
+            <ArrowLeft size={16} className="mr-1.5" />
+            Back
+          </Button>
+        }
+      />
 
       {/* Hash */}
-      <div className="flex items-center gap-3 bg-surface/90 border border-brand/30 rounded-lg p-4">
+      <Card className="flex items-center gap-3 p-4">
         <span className="text-text-tertiary text-sm font-inter">Hash:</span>
-        <div className="flex items-center gap-2 flex-1">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
           <span className="text-brand font-inter break-all">
             <span className="md:hidden">{truncateHash(txHash)}</span>
             <span className="hidden md:inline">{txHash}</span>
@@ -105,7 +101,7 @@ export default function TransactionPage() {
             )}
           </button>
         </div>
-      </div>
+      </Card>
 
       {/* Transaction Header */}
       <TransactionHeader transaction={transactionDetails as ExtendedTransactionDetails} />

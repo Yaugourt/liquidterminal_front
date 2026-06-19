@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Copy, Check } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -146,11 +147,11 @@ export function PortfolioStats({
 
   if (!isMounted) {
     return (
-      <div className="h-full bg-surface/60 border border-border-subtle rounded-lg p-6">
+      <Card className="h-full p-6">
         <div className="flex items-center justify-center h-full">
           <InlineSpinner className="w-6 h-6 text-brand" />
         </div>
-      </div>
+      </Card>
     );
   }
 
@@ -221,7 +222,7 @@ export function PortfolioStats({
             </div>
 
             {/* Colonne droite : Long/Short Ratio */}
-            <div className="bg-surface/60 border border-border-subtle rounded-lg p-4 h-full">
+            <Card className="p-4 h-full">
               <div className="flex flex-col h-full">
                 {/* Section 1: Volumes */}
                 <div className="flex-1">
@@ -302,7 +303,7 @@ export function PortfolioStats({
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
           </div>
 
