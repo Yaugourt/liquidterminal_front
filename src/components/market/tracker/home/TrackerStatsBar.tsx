@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useTopTraders } from "@/services/market/toptraders";
 import { useActiveUsers } from "@/services/market/activeusers";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
-import { TrendingUp, DollarSign, Activity, Trophy, Crown, Zap, type LucideIcon } from "lucide-react";
+import { DollarSign, Trophy, Crown, Zap, type LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { StatsCard } from "@/components/common";
+import { KpiRibbon, type KpiCell } from "@/components/common";
 
 interface NotableWalletCardProps {
   label: string;
@@ -82,32 +82,16 @@ export function TrackerStatsBar() {
     );
   }
 
+  const statsCells: KpiCell[] = [
+    { label: "24h Volume", value: `$${formatLargeNumber(totalVolume24h)}` },
+    { label: "24h PnL (Top 50)", value: `+$${formatLargeNumber(totalPnl24h)}` },
+    { label: "24h Fills", value: formatLargeNumber(totalFills24h) },
+  ];
+
   return (
     <div className="space-y-4">
       {/* Stats Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <StatsCard
-          icon={<DollarSign className="h-4 w-4 text-gold" />}
-          iconClassName="bg-surface-2 rounded-lg"
-          title="24h Volume"
-          value={`$${formatLargeNumber(totalVolume24h)}`}
-          valueClassName="text-lg font-semibold text-text-primary"
-        />
-        <StatsCard
-          icon={<TrendingUp className="h-4 w-4 text-success" />}
-          iconClassName="bg-surface-2 rounded-lg"
-          title="24h PnL (Top 50)"
-          value={`+$${formatLargeNumber(totalPnl24h)}`}
-          valueClassName="text-lg font-semibold text-text-primary"
-        />
-        <StatsCard
-          icon={<Activity className="h-4 w-4 text-brand" />}
-          iconClassName="bg-surface-2 rounded-lg"
-          title="24h Fills"
-          value={formatLargeNumber(totalFills24h)}
-          valueClassName="text-lg font-semibold text-text-primary"
-        />
-      </div>
+      <KpiRibbon cells={statsCells} />
 
       {/* Notable Wallets Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
