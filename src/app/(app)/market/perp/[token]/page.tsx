@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { LoadingState } from "@/components/ui/loading-state";
 import { TradingLayout } from "@/layouts/TradingLayout";
 import { TokenCard, TokenData, OrderBook, RecentTrades } from "@/components/market/token";
@@ -82,12 +83,12 @@ export default function PerpTokenPage() {
   if (!token) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="bg-surface border border-border-subtle rounded-lg p-8 shadow-xl shadow-black/20 flex flex-col items-center justify-center">
+        <Card className="p-6 flex flex-col items-center justify-center">
           <div className="text-xl font-bold text-text-primary mb-4">Token not found</div>
           <Button onClick={() => router.back()} className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold">
             Go Back
           </Button>
-        </div>
+        </Card>
       </div>
     );
   }

@@ -9,7 +9,6 @@ import {
   useBuilderUsers,
   type BuildersTimeframe,
 } from "@/services/indexer/builders";
-import { Button } from "@/components/ui/button";
 import {
   BuilderSelector,
   BuilderCoinBreakdown,
@@ -17,7 +16,7 @@ import {
   BuilderIntelligenceUsersTable,
   BuilderIntelligenceSecondaryStats,
 } from "@/components/market/builders";
-import { PageHeader } from "@/components/common";
+import { PageHeader, TimeframeTabs } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 const ETH = /^0x[a-fA-F0-9]{40}$/i;
@@ -58,23 +57,11 @@ export default function BuildersIntelligencePage() {
         title="Builder Analytics"
         description="Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure."
         actions={
-          <div className="flex flex-wrap gap-2">
-            {TIMEFRAMES.map((t) => (
-              <Button
-                key={t}
-                type="button"
-                size="sm"
-                onClick={() => setTf(t)}
-                className={
-                  tf === t
-                    ? "bg-brand/20 text-brand border border-brand/40 hover:bg-brand/30"
-                    : "border border-border-subtle text-text-secondary hover:bg-surface-2 hover:text-text-primary bg-transparent"
-                }
-              >
-                {t}
-              </Button>
-            ))}
-          </div>
+          <TimeframeTabs
+            options={TIMEFRAMES}
+            value={tf}
+            onChange={(v) => setTf(v as BuildersTimeframe)}
+          />
         }
       />
 

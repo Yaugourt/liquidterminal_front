@@ -5,6 +5,7 @@ import { useAuctionTiming, usePerpAuctionTiming } from "@/services/market/auctio
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface AuctionCardProps {
   marketType: "spot" | "perp";
@@ -66,9 +67,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center px-4 pb-4">
         {isLoading ? (
-          <div className="flex items-center justify-center py-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand/50"></div>
-          </div>
+          <LoadingState size="sm" withCard={false} />
         ) : (
           <div className="space-y-6">
 

@@ -1,10 +1,11 @@
 "use client";
 
-import { useId, useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import { PerformanceSection } from "./performance/PerformanceSection";
 import { DistributionSection } from "./performance/DistributionSection";
 import { Eye, EyeOff } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { PortfolioApiResponse } from "@/services/explorer/address/types";
 import { HyperliquidBalance } from "@/services/market/tracker/types";
 
@@ -25,44 +26,21 @@ export function PerformanceChart({
 }: PerformanceChartProps) {
   const [activeTab, setActiveTab] = useState<PerformanceTab>('performance');
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
-  const uid = useId().replace(/:/g, "");
 
-  const tabs: { key: PerformanceTab; label: string }[] = [
-    { key: 'performance', label: 'Performance' },
-    { key: 'distribution', label: 'Distribution' }
+  const tabs: { value: PerformanceTab; label: string }[] = [
+    { value: 'performance', label: 'Performance' },
+    { value: 'distribution', label: 'Distribution' }
   ];
 
   return (
-    <div className="w-full h-full bg-surface/60 border border-border-subtle rounded-lg hover:border-border-default transition-all overflow-hidden relative">
+    <Card className="w-full h-full relative">
       {/* Aurora pill tabs */}
       <div className="absolute top-3 left-4 z-20">
-        <div className="flex items-center rounded-lg border border-border-subtle bg-base p-1">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.key;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className="relative rounded-lg px-3 py-1 text-[11px] font-semibold whitespace-nowrap"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId={`perf-tab-${uid}`}
-                    className="absolute inset-0 rounded-lg bg-surface-2 ring-1 ring-border-default"
-                    transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 ${
-                    isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <PillTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(value) => setActiveTab(value as PerformanceTab)}
+        />
       </div>
 
       {/* Hide small balances — only on Distribution, Aurora style */}
@@ -96,6 +74,6 @@ export function PerformanceChart({
           isLoading={balancesLoading}
         />
       )}
-    </div>
+    </Card>
   );
 }

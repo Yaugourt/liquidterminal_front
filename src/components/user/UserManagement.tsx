@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ProtectedAction, StatsCard } from '@/components/common';
-import { Pagination } from '@/components/common';
+import { Pagination, DeleteConfirmDialog } from '@/components/common';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
 import { AdminUpdateUserInput, AdminUsersQueryParams } from '@/services/auth/user/types';
@@ -24,6 +24,7 @@ export function UserManagement() {
   const [editForm, setEditForm] = useState<AdminUpdateUserInput>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   // Build query parameters for server-side pagination and filtering
   const queryParams: AdminUsersQueryParams = useMemo(() => {
@@ -46,7 +47,7 @@ export function UserManagement() {
   // Get users with server-side pagination and filtering
   const { users, isLoading, error, refetch, pagination } = useAdminUsers(queryParams);
   const { updateUser, isLoading: isUpdating } = useAdminUpdateUser();
-  const { deleteUser } = useAdminDeleteUser();
+  const { deleteUser, isLoading: isDeleting } = useAdminDeleteUser();
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -85,14 +86,22 @@ export function UserManagement() {
     }
   };
 
-  // Handle user deletion
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+  // Handle user deletion — open the confirmation dialog
+  const handleDeleteUser = (userId: string) => {
+    const target = users?.find(u => u.id === userId) ?? null;
+    if (!target) return;
+    setUserToDelete(target);
+  };
+
+  // Confirm user deletion — runs the actual delete after confirmation
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
 
     try {
-      await deleteUser(parseInt(userId));
+      await deleteUser(parseInt(userToDelete.id));
       toast.success('User deleted successfully');
       await refetch();
+      setUserToDelete(null);
     } catch {
       toast.error('Error deleting user');
     }
@@ -266,6 +275,23 @@ export function UserManagement() {
             onFormChange={setEditForm}
             onSave={handleSaveEdit}
             onCancel={handleCancelEdit}
+          />
+
+          {/* Delete Confirmation */}
+          <DeleteConfirmDialog
+            open={userToDelete !== null}
+            onOpenChange={(open) => {
+              if (!open) setUserToDelete(null);
+            }}
+            title="Delete User"
+            description={
+              <>
+                Are you sure you want to delete{' '}
+                <span className="font-semibold">{userToDelete?.name || userToDelete?.email || 'this user'}</span>?
+              </>
+            }
+            isLoading={isDeleting}
+            onConfirm={confirmDeleteUser}
           />
 
           {/* Pagination */}

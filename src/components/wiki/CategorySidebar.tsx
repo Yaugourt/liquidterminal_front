@@ -4,6 +4,7 @@ import { Check, Filter, Layers } from "lucide-react";
 import { useEducationalCategories } from "@/services/wiki";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
 
 interface CategorySidebarProps {
   selectedCategories: number[];
@@ -118,10 +119,7 @@ export function CategorySidebar({
       {/* Category list */}
       <div className="relative z-10 max-h-[60vh] overflow-y-auto p-2 pt-1 pr-1 scrollbar-brand lg:max-h-[calc(100vh-18rem)]">
         {isLoading ? (
-          <div className="flex flex-col items-center gap-2 py-6 text-text-tertiary">
-            <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-brand" />
-            <span className="text-xs">Loading categories…</span>
-          </div>
+          <LoadingState withCard={false} size="sm" message="Loading categories…" />
         ) : total === 0 ? (
           <div className="py-6 text-center text-xs text-text-tertiary">
             No categories available
