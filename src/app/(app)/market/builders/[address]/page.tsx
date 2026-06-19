@@ -18,7 +18,7 @@ import {
   BuilderUsersTable,
   formatBuilderDisplayName,
 } from "@/components/market/builders";
-import { KpiRibbon } from "@/components/common";
+import { KpiRibbon, Skeleton } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -93,12 +93,12 @@ export default function BuilderDetailPage() {
 
       {/* Builder header */}
       {isFirstLoad ? (
-        <Card className="p-6 animate-pulse">
+        <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-surface-2" />
+            <Skeleton className="w-16 h-16 rounded-full" />
             <div className="space-y-2">
-              <div className="h-6 w-32 bg-surface-2 rounded" />
-              <div className="h-4 w-48 bg-surface-2 rounded" />
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-48" />
             </div>
           </div>
         </Card>

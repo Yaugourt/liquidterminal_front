@@ -13,6 +13,7 @@ import { useGlobalAliases } from "@/services/explorer";
 import { useWallets } from "@/store/use-wallets";
 import { AddToTrackListButton } from "@/components/market/tracker/AddToTrackListButton";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/common";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
 
 interface AddressHeroProps {
@@ -90,7 +91,7 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   Address
                 </span>
                 {aliasLoading ? (
-                  <div className="h-4 w-20 animate-pulse rounded-md bg-brand/20" />
+                  <Skeleton className="h-4 w-20" />
                 ) : alias ? (
                   <span className="rounded-md border border-gold/20 bg-gold/10 px-2 py-0.5 text-[10px] font-medium text-gold">
                     {alias}
