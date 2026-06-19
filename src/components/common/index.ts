@@ -69,7 +69,6 @@ export { LegalPage } from './LegalPage';
 export * from './animations';
 export * from './charts';
 export * from './forms';
-export * from './modal';
 export * from './settings';
 export * from './tables';
 export * from './tooltip';
