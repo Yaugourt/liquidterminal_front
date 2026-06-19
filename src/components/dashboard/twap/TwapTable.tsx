@@ -78,12 +78,6 @@ const ProgressionCellComponent = ({
   const progression = realTime ? realTime.progression : twap.progression;
   const roundedProgression = Math.round(progression * 100) / 100;
 
-  const getProgressColor = (p: number) => {
-    if (p < 30) return "bg-danger";
-    if (p < 70) return "bg-gold";
-    return "bg-success";
-  };
-
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between w-[120px]">
@@ -95,7 +89,7 @@ const ProgressionCellComponent = ({
       <div className="flex items-center">
         <div className="w-[120px] bg-surface-2 rounded-full h-1">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${getProgressColor(roundedProgression)}`}
+            className="h-full rounded-full bg-success transition-all duration-300"
             style={{ width: `${roundedProgression}%` }}
           />
         </div>
