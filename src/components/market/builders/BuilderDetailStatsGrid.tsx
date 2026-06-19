@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { StatsCard } from "@/components/common";
+import { StatsCard, Skeleton } from "@/components/common";
 
 interface BuilderDetailStatsGridProps {
   stats: BuilderDetailStatsPayload | null;
@@ -28,7 +28,7 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="stat-card animate-pulse h-24 rounded-lg" />
+          <Skeleton key={i} className="h-24 rounded-lg" />
         ))}
       </div>
     );
