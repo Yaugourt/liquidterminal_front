@@ -1,6 +1,6 @@
 "use client";
 
-import { TypedDataTable, type Column, TokenIcon, chartPalette } from "@/components/common";
+import { TypedDataTable, type Column, TokenAvatar, chartPalette } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
 
@@ -53,7 +53,7 @@ function buildSpotColumns(
       getSortValue: (row) => row.coin,
       accessor: (row) => (
         <div className="flex items-center gap-3">
-          <TokenIcon src={row.logo} name={row.coin} size="md" variant="dark" />
+          <TokenAvatar src={row.logo} assetName={row.coin} size="lg" />
           <span className="text-text-primary text-sm font-medium">{row.coin}</span>
         </div>
       ),
@@ -117,7 +117,7 @@ function buildPerpColumns(
       getSortValue: (row) => row.coin,
       accessor: (row) => (
         <div className="flex items-center gap-3">
-          <TokenIcon src={row.logo} name={row.coin} size="md" variant="dark" />
+          <TokenAvatar src={row.logo} assetName={row.coin} size="lg" />
           <span className="text-text-primary text-sm font-medium">{row.coin}</span>
         </div>
       ),
