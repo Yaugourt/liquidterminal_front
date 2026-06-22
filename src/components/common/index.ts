@@ -29,7 +29,7 @@ export { UserAccountCompact } from './UserAccountCompact';
 export { ThemeToggle } from './ThemeToggle';
 
 // Tables
-export { DataTable, TypedDataTable } from './DataTable';
+export { TypedDataTable } from './DataTable';
 export type { Column, ColumnType } from './DataTable';
 export { ScrollableTable } from './ScrollableTable';
 export {
