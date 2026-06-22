@@ -1,9 +1,17 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { usePrivy } from "@privy-io/react-auth";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { usePrivy, useModalStatus } from "@privy-io/react-auth";
 import { useWallets } from "@/store/use-wallets";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Plus, Check, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { showXpGainToast } from "@/components/xp";
@@ -21,10 +29,16 @@ interface AddToTrackListButtonProps {
  */
 export function AddToTrackListButton({ address, className = "" }: AddToTrackListButtonProps) {
   const { authenticated, login } = usePrivy();
+  // Privy's own modal open-state — used to hand off focus cleanly (see below).
+  const { isOpen: privyModalOpen } = useModalStatus();
   const { wallets, addWallet } = useWallets();
   const [isAdding, setIsAdding] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  // Set when the user clicks "Login" from the modal. The dialog is hidden while
+  // Privy's modal is open (so Radix's focus trap doesn't fight Privy), so the
+  // intent is tracked on a ref to survive that close and still auto-add.
+  const awaitingLoginRef = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -60,13 +74,14 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
     }
   }, [authenticated, addWallet, address, truncatedAddress]);
 
-  // After login, automatically add wallet
+  // After the user logs in via the modal, automatically add the wallet.
   useEffect(() => {
-    if (authenticated && showLoginModal && !isTracked) {
+    if (authenticated && awaitingLoginRef.current && !isTracked) {
+      awaitingLoginRef.current = false;
       setShowLoginModal(false);
       void handleAddToTrackList();
     }
-  }, [authenticated, showLoginModal, isTracked, handleAddToTrackList]);
+  }, [authenticated, isTracked, handleAddToTrackList]);
 
   // If already tracked, show "Tracked" button
   if (isTracked) {
@@ -84,35 +99,34 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
 
   return (
     <>
-      {/* Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-surface/80 backdrop-blur-md border border-border-subtle shadow-xl rounded-2xl p-6 max-w-md mx-4">
-            <h2 className="text-lg font-semibold text-text-primary mb-2">
-              Login to Track Wallet
-            </h2>
-            <p className="text-text-secondary text-sm mb-4">
+      {/* Login modal — shown when an unauthenticated user tries to track.
+          Hidden while Privy's own modal is open so the two focus traps don't
+          fight; it reappears if the user dismisses Privy without logging in. */}
+      <Dialog open={showLoginModal && !privyModalOpen} onOpenChange={setShowLoginModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Login to Track Wallet</DialogTitle>
+            <DialogDescription>
               Sign in to add this wallet to your track list
-            </p>
-            <div className="flex gap-3">
-              <Button
-                onClick={() => login()}
-                className="flex-1 bg-brand hover:bg-brand/90 text-black font-semibold"
-              >
-                <LogIn className="w-5 h-5 mr-2" />
-                Login
-              </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowLoginModal(false)} variant="outline">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                awaitingLoginRef.current = true;
+                login();
+              }}
+              className="bg-brand hover:bg-brand/90 text-black font-semibold"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              Login
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Button */}
       <Button

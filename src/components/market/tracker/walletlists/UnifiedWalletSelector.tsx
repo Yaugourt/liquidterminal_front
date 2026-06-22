@@ -13,16 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle, Search, Wallet, Trash2, FileUp, Download } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmDialog } from "@/components/common";
 
 // Interface unifiée pour les items wallet
 export interface WalletItem {
@@ -59,6 +50,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedWalletIds, setSelectedWalletIds] = useState<Set<number>>(new Set());
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Filter items based on search
     const filteredItems = useMemo(() => {
@@ -101,12 +93,14 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
     }, [selectedWalletIds.size]);
 
     const handleConfirmBulkDelete = useCallback(async () => {
+        setIsDeleting(true);
         try {
             await onBulkDelete(Array.from(selectedWalletIds));
             setSelectedWalletIds(new Set());
         } catch {
             // Error handled by onBulkDelete
         } finally {
+            setIsDeleting(false);
             setIsDeleteDialogOpen(false);
         }
     }, [onBulkDelete, selectedWalletIds]);
@@ -303,28 +297,20 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
             </div>
 
             {/* Bulk Delete Confirmation Dialog */}
-            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <AlertDialogContent className="bg-surface border-border-default rounded-2xl shadow-xl shadow-black/20">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-text-primary">Delete Multiple Wallets</AlertDialogTitle>
-                        <AlertDialogDescription className="text-text-secondary">
-                            Are you sure you want to delete {selectedWalletIds.size} wallet
-                            {selectedWalletIds.size !== 1 ? "s" : ""}? This action cannot be undone.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel className="border-border-subtle text-text-primary hover:bg-surface-2 rounded-lg">
-                            Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleConfirmBulkDelete}
-                            className="bg-danger hover:bg-danger/90 text-white rounded-lg"
-                        >
-                            Delete {selectedWalletIds.size} Wallet{selectedWalletIds.size !== 1 ? "s" : ""}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DeleteConfirmDialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                title="Delete Multiple Wallets"
+                description={
+                    <>
+                        Are you sure you want to delete {selectedWalletIds.size} wallet
+                        {selectedWalletIds.size !== 1 ? "s" : ""}?
+                    </>
+                }
+                confirmLabel={`Delete ${selectedWalletIds.size} Wallet${selectedWalletIds.size !== 1 ? "s" : ""}`}
+                isLoading={isDeleting}
+                onConfirm={handleConfirmBulkDelete}
+            />
         </>
     );
 });
