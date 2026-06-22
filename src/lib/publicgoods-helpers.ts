@@ -14,11 +14,12 @@ export const CATEGORIES = [
   "Other"
 ] as const;
 
+// Lifecycle progression mapped onto V4 tokens: muted → building → testing → live.
 export const DEVELOPMENT_STATUSES = [
-  { value: 'IDEA', label: 'Idea', color: 'bg-gray-500/20 text-gray-400' },
-  { value: 'DEVELOPMENT', label: 'Development', color: 'bg-purple-500/20 text-purple-400' },
-  { value: 'BETA', label: 'Beta', color: 'bg-blue-500/20 text-blue-400' },
-  { value: 'PRODUCTION', label: 'Production', color: 'bg-brand/20 text-brand' }
+  { value: 'IDEA', label: 'Idea', color: 'bg-surface-2 text-text-tertiary' },
+  { value: 'DEVELOPMENT', label: 'Development', color: 'bg-gold/15 text-gold' },
+  { value: 'BETA', label: 'Beta', color: 'bg-brand/15 text-brand' },
+  { value: 'PRODUCTION', label: 'Production', color: 'bg-success/15 text-success' }
 ] as const;
 
 export const TEAM_SIZES = [
