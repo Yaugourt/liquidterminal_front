@@ -1,20 +1,19 @@
 import { create } from 'zustand';
-import { 
-  TokenWebSocketStore, 
-  TokenTradeResponse, 
+import {
+  TokenWebSocketStore,
+  TokenTradeResponse,
   TokenOrderBookResponse,
 } from './types';
+import { WebSocketClient } from '@/lib/websocket-client';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
+const MAX_RECONNECT_ATTEMPTS = 3;
+const RECONNECT_DELAY = 2000;
 
-export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => {
-  let ws: WebSocket | null = null;
+export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
+  let client: WebSocketClient | null = null;
   let resetTimeout: NodeJS.Timeout | null = null;
   let currentCoinId: string | null = null;
-  let isConnecting = false;
-  let reconnectAttempts = 0;
-  const MAX_RECONNECT_ATTEMPTS = 3;
-  const RECONNECT_DELAY = 2000;
 
   return {
     currentPrice: 0,
@@ -39,22 +38,19 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
         return;
       }
 
-      // If already connected to the same coin, don't reconnect
-      if (ws && get().isConnected && currentCoinId === coinId) {
+      // Same coin: reuse the existing client. connect() is idempotent while the
+      // socket is OPEN/CONNECTING and reconnects if it has closed. This subsumes
+      // the previous "already connected" and "isConnecting" guards.
+      if (client && currentCoinId === coinId) {
+        client.connect();
         return;
       }
 
-      // Prevent multiple simultaneous connections
-      if (isConnecting) {
-        return;
-      }
-
-      // Disconnect existing connection if switching tokens
-      if (ws && currentCoinId !== coinId) {
-        ws.close(1000, 'Switching tokens');
-        ws = null;
-        currentCoinId = null;
-        set({ 
+      // Switching tokens: tear down the previous connection and reset state.
+      if (client) {
+        client.disconnect();
+        client = null;
+        set({
           isConnected: false,
           currentPrice: 0,
           lastSide: null,
@@ -64,45 +60,36 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
       }
 
       currentCoinId = coinId;
-      isConnecting = true;
 
-      try {
-        ws = new WebSocket(WS_URL);
-
-        ws.onopen = () => {
-          isConnecting = false;
-          reconnectAttempts = 0;
+      client = new WebSocketClient({
+        url: WS_URL,
+        maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
+        baseReconnectDelay: RECONNECT_DELAY,
+        onOpen: () => {
           set({ isConnected: true, error: null });
-          
+
           // Subscribe to trades
-          const tradesSubscription = {
-            method: "subscribe",
-            subscription: { type: "trades", coin: coinId }
-          };
-          ws?.send(JSON.stringify(tradesSubscription));
+          client?.send({
+            method: 'subscribe',
+            subscription: { type: 'trades', coin: coinId }
+          });
 
           // Subscribe to order book (l2Book)
-          const orderBookSubscription = {
-            method: "subscribe",
-            subscription: { 
-              type: "l2Book", 
-              coin: coinId, 
-            }
-          };
-          ws?.send(JSON.stringify(orderBookSubscription));
-        };
-
-        ws.onmessage = (event) => {
+          client?.send({
+            method: 'subscribe',
+            subscription: { type: 'l2Book', coin: coinId }
+          });
+        },
+        onMessage: (data) => {
           try {
-            const message = JSON.parse(event.data);
+            const message = data as TokenTradeResponse;
 
             if (message.channel === 'trades') {
-              const tradeData = message as TokenTradeResponse;
-              const latestTrade = tradeData.data[0];
-              
+              const latestTrade = message.data[0];
+
               if (latestTrade) {
                 const price = parseFloat(latestTrade.px);
-                
+
                 set((state) => ({
                   currentPrice: price,
                   lastSide: latestTrade.side,
@@ -120,13 +107,13 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
             }
 
             if (message.channel === 'l2Book') {
-              const orderBookData = message as TokenOrderBookResponse;
+              const orderBookData = data as TokenOrderBookResponse;
               const { levels } = orderBookData.data;
-              
+
               if (levels && levels.length >= 2) {
                 const bids = levels[0] || []; // Buy orders (index 0)
                 const asks = levels[1] || []; // Sell orders (index 1)
-                
+
                 set({
                   orderBook: {
                     bids: bids.slice(0, 20), // Keep top 20 levels
@@ -138,48 +125,20 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
           } catch {
             set({ error: 'Failed to parse WebSocket data' });
           }
-        };
-
-
-        ws.onerror = () => {
-          // Silent error handling - onclose will handle the reconnection
-        };
-
-        ws.onclose = (event) => {
-          isConnecting = false;
-          set({ 
+        },
+        onClose: () => {
+          set({
             isConnected: false,
-            error: null 
+            error: null
           });
-          ws = null;
-          
-          // Auto-reconnect with exponential backoff if not manually disconnected
-          if (currentCoinId && reconnectAttempts < MAX_RECONNECT_ATTEMPTS && event.code !== 1000) {
-            reconnectAttempts++;
-            const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
-            
-            setTimeout(() => {
-              if (currentCoinId && !get().isConnected) {
-                get().connect(currentCoinId);
-              }
-            }, delay);
-          } else if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-            set({ error: 'WebSocket connection failed after multiple attempts' });
-            currentCoinId = null;
-            reconnectAttempts = 0;
-          } else {
-            currentCoinId = null;
-            reconnectAttempts = 0;
-          }
-        };
+        },
+        onReconnectFailed: () => {
+          set({ error: 'WebSocket connection failed after multiple attempts' });
+          currentCoinId = null;
+        }
+      });
 
-      } catch {
-        isConnecting = false;
-        set({ 
-          error: 'Failed to establish WebSocket connection',
-          isConnected: false 
-        });
-      }
+      client.connect();
     },
 
     disconnect: () => {
@@ -187,16 +146,14 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => 
         clearTimeout(resetTimeout);
         resetTimeout = null;
       }
-      
-      if (ws) {
-        ws.close(1000, 'Manual disconnect'); // Normal closure
-        ws = null;
+
+      if (client) {
+        client.disconnect();
+        client = null;
       }
-      
+
       currentCoinId = null;
-      isConnecting = false;
-      reconnectAttempts = 0;
-      set({ 
+      set({
         isConnected: false,
         error: null,
         currentPrice: 0,

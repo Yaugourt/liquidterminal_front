@@ -1,10 +1,11 @@
 import { create } from 'zustand';
-import { 
-  DexMarketData, 
+import {
+  DexMarketData,
   AssetMarketData,
   AllDexsAssetCtxsMessage,
   AssetMarketCtx
 } from './types';
+import { WebSocketClient } from '@/lib/websocket-client';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -67,9 +68,7 @@ const parseDexCtx = (dexName: string, assetCtxs: AssetMarketCtx[]): DexMarketDat
 };
 
 export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, get) => {
-  let ws: WebSocket | null = null;
-  let reconnectAttempts = 0;
-  let reconnectTimeout: NodeJS.Timeout | null = null;
+  let client: WebSocketClient | null = null;
 
   return {
     marketData: new Map(),
@@ -81,97 +80,69 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
       // SSR protection
       if (typeof window === 'undefined') return;
 
-      // Don't create multiple connections
-      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+      // Reuse the existing client; connect() is a no-op while OPEN/CONNECTING
+      // and reconnects if the socket has closed.
+      if (!client) {
+        client = new WebSocketClient({
+          url: WS_URL,
+          maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
+          baseReconnectDelay: BASE_RECONNECT_DELAY,
+          onOpen: () => {
+            set({ isConnected: true, error: null });
 
-      // Clear pending reconnect
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-        reconnectTimeout = null;
-      }
-
-      try {
-        ws = new WebSocket(WS_URL);
-
-        ws.onopen = () => {
-          reconnectAttempts = 0;
-          set({ isConnected: true, error: null });
-
-          // Subscribe to all DEX asset contexts only if still connected
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({
+            // Subscribe to all DEX asset contexts
+            client?.send({
               method: "subscribe",
               subscription: { type: "allDexsAssetCtxs" }
-            }));
-          }
-        };
+            });
+          },
+          onMessage: (data) => {
+            try {
+              const message = data as { channel?: string };
 
-        ws.onmessage = (event) => {
-          try {
-            const message = JSON.parse(event.data);
+              if (message.channel === 'allDexsAssetCtxs') {
+                const ctxMessage = data as AllDexsAssetCtxsMessage;
+                const newMarketData = new Map<string, DexMarketData>();
 
-            if (message.channel === 'allDexsAssetCtxs') {
-              const data = message as AllDexsAssetCtxsMessage;
-              const newMarketData = new Map<string, DexMarketData>();
+                ctxMessage.data.ctxs.forEach(([dexName, assetCtxs]) => {
+                  // Skip empty dex name (native perps)
+                  if (!dexName) return;
 
-              data.data.ctxs.forEach(([dexName, assetCtxs]) => {
-                // Skip empty dex name (native perps)
-                if (!dexName) return;
-                
-                const dexData = parseDexCtx(dexName, assetCtxs);
-                newMarketData.set(dexName, dexData);
-              });
+                  const dexData = parseDexCtx(dexName, assetCtxs);
+                  newMarketData.set(dexName, dexData);
+                });
 
-              set({ 
-                marketData: newMarketData,
-                lastUpdate: new Date()
-              });
+                set({
+                  marketData: newMarketData,
+                  lastUpdate: new Date()
+                });
+              }
+            } catch {
+              // Silent parse error
             }
-          } catch {
-            // Silent parse error
-          }
-        };
-
-        ws.onerror = () => {
-          // Let onclose handle reconnection
-        };
-
-        ws.onclose = (event) => {
-          set({ isConnected: false });
-
-          // Reconnect with exponential backoff
-          if (event.code !== 1000 && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-            reconnectAttempts++;
-            const delay = BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
-
-            reconnectTimeout = setTimeout(() => {
-              get().connect();
-            }, delay);
-          } else if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+          },
+          onClose: () => {
+            set({ isConnected: false });
+          },
+          onReconnectFailed: () => {
             set({ error: 'Failed to connect after multiple attempts' });
           }
-        };
-      } catch {
-        set({ error: 'Failed to establish WebSocket connection', isConnected: false });
+        });
       }
+
+      client.connect();
     },
 
     disconnect: () => {
       if (typeof window === 'undefined') return;
 
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-        reconnectTimeout = null;
+      if (client) {
+        client.disconnect();
+        client = null;
       }
 
-      if (ws) {
-        ws.close(1000, 'Manual disconnect');
-        ws = null;
-      }
-
-      reconnectAttempts = 0;
-      set({ 
-        isConnected: false, 
+      set({
+        isConnected: false,
         error: null,
         marketData: new Map()
       });
