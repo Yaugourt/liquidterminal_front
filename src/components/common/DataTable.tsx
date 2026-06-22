@@ -5,7 +5,7 @@ import { Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
-import { Pagination, type PaginationProps } from "./pagination";
+import { type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
 import {
     Table,
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/table";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Card } from "@/components/ui/card";
 import { SortableTableHead } from "./tables/SortableTableHead";
 import { TablePaginationFooter } from "./tables/TablePaginationFooter";
@@ -111,74 +110,6 @@ const DENSITY_STYLES: Record<Density, DensityStyles> = {
     comfortable: { cellPaddingY: "py-2", cellPaddingX: "px-3.5", textSize: "text-sm" },
     compact:     { cellPaddingY: "py-1.5", cellPaddingX: "px-3", textSize: "text-xs" },
 };
-
-// ─── DataTable wrapper (children-based) ───────────────────────────────
-
-interface DataTableWrapperProps {
-    isLoading?: boolean;
-    error?: Error | null;
-    isEmpty?: boolean;
-    emptyState?: {
-        title?: string;
-        description?: string;
-        icon?: ReactNode;
-        action?: ReactNode;
-    };
-    children: ReactNode;
-    className?: string;
-    loadingMessage?: string;
-    errorMessage?: string;
-    pagination?: PaginationProps;
-}
-
-/**
- * DataTable Wrapper — for custom table implementations (children-based).
- *
- * Use when you want to provide your own `<Table>` JSX (full markup
- * control) but reuse the standard loading/error/empty states + pagination.
- * For data-driven tables with column configs, prefer `<TypedDataTable>`.
- */
-export function DataTable({
-    isLoading,
-    error,
-    isEmpty,
-    emptyState,
-    children,
-    className,
-    loadingMessage = "Loading...",
-    errorMessage = "An error occurred",
-    pagination,
-}: DataTableWrapperProps) {
-    if (isLoading) {
-        return <LoadingState message={loadingMessage} size="lg" />;
-    }
-    if (error) {
-        return <ErrorState title={errorMessage} message={error.message} />;
-    }
-    if (isEmpty) {
-        return (
-            <EmptyState
-                title={emptyState?.title}
-                description={emptyState?.description}
-                icon={emptyState?.icon}
-                action={emptyState?.action}
-            />
-        );
-    }
-
-    return (
-        <div>
-            <div className={cn("overflow-x-auto scrollbar-brand rounded-lg", className)}>
-                {children}
-            </div>
-            {pagination && (
-                <div className="px-4 py-3 border-t border-border-subtle">
-                    <Pagination {...pagination} />
-                </div>
-            )}
-        </div>
-    );
-}
 
 // ─── TypedDataTable (the canonical primitive) ─────────────────────────
 
