@@ -1,6 +1,6 @@
 "use client";
 
-import { TypedDataTable, type Column, TokenAvatar, chartPalette } from "@/components/common";
+import { TypedDataTable, type Column, TokenAvatar, chartPalette, PeriodSelector } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
 
@@ -244,24 +244,13 @@ export function AssetsTable({
     <Card interactive={false}>
       {/* Tab header + stats */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-        <div className="flex bg-base rounded-lg p-1 border border-border-subtle">
-          {[
-            { key: 'spot', label: 'Spot' },
-            { key: 'perp', label: 'Perps' }
-          ].map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => onViewTypeChange(tab.key as "spot" | "perp")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-                type === tab.key
-                  ? 'bg-brand text-brand-text-on shadow-sm font-bold'
-                  : 'tab-inactive'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <PeriodSelector
+          selected={type}
+          onChange={onViewTypeChange}
+          options={['spot', 'perp'] as const}
+          labels={{ spot: 'Spot', perp: 'Perps' }}
+          size="md"
+        />
 
         <div className="flex items-center gap-6">
           <div className="flex items-baseline gap-2">
