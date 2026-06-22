@@ -12,10 +12,17 @@ import { OrdersSection, AddressTwapSection } from "@/components/explorer/address
 import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { LogIn } from "lucide-react";
 import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useModalStatus } from "@privy-io/react-auth";
 
 // Telegram brand icon
 const TelegramIcon = ({ className }: { className?: string }) => (
@@ -29,6 +36,9 @@ export default function MyWallets() {
   const { setTitle } = usePageTitle();
   const { login, user: currentUser } = useAuthContext();
   const { ready: privyReady, authenticated } = usePrivy();
+  // Privy's own modal open-state — the gate hides while Privy's login modal is
+  // up so Radix's focus trap doesn't fight it (see the Dialog below).
+  const { isOpen: privyModalOpen } = useModalStatus();
   const { getActiveWallet } = useWallets();
   const activeWallet = getActiveWallet();
   const [activeAssetsTab, setActiveAssetsTab] = useState("holdings");
@@ -52,25 +62,32 @@ export default function MyWallets() {
 
   return (
     <>
-      {showAuthPopup && (
-        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-          <div className="bg-surface/80 backdrop-blur-md border border-border-subtle shadow-xl shadow-black/20 rounded-2xl p-6 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold text-text-primary mb-2">Authentication Required</h2>
-              <p className="text-text-secondary text-sm">You need to login to access your wallet data</p>
-            </div>
-            <Button
-              onClick={() => login()}
-              className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg py-2.5"
-            >
-              <LogIn className="w-5 h-5 mr-2" />
-              Login
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Auth gate — non-dismissable until the user logs in. The modal overlay
+          darkens + blurs the inert page behind it (no manual blur wrapper).
+          Hidden while Privy's modal is open so the focus traps don't fight;
+          reappears automatically if the user dismisses Privy without auth. */}
+      <Dialog open={showAuthPopup && !privyModalOpen}>
+        <DialogContent
+          hideClose
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+          className="max-w-md"
+        >
+          <DialogHeader>
+            <DialogTitle>Authentication Required</DialogTitle>
+            <DialogDescription>You need to login to access your wallet data</DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={() => login()}
+            className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold rounded-lg py-2.5"
+          >
+            <LogIn className="w-5 h-5 mr-2" />
+            Login
+          </Button>
+        </DialogContent>
+      </Dialog>
 
-      <div className={showAuthPopup ? "filter blur-[5px] pointer-events-none select-none" : ""}>
+      <div>
         {/* Navigation principale */}
         <div className="mb-8">
           <WalletTabs />

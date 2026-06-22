@@ -31,8 +31,11 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    /** Hide the built-in top-right close button (e.g. for non-dismissable gates). */
+    hideClose?: boolean
+  }
+>(({ className, children, hideClose = false, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -44,10 +47,12 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md text-text-secondary transition-colors hover:text-white hover:bg-white/5 p-1 focus:outline-none focus:ring-1 focus:ring-brand/50 disabled:pointer-events-none">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
+      {!hideClose && (
+        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md text-text-secondary transition-colors hover:text-white hover:bg-white/5 p-1 focus:outline-none focus:ring-1 focus:ring-brand/50 disabled:pointer-events-none">
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      )}
     </DialogPrimitive.Content>
   </DialogPortal>
 ))
