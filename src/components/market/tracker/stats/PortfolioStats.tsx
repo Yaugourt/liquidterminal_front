@@ -5,6 +5,7 @@ import { Copy, Check } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PeriodSelector } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddressBalance } from "@/services/explorer/address";
@@ -228,20 +229,11 @@ export function PortfolioStats({
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-stat-label">Volume</p>
-                    <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
-                      {(['24h', '7d', '30d', 'all'] as const).map((timeframe) => (
-                        <button
-                          key={timeframe}
-                          onClick={() => setVolumeTimeframe(timeframe)}
-                          className={`px-2 py-1 text-label rounded-md transition-all ${volumeTimeframe === timeframe
-                            ? 'bg-brand text-brand-text-on font-bold'
-                            : 'text-text-secondary hover:text-text-primary'
-                            }`}
-                        >
-                          {timeframe}
-                        </button>
-                      ))}
-                    </div>
+                    <PeriodSelector
+                      selected={volumeTimeframe}
+                      onChange={setVolumeTimeframe}
+                      options={['24h', '7d', '30d', 'all'] as const}
+                    />
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
