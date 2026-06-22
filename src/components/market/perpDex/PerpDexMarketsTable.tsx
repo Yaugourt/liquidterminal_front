@@ -1,9 +1,8 @@
 "use client";
 
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, type Column, TokenAvatar } from "@/components/common";
 import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
-import { AssetLogo } from "@/components/common";
 import type { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
 import type { PerpDexMarketsSortField } from "@/lib/perpDexMarketsSort";
 import { Sprout, AlertCircle } from "lucide-react";
@@ -59,7 +58,7 @@ function buildColumns(
       header: "Asset",
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <AssetLogo assetName={row.name} isDelisted={row.isDelisted} />
+          <TokenAvatar assetName={row.name} size="lg" className={row.isDelisted ? "opacity-50" : ""} />
           <div>
             <div className="flex items-center gap-1">
               <span className="text-text-primary text-sm font-medium">{getTicker(row.name)}</span>

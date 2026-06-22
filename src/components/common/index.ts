@@ -6,8 +6,6 @@
  */
 
 // Atomic UI helpers
-export { AssetLogo } from './AssetLogo';
-export { TokenIcon } from './TokenIcon';
 export { TokenAvatar } from './TokenAvatar';
 export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChange';
 export { Pagination } from './pagination';

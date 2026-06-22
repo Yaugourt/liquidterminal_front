@@ -36,8 +36,15 @@ const SIZE_CLASS: Record<NonNullable<TokenAvatarProps["size"]>, string> = {
 };
 
 interface TokenAvatarProps {
-  /** Asset name resolved against the HL CDN (`BTC`, `HYPE_spot`, `xyz:BRENTOIL`). */
+  /** Asset name — used for the alt text + initials fallback, and (when `src` is
+   * absent) resolved against the HL CDN (`BTC`, `HYPE_spot`, `xyz:BRENTOIL`). */
   assetName: string;
+  /**
+   * Explicit image URL (e.g. a backend-provided `logo`). When set, it is used
+   * directly and the CDN convention is bypassed. Falls back to the CDN URL
+   * (then to initials) when null/empty.
+   */
+  src?: string | null;
   /** Override the URL convention — only useful for bare tickers. Default `"auto"`. */
   kind?: TokenKind;
   /** Pixel size of the square. Default `"md"` (20×20). */
@@ -53,6 +60,7 @@ interface TokenAvatarProps {
 
 export function TokenAvatar({
   assetName,
+  src,
   kind = "auto",
   size = "md",
   className = "",
@@ -61,16 +69,17 @@ export function TokenAvatar({
   const [errored, setErrored] = useState(false);
   const px = SIZE_PX[size];
   const sizeClass = SIZE_CLASS[size];
+  const resolvedSrc = src && src.trim() ? src : getTokenIconUrl(assetName, kind);
 
   return (
     <span
       className={`${sizeClass} shrink-0 rounded-md flex items-center justify-center font-semibold bg-brand/10 text-brand overflow-hidden ${className}`}
     >
-      {errored ? (
+      {errored || !resolvedSrc ? (
         getTokenInitials(fallback ?? assetName)
       ) : (
         <Image
-          src={getTokenIconUrl(assetName, kind)}
+          src={resolvedSrc}
           alt={assetName}
           width={px}
           height={px}
