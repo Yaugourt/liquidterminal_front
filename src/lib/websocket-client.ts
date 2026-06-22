@@ -4,6 +4,8 @@ export interface WebSocketClientConfig {
     onOpen?: () => void;
     onClose?: () => void;
     onError?: (error: Event) => void;
+    /** Called once when the reconnect budget is exhausted (no further retries). */
+    onReconnectFailed?: () => void;
     maxReconnectAttempts?: number;
     baseReconnectDelay?: number;
     debug?: boolean;
@@ -112,7 +114,7 @@ export class WebSocketClient {
             }, delay);
         } else {
             this.log('Max reconnect attempts reached');
-            // maybe notify error via config?
+            if (this.config.onReconnectFailed) this.config.onReconnectFailed();
         }
     }
 
