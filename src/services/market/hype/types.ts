@@ -37,4 +37,45 @@ export interface UseHypePriceResult {
 // Interface pour étendre Window avec les propriétés WebSocket
 export interface HypeWebSocketWindow extends Window {
   hypePriceWs?: WebSocket;
-} 
+}
+
+/** A single Assistance Fund HYPE buy (on-chain fill). */
+export interface AfFill {
+  time: number;
+  px: number;
+  sz: number;
+}
+
+/** Aggregated buyback for one UTC day. */
+export interface DailyBuyback {
+  /** UTC midnight of the day (ms). */
+  time: number;
+  hype: number;
+  usd: number;
+}
+
+/** Real Assistance Fund buyback activity over a trailing window of days. */
+export interface AfBuybacks {
+  /** Per-day buyback series (ascending), today last and partial. */
+  daily: DailyBuyback[];
+  /** Most recent fills (descending) — for a live feed. */
+  recent: AfFill[];
+  /** Average over completed days. */
+  avgDailyHype: number;
+  avgDailyUsd: number;
+  weeklyHype: number;
+  weeklyUsd: number;
+  monthlyHype: number;
+  monthlyUsd: number;
+  /** Completed days the average is built from. */
+  windowDays: number;
+  /** Realized average buy price over the window (USD / HYPE). */
+  avgPrice: number;
+}
+
+export interface UseAfBuybacksResult {
+  data: AfBuybacks | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}

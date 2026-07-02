@@ -1,14 +1,12 @@
 import { postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
-import { 
-  SpotClearinghouseStateResponse, 
+import { ASSISTANCE_FUND_ADDRESS } from '../hype/constants';
+import {
+  SpotClearinghouseStateResponse,
   SpotClearinghouseStateRequest,
-  AssistanceFundData 
+  AssistanceFundRaw,
 } from './types';
-
-// Adresse du fonds d'assistance
-const ASSISTANCE_FUND_ADDRESS = "0xfefefefefefefefefefefefefefefefefefefefe";
 
 /**
  * Récupère l'état du clearinghouse spot pour une adresse donnée
@@ -30,30 +28,25 @@ export const fetchSpotClearinghouseState = async (userAddress: string): Promise<
 };
 
 /**
- * Récupère les données du fonds d'assistance (balance HYPE)
+ * Récupère les faits on-chain du fonds d'assistance (balance HYPE + cost basis).
+ * Price-independent — la valorisation USD et le PnL sont calculés dans le hook
+ * avec le prix HYPE live.
  */
-export const fetchAssistanceFundData = async (hypePrice: number): Promise<AssistanceFundData> => {
+export const fetchAssistanceFundData = async (): Promise<AssistanceFundRaw> => {
   return withErrorHandling(async () => {
     const response = await fetchSpotClearinghouseState(ASSISTANCE_FUND_ADDRESS);
-    
+
     // Trouver le balance HYPE dans les balances
     const hypeBalance = response.balances.find(balance => balance.coin === 'HYPE');
-    
+
     if (!hypeBalance) {
-      // Si pas de HYPE trouvé, retourner 0
-      return {
-        hypeBalance: 0,
-        hypeValueUsd: 0
-      };
+      return { hypeBalance: 0, costBasisUsd: 0, avgEntryPrice: 0 };
     }
 
-    // Convertir le balance string en nombre
     const hypeAmount = parseFloat(hypeBalance.total);
-    const hypeValueUsd = hypeAmount * hypePrice;
+    const costBasisUsd = parseFloat(hypeBalance.entryNtl ?? '0');
+    const avgEntryPrice = hypeAmount > 0 ? costBasisUsd / hypeAmount : 0;
 
-    return {
-      hypeBalance: hypeAmount,
-      hypeValueUsd: hypeValueUsd
-    };
+    return { hypeBalance: hypeAmount, costBasisUsd, avgEntryPrice };
   }, 'fetching assistance fund data');
 };
