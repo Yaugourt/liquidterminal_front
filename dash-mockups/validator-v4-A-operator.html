@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · A — Operator</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP A — "OPERATOR"  (network-health lens)
+ Question answered: "Is the validator set healthy right now?"  Dense table = hero.
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE B · BLOCK → KIT BLOCK → PROD PRIMITIVE → DATA SOURCE (route · field)
+  1 PageHeader      → kit#1 PageHeader      → @/components/common/PageHeader
+                                              + charts/DataFreshness(actions)
+                       data: static title · useValidators().dataUpdatedAt
+  2 KpiRibbon (6)   → kit#2 KpiRibbon plain  → @/components/common/KpiRibbon
+                       data: GET /staking/validators .stats {totalHypeStaked,
+                       totalValidators, activeValidators}; "Jailed"=total−active;
+                       median uptime/apr derived from .data[].{uptime,apr}
+  3 Validators tbl  → kit#6 TypedDataTable    → @/components/common/DataTable
+                       + @/components/ui/status-badge (Status col)
+                       data: GET /staking/validators .data[] {name,validator,
+                       stake,apr,commission,uptime,nRecentBlocks,isActive}
+  4 Validations     → kit#4 OverviewModule    → @/components/common/OverviewModule
+       tape (rail)         + ModuleTable+ModuleTableRow
+                       data: GET /staking/validations .data[] {time,type,amount,validator}
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE C · MISSING PRIMITIVES: none — every block maps 1:1 to an existing primitive.
+ GATE 1 · NOT SERVED → NOT DRAWN:
+   · isJailed/signer/unjailableAfter (dropped by formatted ValidatorDetails) →
+     "Jailed" KPI uses total−active=4, Status badge uses isActive only.
+   · per-validator stake sparkline → no per-validator time series served → omitted.
+ All figures below are REAL (live local back :3002, 2026-06-02). No placeholder data.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- sidebar (static nav chrome, not part of the page primitives) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium flex items-center justify-between">Validators <span class="mono text-[10px]">A</span></a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span>
+      <span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Validators</span>
+      <span class="ml-2 text-[10px] mono px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">lens: Operator</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-5 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- 1 · PageHeader (no stats in header — only title + freshness) -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Validators</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">HyperLiquid staking set · updated <span class="mono text-text-secondary">8s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- 2 · KpiRibbon variant=plain (6 cells) -->
+      <div class="rounded-lg overflow-hidden border border-border-subtle">
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-px bg-border-subtle">
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Total Staked</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">429.6M</span>
+            <span class="text-[11px] text-text-tertiary">HYPE</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Validators</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">31</span>
+            <span class="text-[11px] text-text-tertiary">in the set</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Active</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-success">27</span>
+            <span class="text-[11px] text-text-tertiary">producing</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Jailed</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-danger">4</span>
+            <span class="text-[11px] text-text-tertiary">total − active</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Median Uptime</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">100.0%</span>
+            <span class="text-[11px] text-text-tertiary">last day</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Median APR</span>
+            <span class="mono text-[20px] font-semibold tracking-[-0.02em] text-gold">2.19%</span>
+            <span class="text-[11px] text-text-tertiary">predicted</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 + 4 · page layout: table (minmax 0 1fr) + 280px sticky rail -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- 3 · TypedDataTable -->
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h2 class="text-[14px] font-semibold text-text-primary">All Validators</h2>
+            <span class="text-[11px] text-text-tertiary mono ml-auto">sorted ↓ stake</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[820px]">
+              <thead>
+                <tr class="text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary">
+                  <th class="px-3 py-2.5 text-left border-b border-border-subtle w-10">#</th>
+                  <th class="px-3 py-2.5 text-left border-b border-border-subtle">Validator</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Stake</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Share</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Comm.</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">APR</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Uptime</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Blocks</th>
+                  <th class="px-3 py-2.5 text-right border-b border-border-subtle">Status</th>
+                </tr>
+              </thead>
+              <tbody class="text-[12.5px]">
+                <!-- rows: real top-15 from GET /staking/validators -->
+                <script>
+                  const ROWS = [
+                    [1,"Hyper Foundation 2","0xa82f…62ad","55.89M",13.0,3.0,2.19,100.0,14,1,1],
+                    [2,"Hyper Foundation 3","0x80f0…384d","55.38M",12.9,3.0,2.19,100.0,13,1,1],
+                    [3,"Hyper Foundation 4","0xdf35…51e8","53.38M",12.4,3.0,2.19,100.0,14,1,1],
+                    [4,"Hyper Foundation 1","0x5ac9…b487","52.59M",12.2,3.0,2.19,100.0,13,1,1],
+                    [5,"Anchorage By Figment","0x420a…5e66","25.52M",5.9,10.0,2.04,100.0,7,1,0],
+                    [6,"Hypurrscanning","0xabcd…2cd2","23.07M",5.4,1.0,2.24,100.0,6,1,0],
+                    [7,"Nansen x HypurrCollective","0xb8f4…5bc5","22.73M",5.3,2.0,2.22,100.0,6,1,0],
+                    [8,"infinitefield.xyz","0xa23b…5f1f","17.72M",4.1,0.0,2.26,100.0,4,1,0],
+                    [9,"Hyperliquid Strategies","0xd6a7…5cec","17.04M",4.0,2.0,2.22,100.0,4,1,0],
+                    [10,"Hyper Foundation 5","0x66be…98fd","15.28M",3.6,3.0,2.19,100.0,0,1,1],
+                    [11,"HyperStake","0x8b8c…e9b1","9.91M",2.3,0.0,2.26,100.0,2,1,0],
+                    [12,"Kinetiq x Hyperion","0xeeee…c006","9.34M",2.2,4.0,2.17,100.0,2,1,0],
+                    [13,"Imperator.co - HypeRPC","0x8a5d…dfd4","7.61M",1.8,3.0,2.19,100.0,1,1,0],
+                    [14,"Bitwise Onchain Solutions","0x30c6…9815","7.13M",1.7,3.0,2.19,100.0,2,1,0],
+                    [15,"USDT0 x Luganodes","0x48f1…7402","6.93M",1.6,3.0,2.19,100.0,2,1,0],
+                  ];
+                  document.write(ROWS.map(r=>`
+                    <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle/60">
+                      <td class="px-3 py-2.5 mono text-text-tertiary">${r[0]}</td>
+                      <td class="px-3 py-2.5">
+                        <div class="flex items-center gap-2">
+                          <span class="w-6 h-6 rounded-md ${r[10]?'bg-gold/15 text-gold':'bg-surface-3 text-text-secondary'} grid place-items-center text-[10px] font-semibold shrink-0">${r[1].slice(0,2)}</span>
+                          <div class="min-w-0">
+                            <div class="truncate ${r[10]?'text-gold':'text-text-primary'} font-medium">${r[1]}</div>
+                            <div class="mono text-[10.5px] text-text-tertiary">${r[2]}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-3 py-2.5 text-right mono">${r[3]}</td>
+                      <td class="px-3 py-2.5 text-right mono text-text-secondary">${r[4].toFixed(1)}%</td>
+                      <td class="px-3 py-2.5 text-right mono text-text-secondary">${r[5].toFixed(0)}%</td>
+                      <td class="px-3 py-2.5 text-right mono text-gold">${r[6].toFixed(2)}%</td>
+                      <td class="px-3 py-2.5 text-right mono ${r[7]>=99.9?'text-success':'text-text-secondary'}">${r[7].toFixed(1)}%</td>
+                      <td class="px-3 py-2.5 text-right mono text-text-secondary">${r[8]}</td>
+                      <td class="px-3 py-2.5 text-right">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md ${r[9]?'bg-success/10 border border-success/25 text-success':'bg-danger/10 border border-danger/25 text-danger'} font-medium">
+                          <span class="w-1.5 h-1.5 rounded-full ${r[9]?'bg-success':'bg-danger'}"></span>${r[9]?'Active':'Jailed'}
+                        </span>
+                      </td>
+                    </tr>`).join(''));
+                </script>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex items-center justify-between px-3.5 py-2.5 border-t border-border-subtle text-[11px] text-text-tertiary">
+            <span class="mono">15 of 31</span>
+            <div class="flex items-center gap-1">
+              <button class="h-7 px-2 rounded-md border border-border-default bg-surface-2 text-text-secondary">Prev</button>
+              <button class="h-7 px-2 rounded-md border border-border-default bg-surface-2 text-text-secondary">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 · OverviewModule — recent validations tape (rail) -->
+        <div class="xl:sticky xl:top-[64px] space-y-4">
+          <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+            <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+              <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+              </div>
+              <h2 class="text-[13px] font-semibold text-text-primary">Recent Staking Activity</h2>
+              <a class="ml-auto text-[11px] text-brand hover:text-brand-hover">View all →</a>
+            </div>
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary">
+                  <th class="px-3 py-2 text-left border-b border-border-subtle">Time</th>
+                  <th class="px-3 py-2 text-left border-b border-border-subtle">Type</th>
+                  <th class="px-3 py-2 text-right border-b border-border-subtle">Amount</th>
+                </tr>
+              </thead>
+              <tbody class="text-[12px]">
+                <script>
+                  const TAPE = [
+                    ["15:19:56","Undelegate","100.98","0xa82f…62ad"],
+                    ["15:19:13","Undelegate","0.05","0x66be…98fd"],
+                    ["15:19:08","Undelegate","1.41","0xb8f4…5bc5"],
+                    ["15:17:43","Undelegate","10.00","0xb8f4…5bc5"],
+                    ["15:16:29","Undelegate","0.05","0xabcd…2cd2"],
+                  ];
+                  document.write(TAPE.map(t=>`
+                    <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle/60">
+                      <td class="px-3 py-2 mono text-text-tertiary">${t[0]}</td>
+                      <td class="px-3 py-2"><span class="inline-flex items-center gap-1 text-[10.5px] px-1.5 py-0.5 rounded ${t[1]==='Delegate'?'bg-success/10 text-success border border-success/25':'bg-danger/10 text-danger border border-danger/25'}">${t[1]}</span><div class="mono text-[10px] text-text-tertiary mt-0.5">${t[3]}</div></td>
+                      <td class="px-3 py-2 text-right mono">${t[2]}</td>
+                    </tr>`).join(''));
+                </script>
+              </tbody>
+            </table>
+            <div class="px-3.5 py-2 border-t border-border-subtle text-[10.5px] text-text-tertiary mono">255 actions · paginated</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

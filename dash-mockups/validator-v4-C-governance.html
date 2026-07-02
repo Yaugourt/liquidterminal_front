@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · C — Governance</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP C — "GOVERNANCE"  (L1 votes lens)
+ Question answered: "What's pending validator ratification, who's voting, and
+ does the Foundation participate?"  Proposals table = hero. NEW backend route.
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE B · BLOCK → KIT BLOCK → PROD PRIMITIVE → DATA SOURCE (route · field)
+  1 PageHeader      → kit#1 PageHeader        → @/components/common/PageHeader
+  2 ex-Foundation   → kit#3 PillTabs (pill)    → @/components/ui/pill-tabs
+       toggle             swaps stake-weight col: stakeWeightPct ↔ stakeWeightExFoundationPct
+  3 KpiRibbon (5)   → kit#2 KpiRibbon plain     → GET /staking/validators/votes
+                       .stats {pendingCount,totalValidators} + .data[] aggregates
+  4 Proposals tbl   → kit#6 TypedDataTable       → @/components/common/DataTable
+                       + @/components/ui/status-badge + charts/FlowBar (inline cell)
+                       data: GET /staking/validators/votes .data[] {id,actionType,
+                       summary,expireTime,voterCount,totalValidators,participationPct,
+                       stakeWeightPct,stakeWeightExFoundationPct,quorumReached,foundationVoterCount}
+  5 Voters rail     → kit#4 OverviewModule       → @/components/common/OverviewModule
+                       + ModuleTable + ModuleAsset + ui/status-badge
+                       data: GET /staking/validators/votes .data[0].voters[] {name,stake,isFoundation}
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE C · MISSING PRIMITIVES: none.
+ GATE 1 · NOT SERVED → NOT DRAWN:
+   · Vote HISTORY / timeline — upstream (validatorL1Votes) serves the PENDING
+     snapshot only. No historical votes → no time series drawn; "Expires" uses
+     expireTime alone; empty snapshot renders the table empty-state (handled).
+ All figures REAL (live local back :3002 GET /staking/validators/votes, 2026-06-02).
+ Headline signal (proven): Foundation holds 54.1% of stake yet voted on 0/4 proposals.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+  },
+  fontFamily: { sans:["Inter","sans-serif"], inter:["Inter","sans-serif"], mono:["JetBrains Mono","monospace"] },
+} } };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; } ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+  .bar { transition: width .5s cubic-bezier(.4,0,.2,1); }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium flex items-center justify-between">Validators <span class="mono text-[10px]">C</span></a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span><span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Validators</span>
+      <span class="ml-2 text-[10px] mono px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">lens: Governance</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-5 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- 1 · PageHeader + 2 · ex-Foundation toggle -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Validators · Governance</h1>
+          <p class="text-sm text-text-secondary">pending L1 votes · updated <span class="mono">8s ago</span></p>
+        </div>
+        <div class="inline-flex items-center p-0.5 rounded-lg bg-surface-2 border border-border-subtle text-[12px] shrink-0">
+          <button id="tg-all" class="px-3 h-7 rounded-md font-medium bg-brand text-brand-text-on">Stake weight (all)</button>
+          <button id="tg-comm" class="px-3 h-7 rounded-md font-medium text-text-secondary hover:text-text-primary">Community (ex-Foundation)</button>
+        </div>
+      </div>
+
+      <!-- 3 · KpiRibbon (governance) -->
+      <div class="rounded-lg overflow-hidden border border-border-subtle">
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-px bg-border-subtle">
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Pending</span><span class="mono text-[20px] font-semibold">4</span><span class="text-[11px] text-text-tertiary">proposals</span></div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Avg Participation</span><span class="mono text-[20px] font-semibold">40%</span><span class="text-[11px] text-text-tertiary">of 31 validators</span></div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Quorum Reached</span><span class="mono text-[20px] font-semibold text-success">4 / 4</span><span class="text-[11px] text-text-tertiary">all pending</span></div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Foundation Voted</span><span class="mono text-[20px] font-semibold text-gold">0 / 5</span><span class="text-[11px] text-text-tertiary">abstained on all</span></div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Eligible</span><span class="mono text-[20px] font-semibold">31</span><span class="text-[11px] text-text-tertiary">validators</span></div>
+        </div>
+      </div>
+
+      <!-- 4 + 5 · layout: proposals table + 280 voters rail -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- 4 · TypedDataTable (proposals) -->
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div>
+            <h2 class="text-[14px] font-semibold">Pending L1 Votes</h2>
+            <span id="wt-cap" class="ml-auto text-[11px] text-text-tertiary mono">weight: all stake</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[720px]">
+              <thead><tr class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
+                <th class="px-3 py-2.5 text-left border-b border-border-subtle w-8">#</th>
+                <th class="px-3 py-2.5 text-left border-b border-border-subtle">Action</th>
+                <th class="px-3 py-2.5 text-right border-b border-border-subtle">Expires</th>
+                <th class="px-3 py-2.5 text-right border-b border-border-subtle">Participation</th>
+                <th class="px-3 py-2.5 text-left border-b border-border-subtle w-[180px]">Stake weight</th>
+                <th class="px-3 py-2.5 text-center border-b border-border-subtle">Quorum</th>
+                <th class="px-3 py-2.5 text-center border-b border-border-subtle">Foundation</th>
+              </tr></thead>
+              <tbody id="prop-body" class="text-[12.5px]"></tbody>
+            </table>
+          </div>
+          <div class="px-3.5 py-2 border-t border-border-subtle text-[10.5px] text-text-tertiary">Snapshot of pending votes only — no historical record served upstream.</div>
+        </div>
+
+        <!-- 5 · OverviewModule (voters of selected proposal) -->
+        <div class="xl:sticky xl:top-[64px] bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <h2 class="text-[13px] font-semibold">Voters · Proposal #0</h2>
+            <span class="ml-auto text-[11px] mono text-text-tertiary">13/31</span>
+          </div>
+          <div class="px-3.5 py-2 border-b border-border-subtle bg-gold/5">
+            <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium"><span class="w-1.5 h-1.5 rounded-full bg-gold"></span>0 Foundation validators voted</span>
+          </div>
+          <div class="max-h-[420px] overflow-y-auto">
+            <table class="w-full border-collapse">
+              <tbody class="text-[12px]" id="voters-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  // ─── proposals (real, GET /staking/validators/votes) ───
+  const PROPS = [
+    {id:0, action:"settleOutcome", summary:"UEFA crowned Paris Saint-Germain champion of the 2025-26 Champions League (PSG 4-3 Arsenal on pens).", exp:"Jun 7", part:42, wtAll:26.0, wtComm:56.6, quorum:true, fnd:"0/5"},
+    {id:1, action:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, wtAll:21.9, wtComm:47.6, quorum:true, fnd:"0/5"},
+    {id:2, action:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, wtAll:21.9, wtComm:47.6, quorum:true, fnd:"0/5"},
+    {id:3, action:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, wtAll:24.9, wtComm:54.2, quorum:true, fnd:"0/5"},
+  ];
+  function renderProps(mode){
+    const useComm = mode==='comm';
+    document.getElementById('wt-cap').textContent = useComm ? "weight: community (ex-Foundation)" : "weight: all stake";
+    document.getElementById('prop-body').innerHTML = PROPS.map(p=>{
+      const wt = useComm ? p.wtComm : p.wtAll;
+      const denom = useComm ? "community" : "total";
+      return `
+      <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle/60 align-top">
+        <td class="px-3 py-3 mono text-text-tertiary">${p.id}</td>
+        <td class="px-3 py-3">
+          <span class="inline-flex items-center text-[10.5px] px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand mono">${p.action}</span>
+          ${p.summary ? `<div class="text-[11.5px] text-text-secondary mt-1 max-w-[320px]">${p.summary}</div>` : `<div class="text-[11px] text-text-tertiary mt-1 italic">no summary served</div>`}
+        </td>
+        <td class="px-3 py-3 text-right mono text-text-secondary whitespace-nowrap">${p.exp}</td>
+        <td class="px-3 py-3 text-right"><span class="mono text-text-primary">${p.part}%</span><div class="text-[10px] mono text-text-tertiary">${Math.round(p.part*31/100)}/31</div></td>
+        <td class="px-3 py-3">
+          <div class="flex items-center gap-2">
+            <div class="flex-1 h-[16px] rounded bg-surface-2 overflow-hidden min-w-[80px]"><div class="bar h-full rounded" style="width:${wt}%;background:${useComm?'#1FB58E':'#83E9FF'}"></div></div>
+            <span class="w-12 text-right mono ${useComm?'text-success':'text-text-primary'}">${wt.toFixed(1)}%</span>
+          </div>
+        </td>
+        <td class="px-3 py-3 text-center"><span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Reached</span></td>
+        <td class="px-3 py-3 text-center"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium mono">${p.fnd}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ─── voters of proposal #0 (real, .data[0].voters[]) ───
+  const VOTERS = [
+    ["Hypurrscanning",23.07,0],["Nansen x HypurrCollective",22.73,0],["infinitefield.xyz",17.72,0],
+    ["Imperator.co - HypeRPC",7.61,0],["ASXN",6.40,0],["ValiDAO",5.01,0],["B-Harvest",4.81,0],
+    ["HypurrCorea - Spacebar",4.76,0],["Purrposeful x HyBridge",4.54,0],["Alphaticks",4.15,0],
+    ["CMI",4.10,0],["Liquid Spirit x Hydromance",3.47,0],["Enigma - Hypedexer.com",3.24,0],
+  ];
+  document.getElementById('voters-body').innerHTML = VOTERS.map(v=>`
+    <tr class="hover:bg-surface-2/60 border-b border-border-subtle/60">
+      <td class="px-3.5 py-2">
+        <div class="flex items-center gap-2">
+          <span class="w-5 h-5 rounded bg-surface-3 text-text-secondary grid place-items-center text-[9px] font-semibold shrink-0">${v[0].slice(0,2)}</span>
+          <span class="truncate text-text-primary">${v[0]}</span>
+        </div>
+      </td>
+      <td class="px-3.5 py-2 text-right mono text-text-secondary whitespace-nowrap">${v[1].toFixed(2)}M</td>
+    </tr>`).join('');
+
+  function setMode(mode){
+    const a=document.getElementById('tg-all'), c=document.getElementById('tg-comm');
+    const on="px-3 h-7 rounded-md font-medium bg-brand text-brand-text-on", off="px-3 h-7 rounded-md font-medium text-text-secondary hover:text-text-primary";
+    a.className = mode==='all'?on:off; c.className = mode==='comm'?on:off;
+    renderProps(mode);
+  }
+  document.getElementById('tg-all').onclick=()=>setMode('all');
+  document.getElementById('tg-comm').onclick=()=>setMode('comm');
+  setMode('all');
+</script>
+</body>
+</html>

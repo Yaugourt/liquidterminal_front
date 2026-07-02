@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Project V4 · A — Protocol (DeFiLlama-faithful)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ PROJECT DETAIL V4 · MOCKUP A — "PROTOCOL"  (DeFiLlama-faithful, chart-forward)
+ Question answered: "What are this project's on-chain fundamentals?"
+ ───────────────────────────────────────────────────────────────────────────────
+ · Hero header: logo + name + category pills + status + social links.
+ · Fundamentals KpiRibbon (plain): TVL · Vol 24h · Fees 24h · Revenue 24h · Mkt Cap.
+   gold = fees only (DS rule). Revenue tone neutral.
+ · Primary TVL area chart full-width with TimeframeTabs (the DeFiLlama opener).
+ · Two-up: Fees chart (gold) + Volume chart. Then Token snapshot ribbon + sparkline.
+ · Right rail (300px sticky): About · Links · Data sources · Categories.
+ Data 1:1 with GET /project/:id/metrics (tvl, volume24h, fees24h, revenue24h,
+ price, marketCap, fdv, change24h, holders, series{tvl,fees,volume}, sources[]).
+ Tokens copied verbatim from kit.html. Charts are placeholders (React: AuroraAreaChart).
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- sidebar (static nav chrome) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Projects
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Wiki</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-7">
+
+      <!-- breadcrumb -->
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-secondary">Ecosystem</a><span>/</span>
+        <a class="hover:text-text-secondary">Projects</a><span>/</span>
+        <span class="text-text-secondary">HyperLend</span>
+      </nav>
+
+      <!-- hero header -->
+      <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex items-start gap-3.5 min-w-0">
+          <div class="w-12 h-12 shrink-0 rounded-lg bg-surface-2 border border-border-subtle grid place-items-center text-[15px] font-semibold text-text-secondary">HL</div>
+          <div class="min-w-0 space-y-1.5">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="font-inter text-2xl sm:text-[28px] font-semibold tracking-tight leading-none">HyperLend</h1>
+              <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Live</span>
+            </div>
+            <p class="text-sm text-text-secondary max-w-xl">Permissionless money market on HyperEVM. Supply, borrow, and earn across blue-chip HL assets.</p>
+            <div class="flex items-center gap-2 pt-0.5">
+              <span class="text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">Lending</span>
+              <span class="text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">DeFi</span>
+              <span class="mono text-[11px] text-text-tertiary ml-1">$HLND</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <a class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary" title="Website"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>
+          <a class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary" title="X"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.6h3.5l-7.6 8.7L23.8 22h-7l-5.5-7.2L5 22H1.5l8.1-9.3L.7 1.6h7.2l5 6.6 5.9-6.6Z"/></svg></a>
+          <a class="h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary" title="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 5.6A17 17 0 0 0 15.3 4l-.2.4a13 13 0 0 1 3.8 1.9 12 12 0 0 0-10.2 0A13 13 0 0 1 12.5 4l-.3-.4A17 17 0 0 0 8 5.6 18 18 0 0 0 4.5 18a17 17 0 0 0 5.2 2.6l.4-.6a11 11 0 0 1-1.8-.9l.4-.3a12 12 0 0 0 10.4 0l.5.3a11 11 0 0 1-1.8.9l.4.6a17 17 0 0 0 5.2-2.6 18 18 0 0 0-3.8-12.4ZM9.7 15.3c-.8 0-1.5-.8-1.5-1.7s.7-1.7 1.5-1.7 1.5.8 1.5 1.7-.7 1.7-1.5 1.7Zm4.6 0c-.8 0-1.5-.8-1.5-1.7s.7-1.7 1.5-1.7 1.5.8 1.5 1.7-.7 1.7-1.5 1.7Z"/></svg></a>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">Visit ↗</button>
+        </div>
+      </header>
+
+      <!-- two-column: charts (main) + info rail -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+
+        <div class="min-w-0 space-y-4">
+
+          <!-- fundamentals ribbon (KpiRibbon variant="plain") -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+            <div class="px-4 py-3.5 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">TVL</div>
+              <div class="mono text-[20px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$84.2M</div>
+              <div class="text-[10.5px] text-success mt-1.5">+4.1% 7d</div>
+            </div>
+            <div class="px-4 py-3.5 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Volume 24h</div>
+              <div class="mono text-[20px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$12.6M</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">borrows + repays</div>
+            </div>
+            <div class="px-4 py-3.5 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fees 24h</div>
+              <div class="mono text-[20px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$38.4K</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">annualized $14.0M</div>
+            </div>
+            <div class="px-4 py-3.5 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Revenue 24h</div>
+              <div class="mono text-[20px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$11.5K</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">protocol share</div>
+            </div>
+            <div class="px-4 py-3.5 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Market Cap</div>
+              <div class="mono text-[20px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$31.8M</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">FDV $96.0M</div>
+            </div>
+          </div>
+
+          <!-- primary TVL chart (React: AuroraAreaChart) -->
+          <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Total Value Locked</h3>
+              <span class="mono text-[11px] text-text-tertiary">$84.2M</span>
+              <div class="ml-auto flex items-center gap-3 text-[11px]">
+                <button class="text-text-tertiary hover:text-text-primary">7d</button>
+                <button class="text-text-tertiary hover:text-text-primary">30d</button>
+                <button class="text-brand font-medium">90d</button>
+                <button class="text-text-tertiary hover:text-text-primary">1y</button>
+                <button class="text-text-tertiary hover:text-text-primary">All</button>
+              </div>
+            </div>
+            <div class="px-1 pt-3 pb-1">
+              <svg class="w-full h-[260px]" viewBox="0 0 1080 260" preserveAspectRatio="none">
+                <defs><linearGradient id="gA-tvl" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#83E9FF" stop-opacity="0.28"/><stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0,190 L60,182 L120,186 L180,168 L240,172 L300,150 L360,156 L420,132 L480,128 L540,110 L600,118 L660,92 L720,96 L780,74 L840,80 L900,58 L960,64 L1020,46 L1080,42 L1080,260 L0,260 Z" fill="url(#gA-tvl)"/>
+                <path d="M0,190 L60,182 L120,186 L180,168 L240,172 L300,150 L360,156 L420,132 L480,128 L540,110 L600,118 L660,92 L720,96 L780,74 L840,80 L900,58 L960,64 L1020,46 L1080,42" stroke="#83E9FF" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- two-up: fees + volume -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary">Fees</h3>
+                <span class="ml-auto mono text-[11px] text-text-tertiary">30d</span>
+              </div>
+              <div class="px-3 pt-2 pb-1">
+                <svg class="w-full h-[150px]" viewBox="0 0 520 150" preserveAspectRatio="none">
+                  <g fill="#F9E370" fill-opacity="0.75">
+                    <rect x="8" y="96" width="20" height="54"/><rect x="44" y="84" width="20" height="66"/><rect x="80" y="104" width="20" height="46"/><rect x="116" y="72" width="20" height="78"/><rect x="152" y="88" width="20" height="62"/><rect x="188" y="60" width="20" height="90"/><rect x="224" y="74" width="20" height="76"/><rect x="260" y="52" width="20" height="98"/><rect x="296" y="66" width="20" height="84"/><rect x="332" y="44" width="20" height="106"/><rect x="368" y="58" width="20" height="92"/><rect x="404" y="38" width="20" height="112"/><rect x="440" y="50" width="20" height="100"/><rect x="476" y="32" width="20" height="118"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary">Volume</h3>
+                <span class="ml-auto mono text-[11px] text-text-tertiary">30d</span>
+              </div>
+              <div class="px-1 pt-2 pb-1">
+                <svg class="w-full h-[150px]" viewBox="0 0 520 150" preserveAspectRatio="none">
+                  <defs><linearGradient id="gA-vol" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity="0.26"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient></defs>
+                  <path d="M0,110 L40,98 L80,104 L120,86 L160,92 L200,74 L240,82 L280,66 L320,72 L360,58 L400,64 L440,48 L480,54 L520,40 L520,150 L0,150 Z" fill="url(#gA-vol)"/>
+                  <path d="M0,110 L40,98 L80,104 L120,86 L160,92 L200,74 L240,82 L280,66 L320,72 L360,58 L400,64 L440,48 L480,54 L520,40" stroke="#A78BFA" stroke-width="2" fill="none"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- token snapshot ribbon -->
+          <div>
+            <div class="flex items-baseline gap-2 mb-2.5">
+              <h2 class="text-[13px] font-semibold text-text-primary">Token · $HLND</h2>
+              <span class="text-[11px] text-text-tertiary">via HL Spot</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+              <div class="px-4 py-3.5 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Price</div>
+                <div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$0.0192</div>
+              </div>
+              <div class="px-4 py-3.5 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">24h</div>
+                <div class="mono text-[18px] font-medium leading-none mt-2 text-success">+6.4%</div>
+              </div>
+              <div class="px-4 py-3.5 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Market Cap</div>
+                <div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$31.8M</div>
+              </div>
+              <div class="px-4 py-3.5 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">FDV</div>
+                <div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$96.0M</div>
+              </div>
+              <div class="px-4 py-3.5 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Holders</div>
+                <div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">4,812</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- right rail (300px sticky) -->
+        <aside class="xl:sticky xl:top-6 space-y-4">
+          <div class="bg-surface border border-border-subtle rounded-lg">
+            <div class="px-4 py-3 border-b border-border-subtle"><h3 class="text-[13px] font-medium text-text-primary">About</h3></div>
+            <div class="px-4 py-3 space-y-3">
+              <p class="text-[12.5px] leading-relaxed text-text-secondary">HyperLend is an over-collateralized lending market native to HyperEVM, with isolated risk tiers and HL-asset oracles.</p>
+              <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Launched</span><span class="mono text-text-secondary">Mar 2025</span></div>
+              <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Chain</span><span class="text-text-secondary">HyperEVM</span></div>
+            </div>
+          </div>
+
+          <div class="bg-surface border border-border-subtle rounded-lg">
+            <div class="px-4 py-3 border-b border-border-subtle"><h3 class="text-[13px] font-medium text-text-primary">Data sources</h3></div>
+            <div class="px-4 py-3 space-y-2">
+              <div class="flex items-center justify-between"><span class="text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">DeFiLlama</span><span class="mono text-[10.5px] text-text-tertiary">TVL · fees · vol</span></div>
+              <div class="flex items-center justify-between"><span class="text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">HL Spot</span><span class="mono text-[10.5px] text-text-tertiary">price · mcap</span></div>
+              <p class="text-[10.5px] text-text-tertiary pt-1">updated <span class="mono">42s ago</span></p>
+            </div>
+          </div>
+
+          <div class="bg-surface border border-border-subtle rounded-lg">
+            <div class="px-4 py-3 border-b border-border-subtle"><h3 class="text-[13px] font-medium text-text-primary">Links</h3></div>
+            <div class="px-2 py-2">
+              <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Website <span class="ml-auto text-text-tertiary">↗</span></a>
+              <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Docs <span class="ml-auto text-text-tertiary">↗</span></a>
+              <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">X / Twitter <span class="ml-auto text-text-tertiary">↗</span></a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

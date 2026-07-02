@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · A — Operator (v2)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP A — "OPERATOR"  (network-health lens) · v2 rebuild
+ Question answered: "Is the active validator set healthy right now?"
+ ───────────────────────────────────────────────────────────────────────────────
+ v2 changes (presentation only — every DATA value preserved from v1 + PROOF):
+  · Unified chrome: shared PageHeader (h1 "Validators", desc A, DataFreshness),
+    PillTabs text spine (Operator·Capital·Governance) — breadcrumb + "lens:" chip deleted.
+  · Tokens reconciled to canonical: bg-base #0A0B0F, success #1FA85B.
+  · gold killed everywhere on this page (APR, Foundation name/avatar) — gold = fees only.
+    No fee figure on the Operator lens → ZERO gold here.
+  · KpiRibbon → canonical minimal (hairline dividers, 22px value). 5 primary + grouped
+    "Network health" band (ex-"Jailed" → "Inactive", neutral not danger).
+  · TypedDataTable trimmed 9→7 cols (Share + Comm. moved out). APR text-secondary (not gold).
+    Status: success "Active" / neutral "Inactive" (NOT danger-red).
+  · Single neutral avatar treatment everywhere (no gold/cyan blobs). Foundation = neutral tag.
+  · Two-tier rhythm: PageSection + SectionHead, space-y-8 / gap-4.
+  · Copy humanized; tape Delegate/Undelegate = neutral badges; empty/footer copy cleaned.
+ NOT SERVED → NOT DRAWN preserved (no sparkline, isActive only, total−active=4).
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- sidebar (static nav chrome, not part of the page primitives) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Validators
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-6">
+
+      <!-- 1 · PageHeader (shared chrome: h1 + sentence desc + DataFreshness; controls in actions) -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Validators</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">
+            Health and performance of the active validator set.
+            <span class="text-text-tertiary">· Updated <span class="mono">8s ago</span></span>
+          </p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- 2 · Lens spine — PillTabs variant="text" (shared across A/B/C) -->
+      <div class="flex items-center gap-5 text-[13px]">
+        <button class="text-brand font-medium">Operator</button>
+        <button class="text-text-tertiary hover:text-text-primary">Capital</button>
+        <button class="text-text-tertiary hover:text-text-primary">Governance</button>
+      </div>
+
+      <!-- two-tier rhythm: zones in space-y-8 -->
+      <div class="space-y-8">
+
+        <!-- ───────────── §Overview ───────────── -->
+        <section class="space-y-4">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">Overview</h2>
+            <span class="text-[11px] text-text-tertiary">Active set at a glance</span>
+          </div>
+
+          <!-- KpiRibbon primary · 5 cells · canonical minimal (NO gold) -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+            <div class="px-5 py-4 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Total Staked</div>
+              <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">429.6M</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">HYPE</div>
+            </div>
+            <div class="px-5 py-4 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Validators</div>
+              <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">31</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">in the set</div>
+            </div>
+            <div class="px-5 py-4 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Active</div>
+              <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-success">27</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">producing</div>
+            </div>
+            <div class="px-5 py-4 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Median Uptime</div>
+              <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">100.0%</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">last 24h</div>
+            </div>
+            <div class="px-5 py-4 flex flex-col">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Median APR</div>
+              <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">2.19%</div>
+              <div class="text-[10.5px] text-text-tertiary mt-1.5">est. annualized</div>
+            </div>
+          </div>
+
+          <!-- KpiRibbon · grouped "Network health" band (ex-Jailed → Inactive, neutral) -->
+          <div class="space-y-2">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Network health</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Active</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-success">27</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">producing</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Inactive</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">4</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">not producing</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Median Uptime</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">100.0%</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">last 24h</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Blocks · last epoch</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">82</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">across active set</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ───────────── §Directory ───────────── -->
+        <section class="space-y-4">
+          <div class="flex items-baseline gap-3">
+            <h2 class="text-[14px] font-semibold text-text-primary">Directory</h2>
+            <span class="text-[11px] text-text-tertiary">Sorted by stake</span>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+            <!-- 3 · TypedDataTable — minimal head, 7 cols, neutral avatars/badges -->
+            <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+              <!-- minimal card-head + toolbar (search + status text-tabs) -->
+              <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+                <div class="relative flex-1 min-w-[180px] max-w-xs">
+                  <input placeholder="Search name or address…" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                  <button class="text-brand font-medium">All <span class="mono text-text-tertiary">31</span></button>
+                  <button class="text-text-tertiary hover:text-text-primary">Active <span class="mono">27</span></button>
+                  <button class="text-text-tertiary hover:text-text-primary">Inactive <span class="mono">4</span></button>
+                </div>
+                <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0">31 validators</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse min-w-[720px]">
+                  <thead>
+                    <tr>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-10">#</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Validator</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Stake</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">APR</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Uptime</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Blocks</th>
+                      <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-[12.5px]">
+                    <script>
+                      // [#, name, addr, stake, apr, uptime, blocks, isActive(1), isFoundation(1)]
+                      const ROWS = [
+                        [1,"Hyper Foundation 2","0xa82f…62ad","55.89M",2.19,100.0,14,1,1],
+                        [2,"Hyper Foundation 3","0x80f0…384d","55.38M",2.19,100.0,13,1,1],
+                        [3,"Hyper Foundation 4","0xdf35…51e8","53.38M",2.19,100.0,14,1,1],
+                        [4,"Hyper Foundation 1","0x5ac9…b487","52.59M",2.19,100.0,13,1,1],
+                        [5,"Anchorage By Figment","0x420a…5e66","25.52M",2.04,100.0,7,1,0],
+                        [6,"Hypurrscanning","0xabcd…2cd2","23.07M",2.24,100.0,6,1,0],
+                        [7,"Nansen x HypurrCollective","0xb8f4…5bc5","22.73M",2.22,100.0,6,1,0],
+                        [8,"infinitefield.xyz","0xa23b…5f1f","17.72M",2.26,100.0,4,1,0],
+                        [9,"Hyperliquid Strategies","0xd6a7…5cec","17.04M",2.22,100.0,4,1,0],
+                        [10,"Hyper Foundation 5","0x66be…98fd","15.28M",2.19,100.0,0,1,1],
+                        [11,"HyperStake","0x8b8c…e9b1","9.91M",2.26,100.0,2,1,0],
+                        [12,"Kinetiq x Hyperion","0xeeee…c006","9.34M",2.17,100.0,2,1,0],
+                        [13,"Imperator.co - HypeRPC","0x8a5d…dfd4","7.61M",2.19,100.0,1,1,0],
+                        [14,"Bitwise Onchain Solutions","0x30c6…9815","7.13M",2.19,100.0,2,1,0],
+                        [15,"USDT0 x Luganodes","0x48f1…7402","6.93M",2.19,100.0,2,1,0],
+                      ];
+                      const initials = n => n.replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+                      document.write(ROWS.map(r=>`
+                        <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle last:border-b-0">
+                          <td class="px-4 py-3 text-right"><span class="mono text-text-tertiary text-[11px]">${r[0]}</span></td>
+                          <td class="px-4 py-3">
+                            <div class="flex items-center gap-2.5">
+                              <span class="w-6 h-6 shrink-0 rounded-md bg-surface-2 text-text-secondary grid place-items-center text-[9px] font-semibold overflow-hidden">${initials(r[1])}</span>
+                              <div class="min-w-0 flex items-center gap-2">
+                                <div>
+                                  <div class="text-[13px] font-medium text-text-primary truncate max-w-[200px]">${r[1]}</div>
+                                  <div class="mono text-[11px] text-text-tertiary">${r[2]}</div>
+                                </div>
+                                ${r[8]?'<span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">Foundation</span>':''}
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">${r[3]}</td>
+                          <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">${r[4].toFixed(2)}%</td>
+                          <td class="px-4 py-3 text-right mono text-[13px] ${r[5]>=99.9?'text-success':'text-text-secondary'}">${r[5].toFixed(1)}%</td>
+                          <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">${r[6]}</td>
+                          <td class="px-4 py-3 text-right">
+                            ${r[7]
+                              ? '<span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Active</span>'
+                              : '<span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Inactive</span>'}
+                          </td>
+                        </tr>`).join(''));
+                    </script>
+                  </tbody>
+                </table>
+              </div>
+              <div class="flex items-center justify-between px-4 py-3 border-t border-border-subtle text-[11px] text-text-tertiary">
+                <span class="mono">Showing 15 of 31</span>
+                <div class="flex items-center gap-1">
+                  <button class="h-7 px-2 rounded-md border border-border-default bg-surface-2 text-text-secondary">Prev</button>
+                  <button class="h-7 px-2 rounded-md border border-border-default bg-surface-2 text-text-secondary">Next</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- rail · OverviewModule tape + ModuleRow "Top by blocks produced" -->
+            <aside class="xl:sticky xl:top-6 space-y-4">
+
+              <!-- OverviewModule — recent staking activity tape (neutral Delegate/Undelegate) -->
+              <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">Recent staking activity</h3>
+                  <a class="ml-auto shrink-0 text-[11px] text-brand hover:text-brand-hover">View all →</a>
+                </div>
+                <table class="w-full border-collapse table-fixed">
+                  <colgroup><col style="width:64px"><col><col style="width:84px"></colgroup>
+                  <thead><tr>
+                    <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Time</th>
+                    <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Type</th>
+                    <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Amount</th>
+                  </tr></thead>
+                  <tbody class="text-[12px]">
+                    <script>
+                      const TAPE = [
+                        ["15:19:56","Undelegate","100.98","0xa82f…62ad"],
+                        ["15:19:13","Undelegate","0.05","0x66be…98fd"],
+                        ["15:19:08","Undelegate","1.41","0xb8f4…5bc5"],
+                        ["15:17:43","Undelegate","10.00","0xb8f4…5bc5"],
+                        ["15:16:29","Undelegate","0.05","0xabcd…2cd2"],
+                      ];
+                      document.write(TAPE.map(t=>`
+                        <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle last:border-b-0">
+                          <td class="px-3 py-2.5 mono text-text-tertiary align-top">${t[0]}</td>
+                          <td class="px-3 py-2.5">
+                            <span class="inline-flex items-center text-[10.5px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">${t[1]}</span>
+                            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">${t[3]}</div>
+                          </td>
+                          <td class="px-3 py-2.5 text-right mono text-text-secondary align-top">${t[2]}</td>
+                        </tr>`).join(''));
+                    </script>
+                  </tbody>
+                </table>
+                <div class="flex items-center px-4 py-2.5 border-t border-border-subtle text-[10.5px] text-text-tertiary">
+                  <span class="mono">255 events total</span>
+                  <a class="ml-auto text-brand hover:text-brand-hover">View all →</a>
+                </div>
+              </div>
+
+              <!-- ModuleRow — Top by blocks produced (rail length ≈ table) -->
+              <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">Top by blocks produced</h3>
+                  <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">last epoch</span>
+                </div>
+                <script>
+                  // [rank, name, blocks] — real nRecentBlocks from /staking/validators
+                  const TOPB = [
+                    [1,"Hyper Foundation 2",14],
+                    [2,"Hyper Foundation 4",14],
+                    [3,"Hyper Foundation 3",13],
+                    [4,"Hyper Foundation 1",13],
+                    [5,"Anchorage By Figment",7],
+                    [6,"Hypurrscanning",6],
+                    [7,"Nansen x HypurrCollective",6],
+                  ];
+                  const ini = n => n.replace(/[^A-Za-z0-9 ]/g,'').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+                  document.write(TOPB.map(r=>`
+                    <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors">
+                      <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">${String(r[0]).padStart(2,'0')}</span>
+                      <div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">${ini(r[1])}</div>
+                      <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">${r[1]}</div></div>
+                      <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-text-primary">${r[2]}</div>
+                    </div>`).join(''));
+                </script>
+              </div>
+
+            </aside>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
