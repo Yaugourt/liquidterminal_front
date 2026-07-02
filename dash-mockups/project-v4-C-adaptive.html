@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Project V4 · C — Adaptive (source-aware)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ PROJECT DETAIL V4 · MOCKUP C — "ADAPTIVE"  (source-aware, graceful degradation)
+ Question answered: "Be honest about what data exists — the page adapts to coverage."
+ ───────────────────────────────────────────────────────────────────────────────
+ Leans into the multi-source architecture (ProjectDataSource + provider registry):
+  · COVERAGE STRIP under the header: one chip per source type with ✓ / — and "as of".
+    This is unique to our backend — DeFiLlama can't show it.
+  · Modular full-width blocks that appear ONLY when their source returned data; each
+    block carries a per-metric source footer ("via DeFiLlama" / "via HL Spot").
+  · Explicit honest states shown inline: a PARTIAL project (token only, no TVL) and an
+    UNMAPPED project (metadata only) — proving the no-fake-data DS rule.
+ Data 1:1 with GET /project/:id/metrics (metrics{}, sources[], updatedAt).
+ Tokens copied verbatim from kit.html. Single column, no rail.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Projects
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Wiki</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1080px] mx-auto space-y-6">
+
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-secondary">Ecosystem</a><span>/</span>
+        <a class="hover:text-text-secondary">Projects</a><span>/</span>
+        <span class="text-text-secondary">HyperLend</span>
+      </nav>
+
+      <!-- header -->
+      <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 shrink-0 rounded-lg bg-surface-2 border border-border-subtle grid place-items-center text-[14px] font-semibold text-text-secondary">HL</div>
+          <div class="space-y-1 min-w-0">
+            <div class="flex items-center gap-2.5">
+              <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight leading-none">HyperLend</h1>
+              <span class="text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">Lending</span>
+            </div>
+            <p class="text-sm text-text-secondary">Permissionless money market on HyperEVM.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <a class="text-[11px] px-2 py-1 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Website ↗</a>
+          <a class="text-[11px] px-2 py-1 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">X ↗</a>
+          <button class="h-8 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">Visit ↗</button>
+        </div>
+      </header>
+
+      <!-- COVERAGE STRIP — the signature of this direction -->
+      <div class="flex flex-wrap items-center gap-2 px-3.5 py-2.5 rounded-lg border border-border-subtle bg-surface">
+        <span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary mr-1">Data coverage</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span>DeFiLlama</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>HL Spot</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>HL Builder —</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>HL Vault —</span>
+        <span class="ml-auto text-[10.5px] text-text-tertiary">updated <span class="mono">42s ago</span></span>
+      </div>
+
+      <!-- BLOCK: Fundamentals (renders because DeFiLlama returned data) -->
+      <section class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Fundamentals</h3>
+          <div class="ml-auto flex items-center gap-3 text-[11px]">
+            <button class="text-text-tertiary hover:text-text-primary">30d</button>
+            <button class="text-brand font-medium">90d</button>
+            <button class="text-text-tertiary hover:text-text-primary">All</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-border-subtle border-b border-border-subtle">
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">TVL</div><div class="mono text-[20px] font-medium leading-none mt-2 text-text-primary">$84.2M</div><div class="text-[10.5px] text-success mt-1.5">+4.1% 7d</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Volume 24h</div><div class="mono text-[20px] font-medium leading-none mt-2 text-text-primary">$12.6M</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Fees 24h</div><div class="mono text-[20px] font-medium leading-none mt-2 text-gold">$38.4K</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Revenue 24h</div><div class="mono text-[20px] font-medium leading-none mt-2 text-text-primary">$11.5K</div></div>
+        </div>
+        <div class="px-1 pt-3 pb-1">
+          <svg class="w-full h-[220px]" viewBox="0 0 1040 220" preserveAspectRatio="none">
+            <defs><linearGradient id="gC-tvl" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#83E9FF" stop-opacity="0.26"/><stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,160 L58,152 L116,156 L174,140 L232,144 L290,124 L348,130 L406,108 L464,104 L522,90 L580,98 L638,74 L696,80 L754,60 L812,66 L870,46 L928,52 L986,38 L1040,34 L1040,220 L0,220 Z" fill="url(#gC-tvl)"/>
+            <path d="M0,160 L58,152 L116,156 L174,140 L232,144 L290,124 L348,130 L406,108 L464,104 L522,90 L580,98 L638,74 L696,80 L754,60 L812,66 L870,46 L928,52 L986,38 L1040,34" stroke="#83E9FF" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+        <div class="px-4 py-2 border-t border-border-subtle"><span class="text-[10.5px] text-text-tertiary">via <span class="text-brand">DeFiLlama</span> · slug <span class="mono">hyperlend</span></span></div>
+      </section>
+
+      <!-- BLOCK: Token (renders because HL Spot returned data) -->
+      <section class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Token</h3>
+          <span class="mono text-[11px] text-text-tertiary">$HLND</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-border-subtle">
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Price</div><div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$0.0192</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h</div><div class="mono text-[18px] font-medium leading-none mt-2 text-success">+6.4%</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Mkt Cap</div><div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$31.8M</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">FDV</div><div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">$96.0M</div></div>
+          <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Holders</div><div class="mono text-[18px] font-medium leading-none mt-2 text-text-primary">4,812</div></div>
+        </div>
+        <div class="px-4 py-2 border-t border-border-subtle"><span class="text-[10.5px] text-text-tertiary">via <span class="text-success">HL Spot</span> · auto-derived from token field</span></div>
+      </section>
+
+      <!-- ── degradation reference (annotation, not part of the live page) ── -->
+      <div class="pt-2 text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Same template · other coverage states</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- PARTIAL: token only, no DeFiLlama mapping -->
+        <section class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+            <div class="w-7 h-7 rounded-md bg-surface-2 border border-border-subtle grid place-items-center text-[10px] font-semibold text-text-secondary">PX</div>
+            <h3 class="text-[13px] font-medium text-text-primary">Purr Exchange</h3>
+            <span class="ml-auto inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium">HL Spot</span>
+          </div>
+          <div class="grid grid-cols-3 divide-x divide-border-subtle">
+            <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Price</div><div class="mono text-[16px] font-medium leading-none mt-2 text-text-primary">$0.41</div></div>
+            <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h</div><div class="mono text-[16px] font-medium leading-none mt-2 text-danger">−2.1%</div></div>
+            <div class="px-4 py-3.5 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Mkt Cap</div><div class="mono text-[16px] font-medium leading-none mt-2 text-text-primary">$8.0M</div></div>
+          </div>
+          <div class="px-4 py-2.5 border-t border-border-subtle flex items-center gap-2">
+            <span class="text-[10.5px] text-text-tertiary">No TVL/fees — not mapped to DeFiLlama.</span>
+            <a class="ml-auto text-[10.5px] text-brand hover:text-brand-hover">Map source →</a>
+          </div>
+        </section>
+
+        <!-- UNMAPPED: metadata only -->
+        <section class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+            <div class="w-7 h-7 rounded-md bg-surface-2 border border-border-subtle grid place-items-center text-[10px] font-semibold text-text-secondary">NV</div>
+            <h3 class="text-[13px] font-medium text-text-primary">Novault</h3>
+            <span class="ml-auto text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">Infra</span>
+          </div>
+          <div class="flex-1 grid place-items-center px-4 py-8 text-center">
+            <div class="space-y-2">
+              <div class="w-9 h-9 mx-auto rounded-lg bg-surface-2 border border-border-subtle grid place-items-center text-text-tertiary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+              <p class="text-[12.5px] text-text-secondary">No on-chain metrics yet</p>
+              <p class="text-[11px] text-text-tertiary max-w-[220px]">This project hasn't been mapped to a data source. Add one in the admin to populate metrics.</p>
+              <a class="inline-block text-[11px] text-brand hover:text-brand-hover pt-1">Map a source →</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

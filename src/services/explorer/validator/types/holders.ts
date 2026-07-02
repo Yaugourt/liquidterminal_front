@@ -52,7 +52,7 @@ export interface HoldersDistributionRange {
 /**
  * Interface pour les statistiques des top holders
  */
-interface TopHoldersStats {
+export interface TopHoldersStats {
   topCount: number;
   totalStaked: number;
   percentage: number;

@@ -1,5 +1,6 @@
 // Barrel export - réexporte toutes les fonctions des modules
 export * from './validators';
+export * from './votes';
 export * from './staking';
 export * from './staking-holders';
 export * from './delegator';

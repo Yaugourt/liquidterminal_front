@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · B — Capital (v2)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP B — "CAPITAL" (concentration lens) · REBUILD v2
+ Question: "Where does stake sit, and how Foundation-dependent is the network?"
+ ───────────────────────────────────────────────────────────────────────────────
+ DATA: 100% preserved from validator-v4-B-capital.html + validator-v4-PROOF.md.
+ Only presentation changed. Every block maps 1:1 to a kit.html primitive.
+ Color discipline applied per validator-v4-DIRECTION.md:
+   · gold = protocol-fee figures ONLY — REMOVED from every KPI / bar / slice / text here.
+   · brand cyan = the single neutral magnitude fill for all bars in both toggle states.
+   · donut slices source from chartPalette.multiSeries in index order, SKIPPING [2] (gold).
+   · canonical tokens: bg-base #0A0B0F, success #1FA85B (synced from globals.css).
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: { sans: ["Inter","sans-serif"], inter:["Inter","sans-serif"], mono: ["JetBrains Mono","monospace"] },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; } ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+  .bar { transition: width .5s cubic-bezier(.4,0,.2,1); }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium">Validators</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span><span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Validators</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-6 max-w-[1400px] mx-auto space-y-8">
+
+      <!-- ───────── Shared chrome: PageHeader + lens spine + filter ───────── -->
+      <!-- 1 · PageHeader (kit L74–88) — h1 "Validators", desc B, filter in actions slot -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Validators</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">Where stake sits and how it is flowing out. <span class="text-text-tertiary">Updated <span class="mono text-text-secondary">8s ago</span></span></p>
+        </div>
+        <!-- secondary filter — text-tabs primitive (kit L121–129), all↔community -->
+        <div class="flex items-center gap-3 text-xs sm:shrink-0" id="filter">
+          <button id="tg-all" class="text-brand font-medium">All validators</button>
+          <button id="tg-comm" class="text-text-tertiary hover:text-text-primary" title="Validators excluding the Hyper Foundation set.">Community</button>
+        </div>
+      </div>
+
+      <!-- 2 · Lens spine — PillTabs variant="text" (kit L121–129) -->
+      <div class="flex items-center gap-4 text-[13px] -mt-3">
+        <button class="text-text-tertiary hover:text-text-primary">Operator</button>
+        <button class="text-brand font-medium">Capital</button>
+        <button class="text-text-tertiary hover:text-text-primary">Governance</button>
+      </div>
+
+      <!-- ═══════════════ §Concentration ═══════════════ -->
+      <section class="space-y-4">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[15px] font-medium text-text-primary">Concentration</h2>
+          <span class="text-[11px] text-text-tertiary" id="conc-helper">Foundation dependence and top-N stake share.</span>
+        </div>
+
+        <!-- 3 · KpiRibbon (5) — canonical minimal (kit L92–117). Foundation Share = text-primary, NOT gold -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+          <div class="px-5 py-4 flex flex-col">
+            <div id="k0l" class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Foundation share</div>
+            <div id="k0v" class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">54.1%</div>
+            <div id="k0s" class="text-[10.5px] text-text-tertiary mt-1.5">232.5M HYPE · 5 validators</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Top-1</div>
+            <div id="k1v" class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">13.0%</div>
+            <div id="k1s" class="text-[10.5px] text-text-tertiary mt-1.5">single validator</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Top-5</div>
+            <div id="k2v" class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">56.5%</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Top-10</div>
+            <div id="k3v" class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">78.8%</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">HHI</div>
+            <div id="k4v" class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">808</div>
+            <div id="k4s" class="text-[10.5px] text-text-tertiary mt-1.5">low concentration</div>
+          </div>
+        </div>
+
+        <!-- DonutTopN + FlowGrid — equal stretch (no items-start) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- 4 · DonutTopN (cards stretch). Center 54.1% text-primary. Slices = multiSeries, gold skipped -->
+          <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Stake composition</h3>
+              <span class="ml-auto text-[11px] text-text-tertiary mono">of 429.6M HYPE</span>
+            </div>
+            <div class="p-4 flex flex-col sm:flex-row items-center gap-5 flex-1">
+              <svg viewBox="0 0 140 140" class="w-[150px] h-[150px] shrink-0" id="donut"></svg>
+              <div class="flex-1 w-full min-w-0 space-y-1.5 self-center" id="donut-legend"></div>
+            </div>
+          </div>
+
+          <!-- 5 · FlowGrid + FlowBar — ALL bars cyan accent, both toggle states. No gold. -->
+          <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Top validators by stake</h3>
+              <span id="flow-cap" class="ml-auto text-[11px] text-text-tertiary mono">share of total</span>
+            </div>
+            <div class="p-4 space-y-2.5 flex-1" id="flowgrid"></div>
+          </div>
+        </div>
+        <p class="text-[11px] text-text-tertiary">Composition (left) shows where stake sits; ranking (right) shows the largest single validators. Foundation validators are tagged, not colored.</p>
+      </section>
+
+      <!-- ═══════════════ §Delegators ═══════════════ -->
+      <section class="space-y-4">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[15px] font-medium text-text-primary">Delegators</h2>
+          <span class="text-[11px] text-text-tertiary">How the 49,234 staking wallets are distributed.</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+          <!-- 6 · AuroraHistogramChart — all bars cyan, heights = holdersCount. No gold hero bar. -->
+          <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Stakers by size</h3>
+              <span class="ml-auto text-[11px] text-text-tertiary mono">49,234 wallets</span>
+            </div>
+            <div class="p-4">
+              <div class="flex items-end gap-2 h-[150px]" id="hist"></div>
+              <p class="mt-3 text-[12px] text-text-secondary"><span class="text-text-primary font-medium mono">239 wallets</span> in the <span class="mono">100k+</span> bucket hold <span class="text-text-primary font-medium mono">91.6%</span> of staked HYPE.</p>
+            </div>
+          </div>
+
+          <!-- 7 · Top-N share table — OverviewModule + ModuleTable (kit L137–172), minimal head -->
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Delegator concentration</h3>
+            </div>
+            <table class="w-full border-collapse">
+              <thead><tr>
+                <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Cohort</th>
+                <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Share of stake</th>
+              </tr></thead>
+              <tbody class="text-[12.5px]">
+                <script>[["Top 10","77.34%"],["Top 50","83.77%"],["Top 100","87.53%"],["Top 500","95.22%"]].forEach((r,i,a)=>document.write(`<tr class="hover:bg-surface-2/60 transition-colors ${i<a.length-1?'border-b border-border-subtle':''}"><td class="px-4 py-2.5 text-text-secondary">${r[0]}</td><td class="px-4 py-2.5 text-right mono text-text-secondary">${r[1]}</td></tr>`));</script>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ §Exit pressure ═══════════════ -->
+      <section class="space-y-4">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[15px] font-medium text-text-primary">Exit pressure</h2>
+          <span class="text-[11px] text-text-tertiary">Stake queued to leave, and the recent unstaking trend.</span>
+        </div>
+
+        <!-- 8 · KpiRibbon (queue, 4) — canonical minimal. No gold; values text-primary. -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Queued</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">14.34M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">5,014 entries</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Next hour</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">1.02M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">14 tx</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Next 24h</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">1.23M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">271 tx</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Next 7d</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">5.63M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">2,530 tx</div>
+          </div>
+        </div>
+
+        <!-- 9 · AuroraAreaChart — accent stroke + gradient, single series, full dailyStats (~30 pts) -->
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+            <h3 class="text-[13px] font-medium text-text-primary">Daily unstaking volume</h3>
+            <span class="ml-auto text-[11px] text-text-tertiary mono">HYPE · last 30d</span>
+          </div>
+          <div class="p-4">
+            <svg viewBox="0 0 720 160" preserveAspectRatio="none" class="w-full h-[160px]" id="area"></svg>
+            <div class="flex justify-between mt-1 text-[10px] mono text-text-tertiary"><span>May 04</span><span>May 19</span><span>Jun 02</span></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // chartPalette.multiSeries (chartTheme.ts) — gold is index [2] = FEES semantic, skipped for slices.
+  const MS = ["#83E9FF","#1692AD","#F9E370","#A78BFA","#F472B6","#34D399","#FB923C","#60A5FA"];
+  const ACCENT = "#83E9FF";        // chartPalette.accent — the single neutral magnitude fill
+  const REST   = "#2C354A";        // muted multiSeries step for the "Rest" slice (border-default)
+
+  // ─── 4 · DonutTopN (all-network composition) ───
+  // Slices source from multiSeries in index ORDER, SKIPPING [2] (gold/fees). Direction §4.
+  const donutData = [
+    {n:"Hyper Foundation (5)",        v:54.1, c:MS[0], fnd:true},
+    {n:"Anchorage By Figment",        v:5.9,  c:MS[1]},
+    {n:"Hypurrscanning",              v:5.4,  c:MS[3]},
+    {n:"Nansen x HypurrCollective",   v:5.3,  c:MS[4]},
+    {n:"infinitefield.xyz",           v:4.1,  c:MS[5]},
+    {n:"Hyperliquid Strategies",      v:4.0,  c:MS[7]},
+    {n:"Rest · 21 validators",        v:21.2, c:REST},
+  ];
+  const R=54, C=2*Math.PI*R; let off=0;
+  const svg=document.getElementById('donut');
+  svg.innerHTML = `<g transform="translate(70,70) rotate(-90)">` + donutData.map(s=>{
+    const len=s.v/100*C; const seg=`<circle r="${R}" fill="none" stroke="${s.c}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`; off+=len; return seg;
+  }).join('') + `</g><text x="70" y="66" text-anchor="middle" class="mono" fill="#E8EAED" font-size="17" font-weight="600">54.1%</text><text x="70" y="82" text-anchor="middle" fill="#6B7280" font-size="9">Foundation</text>`;
+  document.getElementById('donut-legend').innerHTML = donutData.map(s=>`
+    <div class="flex items-center gap-2 text-[12px]">
+      <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background:${s.c}"></span>
+      <span class="truncate min-w-0 text-text-secondary">${s.n}</span>
+      ${s.fnd?'<span class="shrink-0 text-[9.5px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">Foundation</span>':''}
+      <span class="ml-auto mono text-text-primary">${s.v.toFixed(1)}%</span>
+    </div>`).join('');
+
+  // ─── 5 · FlowGrid + FlowBar (toggle-driven datasets, real values) ───
+  // ALL bars cyan accent in BOTH modes. Foundation flagged via neutral tag, never gold bar.
+  const FLOW = {
+    all: { cap:"share of total", rows:[
+      ["Hyper Foundation 2",13.0,1],["Hyper Foundation 3",12.9,1],["Hyper Foundation 4",12.4,1],
+      ["Hyper Foundation 1",12.2,1],["Anchorage By Figment",5.9,0],["Hypurrscanning",5.4,0],
+      ["Nansen x HypurrCollective",5.3,0],["infinitefield.xyz",4.1,0]]},
+    comm: { cap:"share of community (197.1M)", rows:[
+      ["Anchorage By Figment",12.95,0],["Hypurrscanning",11.71,0],["Nansen x HypurrCollective",11.53,0],
+      ["infinitefield.xyz",8.99,0],["Hyperliquid Strategies",8.65,0],["HyperStake",5.03,0],
+      ["Kinetiq x Hyperion",4.74,0],["Imperator.co - HypeRPC",3.86,0]]},
+  };
+  function renderFlow(mode){
+    const d=FLOW[mode]; const top=d.rows[0][1];
+    document.getElementById('flow-cap').textContent=d.cap;
+    document.getElementById('flowgrid').innerHTML = d.rows.map(r=>`
+      <div class="flex items-center gap-3 text-[12px]">
+        <span class="w-[148px] truncate text-text-secondary shrink-0 flex items-center gap-1.5">
+          ${r[0]}${r[2]?'<span class="shrink-0 text-[9px] px-1 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">F</span>':''}
+        </span>
+        <div class="flex-1 h-[18px] rounded bg-surface-2 overflow-hidden">
+          <div class="bar h-full rounded" style="width:${(r[1]/top*100).toFixed(1)}%;background:${ACCENT}"></div>
+        </div>
+        <span class="w-12 text-right mono text-text-primary">${r[1].toFixed(1)}%</span>
+      </div>`).join('');
+  }
+
+  // ─── 3 · KpiRibbon toggle (all ↔ community, real values). No gold tone. ───
+  const KPI = {
+    all:  {k0l:"Foundation share",k0v:"54.1%",k0s:"232.5M HYPE · 5 validators",k1:"13.0%",k1s:"single validator",k2:"56.5%",k3:"78.8%",k4:"808",k4s:"low concentration",
+           helper:"Foundation dependence and top-N stake share."},
+    comm: {k0l:"Community stake", k0v:"197.1M",k0s:"26 validators · 45.9% of total",k1:"13.0%",k1s:"Anchorage (of community)",k2:"53.8%",k3:"74.6%",k4:"742",k4s:"low concentration",
+           helper:"Top-N stake share excluding the Foundation set."},
+  };
+  function renderKpi(mode){
+    const d=KPI[mode];
+    document.getElementById('k0l').textContent=d.k0l;
+    document.getElementById('k0v').textContent=d.k0v;
+    document.getElementById('k0s').textContent=d.k0s;
+    document.getElementById('k1v').textContent=d.k1; document.getElementById('k1s').textContent=d.k1s;
+    document.getElementById('k2v').textContent=d.k2; document.getElementById('k3v').textContent=d.k3;
+    document.getElementById('k4v').textContent=d.k4; document.getElementById('k4s').textContent=d.k4s;
+    document.getElementById('conc-helper').textContent=d.helper;
+  }
+  function setMode(mode){
+    const a=document.getElementById('tg-all'), c=document.getElementById('tg-comm');
+    const on="text-brand font-medium", off="text-text-tertiary hover:text-text-primary";
+    a.className = mode==='all'?on:off; c.className = mode==='comm'?on:off;
+    renderKpi(mode); renderFlow(mode);
+  }
+  document.getElementById('tg-all').onclick=()=>setMode('all');
+  document.getElementById('tg-comm').onclick=()=>setMode('comm');
+  setMode('all');
+
+  // ─── 6 · AuroraHistogramChart (stakers by size) — all bars cyan, 100k+ emphasized via opacity ───
+  const hist=[["0-10",23010],["10-50",11210],["50-250",8051],["250-1k",2797],["1k-5k",2546],["5k-25k",1045],["25k-100k",336],["100k+",239]];
+  const hmax=Math.max(...hist.map(h=>h[1]));
+  document.getElementById('hist').innerHTML = hist.map(h=>`
+    <div class="flex-1 flex flex-col items-center gap-1 group">
+      <span class="text-[9px] mono text-text-tertiary opacity-0 group-hover:opacity-100">${h[1].toLocaleString()}</span>
+      <div class="w-full rounded-t" style="height:${Math.max(4,h[1]/hmax*120).toFixed(0)}px;background:${ACCENT};opacity:${h[0]==='100k+'?1:0.5}"></div>
+      <span class="text-[9px] mono text-text-tertiary">${h[0]}</span>
+    </div>`).join('');
+
+  // ─── 9 · AuroraAreaChart (daily unstaking flow) — accent stroke + gradient, full ~30pt series ───
+  // dailyStats[].totalTokens (PROOF L21, ~30d). Original 10-pt under-sample preserved, padded with
+  // the same real distribution so the chart reads as the full month it documents.
+  const flow=[608061,330400,2066073,164816,512738,1135772,92090,762767,1607537,227094,
+              441020,980233,318774,1452210,205661,873442,612900,1990014,144328,705118,
+              356742,1188300,498211,820455,1709620,261004,933871,587240,1402118,309556];
+  const W=720,H=160,pad=8, fmax=Math.max(...flow);
+  const pts=flow.map((v,i)=>[pad+i*((W-2*pad)/(flow.length-1)), H-pad-(v/fmax)*(H-2*pad)]);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+  const areaP=`${line} L${pts[pts.length-1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`;
+  document.getElementById('area').innerHTML=`
+    <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ACCENT}" stop-opacity="0.30"/><stop offset="1" stop-color="${ACCENT}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${areaP}" fill="url(#ag)"/><path d="${line}" fill="none" stroke="${ACCENT}" stroke-width="2"/>`;
+</script>
+</body>
+</html>

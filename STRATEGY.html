@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Terminal — Strategy Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base:#0A0B0F; --bg-surface:#0F1421; --bg-surface-2:#141B2A;
+    --border-subtle:rgba(255,255,255,.06); --border-default:rgba(255,255,255,.10);
+    --text-primary:#EAF0F7; --text-secondary:#9BA7B8; --text-tertiary:#5E6B7E;
+    --brand:#83E9FF; --gold:#F9E370; --success:#1FA85B; --danger:#E53E3E;
+    --violet:#B78CFF;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg-base); color:var(--text-primary); font-family:var(--sans);
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 520px at 50% -8%, rgba(131,233,255,.10), transparent 70%);
+    background-repeat:no-repeat;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px 96px}
+  a{color:var(--brand); text-decoration:none}
+
+  /* Header */
+  header{padding:56px 0 28px; border-bottom:1px solid var(--border-subtle)}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--brand); display:flex; align-items:center; gap:10px}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 12px var(--brand)}
+  h1{font-size:44px; font-weight:700; letter-spacing:-.02em; margin:14px 0 8px}
+  h1 .accent{color:var(--brand)}
+  .sub{color:var(--text-secondary); font-size:17px; max-width:760px}
+  .meta{margin-top:18px; display:flex; gap:10px; flex-wrap:wrap}
+  .pill{font-family:var(--mono); font-size:11px; letter-spacing:.04em; padding:5px 11px; border-radius:999px;
+    border:1px solid var(--border-default); color:var(--text-secondary); background:var(--bg-surface)}
+  .pill.on{color:var(--brand); border-color:rgba(131,233,255,.35); background:rgba(131,233,255,.06)}
+
+  section{margin-top:52px}
+  .kicker{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--text-tertiary); margin-bottom:16px; display:flex; align-items:center; gap:12px}
+  .kicker::before{content:''; width:22px; height:1px; background:var(--brand); opacity:.7}
+  h2{font-size:26px; font-weight:700; letter-spacing:-.01em; margin-bottom:6px}
+
+  .card{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:14px; padding:22px 24px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+
+  /* TL;DR verdict */
+  .verdict{background:linear-gradient(180deg,rgba(131,233,255,.05),rgba(131,233,255,0)); border:1px solid rgba(131,233,255,.20); border-radius:16px; padding:26px 28px}
+  .verdict .big{font-size:21px; font-weight:600; letter-spacing:-.01em}
+  .verdict .big b{color:var(--brand)}
+  .truths{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px}
+  .truth{border:1px solid var(--border-default); border-left:3px solid var(--danger); border-radius:10px; padding:16px 18px; background:var(--bg-surface-2)}
+  .truth .t-h{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--danger); margin-bottom:8px}
+  .truth p{font-size:14px; color:var(--text-secondary)}
+
+  /* Wedge */
+  .wedge{border:1px solid rgba(249,227,112,.25); background:linear-gradient(180deg,rgba(249,227,112,.05),transparent); border-radius:16px; padding:30px 32px; text-align:center}
+  .wedge .q{font-size:24px; font-weight:600; letter-spacing:-.01em; max-width:880px; margin:0 auto}
+  .wedge .q .g{color:var(--gold)} .wedge .q .b{color:var(--brand)}
+  .wedge .foot{margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--text-tertiary); letter-spacing:.04em}
+
+  /* Matrix */
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  .matrix-wrap{overflow-x:auto; border:1px solid var(--border-subtle); border-radius:14px}
+  th,td{padding:13px 14px; text-align:center; border-bottom:1px solid var(--border-subtle)}
+  th{font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); background:var(--bg-surface-2); font-weight:500}
+  td:first-child,th:first-child{text-align:left; color:var(--text-primary); font-family:var(--sans); text-transform:none; letter-spacing:0; font-size:13.5px}
+  th:first-child{color:var(--text-tertiary)}
+  tbody tr:last-child td{border-bottom:none}
+  .col-lt{background:rgba(131,233,255,.06); color:var(--brand)!important; border-left:1px solid rgba(131,233,255,.2); border-right:1px solid rgba(131,233,255,.2)}
+  td.col-lt{color:var(--text-primary)!important}
+  .yes{color:var(--success); font-weight:700} .no{color:var(--text-tertiary)} .part{color:var(--gold)}
+  .cap{font-size:12px; color:var(--text-tertiary); margin-top:10px; font-family:var(--mono)}
+
+  /* forces / dettes lists */
+  .list h3{font-size:13px; font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px}
+  .list.pos h3{color:var(--success)} .list.neg h3{color:var(--danger)}
+  .item{display:flex; gap:11px; padding:9px 0; border-bottom:1px solid var(--border-subtle); font-size:14px; color:var(--text-secondary)}
+  .item:last-child{border-bottom:none}
+  .item .mk{flex:none; font-family:var(--mono); font-weight:700}
+  .pos .mk{color:var(--success)} .neg .mk{color:var(--danger)}
+  .item b{color:var(--text-primary); font-weight:600}
+  .p0{display:inline-block; font-family:var(--mono); font-size:10px; background:var(--danger); color:#fff; padding:1px 6px; border-radius:4px; margin-left:6px; vertical-align:middle}
+
+  /* roadmap */
+  .road{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  .lane{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:14px; padding:20px 20px 8px; position:relative; overflow:hidden}
+  .lane::before{content:''; position:absolute; top:0; left:0; right:0; height:3px}
+  .lane.now::before{background:var(--brand)} .lane.next::before{background:var(--gold)} .lane.later::before{background:var(--text-tertiary)}
+  .lane .l-h{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px}
+  .lane .l-t{font-family:var(--mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+  .lane.now .l-t{color:var(--brand)} .lane.next .l-t{color:var(--gold)} .lane.later .l-t{color:var(--text-secondary)}
+  .lane .l-when{font-family:var(--mono); font-size:10px; color:var(--text-tertiary)}
+  .task{padding:12px 0; border-bottom:1px solid var(--border-subtle)}
+  .task:last-child{border-bottom:none}
+  .task .tt{font-size:14px; font-weight:600; color:var(--text-primary); display:flex; gap:8px}
+  .task .num{font-family:var(--mono); color:var(--text-tertiary); font-size:13px}
+  .task .td{font-size:12.5px; color:var(--text-secondary); margin-top:3px}
+  .eff{display:inline-flex; gap:6px; margin-top:7px; font-family:var(--mono); font-size:10px; color:var(--text-tertiary)}
+  .eff span{border:1px solid var(--border-default); padding:1px 6px; border-radius:4px}
+
+  /* monetisation ladder */
+  .ladder{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  .rung{background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:18px}
+  .rung .r-seq{font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--text-tertiary); text-transform:uppercase}
+  .rung .r-t{font-size:15px; font-weight:700; margin:8px 0 4px}
+  .rung .r-p{font-family:var(--mono); font-size:13px; color:var(--gold)}
+  .rung .r-d{font-size:12.5px; color:var(--text-secondary); margin-top:8px}
+  .rung.frozen{opacity:.62} .rung.frozen .r-p{color:var(--text-tertiary)}
+  .tag-free{color:var(--success)} .tag-prem{color:var(--brand)}
+
+  /* next steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  .step{background:var(--bg-surface-2); border:1px solid var(--border-default); border-radius:14px; padding:22px}
+  .step .s-n{font-family:var(--mono); font-size:34px; font-weight:700; color:var(--brand); line-height:1; opacity:.85}
+  .step .s-t{font-size:16px; font-weight:700; margin:12px 0 6px}
+  .step .s-d{font-size:13px; color:var(--text-secondary)}
+
+  .note{font-size:13px; color:var(--text-tertiary); margin-top:14px; font-family:var(--mono)}
+  footer{margin-top:60px; padding-top:22px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11px; color:var(--text-tertiary)}
+
+  @media(max-width:860px){
+    .grid2,.grid3,.truths,.road,.ladder,.steps{grid-template-columns:1fr}
+    h1{font-size:34px} .wedge .q{font-size:20px} .verdict .big{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span>Liquid Terminal · Strategy Brief</div>
+    <h1>Le bot d'abord, <span class="accent">le terminal ensuite</span>.</h1>
+    <p class="sub">Repositionnement fondateur d'un bien public open source sur Hyperliquid. Le terminal web est une commodite deja couverte. Le seul actif qui retient, distribue et encaisse, c'est le bot Telegram.</p>
+    <div class="meta">
+      <span class="pill on">Open source · MIT</span>
+      <span class="pill">Wedge : alertes retail HIP-3</span>
+      <span class="pill">Freemium leger</span>
+      <span class="pill">Grant-funded</span>
+      <span class="pill">MAJ 01/07/2026</span>
+    </div>
+  </header>
+
+  <!-- TL;DR -->
+  <section id="tldr">
+    <div class="kicker">01 · Le verdict</div>
+    <div class="verdict">
+      <p class="big">Liquid Terminal n'est pas un SaaS deguise. C'est un <b>bien public OSS</b> finance par grants et dons, dont le seul actif a retention, distribution et surface de paiement est le <b>bot Telegram</b>. Direction : arreter le framing terminal-first, faire du bot d'alertes retail le produit, et du site le canal d'acquisition gratuit qui le nourrit.</p>
+      <div class="truths">
+        <div class="truth">
+          <div class="t-h">Verite dure 1 · Dependance</div>
+          <p>Tout le wedge repose sur l'API d'un tiers (HypeDexer). Flowscan prouve le risque : c'est deja le dashboard gratuit d'une boite data B2B (Hydromancer). LT risque d'etre ce dashboard pour HypeDexer. Le moat se batit sur la distribution retail, pas sur la data brute.</p>
+        </div>
+        <div class="truth">
+          <div class="t-h">Verite dure 2 · Echelle</div>
+          <p>2 a 4k$/mois de bot n'est pas un business, c'est un tip jar qui ne paie pas un dev. Donc grants et dons en priorite, revenu bot en complement recurrent. On ne se ment pas sur le TAM retail HL, encore inconnu.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wedge -->
+  <section id="wedge">
+    <div class="kicker">02 · Le wedge (la chose UNE)</div>
+    <div class="wedge">
+      <p class="q">Le <span class="b">bot d'alertes Hyperliquid</span> que le retail garde ouvert 24/7. Les autres <span class="g">affichent</span> la data (HIP-3 compris) dans des dashboards. Aucun ne la <span class="g">pousse en alerte</span> au retail sur Telegram. LT possede cette couche de livraison.</p>
+      <p class="foot">L'exclusivite n'est pas la data. C'est le push. Le site nourrit le bot, pas l'inverse.</p>
+    </div>
+  </section>
+
+  <!-- Matrix -->
+  <section id="matrix">
+    <div class="kicker">03 · Positionnement concurrentiel</div>
+    <h2>Tous affichent. Un seul pousse.</h2>
+    <p class="sub" style="margin-bottom:18px">La matrice montre le seul terrain vide : personne n'a de bot d'alertes retail sur Telegram.</p>
+    <div class="matrix-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Capacite</th>
+            <th class="col-lt">Liquid Terminal</th>
+            <th>Flowscan / Hydromancer</th>
+            <th>hl.eco</th>
+            <th>HypurrScan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dashboard HIP-3 (perp DEX)</td><td class="col-lt part">~ partiel</td><td class="yes">✓</td><td class="yes">✓</td><td class="part">~ filtre</td></tr>
+          <tr><td>HIP-4 prediction markets</td><td class="col-lt no">✕</td><td class="yes">✓</td><td class="no">✕</td><td class="no">✕</td></tr>
+          <tr><td>Builder / Builder Intelligence</td><td class="col-lt part">~</td><td class="yes">✓</td><td class="yes">✓</td><td class="part">~</td></tr>
+          <tr><td>Explorer HyperEVM + forensics</td><td class="col-lt no">✕</td><td class="no">✕</td><td class="no">✕</td><td class="yes">✓</td></tr>
+          <tr><td>API data premium (B2B)</td><td class="col-lt no">✕</td><td class="yes">✓</td><td class="no">✕</td><td class="yes">✓</td></tr>
+          <tr><td>Annuaire projets / hub liens</td><td class="col-lt no">✕</td><td class="no">✕</td><td class="yes">✓</td><td class="no">✕</td></tr>
+          <tr><td><b>Bot d'alertes retail Telegram</b></td><td class="col-lt yes">✓ livre</td><td class="no">✕</td><td class="no">✕</td><td class="no">✕</td></tr>
+          <tr><td>Open source (MIT)</td><td class="col-lt yes">✓</td><td class="no">✕</td><td class="no">✕</td><td class="no">✕</td></tr>
+          <tr><td>Cible retail (pas builders/experts)</td><td class="col-lt yes">✓</td><td class="no">✕</td><td class="part">~</td><td class="no">✕</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cap">✓ couvert · ~ partiel · ✕ absent — source : COMPETITOR_INTEL.md (intel terrain 01/07/2026)</p>
+  </section>
+
+  <!-- Etat actuel -->
+  <section id="etat">
+    <div class="kicker">04 · Etat honnete du produit</div>
+    <div class="grid2">
+      <div class="card list pos">
+        <h3>Forces reelles</h3>
+        <div class="item"><span class="mk">+</span><span><b>Bot Telegram livre</b> (grammY v1.4.1) : Fill + Liquidation alerts, wallet tracking, filtres. Seul actif a retention et paiement.</span></div>
+        <div class="item"><span class="mk">+</span><span><b>Market + Explorer matures</b> sur data reelle (spot/perp/HIP-3, address/block/tx/validator/vaults).</span></div>
+        <div class="item"><span class="mk">+</span><span><b>Dashboard V4</b> : 8 sections cablees (Network Pulse, Protocol Revenue 5 sources, Live Activity).</span></div>
+        <div class="item"><span class="mk">+</span><span><b>Archi back propre</b> : 4 couches, circuit breaker, rate limiter, Redis, 4 DB isolees.</span></div>
+        <div class="item"><span class="mk">+</span><span><b>Design System V4</b> discipline, "real data only, no fake sparkline". Rare.</span></div>
+      </div>
+      <div class="card list neg">
+        <h3>Dettes reelles (par gravite)</h3>
+        <div class="item"><span class="mk">!</span><span><b>Instabilite back</b><span class="p0">P0</span> pollers/WS saturent les pools DB, crashs confirmes. Un terminal qui tombe n'a aucune credibilite.</span></div>
+        <div class="item"><span class="mk">!</span><span><b>Dependance dure HypeDexer</b> single point of failure externe ET concurrent potentiel.</span></div>
+        <div class="item"><span class="mk">!</span><span><b>72 commits V4 non merges</b><span class="p0">P0</span> prod n'est pas le code lu. Rien de neuf ne compte tant que ce retard existe.</span></div>
+        <div class="item"><span class="mk">!</span><span><b>Fragmentation</b> : mockups a fausses donnees, 8 modeles Telegram parkes, "coming soon" eparpilles.</span></div>
+        <div class="item"><span class="mk">!</span><span><b>Zero monetisation</b> implementee : aucun quota, aucun tier, aucun paiement.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap">
+    <div class="kicker">05 · Roadmap</div>
+    <h2>Fermer avant d'ouvrir.</h2>
+    <p class="sub" style="margin-bottom:18px">NEXT et LATER sont conditionnes a un signal : des abonnes qui paient pour l'alerte HIP-3.</p>
+    <div class="road">
+      <div class="lane now">
+        <div class="l-h"><span class="l-t">Now</span><span class="l-when">cette semaine</span></div>
+        <div class="task"><div class="tt"><span class="num">1</span>Stabiliser le back <span class="p0">P0</span></div><div class="td">Corriger la saturation des pools DB par les pollers/WS avant toute charge.</div><div class="eff"><span>humain moyen</span><span>CC moyen</span></div></div>
+        <div class="task"><div class="tt"><span class="num">2</span>Merger la dette V4 <span class="p0">P0</span></div><div class="td">Rapprocher feat/project-detail-protocol (72 commits) de main. Prod = code lu.</div><div class="eff"><span>humain moy+</span><span>CC moyen</span></div></div>
+        <div class="task"><div class="tt"><span class="num">3</span>UNE alerte HIP-3 dans le bot</div><div class="td">Nouveau DEX/asset + oracle health. Service indexer/hip3/api.ts deja ecrit. Mesurer si le retail s'abonne.</div><div class="eff"><span>humain faible</span><span>CC eleve</span></div></div>
+        <div class="task"><div class="tt"><span class="num">4</span>Socle Bot Premium v1 + charte</div><div class="td">Gating, paiement, charte "toujours gratuit" publique.</div><div class="eff"><span>humain moyen</span><span>CC moyen</span></div></div>
+      </div>
+      <div class="lane next">
+        <div class="l-h"><span class="l-t">Next</span><span class="l-when">1 a 3 mois · si traction</span></div>
+        <div class="task"><div class="tt"><span class="num">5</span>Elargir les alertes HIP-3</div><div class="td">Funding spikes, detection TWAP, drawdown vault, listings builders. Les alertes premium.</div></div>
+        <div class="task"><div class="tt"><span class="num">6</span>Vues web HIP-3 completes</div><div class="td">Top movers, snapshots, TWAP tracker. Vitrine d'acquisition du bot.</div></div>
+        <div class="task"><div class="tt"><span class="num">7</span>Cross-venue funding</div><div class="td">HL vs Binance/Bybit. Angle arbitrage, parfait en alerte premium.</div></div>
+        <div class="task"><div class="tt"><span class="num">8</span>Referral affiliate + page /funding</div><div class="td">Lane leger prouve par hl.eco. Transparence OSS on-chain. Deposer les grants avec des chiffres.</div></div>
+      </div>
+      <div class="lane later">
+        <div class="l-h"><span class="l-t">Later</span><span class="l-when">3 a 6 mois+ · opportuniste</span></div>
+        <div class="task"><div class="tt"><span class="num">9</span>Redondance HypeDexer</div><div class="td">Fallback hl_public + HypurrScan sur les endpoints critiques.</div></div>
+        <div class="task"><div class="tt"><span class="num">10</span>HIP-4 prediction markets</div><div class="td">Seulement si un signal de demande apparait.</div></div>
+        <div class="task"><div class="tt"><span class="num">11</span>Auction tracker, PnL, EVM explorer</div><div class="td">Scope creep tant que la retention bot n'est pas prouvee.</div></div>
+        <div class="task"><div class="tt"><span class="num">12</span>Builder codes</div><div class="td">Gele : surface reglementaire, neutralite. Apres revenu bot + avis juridique.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monetisation -->
+  <section id="monet">
+    <div class="kicker">06 · Monetisation freemium-legere</div>
+    <h2>Le premium vend le push, jamais la data.</h2>
+    <p class="sub" style="margin-bottom:18px"><span class="tag-free">Gratuit pour toujours</span> : toute la data web, le core MIT, l'API de base. <span class="tag-prem">Premium</span> : le push, le timing, le volume, l'agregation.</p>
+    <div class="ladder">
+      <div class="rung">
+        <div class="r-seq">Seq 1 · Now</div>
+        <div class="r-t">Bot Premium</div>
+        <div class="r-p">~7-9 $/mois</div>
+        <div class="r-d">Alertes illimitees, latence prioritaire, quotas hauts, alertes avancees HIP-3/funding/TWAP. Attention : Stars = coupe ~30% Apple/Google, pousser USDC.</div>
+      </div>
+      <div class="rung">
+        <div class="r-seq">Seq 2 · Next</div>
+        <div class="r-t">Referral affiliate</div>
+        <div class="r-p">4% frais trading</div>
+        <div class="r-d">Comme hl.eco. Lien d'affiliation, pas builder code : zero routing, zero surface reglementaire. A afficher honnetement.</div>
+      </div>
+      <div class="rung">
+        <div class="r-seq">Seq 2 · Runway</div>
+        <div class="r-t">Grants + dons</div>
+        <div class="r-p">non-dilutif</div>
+        <div class="r-d">Hyper Foundation, retroactive public goods, Gitcoin. Le vrai runway. A pitcher avec de la traction, pas un README. Grant 10M$ USDH : eligibilite a verifier.</div>
+      </div>
+      <div class="rung frozen">
+        <div class="r-seq">Later · gele</div>
+        <div class="r-t">Builder codes</div>
+        <div class="r-p">bloque</div>
+        <div class="r-d">Routing d'ordres = surface reglementaire + neutralite abimee. Apres revenu bot prouve ET avis juridique. Pas avant.</div>
+      </div>
+    </div>
+    <p class="note">Garde-fou : charte "toujours gratuit" publique, transparence /funding on-chain, zero vente de donnees utilisateurs.</p>
+  </section>
+
+  <!-- Next steps -->
+  <section id="next">
+    <div class="kicker">07 · Les 3 prochains pas (cette semaine)</div>
+    <div class="steps">
+      <div class="step"><div class="s-n">1</div><div class="s-t">Stabiliser + merger V4</div><div class="s-d">Rien de neuf ne compte tant que prod crashe et n'est pas le code lu. Prealable non negociable.</div></div>
+      <div class="step"><div class="s-n">2</div><div class="s-t">Shipper 1 alerte HIP-3</div><div class="s-d">Dans le bot, service deja ecrit. Le but n'est pas six vues web : c'est de mesurer si le retail s'abonne.</div></div>
+      <div class="step"><div class="s-n">3</div><div class="s-t">Socle Bot Premium + charte</div><div class="s-d">Gating, paiement (Stars + USDC), charte "toujours gratuit". Premier revenu recurrent sur l'existant.</div></div>
+    </div>
+    <p class="note">En parallele, 2 verifs faible effort / haute valeur : chiffrer le cout d'infra (dont acces HypeDexer) face au revenu, et verifier l'eligibilite au grant 10M$ sans construire de plan dessus.</p>
+  </section>
+
+  <footer>
+    <span>Liquid Terminal — Strategy Brief</span>
+    <span>Sources : STRATEGY.md · COMPETITOR_INTEL.md · STRATEGY_ANNEXES.md</span>
+    <span>Genere en lentille CEO/fondateur (gstack)</span>
+  </footer>
+
+</div>
+</body>
+</html>

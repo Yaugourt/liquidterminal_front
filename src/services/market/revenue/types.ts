@@ -16,7 +16,7 @@ export interface RevenueDay {
   total: number;
 }
 
-interface RevenueLifetime {
+export interface RevenueLifetime {
   perp: number;
   spot: number;
   hip1: number;

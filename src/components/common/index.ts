@@ -55,6 +55,11 @@ export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 export { DeleteConfirmDialog } from './DeleteConfirmDialog';
 export type { DeleteConfirmDialogProps } from './DeleteConfirmDialog';
 
+// Labeled dominance bar with legend (stake-share concentration).
+// Distinct from charts/StackedShareBar, the thin proportional track.
+export { DominanceBar } from './DominanceBar';
+export type { DominanceSegment, DominanceBarProps } from './DominanceBar';
+
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';

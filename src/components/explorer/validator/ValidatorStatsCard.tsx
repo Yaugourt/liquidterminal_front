@@ -7,48 +7,42 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { KpiRibbon, type KpiCell } from "@/components/common";
 
+/**
+ * Network-health KPI strip on the canonical <KpiRibbon> primitive
+ * (DESIGN_SYSTEM §7.b).
+ */
 export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
-  const { stats, isLoading } = useValidators();
+  const { stats } = useValidators();
   const { stats: holdersStats } = useHoldersStats();
   const { upcomingUnstaking } = useUnstakingStatsData();
   const { format } = useNumberFormat();
   const { price: hypePrice } = useHypePrice();
 
-  const loading = isLoading && !stats;
-
   const totalStaked = stats?.totalHypeStaked ?? 0;
+  const fmt = (n: number) => formatNumber(n, format, { maximumFractionDigits: 0 });
 
   const cells: KpiCell[] = [
     {
       label: "Validators",
-      value: loading ? "…" : `${stats.total} (${stats.active} active)`,
+      value: `${stats.total}`,
+      sub: `${stats.active} active · ${stats.inactive} jailed`,
     },
     {
       label: "HYPE Staked",
-      value: loading ? "…" : formatNumber(totalStaked, format, { maximumFractionDigits: 0 }),
-      sub: hypePrice
-        ? `$${formatNumber(totalStaked * hypePrice, format, { maximumFractionDigits: 0 })}`
-        : undefined,
+      value: fmt(totalStaked),
+      sub: hypePrice ? `$${fmt(totalStaked * hypePrice)}` : undefined,
     },
     {
       label: "Active Stakers",
-      value: holdersStats
-        ? formatNumber(holdersStats.totalHolders, format, { maximumFractionDigits: 0 })
-        : "…",
-      sub: holdersStats
-        ? `avg ${formatNumber(holdersStats.averageStaked, format, { maximumFractionDigits: 0 })} HYPE`
-        : undefined,
+      value: holdersStats ? fmt(holdersStats.totalHolders) : "…",
+      sub: holdersStats ? `avg ${fmt(holdersStats.averageStaked)} HYPE` : undefined,
     },
     {
       label: "Upcoming Unstaking",
-      value: upcomingUnstaking
-        ? formatNumber(upcomingUnstaking.next24Hours.totalTokens, format, { maximumFractionDigits: 0 })
-        : "…",
-      sub: upcomingUnstaking
-        ? `${formatNumber(upcomingUnstaking.nextHour.totalTokens, format, { maximumFractionDigits: 0 })} next hour`
-        : undefined,
+      value: upcomingUnstaking ? fmt(upcomingUnstaking.next24Hours.totalTokens) : "…",
+      sub: upcomingUnstaking ? `${fmt(upcomingUnstaking.nextHour.totalTokens)} next hour` : undefined,
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 xl:grid-cols-4" />;
+  return <KpiRibbon cells={cells} variant="plain" />;
 });
