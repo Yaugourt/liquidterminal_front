@@ -1,1 +1,1 @@
-export type ValidatorSubTab = 'all' | 'transactions' | 'unstaking' | 'stakers'; 
+export type ValidatorSubTab = 'all' | 'transactions' | 'unstaking' | 'stakers' | 'governance'; 

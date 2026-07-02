@@ -63,6 +63,15 @@ export const chartPalette = {
     "#FB923C", // 6 orange
     "#60A5FA", // 7 blue
   ] as readonly string[],
+  /** Mono-hue cyan ramp (light→deep) for ranked single-metric segments,
+   *  e.g. the validator stake-share StackedShareBar. */
+  cyanRamp: [
+    "#83E9FF", // 0 brand cyan
+    "#5FC9E6", // 1
+    "#3FA9CC", // 2
+    "#2C8CB0", // 3
+    "#1F6E8C", // 4
+  ] as readonly string[],
 } as const;
 
 export type ChartPalette = typeof chartPalette;

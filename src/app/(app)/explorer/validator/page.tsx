@@ -1,58 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { ValidatorStatsCard } from "@/components/explorer/validator/ValidatorStatsCard";
-import { ValidatorTable } from "@/components/explorer/validator/ValidatorTable";
-import { ValidatorChartSection } from "@/components/explorer/validator/chart/ValidatorChartSection";
-import { PillTabs } from "@/components/ui/pill-tabs";
-import { ValidatorSubTab } from "@/components/explorer/validator/types";
-import { Card } from "@/components/ui/card";
+import { useState } from "react";
 import { PageHeader } from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { OperatorLens } from "@/components/explorer/validator/lens/OperatorLens";
+import { CapitalLens } from "@/components/explorer/validator/lens/CapitalLens";
+import { GovernanceLens } from "@/components/explorer/validator/lens/GovernanceLens";
 
-const TABLE_TABS = [
-  { value: "all", label: "All Validators" },
-  { value: "transactions", label: "Staking Transactions" },
-  { value: "unstaking", label: "Unstaking Queue" },
-  { value: "stakers", label: "Stakers" },
-] as const;
+type Lens = "operator" | "capital" | "governance";
+
+const LENS_TABS = [
+  { value: "operator", label: "Operator" },
+  { value: "capital", label: "Capital" },
+  { value: "governance", label: "Governance" },
+];
+
+/** Per-lens header description — one product, three reading angles. */
+const LENS_DESCRIPTION: Record<Lens, string> = {
+  operator: "Health and performance of the active validator set.",
+  capital: "Where stake sits and how it's flowing out.",
+  governance: "Pending L1 votes awaiting validator ratification.",
+};
 
 export default function ValidatorPage() {
-  const [validatorSubTab, setValidatorSubTab] = useState<ValidatorSubTab>("all");
+  const [lens, setLens] = useState<Lens>("operator");
 
   return (
-    <motion.div
-      className="space-y-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <PageHeader
-        title="Validators"
-        description="HyperLiquid validators — staking stats, delegation distribution, staking transactions, and the unstaking queue."
-      />
+    <div className="space-y-6">
+      <PageHeader title="Validators" description={LENS_DESCRIPTION[lens]}>
+        <PillTabs
+          tabs={LENS_TABS}
+          activeTab={lens}
+          onTabChange={(value) => setLens(value as Lens)}
+          variant="text"
+        />
+      </PageHeader>
 
-      {/* Stats strip — 4 KPI cards full width */}
-      <ValidatorStatsCard />
-
-      {/* Chart card */}
-      <Card>
-        <ValidatorChartSection />
-      </Card>
-
-      {/* Table card — tabs live inside the card header */}
-      <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-        {/* Card header: tabs */}
-        <div className="flex items-center px-3.5 py-3 border-b border-border-subtle">
-          <PillTabs
-            tabs={TABLE_TABS as unknown as { value: string; label: string }[]}
-            activeTab={validatorSubTab}
-            onTabChange={(val) => setValidatorSubTab(val as ValidatorSubTab)}
-          />
-        </div>
-
-        <ValidatorTable activeTab={validatorSubTab} />
-      </div>
-    </motion.div>
+      {lens === "operator" && <OperatorLens />}
+      {lens === "capital" && <CapitalLens />}
+      {lens === "governance" && <GovernanceLens />}
+    </div>
   );
 }
