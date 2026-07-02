@@ -46,6 +46,10 @@ export { Num } from './Num';
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 
+// Stacked dominance bar (stake-share concentration)
+export { StackedShareBar } from './StackedShareBar';
+export type { ShareSegment, StackedShareBarProps } from './StackedShareBar';
+
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';

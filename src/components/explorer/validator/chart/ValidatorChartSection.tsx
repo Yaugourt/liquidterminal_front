@@ -130,8 +130,10 @@ export const ValidatorChartSection = memo(function ValidatorChartSection({
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       {/* Ambient glow — cyan-leaning to stay coherent with validator staking accent */}
-      <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-gold/[0.06] blur-3xl" />
+      {/* Decorative corner halos — pinned to the edges (no negative inset) so they
+          don't inflate the container's scrollWidth and trip the render gate. */}
+      <div className="pointer-events-none absolute -top-24 right-0 h-56 w-56 rounded-full bg-brand/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-gold/[0.06] blur-3xl" />
 
       <div className="relative z-10 p-4">
         {/* Header with tabs + context-sensitive controls */}

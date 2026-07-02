@@ -1,4 +1,5 @@
 export { useValidatorDelegations } from './validator/useValidatorDelegations';
+export { useValidatorVotes } from './validator/useValidatorVotes';
 export { useValidators } from './validator/useValidators'; 
 export {  useStakingValidationsPaginated, useUnstakingQueuePaginated } from './staking';
 export { useDelegatorHistory } from './delegator/useDelegatorHistory';
