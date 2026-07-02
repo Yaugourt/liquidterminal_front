@@ -85,6 +85,67 @@ export interface UseCategoriesResult {
   refetch: () => Promise<void>;
 }
 
+// ==================== PROJECT METRICS (DeFiLlama-like, multi-source) ====================
+// Mirrors the backend GET /project/:id/metrics payload (projectMetrics.types.ts).
+
+export type ProjectDataSourceType =
+  | 'HL_SPOT_TOKEN'
+  | 'DEFILLAMA'
+  | 'HL_BUILDER'
+  | 'HL_VAULT'
+  | 'MANUAL';
+
+/** A single metric value tagged with its source and freshness. */
+export interface MetricValue {
+  value: number;
+  source: string;
+  unit?: string;
+  asOf: number; // epoch ms
+}
+
+/** A point in a historical series. */
+export interface SeriesPoint {
+  t: number; // epoch ms
+  v: number;
+}
+
+/** Source-agnostic metric bundle. Every field is optional — a project may expose only some. */
+export interface NormalizedMetrics {
+  tvl?: MetricValue;
+  volume24h?: MetricValue;
+  fees24h?: MetricValue;
+  revenue24h?: MetricValue;
+  price?: MetricValue;
+  marketCap?: MetricValue;
+  fdv?: MetricValue;
+  change24h?: MetricValue;
+  holders?: MetricValue;
+  series?: {
+    tvl?: SeriesPoint[];
+    fees?: SeriesPoint[];
+    volume?: SeriesPoint[];
+  };
+}
+
+export interface ProjectMetrics {
+  projectId: number;
+  metrics: NormalizedMetrics;
+  sources: ProjectDataSourceType[];
+  updatedAt: number; // epoch ms
+}
+
+export interface ProjectMetricsResponse {
+  success: boolean;
+  data: ProjectMetrics;
+}
+
+export interface UseProjectMetricsResult {
+  metrics: ProjectMetrics | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
+
 // Types pour les mutations
 export interface CreateProjectInput {
   title: string;
