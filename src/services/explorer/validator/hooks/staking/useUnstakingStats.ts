@@ -33,6 +33,43 @@ const useUnstakingStats = (): {
 };
 
 /**
+ * Hook pour récupérer les statistiques d'unstaking formatées pour la chart
+ */
+export const useUnstakingStatsForChart = (): UseUnstakingStatsWithChartResult => {
+  const baseResult = useUnstakingStats();
+
+  // Logique métier : traiter les données pour la chart - prendre les 10 derniers jours
+  const chartData = useMemo(() => {
+    if (!baseResult.dailyStats.length) return [];
+
+    // Prendre les 10 derniers jours et les formater
+    return baseResult.dailyStats
+      .slice(-10)
+      .map((stat: UnstakingDailyStats) => {
+        const date = new Date(stat.date);
+        const dayName = date.toLocaleDateString('fr-FR', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short'
+        });
+
+        return {
+          day: dayName,
+          date: stat.date,
+          totalTokens: stat.totalTokens,
+          transactionCount: stat.transactionCount,
+          uniqueUsers: stat.uniqueUsers
+        };
+      });
+  }, [baseResult.dailyStats]);
+
+  return {
+    ...baseResult,
+    chartData
+  };
+};
+
+/**
  * Hook pour récupérer les statistiques d'unstaking formatées pour la chart avec période personnalisée
  */
 export const useUnstakingStatsForChartWithPeriod = (period: ChartPeriod = '7d'): UseUnstakingStatsWithChartResult => {

@@ -1,3 +1,3 @@
 export { useStakingValidationsPaginated } from './useStakingValidationsPaginated';
 export { useUnstakingQueuePaginated } from './useUnstakingQueuePaginated';
-export {  useUnstakingStatsData } from './useUnstakingStats';
+export { useUnstakingStatsData, useUnstakingStatsForChart } from './useUnstakingStats';

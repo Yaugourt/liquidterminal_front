@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · C — Governance (v3)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP C v3 — "GOVERNANCE" (L1 votes lens)
+ v3 = light polish of v2 (already the strongest of the three). Structure and
+ REAL data preserved verbatim from validator-v4-C-v2.html. No redesign.
+ ───────────────────────────────────────────────────────────────────────────────
+ KEPT from v2: shared chrome (h1 "Validators" + desc + spine, Governance active),
+   signal callout banner, 5-up KPI ribbon, single-column pending-proposal stack
+   (humanized action badge, success quorum badge, expires, summary/"no summary",
+   cyan stake-weight bar, participation, foundation n/5, expandable voters list
+   with neutral avatars + Foundation neutral tag + abstention banner).
+ POLISHED for v3 consistency: token header aligned to v3 brief (bg-base #0A0B0F,
+   success #1FA85B, gold present in config but UNUSED — fees only / ZERO gold),
+   tightened data-dense spacing + type scale, every bar cyan #83E9FF in BOTH
+   toggle states, Foundation never color-encoded (neutral surface-2 tag), spine +
+   header set to match sibling v3 files so the three read as one product.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: { sans:["Inter","sans-serif"], inter:["Inter","sans-serif"], mono:["JetBrains Mono","monospace"] },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; } ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+  .bar { transition: width .5s cubic-bezier(.4,0,.2,1); }
+  details[open] > summary svg { transform: rotate(90deg); }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium">Validators</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+
+    <!-- sticky header: NO breadcrumb chip, no border-b -->
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span><span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Validators</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-5 max-w-[1400px] mx-auto space-y-7">
+
+      <!-- ── PageHeader (kit) — shared v3 chrome: h1 "Validators" + desc + freshness ── -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Validators</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">Pending L1 votes awaiting validator ratification.</p>
+        </div>
+        <span class="text-xs text-text-tertiary sm:shrink-0">Updated <span class="mono text-text-secondary">8s ago</span></span>
+      </div>
+
+      <!-- ── Lens spine — PillTabs variant="text" (kit) · shared across the 3 v3 files ── -->
+      <div class="flex items-center gap-4 text-sm border-b border-border-subtle pb-3">
+        <a class="text-text-tertiary hover:text-text-primary">Operator</a>
+        <a class="text-text-tertiary hover:text-text-primary">Capital</a>
+        <a class="text-brand font-medium">Governance</a>
+      </div>
+
+      <!-- ════════ §Signal — full-width Card callout (page thesis) ════════ -->
+      <div class="bg-surface-2 border border-border-subtle rounded-lg px-5 py-4 flex items-start gap-3">
+        <span class="mt-0.5 shrink-0 w-7 h-7 rounded-md bg-surface-3 text-text-secondary grid place-items-center">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+        </span>
+        <p class="text-[13.5px] leading-relaxed text-text-secondary">
+          <span class="text-text-primary font-medium">Foundation controls <span class="mono">54.1%</span> of stake and voted on <span class="mono">0 of 4</span> pending proposals</span> — community alone reached quorum on all 4.
+        </p>
+      </div>
+
+      <!-- ════════ §Pending ════════ -->
+      <section class="space-y-4">
+
+        <!-- KpiRibbon minimal (kit) · 5 cells · no gold -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Pending</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">4</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">proposals</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Avg participation</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">40%</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">of 31 validators</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Quorum reached</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-success">4 / 4</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">all pending</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Foundation voted</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">0 / 5</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">abstained on all</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Eligible</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">31</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">validators</div>
+          </div>
+        </div>
+
+        <!-- caption + per-lens ex-Foundation toggle (text tabs · top-right of first section) -->
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <h2 class="text-[13px] font-medium text-text-primary">Pending proposals</h2>
+            <span id="wt-cap" class="text-[11px] text-text-tertiary truncate">stake weight · all validators</span>
+          </div>
+          <div class="flex items-center gap-3 shrink-0 text-xs">
+            <button id="tg-all" class="text-brand font-medium">All</button>
+            <button id="tg-comm" class="text-text-tertiary hover:text-text-primary" title="Community = validator set excluding the 5 Foundation validators">Community</button>
+          </div>
+        </div>
+
+        <!-- Proposal Cards — single-column stack -->
+        <div id="prop-stack" class="space-y-3"></div>
+
+      </section>
+
+      <!-- ════════ §footer — scope caption (once) ════════ -->
+      <p class="text-[11px] text-text-tertiary">Showing pending votes only. Historical votes are not available.</p>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // ─── proposals (real values preserved verbatim from C-v2 + PROOF) ───
+  const PROPS = [
+    {id:0, action:"settleOutcome", title:"settleOutcome", summary:"UEFA crowned Paris Saint-Germain champion of the 2025-26 Champions League (PSG 4-3 Arsenal on pens).", exp:"Jun 7", part:42, voters:13, wtAll:26.0, wtComm:56.6, quorum:true, fnd:"0 / 5"},
+    {id:1, action:"registerTokensAndStandaloneOutcome", title:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, voters:12, wtAll:21.9, wtComm:47.6, quorum:true, fnd:"0 / 5"},
+    {id:2, action:"registerTokensAndStandaloneOutcome", title:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, voters:12, wtAll:21.9, wtComm:47.6, quorum:true, fnd:"0 / 5"},
+    {id:3, action:"registerTokensAndStandaloneOutcome", title:"registerTokensAndStandaloneOutcome", summary:null, exp:"Jun 8", part:39, voters:12, wtAll:24.9, wtComm:54.2, quorum:true, fnd:"0 / 5"},
+  ];
+
+  // humanize enum action types (raw enum kept as title attr)
+  function humanize(action){
+    const map = { settleOutcome: "Settle outcome", registerTokensAndStandaloneOutcome: "Register tokens" };
+    if (map[action]) return map[action];
+    return action.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
+  }
+
+  // ─── voters of proposal #0 (real, .data[0].voters[]) ───
+  const VOTERS = [
+    ["Hypurrscanning",23.07],["Nansen x HypurrCollective",22.73],["infinitefield.xyz",17.72],
+    ["Imperator.co - HypeRPC",7.61],["ASXN",6.40],["ValiDAO",5.01],["B-Harvest",4.81],
+    ["HypurrCorea - Spacebar",4.76],["Purrposeful x HyBridge",4.54],["Alphaticks",4.15],
+    ["CMI",4.10],["Liquid Spirit x Hydromance",3.47],["Enigma - Hypedexer.com",3.24],
+  ];
+  function initials(name){
+    const clean = name.replace(/[^A-Za-z0-9 ]/g,' ').trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0]+parts[1][0]).toUpperCase();
+    return clean.slice(0,2).toUpperCase();
+  }
+
+  function votersBlock(p){
+    if (p.id !== 0) return ""; // only proposal #0 has served voter detail
+    const eligible = 31;
+    const rows = VOTERS.map(v=>`
+      <div class="flex items-center gap-2.5 px-4 py-1.5 border-b border-border-subtle/60 last:border-b-0 hover:bg-surface-2/60 transition-colors">
+        <span class="w-6 h-6 shrink-0 rounded-md bg-surface-2 text-text-secondary grid place-items-center text-[9px] font-semibold">${initials(v[0])}</span>
+        <span class="truncate text-[12.5px] text-text-primary">${v[0]}</span>
+        <span class="ml-auto shrink-0 mono text-[12px] text-text-secondary">${v[1].toFixed(2)}M</span>
+      </div>`).join('');
+    return `
+      <details class="border-t border-border-subtle">
+        <summary class="cursor-pointer list-none flex items-center gap-2 px-4 py-2.5 text-[12px] text-text-tertiary hover:text-text-primary transition-colors">
+          <svg class="w-3.5 h-3.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          <span>Voters · ${humanize(p.action)}</span>
+          <span class="ml-auto mono text-text-tertiary" title="voters / eligible">${p.voters}/${eligible}</span>
+        </summary>
+        <div class="bg-surface-2 border-t border-border-subtle px-1.5 py-1.5 rounded-b-lg">
+          <div class="px-2.5 py-2 mb-0.5 text-[11px] text-text-tertiary">Foundation abstained — 0 of 5 voted</div>
+          <div>${rows}</div>
+        </div>
+      </details>`;
+  }
+
+  function renderProps(mode){
+    const useComm = mode==='comm';
+    document.getElementById('wt-cap').textContent = useComm ? "stake weight · community" : "stake weight · all validators";
+    document.getElementById('prop-stack').innerHTML = PROPS.map(p=>{
+      const wt = useComm ? p.wtComm : p.wtAll;
+      const denom = useComm ? "of community stake" : "of total stake";
+      const summary = p.summary
+        ? `<p class="text-[12.5px] leading-relaxed text-text-secondary mt-2 max-w-[640px]">${p.summary}</p>`
+        : `<p class="text-[12px] text-text-tertiary mt-2">No summary provided for this proposal.</p>`;
+      return `
+      <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <!-- card-head (kit): id + humanized action chip (neutral) + quorum + expires -->
+        <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-subtle">
+          <span class="mono text-[11px] text-text-tertiary">#${p.id}</span>
+          <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium" title="${p.title}">${humanize(p.action)}</span>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Quorum reached</span>
+          <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">Expires <span class="mono text-text-secondary">${p.exp}</span></span>
+        </div>
+
+        <!-- body: summary + metrics -->
+        <div class="px-4 py-3.5">
+          ${summary}
+
+          <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-x-8 gap-y-3 mt-3.5 items-end">
+            <!-- stake-weight FlowBar (accent cyan #83E9FF in BOTH toggle states) -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] text-text-tertiary">Stake weight ${denom}</span>
+                <span class="mono text-[12px] text-text-primary">${wt.toFixed(1)}%</span>
+              </div>
+              <div class="h-2 rounded-full bg-surface-2 overflow-hidden">
+                <div class="bar h-full rounded-full" style="width:${wt}%;background:#83E9FF"></div>
+              </div>
+            </div>
+            <!-- participation + foundation chips -->
+            <div class="flex items-center gap-6">
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Participation</span>
+                <span class="mono text-[15px] text-text-primary mt-1 leading-none">${p.part}% <span class="text-[11px] text-text-tertiary">${p.voters}/31</span></span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Foundation</span>
+                <span class="mono text-[15px] text-text-primary mt-1 leading-none">${p.fnd}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${votersBlock(p)}
+      </div>`;
+    }).join('');
+  }
+
+  function setMode(mode){
+    const a=document.getElementById('tg-all'), c=document.getElementById('tg-comm');
+    const on="text-brand font-medium", off="text-text-tertiary hover:text-text-primary";
+    a.className = mode==='all'?on:off;
+    c.className = mode==='comm'?on:off;
+    renderProps(mode);
+  }
+  document.getElementById('tg-all').onclick=()=>setMode('all');
+  document.getElementById('tg-comm').onclick=()=>setMode('comm');
+  setMode('all');
+</script>
+</body>
+</html>

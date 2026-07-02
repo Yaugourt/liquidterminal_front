@@ -4,12 +4,14 @@ import {
   ProjectsResponse,
   CategoriesResponse,
   ProjectQueryParams,
+  Project,
   CreateProjectInput,
   CreateProjectWithUploadInput,
   CreateCategoryInput,
   ProjectResponse,
   CategoryResponse,
   ProjectCsvUploadApiResponse,
+  ProjectMetricsResponse,
 } from './types';
 import { buildQueryParams } from '../../common';
 
@@ -30,6 +32,26 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
     const endpoint = `/project?${queryParams.toString()}`;
     return await get<ProjectsResponse>(endpoint);
   }, 'fetching projects');
+};
+
+/**
+ * Récupère un projet par ID.
+ * Note: cette route backend renvoie le projet brut (pas d'enveloppe { success, data }).
+ */
+export const fetchProject = async (id: number): Promise<Project> => {
+  return withErrorHandling(async () => {
+    return await get<Project>(`/project/${id}`);
+  }, 'fetching project');
+};
+
+/**
+ * Récupère les métriques agrégées (multi-source) d'un projet — TVL, volume,
+ * fees, token… normalisées par le backend. Champs optionnels selon les sources.
+ */
+export const fetchProjectMetrics = async (id: number): Promise<ProjectMetricsResponse> => {
+  return withErrorHandling(async () => {
+    return await get<ProjectMetricsResponse>(`/project/${id}/metrics`);
+  }, 'fetching project metrics');
 };
 
 /**

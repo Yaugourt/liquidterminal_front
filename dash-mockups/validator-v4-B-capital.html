@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Validators V4 · B — Capital</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ VALIDATOR V4 · MOCKUP B — "CAPITAL"  (concentration lens)
+ Question answered: "Where is stake concentrated, and how Foundation-dependent
+ is the network?"  Twin view (all ↔ ex-Foundation) is the spine (GATE 3).
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE B · BLOCK → KIT BLOCK → PROD PRIMITIVE → DATA SOURCE (route · field)
+  1 PageHeader        → kit#1 PageHeader        → @/components/common/PageHeader
+  2 ex-Foundation tog → kit#3 PillTabs (pill)    → @/components/ui/pill-tabs
+                        client-side filter over .data[] via isFoundationValidator()
+                        (single-sourced: FOUNDATION_VALIDATOR_NAME_PREFIXES)
+  3 KpiRibbon (5)     → kit#2 KpiRibbon plain     → @/components/common/KpiRibbon
+                        derived from GET /staking/validators .data[].stake
+                        (Foundation split, top-N cumulative, HHI) — 100% front
+  4 DonutTopN         → —     charts/DonutTopN     → @/components/common/charts
+                        GET /staking/validators .data[].{name,stake} aggregated
+  5 FlowGrid+FlowBar  → —     charts/FlowGrid/FlowBar → @/components/common/charts
+                        GET /staking/validators .data[] top-N by stake
+  6 AuroraHistogram   → —     charts/AuroraHistogramChart → GET /staking/holders/stats
+                        .distributionByRange[] {range, holdersCount}
+  7 Top-N share tbl   → kit#4 OverviewModule+ModuleTable → GET /staking/holders/stats
+                        .topHoldersStats[] {topCount, percentage}
+  8 KpiRibbon (queue) → kit#2 KpiRibbon plain     → GET /staking/unstaking-queue/stats
+                        .totalStats + .upcomingUnstaking
+  9 AuroraAreaChart   → —     charts/AuroraAreaChart → GET /staking/unstaking-queue/stats
+                        .dailyStats[] {date, totalTokens}
+ ───────────────────────────────────────────────────────────────────────────────
+ LIVRABLE C · MISSING PRIMITIVES: none.
+ GATE 1 · NOT SERVED → NOT DRAWN:
+   · HHI / top-N% have no upstream field → computed front-side from served stake[]
+     (declared as a derivation, not a fabricated source).
+   · ex-Foundation donut rescale is done client-side from name+stake (served).
+ All figures REAL (live local back :3002, 2026-06-02). Toggle swaps real all↔ex-Fnd values.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+  },
+  fontFamily: { sans: ["Inter","sans-serif"], inter:["Inter","sans-serif"], mono: ["JetBrains Mono","monospace"] },
+} } };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; } ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+  .bar { transition: width .5s cubic-bezier(.4,0,.2,1); }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Explorer</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Overview</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Vaults</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium flex items-center justify-between">Validators <span class="mono text-[10px]">B</span></a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Addresses</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.06),transparent)] z-0"></div>
+    <header class="sticky top-0 z-20 bg-base/80 backdrop-blur-xl px-6 h-[52px] flex items-center gap-3">
+      <span class="text-[13px] text-text-tertiary">Explorer</span><span class="text-text-tertiary">/</span>
+      <span class="text-[13px] text-text-primary font-medium">Validators</span>
+      <span class="ml-2 text-[10px] mono px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">lens: Capital</span>
+    </header>
+
+    <main class="relative z-10 px-4 sm:px-6 py-5 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- 1 · PageHeader + 2 · ex-Foundation toggle (PillTabs) -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Validators · Capital</h1>
+          <p class="text-sm text-text-secondary">stake concentration & flows · updated <span class="mono">8s ago</span></p>
+        </div>
+        <div class="inline-flex items-center p-0.5 rounded-lg bg-surface-2 border border-border-subtle text-[12px] shrink-0">
+          <button id="tg-all" class="px-3 h-7 rounded-md font-medium bg-brand text-brand-text-on">Network (all)</button>
+          <button id="tg-comm" class="px-3 h-7 rounded-md font-medium text-text-secondary hover:text-text-primary">Community (ex-Foundation)</button>
+        </div>
+      </div>
+
+      <!-- 3 · KpiRibbon (concentration; toggle-driven) -->
+      <div class="rounded-lg overflow-hidden border border-border-subtle">
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-px bg-border-subtle">
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span id="k0l" class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Foundation Share</span>
+            <span id="k0v" class="mono text-[20px] font-semibold tracking-[-0.02em] text-gold">54.1%</span>
+            <span id="k0s" class="text-[11px] text-text-tertiary">232.5M HYPE · 5 validators</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Top-1</span>
+            <span id="k1v" class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">13.0%</span>
+            <span id="k1s" class="text-[11px] text-text-tertiary">single validator</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Top-5</span>
+            <span id="k2v" class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">56.5%</span>
+            <span id="k2s" class="text-[11px] text-text-tertiary">cumulative</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Top-10</span>
+            <span id="k3v" class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">78.8%</span>
+            <span id="k3s" class="text-[11px] text-text-tertiary">cumulative</span>
+          </div>
+          <div class="bg-surface px-4 py-3 flex flex-col gap-0.5">
+            <span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">HHI</span>
+            <span id="k4v" class="mono text-[20px] font-semibold tracking-[-0.02em] text-text-primary">808</span>
+            <span id="k4s" class="text-[11px] text-text-tertiary">&lt;1500 = unconcentrated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 · DonutTopN + 5 · FlowGrid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12V2a10 10 0 0 1 10 10Z"/></svg></div>
+            <h2 class="text-[14px] font-semibold">Stake Composition</h2>
+            <span class="ml-auto text-[11px] text-text-tertiary mono">of 429.6M HYPE</span>
+          </div>
+          <div class="p-4 flex flex-col sm:flex-row items-center gap-5">
+            <svg viewBox="0 0 140 140" class="w-[150px] h-[150px] shrink-0" id="donut"></svg>
+            <div class="flex-1 w-full min-w-0 space-y-1.5" id="donut-legend"></div>
+          </div>
+        </div>
+
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="12" y="6" width="3" height="12"/><rect x="17" y="13" width="3" height="5"/></svg></div>
+            <h2 class="text-[14px] font-semibold">Top Validators by Stake</h2>
+            <span id="flow-cap" class="ml-auto text-[11px] text-text-tertiary mono">share of total</span>
+          </div>
+          <div class="p-3.5 space-y-2.5" id="flowgrid"></div>
+        </div>
+      </div>
+
+      <!-- 6 · AuroraHistogram (delegator distribution) + 7 · top-N share -->
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16v2M11 11v7M15 14v4M19 7v11"/></svg></div>
+            <h2 class="text-[14px] font-semibold">Stakers by Size</h2>
+            <span class="ml-auto text-[11px] text-text-tertiary mono">49,234 wallets</span>
+          </div>
+          <div class="p-4">
+            <div class="flex items-end gap-2 h-[150px]" id="hist"></div>
+            <p class="mt-3 text-[12px] text-text-secondary">Long-tailed: <span class="text-text-primary font-medium">239 wallets</span> in the <span class="mono">100k+</span> bucket hold <span class="text-gold font-medium">91.6%</span> of all staked HYPE.</p>
+          </div>
+        </div>
+
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <h2 class="text-[13px] font-semibold">Delegator Concentration</h2>
+          </div>
+          <table class="w-full border-collapse">
+            <thead><tr class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
+              <th class="px-3.5 py-2 text-left border-b border-border-subtle">Cohort</th>
+              <th class="px-3.5 py-2 text-right border-b border-border-subtle">Share of stake</th>
+            </tr></thead>
+            <tbody class="text-[12.5px]">
+              <script>[["Top 10","77.34%"],["Top 50","83.77%"],["Top 100","87.53%"],["Top 500","95.22%"]].forEach(r=>document.write(`<tr class="hover:bg-surface-2/60 border-b border-border-subtle/60"><td class="px-3.5 py-2.5 text-text-secondary">${r[0]}</td><td class="px-3.5 py-2.5 text-right mono">${r[1]}</td></tr>`));</script>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8 · KpiRibbon (queue) + 9 · AuroraAreaChart (unstaking flow) -->
+      <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+          <div class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center text-brand"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5v14"/></svg></div>
+          <h2 class="text-[14px] font-semibold">Unstaking Pressure</h2>
+          <span class="ml-auto text-[11px] text-text-tertiary mono">forward queue</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle border-b border-border-subtle">
+          <div class="bg-surface px-4 py-2.5 flex flex-col"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Queued</span><span class="mono text-[18px] font-semibold">14.34M</span><span class="text-[10.5px] text-text-tertiary">5,014 entries</span></div>
+          <div class="bg-surface px-4 py-2.5 flex flex-col"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Next hour</span><span class="mono text-[18px] font-semibold">1.02M</span><span class="text-[10.5px] text-text-tertiary">14 tx</span></div>
+          <div class="bg-surface px-4 py-2.5 flex flex-col"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Next 24h</span><span class="mono text-[18px] font-semibold">1.23M</span><span class="text-[10.5px] text-text-tertiary">271 tx</span></div>
+          <div class="bg-surface px-4 py-2.5 flex flex-col"><span class="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">Next 7d</span><span class="mono text-[18px] font-semibold text-gold">5.63M</span><span class="text-[10.5px] text-text-tertiary">2,530 tx</span></div>
+        </div>
+        <div class="p-4">
+          <svg viewBox="0 0 720 160" preserveAspectRatio="none" class="w-full h-[160px]" id="area"></svg>
+          <div class="flex justify-between mt-1 text-[10px] mono text-text-tertiary"><span>May 31</span><span>Jun 04</span><span>Jun 09</span></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  // ─── DonutTopN (all-network composition) ───
+  const donutData = [
+    {n:"Hyper Foundation (5)", v:54.1, c:"#F9E370"},
+    {n:"Anchorage By Figment", v:5.9, c:"#83E9FF"},
+    {n:"Hypurrscanning", v:5.4, c:"#1FB58E"},
+    {n:"Nansen x HypurrCollective", v:5.3, c:"#A78BFA"},
+    {n:"infinitefield.xyz", v:4.1, c:"#60A5FA"},
+    {n:"Hyperliquid Strategies", v:4.0, c:"#F472B6"},
+    {n:"Rest · 21 validators", v:21.2, c:"#2C354A"},
+  ];
+  const R=54, C=2*Math.PI*R; let off=0;
+  const svg=document.getElementById('donut');
+  svg.innerHTML = `<g transform="translate(70,70) rotate(-90)">` + donutData.map(s=>{
+    const len=s.v/100*C; const seg=`<circle r="${R}" fill="none" stroke="${s.c}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`; off+=len; return seg;
+  }).join('') + `</g><text x="70" y="66" text-anchor="middle" class="mono" fill="#E8EAED" font-size="17" font-weight="600">54.1%</text><text x="70" y="82" text-anchor="middle" fill="#6B7280" font-size="9">Foundation</text>`;
+  document.getElementById('donut-legend').innerHTML = donutData.map(s=>`
+    <div class="flex items-center gap-2 text-[12px]">
+      <span class="w-2.5 h-2.5 rounded-sm shrink-0" style="background:${s.c}"></span>
+      <span class="truncate min-w-0 ${s.c==='#F9E370'?'text-gold':'text-text-secondary'}">${s.n}</span>
+      <span class="ml-auto mono ${s.c==='#F9E370'?'text-gold':'text-text-primary'}">${s.v.toFixed(1)}%</span>
+    </div>`).join('');
+
+  // ─── FlowGrid + FlowBar (toggle-driven datasets, real values) ───
+  const FLOW = {
+    all: { cap:"share of total", rows:[
+      ["Hyper Foundation 2",13.0,1],["Hyper Foundation 3",12.9,1],["Hyper Foundation 4",12.4,1],
+      ["Hyper Foundation 1",12.2,1],["Anchorage By Figment",5.9,0],["Hypurrscanning",5.4,0],
+      ["Nansen x HypurrCollective",5.3,0],["infinitefield.xyz",4.1,0]]},
+    comm: { cap:"share of community (197.1M)", rows:[
+      ["Anchorage By Figment",12.95,0],["Hypurrscanning",11.71,0],["Nansen x HypurrCollective",11.53,0],
+      ["infinitefield.xyz",8.99,0],["Hyperliquid Strategies",8.65,0],["HyperStake",5.03,0],
+      ["Kinetiq x Hyperion",4.74,0],["Imperator.co - HypeRPC",3.86,0]]},
+  };
+  function renderFlow(mode){
+    const d=FLOW[mode]; const top=d.rows[0][1];
+    document.getElementById('flow-cap').textContent=d.cap;
+    document.getElementById('flowgrid').innerHTML = d.rows.map(r=>`
+      <div class="flex items-center gap-3 text-[12px]">
+        <span class="w-[150px] truncate ${r[2]?'text-gold':'text-text-secondary'} shrink-0">${r[0]}</span>
+        <div class="flex-1 h-[18px] rounded bg-surface-2 overflow-hidden">
+          <div class="bar h-full rounded" style="width:${(r[1]/top*100).toFixed(1)}%;background:${r[2]?'#F9E370':'#83E9FF'}"></div>
+        </div>
+        <span class="w-12 text-right mono ${r[2]?'text-gold':'text-text-primary'}">${r[1].toFixed(1)}%</span>
+      </div>`).join('');
+  }
+
+  // ─── KpiRibbon toggle (all ↔ ex-Foundation, real values) ───
+  const KPI = {
+    all:  {k0l:"Foundation Share",k0v:"54.1%",k0c:"text-gold",k0s:"232.5M HYPE · 5 validators",k1:"13.0%",k1s:"single validator",k2:"56.5%",k3:"78.8%",k4:"808"},
+    comm: {k0l:"Community Stake", k0v:"197.1M",k0c:"text-text-primary",k0s:"26 validators · 45.9% of total",k1:"13.0%",k1s:"Anchorage (of community)",k2:"53.8%",k3:"74.6%",k4:"742"},
+  };
+  function renderKpi(mode){
+    const d=KPI[mode];
+    const k0v=document.getElementById('k0v');
+    document.getElementById('k0l').textContent=d.k0l; k0v.textContent=d.k0v; k0v.className="mono text-[20px] font-semibold tracking-[-0.02em] "+d.k0c;
+    document.getElementById('k0s').textContent=d.k0s;
+    document.getElementById('k1v').textContent=d.k1; document.getElementById('k1s').textContent=d.k1s;
+    document.getElementById('k2v').textContent=d.k2; document.getElementById('k3v').textContent=d.k3;
+    document.getElementById('k4v').textContent=d.k4;
+  }
+  function setMode(mode){
+    const a=document.getElementById('tg-all'), c=document.getElementById('tg-comm');
+    const on="px-3 h-7 rounded-md font-medium bg-brand text-brand-text-on", off="px-3 h-7 rounded-md font-medium text-text-secondary hover:text-text-primary";
+    a.className = mode==='all'?on:off; c.className = mode==='comm'?on:off;
+    renderKpi(mode); renderFlow(mode);
+  }
+  document.getElementById('tg-all').onclick=()=>setMode('all');
+  document.getElementById('tg-comm').onclick=()=>setMode('comm');
+  setMode('all');
+
+  // ─── AuroraHistogramChart (stakers by size) ───
+  const hist=[["0-10",23010],["10-50",11210],["50-250",8051],["250-1k",2797],["1k-5k",2546],["5k-25k",1045],["25k-100k",336],["100k+",239]];
+  const hmax=Math.max(...hist.map(h=>h[1]));
+  document.getElementById('hist').innerHTML = hist.map(h=>`
+    <div class="flex-1 flex flex-col items-center gap-1 group">
+      <span class="text-[9px] mono text-text-tertiary opacity-0 group-hover:opacity-100">${h[1].toLocaleString()}</span>
+      <div class="w-full rounded-t" style="height:${Math.max(4,h[1]/hmax*120).toFixed(0)}px;background:${h[0]==='100k+'?'#F9E370':'#83E9FF'};opacity:${h[0]==='100k+'?1:0.85}"></div>
+      <span class="text-[9px] mono text-text-tertiary">${h[0]}</span>
+    </div>`).join('');
+
+  // ─── AuroraAreaChart (daily unstaking flow) ───
+  const flow=[608061,330400,2066073,164816,512738,1135772,92090,762767,1607537,227094];
+  const W=720,H=160,pad=8, fmax=Math.max(...flow);
+  const pts=flow.map((v,i)=>[pad+i*((W-2*pad)/(flow.length-1)), H-pad-(v/fmax)*(H-2*pad)]);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+  const areaP=`${line} L${pts[pts.length-1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`;
+  document.getElementById('area').innerHTML=`
+    <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#83E9FF" stop-opacity="0.35"/><stop offset="1" stop-color="#83E9FF" stop-opacity="0"/></linearGradient></defs>
+    <path d="${areaP}" fill="url(#ag)"/><path d="${line}" fill="none" stroke="#83E9FF" stroke-width="2"/>
+    ${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="#83E9FF"/>`).join('')}`;
+</script>
+</body>
+</html>

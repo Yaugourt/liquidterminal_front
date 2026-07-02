@@ -19,6 +19,7 @@ import {
   Sparkles,
   Users,
   ArrowRightLeft,
+  Flame,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -68,6 +69,12 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/dashboard',
         icon: null,
         IconComponent: Home
+      },
+      {
+        name: 'HYPE',
+        href: '/hype',
+        icon: null,
+        IconComponent: Flame
       },
     ]
   },
