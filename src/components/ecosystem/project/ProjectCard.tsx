@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -107,9 +108,12 @@ export const ProjectCard = memo(function ProjectCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <h3 className="text-base text-text-primary font-semibold truncate">
+            <Link
+              href={`/ecosystem/project/${project.id}`}
+              className="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors"
+            >
               {project.title}
-            </h3>
+            </Link>
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {project.categories.map(category => (
