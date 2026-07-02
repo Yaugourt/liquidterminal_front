@@ -1,44 +1,49 @@
 import { useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchAssistanceFundData } from '../api';
-import { UseAssistanceFundResult, AssistanceFundData } from '../types';
+import { UseAssistanceFundResult, AssistanceFundData, AssistanceFundRaw } from '../types';
 import { useHypePrice } from '../../hype/hooks/useHypePrice';
 
 /**
- * Hook to fetch assistance fund data
- * Updates every 30 seconds and when HYPE price changes
+ * Hook to fetch assistance fund data.
+ *
+ * On-chain facts (HYPE balance, cost basis) are fetched once and refreshed
+ * every 30s; the live mark value and unrealized PnL are recomputed whenever
+ * the HYPE price ticks.
  */
 export const useAssistanceFund = (): UseAssistanceFundResult => {
   // Get real-time HYPE price
   const { price: hypePrice, isLoading: hypePriceLoading } = useHypePrice();
 
-  // Use useDataFetching for data management
-  const { 
-    data: balanceData, 
-    isLoading: balanceLoading, 
+  // On-chain balance + cost basis (price-independent)
+  const {
+    data: raw,
+    isLoading: balanceLoading,
     error,
     refetch,
-  } = useDataFetching<number>({
-    fetchFn: async () => {
-      // Fetch only HYPE balance (without price dependency)
-      const assistanceFundData = await fetchAssistanceFundData(1); // Temporary price
-      return assistanceFundData.hypeBalance;
-    },
+  } = useDataFetching<AssistanceFundRaw>({
+    fetchFn: fetchAssistanceFundData,
     refreshInterval: 30000, // 30 seconds
-    dependencies: [], // No dependencies to avoid unnecessary re-fetches
+    dependencies: [],
     maxRetries: 3
   });
 
-  // Calculate final data with real-time HYPE price
+  // Final data valued at the live HYPE price
   const data: AssistanceFundData | null = useMemo(() => {
-    if (balanceData !== null && hypePrice) {
+    if (raw && hypePrice) {
+      const hypeValueUsd = raw.hypeBalance * hypePrice;
+      const unrealizedPnlUsd = hypeValueUsd - raw.costBasisUsd;
+      const unrealizedPnlPct =
+        raw.costBasisUsd > 0 ? (unrealizedPnlUsd / raw.costBasisUsd) * 100 : 0;
       return {
-        hypeBalance: balanceData,
-        hypeValueUsd: balanceData * hypePrice
+        ...raw,
+        hypeValueUsd,
+        unrealizedPnlUsd,
+        unrealizedPnlPct,
       };
     }
     return null;
-  }, [balanceData, hypePrice]);
+  }, [raw, hypePrice]);
 
   return {
     data,
