@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LT Home — B · Open House</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  /* page-mockup only: live ribbon drift */
+  @keyframes lt-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .lt-marquee { animation: lt-marquee 48s linear infinite; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<!-- ═════════════════════ 1 · Top nav ═════════════════════ -->
+<header class="border-b border-border-subtle">
+  <div class="max-w-[1280px] mx-auto px-6 h-14 flex items-center gap-6">
+    <a href="#" class="flex items-center gap-2 shrink-0">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="1" y="1" width="16" height="16" rx="4" stroke="#83E9FF" stroke-width="1.5"/>
+        <path d="M5.5 5.5v7h7" stroke="#83E9FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="font-inter text-[14px] font-semibold tracking-tight">Liquid Terminal</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-5 text-[12.5px] text-text-tertiary">
+      <a href="#" class="hover:text-text-primary">Market</a>
+      <a href="#" class="hover:text-text-primary">Explorer</a>
+      <a href="#" class="hover:text-text-primary">Vaults</a>
+      <a href="#" class="hover:text-text-primary">HYPE</a>
+      <a href="#" class="hover:text-text-primary">Wiki</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <button class="h-8 px-3 rounded-md text-xs font-medium border border-gold/40 text-gold hover:bg-gold/10">Bot</button>
+      <button class="h-8 px-3 rounded-md text-xs font-semibold bg-brand text-brand-text-on hover:bg-brand/90">Connect</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═════════════════════ 2 · Hero ═════════════════════ -->
+<section class="max-w-[1280px] mx-auto px-6 py-24">
+  <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+    <div class="space-y-6 min-w-0">
+      <div class="text-[11px] uppercase tracking-[0.14em] text-brand font-medium">Open-source · MIT · Free forever</div>
+      <h1 class="font-inter font-semibold tracking-tight text-[40px] leading-[1.05] sm:text-[52px]">The open house of Hyperliquid data.</h1>
+      <p class="text-[15px] leading-relaxed text-text-secondary max-w-xl">
+        Any question about Hyperliquid starts and ends here. Prices, vaults, HIP-3 markets,
+        deployers, whales, governance — one connected graph, not twenty siloed tabs.
+        MIT code, free API, and a bot that brings it all to your pocket.
+      </p>
+      <div class="flex flex-wrap items-center gap-3 pt-1">
+        <button class="h-10 px-5 rounded-md text-[13px] font-semibold bg-brand text-brand-text-on hover:bg-brand/90">Explore the terminal</button>
+        <button class="h-10 px-5 rounded-md text-[13px] font-medium border border-border-default text-text-secondary hover:text-text-primary hover:border-border-strong">Get the alert bot</button>
+      </div>
+      <p class="text-[11.5px] text-text-tertiary">No wallet needed to browse. Everything on the site is free, forever.</p>
+    </div>
+
+    <!-- live-proof card stack -->
+    <div class="relative min-w-0">
+      <div class="absolute inset-0 translate-x-4 translate-y-4 bg-surface-2/60 border border-border-subtle rounded-lg shadow-2xl shadow-black/40" aria-hidden="true"></div>
+      <div class="relative bg-surface border border-border-subtle rounded-lg shadow-2xl shadow-black/50 overflow-hidden">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Hyperliquid · live</h3>
+          <span class="ml-auto shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Live</span>
+        </div>
+        <div class="grid grid-cols-2 divide-x divide-y divide-border-subtle">
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">HYPE</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$65.56</div>
+            <div class="mono text-[10.5px] text-success mt-1.5">+2.66% · 24h</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">24h Volume</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$62.69B</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">perps + spot</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Revenue · 24h</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$2.20M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">fees to AF + HLP</div>
+          </div>
+          <div class="px-5 py-4 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Staked</div>
+            <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">438.3M</div>
+            <div class="text-[10.5px] text-text-tertiary mt-1.5">HYPE · 16 validators+</div>
+          </div>
+        </div>
+        <div class="px-5 pt-3 pb-4 border-t border-border-subtle">
+          <div class="flex items-baseline justify-between">
+            <span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">HYPE · 7d</span>
+            <span class="mono text-[10.5px] text-success">+8.4%</span>
+          </div>
+          <svg class="w-full mt-2" viewBox="0 0 400 56" preserveAspectRatio="none" height="56">
+            <defs>
+              <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,44 L28,40 L56,42 L84,34 L112,37 L140,29 L168,32 L196,24 L224,27 L252,19 L280,23 L308,14 L336,18 L364,10 L400,7 L400,56 L0,56 Z" fill="url(#sparkFill)"/>
+            <path d="M0,44 L28,40 L56,42 L84,34 L112,37 L140,29 L168,32 L196,24 L224,27 L252,19 L280,23 L308,14 L336,18 L364,10 L400,7" fill="none" stroke="#83E9FF" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════ 3 · Live ribbon ═════════════════════ -->
+<div class="border-y border-border-subtle py-2.5 overflow-hidden">
+  <div class="lt-marquee flex gap-8 whitespace-nowrap mono text-[11.5px] text-text-secondary w-max">
+    <!-- sequence x2 for seamless loop -->
+    <span class="shrink-0"><span class="text-danger">Liq</span> · 0x7a3f…9c2e liquidated <span class="text-text-primary">$1.2M</span> BTC</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-brand">Gov</span> · Hyper Foundation vote passed</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0">PURR <span class="text-success">+14.2%</span></span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-gold">HIP-3</span> · New market: XAU on felix</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-brand">Fill</span> · 0x8bc4…e9b1 bought 12,400 HYPE @ $65.31</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0">HLP vault TVL <span class="text-text-primary">$356.9M</span> <span class="text-success">+0.8%</span></span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-danger">Liq</span> · 0x7a3f…9c2e liquidated <span class="text-text-primary">$1.2M</span> BTC</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-brand">Gov</span> · Hyper Foundation vote passed</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0">PURR <span class="text-success">+14.2%</span></span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-gold">HIP-3</span> · New market: XAU on felix</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0"><span class="text-brand">Fill</span> · 0x8bc4…e9b1 bought 12,400 HYPE @ $65.31</span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+    <span class="shrink-0">HLP vault TVL <span class="text-text-primary">$356.9M</span> <span class="text-success">+0.8%</span></span>
+    <span class="shrink-0 text-text-tertiary">·</span>
+  </div>
+</div>
+
+<!-- ═════════════════════ 4 · One graph, not twenty tabs ═════════════════════ -->
+<section class="max-w-[1280px] mx-auto px-6 py-20">
+  <div class="max-w-2xl space-y-3">
+    <div class="text-[11px] uppercase tracking-[0.14em] text-brand font-medium">The differentiator</div>
+    <h2 class="font-inter text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight">One graph, not twenty tabs.</h2>
+    <p class="text-[14.5px] leading-relaxed text-text-secondary">
+      Every entity on Hyperliquid links to the next. A token leads to its HIP-3 DEX, the DEX to
+      its deployer, the deployer to oracle health, the market to its top traders, the traders to
+      their vaults and wallets. Liquid Terminal keeps those edges — so you never dead-end.
+    </p>
+  </div>
+
+  <!-- entity-graph band -->
+  <div class="mt-10 overflow-x-auto">
+    <div class="flex items-stretch w-max min-w-full">
+      <!-- node -->
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Token</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">HYPE</div>
+        <div class="mono text-[10.5px] text-success mt-0.5">$65.56 +2.66%</div>
+      </a>
+      <!-- connector -->
+      <div class="shrink-0 self-center px-1">
+        <svg width="36" height="12" viewBox="0 0 36 12" fill="none"><line x1="0" y1="6" x2="28" y2="6" stroke="#2C354A" stroke-width="1.5"/><path d="M28 2l7 4-7 4z" fill="#83E9FF"/></svg>
+      </div>
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">HIP-3 DEX</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">hyperps</div>
+        <div class="mono text-[10.5px] text-text-tertiary mt-0.5">14 markets</div>
+      </a>
+      <div class="shrink-0 self-center px-1">
+        <svg width="36" height="12" viewBox="0 0 36 12" fill="none"><line x1="0" y1="6" x2="28" y2="6" stroke="#2C354A" stroke-width="1.5"/><path d="M28 2l7 4-7 4z" fill="#83E9FF"/></svg>
+      </div>
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Deployer</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">0xd1…f3</div>
+        <div class="mono text-[10.5px] text-text-tertiary mt-0.5">stake 1.2M HYPE</div>
+      </a>
+      <div class="shrink-0 self-center px-1">
+        <svg width="36" height="12" viewBox="0 0 36 12" fill="none"><line x1="0" y1="6" x2="28" y2="6" stroke="#2C354A" stroke-width="1.5"/><path d="M28 2l7 4-7 4z" fill="#83E9FF"/></svg>
+      </div>
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Oracle</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">99.98%</div>
+        <div class="mt-1"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Healthy</span></div>
+      </a>
+      <div class="shrink-0 self-center px-1">
+        <svg width="36" height="12" viewBox="0 0 36 12" fill="none"><line x1="0" y1="6" x2="28" y2="6" stroke="#2C354A" stroke-width="1.5"/><path d="M28 2l7 4-7 4z" fill="#83E9FF"/></svg>
+      </div>
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Top trader</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">0x9e2a…41c7</div>
+        <div class="mono text-[10.5px] text-success mt-0.5">+$4.2M · 30d</div>
+      </a>
+      <div class="shrink-0 self-center px-1">
+        <svg width="36" height="12" viewBox="0 0 36 12" fill="none"><line x1="0" y1="6" x2="28" y2="6" stroke="#2C354A" stroke-width="1.5"/><path d="M28 2l7 4-7 4z" fill="#83E9FF"/></svg>
+      </div>
+      <a href="#" class="shrink-0 bg-surface border border-border-subtle rounded-lg px-4 py-3 hover:border-border-default">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Vault</div>
+        <div class="mono text-[13px] font-medium text-text-primary mt-1.5">HLP</div>
+        <div class="mono text-[10.5px] text-text-tertiary mt-0.5">$356M TVL</div>
+      </a>
+    </div>
+  </div>
+  <p class="mt-4 text-[12px] text-text-tertiary">Land anywhere. Jump to anything linked.</p>
+</section>
+
+<!-- ═════════════════════ 5 · Doors into the graph ═════════════════════ -->
+<section class="max-w-[1280px] mx-auto px-6 py-20 border-t border-border-subtle">
+  <div class="max-w-2xl space-y-3">
+    <h2 class="font-inter text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight">Doors into the graph.</h2>
+    <p class="text-[14.5px] leading-relaxed text-text-secondary">Six entrances, one house. Start where your question starts.</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Market</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Perps · 24h volume</span>
+        <span class="mono text-[12.5px] font-medium text-text-primary">$58.4B</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">Every pair, funding, OI and orderbook — perps and spot.</div>
+    </a>
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Explorer</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Liquidations · 24h</span>
+        <span class="mono text-[12.5px] font-medium text-danger">$48.2M</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">Blocks, wallets, fills, TWAPs and liquidations — searchable.</div>
+    </a>
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Vaults</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Total TVL · 3,241 vaults</span>
+        <span class="mono text-[12.5px] font-medium text-text-primary">$439.9M</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">APR, drawdown and leader history for every copy vault.</div>
+    </a>
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">HYPE</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Staked supply</span>
+        <span class="mono text-[12.5px] font-medium text-text-primary">438.3M</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">Supply, burns, staking, unlocks and Assistance Fund flows.</div>
+    </a>
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">HIP-3</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Builder DEXs live</span>
+        <span class="mono text-[12.5px] font-medium text-gold">27</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">Builder markets, deployers, oracle health and auctions.</div>
+    </a>
+    <a href="#" class="bg-surface border border-border-subtle rounded-lg flex flex-col hover:border-border-default transition-colors">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Wiki</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">→</span>
+      </div>
+      <div class="px-4 py-3 flex items-baseline justify-between gap-2">
+        <span class="text-[11.5px] text-text-tertiary">Guides &amp; resources</span>
+        <span class="mono text-[12.5px] font-medium text-text-primary">312</span>
+      </div>
+      <div class="px-4 pb-3 text-[11.5px] text-text-secondary">The ecosystem explained — from first deposit to HIP-3 deploys.</div>
+    </a>
+  </div>
+</section>
+
+<!-- ═════════════════════ 6 · Free forever · bot ═════════════════════ -->
+<section class="max-w-[1280px] mx-auto px-6 py-20 border-t border-border-subtle">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+    <!-- Free forever manifesto -->
+    <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Free forever</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">the charter</span>
+      </div>
+      <div class="px-4 py-4 space-y-4">
+        <p class="text-[13.5px] leading-relaxed text-text-secondary">
+          Liquid Terminal is a public good. The data you see on this site will never sit
+          behind a paywall — that is written into our charter, not a pricing page.
+        </p>
+        <div class="space-y-0">
+          <div class="flex items-center gap-3 py-2.5 border-b border-border-subtle">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.2 3.2L13 5" stroke="#1FB58E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="text-[12.5px] text-text-primary">All site data</span>
+            <span class="ml-auto text-[11px] text-text-tertiary">forever</span>
+          </div>
+          <div class="flex items-center gap-3 py-2.5 border-b border-border-subtle">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.2 3.2L13 5" stroke="#1FB58E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="text-[12.5px] text-text-primary">The code</span>
+            <span class="ml-auto mono text-[11px] text-text-tertiary">MIT</span>
+          </div>
+          <div class="flex items-center gap-3 py-2.5 border-b border-border-subtle">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.2 3.2L13 5" stroke="#1FB58E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="text-[12.5px] text-text-primary">Base API quotas</span>
+            <span class="ml-auto text-[11px] text-text-tertiary">build on us</span>
+          </div>
+          <div class="flex items-center gap-3 py-2.5">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.2 3.2L13 5" stroke="#1FB58E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="text-[12.5px] text-text-primary">Essential bot alerts</span>
+            <span class="ml-auto text-[11px] text-text-tertiary">included</span>
+          </div>
+        </div>
+        <p class="text-[11.5px] text-text-tertiary">Embed our widgets, fork the repo, ship your own app on the API. This is the house where other apps live.</p>
+      </div>
+    </div>
+
+    <!-- Bot card -->
+    <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+      <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">The bot is the terminal in your pocket</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">Telegram · 24/7</span>
+      </div>
+      <div class="px-4 py-4 space-y-4">
+        <p class="text-[13.5px] leading-relaxed text-text-secondary">
+          Everything the graph knows, pushed to you the second it happens — fills, liquidations,
+          vault moves, oracle drift, governance. You set the edge, the bot watches it.
+        </p>
+        <div class="bg-surface-2 rounded-lg p-3 mono text-[12px] leading-relaxed border border-border-subtle max-w-md">
+          <div class="flex items-center gap-2 text-[10px] text-text-tertiary mb-1.5"><span class="font-semibold text-text-secondary">LiquidTerminal Bot</span><span>14:32</span></div>
+          <div class="text-text-primary">⚡ Fill: <span class="text-brand">0x8bc…e9b1</span> bought 12,400 HYPE @ $65.31 · <span class="text-gold">$809K</span></div>
+        </div>
+        <div class="bg-surface-2 rounded-lg p-3 mono text-[12px] leading-relaxed border border-border-subtle max-w-md">
+          <div class="flex items-center gap-2 text-[10px] text-text-tertiary mb-1.5"><span class="font-semibold text-text-secondary">LiquidTerminal Bot</span><span>14:35</span></div>
+          <div class="text-text-primary">🔻 Liq: <span class="text-brand">0x7a3f…9c2e</span> lost <span class="text-danger">$1.2M</span> BTC long @ $96,410</div>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <button class="h-9 px-4 rounded-md text-[12.5px] font-semibold bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20">Set your first alert</button>
+          <span class="text-[11px] text-text-tertiary">Essentials free · pro alerts fund the public good</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═════════════════════ 7 · Footer ═════════════════════ -->
+<footer class="border-t border-border-subtle">
+  <div class="max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
+    <div class="space-y-3">
+      <div class="flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+          <rect x="1" y="1" width="16" height="16" rx="4" stroke="#83E9FF" stroke-width="1.5"/>
+          <path d="M5.5 5.5v7h7" stroke="#83E9FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
+      </div>
+      <p class="text-[11.5px] leading-relaxed text-text-tertiary max-w-[260px]">Built in the open. All site data free forever — the charter, not a promise.</p>
+    </div>
+    <div class="space-y-2.5">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Terminal</div>
+      <div class="flex flex-col gap-2 text-[12px] text-text-secondary">
+        <a href="#" class="hover:text-text-primary">Market</a>
+        <a href="#" class="hover:text-text-primary">Explorer</a>
+        <a href="#" class="hover:text-text-primary">Vaults</a>
+        <a href="#" class="hover:text-text-primary">HYPE</a>
+        <a href="#" class="hover:text-text-primary">Wiki</a>
+      </div>
+    </div>
+    <div class="space-y-2.5">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Open</div>
+      <div class="flex flex-col gap-2 text-[12px] text-text-secondary">
+        <a href="#" class="hover:text-text-primary">GitHub</a>
+        <a href="#" class="hover:text-text-primary">API docs</a>
+        <a href="#" class="hover:text-text-primary">Brand</a>
+        <a href="#" class="hover:text-text-primary">The charter</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
