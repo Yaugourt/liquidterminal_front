@@ -34,6 +34,7 @@
   @keyframes lt-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   .lt-marquee { animation: lt-marquee 48s linear infinite; }
   @media (prefers-reduced-motion: reduce) { .lt-marquee { animation: none; } }
+  .lt-ticker { -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent); mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent); }
 </style>
 </head>
 <body class="font-sans text-text-primary antialiased">
@@ -136,7 +137,7 @@
   </div>
 </section>
 <!-- ═════════════════════ 3 · Live ribbon ═════════════════════ -->
-<div class="border-y border-border-subtle py-2.5 overflow-hidden">
+<div class="lt-ticker border-y border-border-subtle py-2.5 overflow-hidden">
   <div class="lt-marquee flex gap-8 whitespace-nowrap mono text-[11.5px] text-text-secondary w-max">
     <!-- sequence x2 for seamless loop -->
     <span class="shrink-0"><span class="text-danger">Liq</span> · 0x7a3f…9c2e liquidated <span class="text-text-primary">$1.2M</span> BTC</span>
