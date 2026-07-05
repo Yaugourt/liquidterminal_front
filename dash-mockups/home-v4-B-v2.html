@@ -238,75 +238,75 @@
   </div>
 </section>
 
-<!-- ═════════════════════ 6 · Data sources ═════════════════════ -->
+<!-- ═════════════════════ 6 · Built with · partners ═════════════════════ -->
 <section class="max-w-[1280px] mx-auto px-6 py-20 border-t border-border-subtle">
-  <div class="max-w-2xl space-y-3">
-    <div class="text-[11px] uppercase tracking-[0.14em] text-brand font-medium">Transparency</div>
-    <h2 class="font-inter text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight">Where every number comes from.</h2>
-    <p class="text-[14.5px] leading-relaxed text-text-secondary">
-      Every metric on the site is attributable to its source. We read from the official
-      node API, three independent data providers, and our own indexing pipelines.
-      Nothing is estimated, nothing is opaque.
-    </p>
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+    <div class="max-w-2xl space-y-3">
+      <div class="text-[11px] uppercase tracking-[0.14em] text-brand font-medium">Built with</div>
+      <h2 class="font-inter text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight">The data partners behind the terminal.</h2>
+      <p class="text-[14.5px] leading-relaxed text-text-secondary">
+        Liquid Terminal reads from the official node API and the best independent
+        providers of the ecosystem. Every chart on the site cites its source.
+      </p>
+    </div>
+    <a href="#" class="shrink-0 text-[12px] text-text-tertiary hover:text-text-primary">Full attribution →</a>
   </div>
 
-  <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-10">
-    <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
-      <h3 class="text-[13px] font-medium text-text-primary truncate">Data sources</h3>
-      <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">5 upstreams · attributed per chart</span>
-    </div>
-
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
-      <div class="w-6 h-6 shrink-0 rounded-md hidden sm:flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HL</div>
-      <div class="min-w-0 sm:w-[220px] shrink-0">
-        <div class="text-[12.5px] font-medium text-text-primary truncate">Hyperliquid API</div>
-        <div class="mono text-[10px] text-text-tertiary truncate">api.hyperliquid.xyz</div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+    <a href="https://hyperliquid.xyz" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
+      <div class="flex items-center justify-between">
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HL</div>
+        <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
-      <div class="text-[12px] text-text-secondary min-w-0 flex-1">Official node API — prices, order books, funding, staking and vaults, streamed over WebSocket.</div>
-      <span class="shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Live · WS</span>
-    </div>
-
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
-      <div class="w-6 h-6 shrink-0 rounded-md hidden sm:flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HD</div>
-      <div class="min-w-0 sm:w-[220px] shrink-0">
-        <div class="text-[12.5px] font-medium text-text-primary truncate">HypeDexer</div>
-        <div class="mono text-[10px] text-text-tertiary truncate">api.hypedexer.com</div>
+      <div class="space-y-1">
+        <div class="text-[14px] font-medium text-text-primary">Hyperliquid</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">The official node API. Prices, order books, funding, staking and vaults, streamed live over WebSocket.</div>
       </div>
-      <div class="text-[12px] text-text-secondary min-w-0 flex-1">Community indexer by Enigma Validator — fills, liquidations, TWAPs, HIP-3, builders and HyperEVM history.</div>
-      <span class="shrink-0 mono text-[11px] text-text-tertiary">247M+ trades indexed</span>
-    </div>
+      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hyperliquid.xyz</div>
+    </a>
 
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
-      <div class="w-6 h-6 shrink-0 rounded-md hidden sm:flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HS</div>
-      <div class="min-w-0 sm:w-[220px] shrink-0">
-        <div class="text-[12.5px] font-medium text-text-primary truncate">Hypurrscan</div>
-        <div class="mono text-[10px] text-text-tertiary truncate">api.hypurrscan.io</div>
+    <a href="https://hypedexer.com" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
+      <div class="flex items-center justify-between">
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HD</div>
+        <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
-      <div class="text-[12px] text-text-secondary min-w-0 flex-1">Hyperliquid L1 explorer — protocol fees, deploy auctions and stablecoin supply on spot.</div>
-      <span class="shrink-0 mono text-[11px] text-text-tertiary">REST</span>
-    </div>
+      <div class="space-y-1">
+        <div class="text-[14px] font-medium text-text-primary">HypeDexer</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">Community data engine by Enigma Validator. 247M+ trades indexed — fills, liquidations, TWAPs, HIP-3, HyperEVM.</div>
+      </div>
+      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hypedexer.com</div>
+    </a>
 
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
-      <div class="w-6 h-6 shrink-0 rounded-md hidden sm:flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">DL</div>
-      <div class="min-w-0 sm:w-[220px] shrink-0">
-        <div class="text-[12.5px] font-medium text-text-primary truncate">DefiLlama</div>
-        <div class="mono text-[10px] text-text-tertiary truncate">api.llama.fi</div>
+    <a href="https://hypurrscan.io" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
+      <div class="flex items-center justify-between">
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HS</div>
+        <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
-      <div class="text-[12px] text-text-secondary min-w-0 flex-1">Open-source TVL aggregator — bridge flows and per-project TVL, fees and volume.</div>
-      <span class="shrink-0 mono text-[11px] text-text-tertiary">7,000+ protocols</span>
-    </div>
+      <div class="space-y-1">
+        <div class="text-[14px] font-medium text-text-primary">Hypurrscan</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">The reference L1 explorer. Protocol fees, deploy auctions and stablecoin supply on spot.</div>
+      </div>
+      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hypurrscan.io</div>
+    </a>
 
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-3.5 hover:bg-surface-2/60 transition-colors">
-      <div class="w-6 h-6 shrink-0 rounded-md hidden sm:flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">LT</div>
-      <div class="min-w-0 sm:w-[220px] shrink-0">
-        <div class="text-[12.5px] font-medium text-text-primary truncate">Liquid Terminal indexer</div>
-        <div class="mono text-[10px] text-text-tertiary truncate">our own pipelines</div>
+    <a href="https://defillama.com" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
+      <div class="flex items-center justify-between">
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">DL</div>
+        <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
-      <div class="text-[12px] text-text-secondary min-w-0 flex-1">What no upstream keeps — liquidation history, revenue aggregation, governance votes — indexed in-house and served on the free API.</div>
-      <span class="shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium">Open API</span>
-    </div>
+      <div class="space-y-1">
+        <div class="text-[14px] font-medium text-text-primary">DefiLlama</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">The largest open-source TVL aggregator. Bridge flows and per-project TVL, fees and volume.</div>
+      </div>
+      <div class="mt-auto mono text-[10.5px] text-text-tertiary">defillama.com</div>
+    </a>
   </div>
-  <p class="mt-4 text-[12px] text-text-tertiary">Each chart on the site cites its source in the card footer. Independent sources cross-check each other.</p>
+
+  <p class="mt-6 text-[12px] text-text-tertiary">
+    Plus our own indexing pipelines for what no upstream keeps — liquidation history, revenue
+    aggregation, governance votes — served back to the community on the
+    <a href="#" class="text-brand hover:text-brand-hover">free Liquid Terminal API</a>.
+  </p>
 </section>
 
 <!-- ═════════════════════ 7 · Free forever · bot ═════════════════════ -->
