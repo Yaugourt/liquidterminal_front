@@ -252,53 +252,76 @@
     <a href="#" class="shrink-0 text-[12px] text-text-tertiary hover:text-text-primary">Full attribution →</a>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+  <!-- primary provider · featured -->
+  <a href="https://hypedexer.com" class="group block mt-10 bg-surface border border-brand/30 rounded-lg p-6 hover:border-brand/50 transition-colors">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+      <div class="flex items-center gap-4 lg:w-[300px] shrink-0">
+        <div class="w-12 h-12 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center text-[15px] font-semibold text-brand">HD</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[16px] font-semibold text-text-primary">HypeDexer</span>
+            <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
+          </div>
+          <span class="inline-flex items-center gap-1.5 mt-1 text-[10.5px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium uppercase tracking-[0.06em]">Primary data provider</span>
+        </div>
+      </div>
+      <p class="text-[13px] leading-relaxed text-text-secondary min-w-0 flex-1">
+        The data engine of the terminal, built by Enigma Validator. One unified API across
+        HyperCore, HyperEVM, HIP-3 and builders — fills, liquidations, TWAPs, vaults and
+        247M+ historical trades, over REST and WebSocket.
+      </p>
+      <div class="flex lg:flex-col items-baseline lg:items-end gap-2 lg:gap-0 shrink-0">
+        <div class="mono text-[26px] font-medium tracking-[-0.01em] text-brand leading-none">61</div>
+        <div class="text-[10.5px] text-text-tertiary lg:mt-1.5">endpoints in production</div>
+      </div>
+    </div>
+  </a>
+
+  <!-- other providers -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
     <a href="https://hyperliquid.xyz" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
       <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HL</div>
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-text-secondary">HL</div>
         <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
       <div class="space-y-1">
         <div class="text-[14px] font-medium text-text-primary">Hyperliquid</div>
         <div class="text-[12px] leading-relaxed text-text-secondary">The official node API. Prices, order books, funding, staking and vaults, streamed live over WebSocket.</div>
       </div>
-      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hyperliquid.xyz</div>
-    </a>
-
-    <a href="https://hypedexer.com" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
-      <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HD</div>
-        <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
+      <div class="mt-auto flex items-baseline justify-between">
+        <span class="mono text-[10.5px] text-text-tertiary">hyperliquid.xyz</span>
+        <span class="mono text-[11.5px] text-text-secondary"><span class="text-text-primary font-medium">29</span> endpoints</span>
       </div>
-      <div class="space-y-1">
-        <div class="text-[14px] font-medium text-text-primary">HypeDexer</div>
-        <div class="text-[12px] leading-relaxed text-text-secondary">Community data engine by Enigma Validator. 247M+ trades indexed — fills, liquidations, TWAPs, HIP-3, HyperEVM.</div>
-      </div>
-      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hypedexer.com</div>
     </a>
 
     <a href="https://hypurrscan.io" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
       <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">HS</div>
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-text-secondary">HS</div>
         <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
       <div class="space-y-1">
         <div class="text-[14px] font-medium text-text-primary">Hypurrscan</div>
-        <div class="text-[12px] leading-relaxed text-text-secondary">The reference L1 explorer. Protocol fees, deploy auctions and stablecoin supply on spot.</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">The reference L1 explorer. Protocol fees, deploy auctions, unstaking queue and stablecoin supply.</div>
       </div>
-      <div class="mt-auto mono text-[10.5px] text-text-tertiary">hypurrscan.io</div>
+      <div class="mt-auto flex items-baseline justify-between">
+        <span class="mono text-[10.5px] text-text-tertiary">hypurrscan.io</span>
+        <span class="mono text-[11.5px] text-text-secondary"><span class="text-text-primary font-medium">7</span> endpoints</span>
+      </div>
     </a>
 
     <a href="https://defillama.com" class="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors">
       <div class="flex items-center justify-between">
-        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-brand">DL</div>
+        <div class="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-text-secondary">DL</div>
         <span class="text-[13px] text-text-tertiary group-hover:text-brand transition-colors">↗</span>
       </div>
       <div class="space-y-1">
         <div class="text-[14px] font-medium text-text-primary">DefiLlama</div>
-        <div class="text-[12px] leading-relaxed text-text-secondary">The largest open-source TVL aggregator. Bridge flows and per-project TVL, fees and volume.</div>
+        <div class="text-[12px] leading-relaxed text-text-secondary">The largest open-source TVL aggregator. Bridge flows, stablecoins and per-project TVL, fees and volume.</div>
       </div>
-      <div class="mt-auto mono text-[10.5px] text-text-tertiary">defillama.com</div>
+      <div class="mt-auto flex items-baseline justify-between">
+        <span class="mono text-[10.5px] text-text-tertiary">defillama.com</span>
+        <span class="mono text-[11.5px] text-text-secondary"><span class="text-text-primary font-medium">4</span> endpoints</span>
+      </div>
     </a>
   </div>
 
