@@ -33,6 +33,7 @@
   /* page-mockup only: live ribbon drift */
   @keyframes lt-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   .lt-marquee { animation: lt-marquee 48s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .lt-marquee { animation: none; } }
 </style>
 </head>
 <body class="font-sans text-text-primary antialiased">
