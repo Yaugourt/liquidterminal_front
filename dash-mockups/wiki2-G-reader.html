@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V4.1 · G : Reader (docs-first, articles liés)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V4.1 · MOCKUP G : "READER"
+ Docs-first: the Learn outline is the navigation, the chapter is READ in
+ place (gitbook feel), and the community articles of the same theme follow
+ the prose as "Go deeper". No tabs.
+ ───────────────────────────────────────────────────────────────────────────────
+ · Left: curriculum outline (7 chapters, HIP Framework expanded, HIP-3 active)
+   + community categories collapsed below.
+ · Center: chapter prose (real description), key-stat callout ribbon inline,
+   then "Go deeper : community articles (17)" rows.
+ · Right: on-this-page anchors + most saved of the theme.
+ Data: real chapter text (hyperliquid-education.json) + real articles (API).
+ Tokens copied verbatim from kit.html.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1440px] mx-auto space-y-5">
+
+      <!-- PageHeader -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Wiki</h1>
+          <p class="text-sm text-text-secondary">Read the fundamentals; every chapter ends with the community's best writing on it.</p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <div class="relative hidden sm:block">
+            <input placeholder="Search chapters & articles…" class="h-8 w-[230px] rounded-md border border-border-subtle bg-transparent px-3 text-[12.5px] text-text-primary placeholder:text-text-tertiary" />
+          </div>
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">My contributions <span class="mono ml-1.5 text-[10px] text-text-tertiary">2</span></button>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+        </div>
+      </div>
+
+      <!-- 3 panes: outline · reader · context -->
+      <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
+
+        <!-- Outline -->
+        <nav class="min-w-0 xl:sticky xl:top-6 space-y-4">
+          <div>
+            <div class="px-1 mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">Curriculum</div>
+            <div class="space-y-0.5">
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-success">✓</span><span class="flex-1 text-left">1 · Introduction</span></button>
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-success">✓</span><span class="flex-1 text-left">2 · HyperBFT</span></button>
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-text-tertiary">○</span><span class="flex-1 text-left">3 · HyperCore</span></button>
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-text-tertiary">○</span><span class="flex-1 text-left">4 · HyperEVM</span></button>
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-text-tertiary">○</span><span class="flex-1 text-left">5 · Core ↔ EVM</span></button>
+              <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="mono text-[10px] text-text-tertiary">○</span><span class="flex-1 text-left">6 · $HYPE</span></button>
+              <div class="rounded-lg bg-surface-2/40 py-1">
+                <button class="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-[12.5px] font-medium text-text-primary"><span class="mono text-[10px] text-text-tertiary">◐</span><span class="flex-1 text-left">7 · HIP Framework</span></button>
+                <div class="space-y-0.5 pl-7 pr-1">
+                  <button class="flex w-full items-center rounded-md px-2 py-1 text-[12px] text-text-secondary hover:text-text-primary">HIP-1 · Token standard</button>
+                  <button class="flex w-full items-center rounded-md px-2 py-1 text-[12px] text-text-secondary hover:text-text-primary">HIP-2 · Hyperliquidity</button>
+                  <button class="flex w-full items-center rounded-md border border-brand/30 bg-brand/10 px-2 py-1 text-[12px] font-medium text-brand">HIP-3 · Builder perps</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="px-1 mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">Community topics</div>
+            <div class="space-y-0.5">
+              <button class="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span>HypurrCollective</span><span class="mono text-[11px] text-text-tertiary">28</span></button>
+              <button class="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span>Farming</span><span class="mono text-[11px] text-text-tertiary">24</span></button>
+              <button class="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span>Thesis</span><span class="mono text-[11px] text-text-tertiary">11</span></button>
+              <button class="w-full rounded-lg px-3 py-1 text-left text-[11.5px] text-text-tertiary hover:text-text-primary">Show all 34…</button>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Reader + context -->
+        <div class="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
+
+          <!-- Reader -->
+          <article class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+            <div class="border-b border-border-subtle bg-[linear-gradient(120deg,rgba(131,233,255,0.06),transparent_55%)] px-6 py-6 sm:px-8">
+              <div class="mb-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                <span class="uppercase tracking-[0.12em]">Chapter 7 · HIP Framework</span>
+                <span class="ml-auto mono">~6 min read</span>
+              </div>
+              <h2 class="font-inter text-2xl font-semibold tracking-tight">HIP-3 : Builder-Deployed Perpetuals</h2>
+              <p class="mt-1.5 text-[13px] font-medium text-brand/90">Permissionless market creation, secured by stake</p>
+            </div>
+
+            <div class="space-y-5 px-6 py-6 sm:px-8">
+              <p class="max-w-[640px] text-[13.5px] leading-[1.75] text-text-secondary">
+                Hyperliquid Improvement Proposals (HIPs) are the binding code upgrades that extend the
+                protocol. Each HIP introduces a new primitive : token standards, liquidity bootstrapping,
+                permissionless market creation. HIP-3 is the most consequential: it opens perpetual
+                deployment to any builder willing to put capital at stake.
+              </p>
+
+              <!-- inline stat callout (KpiRibbon plain, embedded in prose) -->
+              <div class="grid max-w-[640px] grid-cols-3 divide-x divide-border-subtle overflow-hidden rounded-lg border border-border-subtle">
+                <div class="px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Stake</div><div class="mono mt-1 text-[16px] font-medium">500k HYPE</div><div class="text-[10px] text-text-tertiary">~$15–20M</div></div>
+                <div class="px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Builder fees</div><div class="mono mt-1 text-[16px] font-medium text-gold">50%</div><div class="text-[10px] text-text-tertiary">per market</div></div>
+                <div class="px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Open interest</div><div class="mono mt-1 text-[16px] font-medium text-success">$1B+</div><div class="text-[10px] text-text-tertiary">in 3 months</div></div>
+              </div>
+
+              <p class="max-w-[640px] text-[13.5px] leading-[1.75] text-text-secondary">
+                A deployment slot is won through a 31-hour dutch auction. The winning builder posts the
+                stake, operates the market's oracle, and collects half of all fees it generates. Slashing
+                keeps oracles honest: misreport prices and the stake is at risk. Within one quarter,
+                builder-deployed markets grew to 40% of Hyperliquid volume : led by commodities.
+              </p>
+
+              <div class="flex max-w-[640px] items-center justify-between rounded-lg border border-border-subtle bg-surface-2/50 px-4 py-2.5">
+                <span class="text-[11.5px] text-text-tertiary">Previous: <a class="cursor-pointer text-text-secondary hover:text-text-primary">HIP-2 · Hyperliquidity</a></span>
+                <span class="text-[11.5px] text-text-tertiary">Next: <a class="cursor-pointer text-brand hover:text-brand-hover">Chapter recap →</a></span>
+              </div>
+            </div>
+
+            <!-- Go deeper: the community articles of this theme -->
+            <div class="border-t border-border-subtle">
+              <div class="flex items-center justify-between px-6 py-3 sm:px-8">
+                <h3 class="text-[13px] font-semibold">Go deeper <span class="ml-1 text-[11px] font-normal text-text-tertiary">community articles on HIP-3 · <span class="mono">17</span></span></h3>
+                <div class="flex items-center gap-2 text-[11px]">
+                  <button class="font-medium text-brand">Latest</button>
+                  <button class="text-text-tertiary hover:text-text-primary">Most saved</button>
+                </div>
+              </div>
+              <a class="flex cursor-pointer items-center gap-2.5 border-t border-border-subtle/60 px-6 py-2.5 transition-colors hover:bg-surface-2/60 sm:px-8">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded bg-surface-2 text-[9px] font-semibold text-text-secondary">𝕏</span>
+                <span class="truncate text-[12.5px] font-medium">HIP-3 in Q1 2026: 40% of Hyperliquid Is Now Commodities</span>
+                <span class="hidden truncate text-[11px] text-text-tertiary md:inline">x.com</span>
+                <span class="mono ml-auto shrink-0 text-[10.5px] text-text-tertiary">58d</span>
+              </a>
+              <a class="flex cursor-pointer items-center gap-2.5 border-t border-border-subtle/60 px-6 py-2.5 transition-colors hover:bg-surface-2/60 sm:px-8">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded bg-surface-2 text-[9px] font-semibold text-text-secondary">B</span>
+                <span class="truncate text-[12.5px] font-medium">HIP-3 Explained: Why Hyperliquid Will Flip Binance</span>
+                <span class="hidden truncate text-[11px] text-text-tertiary md:inline">blocmates.com</span>
+                <span class="mono ml-auto shrink-0 text-[10.5px] text-gold">★ 2</span>
+              </a>
+              <a class="flex cursor-pointer items-center gap-2.5 border-t border-border-subtle/60 px-6 py-2.5 transition-colors hover:bg-surface-2/60 sm:px-8">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded bg-surface-2 text-[9px] font-semibold text-text-secondary">𝕏</span>
+                <span class="truncate text-[12.5px] font-medium">Kinetiq Launch: Making way for the People's Exchange</span>
+                <span class="hidden truncate text-[11px] text-text-tertiary md:inline">x.com</span>
+                <span class="mono ml-auto shrink-0 text-[10.5px] text-text-tertiary">272d</span>
+              </a>
+              <a class="flex cursor-pointer items-center gap-2.5 border-t border-border-subtle/60 px-6 py-2.5 transition-colors hover:bg-surface-2/60 sm:px-8">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded bg-surface-2 text-[9px] font-semibold text-text-secondary">𝕏</span>
+                <span class="truncate text-[12.5px] font-medium">HIP-3 and the Future of Decentralized Market Infrastructure</span>
+                <span class="hidden truncate text-[11px] text-text-tertiary md:inline">x.com</span>
+                <span class="mono ml-auto shrink-0 text-[10.5px] text-text-tertiary">272d</span>
+              </a>
+              <div class="border-t border-border-subtle px-6 py-2.5 text-center sm:px-8">
+                <button class="text-[11.5px] font-medium text-brand hover:text-brand-hover">Show all 17 articles →</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Context rail -->
+          <aside class="min-w-0 space-y-4 xl:sticky xl:top-6">
+            <div class="rounded-lg border border-border-subtle bg-surface p-4">
+              <div class="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">On this page</div>
+              <div class="space-y-1.5 border-l border-border-subtle pl-3 text-[12px]">
+                <a class="block cursor-pointer font-medium text-brand">What HIP-3 unlocks</a>
+                <a class="block cursor-pointer text-text-secondary hover:text-text-primary">Auctions & stake</a>
+                <a class="block cursor-pointer text-text-secondary hover:text-text-primary">Oracle duties & slashing</a>
+                <a class="block cursor-pointer text-text-secondary hover:text-text-primary">Go deeper (17)</a>
+              </div>
+            </div>
+            <div class="overflow-hidden rounded-lg border border-border-subtle bg-surface">
+              <div class="flex items-baseline gap-2 border-b border-border-subtle px-4 py-3">
+                <h3 class="text-[13px] font-medium">Most saved · HIP-3</h3>
+              </div>
+              <a class="flex cursor-pointer items-center gap-3 border-b border-border-subtle px-4 py-2.5 transition-colors hover:bg-surface-2/60">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">01</span>
+                <div class="min-w-0"><div class="truncate text-[12px] font-medium">HIP-3 Explained: Why Hyperliquid Will…</div><div class="text-[10px] text-text-tertiary">blocmates.com</div></div>
+                <span class="mono ml-auto text-[11px] text-text-secondary">2</span>
+              </a>
+              <a class="flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors hover:bg-surface-2/60">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">02</span>
+                <div class="min-w-0"><div class="truncate text-[12px] font-medium">What Is HIP-2, Hyper Liquidity?</div><div class="text-[10px] text-text-tertiary">x.com</div></div>
+                <span class="mono ml-auto text-[11px] text-text-secondary">1</span>
+              </a>
+            </div>
+            <div class="rounded-lg border border-border-subtle bg-surface p-4">
+              <h3 class="text-[13px] font-semibold">Know a great HIP-3 article?</h3>
+              <p class="mt-1 text-[11.5px] leading-relaxed text-text-secondary">Suggest it and it will appear here once approved.</p>
+              <button class="mt-2.5 h-7 rounded-md bg-brand px-3 text-[11px] font-semibold text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>
