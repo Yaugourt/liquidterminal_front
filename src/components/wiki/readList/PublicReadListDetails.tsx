@@ -13,10 +13,10 @@ import {
   Globe,
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { chartPalette, Skeleton } from "@/components/common";
+import { Skeleton } from "@/components/common";
 import { PublicReadList, ReadListItem } from "@/services/wiki/readList/types";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
-import { ResourceCard } from "../ResourceCard";
+import { ArticleCard } from "../library/ArticleCard";
 import { getReadListItems } from "@/services/wiki/readList/api";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -215,15 +215,16 @@ export function PublicReadListDetails({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.05, 0.4) }}
                 >
-                  <ResourceCard
+                  <ArticleCard
                     resource={{
-                      id: item.resourceId.toString(),
+                      id: item.resourceId,
                       url: item.resource.url,
-                      title: item.resource.url,
-                      description: item.notes || '',
-                      image: ''
+                      createdAt: String(item.resource.createdAt),
+                      creator: item.resource.creator,
+                      categories: [],
+                      linkPreview: item.resource.linkPreview ?? null,
+                      status: 'APPROVED',
                     }}
-                    categoryColor={chartPalette.accent}
                   />
                 </motion.div>
               ))}
