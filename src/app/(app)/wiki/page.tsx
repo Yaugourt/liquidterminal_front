@@ -18,8 +18,12 @@ export default function EducationPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // Bumped after a submission/creation to refetch the library without a full reload
+  const [refreshToken, setRefreshToken] = useState(0);
   const { user } = useAuthContext();
   const { setTitle } = usePageTitle();
+
+  const handleContentAdded = () => setRefreshToken((token) => token + 1);
 
   useEffect(() => {
     setTitle("Wiki");
@@ -100,9 +104,9 @@ export default function EducationPage() {
               />
             </div>
             <div className="flex items-center gap-2 sm:shrink-0">
-              <UserSubmissionModal onSuccess={() => window.location.reload()} />
+              <UserSubmissionModal onSuccess={handleContentAdded} />
               <ProtectedAction requiredRole="MODERATOR" user={user}>
-                <EducationModal onSuccess={() => window.location.reload()} />
+                <EducationModal onSuccess={handleContentAdded} />
               </ProtectedAction>
             </div>
           </div>
@@ -111,6 +115,7 @@ export default function EducationPage() {
             selectedCategoryIds={selectedCategories}
             sectionColor={hyperliquidInfo?.colors[0] || chartPalette.accent}
             searchQuery={searchQuery}
+            refreshToken={refreshToken}
           />
         </div>
       </div>

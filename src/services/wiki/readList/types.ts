@@ -2,6 +2,8 @@
 // TYPES BACKEND - Exactement comme demandé
 // ============================================
 
+import type { WikiLinkPreview } from '../types';
+
 // Response types from backend
 interface ReadListSummaryResponse {
   id: number;
@@ -17,6 +19,8 @@ interface ReadListSummaryResponse {
     email: string | null;
   };
   itemsCount: number;
+  /** Items marked as read; drives the progress bar. */
+  readCount: number;
 }
 
 interface ReadListItemResponse {
@@ -36,6 +40,8 @@ interface ReadListItemResponse {
       name: string | null;
       email: string | null;
     };
+    /** Inlined by the backend; no /link-preview call needed for item cards. */
+    linkPreview?: WikiLinkPreview | null;
   };
 }
 

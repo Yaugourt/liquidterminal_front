@@ -29,25 +29,25 @@ export function ReportResourceModal({
         e.preventDefault();
 
         if (!reason.trim() || reason.length < 10) {
-            toast.error("La raison doit contenir au moins 10 caractères");
+            toast.error("Reason must be at least 10 characters");
             return;
         }
 
         if (reason.length > 500) {
-            toast.error("La raison ne doit pas dépasser 500 caractères");
+            toast.error("Reason must be 500 characters or less");
             return;
         }
 
         try {
             await report(resourceId, { reason: reason.trim() });
-            toast.success("Signalement envoyé. Merci pour votre contribution !");
+            toast.success("Report submitted. Thanks for contributing!");
             setReason("");
             onOpenChange(false);
         } catch {
             if (isDuplicateReport) {
-                toast.error("Vous avez déjà signalé cette ressource");
+                toast.error("You already reported this resource");
             } else {
-                toast.error("Erreur lors du signalement");
+                toast.error("Failed to submit report");
             }
         }
     };

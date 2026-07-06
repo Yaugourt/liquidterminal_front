@@ -107,9 +107,9 @@ export function ReadList() {
         setIsCreateModalOpen(false);
         readListMessages.success.listCreated(data.name);
 
-        // Show XP gain toast
-        const xpReward = data.isPublic ? 20 : 15;
-        const rewardMsg = data.isPublic ? "+20 XP Public ReadList created" : "+15 XP ReadList created";
+        // XP matches backend constants: CREATE_READLIST 15 + public bonus 10
+        const xpReward = data.isPublic ? 25 : 15;
+        const rewardMsg = data.isPublic ? "+25 XP Public ReadList created" : "+15 XP ReadList created";
         showXpGainToast(xpReward, rewardMsg);
       }
     } catch (error) {

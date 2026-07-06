@@ -1,20 +1,19 @@
 "use client";
 
 import { useMySubmissions } from "@/services/wiki";
-import { ResourceStatus } from "@/services/wiki/types";
+import { EducationalResource, ResourceStatus } from "@/services/wiki/types";
 import { ExternalLink, Clock, CheckCircle, XCircle } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { safeHref } from "@/lib/safeUrl";
 
 const statusConfig: Record<ResourceStatus, { icon: typeof Clock; label: string; color: string }> = {
-    PENDING: { icon: Clock, label: "En attente", color: "text-gold bg-gold/10 border-gold/20" },
-    APPROVED: { icon: CheckCircle, label: "Approuvé", color: "text-success bg-success/10 border-success/20" },
-    REJECTED: { icon: XCircle, label: "Rejeté", color: "text-danger bg-danger/10 border-danger/20" },
+    PENDING: { icon: Clock, label: "Pending", color: "text-gold bg-gold/10 border-gold/20" },
+    APPROVED: { icon: CheckCircle, label: "Approved", color: "text-success bg-success/10 border-success/20" },
+    REJECTED: { icon: XCircle, label: "Rejected", color: "text-danger bg-danger/10 border-danger/20" },
 };
 
-function SubmissionItem({ resource }: { resource: { id: number; url: string; status: ResourceStatus; reviewNotes?: string; createdAt: string } }) {
-    const { data: preview, isLoading } = useLinkPreview(resource.url);
+function SubmissionItem({ resource }: { resource: EducationalResource }) {
+    const preview = resource.linkPreview;
     const config = statusConfig[resource.status];
     const StatusIcon = config.icon;
 
@@ -29,7 +28,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
                             rel="noopener noreferrer"
                             className="text-sm font-medium text-text-primary hover:text-brand transition-colors truncate"
                         >
-                            {isLoading ? "Loading..." : (preview?.title || resource.url)}
+                            {preview?.title || resource.url}
                         </a>
                         <ExternalLink className="w-3 h-3 text-text-tertiary flex-shrink-0" />
                     </div>
@@ -44,7 +43,7 @@ function SubmissionItem({ resource }: { resource: { id: number; url: string; sta
             </div>
             {resource.status === "REJECTED" && resource.reviewNotes && (
                 <div className="mt-2 p-2 bg-danger/5 border border-danger/10 rounded-lg text-xs text-danger">
-                    <strong>Raison:</strong> {resource.reviewNotes}
+                    <strong>Reason:</strong> {resource.reviewNotes}
                 </div>
             )}
         </div>
@@ -65,7 +64,7 @@ export function MySubmissionsList() {
     if (error) {
         return (
             <div className="text-center py-8 text-danger text-sm">
-                Erreur lors du chargement
+                Failed to load submissions
             </div>
         );
     }
@@ -73,7 +72,7 @@ export function MySubmissionsList() {
     if (submissions.length === 0) {
         return (
             <div className="text-center py-8 text-text-tertiary text-sm">
-                Aucune soumission pour le moment.
+                No submissions yet.
             </div>
         );
     }
@@ -86,9 +85,9 @@ export function MySubmissionsList() {
         <div className="space-y-4">
             {/* Stats */}
             <div className="flex gap-4 text-xs">
-                <span className="text-gold">{pending.length} en attente</span>
-                <span className="text-success">{approved.length} approuvé(s)</span>
-                <span className="text-danger">{rejected.length} rejeté(s)</span>
+                <span className="text-gold">{pending.length} pending</span>
+                <span className="text-success">{approved.length} approved</span>
+                <span className="text-danger">{rejected.length} rejected</span>
             </div>
 
             {/* List */}

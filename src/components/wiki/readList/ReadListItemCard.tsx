@@ -5,14 +5,14 @@ import { Card } from "@/components/ui/card";
 import { useState, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import type { ReadListItem } from "@/services/wiki";
-import type { LinkPreview } from "@/services/wiki/linkPreview";
+import type { ReadListItem, WikiLinkPreview } from "@/services/wiki";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { safeHref } from "@/lib/safeUrl";
 
 interface ReadListItemCardProps {
   item: ReadListItem;
-  preview?: LinkPreview | null;
+  /** Preview metadata inlined on item.resource by the API. */
+  preview?: WikiLinkPreview | null;
   onRemoveItem: (itemId: number) => void;
   onToggleRead: (itemId: number, isRead: boolean) => void;
 }
