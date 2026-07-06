@@ -14,7 +14,8 @@ import {
   ReportResourceResponse,
   ApproveResourceInput,
   RejectResourceInput,
-  PendingCountResponse
+  PendingCountResponse,
+  PopularResourcesResponse
 } from './types';
 import { apiClient } from '../api/axios-config';
 import { buildQueryParams } from '../common';
@@ -90,6 +91,16 @@ export const fetchAllWikiResources = async (params?: WikiResourcesParams): Promi
 
     return { ...last, data: all };
   }, 'fetching all wiki resources');
+};
+
+/**
+ * Leaderboard "most saved": APPROVED resources ranked by how many read
+ * lists include them. Feeds the library side rail.
+ */
+export const fetchPopularWikiResources = async (limit = 5): Promise<PopularResourcesResponse> => {
+  return withErrorHandling(async () => {
+    return await get<PopularResourcesResponse>(`/educational/resources/popular?limit=${limit}`);
+  }, 'fetching popular wiki resources');
 };
 
 /**

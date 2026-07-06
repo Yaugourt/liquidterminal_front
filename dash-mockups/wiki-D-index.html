@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V4 · D — Compact Index</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V4 · MOCKUP D — "COMPACT INDEX"  (Bloomberg density, no images)
+ Question answered: "Show me EVERYTHING, grouped, on one screen."
+ ───────────────────────────────────────────────────────────────────────────────
+ · PageHeader + hub pill tabs. Full-width thin KPI ribbon (inline cells).
+ · ONE card-shell: view switcher (Index · Cards) + search in the header.
+ · Body = index grouped by category sections: slim cyan section header w/ mono
+   count + "View all", then single-line rows (favicon · title · domain · date ·
+   reads). ~18 rows visible, zero images.
+ Tokens copied verbatim from kit.html. Blocks: PageHeader, KpiRibbon(inline),
+ PillTabs, ModuleTable-style rows.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- PageHeader -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Wiki</h1>
+          <p class="text-sm text-text-secondary">Curated Hyperliquid knowledge · updated <span class="mono">38s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <div class="flex items-center bg-surface-2 p-0.5 rounded-md">
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Library</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Learn</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">My contributions</button>
+          </div>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+        </div>
+      </div>
+
+      <!-- thin inline KPI ribbon -->
+      <div class="flex flex-wrap items-center border border-border-subtle rounded-lg divide-x divide-border-subtle overflow-hidden">
+        <div class="px-5 py-2.5 flex items-baseline gap-2"><span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Resources</span><span class="mono text-[15px] font-medium text-text-primary">194</span></div>
+        <div class="px-5 py-2.5 flex items-baseline gap-2"><span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Categories</span><span class="mono text-[15px] font-medium text-text-primary">12</span></div>
+        <div class="px-5 py-2.5 flex items-baseline gap-2"><span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Added · 7d</span><span class="mono text-[15px] font-medium text-success">+6</span></div>
+        <div class="px-5 py-2.5 flex items-baseline gap-2"><span class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Reads · 7d</span><span class="mono text-[15px] font-medium text-text-primary">1,842</span></div>
+      </div>
+
+      <!-- card-shell: switcher + search, then grouped index -->
+      <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-3.5 py-3 border-b border-border-subtle">
+          <div class="flex items-center bg-surface-2 p-0.5 rounded-md">
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Index</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Cards</button>
+          </div>
+          <div class="relative flex-1 min-w-[180px] max-w-xs">
+            <input placeholder="Search title, description or URL…" class="w-full px-3 h-7 text-[12px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+          </div>
+          <span class="text-[10px] text-text-tertiary tracking-wide ml-auto">Grouped by category · <span class="mono">194</span> resources</span>
+        </div>
+
+        <!-- section: HypurrCollective -->
+        <div class="flex items-baseline gap-2 px-4 pt-3.5 pb-2 border-b border-border-subtle">
+          <span class="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-brand">HypurrCollective</span>
+          <span class="mono text-[10.5px] text-text-tertiary">28</span>
+          <a class="ml-auto text-[11px] text-text-tertiary hover:text-text-primary cursor-pointer">View all →</a>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">HC</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">The HypurrCollective Ecosystem Map</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">hypurr.co</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">1d</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">208 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">X</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">HypurrFun Bot: Launch and Trade Memecoins</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">x.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">3d</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">176 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">MI</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Hypurr NFTs: Collection History and Utility</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">mirror.xyz</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">1w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">143 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">SB</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Community Grants: How the Collective Funds Builders</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">substack.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">2w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">98 rd</span>
+        </div>
+
+        <!-- section: Farming -->
+        <div class="flex items-baseline gap-2 px-4 pt-3.5 pb-2 border-b border-border-subtle">
+          <span class="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-brand">Farming</span>
+          <span class="mono text-[10.5px] text-text-tertiary">24</span>
+          <a class="ml-auto text-[11px] text-text-tertiary hover:text-text-primary cursor-pointer">View all →</a>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">SB</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Points Meta on Hyperliquid: Every Farmable Protocol Ranked</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">substack.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">12h</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">143 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">PA</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Farming Strategies on HyperEVM: LPs, Loops and Points</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">paragraph.xyz</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">3d</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">187 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">MD</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Stablecoin Yield Routes on Hyperliquid</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">medium.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">5d</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">121 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">X</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Season 2 Airdrop Speculation: What We Know</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">x.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">1w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">254 rd</span>
+        </div>
+
+        <!-- section: HIP-3 -->
+        <div class="flex items-baseline gap-2 px-4 pt-3.5 pb-2 border-b border-border-subtle">
+          <span class="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-brand">HIP-3</span>
+          <span class="mono text-[10.5px] text-text-tertiary">17</span>
+          <a class="ml-auto text-[11px] text-text-tertiary hover:text-text-primary cursor-pointer">View all →</a>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">X</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">HIP-3 Auction Mechanics: How Deployment Slots Are Priced</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">x.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">6h</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">92 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">AS</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Understanding HIP-3: Builder-Deployed Perpetuals</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">asxn.xyz</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">2d</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">341 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">GB</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">HIP-3 Official Specification</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">hyperliquid.gitbook.io</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">3w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">387 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 border-b border-border-subtle/60 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">MI</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">Oracle Design for Builder-Deployed Markets</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">mirror.xyz</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">1w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">115 rd</span>
+        </div>
+        <div class="flex items-center gap-2.5 px-4 py-2 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="w-5 h-5 shrink-0 rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">SB</span>
+          <span class="text-[12.5px] font-medium text-text-primary truncate">First HIP-3 Deployments Reviewed</span>
+          <span class="text-[11px] text-text-tertiary truncate hidden sm:inline">substack.com</span>
+          <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">2w</span>
+          <span class="shrink-0 mono text-[11px] text-text-secondary w-14 text-right">203 rd</span>
+        </div>
+
+        <!-- footer -->
+        <div class="flex items-center justify-between px-4 py-3 border-t border-border-subtle">
+          <span class="text-[11px] text-text-tertiary">Showing top of each category · <span class="mono">9</span> more sections below</span>
+          <a class="text-[11px] text-brand hover:text-brand-hover cursor-pointer">Expand all sections</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>
