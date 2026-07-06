@@ -3,6 +3,7 @@ export {
   fetchEducationalCategories,
   fetchWikiResources,
   fetchAllWikiResources,
+  fetchPopularWikiResources,
   createEducationalCategory,
   createEducationalResource,
   deleteEducationalResource,
@@ -19,6 +20,7 @@ export {
 // Hooks
 export { useEducationalCategories } from './hooks/useEducationalCategories';
 export { useWikiLibrary } from './hooks/useWikiLibrary';
+export { usePopularWikiResources } from './hooks/usePopularWikiResources';
 export { useCreateEducationalCategory } from './hooks/useCreateEducationalCategory';
 export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
 export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
@@ -41,6 +43,7 @@ export type {
   WikiResourcesParams,
   CategoriesResponse,
   ResourcesResponse,
+  PopularResourcesResponse,
   CreateCategoryInput,
   CreateResourceInput,
   CategoryResponse,

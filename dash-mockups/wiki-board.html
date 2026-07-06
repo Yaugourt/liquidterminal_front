@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V4 — Comparison board (A/B/C/D)</title>
+<style>
+  body { margin:0; background:#08101A; color:#E8EAED; font:14px/1.5 Inter, system-ui, sans-serif; }
+  header { padding:20px 28px 8px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p { color:#9CA3AF; margin:0; font-size:13px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(620px,1fr)); gap:20px; padding:20px 28px 40px; }
+  .cell { border:1px solid #1E2535; border-radius:10px; overflow:hidden; background:#0F1421; }
+  .cell h2 { font-size:13px; margin:0; padding:10px 14px; border-bottom:1px solid #1E2535; display:flex; justify-content:space-between; align-items:baseline; }
+  .cell h2 a { color:#83E9FF; text-decoration:none; font-weight:500; font-size:12px; }
+  .cell h2 span.tag { color:#6B7280; font-weight:400; font-size:11px; margin-left:8px; }
+  .frame { position:relative; width:100%; aspect-ratio:1440/1000; overflow:hidden; }
+  .frame iframe { width:1440px; height:1000px; border:0; transform-origin:0 0; position:absolute; top:0; left:0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wiki V4 — 4 directions</h1>
+  <p>Click a title to open the full-size mockup. A: Terminal Data-Dense · B: Magazine Hub · C: Command Center · D: Compact Index.</p>
+</header>
+<div class="grid">
+  <div class="cell"><h2>A — Terminal Data-Dense<span class="tag">KPI ribbon + Table/Cards/Compact switch</span><a href="wiki-A-terminal.html" target="_blank">open ↗</a></h2><div class="frame"><iframe src="wiki-A-terminal.html"></iframe></div></div>
+  <div class="cell"><h2>B — Magazine Hub<span class="tag">hero featured + rail + Magazine/Compact switch</span><a href="wiki-B-magazine.html" target="_blank">open ↗</a></h2><div class="frame"><iframe src="wiki-B-magazine.html"></iframe></div></div>
+  <div class="cell"><h2>C — Command Center<span class="tag">3 zones + Most read + Cards/Table switch</span><a href="wiki-C-command.html" target="_blank">open ↗</a></h2><div class="frame"><iframe src="wiki-C-command.html"></iframe></div></div>
+  <div class="cell"><h2>D — Compact Index<span class="tag">grouped by category + Index/Cards switch</span><a href="wiki-D-index.html" target="_blank">open ↗</a></h2><div class="frame"><iframe src="wiki-D-index.html"></iframe></div></div>
+</div>
+<script>
+  // Scale each 1440px iframe to fit its cell width.
+  function fit() {
+    document.querySelectorAll('.frame').forEach(f => {
+      const s = f.clientWidth / 1440;
+      f.querySelector('iframe').style.transform = 'scale(' + s + ')';
+      f.style.height = (1000 * s) + 'px';
+    });
+  }
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

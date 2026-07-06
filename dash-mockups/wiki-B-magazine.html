@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V4 · B — Magazine Hub</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V4 · MOCKUP B — "MAGAZINE HUB"  (editorial, image-rich)
+ Question answered: "What should I read next about Hyperliquid?"
+ ───────────────────────────────────────────────────────────────────────────────
+ · PageHeader + hub pill tabs. NO KPI strip (editorial breathing room).
+ · Left category rail (single-select, mono counts).
+ · Hero featured article (gold badge) from linkPreview image.
+ · Toolbar: search + view switcher (Magazine · Compact) Builders-style.
+ · 3-col magazine grid: big preview image, chip, title, 2-line description.
+ Image slots use token gradients as placeholders (real page = linkPreview.image).
+ Tokens copied verbatim from kit.html. Blocks: PageHeader, PillTabs, Card.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- PageHeader -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Wiki</h1>
+          <p class="text-sm text-text-secondary">Curated Hyperliquid knowledge · updated <span class="mono">38s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <div class="flex items-center bg-surface-2 p-0.5 rounded-md">
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Library</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Learn</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">My contributions</button>
+          </div>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+        </div>
+      </div>
+
+      <!-- rail + editorial column -->
+      <div class="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-6 items-start">
+
+        <!-- category rail -->
+        <nav class="min-w-0 lg:sticky lg:top-6 space-y-0.5">
+          <div class="px-1 mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">Categories</div>
+          <button class="flex w-full items-center justify-between rounded-lg border border-brand/30 bg-brand/10 px-3 py-2 text-[13px] font-medium text-brand"><span>All resources</span><span class="mono text-[11px] text-brand/80">194</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HypurrCollective</span><span class="mono text-[11px] text-text-tertiary">28</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Farming</span><span class="mono text-[11px] text-text-tertiary">24</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HIP-3</span><span class="mono text-[11px] text-text-tertiary">17</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Vaults</span><span class="mono text-[11px] text-text-tertiary">15</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Security</span><span class="mono text-[11px] text-text-tertiary">12</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Trading</span><span class="mono text-[11px] text-text-tertiary">11</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Builders</span><span class="mono text-[11px] text-text-tertiary">9</span></button>
+          <button class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Staking</span><span class="mono text-[11px] text-text-tertiary">8</span></button>
+        </nav>
+
+        <div class="min-w-0 space-y-5">
+
+          <!-- Hero featured article -->
+          <a class="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer">
+            <div class="min-h-[220px] bg-[linear-gradient(135deg,rgba(131,233,255,0.16),rgba(20,27,42,0.9)_55%,rgba(167,139,250,0.10))] grid place-items-center">
+              <span class="text-[64px] font-bold text-brand/20 font-inter">HIP-3</span>
+            </div>
+            <div class="p-6 flex flex-col gap-3">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium">★ Featured</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">HIP-3</span>
+              </div>
+              <h2 class="font-inter text-[22px] leading-snug font-semibold text-text-primary">Understanding HIP-3: Builder-Deployed Perpetuals</h2>
+              <p class="text-[13px] leading-relaxed text-text-secondary">How permissionless perp deployment works: the 500k HYPE stake, dutch-auction slots, oracle duties and what it means for builders competing with core markets.</p>
+              <div class="mt-auto flex items-center gap-2 text-[11.5px] text-text-tertiary">
+                <span class="w-5 h-5 rounded grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">AS</span>
+                <span>asxn.xyz</span><span>·</span><span class="mono">2d ago</span><span>·</span><span class="mono">341 reads</span>
+              </div>
+            </div>
+          </a>
+
+          <!-- toolbar: search + view switcher -->
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="relative w-full sm:max-w-[380px]">
+              <input placeholder="Search title, description or URL…" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+            </div>
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+              <span class="text-[11px] text-text-tertiary"><span class="mono">193</span> more resources</span>
+              <div class="flex items-center bg-surface-2 p-0.5 rounded-md">
+                <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Magazine</button>
+                <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Compact</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- magazine grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(31,181,142,0.14),rgba(20,27,42,0.9)_60%)] grid place-items-center"><span class="text-[40px] font-bold text-success/25 font-inter">HLP</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Vaults</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">HLP Vault Mechanics Explained</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">Where HLP yield actually comes from: market-making PnL, liquidations and funding, plus the risks depositors underwrite.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-4.5 h-4.5 w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">MI</span>
+                  <span>mirror.xyz</span><span>·</span><span class="mono">5d</span><span class="ml-auto mono">512 reads</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(249,227,112,0.12),rgba(20,27,42,0.9)_60%)] grid place-items-center"><span class="text-[40px] font-bold text-gold/25 font-inter">🐱</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">HypurrCollective</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">The HypurrCollective Ecosystem Map</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">Every team, tool and community project in the collective, mapped by vertical with links and status.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">HC</span>
+                  <span>hypurr.co</span><span>·</span><span class="mono">1d</span><span class="ml-auto mono">208 reads</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(167,139,250,0.14),rgba(20,27,42,0.9)_60%)] grid place-items-center"><span class="text-[40px] font-bold text-violet/25 font-inter">EVM</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Farming</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">Farming Strategies on HyperEVM: LPs, Loops and Points</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">A practical tour of yield routes on HyperEVM, from stable LPs to looped lending, with risk notes per strategy.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">PA</span>
+                  <span>paragraph.xyz</span><span>·</span><span class="mono">3d</span><span class="ml-auto mono">187 reads</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(131,233,255,0.13),rgba(20,27,42,0.9)_60%)] grid place-items-center"><span class="text-[40px] font-bold text-brand/25 font-inter">HYPE</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Staking</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">Staking HYPE: A Complete Guide</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">Validators, delegation, unstaking queues and rewards math, straight from the official docs.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">GB</span>
+                  <span>hyperliquid.gitbook.io</span><span>·</span><span class="mono">1w</span><span class="ml-auto mono">429 reads</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(229,62,62,0.10),rgba(20,27,42,0.9)_60%)] grid place-items-center"><span class="text-[40px] font-bold text-danger/25 font-inter">SEC</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Security</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">Hyperliquid Bridge Security Model</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">How the Arbitrum bridge is secured by the validator set, plus the guardian and dispute mechanisms.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">MD</span>
+                  <span>medium.com</span><span>·</span><span class="mono">1w</span><span class="ml-auto mono">298 reads</span>
+                </div>
+              </div>
+            </a>
+
+            <a class="bg-surface border border-border-subtle rounded-lg overflow-hidden hover:border-border-default transition-colors cursor-pointer flex flex-col">
+              <div class="h-36 bg-[linear-gradient(135deg,rgba(131,233,255,0.10),rgba(20,27,42,0.9)_50%,rgba(249,227,112,0.08))] grid place-items-center"><span class="text-[40px] font-bold text-text-tertiary/30 font-inter">BFT</span></div>
+              <div class="p-4 flex flex-col gap-2 flex-1">
+                <span class="self-start inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Infrastructure</span>
+                <h3 class="text-[15px] font-semibold leading-snug text-text-primary">HyperBFT Consensus Deep Dive</h3>
+                <p class="text-[12.5px] leading-relaxed text-text-secondary line-clamp-2">Block production, finality and how HyperBFT differs from Tendermint under adversarial load.</p>
+                <div class="mt-auto pt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
+                  <span class="w-[18px] h-[18px] rounded grid place-items-center text-[8px] font-semibold bg-surface-2 text-text-secondary">AS</span>
+                  <span>asxn.xyz</span><span>·</span><span class="mono">2w</span><span class="ml-auto mono">356 reads</span>
+                </div>
+              </div>
+            </a>
+
+          </div>
+
+          <!-- pagination -->
+          <div class="flex justify-center pt-1">
+            <div class="flex items-center gap-1">
+              <button class="h-7 px-2.5 rounded-md border border-border-subtle text-[11px] text-text-tertiary">‹ Prev</button>
+              <span class="px-3 text-[11px] text-text-tertiary">Page <span class="mono">1</span> / <span class="mono">9</span></span>
+              <button class="h-7 px-2.5 rounded-md border border-border-subtle bg-surface-2 text-[11px] text-text-primary">Next ›</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

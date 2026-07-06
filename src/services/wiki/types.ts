@@ -39,6 +39,8 @@ export interface EducationalResource {
   };
   categories: EducationalResourceCategory[];
   linkPreview?: WikiLinkPreview | null;
+  /** Number of read lists that include this resource (public popularity signal). */
+  savesCount?: number;
   // Moderation fields
   status: ResourceStatus;
   reviewedAt?: string;
@@ -131,6 +133,13 @@ export interface ResourcesResponse {
     hasNext: boolean;
     hasPrevious: boolean;
   };
+  message?: string;
+}
+
+/** GET /educational/resources/popular — no pagination, ranked by saves. */
+export interface PopularResourcesResponse {
+  success: boolean;
+  data: EducationalResource[];
   message?: string;
 }
 
