@@ -73,7 +73,9 @@ function SortableReadListItem({
     transition,
   };
 
-  const readCount = 0;
+  // readCount comes from the API summary; persisted pre-v2 store entries
+  // may lack it until the next refresh, hence the fallback.
+  const readCount = list.readCount ?? 0;
   const total = list.itemsCount || 0;
   const progress = total > 0 ? (readCount / total) * 100 : 0;
 

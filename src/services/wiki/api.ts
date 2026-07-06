@@ -1,7 +1,6 @@
 import { get, post, del, patch } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import {
-  EducationalResource,
   CategoriesResponse,
   ResourcesResponse,
   CreateCategoryInput,
@@ -10,6 +9,7 @@ import {
   ResourceResponse,
   CsvUploadApiResponse,
   CategoryParams,
+  WikiResourcesParams,
   ReportResourceInput,
   ReportResourceResponse,
   ApproveResourceInput,
@@ -35,11 +35,61 @@ export const fetchEducationalCategories = async (params?: CategoryParams): Promi
       apiParams.order = params.sortOrder;
       delete apiParams.sortOrder;
     }
+    if (params?.withCounts) {
+      apiParams.withCounts = 'true';
+    } else {
+      delete apiParams.withCounts;
+    }
 
     const queryParams = buildQueryParams(apiParams);
     const endpoint = `/educational/categories?${queryParams.toString()}`;
     return await get<CategoriesResponse>(endpoint);
   }, 'fetching educational categories');
+};
+
+/**
+ * Listing serveur de la bibliothèque (APPROVED only, previews inline).
+ * Un seul appel remplace l'ancien fan-out une-requête-par-catégorie.
+ */
+export const fetchWikiResources = async (params?: WikiResourcesParams): Promise<ResourcesResponse> => {
+  return withErrorHandling(async () => {
+    const apiParams: Record<string, unknown> = {
+      page: params?.page,
+      limit: params?.limit,
+      sort: params?.sort,
+      order: params?.order,
+      search: params?.search || undefined,
+      categoryIds: params?.categoryIds && params.categoryIds.length > 0
+        ? params.categoryIds.join(',')
+        : undefined
+    };
+
+    const queryParams = buildQueryParams(apiParams);
+    return await get<ResourcesResponse>(`/educational/resources?${queryParams.toString()}`);
+  }, 'fetching wiki resources');
+};
+
+/**
+ * Fetches every page of the library (server caps limit at 100 per page).
+ * Interim helper for the grouped-by-category view; the PR 3 redesign
+ * replaces it with real UI pagination. Hard-capped at 5 pages.
+ */
+export const fetchAllWikiResources = async (params?: WikiResourcesParams): Promise<ResourcesResponse> => {
+  return withErrorHandling(async () => {
+    const limit = 100;
+    const MAX_PAGES = 5;
+    const all: ResourcesResponse['data'] = [];
+    let page = 1;
+    let last: ResourcesResponse;
+
+    do {
+      last = await fetchWikiResources({ ...params, page, limit });
+      all.push(...(last.data || []));
+      page += 1;
+    } while (last.pagination?.hasNext && page <= MAX_PAGES);
+
+    return { ...last, data: all };
+  }, 'fetching all wiki resources');
 };
 
 /**
@@ -68,37 +118,6 @@ export const deleteEducationalResource = async (id: number): Promise<{ success: 
   return withErrorHandling(async () => {
     return await del<{ success: boolean; message: string }>(`/educational/resources/${id}`);
   }, 'deleting educational resource');
-};
-
-/**
- * Récupère les ressources d'une catégorie spécifique
- */
-const fetchResourcesByCategory = async (categoryId: number): Promise<{ success: boolean; data: EducationalResource[] }> => {
-  return withErrorHandling(async () => {
-    return await get<{ success: boolean; data: EducationalResource[] }>(`/educational/resources/category/${categoryId}`);
-  }, 'fetching resources by category');
-};
-
-/**
- * Récupère les ressources de plusieurs catégories
- */
-export const fetchResourcesByCategories = async (categoryIds: number[]): Promise<EducationalResource[]> => {
-  return withErrorHandling(async () => {
-    const allResources = await Promise.all(
-      categoryIds.map(async id => {
-        const response = await fetchResourcesByCategory(id);
-        return response.data;
-      })
-    );
-
-    // Fusionner et dédupliquer par ID
-    const resourceMap = new Map();
-    allResources.flat().forEach(resource => {
-      resourceMap.set(resource.id, resource);
-    });
-
-    return Array.from(resourceMap.values());
-  }, 'fetching resources by multiple categories');
 };
 
 /**

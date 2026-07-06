@@ -16,27 +16,27 @@ interface UserSubmissionFormProps {
     onCancel?: () => void;
 }
 
-// Messages d'erreur explicites pour le filtrage de contenu
+// Explicit error messages for the content filter reasons
 const getContentFilterMessage = (reason?: string): string => {
     switch (reason) {
         case 'BLACKLISTED_DOMAIN':
-            return "Ce domaine n'est pas autorisé (ex: raccourcisseur d'URL)";
+            return "This domain is not allowed (e.g. URL shorteners)";
         case 'BLOCKED_EXTENSION':
-            return "Les téléchargements directs ne sont pas autorisés";
+            return "Direct file downloads are not allowed";
         case 'MALWARE_PATTERN':
-            return "Cette URL contient des éléments suspects";
+            return "This URL contains suspicious patterns";
         case 'INJECTION_DETECTED':
-            return "URL invalide";
+            return "Invalid URL";
         case 'URL_MANIPULATION':
-            return "Cette URL semble manipulée";
+            return "This URL looks manipulated";
         case 'PUNYCODE_DETECTED':
-            return "Domaine avec caractères spéciaux non autorisé";
+            return "Domains with special characters are not allowed";
         case 'HOMOGRAPH_DETECTED':
-            return "URL invalide - caractères suspects";
+            return "Invalid URL: suspicious characters";
         case 'HTTPS_REQUIRED':
-            return "Seules les URLs HTTPS sont acceptées";
+            return "Only HTTPS URLs are accepted";
         default:
-            return "Cette URL n'est pas autorisée";
+            return "This URL is not allowed";
     }
 };
 
@@ -51,7 +51,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
         e.preventDefault();
 
         if (!url.startsWith("https://")) {
-            toast.error("L'URL doit commencer par https://");
+            toast.error("URL must start with https://");
             return;
         }
 
@@ -62,12 +62,12 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
             });
 
             toast.success(
-                "Ressource soumise avec succès ! Elle sera examinée par un modérateur.",
+                "Resource submitted! It will be reviewed by a moderator.",
                 { duration: 5000 }
             );
 
-            // Show XP gain toast
-            showXpGainToast(15, "+15 XP Resource submitted");
+            // XP reward matches the backend ADD_EDUCATIONAL_RESOURCE constant (25)
+            showXpGainToast(25, "+25 XP Resource submitted");
 
             setUrl("");
             setCategoryId("");
@@ -76,10 +76,10 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
             const error = err as AxiosError<{ code?: string; reason?: string; error?: string }>;
             const code = error.response?.data?.code;
             const reason = error.response?.data?.reason;
-            
-            // Gestion prioritaire du Rate Limit (Status 429 ou Code spécifique)
+
+            // Rate limit first (status 429 or explicit code); backend cap is 5/day
             if (error.response?.status === 429 || code === 'RATE_LIMIT_EXCEEDED') {
-                toast.error("Limite hebdomadaire atteinte (10/semaine).");
+                toast.error("Daily submission limit reached (5/day). Try again tomorrow.");
                 return;
             }
 
@@ -88,13 +88,13 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     toast.error(getContentFilterMessage(reason));
                     break;
                 case 'EDUCATIONAL_RESOURCE_ALREADY_EXISTS':
-                    toast.error("Cette ressource a déjà été soumise");
+                    toast.error("This resource has already been submitted");
                     break;
                 case 'EDUCATIONAL_INVALID_URL':
-                    toast.error("URL invalide");
+                    toast.error("Invalid URL");
                     break;
                 default:
-                    toast.error(error.response?.data?.error || "Erreur lors de la soumission");
+                    toast.error(error.response?.data?.error || "Failed to submit resource");
             }
         }
     };
@@ -105,7 +105,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
             {isRateLimited && (
                 <div className="flex items-center gap-2 p-3 bg-gold/10 border border-gold/20 rounded-lg text-gold text-sm">
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                    <span>Limite quotidienne atteinte (5/jour). Réessayez demain.</span>
+                    <span>Daily limit reached (5/day). Try again tomorrow.</span>
                 </div>
             )}
 
@@ -113,13 +113,13 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
             {rateLimitRemaining !== undefined && !isRateLimited && (
                 <div className="flex items-center gap-2 text-xs text-text-tertiary">
                     <CheckCircle className="w-3 h-3" />
-                    <span>{rateLimitRemaining} soumission(s) restante(s) aujourd&apos;hui</span>
+                    <span>{rateLimitRemaining} submission(s) left today</span>
                 </div>
             )}
 
             <div className="space-y-2">
                 <label htmlFor="resourceUrl" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-                    URL de la ressource *
+                    Resource URL *
                 </label>
                 <Input
                     id="resourceUrl"
@@ -135,7 +135,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
 
             <div className="space-y-2">
                 <label htmlFor="resourceCategory" className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-                    Catégorie (optionnel)
+                    Category (optional)
                 </label>
                 <Select
                     value={categoryId}
@@ -143,7 +143,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     disabled={isRateLimited || isLoading}
                 >
                     <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner une catégorie" />
+                        <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
                         {categories?.map(cat => (
@@ -168,7 +168,7 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                         className="border-border-subtle text-text-secondary hover:bg-surface-2 rounded-lg"
                         disabled={isLoading}
                     >
-                        Annuler
+                        Cancel
                     </Button>
                 )}
                 <Button
@@ -179,16 +179,16 @@ export function UserSubmissionForm({ onSuccess, onCancel }: UserSubmissionFormPr
                     {isLoading ? (
                         <>
                             <InlineSpinner className="mr-2" />
-                            Envoi...
+                            Submitting...
                         </>
                     ) : (
-                        "Soumettre"
+                        "Submit"
                     )}
                 </Button>
             </div>
 
             <p className="text-xs text-text-tertiary text-center">
-                Votre soumission sera examinée par un modérateur avant publication.
+                Your submission will be reviewed by a moderator before publication.
             </p>
         </form>
     );

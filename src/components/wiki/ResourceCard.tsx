@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { useState, memo, useCallback } from "react";
 import Image from "next/image";
 import { useReadLists } from "@/store/use-readlists";
-import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
@@ -15,7 +14,7 @@ import { safeHref } from "@/lib/safeUrl";
 import { ReportResourceModal } from "./ReportResourceModal";
 import { AddToReadListModal } from "./AddToReadListModal";
 import { resourceStatusConfig } from "./resource-status-config";
-import { ResourceStatus } from "@/services/wiki/types";
+import { ResourceStatus, WikiLinkPreview } from "@/services/wiki/types";
 
 interface Resource {
   id: string;
@@ -29,13 +28,15 @@ interface Resource {
 
 interface ResourceCardProps {
   resource: Resource;
+  /** Preview metadata inlined by the API; no client-side fetch anymore. */
+  preview?: WikiLinkPreview | null;
   categoryColor: string;
   onDelete?: (resourceId: number) => void;
   isDeleting?: boolean;
   showStatus?: boolean;
 }
 
-export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
+export const ResourceCard = memo(function ResourceCard({ resource, preview = null, onDelete, isDeleting = false, showStatus = false }: ResourceCardProps) {
   const [imageError, setImageError] = useState(false);
   const [isAddingToList, setIsAddingToList] = useState(false);
   const [addingToListId, setAddingToListId] = useState<number | null>(null);
@@ -44,10 +45,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
   const [listSearch, setListSearch] = useState("");
   const { readLists, addItemToReadList } = useReadLists();
   const { user, authenticated } = useAuthContext();
-
-  const { data: preview, isLoading: previewLoading } = useLinkPreview(
-    resource.url && resource.url.startsWith('http') ? resource.url : ''
-  );
 
   const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
@@ -173,10 +170,6 @@ export const ResourceCard = memo(function ResourceCard({ resource, onDelete, isD
                 {preview?.siteName || 'Article'}
               </Badge>
               <div className="flex items-center gap-1">
-                {previewLoading && (
-                  <span className="text-xs text-text-tertiary">Loading...</span>
-                )}
-
                 {authenticated && (
                   <Button
                     size="sm"

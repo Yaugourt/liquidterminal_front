@@ -8,7 +8,6 @@ import type { ReadList, ReadListItem } from "@/services/wiki";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ReadListItemCard } from "./ReadListItemCard";
-import { useLinkPreviewsBatch } from "@/services/wiki/linkPreview/hooks/hooks";
 
 interface ReadListContentProps {
   activeList?: ReadList;
@@ -62,19 +61,11 @@ export function ReadListContent({
   const [activeTab, setActiveTab] = useState<"all" | "read" | "unread">("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const urls = useMemo(() => {
-    if (!items || !Array.isArray(items)) return [];
-    return items
-      .map(item => item.resource?.url)
-      .filter((url): url is string => !!url && url.startsWith('http'));
-  }, [items]);
-
-  const { getPreview } = useLinkPreviewsBatch(urls);
-
   useEffect(() => {
     setEnrichedItems(Array.isArray(items) ? items : []);
   }, [items]);
 
+  // Previews are inlined on item.resource by the API; search can match them.
   const filteredItems = useMemo(() => {
     let filtered = enrichedItems;
     if (activeTab === "read") filtered = filtered.filter(item => item.isRead);
@@ -83,6 +74,7 @@ export function ReadListContent({
       const q = searchTerm.toLowerCase();
       filtered = filtered.filter(item =>
         item.resource?.url?.toLowerCase().includes(q) ||
+        item.resource?.linkPreview?.title?.toLowerCase().includes(q) ||
         item.notes?.toLowerCase().includes(q)
       );
     }
@@ -258,7 +250,7 @@ export function ReadListContent({
                   >
                     <ReadListItemCard
                       item={item}
-                      preview={getPreview(item.resource?.url || '')}
+                      preview={item.resource?.linkPreview ?? null}
                       onRemoveItem={onRemoveItem}
                       onToggleRead={onToggleRead}
                     />

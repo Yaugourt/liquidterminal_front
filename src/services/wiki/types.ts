@@ -9,9 +9,24 @@ export interface EducationalCategory {
     name: string | null;
     email: string | null;
   };
+  /** Present when fetched with withCounts=true (APPROVED resources only). */
+  resourcesCount?: number;
 }
 
 export type ResourceStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+/**
+ * Preview metadata inlined by the backend on every resource response.
+ * Cards render from this; no client-side /link-preview call needed.
+ */
+export interface WikiLinkPreview {
+  id: string;
+  title: string | null;
+  description: string | null;
+  image: string | null;
+  siteName: string | null;
+  favicon: string | null;
+}
 
 export interface EducationalResource {
   id: number;
@@ -23,6 +38,7 @@ export interface EducationalResource {
     email: string | null;
   };
   categories: EducationalResourceCategory[];
+  linkPreview?: WikiLinkPreview | null;
   // Moderation fields
   status: ResourceStatus;
   reviewedAt?: string;
@@ -77,6 +93,18 @@ export interface CategoryParams {
   page?: number;
   sortBy?: 'name' | 'createdAt';
   sortOrder?: 'asc' | 'desc';
+  /** Adds resourcesCount (APPROVED) to each category. */
+  withCounts?: boolean;
+}
+
+/** Server-driven library query: one request replaces the per-category fan-out. */
+export interface WikiResourcesParams {
+  categoryIds?: number[];
+  search?: string;
+  page?: number;
+  limit?: number;
+  sort?: 'createdAt' | 'url';
+  order?: 'asc' | 'desc';
 }
 
 // ==================== RÉPONSES API ====================

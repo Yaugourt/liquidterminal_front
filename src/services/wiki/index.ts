@@ -1,31 +1,28 @@
 // API functions
 export {
-  
-  
-  
-  
-  
-  
-  
-  
-  // New submission/moderation API
-  
-  
-  
-  
-  
-  
-  
-  
+  fetchEducationalCategories,
+  fetchWikiResources,
+  fetchAllWikiResources,
+  createEducationalCategory,
+  createEducationalResource,
+  deleteEducationalResource,
+  uploadCsvResources,
+  submitResource,
+  fetchMySubmissions,
+  reportResource,
+  fetchPendingResources,
+  fetchPendingCount,
+  approveResource,
+  rejectResource
 } from './api';
 
 // Hooks
 export { useEducationalCategories } from './hooks/useEducationalCategories';
+export { useWikiLibrary } from './hooks/useWikiLibrary';
 export { useCreateEducationalCategory } from './hooks/useCreateEducationalCategory';
 export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
 export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
 export { useCsvUpload } from './hooks/useCsvUpload';
-// New submission/moderation hooks
 export { useSubmitResource } from './hooks/useSubmitResource';
 export { useMySubmissions } from './hooks/useMySubmissions';
 export { useReportResource } from './hooks/useReportResource';
@@ -35,40 +32,27 @@ export { usePendingCount } from './hooks/usePendingCount';
 
 // Types
 export type {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  // New types
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  EducationalCategory,
+  EducationalResource,
+  EducationalResourceCategory,
+  WikiLinkPreview,
+  ResourceStatus,
+  CategoryParams,
+  WikiResourcesParams,
+  CategoriesResponse,
+  ResourcesResponse,
+  CreateCategoryInput,
+  CreateResourceInput,
+  CategoryResponse,
+  ResourceResponse,
+  CsvUploadApiResponse,
+  ResourceReport,
+  ReportResourceInput,
+  ReportResourceResponse,
+  ApproveResourceInput,
+  RejectResourceInput,
+  PendingCountResponse
 } from './types';
 
 // ReadList exports
-export * from './readList'; 
+export * from './readList';

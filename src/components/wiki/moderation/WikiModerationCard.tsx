@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { usePendingResources, usePendingCount, useModerationActions } from "@/services/wiki";
 import { EducationalResource } from "@/services/wiki/types";
-import { useLinkPreview } from "@/services/wiki/linkPreview/hooks/hooks";
 import { safeHref } from "@/lib/safeUrl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,13 +31,13 @@ function PendingResourceItem({
     isApproving: boolean;
     isRejecting: boolean;
 }) {
-    const { data: preview, isLoading } = useLinkPreview(resource.url);
+    const preview = resource.linkPreview;
     const [rejectNotes, setRejectNotes] = useState("");
     const [showRejectForm, setShowRejectForm] = useState(false);
 
     const handleReject = () => {
         if (!rejectNotes.trim()) {
-            toast.error("Une raison est requise pour le rejet");
+            toast.error("A reason is required to reject");
             return;
         }
         onReject(resource.id, rejectNotes);
@@ -56,11 +55,11 @@ function PendingResourceItem({
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-text-primary hover:text-brand transition-colors flex items-center gap-2"
                     >
-                        {isLoading ? "Loading..." : (preview?.title || resource.url)}
+                        {preview?.title || resource.url}
                         <ExternalLink className="w-3 h-3 text-text-tertiary flex-shrink-0" />
                     </a>
                     <div className="text-xs text-text-tertiary mt-1">
-                        Soumis par {resource.creator?.name || "Unknown"} • {new Date(resource.createdAt).toLocaleDateString()}
+                        Submitted by {resource.creator?.name || "Unknown"} • {new Date(resource.createdAt).toLocaleDateString()}
                     </div>
                 </div>
             </div>
@@ -74,7 +73,7 @@ function PendingResourceItem({
                         className="bg-success/10 text-success hover:bg-success/20 border border-success/20"
                     >
                         {isApproving ? <InlineSpinner className="w-3 h-3" /> : <CheckCircle className="w-3 h-3 mr-1" />}
-                        Approuver
+                        Approve
                     </Button>
                     <Button
                         size="sm"
@@ -84,7 +83,7 @@ function PendingResourceItem({
                         className="text-danger hover:bg-danger/10"
                     >
                         <XCircle className="w-3 h-3 mr-1" />
-                        Rejeter
+                        Reject
                     </Button>
                 </div>
             ) : (
@@ -92,7 +91,7 @@ function PendingResourceItem({
                     <Input
                         value={rejectNotes}
                         onChange={(e) => setRejectNotes(e.target.value)}
-                        placeholder="Raison du rejet (obligatoire)"
+                        placeholder="Rejection reason (required)"
                         className="bg-surface border-border-subtle text-text-primary text-sm"
                     />
                     <div className="flex gap-2">
@@ -102,7 +101,7 @@ function PendingResourceItem({
                             disabled={isRejecting}
                             className="bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20"
                         >
-                            {isRejecting ? <InlineSpinner className="w-3 h-3" /> : "Confirmer le rejet"}
+                            {isRejecting ? <InlineSpinner className="w-3 h-3" /> : "Confirm rejection"}
                         </Button>
                         <Button
                             size="sm"
@@ -111,7 +110,7 @@ function PendingResourceItem({
                             disabled={isRejecting}
                             className="text-text-secondary"
                         >
-                            Annuler
+                            Cancel
                         </Button>
                     </div>
                 </div>
@@ -128,20 +127,20 @@ export function WikiModerationCard() {
     const handleApprove = async (resourceId: number, notes?: string) => {
         try {
             await approve(resourceId, { notes });
-            toast.success("Ressource approuvée");
+            toast.success("Resource approved");
             refetch();
         } catch {
-            toast.error("Erreur lors de l'approbation");
+            toast.error("Failed to approve resource");
         }
     };
 
     const handleReject = async (resourceId: number, notes: string) => {
         try {
             await reject(resourceId, { notes });
-            toast.success("Ressource rejetée");
+            toast.success("Resource rejected");
             refetch();
         } catch {
-            toast.error("Erreur lors du rejet");
+            toast.error("Failed to reject resource");
         }
     };
 

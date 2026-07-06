@@ -4,8 +4,7 @@ import { ResourceCard } from "./ResourceCard";
 import { Button } from "@/components/ui/button";
 import { SkeletonGrid } from "@/components/common";
 import { useState, useCallback, useEffect } from "react";
-import { useEducationalCategories } from "@/services/wiki";
-import { useEducationalResourcesByCategories } from "@/services/wiki/hooks/useEducationalResourcesByCategories";
+import { useEducationalCategories, useWikiLibrary } from "@/services/wiki";
 import { useDeleteEducationalResource } from "@/services/wiki";
 import { EducationalCategory, EducationalResource, EducationalResourceCategory } from "@/services/wiki/types";
 import { toast } from "sonner";
@@ -14,14 +13,20 @@ interface ResourcesSectionProps {
   selectedCategoryIds: number[];
   sectionColor: string;
   searchQuery?: string;
+  /** Bump to force a refetch (e.g. after a submission was approved/added). */
+  refreshToken?: number;
 }
 
-export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuery = "" }: ResourcesSectionProps) {
+export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuery = "", refreshToken = 0 }: ResourcesSectionProps) {
   const [expandedCategories, setExpandedCategories] = useState<Record<number, number>>({});
 
-  // Fetch categories and resources using the education service
+  // Server-driven: one request (APPROVED only, previews inline, search included)
+  // instead of the old one-request-per-category fan-out.
   const { categories: serverCategories, isLoading: categoriesLoading } = useEducationalCategories();
-  const { resources: serverResources, isLoading: resourcesLoading, refetch: refetchResources } = useEducationalResourcesByCategories(selectedCategoryIds);
+  const { resources: serverResources, isLoading: resourcesLoading, refetch: refetchResources } = useWikiLibrary(
+    { categoryIds: selectedCategoryIds, search: searchQuery },
+    { refreshToken, skipWhenNoCategories: true, fetchAll: true }
+  );
 
   // Local state for optimistic updates
   const [localCategories, setLocalCategories] = useState<EducationalCategory[]>([]);
@@ -30,7 +35,8 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
   // Delete resource hook
   const { deleteResource, isLoading: isDeleting } = useDeleteEducationalResource();
 
-  // Synchronize local state with server data
+  // Synchronize local state with server data (including empty results,
+  // otherwise a cleared search keeps showing stale cards).
   useEffect(() => {
     if (serverCategories.length > 0) {
       setLocalCategories(serverCategories);
@@ -38,9 +44,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
   }, [serverCategories]);
 
   useEffect(() => {
-    if (serverResources.length > 0) {
-      setLocalResources(serverResources);
-    }
+    setLocalResources(serverResources);
   }, [serverResources]);
 
   const handleShowMore = (categoryId: number) => {
@@ -82,35 +86,22 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
 
 
 
-  // Helper function to check if resource matches search query
-  const matchesSearch = (resource: EducationalResource, categoryName: string) => {
-    if (!searchQuery.trim()) return true;
-
-    const query = searchQuery.toLowerCase();
-    const searchableText = [
-      resource.url.toLowerCase(),
-      categoryName.toLowerCase(),
-      resource.categories.map(cat => cat.category.name).join(' ').toLowerCase()
-    ].join(' ');
-
-    return searchableText.includes(query);
-  };
-
-  // Group resources by category using local state
+  // Group resources by category (search is server-side now: URL + preview
+  // title/description). Grouping stays client-side until the PR 3 redesign.
   const categoriesWithResources = localCategories
     .filter(cat => selectedCategoryIds.length > 0 && selectedCategoryIds.includes(cat.id))
     .map(category => {
       const categoryResources = localResources
         .filter(resource =>
-          resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id) &&
-          matchesSearch(resource, category.name)
+          resource.categories.some((resCat: EducationalResourceCategory) => resCat.category.id === category.id)
         )
         .map((resource: EducationalResource) => ({
           id: resource.id.toString(),
-          title: resource.url,
+          title: resource.linkPreview?.title || resource.url,
           description: resource.categories.map((cat: EducationalResourceCategory) => cat.category.name).join(', '),
           url: resource.url,
-          image: '/api/placeholder/400/200' // Default image since API doesn't provide images
+          image: resource.linkPreview?.image || '',
+          preview: resource.linkPreview ?? null
         }));
 
       return {
@@ -173,6 +164,7 @@ export function ResourcesSection({ selectedCategoryIds, sectionColor, searchQuer
                 <ResourceCard
                   key={resource.id}
                   resource={resource}
+                  preview={resource.preview}
                   categoryColor={sectionColor}
                   onDelete={handleDeleteResource}
                   isDeleting={isDeleting}
