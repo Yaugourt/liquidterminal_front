@@ -9,6 +9,7 @@ import {
   ReadListItemUpdateInput,
   PublicReadListQueryParams,
   PublicReadListsResponse,
+  PublicReadListWithItems,
   ReadListCopyResponse
 } from './types';
 
@@ -113,6 +114,18 @@ export const deleteReadListItem = async (itemId: number): Promise<void> => {
 // ============================================
 // API POUR LES READ LISTS PUBLIQUES
 // ============================================
+
+// Get one read list by id WITH its items. Public lists are readable without
+// auth (GET /readlists/:id checks isPublic); returns 403 for private lists.
+export const getPublicReadListWithItems = async (
+  id: number
+): Promise<{ success: boolean; data: PublicReadListWithItems }> => {
+  return withErrorHandling(async () => {
+    const response = await get<{ success: boolean; data: PublicReadListWithItems }>(`/readlists/${id}`);
+    if (!response) throw new Error("Read list not found");
+    return response;
+  }, "fetching public read list");
+};
 
 // Get public read lists with pagination
 export const getPublicReadListsPaginated = async (params?: PublicReadListQueryParams): Promise<PublicReadListsResponse> => {

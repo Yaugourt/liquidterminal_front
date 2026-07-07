@@ -98,7 +98,7 @@ export interface PublicReadList {
   updatedAt: string;
 }
 
-interface PublicReadListWithItems extends PublicReadList {
+export interface PublicReadListWithItems extends PublicReadList {
   items: ReadListItem[];
 }
 
